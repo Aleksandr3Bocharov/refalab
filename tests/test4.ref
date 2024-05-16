@@ -1,0 +1,27 @@
+tes4 START
+    ENTRY go
+    EXTRN first,last,lengr,lengw,prout,proutm
+    empty pus,em1,em2,em3
+Bspe  S  '2134'/pus/
+go   = +
+        k/prspe//pus/'as01a432l7l'/em3/.+
+        k/dal/.
+*      prowerka  specifikacii
+prspe e2 s(/em1//em2//em3/)1 = k/prout/' symbol-/em/'s1.k/prspe/e2.
+      s(:Bspe:)1 ek = k/prout/' symbol-1234p='s1.k/prspe/ek.
+      R eh s('l7')1 = k/prout/' symbol-l7='s1.k/prspe/eh.
+      ss ek = k/prout/'  symbol ='ss.k/prspe/ek.
+            =
+dal =  k/prln//0//1/'345678'.k/prln/(/0//1/)'345678'.+
+       k/prfe//3/'1234567'.k/prla//3/'123456'.k/prfe//1//2/.+
+       k/prla//3//1//2//3/'567'.+
+*  neot
+       k/prfe/'123'.k/prla/'123'.
+prfe e1 = k/prow//first/e1.
+prla e1 = k/prow//last/e1.
+prow s1 e2 = k/proutm/s1', whod='e2'  wyh='k s1 e2..
+*
+*
+prln e1 = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
+                                         '  wyh-w='k/lengw/e1..
+    END

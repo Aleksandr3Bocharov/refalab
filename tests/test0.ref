@@ -1,0 +1,75 @@
+bbb START
+    ENTRY go
+    EXTRN add,m1,prout,numb,symb,first,last,lengr,lengw
+    extrn new,WTR,rdr,ptr,gtr,swr,mul,p1,proutm
+    extrn dr
+    extrn opnput,opnget,clsput,clsget,libget,libput
+    extrn br,rp,dg,dgall,cp,print,renam,unlnk
+    EMPTY tra,em1,em2,em3,pus
+    SWAP sw
+div e1 = k/div0/ k/dr/e1..
+div0 e1(e2) = e1
+Bspe  S  '2134'/pus/
+go   = +
+       k/prsw/.+
+       k/prvv/.+
+        k/prkop/.+
+        k/dal1/.+
+        k/prspe//pus/'as01a432l7l'/em3/.
+*      prowerka  specifikacii
+prspe e2 s(/em1//em2//em3/)1 = k/prout/' symbol-/em/'s1.k/prspe/e2.
+      s(:Bspe:)1 ek = k/prout/' symbol-b='s1.k/prspe/ek.
+      R eh s('l7')1 = k/prout/' symbol-l='s1.k/prspe/eh.
+      ss ek = k/prout/'  symbol='ss.k/prspe/ek.
+            =
+*      prowerka mul, p1,lengr,lengw,first,last,numb,symb,add,m1,sub
+dal1 = k/prmu/(/126/)/2/.k/prmu/(/65536/)/64/.k/prmu/(/16777215/)/1/.+
+*       k/prmu/(/65536/)/512/.+    neot
+        k/prdl/(/65536/)/4/.k/prdl/(/65536/)/666/.+
+*       k/prdl/(/1/)/0/.+      neot
+       k/prp1//4/.k/prp1//65536/.k/prp1//128/.+
+*       k/prp1//16777215/.+     neot
+        k/dal/.
+dal =  k/prln//0//1/'345678'.k/prln/(/0//1/)'345678'.+
+       k/prfe//3/'1234567'.k/prla//3/'123456'.k/prfe//1//2/.+
+       k/prla//3//1//2//3/'567'.+
+*       k/prfe/'123'.k/prla/'123'.+          neot
+        k/prnu/'125'.k/prnu/'76666'.k/prnu/'16777215'.+
+*       k/prnu/'17777215'.k/prnu/'-45'.+      neot
+       k/prsy//5678/.k/prsy//16777215/.+
+*       k/prad/(/128/)/456/.k/prad/(/16777215/)/2/. +     neot
+       k/prm1//3/.k/prm1//128/.k/prm1//16777215/.
+*       k/prsu/(/16777215/)/2/.k/prsu/(/2/)/456/.
+prmu e1 = k/prow//mul/e1.
+prnu e1 = k/prow//numb/e1.
+prsy e1 = k/prow//symb/e1.
+prad e1 = k/prow//add/e1.
+prm1 e1 = k/prow//m1/e1.
+prdl e1 = k/prow//div/e1.
+prp1 e1 = k/prow//p1/e1.
+prfe e1 = k/prow//first/e1.
+prla e1 = k/prow//last/e1.
+prow s1 e2 = k/proutm/s1', whod='e2'  wyh='k s1 e2..
+*
+*
+prkop   = k/br/'cc='/123/.k/br/'mmm=345'.k/rp/'mmm=879'.k/dg/'mmm'.+
+          k/cp/'cc'.k/dgall/.+
+          k/br//tra/'=765'.k/rp//tra/'='/16777215/.k/dg//tra/.
+*
+prvv  = k/opnput/'lala.put'.+
+       k/libput/' str 1'.k/libput/' str 2'.k/clsput/.+
+       <opnput '*lala.put'> <libput ' str 3'> <clsput> +
+       <renam 'lala.put lala.get'> +
+       k/opnget//4/'lala.get'.+
+       k/print/k/libget//4/..k/print/k/libget//4/..+
+       k/print/k/libget//4/..k/clsget//4/. <unlnk 'lala.get'>
+*
+prsw    = k/sw1/k/new//123456/..k/wtr//sw//123456/.k/ptr//sw/'0'.+
+                                k/rdr//sw/.k/gtr//sw/.
+sw1 Rx  = k/ptr/ Rx/2/.k/rdr/ rx.k/wtr/ rx/12/.k/sw2/rx.
+sw2 Rx  = k/ptr/Rx/3/.k/rdr/Rx.k/gtr/Rx.k/swr/Rx'0'/16777215/'0'.+
+                                 k/prout/ k/rdr/Rx..
+prln e1 = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
+                                         '  wyh-w='k/lengw/e1..
+    END
+

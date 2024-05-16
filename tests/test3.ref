@@ -1,0 +1,24 @@
+tes3 START
+    ENTRY go
+    extrn new,WTR,rdr,ptr,gtr,swr,proutm,prout
+    extrn br,rp,dg,dgall,cp,print
+    EMPTY tra,pus
+    SWAP sw
+go   = +
+      k/br/'cc='/123/.k/br/'mmm=345'.k/br/'mmm=879'. +
+      k/proutm/' d.b. 879:  ' k/dg/'mmm'..+
+      k/rp/'cc=1'.k/cp/'cc'.k/proutm/' d.b. 345 i 1: ' k/dgall/..+
+      k/rp//tra/'=765'.k/rp//tra/'='/16777215/. +
+      k/proutm/' d.b. /16777215/: ' k/dg//tra/..+
+*
+*
+      k/sw1/k/new//123456/..k/wtr//sw//123456/.k/wtr//sw/'0'.+
+      k/proutm/' d.b. 0 i 0: ' k/rdr//sw/.k/gtr//sw/.k/rdr//sw/..
+sw1 Rx  = k/proutm/' d.b. /123456/: 'k/swr/ Rx/2/.. +
+          k/proutm/' d.b. /2/: ' k/rdr/ rx.. +
+          k/wtr/ rx/12/.k/sw2/rx.
+sw2 Rx  = k/ptr/Rx/3/.k/proutm/' d.b. 2*(/12/ /3/): ' k/rdr/Rx.+
+          k/gtr/Rx..+
+          k/prout/' d.b. pusto: ' k/swr/Rx'0'/16777215/'0'..+
+                                 k/prout/ k/rdr/Rx..
+    END

@@ -1,1 +1,26 @@
+fact	start
+	entry go
+	extrn NUMB,SYMB,CVD,FIRST 
+	extrn MUL
+	extrn PROUT,CARD,M1
 
+go	= <fact <numb <prout ' give a number: '> <card>>> 
+
+fact /0/ = 
+     e1  = +
+           <pr <symb e1> '!=' +
+            <cvd  +
+             <f e1> +
+            >  +
+           > <go>
+
+f    /1/ = /1/
+     e1  = <mul (e1) <f <m1 e1>>>
+
+pr       =
+     e1  = <pr1 <first /80/ e1>>
+
+pr1 (e1)e2 = <prout e1> <pr e2>
+    '*' e1 = <prout e1>
+
+	end

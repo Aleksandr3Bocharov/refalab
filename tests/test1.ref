@@ -1,0 +1,143 @@
+tes1 START
+    ENTRY go
+    EXTRN add,sub,mul,dr,div
+    EXTRN addn,subn,muln,drn,divn
+    extrn p1,m1,prout,numb,symb,proutm,crel
+
+go   = <f1> <f2> <f3> <f4>
+*  prowerka mul, dr, div, add, sub
+f1 =    k/prad/(/1/)/2/.             +
+        k/prad/()/2/.                +
+        k/prad/(/1/).                +
+        k/prad/(/1/)'-'/2/.          +
+        k/prsu/(/1/)/2/.             +
+        k/prsu/()/2/.                +
+        k/prsu/(/1/).                +
+        k/prsu/(/1/)'-'/2/.          +
+        k/prmu/('-'/126/).           +
+        k/prmu/()/2/.                +
+        k/prmu/('-'/126/)/2/.        +
+        k/prmu/(/65536/)/64/.        +
+        k/prmu/('-'/2/)'-'/2/.       +
+        k/prmu/(/16777215/)'-'/1/.   +
+        k/prmu/('-'/65536/)'-'/512/. +    
+        k/prdr/(/5/)/3/.             +
+        k/prdr/(/5/)'-'/3/.          +
+        k/prdr/('-'/5/)/3/.          +
+        k/prdr/('-'/5/)'-'/3/.       +
+        k/prdr/(/5/)/33/.            +
+        k/prdr/(/5/)'-'/33/.         +
+        k/prdr/('-'/5/)/33/.         +
+        k/prdr/('-'/5/)'-'/33/.      +
+        k/prdl/(/5/)/3/.             +
+        k/prdl/(/5/)'-'/3/.          +
+        k/prdl/('-'/5/)/3/.          +
+        k/prdl/('-'/5/)'-'/3/.       +
+        k/prdl/(/5/)/33/.            +
+        k/prdl/(/5/)'-'/33/.         +
+        k/prdl/('-'/5/)/33/.         +
+        k/prdl/('-'/5/)'-'/33/.      
+*  prowerka muln, drn, divn, addn, subn
+f2 =    k/pradn/(/1/)/2/.             +
+        k/pradn/()/2/.                +
+        k/pradn/(/1/).                +
+        k/pradn/(/1/)'-'/2/.          +
+        k/prsun/(/1/)/2/.             +
+        k/prsun/()/2/.                +
+        k/prsun/(/1/).                +
+        k/prsun/(/1/)'-'/2/.          +
+        k/prmun/('-'/126/).           +
+        k/prmun/()/2/.                +
+        k/prmun/('-'/126/)/2/.        +
+        k/prmun/(/65536/)/64/.        +
+        k/prmun/('-'/2/)'-'/2/.       +
+        k/prmun/(/16777215/)'-'/1/.   +
+        k/prmun/('-'/65536/)'-'/512/. +    
+        k/prdrn/(/5/)/3/.             +
+        k/prdrn/(/5/)'-'/3/.          +
+        k/prdrn/('-'/5/)/3/.          +
+        k/prdrn/('-'/5/)'-'/3/.       +
+        k/prdrn/(/5/)/33/.            +
+        k/prdrn/(/5/)'-'/33/.         +
+        k/prdrn/('-'/5/)/33/.         +
+        k/prdrn/('-'/5/)'-'/33/.      +
+        k/prdln/(/5/)/3/.             +
+        k/prdln/(/5/)'-'/3/.          +
+        k/prdln/('-'/5/)/3/.          +
+        k/prdln/('-'/5/)'-'/3/.       +
+        k/prdln/(/5/)/33/.            +
+        k/prdln/(/5/)'-'/33/.         +
+        k/prdln/('-'/5/)/33/.         +
+        k/prdln/('-'/5/)'-'/33/.      
+*  neot
+f3 =                                  +
+       k/prad/('+')/2/.               +
+       k/prad/(/2/)'-'.               +
+       k/prdr/(/1/)/0/.               +      
+       k/prdr/(/1//2//3//4/)/0//0/.   +
+       k/prdl/(/1/).                  +
+       k/prdrn/(/1/)/0/.              +      
+       k/prdrn/(/1//2//3//4/)/0//0/.  +
+       k/prdln/(/1/).   
+*  prowerka p1, m1, numb, symb
+f4 =   k/prp1//0/.                    +
+       k/prp1//16777214/.             +
+       k/prm1//1/.                    +
+       k/prm1//16777215/.             +
+       k/prnu/'1000'.                 +
+       k/prnu/'-16777216'.            +
+       k/prnu/'1000000000'.           +
+       k/prnu/'2147483647'.           +
+       k/prnu/.                       +
+       k/prnu/'-'.                    +
+       k/prnu/'+'.                    +
+       k/prsy//1000/.                 +
+       k/prsy/'-'/1//0/.              +
+       k/prsy/.                       +
+       k/prsy/'-'.                    +
+       k/prsy/'+'.                    +
+       k/prsy//59//10144256/.         +
+       k/prsy//127//16777215/.        +
+       k/prsy/'+'/0//0//0/. +
+*  neot
+       k/prp1//16777215/. +
+       k/prp1/'+'/1/. +     
+       k/prm1//0/.+
+       k/prnu/'2147483648'. +
+       k/prnu/'-+45'.+
+       k/prnu/'++'. +      
+       k/prsy//128//0/. +
+*  prowerka CREL
+       <crel ('a')'a'> <crel (/1//2/)/1//2/> +
+       <crel (/crel/)/crel/> <crel ('\101\n')'\101\n'> +
+       <crel (/67//66/)'\103\102'> <crel ('A')'\101'> +
+       <crel ('ab')'a'>  <crel ('ab')'b'> +
+       <crel ('ba')'a'>  <crel ('ba')'b'> +
+       <crel ('a')'ab'>  <crel ('b')'ab'>  +
+       <crel ('a')'ba'>  <crel ('b')'ba'>  +
+       <crel ('ab')'ba'> <crel ('ba')'ab'> +
+       <crel ('100')'99'> <crel ('99')'100'>  +
+       <crel ('010')'99'> <crel ('99')'010'>  +
+*  neot
+       <crel ('a'('b'))'b'> +
+       <crel > <crel /0/> +
+       <crel /crel/> +
+       <crel ('a') 'b'('123')> <crel '123'>
+
+prad  e1 = k/prow//add/e1.
+prsu  e1 = k/prow//sub/e1.
+prmu  e1 = k/prow//mul/e1.
+prdr  e1 = k/prow//dr/e1.
+prdl  e1 = k/prow//div/e1.
+pradn e1 = k/prow//addn/e1.
+prsun e1 = k/prow//subn/e1.
+prmun e1 = k/prow//muln/e1.
+prdrn e1 = k/prow//drn/e1.
+prdln e1 = k/prow//divn/e1.
+prm1  e1 = k/prow//m1/e1.
+prp1  e1 = k/prow//p1/e1.
+prnu  e1 = k/prow//numb/e1.
+prsy  e1 = k/prow//symb/e1.
+
+prow s1 e2 = k/proutm/s1': in='e2'  out='k s1 e2..
+    END

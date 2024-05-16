@@ -1,0 +1,5 @@
+hello	start
+	entry go
+	extrn print
+go  	= <Print 'Hello World!'>
+	end

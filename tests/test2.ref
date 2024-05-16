@@ -1,0 +1,23 @@
+tes2 START
+    ENTRY go
+    extrn opnput,opnget,clsput,clsget,libget,libput
+    extrn print,prout,ftochar,chartof,functab,renam,unlnk
+    empty ffff
+go   = +
+        <functab /prout/>+
+        < <chartof 'prout'> ' eto prout'>+
+        < <chartof 'PROUT'> ' eto PROUT'>+
+*       <opnget /6/'bb'>+    !!  neot  !!
+       <opnput 'lala.tes'>+
+       <libput ' str 1'><libput ' str 2'><clsput >+
+       <opnput '*lala.tes'> <libput ' str 3'> <clsput> +
+       <renam 'lala.tes lala.tos'> +
+       <opnget /4/'lala.tos'>+
+       <print <libget /4/>><print <libget /4/>><print <libget /4/>>+
+       <print <libget /4/>><clsget /4/>+
+       <prout ' d.b. ffff: '<ftochar /ffff/>>+
+       <functab /tttt/> +
+       < <chartof 'tttt'> 'werno'>  +
+       <unlnk 'lala.tos'>
+tttt e1 = <prout e1>
+    END
