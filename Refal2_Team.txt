@@ -1,0 +1,13 @@
+Refal-2 Team
+------------
+
+Authors:
+	Alexander Krasovsky
+	Sergey Romanenko <roman@integrum.ru>
+
+Contributors:
+	Alexey Alyoshin
+	Leonid Belous <belous@ilt.kharkov.ua>
+	Alexander Krasovsky
+	Vyacheslav Sherstnev
+
