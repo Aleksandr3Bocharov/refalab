@@ -1,0 +1,22 @@
+cv start
+   entry CVB,cvd
+   extrn NUMB,SYMB
+   extrn ADD,MUL,DR,DRn
+CVB  '-' V(D)X = '-' K/cvb0/ VX.
+     '+' V(D)X =     K/cvb0/ VX.
+         E(D)X =     K/cvb0/ EX.
+cvb0 VX s1s2s3s4s5s6s7s8s9 =  +
+        <ADD (<MUL (<cvb0 VX>) /59//10144256/>) +
+        <NUMB s1s2s3s4s5s6s7s8s9> >
+     Ex = k/numb/Ex.
+
+cvd  '-' V(N)X = '-' K/cvd0/ VX.
+     '+' V(N)X =     K/cvd0/ VX.
+         E(N)X =     K/cvd0/ EX.
+cvd0 EX = k/cvd1/ k/DRn/ (EX) /59//10144256/..
+cvd1 
+     (ey)  = k/symb/ ey.
+     EX (EY)  = k/cvd0/ EX. k/cvd2/ k/SYMB/ EY..
+cvd2 s1s2s3s4s5s6s7s8s9 = s1s2s3s4s5s6s7s8s9
+     EX = k/cvd2/ '0'EX.
+ end
