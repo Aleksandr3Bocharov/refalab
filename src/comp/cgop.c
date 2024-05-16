@@ -1,6 +1,6 @@
 /*------------------file----CGOP.C--------------------*/
 /*    generation of the assembly language operators   */
-/*          Last edition date : 11.11.2004 (BLF)      */
+/*          Last edition date : 15.05.2024            */
 /*----------------------------------------------------*/
 /* #define PRCODE */ /* BLF */
 #include "refal.def"

@@ -1,6 +1,6 @@
 /*-------------  file  --  CERR.C  ---------------*/
 /*               Print error file                 */
-/*        Last edition date : 14.07.89            */
+/*        Last edition date : 15.05.24            */
 /*------------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"

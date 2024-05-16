@@ -1,6 +1,6 @@
 /*-------------  file  CCST2.C  ------------*/
 /*     The second of two compiler files     */
-/*        Last edition date : 31.01.90      */
+/*        Last edition date : 15.05.24      */
 /*------------------------------------------*/
 #include <stdio.h>
 #define TAG_O 0
