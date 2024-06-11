@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "refal.def"
 
 /* BLF - for renaming add,sub,mul,div */
