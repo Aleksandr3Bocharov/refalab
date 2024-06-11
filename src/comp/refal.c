@@ -67,6 +67,8 @@ unsigned jwhere();
 char *genlbl();  /* kras: wmesto struct u */
 char *spref();   /* kras: wmesto struct u */
 
+void sfclose();
+
 struct linkt {
    int tagg;
    union {
@@ -242,7 +244,7 @@ char *take(s1) char *s1; { /* take a next word from the string */
 main ()  {
  int argc; char *argv[3];
 #else
-main (argc,argv) int argc; char *argv[];  {
+int main (argc,argv) int argc; char *argv[];  {
 #endif
 char parm[40];
  int i,j,temp;
@@ -552,12 +554,14 @@ void translate(char *str, char *class1) { /* L,D,* - classification procedure */
      if ( (j == 35) || (j == 95) ) *(class1+i) = 'L';
    }
 }
-komm() {
+
+int komm() {
  char *k;
    for(k=c; (*k ==' ') || (*k =='\t') ; k++);
    if(*k =='*') return 1;
    else return 0;
 }
+
 void rdcard() {   /* read card procedure */
 RDCARD1:
   rdline(card);
@@ -581,9 +585,10 @@ RDCARD1:
   if (*(c + 71) != ' ')  *(c + 71) = '+';   /*!!!*/
   m = 0;
 }
+
 /*    directive label and keyword extraction    */
 void lblkey(pr) int pr; {
- register i;
+ register int i;
  short l, delta, fixm1;
   if(pr==0) {
 LK1:
@@ -842,10 +847,12 @@ SCNGCR:
 SCNRET: ;
   return;
 }
+
 void gsp(n) char n; {
   if (left_part == 1)  jbyte(n);
 }
-specif (tail) char tail; {    /* specifier compiler */
+
+int specif (tail) char tail; {    /* specifier compiler */
  int  neg;
  char id[255];
  int lid;
@@ -1095,6 +1102,7 @@ ILM1:
   }
 ILM2: pch130();
 }
+
 void equ() {    /* treatement of directives having 'EQU' type */
  char id[40];
  int  lid;
@@ -1104,10 +1112,12 @@ void equ() {    /* treatement of directives having 'EQU' type */
    if (c[m] == ' ') return;
 EQU1: pch130();
 }
+
 void pch130() {
    pchosh("130 invalid record format");
 }
-get_csmb(code,id,lid)  /* procedure read multiple symbol */
+
+int get_csmb(code,id,lid)  /* procedure read multiple symbol */
  struct linkt *code;
  char   id[40];
  int    *lid;
@@ -1148,6 +1158,7 @@ OSH112: pchosh("112 unknown type of the multiple symbol ");
 OSH113: pchosh("113 default '/' under multiple symbol ");
   return(0);
 }
+
 char convert(cm) char cm; {
  int j;
    j = (int) cm;
@@ -1160,7 +1171,8 @@ char convert(cm) char cm; {
 #endif
    return ( cm );
 }
-get_id(id,lid)  char id[];  int *lid; {        /* read identifier */
+
+int get_id(id,lid)  char id[];  int *lid; {        /* read identifier */
  int i;
    for (i = 0; i<40; id[i++] = ' ');
    if (class[m] != 'L') return(0);
@@ -1176,8 +1188,9 @@ get_id(id,lid)  char id[];  int *lid; {        /* read identifier */
       {EH ROMA0;}  /* kras */
 ID0:return(1);
 }
+
       /*read external identifier */
-get_idm(id,lid)  char id[40];  int *lid; {
+int get_idm(id,lid)  char id[40];  int *lid; {
    if (class[m] != 'L') return(0);
    id[0] = convert(c[m]);
    for ( *lid = 1; *lid < 8; (*lid)++ ) {
