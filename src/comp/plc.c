@@ -2,7 +2,7 @@
 /*     standard PL/I-functions implemented on C-language    */
 /*                Last edition date : 10.02.86              */
 /*----------------------------------------------------------*/
-index_x (s,t)
+int index_x (s,t)
           /* first left insertion t into  s */
           /* if not: -1                     */
            char *s, *t;
@@ -30,10 +30,10 @@ index_x (s,t)
 									              }
 
 
-index(s,l,t,m)
+/* int index(s,l,t,m) */
    /* first left insertion t into  s */
    /* if not: -1                     */
- char *s, *t;
+/* char *s, *t;
  int l,m;
  {
   int i, j, k;
@@ -45,7 +45,9 @@ index(s,l,t,m)
     }
   return(-1);
 }
-cmpstr(n,s1,s2) /* comparison two string . if s1<s2 then return < 0 */
+*/
+
+int cmpstr(n,s1,s2) /* comparison two string . if s1<s2 then return < 0 */
               /* if s1 = s2 return 0. if s1>s2 then return > 0    */
  char *s1, *s2;
  int n;
