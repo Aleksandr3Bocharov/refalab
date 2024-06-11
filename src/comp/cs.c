@@ -3,6 +3,7 @@
 /*        Last edition date : 29.10.86          */
 /*----------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
 #define N_FAIL '\002'
 #define N_NIL  '\030'
@@ -61,7 +62,7 @@ extern struct {
 } scn_;
 
  struct u *lookup();
- struct arr_lbl *calloc();
+ /* struct arr_lbl *calloc(); */
 
  static struct arr_lbl *first_arr_lbl = NULL;
  static int n_lbl = 15;
