@@ -11,6 +11,8 @@ rem E-mail: belous@ilt.kharkov.ua
 rem Date: 28.05.2005
 rem *******************************************************************
 
+set CC=F:\Programming\mingw32\bin
+
 bin\refal2 %1.ref > %1.log
-as -o %1.o %1.asm >> %1.log
-ar -r lib\libr2user.a %1.o
+%CC%\as -o %1.o %1.asm >> %1.log
+%CC%\ar -r lib\libr2user.a %1.o
