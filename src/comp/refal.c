@@ -3,6 +3,8 @@
 /*       Last modification : 29.05.2005 (BLF) */
 /*--------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "refal.def"                          
 /* #define  STTIME */
 
@@ -10,7 +12,7 @@
 #define ROMA return;}}
 #define ROMA0 return(0);}}
 int qindex;
-char *malloc();
+/* char *malloc(); */
 void exit();
 void lblkey();
 void gsymbol();
@@ -44,10 +46,10 @@ void pchosa();
 void gsp();
 void scan();
 void oshibka();
-void strncpy();
+/* void strncpy(); */
 void sfop_w();
-int strncmp();
-int strlen();
+/* int strncmp(); */
+/* int strlen(); */
 int atoi();
 int index_x();
 int specif();
@@ -431,18 +433,18 @@ KEYS:
             || (strncmp(stmkey,"CTAPT",5)==0))
      pchosh("002 too many start-directive");
   else if ((strncmp(stmkey,"end",3)==0) || (strncmp(stmkey,"END",3)==0)
-            || (strncmp(stmkey,"îàHàò",5)==0) ) {
+            || (strncmp(stmkey,"ÔøΩÔøΩHÔøΩÔøΩ",5)==0) ) {
      if(prevlb[0]!='\0') sempty (prevlb,strlen(prevlb));
      again = 1;
      goto END_STATEMENT; }
   else if ((strncmp(stmkey,"entry",5)==0) || (strncmp(stmkey,"ENTRY",5)==0)
-            || (strncmp(stmkey,"BXOÑH",5)==0) )
+            || (strncmp(stmkey,"BXOÔøΩH",5)==0) )
      ilm(sentry);
   else if ((strncmp(stmkey,"extrn",5)==0) || (strncmp(stmkey,"EXTRN",5)==0)
-            || (strncmp(stmkey,"BHEòH",5)==0) )
+            || (strncmp(stmkey,"BHEÔøΩH",5)==0) )
      ilm(sextrn);
   else if ((strncmp(stmkey,"empty",5)==0) || (strncmp(stmkey,"EMPTY",5)==0)
-            || (strncmp(stmkey,"èìCTO",5)==0) )
+            || (strncmp(stmkey,"ÔøΩÔøΩCTO",5)==0) )
      il(sempty);
   else if ((strncmp(stmkey,"swap",4)==0) || (strncmp(stmkey,"SWAP",4)==0)
             || (strncmp(stmkey,"OBMEH",5)==0) )
@@ -454,7 +456,7 @@ KEYS:
      spdef(stmlbl,lbl_leng);
      specif(' '); }
   else if ((strncmp(stmkey,"equ",3)==0) || (strncmp(stmkey,"EQU",3)==0)
-           || (strncmp(stmkey,"ùKB",3)==0) )
+           || (strncmp(stmkey,"ÔøΩKB",3)==0) )
      equ();
   else if (stmkey[0]==' ' ){
      trprev();
