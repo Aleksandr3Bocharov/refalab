@@ -143,7 +143,7 @@ void pchosh     ();
 /*void strcat	 ();*/
 /* void strncpy    (); */
 /*void strcpy	 ();*/
-int  strncmp    ();
+/* int  strncmp    (); */
 /*int  strlen	 ();*/
 
 static void oshi1()
