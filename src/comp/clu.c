@@ -3,6 +3,8 @@
 /*           Last edition date : 11.01.92               */
 /*------------------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "refal.def"
 
 struct refw {
@@ -51,10 +53,10 @@ struct u {
  } scn_;
 
  static struct  u *korenj = NULL;   /* tree koren */
- extern char *calloc();
+/* extern char *calloc(); */
  extern void exit();
- extern void strncpy();
- extern int strncmp();
+/* extern void strncpy(); */
+/* extern int strncmp(); */
  extern int cmpstr();
  extern void free();
 void Uns_sto () {
