@@ -8,6 +8,8 @@
 	for  Unix - ELF or GNU format */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "refal.def"
 
 /* BLF - for renaming add,sub,mul,div */
@@ -132,14 +134,14 @@ static T_RL rl;
 static int k;
 static int delta;
 
-char *malloc    ();
+/* char *malloc    (); */
 FILE *fopen     ();
 void free       ();
 void pchose     ();
 void exit       ();
 void pchosh     ();
 /*void strcat	 ();*/
-void strncpy    ();
+/* void strncpy    (); */
 /*void strcpy	 ();*/
 int  strncmp    ();
 /*int  strlen	 ();*/
