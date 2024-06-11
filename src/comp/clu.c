@@ -59,7 +59,7 @@ struct u {
 /* extern int strncmp(); */
  extern int cmpstr();
  extern void free();
-void Uns_sto () {
+void uns_sto () {
    printf ("\nNo memory for identifier table");  exit(1);
 }
 
@@ -74,7 +74,7 @@ T_U *nov_uzel(idp,lid)
 #ifdef mdebug
 printf("\ncalloc(clu-nov_uzel): p=%lx l=%d t=%o",p,p->l,p->type);
 #endif
-  if ( p == NULL ) Uns_sto();
+  if ( p == NULL ) uns_sto();
   p -> i = p -> j = NULL;
   p -> k = '\000';
   p -> mode = '\000';
@@ -88,7 +88,7 @@ printf("\ncalloc(clu-nov_uzel): p=%lx l=%d t=%o",p,p->l,p->type);
 #ifdef mdebug
 printf("\ncalloc(clu-id): q=%lx l=%d",q,lid);
 #endif
-  if ( q == NULL ) Uns_sto();
+  if ( q == NULL ) uns_sto();
   p -> id = q;
   strncpy (q,idp,lid);
   p -> l =lid;
@@ -135,7 +135,7 @@ SHAG:   /* search step */
 #ifdef mdebug
 printf("\ncalloc(clu-lookup): r1=%lx",r1);
 #endif
-         if ( r1 == NULL ) Uns_sto();
+         if ( r1 == NULL ) uns_sto();
          (*p).last_ref = (*q1).next = r1;
          (*r1).next = NULL;
          for ( k = 0; k <= 5; k++)
