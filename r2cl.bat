@@ -11,6 +11,6 @@ rem E-mail: belous@ilt.kharkov.ua
 rem Date: 28.05.2005
 rem *******************************************************************
 
-%~dp0\bin\refal2 %1.ref > %1.log
-F:\Programming\mingw32\bin\as -o %1.o %1.asm >> %1.log
-F:\Programming\mingw32\bin\ar -r %~dp0\lib\libr2user.a %1.o
+bin\refal2 %1.ref > %1.log
+as -o %1.o %1.asm >> %1.log
+ar -r lib\libr2user.a %1.o

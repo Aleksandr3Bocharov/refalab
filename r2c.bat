@@ -11,4 +11,4 @@ rem E-mail: belous@ilt.kharkov.ua
 rem Date: 28.05.2005
 rem *******************************************************************
 
-%~dp0\bin\refal2 %1.ref > %1.log
+bin\refal2 %1.ref > %1.log

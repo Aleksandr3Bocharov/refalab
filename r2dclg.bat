@@ -11,7 +11,7 @@ rem E-mail: belous@ilt.kharkov.ua
 rem Date: 28.05.2005
 rem *******************************************************************
 
-%~dp0\bin\refal2 %1 > %1.log
-F:\Programming\mingw32\bin\as -o %1.o %1.asm >> %1.log
-F:\Programming\mingw32\bin\gcc -o %1.exe %~dp0\lib\r2objects\rfdbg.o -Wl,-L%~dp0\lib %1.o -Wl,-lrefal2 >> %1.log
+bin\refal2 %1 > %1.log
+as -o %1.o %1.asm >> %1.log
+gcc -o %1.exe lib\r2objects\rfdbg.o -Wl,-L./lib %1.o -Wl,-lrefal2 >> %1.log
 %1.exe
