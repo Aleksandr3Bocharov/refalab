@@ -207,9 +207,9 @@ int lsg_p();
 int rsg_p();
 
 void cst(int dir, char *lbl, int lblleng)
-// int dir;      /* matching feature :left to right or otherwise */
-// char *lbl;    /* sentence label */
-// int lblleng;  /* sentence label length */
+/* int dir;      /* matching feature :left to right or otherwise */
+/* char *lbl;    /* sentence label */
+/* int lblleng;  /* sentence label length */
 {
    kol_per = 0;
    n = 0;
