@@ -90,6 +90,8 @@ void through();
 void luterm();
 void free();
 
+void uns_sto();
+
 static void p504(idp,lid) char *idp; int lid; {
   pchosj("504 label", idp,lid, " is already defined");
   return;  /* eg */
@@ -111,7 +113,7 @@ struct i_lbl *alloc_lbl() {
 #ifdef mdebug
 printf("\ncalloc(cs)_lbl: q=%lx",q);
 #endif
-     if ( q == NULL ) Uns_sto();
+     if ( q == NULL ) uns_sto();
      q->nextl = first_arr_lbl;
      first_arr_lbl = q;
      n_lbl = -1;

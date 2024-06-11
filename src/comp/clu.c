@@ -59,7 +59,7 @@ struct u {
 /* extern int strncmp(); */
  extern int cmpstr();
  extern void free();
-void uns_sto () {
+void uns_sto() {
    printf ("\nNo memory for identifier table");  exit(1);
 }
 
