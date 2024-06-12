@@ -4,6 +4,8 @@
 /*------------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
+#include "cerr.h"
+
 #ifdef turbo
   extern int ISTEK,IERRO;
   extern char ESTSOO,ERRO[],BUFF[],MESS[];

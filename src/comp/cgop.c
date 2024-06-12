@@ -4,6 +4,8 @@
 /*----------------------------------------------------*/
 /* #define PRCODE */ /* BLF */
 #include "refal.def"
+#include "cgop.h"
+
 struct linkti {
    short tagg;
    union {
@@ -16,7 +18,7 @@ struct _TAG {
    char b1;
    char b2;
 };
-extern void jbyte();
+
 extern void j3addr();
 extern void gsymbol();
 
@@ -26,6 +28,7 @@ extern void gsymbol();
 #endif
    jbyte(k);
 }*/
+
 void gopn(char  k, char n) {
 #ifdef PRCODE
  prcode(k); printf ("  %d", (int)n );
@@ -72,6 +75,7 @@ void gsymbol(struct linkti *code) {
    }
    else  for (i=0; i<LBLL;i++)  jbyte(*(r+i));
 }
+
 void gops(char k, struct linkti *code) {
 #ifdef PRCODE
  prcode(k); prstruct(code);
@@ -82,6 +86,7 @@ void gops(char k, struct linkti *code) {
    jbyte(k);
    gsymbol(code);
 }
+
 void ghw(short h) {
 struct _TAG *po;
   po = (struct _TAG *) &h;   /*  eg */

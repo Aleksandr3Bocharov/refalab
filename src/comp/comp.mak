@@ -7,7 +7,7 @@
 # Copyright (C) Refal-2 Team
 # Author: Leonid Belous (aka BLF) 
 # E-mail: belous@ilt.kharkov.ua
-# Date: 28.05.2005
+# Last edition date : 12.06.24
 #############################################################################
 
 ####### Compiler, tools and options
@@ -15,7 +15,7 @@
 .SUFFIXES: .c 
 
 CC		=	gcc
-CFLAGS		=	-pipe -std=c17 -O2 -DNO_DEBUG
+CFLAGS		=	-pipe -O2 -DNO_DEBUG
 LINK		=	gcc
 
 TAR		=	tar -cf

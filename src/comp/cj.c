@@ -1,7 +1,7 @@
 /*-----------------  file  --  cj_blf.C  ---------------*/
 /*             generator of object module               */
 /*                (or assembler text)                   */
-/*           Last edition date :  21.05.2005 (BLF)      */
+/*           Last edition date :  12.06.24              */
 /*------------------------------------------------------*/
 
 /* BLF - changes was made for Windows - COFF or GNU and 
@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "refal.def"
+#include "cj.h"
 
 /* BLF - for renaming add,sub,mul,div */
 char *oper_add;
@@ -170,7 +171,7 @@ void oshex()
    
 static void ksmn();
                       
-void sfop_w (s,b)   char *s;  BU *b; {
+void sfop_w (char *s, BU *b) {
 	unsigned un;
 	long lon;
 	if( b->nam != NULL){
@@ -212,7 +213,7 @@ void sfop_w (s,b)   char *s;  BU *b; {
 	b->fil=NULL;
 }
 
-void sfop_r (b)   BU *b; {
+void sfop_r (BU *b) {
 	if( b->fil != NULL ){
 		if( (b->fil = fopen(b->nam,Rbin))==NULL ){ 
 			printf("Can't open for read %s\n",b->nam);
@@ -226,9 +227,11 @@ void sfop_r (b)   BU *b; {
 	b->tek=0;
 }
 
-void sfcl(b)	BU *b; {
-	if( b->fil != NULL ){
-		if( fwrite(b->buf,b->tek,1,b->fil) <= 0 ){ 
+void sfcl(BU *b) {
+	if( b->fil != NULL )
+    {
+		if( fwrite(b->buf,b->tek,1,b->fil) <= 0 )
+        { 
 			printf("Write i/o error in %s\n",b->nam);
 			exit(8); 
 		}
@@ -236,27 +239,30 @@ void sfcl(b)	BU *b; {
 	}
 }
 
-void sfclr(b)	BU *b; {
+void sfclr(BU *b) {
 	if( b->fil != NULL ) 
 		unlink (b->nam);
 	free(b->nam); 
 	free(b->buf); 
-	#ifdef mdebug
+#ifdef mdebug
 	printf("\nfree(sfclr) b->nam(c 0)=%lx",b->nam);
 	printf("\n            b->buf(c 0)=%lx",b->buf);
-	#endif
+#endif
 	b->nam=NULL;  
 	b->buf=NULL;  
 }
 
-void sfclose(b)	BU *b; {
-	if( b->fil == NULL ){
-		if( (b->fil = fopen(b->nam,Wbin))==NULL ){
+void sfclose(BU *b)	{
+	if( b->fil == NULL )
+    {
+		if( (b->fil = fopen(b->nam,Wbin))==NULL )
+        {
 			printf("Can't open for write %s\n",b->nam);
 			exit(8); 
 		}
 	}
-	if( fwrite(b->buf,b->tek,1,b->fil) <= 0 ){
+	if( fwrite(b->buf,b->tek,1,b->fil) <= 0 )
+    {
 		printf("Write i/o error in %s\n",b->nam);
 		exit(8); 
 	}
@@ -271,22 +277,27 @@ void sfclose(b)	BU *b; {
 	b->buf=NULL;  
 }
 
-void sfwr2 () {
+void sfwr2() {
 	unsigned ost;
-	while( TRUE ){
+	while( TRUE )
+    {
 		ost = sysut2.len - sysut2.tek;
-		if( ost >= 6 ){
+		if( ost >= 6 )
+        {
 			memcpy( sysut2.buf+sysut2.tek,&rl,6 );
 			sysut2.tek +=6; 
 			break;
 		}
-		if( sysut2.fil==NULL ){
-			if( (sysut2.fil = fopen(sysut2.nam,Wbin))==NULL ){
+		if( sysut2.fil==NULL )
+        {
+			if( (sysut2.fil = fopen(sysut2.nam,Wbin))==NULL )
+            {
 				printf("Can't open for write sysut2\n"); 
 				exit(8); 
 			}
 		}
-		if( fwrite(sysut2.buf,sysut2.len,1,sysut2.fil) <=0 ){
+		if( fwrite(sysut2.buf,sysut2.len,1,sysut2.fil) <=0 )
+        {
 			printf("Write i/o error in sysut2\n");
 			exit(8); 
 		}
@@ -294,22 +305,27 @@ void sfwr2 () {
 	}/*while*/
 }/*sfwr2*/
 
-void sfwr (c,n,b)	char *c;  unsigned n;  BU *b; {
-	unsigned ost;
-	while( TRUE ){
+void sfwr(char* c, unsigned int n, BU *b) {
+	unsigned int ost;
+	while( TRUE )
+    {
 		ost = b->len - b->tek;
-		if( ost >= n ){
+		if( ost >= n )
+        {
 			memcpy( b->buf+b->tek,c,n );
 			b->tek +=n; break;
 		}
 		memcpy( b->buf+b->tek,c,ost );
-		if( b->fil==NULL ){
-			if( (b->fil = fopen(b->nam,Wbin))==NULL ){
+		if( b->fil==NULL )
+        {
+			if( (b->fil = fopen(b->nam,Wbin))==NULL )
+            {
 				printf("Can't open for write %s\n",b->nam); 
 				exit(8); 
 			}
 		}
-		if( fwrite(b->buf,b->len,1,b->fil) <=0 ){ 
+		if( fwrite(b->buf,b->len,1,b->fil) <=0 )
+        { 
 			printf("Write i/o error in %s\n",b->nam); 
 			exit(8); 
 		}
@@ -428,10 +444,10 @@ unsigned jwhere() {
 		printf("Module too long\n"); 
 		exit(1);
 	}
-	return (curr_addr);
+	return curr_addr;
 }
 
-void jbyte(bb) char bb; {
+void jbyte(char bb) {
 	/* sfwr(&bb,1,&sysut1);   */
 	if( sysut1.tek != sysut1.len ){
 		*(sysut1.buf+sysut1.tek) = bb;

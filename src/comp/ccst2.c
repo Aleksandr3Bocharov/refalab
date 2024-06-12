@@ -3,6 +3,8 @@
 /*        Last edition date : 15.05.24      */
 /*------------------------------------------*/
 #include <stdio.h>
+#include "ccst2.h"
+
 #define TAG_O 0
 #define TAG_F 2
 #define TAG_N 4
@@ -103,7 +105,6 @@ extern short nh_x, nh_y;  /* hole numbers (under enter in brackets)  */
 extern short lrbxy;       /* stoped bracket flag */
 #define gop(n) jbyte(n)
 void jbyte();
-void gpev(char op1, char op2);
 void gopl();
 void gopnm();
 void pchosa();
@@ -270,7 +271,7 @@ ORT3E:
   return res;
 }
 
-void gpev (char op1, char op2) {
+void gpev(char op1, char op2) {
   if (not_nil)  gop(op2);
   else gop(op1);
 }
