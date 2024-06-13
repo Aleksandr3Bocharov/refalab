@@ -89,7 +89,6 @@ void exit();
 /*void gop();*/
 void gopl();
 void jequ();
-void jbyte();
 void jextrn();
 void jentry();
 void jlabel();

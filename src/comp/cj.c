@@ -470,7 +470,7 @@ void jbyte(char bb) {
 	curr_addr++;
 }/*jbyte*/
 
-void j3addr(pp)  T_U *pp; {
+void j3addr(T_U *pp) {
 	rl.point = pp;
 	rl.delta = delta;
 	delta = 0;            
