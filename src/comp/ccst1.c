@@ -207,8 +207,6 @@ void pch406();
 void isk_v();
 void gen_bsb();
 #define gop(n) jbyte(n)
-/*void gop();*/
-void exit();
 int lsg_p();
 int rsg_p();
 

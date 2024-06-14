@@ -53,12 +53,9 @@ struct u {
  } scn_;
 
  static struct  u *korenj = NULL;   /* tree koren */
-/* extern char *calloc(); */
- extern void exit();
-/* extern void strncpy(); */
-/* extern int strncmp(); */
+
  extern int cmpstr();
- extern void free();
+
 void uns_sto() {
    printf ("\nNo memory for identifier table");  exit(1);
 }

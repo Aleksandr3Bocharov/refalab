@@ -72,7 +72,6 @@ extern struct
 } scn_;
 
 struct u *lookup();
-/* struct arr_lbl *calloc(); */
 
 static struct arr_lbl *first_arr_lbl = NULL;
 static int n_lbl = 15;
@@ -82,11 +81,8 @@ static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 void func_end();
 void fnhead();
-void pchosh();
 void pchosj();
-void exit();
 #define gop(n) jbyte(n)
-/*void gop();*/
 void gopl();
 void jequ();
 void jextrn();
@@ -96,7 +92,6 @@ unsigned jwhere();
 void pchosx();
 void through();
 void luterm();
-void free();
 
 void uns_sto();
 

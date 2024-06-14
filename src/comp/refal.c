@@ -12,16 +12,12 @@
 #define ROMA return;}}
 #define ROMA0 return(0);}}
 int qindex;
-/* char *malloc(); */
-void exit();
+
 void lblkey();
 void s_init();
-void pchosh();
 void pch130();
 void blout();
 void jstart();                                  
-/*void strcat();*/
-/*void strcpy();*/
 void trprev();
 void cst();
 void ilm();
@@ -42,10 +38,7 @@ void pchk_t();
 void gsp();
 void scan();
 void oshibka();
-/* void strncpy(); */
 void sfop_w();
-/* int strncmp(); */
-/* int strlen(); */
 int atoi();
 int index_x();
 int specif();
@@ -56,7 +49,6 @@ int sempty();
 int sextrn();
 int sentry();
 int sswap();
-FILE *fopen();
 char *fnref();
 unsigned jwhere();
          /* the recovery of the next element of sentence   */
