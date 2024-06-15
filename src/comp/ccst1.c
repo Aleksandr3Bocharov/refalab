@@ -3,6 +3,7 @@
 /*      Last edition date : 12.06.24        */
 /*------------------------------------------*/
 #include <stdio.h>
+#include "ccst1.h"
 #include "cerr.h"
 #include "cs.h"
 #include "cgop.h"

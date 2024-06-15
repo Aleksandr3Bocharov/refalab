@@ -1,6 +1,6 @@
 /*--------------------  file  --  PLC.C --------------------*/
 /*     standard PL/I-functions implemented on C-language    */
-/*                Last edition date : 10.02.86              */
+/*                Last edition date : 15.06.24              */
 /*----------------------------------------------------------*/
 
 #include "plc.h"

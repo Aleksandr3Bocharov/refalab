@@ -1,6 +1,6 @@
 /*-------------  file  --  CS.C  ---------------*/
 /*         Work with identifier table           */
-/*        Last edition date : 29.10.86          */
+/*        Last edition date : 15.06.24          */
 /*----------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
