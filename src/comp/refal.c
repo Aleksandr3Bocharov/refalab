@@ -34,37 +34,6 @@
 
 int qindex;
 
-void lblkey(int pr);
-void s_init();
-void pch130();
-void blout();
-void trprev();
-void ilm(int (*prog)());
-void il(int (*prog)());
-void equ();
-void sequ();
-void s_end();
-void jend();
-void jendo();
-void s_term();
-void pchzkl();
-void pchk();
-void pchk_t();
-void gsp(char n);
-void scan();
-void oshibka();
-int specif(char tail);
-int get_id(char id[], int *lid);
-int get_idm(char id[40], int *lid);
-int get_csmb(struct linkt *code, char id[40], int *lid);
-int sentry();
-int sswap();
-char *fnref();
-unsigned jwhere();
-/* the recovery of the next element of sentence   */
-char *genlbl(); /* kras: wmesto struct u */
-char *spref();  /* kras: wmesto struct u */
-
 struct linkt
 {
    int tagg;
@@ -79,6 +48,32 @@ struct linkt
       char chinf[2];
    } infoo;
 };
+
+void lblkey(int pr);
+void s_init();
+void pch130();
+void blout();
+void trprev();
+void ilm(void (*prog)(char *, int, char *, int));
+void il(void (*prog)(char *, int));
+void equ();
+void s_end();
+void jend();
+void jendo();
+void s_term();
+void pchzkl();
+void pchk();
+void pchk_t();
+void gsp(char n);
+void scan();
+void oshibka();
+int specif(char tail);
+int get_id(char id[], int *lid);
+int get_idm(char id[40], int *lid);
+int get_csmb(struct linkt *code, char id[40], int *lid);
+unsigned jwhere();
+/* the recovery of the next element of sentence   */
+char *genlbl(); /* kras: wmesto struct u */
 
 struct
 {
@@ -927,7 +922,7 @@ SCNV:
       if (get_id(id, &id_leng) == 0)
          goto SOSH203;
       if (left_part == 1)
-         scn_e.spec.infoo.pinf = spref(id, id_leng, ')');
+         scn_e.spec.infoo.pinf = (char *)spref(id, id_leng, ')');
       if (c[m] == ':')
          EH ROMA else goto SOSH204;
    }
@@ -1070,7 +1065,7 @@ SABBR:
       if ((*(sarr + scode)) == NULL)
       {
          *(sarr + scode) = genlbl();
-         jlabel(*(sarr + scode));
+         jlabel((struct u *)(sarr + scode));
          gsp((char)(scode + 7));
          gsp(ns_ngw);
       };
@@ -1424,7 +1419,7 @@ void pchk_t()
    }
 }
 
-void il(int (*prog)()) /* treatment of directives having 'EMPTY' type */
+void il(void (*prog)(char *, int)) /* treatment of directives having 'EMPTY' type */
 {
    char id[40];
    int lid;
@@ -1447,7 +1442,7 @@ IL2:
    pch130();
 }
 
-void ilm(int (*prog)()) /* treatment of directives having 'ENTRY' type*/
+void ilm(void (*prog)(char *, int, char *, int)) /* treatment of directives having 'ENTRY' type*/
 {
    char id[40], ide[8];
    int lid, lide;
@@ -1515,7 +1510,7 @@ int get_csmb(struct linkt *code, char id[40], int *lid) /* procedure read multip
       goto CSMBN;
    if (get_id(id, lid) == 0)
       goto OSH112;
-   code->infoo.pinf = fnref(id, *lid);
+   code->infoo.pinf = (char *)fnref(id, *lid);
    code->tagg = TAGF;
    goto CSMBEND;
 CSMBN:

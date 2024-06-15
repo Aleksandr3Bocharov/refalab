@@ -12,5 +12,6 @@ extern void jentry(struct u *pp, char *ee, int ll);
 extern void jextrn(struct u *pp, char *ee, int ll);
 extern void jstart(char *ee, int ll);
 extern void sfop_w(char *s, BU *b);
+extern void sfclose(BU *b);
 
 #endif
