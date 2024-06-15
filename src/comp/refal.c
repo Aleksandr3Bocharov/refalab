@@ -28,7 +28,6 @@ void sequ();
 void s_end();
 void jend();
 void jendo();
-void jlabel();
 void s_term();
 void pchzkl();
 void rdline();

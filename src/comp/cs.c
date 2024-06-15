@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include "refal.def"
 #include "cs.h"
+#include "cerr.h"
+#include "cj.h"
+#include "cgop.h"
+#include "clu.h"
 
 #define N_FAIL '\002'
 #define N_NIL '\030'
@@ -18,6 +22,7 @@ struct refw
    struct refw *next;
    int numb[6];
 };
+
 struct u
 { /* for comment see file named CLU.C */
    union
@@ -36,6 +41,7 @@ struct u
    char k;
    char *id;
 };
+
 struct i_lbl
 {
    union
@@ -45,6 +51,7 @@ struct i_lbl
    } infol;
    char model;
 };
+
 struct arr_lbl
 {
    struct arr_lbl *nextl;
@@ -71,8 +78,6 @@ extern struct
    int curr_stmnmb;
 } scn_;
 
-struct u *lookup();
-
 static struct arr_lbl *first_arr_lbl = NULL;
 static int n_lbl = 15;
 static struct i_lbl *pfail = NULL;    /* statememt FAIL label */
@@ -80,33 +85,24 @@ static struct i_lbl *next_stm = NULL; /* next statement label */
 static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 void func_end();
-void fnhead();
-void pchosj();
+void fnhead(char *idp, int lid);
 #define gop(n) jbyte(n)
-void gopl();
-void jequ();
-void jextrn();
-void jentry();
-void jlabel();
 unsigned jwhere();
-void pchosx();
-void through();
 void luterm();
-
 void uns_sto();
 
-static void p504(idp, lid) char *idp;
-int lid;
+static void p504(char *idp, int lid)
 {
    pchosj("504 label", idp, lid, " is already defined");
    return; /* eg */
 }
-static void p505(idp, lid) char *idp;
-int lid;
+
+static void p505(char *idp, int lid)
 {
    pchosj("505 label", idp, lid, " is yet not defined");
    return; /* eg */
 }
+
 static void p500()
 {
    pchosh("500 no statement label");
@@ -132,13 +128,14 @@ struct i_lbl *alloc_lbl()
    n_lbl = n_lbl + 1;
    p = &(first_arr_lbl->lbl[n_lbl]);
    p->model = '\000';
-   return (p);
+   return p;
 }
+
 struct i_lbl *genlbl()
 {
    struct i_lbl *p;
    p = alloc_lbl();
-   return (p);
+   return p;
 }
 
 void fndef(char *idp, int lid)
@@ -177,6 +174,7 @@ void fndef(char *idp, int lid)
    };
    return; /*  eg */
 }
+
 void func_end()
 {
    if (next_stm != NULL)
@@ -198,8 +196,8 @@ void func_end()
    }
    return;
 }
-void sempty(idp, lid) char *idp;
-int lid;
+
+void sempty(char *idp, int lid)
 {
    struct u *p;
    p = lookup(idp, lid);
@@ -215,8 +213,8 @@ int lid;
    }
    return;
 }
-void sswap(idp, lid) char *idp;
-int lid;
+
+void sswap(char *idp, int lid)
 {
    struct u *p;
    int l0, j0, k0, kk;
@@ -248,18 +246,17 @@ int lid;
    return;
 }
 
-void sentry(idp, lidp, ide, lide) char *idp; /* internal name */
-char *ide;                                   /* external name */
-int lidp, lide;
+void sentry(char *idp, int lidp, char *ide, int lide)
 {
    struct u *p;
    p = lookup(idp, lidp);
    jentry(p, ide, lide);
    return; /* eg */
 }
-void sextrn(idp, lidp, ide, lide) char *idp; /* internal name */
-char *ide;                                   /* external name */
-int lidp, lide;
+
+void sextrn(char *idp, int lidp, char *ide, int lide)
+/* idp internal name */
+/* ide external name */
 {
    /*  int ind; */ /* eg */
    struct u *p;
@@ -273,19 +270,16 @@ int lidp, lide;
    }
    return; /*  eg */
 }
-struct u *fnref(idp, lid)
-char *idp;
-int lid;
+
+struct u *fnref(char *idp, int lid)
 {
    struct u *p;
    p = lookup(idp, lid);
    p->type = (p->type) | '\100';
    return (p);
 }
-struct u *spref(idp, lid, d)
-char *idp;
-char d;
-int lid;
+
+struct u *spref(char *idp, int lid, char d)
 {
    struct u *p;
    p = lookup(idp, lid);
@@ -294,8 +288,8 @@ int lid;
       p505(idp, lid);
    return (p);
 }
-void spdef(idp, lid) char *idp;
-int lid;
+
+void spdef(char *idp, int lid)
 {
    struct u *p;
    if (lid == 0)
@@ -314,8 +308,8 @@ int lid;
    }
    return; /*  eg */
 }
-void sequ(id1, lid1, id0, lid0) char *id1, *id0;
-int lid0, lid1;
+
+void sequ(char *id1, int lid1, char *id0, int lid0)
 {
    struct u *p0, *p1;
    p0 = lookup(id0, lid0);
@@ -343,8 +337,8 @@ int lid0, lid1;
       pchosh("501 both labels already defined ");
    return; /* eg */
 }
-void fnhead(idp, lid) char *idp;
-int lid;
+
+void fnhead(char *idp, int lid)
 {
    char *idpm;
    int k0, l0, ll;
@@ -370,8 +364,8 @@ int lid;
       jbyte('\0');
    return; /* eg */
 }
-void check_id(pp) /* check identifier attributes on confirmness */
-    struct u *pp;
+
+void check_id(struct u *pp) /* check identifier attributes on confirmness */
 {
    struct u *q;
    q = pp;
@@ -388,10 +382,12 @@ void check_id(pp) /* check identifier attributes on confirmness */
    if (((q->mode) & '\300') == '\300')
       pchosx("502 label", pp->id, pp->l, " boht specifier and function");
 }
+
 void s_end()
 {
    func_end();
    through(check_id);
+
 }
 void s_init()
 { /* module initiation  */
@@ -401,6 +397,7 @@ void s_init()
    next_stm = NULL;
    return; /* eg */
 }
+
 void s_term()
 { /* module termination */
    struct arr_lbl *p, *p1;
