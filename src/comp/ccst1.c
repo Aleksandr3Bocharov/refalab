@@ -1,8 +1,9 @@
 /*----------   file  CCST1.C  --------------*/
 /*    The first of two compiler files       */
-/*      Last edition date : 12.06.24        */
+/*      Last edition date : 15.06.24        */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "ccst1.h"
 #include "cerr.h"
 #include "cs.h"

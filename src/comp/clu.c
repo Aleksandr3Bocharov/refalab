@@ -122,6 +122,7 @@ struct u *lookup(char *idp, int lid)
     p = korenj;
 SHAG: /* search step */
     if (strncmp(idp, p->id, (lid < p->l) ? lid : p->l) == 0)
+    {
         if (lid == p->l)
         { /* include usage number to list */
             q1 = (*p).last_ref;
@@ -129,6 +130,7 @@ SHAG: /* search step */
             while ((*q1).numb[k] == 0)
                 k--;
             if ((*q1).numb[k] != scn_.nomkar)
+            {
                 /* include number to list */
                 if ((*q1).numb[5] == 0)
                     /* it's free field in current item */
@@ -147,6 +149,7 @@ SHAG: /* search step */
                         (*r1).numb[k] = 0;
                     (*r1).numb[0] = scn_.nomkar;
                 };
+            }
             while ((((*p).mode) & '\300') == '\300')
                 p = (*p).info.infop;
             return p;
@@ -159,6 +162,7 @@ SHAG: /* search step */
                 kren = '\200';
             goto FINT;
         }
+    }
     if (cmpstr(lid < p->l ? lid : p->l, idp, p->id) > 0)
         kren = '\100';
     else
@@ -243,7 +247,7 @@ ISPRB: /* move up and correct */
             (*r).j = p;
             (*r).i = q;
         };
-        nruk = !((*r).k) & '\300';
+        nruk = (!((*r).k)) & '\300';
         if ((*r).k == '\000')
             (*q).k = (*p).k = '\000';
         else if (nruk == kren)

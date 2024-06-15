@@ -4,7 +4,7 @@
 /*          Last modification : 28.05.2005 (BLF)     */
 /*---------------------------------------------------*/
 #define IBM_PC
-   
+
 /* BLF - UNIX for operation system Linux, FreeBSD */
 /*#define UNIX*/
 
@@ -12,121 +12,122 @@
 /*#define FASM*/
 
 /* BLF - MINGW32 for operation system Windows - mingw32 */
-#define MINGW32 
+#define MINGW32
 
 /* BLF - DBLF for prokrutka - trace debug mode, see rfintf.c */
-/*#define DBLF*/ 
+/*#define DBLF*/
 
-/* BLF -  PRINT_CODE - for print operation code, see rfrun1.c */ 
+/* BLF -  PRINT_CODE - for print operation code, see rfrun1.c */
 /*#define PRINT_CODE*/
- 
-/*#define mdebug*/         
+
+/*#define mdebug*/
 /*#define VAX*/
 /*#define PDP*/
 
-#define TAGO  0
-#define TAGF  2
-#define TAGN  4
-#define TAGR  6
+#define TAGO 0
+#define TAGF 2
+#define TAGN 4
+#define TAGR 6
 #define TAGLB 1
 #define TAGRB 3
-#define TAGK  5
-#define TAGD  7
-
+#define TAGK 5
+#define TAGD 7
 
 /* BLF pragma for 1 byte aligniment structure ------------*/
 #pragma pack(1)
 
+struct linkcb_
+{
+	struct linkcb_ *prev;
+	struct linkcb_ *next;
+	short tag;
+	union
+	{
+		char infoc;
+		long coden;
+		struct linkcb_ *codep;
+		char *codef;
+	} info;
+};
 
-	struct  linkcb_ {
-		struct	linkcb_ *prev;
-		struct	linkcb_ *next;
-		short	tag;
-		union {
-			char infoc;
-			long  coden;  
-			struct linkcb_ *codep;
-			char *codef;
-		} info;
-	};
-	
-/*#pragma pack(pop)*/ 
+/*#pragma pack(pop)*/
 #pragma pack()
 
 /* BLF ------------ end of pragma ------------------------------------ */
-	
-	typedef struct linkcb_ linkcb;
 
-	struct  st_ { 
-		struct st_ *stprev;
-		struct st_ *stnext;
-		int state;
-		linkcb *dot;
-		long step;
-		long stop;
-		linkcb *view;
-		linkcb *store;
-	};
-	typedef  struct  st_ st;
+typedef struct linkcb_ linkcb;
 
-	struct  refal_ {
-		st *crprev;
-		st *crnext;
-		int upshot;
-		linkcb *preva;
-		linkcb *nexta;
-		linkcb *prevr;
-		linkcb *nextr;
-		st *currst;
-		linkcb *flhead;
-		linkcb *svar;
-		linkcb *dvar;
-		int stmnmb;
-		int nostm;
-		int tmmode;
-		long tmintv;
-	};
-	typedef struct refal_ REFAL;
+struct st_
+{
+	struct st_ *stprev;
+	struct st_ *stnext;
+	int state;
+	linkcb *dot;
+	long step;
+	long stop;
+	linkcb *view;
+	linkcb *store;
+};
+typedef struct st_ st;
 
-#define TRUE  1
+struct refal_
+{
+	st *crprev;
+	st *crnext;
+	int upshot;
+	linkcb *preva;
+	linkcb *nexta;
+	linkcb *prevr;
+	linkcb *nextr;
+	st *currst;
+	linkcb *flhead;
+	linkcb *svar;
+	linkcb *dvar;
+	int stmnmb;
+	int nostm;
+	int tmmode;
+	long tmintv;
+};
+typedef struct refal_ REFAL;
+
+#define TRUE 1
 #define FALSE 0
-
 
 /*---------- I B M - P C : -------------*/
 #ifdef IBM_PC
-/* #define VIDEO  */		/* BLF */
+/* #define VIDEO  */ /* BLF */
 /* #define STTIME */
-#define QC			/* BLF */
+#define QC /* BLF */
 /* #define turbo	*/
 /* #define mdebug	*/
 
-#ifdef QC						
+#ifdef QC
 
-/* BLF 09.07.2004 (VAX version for IBM PC) */ 
+/* BLF 09.07.2004 (VAX version for IBM PC) */
 
-#define Z_0 0 
-#define Z2 
-#define Z3 '0','0','0', 
-#define Z4 '0','0', 
-#define Z5 '0', 
-#define Z6 
-#define Z7 '0','0','0',
+#define Z_0 0
+#define Z2
+#define Z3 '0', '0', '0',
+#define Z4 '0', '0',
+#define Z5 '0',
+#define Z6
+#define Z7 '0', '0', '0',
 
-/* BLF - initial version for IBM PC, 
+/* BLF - initial version for IBM PC,
 	give error in alignment C-function entry */
 /*
-#define Z_0 1 
+#define Z_0 1
 #define Z2 '0',
-#define Z3  
-#define Z4 '0', 
-#define Z5  
+#define Z3
+#define Z4 '0',
+#define Z5
 #define Z6 '0',
 #define Z7
 */
 
 #else
-#define Z_0 0 
-#define Z2 
+#define Z_0 0
+#define Z2
 #define Z3
 #define Z4
 #define Z5
@@ -134,20 +135,20 @@
 #define Z7
 #endif
 
-
 #define G_L_B
 #define Wbin "wb"
 #define Rbin "rb"
-#define gcoden(p)    p->info.coden 
-#define pcoden(p,W)  p->info.coden = W; 
+#define gcoden(p) p->info.coden
+#define pcoden(p, W) p->info.coden = W;
 
-	typedef unsigned char unchar;
+typedef unsigned char unchar;
 
-	typedef struct __ptr__ {
-		char *_ptr_;
-	} POINT;
+typedef struct __ptr__
+{
+	char *_ptr_;
+} POINT;
 
 #define LBLL sizeof(POINT)
-#define SMBL (sizeof(short) + LBLL)   
+#define SMBL (sizeof(short) + LBLL)
 #endif
 /*-------  end of file REFAL.DEF ---------*/
