@@ -41,11 +41,7 @@ struct linkt
     union
     {
         char *pinf;
-#ifdef PDP
-        int intinf;
-#else
         long intinf;
-#endif
         char chinf[2];
     } infoo;
 };
@@ -617,12 +613,7 @@ void translate(char *str, char *class1)
                 *(class1 + i) = 'L';
                 continue;
             };
-#ifdef IBM_PC
         if (((j > -129) && (j < -80)) || ((j > -33) && (j < -16)))
-#else
-        if (j > -65)
-            if (j < 0)
-#endif
             *(class1 + i) = 'L';
         if ((j == 35) || (j == 95))
             *(class1 + i) = 'L';
@@ -1157,10 +1148,6 @@ SPCR3:
 SPCESC:
     if (get_csmb(&code, id, &lid) == 0)
         goto OSH200;
-#ifdef PDP
-    if (left_part == 1)
-        jvir();
-#endif
     gsp(ns_sc);
     if (left_part == 1)
         gsymbol((struct linkti *)&code);
@@ -1172,10 +1159,6 @@ SPCSP:
     if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
         pchosh("209 specifier is defined through itself");
     p = (char *)spref(id, lid, tail);
-#ifdef PDP
-    if (left_part == 1)
-        jvir();
-#endif
     gsp(ns_cll);
     if (left_part == 1)
         j3addr((T_U *)p);
@@ -1485,20 +1468,6 @@ CSMBN2:
     goto CSMBEND;
 CSMBN3:
     code->tagg = TAGN;
-#ifdef PDP
-    {
-        long ll;
-        union
-        {
-            char ccc[2];
-            int sss;
-        } un;
-        un.sss = code->tagg;
-        ll = k >> 16;
-        un.ccc[1] = ll;
-        code->tagg = un.sss;
-    }
-#endif
     code->infoo.intinf = k;
 CSMBEND:
     if (c[m] != '/')
@@ -1518,15 +1487,10 @@ char convert(char cm)
     j = (int)cm;
     if ((j > 96) && (j < 123))
         cm = cm - '\40';
-#ifdef IBM_PC
     if ((j > -97) && (j < -80))
         cm = cm - '\40';
     if ((j > -33) && (j < -16))
         cm = cm - 80;
-#else
-    if ((j > -33) && (j < 0))
-        return cm - '\40';
-#endif
     return cm;
 }
 

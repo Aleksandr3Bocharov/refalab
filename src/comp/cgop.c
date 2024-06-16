@@ -38,9 +38,6 @@ void gopnm(char k, char n, char m)
 
 void gopl(char k, char *l)
 {
-#ifdef PDP
-    jvir(); /* vyravnivanie */
-#endif
     jbyte(k);
     j3addr((T_U *)l);
 }
@@ -64,10 +61,8 @@ void gsymbol(struct linkti *code)
     {
         jbyte(*r);
         jbyte(*(r + 1));
-#ifndef PDP
         jbyte('\0');
         jbyte('\0');
-#endif
     }
     else
         for (i = 0; i < LBLL; i++)
@@ -76,9 +71,6 @@ void gsymbol(struct linkti *code)
 
 void gops(char k, struct linkti *code)
 {
-#ifdef PDP
-    jvir(); /* vyravnivanie */
-#endif
     jbyte(k);
     gsymbol(code);
 }

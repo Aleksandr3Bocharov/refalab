@@ -1,9 +1,7 @@
 /*--------------- file -- REFAL.DEF -----------------*/
-/*          Select from IBM_PC			             */
-/* For IBM_PC turn on/off: STTIME, QC, turbo, VIDEO  */
+/*       Turn on/off: STTIME, QC, turbo, VIDEO       */
 /*          Last modification : 17.06.24		     */
 /*---------------------------------------------------*/
-#define IBM_PC
 
 /* BLF - UNIX for operation system Linux, FreeBSD */
 /*#define UNIX*/
@@ -92,12 +90,10 @@ typedef struct refal_ REFAL;
 #define FALSE 0
 
 /*---------- I B M - P C : -------------*/
-#ifdef IBM_PC
 /* #define VIDEO  */ /* BLF */
 /* #define STTIME */
 #define QC /* BLF */
 /* #define turbo	*/
-/* #define mdebug	*/
 
 #ifdef QC
 
@@ -148,5 +144,4 @@ typedef struct __ptr__
 
 #define LBLL sizeof(POINT)
 #define SMBL (sizeof(short) + LBLL)
-#endif
 /*-------  end of file REFAL.DEF ---------*/
