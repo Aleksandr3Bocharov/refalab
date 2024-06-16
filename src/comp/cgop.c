@@ -2,7 +2,6 @@
 /*    generation of the assembly language operators   */
 /*          Last edition date : 14.06.2024            */
 /*----------------------------------------------------*/
-/* #define PRCODE */ /* BLF */
 #include "refal.def"
 #include "cgop.h"
 #include "cj.h"
@@ -24,29 +23,14 @@ struct _TAG
     char b2;
 };
 
-/*void gop (k)  char k; {
-#ifdef PRCODE
- prcode(k);
-#endif
-   jbyte(k);
-}*/
-
 void gopn(char k, char n)
 {
-#ifdef PRCODE
-    prcode(k);
-    printf("  %d", (int)n);
-#endif
     jbyte(k);
     jbyte(n);
 }
 
 void gopnm(char k, char n, char m)
 {
-#ifdef PRCODE
-    prcode(k);
-    printf("  %d %d", (int)n, (int)m);
-#endif
     jbyte(k);
     jbyte(n);
     jbyte(m);
@@ -54,10 +38,6 @@ void gopnm(char k, char n, char m)
 
 void gopl(char k, char *l)
 {
-#ifdef PRCODE
-    prcode(k);
-    printf(" %lx", l);
-#endif
 #ifdef PDP
     jvir(); /* vyravnivanie */
 #endif
@@ -96,10 +76,6 @@ void gsymbol(struct linkti *code)
 
 void gops(char k, struct linkti *code)
 {
-#ifdef PRCODE
-    prcode(k);
-    prstruct(code);
-#endif
 #ifdef PDP
     jvir(); /* vyravnivanie */
 #endif

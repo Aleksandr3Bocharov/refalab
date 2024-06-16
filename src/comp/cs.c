@@ -86,7 +86,6 @@ static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 void func_end();
 void fnhead(char *idp, int lid);
-#define gop(n) jbyte(n)
 unsigned jwhere();
 void luterm();
 
@@ -187,7 +186,7 @@ void func_end()
         {
             pfail = next_stm;
             jlabel((struct u *)next_stm);
-            gop(N_FAIL);
+            jbyte(N_FAIL);
         }
         next_stm = NULL;
         if (options.stmnmb == 1)
@@ -211,7 +210,7 @@ void sempty(char *idp, int lid)
         fnhead(idp, lid);
         p->def = scn_.nomkar;
         jlabel(p);
-        gop(N_FAIL);
+        jbyte(N_FAIL);
     }
     return;
 }
@@ -239,7 +238,7 @@ void sswap(char *idp, int lid)
         fnhead(idp, lid);
         p->def = scn_.nomkar;
         jlabel(p);
-        gop(N_SWAP);
+        jbyte(N_SWAP);
         /*   kk = sizeof(int)+sizeof(long)+sizeof(POINTER) * 2;  */
         kk = SMBL + LBLL * 2;
         for (k0 = 1; k0 <= kk; k0++)

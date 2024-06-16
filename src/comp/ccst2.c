@@ -24,7 +24,7 @@
 #define n_prespc '\071'
 #define n_respc '\072'
 
-struct linkti
+struct linkt
 { /*   bylo opisanie w ccst1 */
     short tag;
     union
@@ -38,10 +38,10 @@ struct linkti
 extern struct
 { /* left part buffer elements */
     short p, q, t, i;
-    struct linkti code;
+    struct linkt code;
     short next;
     short pair;
-    struct linkti spec;
+    struct linkt spec;
     short v;
     short eoemrk;
     short e_level;
@@ -87,8 +87,8 @@ extern struct
     short t_;
     char ci_;
     int v_;
-    struct linkti _code;
-    struct linkti _spec;
+    struct linkt _code;
+    struct linkt _spec;
 } scn_e;
 
 extern short t_sc;
@@ -100,8 +100,8 @@ extern short t_e;
 extern short t_k;
 extern short t_p;
 
-extern struct linkti xncode;  /* work structure */
-extern struct linkti funcptr; /* work pointer */
+extern struct linkt xncode;  /* work structure */
+extern struct linkt funcptr; /* work pointer */
 
 extern short n, n1, n2;     /* left part element pointers */
 extern short i, ie;         /* element index */
@@ -116,7 +116,7 @@ extern short kol_per;    /* subprogram of search in variable table */
                          /* table pointer */
 extern short nh_x, nh_y; /* hole numbers (under enter in brackets)  */
 extern short lrbxy;      /* stoped bracket flag */
-#define gop(n) jbyte(n)
+
 int ortgn(short n1, short n2);
 
 void isk_v()
@@ -150,23 +150,23 @@ SW0: /* no stoped brackets */
     return;
 SW1: /* left stoped brackets */
     if (nh == nh_x)
-        gop(n_lb);
+        jbyte(n_lb);
     else if (nh == nh_y)
-        gop(n_lby);
+        jbyte(n_lby);
     else
     {
-        gop(n_lb);
+        jbyte(n_lb);
         goto GEN_SB;
     };
     return;
 SW2: /* right stoped brackets */
     if (nh == nh_x)
-        gop(n_rb);
+        jbyte(n_rb);
     else if (nh == nh_y)
-        gop(n_rby);
+        jbyte(n_rby);
     else
     {
-        gop(n_rb);
+        jbyte(n_rb);
         goto GEN_SB;
     };
     return;
@@ -328,8 +328,8 @@ ORT3E:
 void gpev(char op1, char op2)
 {
     if (not_nil)
-        gop(op2);
+        jbyte(op2);
     else
-        gop(op1);
+        jbyte(op1);
 }
 /*--------  end  of  file  CCST2.C  --------*/

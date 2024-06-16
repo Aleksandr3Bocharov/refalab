@@ -28,7 +28,7 @@
     }        \
     }
 #define ROMA0   \
-    return (0); \
+    return 0;   \
     }           \
     }
 
@@ -69,7 +69,7 @@ void scan();
 void oshibka();
 int specif(char tail);
 int get_id(char id[], int *lid);
-int get_idm(char id[40], int *lid);
+int get_idm(char id[8], int *lid);
 int get_csmb(struct linkt *code, char id[40], int *lid);
 unsigned jwhere();
 /* the recovery of the next element of sentence   */
@@ -1609,7 +1609,7 @@ ID0:
 }
 
 /*read external identifier */
-int get_idm(char id[40], int *lid)
+int get_idm(char id[8], int *lid)
 {
     if (class[m] != 'L')
         return 0;
@@ -1629,6 +1629,7 @@ int get_idm(char id[40], int *lid)
     (*lid)++;
     return 1;
 }
+
 /************************************************************/
 /*                  missing blanks                          */
 /*       before call: (m = 71) !! (m != 71)                 */
