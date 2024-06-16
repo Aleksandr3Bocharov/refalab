@@ -8,7 +8,6 @@ extern REFAL refal;
 
 #define fmax 5
 
-FILE *fopen();
 FILE *inr;
 FILE *inw;
 static FILE *uniput[fmax], *uniget[fmax];
