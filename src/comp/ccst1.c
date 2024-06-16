@@ -10,6 +10,7 @@
 #include "cgop.h"
 #include "cj.h"
 #include "ccst2.h"
+#include "refal.h"
 
 #define TAG_O 0
 #define TAG_F 2
@@ -203,13 +204,6 @@ short lrbxy;      /* stoped bracket flag */
 #define n_blf '\117'
 #define n_eossn '\120'
 #define n_setnos '\121'
-void scan();
-void pch303();
-void pch406();
-void isk_v();
-void gen_bsb();
-int lsg_p();
-int rsg_p();
 
 void cst(int dir, char *lbl, int lblleng)
 /* int dir;     matching feature :left to right or otherwise */

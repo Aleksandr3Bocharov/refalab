@@ -4,5 +4,6 @@
 extern struct u *lookup(char *idp, int lid);
 extern void through(void (*prog)(struct u *));
 extern void uns_sto();
+extern void luterm();
 
 #endif

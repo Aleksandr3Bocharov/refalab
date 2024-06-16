@@ -86,8 +86,6 @@ static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 void func_end();
 void fnhead(char *idp, int lid);
-unsigned jwhere();
-void luterm();
 
 static void p504(char *idp, int lid)
 {

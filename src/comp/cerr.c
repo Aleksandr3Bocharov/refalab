@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include "refal.def"
 #include "cerr.h"
+#include "refal.h"
 
 #ifdef turbo
 extern int ISTEK, IERRO;
 extern char ESTSOO, ERRO[], BUFF[], MESS[];
 #endif
 
-extern void oshibka();
 extern FILE *sysprint, *systerm;
 
 void pchosh(char *s)

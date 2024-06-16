@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "refal.def"
+#include "refal.h"
 #include "cerr.h"
 #include "cj.h"
 #include "cgop.h"
@@ -50,30 +51,19 @@ struct linkt
 };
 
 void lblkey(int pr);
-void s_init();
 void pch130();
 void blout();
 void trprev();
 void ilm(void (*prog)(char *, int, char *, int));
 void il(void (*prog)(char *, int));
 void equ();
-void s_end();
-void jend();
-void jendo();
-void s_term();
 void pchzkl();
 void pchk();
-void pchk_t();
 void gsp(char n);
-void scan();
-void oshibka();
 int specif(char tail);
 int get_id(char id[], int *lid);
 int get_idm(char id[8], int *lid);
 int get_csmb(struct linkt *code, char id[40], int *lid);
-unsigned jwhere();
-/* the recovery of the next element of sentence   */
-char *genlbl(); /* kras: wmesto struct u */
 
 struct
 {
@@ -912,7 +902,7 @@ SCNV:
         EH ROMA;
         if (left_part == 1)
         {
-            p = scn_e.spec.infoo.pinf = genlbl();
+            p = scn_e.spec.infoo.pinf = (char *)genlbl();
             jlabel((struct u *)p);
         }
         if (specif(')') == 1)
@@ -1070,7 +1060,7 @@ SABBR:
     {
         if ((*(sarr + scode)) == NULL)
         {
-            *(sarr + scode) = genlbl();
+            *(sarr + scode) = (char *)genlbl();
             jlabel((struct u *)(sarr + scode));
             gsp((char)(scode + 7));
             gsp(ns_ngw);

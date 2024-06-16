@@ -10,5 +10,9 @@ extern void sswap(char *idp, int lid);
 extern struct u *spref(char *idp, int lid, char d);
 extern struct u *fnref(char *idp, int lid);
 extern void sequ(char *id1, int lid1, char *id0, int lid0);
+extern void s_init();
+extern void s_end();
+extern void s_term();
+extern struct i_lbl *genlbl();
 
 #endif

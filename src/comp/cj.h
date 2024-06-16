@@ -13,5 +13,8 @@ extern void jextrn(struct u *pp, char *ee, int ll);
 extern void jstart(char *ee, int ll);
 extern void sfop_w(char *s, BU *b);
 extern void sfclose(BU *b);
+extern unsigned int jwhere();
+extern void jend();
+extern void jendo();
 
 #endif

@@ -146,11 +146,7 @@ static T_RL rl;
 static int k;
 static int delta;
 
-static union
-{
-    char cc[2];
-    short ww;
-} stm, ksm;
+static void ksmn(char *b, int n);
 
 static void oshi1()
 {
@@ -219,18 +215,6 @@ void oshex()
 {
     fputs("\nOSHEX: no memory!!!", stdout);
     exit(1);
-}
-
-static void ksmn(char *b, int n)
-{
-    int i;
-    stm.cc[1] = 0;
-    for (i = 0; i < n; i++)
-    {
-        stm.cc[0] = *(b + i);
-        ksm.ww += stm.ww;
-    }
-    ksm.cc[1] = '\0';
 }
 
 void sfop_w(char *s, BU *b)
@@ -1075,6 +1059,12 @@ JTERM:
 } /*jend*/
 
 /*--------------------- OBJ -------------------*/
+static union
+{
+    char cc[2];
+    short ww;
+} stm, ksm;
+
 static unsigned char c;
 
 static void sfwrc()
@@ -1110,6 +1100,18 @@ static void ksmb(char b)
     stm.cc[1] = 0;
     stm.cc[0] = b;
     ksm.ww += stm.ww;
+    ksm.cc[1] = '\0';
+}
+
+static void ksmn(char *b, int n)
+{
+    int i;
+    stm.cc[1] = 0;
+    for (i = 0; i < n; i++)
+    {
+        stm.cc[0] = *(b + i);
+        ksm.ww += stm.ww;
+    }
     ksm.cc[1] = '\0';
 }
 
