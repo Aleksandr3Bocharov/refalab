@@ -1,7 +1,7 @@
 /*--------------- file -- REFAL.DEF -----------------*/
-/*          Select from IBM_PC, PDP, VAX             */
+/*          Select from IBM_PC			             */
 /* For IBM_PC turn on/off: STTIME, QC, turbo, VIDEO  */
-/*          Last modification : 28.05.2005 (BLF)     */
+/*          Last modification : 17.06.24		     */
 /*---------------------------------------------------*/
 #define IBM_PC
 
@@ -21,8 +21,6 @@
 /*#define PRINT_CODE*/
 
 /*#define mdebug*/
-/*#define VAX*/
-/*#define PDP*/
 
 #define TAGO 0
 #define TAGF 2

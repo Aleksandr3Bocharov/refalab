@@ -59,7 +59,7 @@ void gsymbol(struct linkti *code)
         return;
         /*      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC */
     };
-    r = (char *)&(code->infoo.codef);
+    r = code->infoo.codef;
     if (code->tagg == 0)
     {
         jbyte(*r);

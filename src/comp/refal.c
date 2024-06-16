@@ -233,54 +233,10 @@ static void de()
     }
 }
 
-#ifdef VAX
-
-char *take(s1)
-char *s1;
-{ /* take a next word from the string */
-    char *p1;
-    int i, beg, len;
-    for (i = cur; s1[i] == ' '; i++)
-        ;
-    beg = i;
-    for (len = 0; (s1[i] != ' ') && (s1[i] != '\0'); i++)
-        len++;
-    if ((p1 = (char *)malloc(len + 1)) == NULL)
-        oshex();
-    for (i = 0; i < len; i++)
-        p1[i] = s1[beg + i];
-    p1[len] = '\0';
-    cur = beg + len;
-    return p1;
-}
-main()
-{
-    int argc;
-    char *argv[3];
-#else
 int main(int argc, char *argv[])
 {
-#endif
     char parm[40];
     int i, j, temp;
-#ifdef VAX
-    adr word;
-    printf("\nEnter command line: ");
-    fgets(parm, 40, stdin);
-    cur = 0;
-    word = take(parm);
-    argv[0] = NULL;
-    argc = 1;
-    while (word[0] != '\0')
-    {
-        argv[argc++] = word;
-        word = take(parm);
-    }
-    free(word);
-#endif
-    /*#ifdef VAX
-       argc = 2;  argv[1] = "rf$rf";
-    #endif*/
 
     systerm = NULL;
 

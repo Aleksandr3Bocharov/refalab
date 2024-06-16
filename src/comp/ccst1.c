@@ -4,6 +4,7 @@
 /*------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include "refal.def"
 #include "ccst1.h"
 #include "cerr.h"
 #include "cs.h"
@@ -11,10 +12,6 @@
 #include "cj.h"
 #include "ccst2.h"
 #include "refal.h"
-
-#define TAG_O 0
-#define TAG_F 2
-#define TAG_N 4
 
 struct linkt
 {
@@ -396,7 +393,7 @@ RCGL:
         goto LSW6;
     };
 LSW1: /*        constant symbol        */
-    if (x[n].code.tag == TAG_O)
+    if (x[n].code.tag == TAGO)
         goto LTXT;
     gops(n_lsc, (struct linkti *)&(x[n].code));
     goto L1;
@@ -404,7 +401,7 @@ LTXT:
     kol_lit = 1;
 LTXT1:
     n++;
-    if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAG_O))
+    if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
         goto LTXT2;
     kol_lit++;
     goto LTXT1;
@@ -576,7 +573,7 @@ RCGR:
         goto RSW6;
     };
 RSW1: /*   constant symbol   */
-    if (x[n].code.tag == TAG_O)
+    if (x[n].code.tag == TAGO)
         goto RTXT;
     gops(n_rsc, (struct linkti *)&(x[n].code));
     goto R1;
@@ -584,7 +581,7 @@ RTXT:
     kol_lit = 1;
 RTXT1:
     n--;
-    if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAG_O))
+    if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
         goto RTXT2;
     kol_lit++;
     goto RTXT1;
@@ -1074,7 +1071,7 @@ SW_RPE:
 RPE0: /* scanner error */
     goto RP_OSH300;
 RPE1: /* symbol-constant */
-    if (scn_e._code.tag == TAG_O)
+    if (scn_e._code.tag == TAGO)
         goto TEXT;
     gops(n_ns, (struct linkti *)&(scn_e._code));
     goto GET_RPE;
@@ -1084,7 +1081,7 @@ TEXT1:
     kol_lit++;
     buf_lit[kol_lit] = scn_e._code.info.chinf[0];
     scan();
-    if ((kol_lit < 80) && (scn_e.t_ == t_sc) && (scn_e._code.tag == TAG_O))
+    if ((kol_lit < 80) && (scn_e.t_ == t_sc) && (scn_e._code.tag == TAGO))
         goto TEXT1;
     if (kol_lit == 1)
         gopn(n_nso, buf_lit[1]);
@@ -1103,7 +1100,7 @@ RPE2: /* left bracket */
         goto GET_RPE;
     };
     kol_skob[ur_skob]++;
-    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAG_F))
+    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
     {
         funcptr.info.pinf = scn_e._code.info.pinf;
         gopl(n_blf, funcptr.info.pinf);
@@ -1187,7 +1184,7 @@ RPE7: /* sign "k" */
     };
     kol_skob[++ur_skob] = 0;
     scan();
-    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAG_F))
+    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
     {
         funcptr.info.pinf = scn_e._code.info.pinf;
         funcptr.tag = 0;

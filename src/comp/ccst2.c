@@ -3,14 +3,12 @@
 /*        Last edition date : 14.06.24      */
 /*------------------------------------------*/
 #include <stdio.h>
+#include "refal.def"
 #include "ccst2.h"
 #include "cj.h"
 #include "cgop.h"
 #include "cerr.h"
 
-#define TAG_O 0
-#define TAG_F 2
-#define TAG_N 4
 /* the table of assembly language statement codes */
 #define n_sb1b2 '\003'
 #define n_lb '\014'
