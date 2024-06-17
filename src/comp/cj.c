@@ -697,7 +697,7 @@ void jend()
 
 #else /*3*/
 
-#ifndef MINGW32
+#ifdef FASM
     fputs("format COFF\n", syslin);
 #endif
 
@@ -876,7 +876,7 @@ fputs ("\tends\n",syslin);
 #endif
 #else          /* Windows */
 /* BLF */
-#ifdef MINGW32 /* then GNU format */
+#ifndef FASM /* then GNU format */
         fputs("\t.extern\t_", syslin); /* BLF */
 #else          /* fasm format */
         fputs("\textrn\t_", syslin); /* BLF */
@@ -909,11 +909,6 @@ fputs ("\tends\n",syslin);
 #ifndef UNIX
         /* begin name with underlining _ */
         fputc('_', syslin);
-#else
-#ifdef MINGW32
-        /* begin name with underlining _ */
-        fputc('_', syslin);
-#endif
 #endif
 
         for (i = 0; i < q->le; i++)

@@ -422,7 +422,7 @@ LTXT3:
     goto RCGL;
 LSCO:
     n = n1 + 1;
-    gopn(n_lsco, (char)x[n].code.info.chinf[0]);
+    gopn(n_lsco, x[n].code.info.chinf[0]);
     goto L1;
 LSW4: /*    s-variable    */
     i = x[n].i;
@@ -602,7 +602,7 @@ RTXT3:
     goto RCGR;
 RSCO:
     n = n2 - 1;
-    gopn(n_rsco, (char)x[n].code.info.chinf[0]);
+    gopn(n_rsco, x[n].code.info.chinf[0]);
     goto R1;
 RSW4: /*     s_variable       */
     i = x[n].i;

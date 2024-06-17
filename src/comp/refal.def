@@ -9,9 +9,6 @@
 /* BLF - FASM for fasm assembler format */
 /*#define FASM*/
 
-/* BLF - MINGW32 for operation system Windows - mingw32 */
-#define MINGW32
-
 /* BLF - DBLF for prokrutka - trace debug mode, see rfintf.c */
 /*#define DBLF*/
 
