@@ -35,15 +35,15 @@
 
 int qindex;
 
-struct linkt
+struct linkti
 {
-    int tagg;
+    size_t tag;
     union
     {
         char *pinf;
         long intinf;
         char chinf[2];
-    } infoo;
+    } info;
 };
 
 void lblkey(int pr);
