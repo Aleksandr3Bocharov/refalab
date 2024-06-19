@@ -25,6 +25,7 @@ extern REFAL refal;
 
 static linkcb *et[256]; /* element table */
 static int nel;         /* adress of first free string in element table */
+
 struct wjs
 { /* jump stack structure */
    linkcb *jsb1;
@@ -34,6 +35,7 @@ struct wjs
 };
 static struct wjs js[64]; /* jump stack and planning translation stack*/
 static struct wjs *jsp;   /* jump stack pointer*/
+
 struct ts
 { /* translation stack structure*/
    linkcb *ts0;
@@ -41,9 +43,11 @@ struct ts
    linkcb *ts2;
 };
 static struct ts *tsp; /*translation stack pointer*/
+
 static int tmmod;      /* timer state */
 static long tmstart;   /* time at the start */
 static long tmstop;    /* time at the end    */
+
 struct sav_
 { /* save area for var-part of REFAL-block */
    int upshot_;
@@ -60,12 +64,14 @@ static union
    char c[2];
    int ii;
 } u;
+
 static union
 { /* structure for pointer and integer aligning */
    char *ptr;
    long *inr;
    char chr[2];
 } inch;
+
 /* definition of work variables and pointers*/
 static char opc;           /* current statement code */
 static unsigned char *vpc; /* virtual program counter */
@@ -74,8 +80,9 @@ static linkcb *lastb;      /* last generated left bracket*/
 static linkcb *b0, *b1, *b2;
 static linkcb *f0, *f1, *f;
 static char *vpca; /* additional vpc  */
-static char (*fptr)();
 static int i, n, m;
+
+static char (*fptr)();
 
 sav *malloc();
 long time();

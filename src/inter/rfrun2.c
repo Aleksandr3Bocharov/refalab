@@ -6,6 +6,27 @@
 #include "refal.def"
 #define NMBL sizeof(char)
 
+struct wjs
+{
+   linkcb *jsb1;
+   linkcb *jsb2;
+   int jsnel;
+   char *jsvpc;
+};
+
+struct ts
+{
+   linkcb *ts0;
+   linkcb *ts1;
+   linkcb *ts2;
+};
+
+struct spcs
+{
+   int spls;
+   char *svpc;
+};
+
 void link();
 void putjs();
 void getjs();
@@ -17,12 +38,6 @@ void move2(); /* BLF 29.07.2004 */
 static letter(unsigned char s);
 static digit(char s);
 static not(int spcpls);
-
-struct spcs
-{
-   int spls;
-   char *svpc;
-};
 
 spc(struct spcs *pspcsp, char *vpc, linkcb *b)
 /* specifier interpreter */
@@ -171,14 +186,6 @@ void link(linkcb *x, linkcb *y)
    y->prev = x;
 }
 
-struct wjs
-{
-   linkcb *jsb1;
-   linkcb *jsb2;
-   int jsnel;
-   char *jsvpc;
-};
-
 void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
 {
    jsp->jsb1 = *ab1;
@@ -194,13 +201,6 @@ void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
    *anel = jsp->jsnel;
    *avpc = jsp->jsvpc;
 }
-
-struct ts
-{
-   linkcb *ts0;
-   linkcb *ts1;
-   linkcb *ts2;
-};
 
 void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
