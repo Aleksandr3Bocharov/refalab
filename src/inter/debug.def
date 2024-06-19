@@ -1,7 +1,10 @@
 /*------------ file -- DEBUG.DEF -------------*/
 /*       Definitions for REFAL-Debugger       */
-/*        Last modification : 02.09.90        */
+/*        Last modification : 19.06.24        */
 /*--------------------------------------------*/
+#ifndef DEBUG_DEF
+#define DEBUG_DEF
+
 extern void (*dba)();
 
 typedef struct DET_TAB  {
@@ -104,5 +107,6 @@ static void   pr_imres();
 static void   pr_finres();
 static void   dbapp();
 
+#endif
 /*---------  end of file DEBUG.DEF -----------*/
 

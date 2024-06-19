@@ -1,13 +1,13 @@
 #############################################################################
-# inter.mak
-#	Makefile for interpreter library (librefal2.a) creation,
-# 	result lib\librefal2.a library
-#       Version for Windows (Win95/98/ME/NT/2000/XP)
+#inter.mak
+#Makefile for interpreter library(librefal2.a) creation,
+#result lib\librefal2.a library
+#Version for Windows(Win95 / 98 / ME / NT / 2000 / XP)
 #
-# Copyright (C) Refal-2 Team
-# Author: Leonid Belous (aka BLF)
-# E-mail: belous@ilt.kharkov.ua
-# Date: 28.05.2005
+#Copyright(C) Refal - 2 Team
+#Author : Leonid Belous(aka BLF)
+#E - mail : belous @ilt.kharkov.ua
+#Date : 19.06.2024
 #############################################################################
 
 ####### Compiler, tools and options
@@ -15,7 +15,7 @@
 .SUFFIXES: .c .ref
 
 CC	=	gcc
-CFLAGS	=	-pipe -w -O2 -DNO_DEBUG
+CFLAGS	=	-pipe -Wall -O2 -DNO_DEBUG
 AR	=	ar
 REFXCV	=	src\inter\refxcv.bat 	# refal2 + assembler for xcv
 TAR	=	tar -cf
