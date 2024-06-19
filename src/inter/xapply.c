@@ -12,21 +12,8 @@ void (*dba)(st*)=NULL;
 static void appl_() {
  st *s_st, *upst;
  linkcb *px,*pk,*pd;
-#ifdef IBM_PC
-
-/* BLF 03.07.2004 
- #ifdef QC
- int  l=stackavail();
-   if (l < 500)
-#else
-*/
   long l=(long) &s_st;  
-/*   printf("\nl=%lx",l);*/
    if( (l & 0xffffL)<200L )
-/* BLF 03.07.2004 
-#endif
-*/
-#endif
    { /* printf("\nStack overflow!");*/ goto LACK;}
    upst = refal.currst;
    if( !slins(refal.prevr,1) ) return;

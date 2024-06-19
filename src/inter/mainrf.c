@@ -1,12 +1,13 @@
 /*----------- file -- MAINRF.C -------------------*/
 /*          Standard REFAL-initiator              */
-/*       Last modification : 05.04.2005 (BLF)     */
+/*       Last modification : 19.06.2024           */
 /*------------------------------------------------*/
 
 /* BLF GO -> go */
 extern char go();
 
-void main() {
+void main()
+{
   rfexec(go);
 }
 

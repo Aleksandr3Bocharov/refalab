@@ -31,20 +31,21 @@
 /* BLF pragma for 1 byte aligniment structure ------------*/
 #pragma pack(1)
 
+struct linkcb_
+{
+	struct linkcb_ *prev;
+	struct linkcb_ *next;
+	short tag;
+	union
+	{
+		char infoc;
+		long coden;
+		struct linkcb_ *codep;
+		char *codef;
+	} info;
+};
 
-	struct  linkcb_ {
-		struct	linkcb_ *prev;
-		struct	linkcb_ *next;
-		short	tag;
-		union {
-			char infoc;
-			long  coden;  
-			struct linkcb_ *codep;
-			char *codef;
-		} info;
-	};
-	
-/*#pragma pack(pop)*/ 
+/*#pragma pack(pop)*/
 #pragma pack()
 
 /* BLF ------------ end of pragma ------------------------------------ */
