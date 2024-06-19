@@ -26,19 +26,27 @@
 #define TAGK 5
 #define TAGD 7
 
-struct linkcb_
-{
-	struct linkcb_ *prev;
-	struct linkcb_ *next;
-	size_t tag;
-	union
-	{
-		unsigned char infoc[sizeof(size_t) - 1];
-		size_t coden;
-		struct linkcb_ *codep;
-		char *codef;
-	} info;
-};
+/* BLF pragma for 1 byte aligniment structure ------------*/
+#pragma pack(1)
+
+
+	struct  linkcb_ {
+		struct	linkcb_ *prev;
+		struct	linkcb_ *next;
+		short	tag;
+		union {
+			char infoc;
+			long  coden;  
+			struct linkcb_ *codep;
+			char *codef;
+		} info;
+	};
+	
+/*#pragma pack(pop)*/ 
+#pragma pack()
+
+/* BLF ------------ end of pragma ------------------------------------ */
+
 typedef struct linkcb_ linkcb;
 
 struct st_
@@ -129,5 +137,5 @@ typedef struct __ptr__
 } POINT;
 
 #define LBLL sizeof(POINT)
-#define SMBL (sizeof(size_t) + LBLL)
+#define SMBL (sizeof(short) + LBLL)
 /*-------  end of file REFAL.DEF ---------*/
