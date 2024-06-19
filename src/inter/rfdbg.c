@@ -10,18 +10,18 @@ extern char go();
 
 void main()
 {
-  rfinit();
-  if (!lincrm())
-    goto LACK;
-  if (!lcre(&s_st))
-    goto LACK;
-  if (!linskd(&s_st, go))
-    goto LACK;
-  rfdbg(&s_st); /* there is exit */
+    rfinit();
+    if (!lincrm())
+        goto LACK;
+    if (!lcre(&s_st))
+        goto LACK;
+    if (!linskd(&s_st, go))
+        goto LACK;
+    rfdbg(&s_st); /* there is exit */
 LACK:
-  printf("\nREFAL-debugger: no memory for initialization");
-  fclose(stdin);
-  rftermm();
-  exit(1);
+    printf("\nREFAL-debugger: no memory for initialization");
+    fclose(stdin);
+    rftermm();
+    exit(1);
 }
 /*---------  end of file RFDBG.C -----------*/

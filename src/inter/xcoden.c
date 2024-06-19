@@ -1,4 +1,4 @@
-/*-------------- file -- XCODEN.C ------------------*/  
+/*-------------- file -- XCODEN.C ------------------*/
 /*       PDP only functions: gcoden, pcoden         */
 /*         Last edition date : 14.08.2004  (BLF)    */
 /*--------------------------------------------------*/
@@ -7,7 +7,7 @@
 
 /*  BLF 14.08.2004 see def for gcoden and pcoden in refal.def */
 
-/* 
+/*
 struct lw_ {
    int i1;
    char c2;
@@ -18,10 +18,10 @@ typedef struct lw_ lw;
 static union {
    lw p1;
    long p2;
-} pole;  
+} pole;
 
-void pcoden(x,l) linkcb *x; long l;  
-{ 
+void pcoden(x,l) linkcb *x; long l;
+{
    pole.p2 = l;
    x->info.codep = NULL;
    x->info.coden = pole.p1.i1;
@@ -29,7 +29,7 @@ void pcoden(x,l) linkcb *x; long l;
 
 }
 
-long gcoden(x) linkcb *x; 
+long gcoden(x) linkcb *x;
 {  pole.p1.i1 = x->info.coden;
    pole.p1.c2 = x->zzp;
    pole.p1.c3 = 0;

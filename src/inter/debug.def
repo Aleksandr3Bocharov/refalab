@@ -9,15 +9,15 @@ extern void (*dba)();
 
 typedef struct DET_TAB
 {
-  struct DET_TAB *det_next;
-  char gt;
-  char ge;
-  char eq;
-  char ne;
-  char lt;
-  char le;
-  char tr;
-  char *det_id;
+    struct DET_TAB *det_next;
+    char gt;
+    char ge;
+    char eq;
+    char ne;
+    char lt;
+    char le;
+    char tr;
+    char *det_id;
 } DET_TAB;
 static DET_TAB *last_det = NULL;
 static DET_TAB *det_table;

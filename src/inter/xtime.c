@@ -5,12 +5,13 @@
 /*-------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
+
 extern REFAL refal;
 
 /*
 #ifdef IBM_PC
-#include "\refal\time.h"  
-#include "\refal\dos.h"   
+#include "\refal\time.h"
+#include "\refal\dos.h"
 
 #ifdef QC
 #define gettime _dos_gettime
@@ -29,7 +30,7 @@ long time();
 char *ctime();
 
 static void rftime_() {
- linkcb *p; 
+ linkcb *p;
  long   tim; char *c;
    tim=time(0l);
    c=ctime(&tim);
@@ -47,8 +48,8 @@ G_L_B char rftime = '\122';   static void (*rftime_1)() = rftime_;
 static void rftm_() {
  linkcb *p; int ih=0,im=0,is=0,ik,i;
  char c,s[12];
-   p = refal.preva->next; 
-   if( p != refal.nexta ){ 
+   p = refal.preva->next;
+   if( p != refal.nexta ){
       if( p->tag != TAGO ) goto NEOT;
       c = p->info.infoc;
       switch (c) {
@@ -62,7 +63,7 @@ static void rftm_() {
          case 'G':
 #ifdef IBM_PC
 
-		 /* BLF            gettime(&t1);
+         /* BLF            gettime(&t1);
             ik = t1.ti_hund - t0.ti_hund;
             if( ik<0 ) {
                ik += 100;  is--; }
