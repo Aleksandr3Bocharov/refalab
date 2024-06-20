@@ -54,46 +54,6 @@ static linkcb *dot1, *prevk1, *nextd1;
 static linkcb *dot2, *prevk2, *nextd2;
 static int i, c2;
 
-#ifdef VIDEO
-/*----------------------------------*/
-#include "\refal\debug\mnw\mnw.def"
-#include "\refal\debug\mnw\mankey.def"
-
-#define TITUL 3
-#define MESSAGE 3
-#define PARAM 5
-#define RFABEND 8
-#define WORK_MES 9
-#define DEF_PARM 10
-#define PSEUDO_PARM 11
-#define PSEUDO_PARM1 110
-
-#define ALL_PARM -1
-#define REDEFINE_PARM 1
-#define QUIT 2
-#define NORMAL_STEP 4
-#define RESTART 8
-
-#define NO_SWITCH 0
-#define SWITCH 1
-
-extern int video_page;
-int rd_deb_screen();
-void rd_deb_file();
-void wr_deb_file();
-int besc();
-static char *word[] = {"Execute", "> ", ">=", "= ", "!=", "< ", "<=",
-                       "TRAP", "STOP", "FROM", "TO", "E1 ="};
-static char modif = '-';
-static char key_code1 = K_ESC;
-static int (*key_b1)() = besc;
-static key_list f1 = {1, &key_code1, &key_b1};
-static read_field inf = {1, 78, 1, BLACK, "", 12, 2};
-static FILE *dfile = NULL;
-static FILE *wrfile;
-/*==================================*/
-#endif
-
 extern void (*dba)();
 extern void rfdbg(st *s_st);
 
