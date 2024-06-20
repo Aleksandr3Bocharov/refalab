@@ -3,11 +3,11 @@
 /*       Last modification : 19.06.2024       */
 /*--------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
+#include "rfintf.h"
+#include "rfrun1.h"
 
-extern REFAL refal;
-
-st *malloc();
 void (*dba)(st *) = NULL;
 
 static void appl_()

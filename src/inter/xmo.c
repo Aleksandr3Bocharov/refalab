@@ -5,9 +5,10 @@
 /*      Last edition date : 19.06.24        */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 static void p1_()
 {
@@ -64,13 +65,11 @@ static int cmpstr(int n, char *s1, char *s2)
     return 0;
 }
 
-long atol();
-
 static void numb_()
 {
     linkcb *p, *pz, *p1;
     char str[12], zn;
-    register i;
+    register int i;
     long l;
     p = refal.preva->next;
     zn = p->info.infoc;
@@ -131,7 +130,7 @@ static void symb_()
 {
     linkcb *p, *pz, *p1;
     char str[12], zn;
-    register i;
+    register int i;
     long l;
     int j;
     p = refal.preva->next;

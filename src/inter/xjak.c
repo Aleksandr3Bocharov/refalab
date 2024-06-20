@@ -5,12 +5,11 @@
 /*------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 #define N_SWAP 0116
 
-static enter(int emp, linkcb **pp, linkcb **rp)
+static int enter(int emp, linkcb **pp, linkcb **rp)
 {
     linkcb *p, *r;
     char *q;
@@ -77,7 +76,6 @@ static void (*br_1)() = br_;
 
 static void dg_()
 {
-    linkcb *lldupl();
     linkcb *pl, *pr, *q;
     st *ast;
     ast = refal.currst;
@@ -215,7 +213,6 @@ static void (*swr_1)() = swr_;
 static void rp_()
 {
     st *ast;
-    linkcb *lldupl();
     linkcb *p, *pr, *pl, *q;
     ast = refal.currst;
     p = refal.preva;
@@ -276,7 +273,6 @@ static void cp_()
 {
     st *ast;
     linkcb *pl, *pr, *q;
-    linkcb *lldupl();
     ast = refal.currst;
     pr = ast->store;
 CP1:

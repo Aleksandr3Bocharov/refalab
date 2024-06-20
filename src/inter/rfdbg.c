@@ -3,12 +3,15 @@
 /*        Last modification : 19.06.24      */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
+#include "d.h"
+#include "rfintf.h"
 
 static st s_st;
-extern char go();
+extern char *go;
 
-void main()
+int main()
 {
     rfinit();
     if (!lincrm())

@@ -7,8 +7,6 @@
 
 #include "refal.def"
 
-extern void (*dba)();
-
 typedef struct DET_TAB
 {
     struct DET_TAB *det_next;
@@ -95,6 +93,9 @@ static FILE *dfile = NULL;
 static FILE *wrfile;
 /*==================================*/
 #endif
+
+extern void (*dba)();
+extern void rfdbg(st *s_st);
 
 #endif
 /*---------  end of file DEBUG.DEF -----------*/

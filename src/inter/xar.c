@@ -6,8 +6,7 @@
 /*------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 #define Oadd 1
 #define Osub 2
@@ -18,7 +17,7 @@ extern REFAL refal;
 #define MAX 16777216L
 #define SMAX 24
 
-static void oper();
+static void oper(int o, int prn);
 
 static void add_() { oper(Oadd, 0); }
 
@@ -106,7 +105,7 @@ static linkcb *x, *y, *nach, *kon, *Xn, *Yn, *Xk, *Yk;
 static int dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
-static dajch()
+static int dajch()
 {
     zn = '+';
     kon = y->prev;
@@ -130,7 +129,7 @@ static dajch()
         dl = 0; /*  wse cifry - nuli */
     else
     {
-        for (dl = 0, nach = x; (x->tag == TAGN); x = x->next, dl++)
+        for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
             ;
         if (x != y)
             return FALSE; /* ne makrocifra */
@@ -138,7 +137,7 @@ static dajch()
     return TRUE;
 }
 
-static dajarg()
+static int dajarg()
 {
     x = refal.preva->next;
     if (x->tag != TAGLB)
@@ -187,7 +186,7 @@ static void obmen()
     Yzn = c;
 }
 
-static xmy()
+static int xmy()
 { /*  if X < Y then TRUE  ( po modulju) */
     if (Xdl < Ydl)
         return TRUE;
@@ -259,7 +258,7 @@ static void oper(int o, int prn)
 {
     linkcb *p, *r, *f, *Xt, *Yt;
     long j, peren;
-    int i, n, a11, b11, a22, b22, r1, r2, r3, r4;
+    int i, n = 0, a11, b11, a22, b22, r1, r2, r3, r4;
     long a, a1, b, b1, c, d, x1, x2, y1, y2;
 
     if (!dajarg())
@@ -697,7 +696,7 @@ static void oper(int o, int prn)
     } /* end case */
     /*  wozwratim X */
     /* podawim wed. nuli */
-    for (x = Xn; (gcoden(x) == 0l); x = x->next)
+    for (x = Xn; gcoden(x) == 0l; x = x->next)
         ;
     if (prn == 1 && x == Xk && gcoden(x) == 0l)
         return;

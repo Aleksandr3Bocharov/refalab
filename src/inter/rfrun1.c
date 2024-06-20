@@ -3,10 +3,12 @@
 /*      Last edition date: 19.06.2024          */
 /*---------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "refal.def"
 #include "rfrun1.h"
-
-extern REFAL refal;
+#include "rfintf.h"
+#include "rfrun2.h"
 
 /* for unlooping: */
 
@@ -85,10 +87,7 @@ static int i, n, m;
 
 static char (*fptr)();
 
-sav *malloc();
-long time();
-
-void rfrun(st *ast) /* adress of current state table */
+extern void rfrun(st *ast) /* adress of current state table */
 {
     /* dynamic area DSA */
     sav *savecr;

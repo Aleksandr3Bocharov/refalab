@@ -4,8 +4,7 @@
 /*------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 #define d24 16777216l
 #define HMAX 4096L

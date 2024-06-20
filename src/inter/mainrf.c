@@ -2,11 +2,12 @@
 /*          Standard REFAL-initiator              */
 /*       Last modification : 19.06.2024           */
 /*------------------------------------------------*/
+#include "rfintf.h"
 
 /* BLF GO -> go */
-extern char go();
+extern char *go;
 
-void main()
+int main()
 {
   rfexec(go);
 }

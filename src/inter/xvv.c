@@ -4,8 +4,7 @@
 /*-----------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 #define fmax 5
 
@@ -16,14 +15,11 @@ static int junp = 1;
 static int jung = 1;
 static long jl;
 
-/* BLF void PROUT() {
-}*/
-
 static void opng_()
 {
     linkcb *p;
     char namf[40];
-    register i;
+    register int i;
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
     p = refal.preva->next;

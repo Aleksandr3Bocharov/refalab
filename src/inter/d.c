@@ -10,8 +10,6 @@
 #include "rfintf.h"
 #include "rfrun1.h"
 
-extern REFAL refal;
-
 static void init_det_flags();
 static void get_arg();
 static int get_det();
@@ -25,10 +23,7 @@ static void pr_finres(long xstep, linkcb *xprevk, linkcb *xnextd);
 static void pr_imres();
 static void pr_step();
 
-void print_parm();
-void parm_menue();
-
-void rfdbg(st *s_st)
+extern void rfdbg(st *s_st)
 {
     /* read task for debugging */
     init_det_flags();
@@ -718,8 +713,6 @@ static void pr_finres(long xstep, linkcb *xprevk, linkcb *xnextd)
     }
     return;
 }
-
-extern char rfcnv(char cm);
 
 static void getpf(st *ss_st)
 {

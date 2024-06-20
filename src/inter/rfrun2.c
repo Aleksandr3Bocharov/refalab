@@ -4,6 +4,8 @@
 /*-------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
+#include "rfrun2.h"
+
 #define NMBL sizeof(char)
 
 struct wjs
@@ -27,19 +29,11 @@ struct spcs
     char *svpc;
 };
 
-void link();
-void putjs();
-void getjs();
-void putts();
-void getts();
-void move();
-void move2(); /* BLF 29.07.2004 */
+static int letter(unsigned char s);
+static int digit(char s);
+static int not(int spcpls);
 
-static letter(unsigned char s);
-static digit(char s);
-static not(int spcpls);
-
-spc(struct spcs *pspcsp, char *vpc, linkcb *b)
+extern int spc(struct spcs *pspcsp, char *vpc, linkcb *b)
 /* specifier interpreter */
 {
     int spcwrk;         /* work variable */
@@ -48,7 +42,7 @@ spc(struct spcs *pspcsp, char *vpc, linkcb *b)
     char *spcvpc;       /* virtual specifier counter */
     char spcopc;        /*specifier code */
     spcsp = pspcsp;
-    move(LBLL, vpc + 1, &spcvpc); /* spcvpc = L */
+    move(LBLL, vpc + 1, spcvpc); /* spcvpc = L */
     spcpls = TRUE;
     goto SPCNXT;
 /* return from specifier element if "YES" */
@@ -101,7 +95,7 @@ SPCNXT:
 SPCCLL:
     spcsp->spls = spcpls;
     spcsp->svpc = spcvpc;
-    move(LBLL, spcvpc, &spcvpc);
+    move(LBLL, spcvpc, spcvpc);
     spcsp++;
     spcpls = TRUE;
     goto SPCNXT;
@@ -114,7 +108,7 @@ SPCNGW:
     spcpls = not(spcpls);
     goto SPCRET;
 SPCSC:
-    if (cmpr(SMBL, spcvpc, &(b->tag)) == 1)
+    if (cmpr(SMBL, spcvpc, (char *)&(b->tag)) == 1)
         goto SPCRET;
     spcvpc = spcvpc + SMBL;
     goto SPCNXT;
@@ -156,7 +150,7 @@ SPCL:
     goto SPCNXT;
 } /*             end      spc          */
 
-static letter(unsigned char s)
+static int letter(unsigned char s)
 {
     if ((s >= 'A' && s <= 'Z') || /* A..Z     */
         (s >= 'a' && s <= 'z') || /* a..z     */
@@ -166,27 +160,27 @@ static letter(unsigned char s)
     return 0;
 }
 
-static digit(char s)
+static int digit(char s)
 {
     if (s >= '0' && s <= '9')
         return 1;
     return 0;
 }
 
-static not(int spcpls)
+static int not(int spcpls)
 {
     if (spcpls == TRUE)
         return FALSE;
     return TRUE;
 }
 
-void link(linkcb *x, linkcb *y)
+extern void link(linkcb *x, linkcb *y)
 {
     x->next = y;
     y->prev = x;
 }
 
-void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
+extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -194,7 +188,7 @@ void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
     jsp->jsvpc = *avpc;
 }
 
-void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
+extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -202,21 +196,21 @@ void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
     *avpc = jsp->jsvpc;
 }
 
-void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+extern void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     tsp->ts0 = *ax;
     tsp->ts1 = *ay;
     tsp->ts2 = *az;
 }
 
-void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+extern void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     *ax = tsp->ts0;
     *ay = tsp->ts1;
     *az = tsp->ts2;
 }
 
-void move(int n, char *pf, char *pt)
+extern void move(int n, char *pf, char *pt)
 {
     int i;
     for (i = 0; i < n; i++)
@@ -248,7 +242,7 @@ int i;
 }
 */
 
-cmpr(int n, char *p1, char *p2)
+extern int cmpr(int n, char *p1, char *p2)
 {
     int i;
     for (i = 1; i <= n; i++)

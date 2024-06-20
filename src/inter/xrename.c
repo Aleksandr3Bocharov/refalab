@@ -3,9 +3,9 @@
 /*      Last edition date : 19.06.24       */
 /*-----------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 static void unlnk_()
 {

@@ -3,13 +3,12 @@
 /*       Last modification : 19.06.24       */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 #define fmax 5
 
-FILE *fopen();
 static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
@@ -19,7 +18,7 @@ static void open_()
    linkcb *p;
    short j;
    char namf[41], c, s[2];
-   register i;
+   register int i;
    for (i = 0; i < 40; i++)
       namf[i] = '\0';
    p = refal.preva->next;

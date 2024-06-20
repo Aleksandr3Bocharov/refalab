@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include "refal.def"
 
-extern REFAL refal;
-
 /*
 #ifdef IBM_PC
 #include "\refal\time.h"

@@ -3,27 +3,26 @@
 /*        Last modification : 19.06.2024            */
 /*--------------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
 #include "rfintf.h"
-
-REFAL refal;
+#include "rfrun1.h"
 
 static linkcb *last_block = NULL;
 static int rf_init = 1;
 static int curr_size = 0;
 static linkcb hd;
 
-linkcb *malloc();
-void rflist();
-void rfpexm();
+static int lgcl();
+static void rflist(linkcb *par, int n);
 
-void rfabe(char *amsg)
+extern void rfabe(char *amsg)
 {
     printf("\n *** refal-abend *** %s", amsg);
     exit(1);
 }
 
-int lincrm()
+extern int lincrm()
 {
     linkcb *first_free, *p;
     linkcb *new_block;
@@ -59,7 +58,7 @@ int lincrm()
 }
 
 /*  check a number of items in free items list */
-lrqlk(int l)
+extern int lrqlk(int l)
 {
     linkcb *p;
     int n;
@@ -73,7 +72,7 @@ lrqlk(int l)
     return TRUE;
 }
 
-lins(linkcb *p, int l)
+extern int lins(linkcb *p, int l)
 {
     int n;
     linkcb *p1, *q, *q1, *r;
@@ -100,7 +99,7 @@ lins(linkcb *p, int l)
     return TRUE;
 }
 
-slins(linkcb *p, int k)
+extern int slins(linkcb *p, int k)
 {
     while (!lrqlk(k))
     {
@@ -113,7 +112,7 @@ slins(linkcb *p, int k)
     return lins(p, k);
 }
 
-linskd(st *ast, char *f)
+extern int linskd(st *ast, char *f)
 {
     linkcb *p, *q, *r;
     if (!lexist(ast))
@@ -134,7 +133,7 @@ linskd(st *ast, char *f)
     return TRUE;
 }
 
-char rfcnv(char cm)
+extern char rfcnv(char cm)
 {
     int j;
     j = (int)cm;
@@ -144,7 +143,7 @@ char rfcnv(char cm)
         return cm; /* perewod  a..z w A..Z */
 }
 
-void rfinit()
+extern void rfinit()
 {
     REFAL *p;
     linkcb *phd;
@@ -168,7 +167,7 @@ void rfinit()
     p->tmintv = 0;
 }
 
-void rfcanc(st *ast)
+extern void rfcanc(st *ast)
 {
     linkcb *flhead1, *view1, *store1;
     if (rf_init)
@@ -191,7 +190,7 @@ void rfcanc(st *ast)
 }
 
 /*    delete part of list and add it to free memory list */
-void rfdel(linkcb *p, linkcb *q)
+extern void rfdel(linkcb *p, linkcb *q)
 {
     linkcb *p1, *q1, *r;
     p1 = p->next;
@@ -207,7 +206,7 @@ void rfdel(linkcb *p, linkcb *q)
     p1->prev = r;
 }
 
-void rftermm()
+extern void rftermm()
 {
     linkcb *new_block;
     while (last_block != NULL)
@@ -221,7 +220,7 @@ void rftermm()
     }
 }
 
-void rfexec(char *func)
+extern void rfexec(char *func)
 {
 
     /* BLF 17.07.2004 */
@@ -307,7 +306,7 @@ LACK:
     rftermm();
 }
 
-void rfpexm(char *pt, linkcb *pr, linkcb *pn)
+extern void rfpexm(char *pt, linkcb *pr, linkcb *pn)
 {
     char *f;
     unsigned char c;
@@ -372,7 +371,7 @@ void rfpexm(char *pt, linkcb *pr, linkcb *pn)
     return;
 }
 
-void rftpl(linkcb *r, linkcb *p, linkcb *q)
+extern void rftpl(linkcb *r, linkcb *p, linkcb *q)
 {
     linkcb *r1, *q1, *p1;
     p1 = p->next;
@@ -389,7 +388,7 @@ void rftpl(linkcb *r, linkcb *p, linkcb *q)
 }
 
 /*  copy expression and add it to nessecary place  */
-lcopy(linkcb *r, linkcb *p, linkcb *q)
+extern int lcopy(linkcb *r, linkcb *p, linkcb *q)
 {
     linkcb *r1, *f, *f0, *f1, *lastb = NULL;
     f = refal.flhead;
@@ -433,7 +432,7 @@ lcopy(linkcb *r, linkcb *p, linkcb *q)
     return TRUE;
 }
 
-lexist(st *ast)
+extern int lexist(st *ast)
 {
     REFAL *p;
     p = &refal;
@@ -446,7 +445,7 @@ lexist(st *ast)
     return FALSE;
 }
 
-lcre(st *ast)
+extern int lcre(st *ast)
 {
     st *q;
     linkcb *flhead1;
@@ -510,7 +509,7 @@ UP:
     goto MRK;
 }
 
-lgcl()
+static int lgcl()
 {
     st *p;
     int was_coll;
@@ -570,7 +569,7 @@ lgcl()
     return was_coll;
 }
 
-void rflist(linkcb *par, int n)
+static void rflist(linkcb *par, int n)
 {
     linkcb *p, *q;
     int k;
@@ -592,7 +591,7 @@ void rflist(linkcb *par, int n)
     return;
 }
 
-void rfpex(char *pt, linkcb *pr, linkcb *pn)
+extern void rfpex(char *pt, linkcb *pr, linkcb *pn)
 {
     char *f;
     unsigned char c;
@@ -638,7 +637,7 @@ void rfpex(char *pt, linkcb *pr, linkcb *pn)
     return;
 }
 
-linkcb *lldupl(linkcb *p, linkcb *q, linkcb *u)
+extern linkcb *lldupl(linkcb *p, linkcb *q, linkcb *u)
 {
     linkcb *x, *y;
     x = p->next;

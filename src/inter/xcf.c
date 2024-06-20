@@ -3,17 +3,14 @@
 /*       Last edition date : 19.06.24       */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "refal.def"
-
-extern REFAL refal;
+#include "rfintf.h"
 
 typedef char *adr;
 short func_n = 0;
 adr *func_f = NULL;
-
-adr *malloc();
-adr *realloc();
-char rfcnv(char cm);
 
 static void ftochar_()
 {
