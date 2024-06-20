@@ -85,7 +85,7 @@ static linkcb *f0, *f1, *f;
 static char *vpca; /* additional vpc  */
 static int i, n, m;
 
-static char (*fptr)();
+static char (*fptr)(REFAL *);
 
 extern void rfrun(st *ast) /* adress of current state table */
 {
