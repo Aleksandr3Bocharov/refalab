@@ -4,11 +4,26 @@
 /*------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "refal.def"
-#include "debug.def"
+#include "d.h"
 #include "rfintf.h"
+#include "rfrun1.h"
 
 extern REFAL refal;
+
+static void init_det_flags();
+static void get_arg();
+static int get_det();
+static int get_numb(long *numb);
+static int get_yn(char *b);
+static void dbapp(st *ss_st);
+static void getpf(st *ss_st);
+static void one_step(st *ss_st);
+static void pr_euc();
+static void pr_finres(long xstep, linkcb *xprevk, linkcb *xnextd);
+static void pr_imres();
+static void pr_step();
 
 void print_parm();
 void parm_menue();
@@ -592,8 +607,7 @@ AB1:
 }
 
 /*    procedures    */
-static void
-init_det_flags()
+static void init_det_flags()
 {
     DET_TAB *det, *det1;
     for (det = last_det; det != NULL; det = det->det_next)
@@ -604,8 +618,8 @@ init_det_flags()
     }
     last_det = NULL;
 }
-static void
-one_step(st *ss_st)
+
+static void one_step(st *ss_st)
 {
     ss_st->stop = ss_st->step + 1;
 AGAIN:
@@ -636,6 +650,7 @@ RET:
     };
     return;
 }
+
 static void pr_step()
 {
     /*printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step);*/
@@ -1402,7 +1417,7 @@ static void get_arg()
 
 static int get_det()
 {
-    register i;
+    register int i;
     det_table = last_det;
     while (det_table != NULL)
     {

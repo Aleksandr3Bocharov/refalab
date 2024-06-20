@@ -4,6 +4,7 @@
 /*---------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
+#include "rfrun1.h"
 
 extern REFAL refal;
 

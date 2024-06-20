@@ -4,5 +4,9 @@
 #include "refal.def"
 
 extern void rfpexm(char *pt, linkcb *pr, linkcb *pn);
+extern void rfcanc(st *ast);
+extern void rftermm();
+extern int lincrm();
+extern void rfdel(linkcb *p, linkcb *q);
 
 #endif

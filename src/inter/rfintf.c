@@ -23,7 +23,7 @@ void rfabe(char *amsg)
     exit(1);
 }
 
-lincrm()
+int lincrm()
 {
     linkcb *first_free, *p;
     linkcb *new_block;

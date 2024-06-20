@@ -2,8 +2,8 @@
 /*           MO: file input/output         */
 /*      Last edition date : 19.06.24       */
 /*-----------------------------------------*/
-#include "refal.def"
 #include <stdio.h>
+#include "refal.def"
 
 extern REFAL refal;
 

@@ -4,8 +4,8 @@
 /*       addn, subn, muln, divn, drn,       */
 /*      Last edition date : 19.06.2024      */
 /*------------------------------------------*/
-#include "refal.def"
 #include <stdio.h>
+#include "refal.def"
 
 extern REFAL refal;
 
