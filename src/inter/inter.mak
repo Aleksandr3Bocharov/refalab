@@ -87,7 +87,7 @@ $(REFLIB): $(OBJECTS)
 
 ####### Dependences
 
-$(S)\d.o:	$(S)\d.c $(S)\refal.def $(S)\debug.def
+$(S)\d.o:	$(S)\d.c $(S)\refal.def $(S)\d.h
 
 $(S)\mainrf.o: 	$(S)\mainrf.c
 
