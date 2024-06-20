@@ -1,5 +1,5 @@
 /*--------------- file -- REFAL.DEF -----------------*/
-/*       Turn on/off: STTIME, QC, turbo, VIDEO       */
+/*            Turn on/off: STTIME, QC                */
 /*          Last modification : 17.06.24		     */
 /*---------------------------------------------------*/
 #ifndef REFAL_DEF
@@ -17,8 +17,6 @@
 /* BLF -  PRINT_CODE - for print operation code, see rfrun1.c */
 /*#define PRINT_CODE*/
 
-/*#define mdebug*/
-
 #define TAGO 0
 #define TAGF 2
 #define TAGN 4
@@ -31,20 +29,21 @@
 /* BLF pragma for 1 byte aligniment structure ------------*/
 #pragma pack(1)
 
+struct linkcb_
+{
+    struct linkcb_ *prev;
+    struct linkcb_ *next;
+    short tag;
+    union
+    {
+        char infoc;
+        long coden;
+        struct linkcb_ *codep;
+        char *codef;
+    } info;
+};
 
-	struct  linkcb_ {
-		struct	linkcb_ *prev;
-		struct	linkcb_ *next;
-		short	tag;
-		union {
-			char infoc;
-			long  coden;  
-			struct linkcb_ *codep;
-			char *codef;
-		} info;
-	};
-	
-/*#pragma pack(pop)*/ 
+/*#pragma pack(pop)*/
 #pragma pack()
 
 /* BLF ------------ end of pragma ------------------------------------ */
@@ -53,34 +52,34 @@ typedef struct linkcb_ linkcb;
 
 struct st_
 {
-	struct st_ *stprev;
-	struct st_ *stnext;
-	int state;
-	linkcb *dot;
-	long step;
-	long stop;
-	linkcb *view;
-	linkcb *store;
+    struct st_ *stprev;
+    struct st_ *stnext;
+    int state;
+    linkcb *dot;
+    long step;
+    long stop;
+    linkcb *view;
+    linkcb *store;
 };
 typedef struct st_ st;
 
 struct refal_
 {
-	st *crprev;
-	st *crnext;
-	int upshot;
-	linkcb *preva;
-	linkcb *nexta;
-	linkcb *prevr;
-	linkcb *nextr;
-	st *currst;
-	linkcb *flhead;
-	linkcb *svar;
-	linkcb *dvar;
-	int stmnmb;
-	int nostm;
-	int tmmode;
-	long tmintv;
+    st *crprev;
+    st *crnext;
+    int upshot;
+    linkcb *preva;
+    linkcb *nexta;
+    linkcb *prevr;
+    linkcb *nextr;
+    st *currst;
+    linkcb *flhead;
+    linkcb *svar;
+    linkcb *dvar;
+    int stmnmb;
+    int nostm;
+    int tmmode;
+    long tmintv;
 };
 typedef struct refal_ REFAL;
 
@@ -88,10 +87,8 @@ typedef struct refal_ REFAL;
 #define FALSE 0
 
 /*---------- I B M - P C : -------------*/
-/* #define VIDEO  */ /* BLF */
 /* #define STTIME */
 #define QC /* BLF */
-/* #define turbo	*/
 
 #ifdef QC
 
@@ -106,7 +103,7 @@ typedef struct refal_ REFAL;
 #define Z7 '0', '0', '0',
 
 /* BLF - initial version for IBM PC,
-	give error in alignment C-function entry */
+    give error in alignment C-function entry */
 /*
 #define Z_0 1
 #define Z2 '0',
@@ -135,7 +132,7 @@ typedef struct refal_ REFAL;
 
 typedef struct __ptr__
 {
-	char *_ptr_;
+    char *_ptr_;
 } POINT;
 
 #define LBLL sizeof(POINT)
