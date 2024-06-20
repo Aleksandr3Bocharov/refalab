@@ -4,6 +4,7 @@
 /*--------------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"
+#include "rfintf.h"
 
 REFAL refal;
 

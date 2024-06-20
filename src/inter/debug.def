@@ -94,7 +94,6 @@ static FILE *wrfile;
 /*==================================*/
 #endif
 
-char *malloc();
 static void init_det_flags();
 static void getpf();
 static void get_arg();

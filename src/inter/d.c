@@ -3,8 +3,10 @@
 /*     Last edition date : 19.06.2024       */
 /*------------------------------------------*/
 #include <stdio.h>
+#include <stdlib.h>
 #include "refal.def"
 #include "debug.def"
+#include "rfintf.h"
 
 extern REFAL refal;
 
