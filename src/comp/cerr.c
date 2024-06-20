@@ -14,7 +14,7 @@ extern char ESTSOO, ERRO[], BUFF[], MESS[];
 
 extern FILE *sysprint, *systerm;
 
-void pchosh(char *s)
+extern void pchosh(char *s)
 {
     char tmp[255];
     oshibka();
@@ -32,7 +32,7 @@ void pchosh(char *s)
     fputs(tmp, systerm);
 }
 
-void pchosi(char *s, char *t)
+static void pchosi(char *s, char *t)
 {
     char tmp[255];
     oshibka();
@@ -50,7 +50,7 @@ void pchosi(char *s, char *t)
     fputs(tmp, systerm);
 }
 
-void pchosj(char *s, char *sid, int lsid, char *s1)
+extern void pchosj(char *s, char *sid, int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
@@ -73,7 +73,7 @@ void pchosj(char *s, char *sid, int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-void pchosx(char *s, char *sid, int lsid, char *s1)
+extern void pchosx(char *s, char *sid, int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
@@ -96,7 +96,7 @@ void pchosx(char *s, char *sid, int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-void pchosa(char *s, char c)
+extern void pchosa(char *s, char c)
 {
     char tmp[255];
     oshibka();
@@ -114,7 +114,7 @@ void pchosa(char *s, char c)
     fputs(tmp, systerm);
 }
 
-void pchose(char *s, char *t, int lt)
+static void pchose(char *s, char *t, int lt)
 {
     char tmp[255];
     char tmp1[255];

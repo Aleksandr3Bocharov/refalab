@@ -60,13 +60,13 @@ extern struct
 
 static struct u *korenj = NULL; /* tree koren */
 
-void uns_sto()
+extern void uns_sto()
 {
     printf("\nNo memory for identifier table");
     exit(1);
 }
 
-T_U *nov_uzel(char *idp, int lid)
+static T_U *nov_uzel(char *idp, int lid)
 {
     int m;
     T_U *p;
@@ -99,7 +99,7 @@ T_U *nov_uzel(char *idp, int lid)
     return p;
 }
 
-struct u *lookup(char *idp, int lid)
+extern struct u *lookup(char *idp, int lid)
 /* lid identifier length */
 {
     struct refw *r1, *q1;
@@ -292,7 +292,7 @@ static void traverse(struct u *ptr, void (*prog)(struct u *))
     return;
 }
 
-void through(void (*prog)(struct u *))
+extern void through(void (*prog)(struct u *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);
@@ -331,7 +331,7 @@ static void kil_tree(struct u *p)
     return;
 }
 
-void luterm()
+extern void luterm()
 {
     if (korenj != NULL)
     {

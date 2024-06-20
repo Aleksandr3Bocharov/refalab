@@ -115,9 +115,9 @@ extern short kol_per;    /* subprogram of search in variable table */
 extern short nh_x, nh_y; /* hole numbers (under enter in brackets)  */
 extern short lrbxy;      /* stoped bracket flag */
 
-int ortgn(short n1, short n2);
+static int ortgn(short n1, short n2);
 
-void isk_v()
+extern void isk_v()
 {
     for (i = 1; i <= kol_per; i++)
         if (v[i].ci == scn_e.ci_)
@@ -131,7 +131,7 @@ void isk_v()
 }
 
 /*   generation of stoped brackets and setting boards   */
-void gen_bsb()
+extern void gen_bsb()
 {
     switch (lrbxy)
     {
@@ -172,18 +172,18 @@ GEN_SB:
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
 }
 
-void pch303()
+extern void pch303()
 {
     pchosa("303 differents for variable ", v[i].ci);
 }
 
-void pch406()
+extern void pch406()
 {
     pchosa("406 in left part missing variable ", v[i].ci);
 }
 
 /*    attempt to extract left support group     */
-int lsg_p()
+extern int lsg_p()
 {
 LSG_:
     n++;
@@ -226,7 +226,7 @@ GEN_LE:
 }
 
 /*        attempt to extract right support group     */
-int rsg_p()
+extern int rsg_p()
 {
 RSG_:
     n--;
@@ -271,7 +271,7 @@ GEN_RE:
 
 /*    check ortogonality of this sentence against left part */
 
-int ortgn(short n1, short n2)
+static int ortgn(short n1, short n2)
 {
     short n;
     short i;
@@ -323,7 +323,7 @@ ORT3E:
     return res;
 }
 
-void gpev(char op1, char op2)
+extern void gpev(char op1, char op2)
 {
     if (not_nil)
         jbyte(op2);

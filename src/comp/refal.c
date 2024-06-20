@@ -46,20 +46,20 @@ struct linkt
     } infoo;
 };
 
-void lblkey(int pr);
-void pch130();
-void blout();
-void trprev();
-void ilm(void (*prog)(char *, int, char *, int));
-void il(void (*prog)(char *, int));
-void equ();
-void pchzkl();
-void pchk();
-void gsp(char n);
-int specif(char tail);
-int get_id(char id[], int *lid);
-int get_idm(char id[8], int *lid);
-int get_csmb(struct linkt *code, char id[40], int *lid);
+static void lblkey(int pr);
+static void pch130();
+static void blout();
+static void trprev();
+static void ilm(void (*prog)(char *, int, char *, int));
+static void il(void (*prog)(char *, int));
+static void equ();
+static void pchzkl();
+static void pchk();
+static void gsp(char n);
+static int specif(char tail);
+static int get_id(char id[], int *lid);
+static int get_idm(char id[8], int *lid);
+static int get_csmb(struct linkt *code, char id[40], int *lid);
 
 struct
 {
@@ -547,7 +547,7 @@ END_OF_SYSIN:
     return 0;
 } /* main program  end  */
 
-void trprev()
+static void trprev()
 { /* perenos poslednej pustoj metki w tekuschuju */
     int n;
     n = strlen(prevlb);
@@ -561,7 +561,7 @@ void trprev()
     prevlb[0] = '\0';
 }
 
-void rdline(char *s)
+static void rdline(char *s)
 { /* read 80 symbols from sysin */
     int i, j, k, c;
     empcard = 1;
@@ -588,7 +588,7 @@ void rdline(char *s)
         *(s + i) = ' ';
 }
 
-void translate(char *str, char *class1)
+static void translate(char *str, char *class1)
 { /* L,D,* - classification procedure */
     int i, j;
     for (i = 0; i < 72; ++i)
@@ -620,7 +620,7 @@ void translate(char *str, char *class1)
     }
 }
 
-int komm()
+static int komm()
 {
     char *k;
     for (k = c; (*k == ' ') || (*k == '\t'); k++)
@@ -631,7 +631,7 @@ int komm()
         return 0;
 }
 
-void rdcard()
+static void rdcard()
 { /* read card procedure */
 RDCARD1:
     rdline(card);
@@ -668,7 +668,7 @@ RDCARD1:
 }
 
 /*    directive label and keyword extraction    */
-void lblkey(int pr)
+static void lblkey(int pr)
 {
     register int i;
     short l, delta, fixm1;
@@ -722,7 +722,7 @@ LKEXIT:
     left_part = 1;
 }
 
-void scan()
+extern void scan()
 {
     static char id[40];
     static int id_leng;
@@ -1034,13 +1034,13 @@ SCNRET:;
     return;
 }
 
-void gsp(char n)
+static void gsp(char n)
 {
     if (left_part == 1)
         jbyte(n);
 }
 
-int specif(char tail)
+static int specif(char tail)
 { /* specifier compiler */
     int neg;
     char id[255];
@@ -1316,7 +1316,7 @@ OSH208:
     goto OSH200;
 }
 
-void pchk()
+static void pchk()
 { /* writing of card into sysprint */
     int i;
     char tmpstr[80];
@@ -1339,7 +1339,7 @@ void pchk()
     }
 }
 
-void pchk_t()
+static void pchk_t()
 { /* card writing into systerm */
     char tmpstr[80];
     if (flags.uzhekrt_t == 0)
@@ -1354,7 +1354,7 @@ void pchk_t()
     }
 }
 
-void il(void (*prog)(char *, int)) /* treatment of directives having 'EMPTY' type */
+static void il(void (*prog)(char *, int)) /* treatment of directives having 'EMPTY' type */
 {
     char id[40];
     int lid;
@@ -1377,7 +1377,7 @@ IL2:
     pch130();
 }
 
-void ilm(void (*prog)(char *, int, char *, int)) /* treatment of directives having 'ENTRY' type*/
+static void ilm(void (*prog)(char *, int, char *, int)) /* treatment of directives having 'ENTRY' type*/
 {
     char id[40], ide[8];
     int lid, lide;
@@ -1415,7 +1415,7 @@ ILM2:
     pch130();
 }
 
-void equ()
+static void equ()
 { /* treatement of directives having 'EQU' type */
     char id[40];
     int lid;
@@ -1429,12 +1429,12 @@ EQU1:
     pch130();
 }
 
-void pch130()
+static void pch130()
 {
     pchosh("130 invalid record format");
 }
 
-int get_csmb(struct linkt *code, char id[40], int *lid) /* procedure read multiple symbol */
+static int get_csmb(struct linkt *code, char id[40], int *lid) /* procedure read multiple symbol */
 {
     long k;
     long l;
@@ -1481,7 +1481,7 @@ OSH113:
     return 0;
 }
 
-char convert(char cm)
+static char convert(char cm)
 {
     int j;
     j = (int)cm;
@@ -1494,7 +1494,7 @@ char convert(char cm)
     return cm;
 }
 
-int get_id(char id[], int *lid)
+static int get_id(char id[], int *lid)
 { /* read identifier */
     int i;
     for (i = 0; i < 40; id[i++] = ' ')
@@ -1519,7 +1519,7 @@ ID0:
 }
 
 /*read external identifier */
-int get_idm(char id[8], int *lid)
+static int get_idm(char id[8], int *lid)
 {
     if (class[m] != 'L')
         return 0;
@@ -1545,7 +1545,7 @@ int get_idm(char id[8], int *lid)
 /*       before call: (m = 71) !! (m != 71)                 */
 /*  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' ')) */
 /************************************************************/
-void blout()
+static void blout()
 {
 BLOUT1:
     while ((m != 71) && (c[m] == ' '))
@@ -1559,7 +1559,7 @@ BLOUT1:
     }
 }
 
-void pchzkl()
+static void pchzkl()
 { /* print conclusion */
     char pr_line[180];
     sprintf(pr_line,
@@ -1582,7 +1582,7 @@ void pchzkl()
 #endif
 }
 
-void oshibka()
+extern void oshibka()
 {
     pchk();
     pchk_t();

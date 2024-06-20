@@ -202,10 +202,10 @@ short lrbxy;      /* stoped bracket flag */
 #define n_eossn '\120'
 #define n_setnos '\121'
 
-void cst(int dir, char *lbl, int lblleng)
-/* int dir;     matching feature :left to right or otherwise */
-/* char *lbl;   sentence label */
-/* int lblleng; sentence label length */
+extern void cst(int dir, char *lbl, int lblleng)
+/* dir;     matching feature :left to right or otherwise */
+/* lbl;   sentence label */
+/* lblleng; sentence label length */
 {
     kol_per = 0;
     n = 0;

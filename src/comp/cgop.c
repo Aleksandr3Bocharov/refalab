@@ -23,26 +23,26 @@ struct _TAG
     char b2;
 };
 
-void gopn(char k, char n)
+extern void gopn(char k, char n)
 {
     jbyte(k);
     jbyte(n);
 }
 
-void gopnm(char k, char n, char m)
+extern void gopnm(char k, char n, char m)
 {
     jbyte(k);
     jbyte(n);
     jbyte(m);
 }
 
-void gopl(char k, char *l)
+extern void gopl(char k, char *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
 }
 
-void gsymbol(struct linkti *code)
+extern void gsymbol(struct linkti *code)
 {
     struct _TAG *q;
     char *r;
@@ -69,13 +69,13 @@ void gsymbol(struct linkti *code)
             jbyte(*(r + i));
 }
 
-void gops(char k, struct linkti *code)
+extern void gops(char k, struct linkti *code)
 {
     jbyte(k);
     gsymbol(code);
 }
 
-void ghw(short h)
+extern void ghw(short h)
 {
     struct _TAG *po;
     po = (struct _TAG *)&h; /*  eg */

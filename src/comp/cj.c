@@ -211,13 +211,13 @@ static void osher2()
     return;
 }
 
-void oshex()
+static void oshex()
 {
     fputs("\nOSHEX: no memory!!!", stdout);
     exit(1);
 }
 
-void sfop_w(char *s, BU *b)
+extern void sfop_w(char *s, BU *b)
 {
     unsigned int un = 0;
     long int lon;
@@ -277,7 +277,7 @@ void sfop_w(char *s, BU *b)
     b->fil = NULL;
 }
 
-void sfop_r(BU *b)
+static void sfop_r(BU *b)
 {
     if (b->fil != NULL)
     {
@@ -295,7 +295,7 @@ void sfop_r(BU *b)
     b->tek = 0;
 }
 
-void sfcl(BU *b)
+static void sfcl(BU *b)
 {
     if (b->fil != NULL)
     {
@@ -308,7 +308,7 @@ void sfcl(BU *b)
     }
 }
 
-void sfclr(BU *b)
+static void sfclr(BU *b)
 {
     if (b->fil != NULL)
         unlink(b->nam);
@@ -322,7 +322,7 @@ void sfclr(BU *b)
     b->buf = NULL;
 }
 
-void sfclose(BU *b)
+extern void sfclose(BU *b)
 {
     if (b->fil == NULL)
     {
@@ -348,7 +348,7 @@ void sfclose(BU *b)
     b->buf = NULL;
 }
 
-void sfwr2()
+static void sfwr2()
 {
     unsigned int ost;
     while (TRUE)
@@ -377,7 +377,7 @@ void sfwr2()
     } /*while*/
 } /*sfwr2*/
 
-void sfwr(char *c, unsigned int n, BU *b)
+static void sfwr(char *c, unsigned int n, BU *b)
 {
     unsigned int ost;
     while (TRUE)
@@ -409,7 +409,7 @@ void sfwr(char *c, unsigned int n, BU *b)
     } /*while*/
 } /*sfwr*/
 
-void sfrd1(char *c, unsigned int n)
+static void sfrd1(char *c, unsigned int n)
 {
     unsigned int ost;
     while (TRUE)
@@ -432,7 +432,7 @@ void sfrd1(char *c, unsigned int n)
     } /*while*/
 } /*sfrd1*/
 
-void sfrd2()
+static void sfrd2()
 {
     unsigned int ost;
     while (TRUE)
@@ -453,7 +453,7 @@ void sfrd2()
     } /*while*/
 } /*sfrd2*/
 
-void sfobmen(int n)
+static void sfobmen(int n)
 {
     unsigned int ost1, ost2;
     while (TRUE)
@@ -513,7 +513,7 @@ void sfobmen(int n)
     } /*while*/
 } /*sfomen*/
 
-void jstart(char *ee, int ll)
+extern void jstart(char *ee, int ll)
 {
     delta = 0; /* kras */
     strncpy(mod_name, ee, ll);
@@ -538,7 +538,7 @@ void jstart(char *ee, int ll)
     n_ext = 1;
 } /*jstart*/
 
-unsigned int jwhere()
+extern unsigned int jwhere()
 {
     if (curr_addr > 65535)
     {
@@ -548,7 +548,7 @@ unsigned int jwhere()
     return curr_addr;
 }
 
-void jbyte(char bb)
+extern void jbyte(char bb)
 {
     /* sfwr(&bb,1,&sysut1);   */
     if (sysut1.tek != sysut1.len)
@@ -578,7 +578,7 @@ void jbyte(char bb)
     curr_addr++;
 } /*jbyte*/
 
-void j3addr(T_U *pp)
+extern void j3addr(T_U *pp)
 {
     rl.point = pp;
     rl.delta = delta;
@@ -587,7 +587,7 @@ void j3addr(T_U *pp)
     curr_addr += 4;
 }
 
-void jentry(struct u *pp, char *ee, int ll)
+extern void jentry(struct u *pp, char *ee, int ll)
 /* ee label  */
 {
     /* label length  */
@@ -617,7 +617,7 @@ void jentry(struct u *pp, char *ee, int ll)
     pp->mode |= '\040';
 } /*jentry*/
 
-void jextrn(struct u *pp, char *ee, int ll)
+extern void jextrn(struct u *pp, char *ee, int ll)
 /* ee label  */
 {
     /*  label length  */
@@ -643,13 +643,13 @@ void jextrn(struct u *pp, char *ee, int ll)
     pp->info.infon = n_ext;
 } /*jextrn*/
 
-void jlabel(struct u *pp)
+extern void jlabel(struct u *pp)
 {
     pp->mode |= '\120';
     pp->info.infon = curr_addr;
 }
 
-void jequ(struct u *pp, struct u *qq)
+extern void jequ(struct u *pp, struct u *qq)
 {
     pp->info.infop = qq;
     pp->mode |= '\320';
@@ -667,7 +667,7 @@ static void zakon()
         mod_length = 65536L + mod_length;
 } /*zakon*/
 
-void jend()
+extern void jend()
 {
     struct u *p, *pp;
     char bufs[81];
@@ -1105,7 +1105,7 @@ static void golowa(int len, int typ)
     ksum();
 }
 
-void jendo()
+extern void jendo()
 {
     struct u *p, *pp;
     T_EXT *qxn, *qxk;

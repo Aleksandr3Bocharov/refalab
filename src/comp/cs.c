@@ -84,8 +84,8 @@ static struct i_lbl *pfail = NULL;    /* statememt FAIL label */
 static struct i_lbl *next_stm = NULL; /* next statement label */
 static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
-void func_end();
-void fnhead(char *idp, int lid);
+static void func_end();
+static void fnhead(char *idp, int lid);
 
 static void p504(char *idp, int lid)
 {
@@ -105,7 +105,7 @@ static void p500()
     return; /* eg */
 }
 
-struct i_lbl *alloc_lbl()
+static struct i_lbl *alloc_lbl()
 {
     struct arr_lbl *q;
     struct i_lbl *p;
@@ -130,14 +130,14 @@ struct i_lbl *alloc_lbl()
     return p;
 }
 
-struct i_lbl *genlbl()
+extern struct i_lbl *genlbl()
 {
     struct i_lbl *p;
     p = alloc_lbl();
     return p;
 }
 
-void fndef(char *idp, int lid)
+extern void fndef(char *idp, int lid)
 {
     struct u *p;
     if (lid != 0)
@@ -174,7 +174,7 @@ void fndef(char *idp, int lid)
     return; /*  eg */
 }
 
-void func_end()
+static void func_end()
 {
     if (next_stm != NULL)
     {
@@ -196,7 +196,7 @@ void func_end()
     return;
 }
 
-void sempty(char *idp, int lid)
+extern void sempty(char *idp, int lid)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -213,7 +213,7 @@ void sempty(char *idp, int lid)
     return;
 }
 
-void sswap(char *idp, int lid)
+extern void sswap(char *idp, int lid)
 {
     struct u *p;
     int l0, j0, k0, kk;
@@ -245,7 +245,7 @@ void sswap(char *idp, int lid)
     return;
 }
 
-void sentry(char *idp, int lidp, char *ide, int lide)
+extern void sentry(char *idp, int lidp, char *ide, int lide)
 {
     struct u *p;
     p = lookup(idp, lidp);
@@ -253,7 +253,7 @@ void sentry(char *idp, int lidp, char *ide, int lide)
     return; /* eg */
 }
 
-void sextrn(char *idp, int lidp, char *ide, int lide)
+extern void sextrn(char *idp, int lidp, char *ide, int lide)
 /* idp internal name */
 /* ide external name */
 {
@@ -270,7 +270,7 @@ void sextrn(char *idp, int lidp, char *ide, int lide)
     return; /*  eg */
 }
 
-struct u *fnref(char *idp, int lid)
+extern struct u *fnref(char *idp, int lid)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -278,7 +278,7 @@ struct u *fnref(char *idp, int lid)
     return (p);
 }
 
-struct u *spref(char *idp, int lid, char d)
+extern struct u *spref(char *idp, int lid, char d)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -288,7 +288,7 @@ struct u *spref(char *idp, int lid, char d)
     return (p);
 }
 
-void spdef(char *idp, int lid)
+extern void spdef(char *idp, int lid)
 {
     struct u *p;
     if (lid == 0)
@@ -308,7 +308,7 @@ void spdef(char *idp, int lid)
     return; /*  eg */
 }
 
-void sequ(char *id1, int lid1, char *id0, int lid0)
+extern void sequ(char *id1, int lid1, char *id0, int lid0)
 {
     struct u *p0, *p1;
     p0 = lookup(id0, lid0);
@@ -337,7 +337,7 @@ void sequ(char *id1, int lid1, char *id0, int lid0)
     return; /* eg */
 }
 
-void fnhead(char *idp, int lid)
+static void fnhead(char *idp, int lid)
 {
     char *idpm;
     int k0, l0, ll;
@@ -364,7 +364,7 @@ void fnhead(char *idp, int lid)
     return; /* eg */
 }
 
-void check_id(struct u *pp) /* check identifier attributes on confirmness */
+static void check_id(struct u *pp) /* check identifier attributes on confirmness */
 {
     struct u *q;
     q = pp;
@@ -382,12 +382,13 @@ void check_id(struct u *pp) /* check identifier attributes on confirmness */
         pchosx("502 label", pp->id, pp->l, " boht specifier and function");
 }
 
-void s_end()
+extern void s_end()
 {
     func_end();
     through(check_id);
 }
-void s_init()
+
+extern void s_init()
 { /* module initiation  */
     first_arr_lbl = NULL;
     n_lbl = 15;
@@ -396,7 +397,7 @@ void s_init()
     return; /* eg */
 }
 
-void s_term()
+extern void s_term()
 { /* module termination */
     struct arr_lbl *p, *p1;
     p = first_arr_lbl;
