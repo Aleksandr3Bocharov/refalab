@@ -72,6 +72,9 @@ static T_U *nov_uzel(char *idp, int lid)
     T_U *p;
     char *q;
     p = (T_U *)calloc(1, sizeof(T_U));
+#ifdef mdebug
+    printf("\ncalloc(clu-nov_uzel): p=%lx l=%d t=%o", p, p->l, p->type);
+#endif
     if (p == NULL)
         uns_sto();
     p->i = p->j = NULL;
@@ -85,6 +88,9 @@ static T_U *nov_uzel(char *idp, int lid)
     p->ref.numb[0] = scn_.nomkar;
     p->def = 0;
     q = calloc(1, lid);
+#ifdef mdebug
+    printf("\ncalloc(clu-id): q=%lx l=%d", q, lid);
+#endif
     if (q == NULL)
         uns_sto();
     p->id = q;
@@ -132,6 +138,9 @@ SHAG: /* search step */
                 else
                 { /* create new item */
                     r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
+#ifdef mdebug
+                    printf("\ncalloc(clu-lookup): r1=%lx", r1);
+#endif
                     if (r1 == NULL)
                         uns_sto();
                     (*p).last_ref = (*q1).next = r1;
@@ -304,12 +313,19 @@ static void kil_tree(struct u *p)
         while (r2 != NULL)
         {
             r1 = (*r2).next;
+#ifdef mdebug
+            printf("\nfree(clu): r2=%lx", r2);
+#endif
             free(r2);
             r2 = r1;
         }
         r = (*q).j;
         free(q->id);
         free(q);
+#ifdef mdebug
+        printf("\nfree(clu):id=%lx", q->id);
+        printf("\n           q=%lx", q);
+#endif
         q = r;
     } while (q != NULL);
     return;

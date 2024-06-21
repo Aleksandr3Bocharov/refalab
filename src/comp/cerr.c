@@ -7,12 +7,25 @@
 #include "cerr.h"
 #include "refal.h"
 
+#ifdef turbo
+extern int ISTEK, IERRO;
+extern char ESTSOO, ERRO[], BUFF[], MESS[];
+#endif
+
 extern FILE *sysprint, *systerm;
 
 extern void pchosh(char *s)
 {
     char tmp[255];
     oshibka();
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s", s);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s\n", s);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -23,6 +36,14 @@ static void pchosi(char *s, char *t)
 {
     char tmp[255];
     oshibka();
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s %s", s, t);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s %s\n", s, t);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -38,6 +59,14 @@ extern void pchosj(char *s, char *sid, int lsid, char *s1)
     for (i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s %s %s", s, tmp1, s1);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s %s %s\n", s, tmp1, s1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -53,6 +82,14 @@ extern void pchosx(char *s, char *sid, int lsid, char *s1)
     for (i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s %s %s", s, tmp1, s1);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s %s %s\n", s, tmp1, s1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -63,6 +100,14 @@ extern void pchosa(char *s, char c)
 {
     char tmp[255];
     oshibka();
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s %c", s, c);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s %c\n", s, c);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -78,6 +123,14 @@ static void pchose(char *s, char *t, int lt)
     for (i = 0; i < lt; i++)
         tmp1[i] = *(t + i);
     tmp1[lt] = '\0';
+#ifdef turbo
+    if (ESTSOO == 0)
+    {
+        sprintf(ERRO, "  %s %s", s, tmp1);
+        IERRO = ISTEK - 2;
+        ESTSOO = 1;
+    }
+#endif
     sprintf(tmp, "***** %s %s\n", s, tmp1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);

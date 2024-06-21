@@ -222,9 +222,17 @@ extern void sfop_w(char *s, BU *b)
     unsigned int un = 0;
     long int lon;
     if (b->nam != NULL)
+    {
         free(b->nam);
+#ifdef mdebug
+        printf("\nfree(cj) b->nam=%lx", b->nam);
+#endif
+    }
     if ((b->nam = (char *)malloc(strlen(s) + 1)) == NULL)
         oshex();
+#ifdef mdebug
+    printf("\nmalloc(cj): b->nam=%lx", b->nam);
+#endif
     strcpy(b->nam, s);
     if (b->buf == NULL)
     {
@@ -245,7 +253,12 @@ extern void sfop_w(char *s, BU *b)
         while (TRUE)
         {
             if ((b->buf = (char *)malloc(un)) != NULL)
+            {
+#ifdef mdebug
+                printf("\nmalloc(cj): b->buf=%lx un=%u", b->buf, un);
+#endif
                 break;
+            }
             else
             {
                 lon = un;
@@ -301,6 +314,10 @@ static void sfclr(BU *b)
         unlink(b->nam);
     free(b->nam);
     free(b->buf);
+#ifdef mdebug
+    printf("\nfree(sfclr) b->nam(c 0)=%lx", b->nam);
+    printf("\n            b->buf(c 0)=%lx", b->buf);
+#endif
     b->nam = NULL;
     b->buf = NULL;
 }
@@ -323,6 +340,10 @@ extern void sfclose(BU *b)
     fclose(b->fil);
     free(b->nam);
     free(b->buf);
+#ifdef mdebug
+    printf("\nfree(sfclose) b->nam(c 0)=%lx", b->nam);
+    printf("\n              b->buf(c 0)=%lx", b->buf);
+#endif
     b->nam = NULL;
     b->buf = NULL;
 }
@@ -501,10 +522,16 @@ extern void jstart(char *ee, int ll)
     sfop_w("sysut2.rf", &sysut2);
     if ((first_ent = (T_ENT *)malloc(sizeof(T_ENT))) == NULL)
         oshex();
+#ifdef mdebug
+    printf("\nmalloc(cj): first_ent=%lx", first_ent);
+#endif
     last_ent = first_ent;
     first_ent->next = NULL;
     if ((first_ext = (T_EXT *)malloc(sizeof(T_EXT))) == NULL)
         oshex();
+#ifdef mdebug
+    printf("\nmalloc(cj): first_ext=%lx", first_ext);
+#endif
     last_ext = first_ext;
     first_ext->next = NULL;
     curr_addr = 0;
@@ -578,6 +605,9 @@ extern void jentry(struct u *pp, char *ee, int ll)
     }
     if ((r = (T_ENT *)malloc(sizeof(T_ENT))) == NULL)
         oshex();
+#ifdef mdebug
+    printf("\nmalloc(cj): r(ent)=%lx", r);
+#endif
     last_ent->next = r;
     last_ent = r;
     r->p = pp;
@@ -593,6 +623,9 @@ extern void jextrn(struct u *pp, char *ee, int ll)
     /*  label length  */
     if ((rx = (T_EXT *)malloc(sizeof(T_EXT))) == NULL)
         oshex();
+#ifdef mdebug
+    printf("\nmalloc(cj): rx(ext)=%lx", rx);
+#endif
     last_ext->next = rx;
     last_ext = rx;
     rx->p = pp;
@@ -715,6 +748,7 @@ GEN_TXT:
 #else
             fputs("\t.byte\t", syslin);
 #endif
+
         }
         sprintf(bufs, "%d", d.w);
         fputs(bufs, syslin);
@@ -819,10 +853,10 @@ GEN_TXT:
 
     /* end text generating */
 
-    /* BLF
-    fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    fputs ("\tends\n",syslin);
-    */
+/* BLF
+fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+fputs ("\tends\n",syslin);
+*/
 
     /*   external label generating    */
 
@@ -840,11 +874,11 @@ GEN_TXT:
 #else
         fputs("\t.extern\t", syslin); /* BLF */
 #endif
-#else        /* Windows */
+#else          /* Windows */
 /* BLF */
 #ifndef FASM /* then GNU format */
         fputs("\t.extern\t_", syslin); /* BLF */
-#else        /* fasm format */
+#else          /* fasm format */
         fputs("\textrn\t_", syslin); /* BLF */
 #endif
 #endif
@@ -938,6 +972,9 @@ JTERM:
     {
         r = q->next;
         free(q);
+#ifdef mdebug
+        printf("\nfree(cj) q=%lx", q);
+#endif
         q = r;
     }
     qx = first_ext;
@@ -945,6 +982,9 @@ JTERM:
     {
         rx = qx->next;
         free(qx);
+#ifdef mdebug
+        printf("\nfree(cj) qx=%lx", qx);
+#endif
         qx = rx;
     }
 } /*jend*/
@@ -1305,6 +1345,9 @@ JTERM:
     {
         r = q->next;
         free(q);
+#ifdef mdebug
+        printf("\nfree(cj) q=%lx", q);
+#endif
         q = r;
     }
     qx = first_ext;
@@ -1312,6 +1355,9 @@ JTERM:
     {
         rx = qx->next;
         free(qx);
+#ifdef mdebug
+        printf("\nfree(cj) qx=%lx", qx);
+#endif
         qx = rx;
     }
 }
