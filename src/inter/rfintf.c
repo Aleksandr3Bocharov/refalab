@@ -45,6 +45,9 @@ extern int lincrm()
         }
     }
     new_block = malloc(1001 * sizeof(linkcb)); /* kras 06.12.88 */
+#ifdef mdebug
+    printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
+#endif
     if (new_block == NULL)
         return FALSE;
     new_block->prev = last_block;
@@ -211,6 +214,9 @@ extern void rftermm()
         new_block = last_block;
         last_block = new_block->prev;
         free(new_block);
+#ifdef mdebug
+        printf("\nLincrm: free new_block=%lx", new_block);
+#endif
     }
 }
 

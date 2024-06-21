@@ -27,6 +27,35 @@ extern void rfdbg(st *s_st)
 {
     /* read task for debugging */
     init_det_flags();
+#ifdef VIDEO
+    /*----------------------------------*/
+    dfile = fopen("refal.cfg", "r");
+    video_page = 1;
+    init_WND(0);
+
+    def_window(TITUL, 0, 0, 0, 30, 25, 0, 55, 2, B_GREEN, SWAPABLE);
+    set_color(RED);
+    draw_frame(0, 0, 30, 2, RED, DOUBLE);
+    set_position(3, 1);
+    wprintf(" REFAL Debugger (v. 1.0)");
+
+    def_window(MESSAGE, 0, 0, 79, 2, 0, 21, 79, 23, B_BLACK, SWAPABLE);
+    set_color(GREEN);
+    draw_frame(0, 0, 79, 2, GREEN, DOUBLE);
+    set_position(36, 0);
+    wprintf(" Message ");
+    set_margins(1, 1, 78, 1);
+    set_position(1, 1);
+
+    if (dfile != NULL)
+        rd_deb_file();
+    parm_menue();
+    if (modif == '+')
+        wr_deb_file();
+    set_video_page(0);
+    set_cursor_size(6, 7);
+/*==================================*/
+#else
     /*----------------------------------*/
     printf("\n ***** REFAL debugger ***** \n");
 
@@ -183,6 +212,7 @@ R4:
     if (!s_upto && s_from)
         s_upto = 0x7FFFFFFFL;
 /*==================================*/
+#endif
     /*  initialization  */
     dba = dbapp;
     printed_step = 0;
@@ -191,6 +221,26 @@ R4:
     res_prevk = res_nextd = NULL;
     /* station "not yet" */
 NOT_YET:
+#ifdef VIDEO
+    /*----------------------------------*/
+    if (kbhit())
+    {
+        c2 = d_get_key();
+        /*      printf("\nNot_Yet: c2=%d",c2); */
+        if (c2 != 19)
+        { /* ^S */
+            set_video_page(1);
+            set_cursor_size(32, 32);
+            modif = '-';
+            parm_menue();
+            if (modif == '+')
+                wr_deb_file();
+            set_video_page(0);
+            set_cursor_size(6, 7);
+        }
+    }
+/*==================================*/
+#endif
     if (s_st->dot == NULL)
         goto DONE;
     if (s_stop < s_st->step)
@@ -227,6 +277,26 @@ NOT_YET:
     }
     /* "is already" station  */
 ALREADY:
+#ifdef VIDEO
+    /*----------------------------------*/
+    if (kbhit())
+    {
+        c2 = d_get_key(); /* get symb */
+        /*printf("\nAlready: c2=%d",c2);*/
+        if (c2 != 19)
+        { /* ^S */
+            set_video_page(1);
+            set_cursor_size(32, 32);
+            modif = '-';
+            parm_menue();
+            if (modif == '+')
+                wr_deb_file();
+            set_video_page(0);
+            set_cursor_size(6, 7);
+        }
+    }
+/*==================================*/
+#endif
     if ((det_table->le) || (det_table->lt))
     {
         /*  "isn't already" */
@@ -352,6 +422,25 @@ static void dbapp(st *ss_st)
     v6 = res_prevk;
     v7 = res_nextd;
 NOT_YET:
+#ifdef VIDEO
+    /*----------------------------------*/
+    if (kbhit())
+    {
+        c2 = d_get_key();
+        if (c2 != 19)
+        { /* ^S */
+            set_video_page(1);
+            set_cursor_size(32, 32);
+            modif = '-';
+            parm_menue();
+            if (modif == '+')
+                wr_deb_file();
+            set_video_page(0);
+            set_cursor_size(6, 7);
+        }
+    }
+/*==================================*/
+#endif
     if (ss_st->dot == NULL)
         goto DO;
     if (s_stop < ss_st->step)
@@ -388,6 +477,26 @@ NOT_YET:
     }
     /* "is already" station  */
 ALREADY:
+#ifdef VIDEO
+    /*----------------------------------*/
+    if (kbhit())
+    {
+        c2 = d_get_key(); /* get symb */
+        /*printf("\nAlready: c2=%d",c2);*/
+        if (c2 != 19)
+        { /* ^S */
+            set_video_page(1);
+            set_cursor_size(32, 32);
+            modif = '-';
+            parm_menue();
+            if (modif == '+')
+                wr_deb_file();
+            set_video_page(0);
+            set_cursor_size(6, 7);
+        }
+    }
+/*==================================*/
+#endif
     if ((det_table->le) || (det_table->lt))
     {
         /*  "isn't already" */
@@ -648,6 +757,646 @@ SEARCH:
         det_table = &dummy_det_table;
     return;
 }
+/* video-procedures */
+#ifdef VIDEO
+/*----------------------------------*/
+
+static w_desc w0 = {DEF_PARM, 0, 0, 30, 14, 25, 3, 55, 17, B_BLUE,
+                    ERASABLE, " Enter - select parameters ", 0, NULL};
+static alt_list mf1_alt = {12, word, NULL};
+static menu_field mf1 = {f_VERTICAL, (mult_list *)&mf1_alt, 4, 1, 16, 12,
+                         B_BLUE, LIGHT_GREY, 12, 12, 0, 0, 3};
+static elem_schem el1 = {&mf1, NULL, NULL, NULL, NULL};
+static char *pmem = NULL;
+static char *dwmem = NULL;
+
+static besc()
+{
+    set_ret(1);
+    return 0;
+}
+
+static void
+    msg_print(msg) char *msg;
+{
+    set_video_page(1);
+    set_cursor_size(32, 32);
+    set_window(MESSAGE);
+    set_color(RED);
+    set_backgr_color(BL_BLACK);
+    wput(msg, 77);
+}
+
+static void
+    print_numb_parm(n) int n;
+{
+    if (n == 8)
+        sprintf(reply_buf, "%ld", s_stop);
+    if (n == 9)
+        sprintf(reply_buf, "%ld", s_from);
+    if (n == 10)
+        sprintf(reply_buf, "%ld", s_upto);
+    if (n == 11)
+        if (e1empty)
+            strcpy(reply_buf, "y");
+        else
+            strcpy(reply_buf, "n");
+    if (n != 0)
+        print_parm(n);
+}
+
+static void print_parm(n) int n;
+{
+    int i;
+    DET_TAB *det_t;
+    int c_color;
+    int w_current = w_curr;
+
+    set_position(9, 13);
+    set_color(RED);
+    wput("Esc - execute", 14);
+    if (n == ALL_PARM)
+    {
+        for (i = 0; i < 12; i++)
+        { /*!!!*/
+            if (i < 8)
+            {
+                reply_buf[0] = '\0';
+                for (det_t = last_det; det_t != NULL; det_t = det_t->det_next)
+                    if (*((char *)(&(det_t->gt)) + i - 1) == 1)
+                    {
+                        strcat(reply_buf, det_t->det_id);
+                        strcat(reply_buf, " ");
+                    }
+                print_parm(i);
+            }
+            else
+                print_numb_parm(i);
+        }
+    }
+    else
+    {
+        c_color = color_curr;
+        set_window(PSEUDO_PARM);
+        set_position(17, 1 + n);
+        wprintf("%13c", ' ');
+        set_position(17, 1 + n);
+        set_color(CYAN);
+        wput(reply_buf, 13);
+        set_color(c_color);
+        set_window(w_current);
+    }
+}
+
+static void
+    wrfabe(text) char *text;
+{
+    int w_current = w_curr;
+    def_window(RFABEND, 0, 0, 40, 4, 20, 11, 60, 14, B_RED, SWAPABLE);
+    draw_frame(0, 0, 40, 3, BLACK, DOUBLE);
+    set_position(14, 0);
+    wputs(" Fatal error ");
+    set_position(1, 1);
+    set_backgr_color(BL_RED);
+    wput(text, 39);
+    set_position(14, 2);
+    wputs("Press any key");
+    d_get_key();
+    remove_window(RFABEND);
+    set_window(w_current);
+}
+
+static void parm_menue()
+{
+    if (pmem == NULL)
+    {
+        if ((pmem = (char *)malloc(62 * 15)) == NULL)
+        {
+            wrfabe("Parm_menue: No memory");
+            set_video_page(0);
+            set_cursor_size(6, 7);
+            exit(8);
+        }
+        el1.p_up = &el1;
+        el1.p_down = &el1;
+    }
+    def_window(PSEUDO_PARM, 0, 0, 30, 14, 25, 3, 55, 17, B_BLUE, PSEUDO);
+    set_window(PSEUDO_PARM);
+    /* save_window ("M:", pmem);  !!! */
+    user_block = rd_deb_screen;
+    man_flags |= USER_EXE;
+    man_flags |= PARTIAL_SUBST;
+    if (dwmem == NULL)
+    {
+        def_w(&w0);
+        set_window(PSEUDO_PARM);
+        print_parm(ALL_PARM);
+    }
+    else
+    {
+        def_window(PSEUDO_PARM1, 0, 0, 30, 14, 25, 3, 55, 17, B_BLUE, PSEUDO);
+        /*restore_window ("M:", dwmem); !!! */
+    }
+    menue(NULL, &el1, &f1);
+    select_item(&mf1, mf1.curr_m_item, f_REVERSE, f_SELECT);
+    /* if (dwmem == NULL) {
+          dwmem = (char *)malloc (62*15);
+          if (dwmem == NULL) {
+             wrfabe("Parm_menue: No memory");
+             set_video_page(0);
+             set_cursor_size(6,7);
+             exit(8);
+          }
+        }
+        save_window ("M:", dwmem);
+    set_window (PSEUDO_PARM);
+    restore_window ("M:", pmem); !!! */
+}
+
+static void
+get_arg()
+{
+    for (l_arg = 0;; l_arg++)
+        if (*(arg + l_arg) == '\n' ||
+            *(arg + l_arg) == '\0' ||
+            *(arg + l_arg) == ',' ||
+            *(arg + l_arg) == ' ')
+            break;
+    for (s_arg = 0; *(arg + l_arg + s_arg) == ' ' ||
+                    *(arg + l_arg + s_arg) == ',';
+         s_arg++)
+        ;
+}
+static int
+get_det()
+{
+    register i;
+    det_table = last_det;
+    while (det_table != NULL)
+    {
+        if (strncmp(det_table->det_id, arg, l_arg) == 0)
+        {
+            if (*(det_table->det_id + l_arg) == '\0')
+                return (1);
+        }
+        det_table = det_table->det_next;
+    }
+    if ((det_table = (DET_TAB *)malloc(sizeof(DET_TAB))) == NULL)
+    {
+    AB:
+        wrfabe("No memory for parameter");
+        return (0);
+    }
+    if ((det_table->det_id = (char *)malloc(l_arg + 1)) == NULL)
+        goto AB;
+    for (i = 0; i < l_arg; i++)
+        *(det_table->det_id + i) = rfcnv(*(arg + i));
+    *(det_table->det_id + l_arg) = '\0';
+    det_table->det_next = last_det;
+    last_det = det_table;
+    det_table->ge = 0;
+    det_table->gt = 0;
+    det_table->eq = 0;
+    det_table->ne = 0;
+    det_table->le = 0;
+    det_table->lt = 0;
+    det_table->tr = 0;
+    return (1);
+}
+static int
+g_numb(buffer, numb)
+char *buffer;
+long *numb;
+{
+    if (sscanf(buffer, "%ld", numb) == 0 || *numb < 0L)
+    {
+        if (buffer == reply_buf)
+            msg_print("\nInvalid number; repeat please. ");
+        return (0);
+    }
+    return (1);
+}
+
+static int
+g_yn(buffer)
+char *buffer;
+{
+    if (*buffer != 'y' && *buffer != 'n')
+    {
+        if (buffer == reply_buf)
+            msg_print("\nAnswer is \"y/n\"; repeat please. ");
+        return (0);
+    }
+    if (*buffer == 'y')
+        e1empty = 1;
+    else
+        e1empty = 0;
+    return (1);
+}
+
+static int
+get_scr_parm(text)
+char *text;
+{
+    int n;
+    DET_TAB *d;
+    def_window(WORK_MES, 0, 0, 79, 2, 0, 18, 79, 20, B_WHITE, SWAPABLE);
+    draw_frame(0, 0, 79, 2, BLACK, SINGLE);
+    n = strlen(text);
+    inf.r_x = n + 2;
+    inf.r_addr = text;
+    if (f_alter < 8)
+    {
+        reply_buf[0] = '\0';
+        for (d = last_det; d != NULL; d = d->det_next)
+            if (*((char *)(&(d->gt)) + f_alter - 1) == 1)
+            {
+                strcat(reply_buf, d->det_id);
+                strcat(reply_buf, " ");
+                *((char *)(&(d->gt)) + f_alter - 1) = 0;
+            }
+    }
+    m_read(&inf, &f1);
+    if (ret_flag > 0)
+    {
+        ret_flag = 0;
+        remove_window(WORK_MES);
+        return (0);
+    }
+    if (f_alter < 8)
+        print_parm(f_alter);
+    remove_window(WORK_MES);
+    return (1);
+}
+
+static int /* read debug task from screen */
+rd_deb_screen()
+{
+    if (f_alter != 0)
+        modif = '+'; /* !!! */
+    switch (f_alter)
+    {
+    case 0:
+        set_ret(1);
+        return 0;
+    case 1: /*    >    */
+        if (get_scr_parm(" > (function list) : "))
+            analize(reply_buf, 1);
+        break;
+    case 2: /*    >=   */
+        if (get_scr_parm(" >= (function list) : "))
+            analize(reply_buf, 2);
+        break;
+    case 3: /*     =   */
+        if (get_scr_parm(" = (function list) : "))
+            analize(reply_buf, 3);
+        break;
+    case 4: /*    !=   */
+        if (get_scr_parm(" != (function list) : "))
+            analize(reply_buf, 4);
+        break;
+    case 5: /*    <    */
+        if (get_scr_parm(" < (function list) : "))
+            analize(reply_buf, 5);
+        break;
+    case 6: /*    <=   */
+        if (get_scr_parm(" <= (function list) : "))
+            analize(reply_buf, 6);
+        break;
+    case 7: /*    TRAP  */
+        if (get_scr_parm(" TRAP (function list) : "))
+            analize(reply_buf, 7);
+        break;
+    case 8:
+    R1:
+        sprintf(reply_buf, "%ld", s_stop);
+        if (get_scr_parm(" STOP (step number) : "))
+        {
+            if (*reply_buf != '\0')
+                if (g_numb(reply_buf, &s_stop) == 0)
+                    goto R1;
+            print_parm(8);
+        }
+        break;
+    case 9:
+    R2:
+        sprintf(reply_buf, "%ld", s_from);
+        if (get_scr_parm(" FROM (step number) : "))
+        {
+            if (*reply_buf != '\0')
+                if (g_numb(reply_buf, &s_from) == 0)
+                    goto R2;
+            print_parm(9);
+        }
+        break;
+    case 10:
+    R3:
+        sprintf(reply_buf, "%ld", s_upto);
+        if (get_scr_parm(" TO (step number) : "))
+        {
+            if (*reply_buf != '\0')
+                if (g_numb(reply_buf, &s_upto) == 0)
+                    goto R3;
+            print_parm(10);
+        }
+        break;
+    case 11:
+    R4:
+        if (e1empty)
+            strcpy(reply_buf, "y");
+        else
+            strcpy(reply_buf, "n");
+        if (get_scr_parm(" E1= (y/n) : "))
+        {
+            if (*reply_buf != '\0')
+                if (g_yn(reply_buf) == 0)
+                    goto R4;
+            print_parm(11);
+        }
+    }
+    set_window(MESSAGE);
+    wputc('\n');
+    return 0;
+}
+
+static void /* read debug task from file */
+rd_deb_file()
+{
+    int i, j;
+    char *pchar;
+    while (fgets(buff, 100, dfile) != NULL)
+    {
+        for (j = 1; j <= 11; j++)
+        {
+            if (strncmp(buff, word[j], strlen(word[j])) == 0)
+            {
+                pchar = NULL;
+                for (i = 0; i < strlen(buff); i++)
+                    if (*(buff + i) == ':')
+                        pchar = buff + i;
+                if (pchar == NULL)
+                {
+                OSH:
+                    sprintf(buff_id, "Error in debug line: %s", buff);
+                    wrfabe(buff_id);
+                    break;
+                }
+                if (!analize((char *)pchar + 1, j))
+                    goto OSH;
+                break;
+            }
+        }
+        if (j == 12)
+        {
+            sprintf(buff_id, "Undefined debug line: %s", buff);
+            wrfabe(buff_id);
+            fclose(dfile);
+        }
+    }
+}
+
+static void /* write debug task to file */
+wr_deb_file()
+{
+    int i;
+    if ((wrfile = fopen("refal.cfg", "w")) == NULL)
+    {
+        wrfabe("Can't open file REFAL.CFG");
+        return;
+    }
+    trace_cond = 0;
+    ge_all = 1;
+    eq_all = 1;
+    for (i = 1; i <= 11; i++)
+    {
+        if (i == 8)
+        {
+            /*  set FROM and TO  */
+            if (!s_from && (s_upto || trace_cond))
+                s_from = 1;
+            if (!s_upto && s_from)
+                s_upto = 0x7FFFFFFFL;
+        }
+        if ((fputs(word[i], wrfile) == EOF) || !wr_det_numb(i))
+        {
+            wrfabe("Write error to file REFAL.CFG");
+            fclose(wrfile);
+            return;
+        }
+    }
+    fclose(wrfile);
+    return;
+}
+
+static int
+wr_det_numb(altern)
+int altern;
+{
+    DET_TAB *det_t;
+
+    if (fputs(" : ", wrfile) == EOF)
+        return (0);
+    if (altern < 8)
+    {
+        for (det_t = last_det; det_t != NULL; det_t = det_t->det_next)
+            if (*((char *)(&(det_t->gt)) + altern - 1) == 1)
+            {
+                trace_cond = 1;
+                switch (altern)
+                {
+                case 1:
+                case 2:
+                    ge_all = 0;
+                    break;
+                case 3:
+                    eq_all = 0;
+                    break;
+                default:
+                    break;
+                }
+                if (fputs(det_t->det_id, wrfile) == EOF)
+                    return (0);
+                if (fputc(' ', wrfile) == EOF)
+                    return (0);
+            }
+    }
+    else
+        switch (altern)
+        {
+        case 8:
+            if (fprintf(wrfile, "%ld", s_stop) == EOF)
+                return (0);
+            break;
+        case 9:
+            if (fprintf(wrfile, "%ld", s_from) == EOF)
+                return (0);
+            break;
+        case 10:
+            if (fprintf(wrfile, "%ld", s_upto) == EOF)
+                return (0);
+            break;
+        case 11:
+            if (e1empty == 0)
+            {
+                if (fputc('n', wrfile) == EOF)
+                    return (0);
+                break;
+            }
+            else if (fputc('y', wrfile) == EOF)
+                return (0);
+            break;
+        }
+    if (fputc('\n', wrfile) == EOF)
+        return (0);
+    return (1);
+}
+
+static int
+analize(buffer, altern)
+int altern;
+char *buffer;
+{
+    arg = buffer;
+    while (*arg == ' ')
+        arg++;
+    switch (altern)
+    {
+    case 1: /*    >    */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            ge_all = 0;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->gt = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 2: /*   >=    */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            ge_all = 0;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->ge = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 3: /*    =    */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            eq_all = 0;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->eq = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 4: /*   !=  */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->ne = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 5: /*   <    */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->lt = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 6: /*   <=   */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trace_cond = 1;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->le = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 7: /*  TRAP  */
+        if (*arg != '\n' && *arg != '\0')
+        {
+            trap_cond = 1;
+            while (*arg != '\n' && *arg != '\0')
+            {
+                get_arg();
+                if (!get_det())
+                    return (0);
+                det_table->tr = 1;
+                arg = arg + l_arg + s_arg;
+            }
+        }
+        break;
+    case 8:
+        if (*arg != '\n' && *arg != '\0')
+        {
+            if (g_numb(arg, &s_stop) == 0)
+                return (0);
+        }
+        else
+            s_stop = 0l;
+        break;
+    case 9:
+        if (*arg != '\n' && *arg != '\0')
+        {
+            if (g_numb(arg, &s_from) == 0)
+                return (0);
+        }
+        else
+            s_from = 0l;
+        break;
+    case 10:
+        if (*arg != '\n' && *arg != '\0')
+        {
+            if (g_numb(arg, &s_upto) == 0)
+                return (0);
+        }
+        else
+            s_upto = 0l;
+        break;
+    case 11:
+        if ((*arg != '\n' && *arg != '\0') && (*arg == 'y'))
+            e1empty = 1;
+    }
+    return (1);
+}
+/*==================================*/
+#else
 
 static void get_arg()
 {
@@ -716,4 +1465,5 @@ static int get_yn(char *b)
         e1empty = 1;
     return 1;
 }
+#endif
 /*---------  end of file DEBUG.C -----------*/
