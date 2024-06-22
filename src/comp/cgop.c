@@ -8,11 +8,11 @@
 
 struct linkti
 {
-    short tagg;
+    unsigned short int tagg;
     union
     {
         char infoc;
-        /*      long coden;*/
+        /*      unsigned long int coden;*/
         char *codef;
     } infoo;
 };
@@ -75,7 +75,7 @@ extern void gops(char k, struct linkti *code)
     gsymbol(code);
 }
 
-extern void ghw(short h)
+extern void ghw(unsigned short int h)
 {
     struct _TAG *po;
     po = (struct _TAG *)&h; /*  eg */

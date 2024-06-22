@@ -237,7 +237,7 @@ extern void sswap(char *idp, int lid)
         p->def = scn_.nomkar;
         jlabel(p);
         jbyte(N_SWAP);
-        /*   kk = sizeof(int)+sizeof(long)+sizeof(POINTER) * 2;  */
+        /*   kk = sizeof(int)+sizeof(unsigned long int)+sizeof(POINTER) * 2;  */
         kk = SMBL + LBLL * 2;
         for (k0 = 1; k0 <= kk; k0++)
             jbyte('\000');

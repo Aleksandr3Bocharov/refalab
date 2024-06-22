@@ -24,41 +24,41 @@
 
 struct linkt
 { /*   bylo opisanie w ccst1 */
-    short tag;
+    unsigned short int tag;
     union
     {
         char *pinf;
-        /*     long   intinf;*/
+        /*     unsigned long int   intinf;*/
         char chinf[2];
     } info;
 };
 
 extern struct
 { /* left part buffer elements */
-    short p, q, t, i;
+    unsigned short int p, q, t, i;
     struct linkt code;
-    short next;
-    short pair;
+    unsigned short int next;
+    unsigned short int pair;
     struct linkt spec;
-    short v;
-    short eoemrk;
-    short e_level;
+    unsigned short int v;
+    unsigned short int eoemrk;
+    unsigned short int e_level;
 } x[100];
 
 extern struct
 { /* variable table elements */
-    short _t, _q;
-    short rem;
-    short last;
+    unsigned short int _t, _q;
+    unsigned short int rem;
+    unsigned short int last;
     char ci;
-    short _v;
+    unsigned short int _v;
 } v[30];
 
 extern struct
 { /* whole list */
-    short _next;
-    short n1;
-    short n2;
+    unsigned short int _next;
+    unsigned short int n1;
+    unsigned short int n2;
 } h[50];
 
 extern struct
@@ -82,40 +82,40 @@ extern struct
 
 extern struct
 { /* the element of sentence */
-    short t_;
+    unsigned short int t_;
     char ci_;
     int v_;
     struct linkt _code;
     struct linkt _spec;
 } scn_e;
 
-extern short t_sc;
-extern short t_lb;
-extern short t_rb;
-extern short t_s;
-extern short t_w;
-extern short t_e;
-extern short t_k;
-extern short t_p;
+extern unsigned short int t_sc;
+extern unsigned short int t_lb;
+extern unsigned short int t_rb;
+extern unsigned short int t_s;
+extern unsigned short int t_w;
+extern unsigned short int t_e;
+extern unsigned short int t_k;
+extern unsigned short int t_p;
 
 extern struct linkt xncode;  /* work structure */
 extern struct linkt funcptr; /* work pointer */
 
-extern short n, n1, n2;     /* left part element pointers */
-extern short i, ie;         /* element index */
-extern short nel;           /* current element number */
-extern short lastb, lastb1; /* variables for brackets linkage  */
-extern short e_level;       /* counter of the longing levels */
-extern short not_nil;       /* working variables */
-extern short k;
-extern short nh;         /* current whole number */
-extern short next_nh;    /* next whole number */
-extern short kol_per;    /* subprogram of search in variable table */
-                         /* table pointer */
-extern short nh_x, nh_y; /* hole numbers (under enter in brackets)  */
-extern short lrbxy;      /* stoped bracket flag */
+extern unsigned short int n, n1, n2;     /* left part element pointers */
+extern unsigned short int i, ie;         /* element index */
+extern unsigned short int nel;           /* current element number */
+extern unsigned short int lastb, lastb1; /* variables for brackets linkage  */
+extern unsigned short int e_level;       /* counter of the longing levels */
+extern unsigned short int not_nil;       /* working variables */
+extern unsigned short int k;
+extern unsigned short int nh;         /* current whole number */
+extern unsigned short int next_nh;    /* next whole number */
+extern unsigned short int kol_per;    /* subprogram of search in variable table */
+                                      /* table pointer */
+extern unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets)  */
+extern unsigned short int lrbxy;      /* stoped bracket flag */
 
-static int ortgn(short n1, short n2);
+static int ortgn(unsigned short int n1, unsigned short int n2);
 
 extern void isk_v()
 {
@@ -271,10 +271,10 @@ GEN_RE:
 
 /*    check ortogonality of this sentence against left part */
 
-static int ortgn(short n1, short n2)
+static int ortgn(unsigned short int n1, unsigned short int n2)
 {
-    short n;
-    short i;
+    unsigned short int n;
+    unsigned short int i;
     int res;
     n = n1;
 ORT1:

@@ -15,11 +15,11 @@
 
 struct linkt
 {
-    short tag;
+    unsigned short int tag;
     union
     {
         char *pinf;
-        /*      long   intinf;*/
+        /*      unsigned long int   intinf;*/
         char chinf[2];
     } info;
 };
@@ -27,31 +27,31 @@ struct linkt
 /* left part buffer elements */
 struct
 {
-    short p, q, t, i;
+    unsigned short int p, q, t, i;
     struct linkt code;
-    short next;
-    short pair;
+    unsigned short int next;
+    unsigned short int pair;
     struct linkt spec;
-    short v;
-    short eoemrk;
-    short e_level;
+    unsigned short int v;
+    unsigned short int eoemrk;
+    unsigned short int e_level;
 } x[100];
 
 /* whole list */
 struct
 {
-    short _t, _q;
-    short rem;
-    short last;
+    unsigned short int _t, _q;
+    unsigned short int rem;
+    unsigned short int last;
     char ci;
-    short _v;
+    unsigned short int _v;
 } v[50];
 
 /* variable table elements */
 struct
 {
-    short _next;
-    short n1, n2;
+    unsigned short int _next;
+    unsigned short int n1, n2;
 } h[30];
 
 /* compiling   options */
@@ -78,44 +78,44 @@ extern struct
 /* the element of sentence */
 extern struct
 {
-    short t_;
+    unsigned short int t_;
     char ci_;
     int v_;
     struct linkt _code;
     struct linkt _spec;
 } scn_e;
 
-short t_sc = 1;
-short t_lb = 2;
-short t_rb = 3;
-short t_s = 4;
-short t_w = 5;
-short t_e = 6;
-short t_k = 7;
-short t_p = 8;
+unsigned short int t_sc = 1;
+unsigned short int t_lb = 2;
+unsigned short int t_rb = 3;
+unsigned short int t_s = 4;
+unsigned short int t_w = 5;
+unsigned short int t_e = 6;
+unsigned short int t_k = 7;
+unsigned short int t_p = 8;
 
-struct linkt xncode;  /* work structure */
-struct linkt funcptr; /* work pointer */
-short n, n1, n2;       /* left part element pointers */
-short i, ie;           /* element index */
-short nel;             /* current element number */
-short lastb, lastb1;   /* variables for brackets linkage  */
-short kol_lit;         /* counter of the symbol number */
-short e_level;         /* counter of the longing levels */
-short diff_e_level;
-short not_nil;     /* working variables */
-int kol_skob[100]; /* stack for counting of the brackets balance */
+struct linkt xncode;              /* work structure */
+struct linkt funcptr;             /* work pointer */
+unsigned short int n, n1, n2;     /* left part element pointers */
+unsigned short int i, ie;         /* element index */
+unsigned short int nel;           /* current element number */
+unsigned short int lastb, lastb1; /* variables for brackets linkage  */
+unsigned short int kol_lit;       /* counter of the symbol number */
+unsigned short int e_level;       /* counter of the longing levels */
+unsigned short int diff_e_level;
+unsigned short int not_nil; /* working variables */
+int kol_skob[100];          /* stack for counting of the brackets balance */
 int ur_skob;
 char buf_lit[80]; /* buffer for generating of the "text" statement */
-short k;
-short fh;      /* free segment number in the whole  list */
-short nh;      /* current whole number */
-short next_nh; /* next whole number */
+unsigned short int k;
+unsigned short int fh;      /* free segment number in the whole  list */
+unsigned short int nh;      /* current whole number */
+unsigned short int next_nh; /* next whole number */
 /* subprogram of search in variable table */
 /* table pointer */
-short kol_per;
-short nh_x, nh_y; /* hole numbers (under enter in brackets) */
-short lrbxy;      /* stoped bracket flag */
+unsigned short int kol_per;
+unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets) */
+unsigned short int lrbxy;      /* stoped bracket flag */
 /* read left part   */
 /* and full array X */
 

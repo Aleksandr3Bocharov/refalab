@@ -89,7 +89,7 @@ extern struct
 static union
 {
     char b[2];
-    short w;
+    unsigned short int w;
 } d;
 
 extern char parm_i[]; /* sourse file name */
@@ -97,7 +97,7 @@ extern char vers_i[]; /* compiler version */
 extern char mod_i[];  /* module name      */
 extern FILE *syslin;  /* asm file */
 extern FILE *systxt;  /* module names */
-extern short nommod;
+extern unsigned short int nommod;
 
 struct BU_
 {
@@ -135,12 +135,12 @@ char *ccc;
 
 static T_ENT *first_ent;
 static T_ENT *last_ent;
-static long mod_length;
+static unsigned long int mod_length;
 static char mod_name[9];
 static int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
-static long curr_addr; /* module generation files  */
+static unsigned long int curr_addr; /* module generation files  */
 static int n_ext;
 static T_RL rl;
 static int k;
@@ -220,7 +220,7 @@ static void oshex()
 extern void sfop_w(char *s, BU *b)
 {
     unsigned int un = 0;
-    long int lon;
+    unsigned long int lon;
     if (b->nam != NULL)
     {
         free(b->nam);
@@ -542,7 +542,7 @@ extern unsigned int jwhere()
 {
     if (curr_addr > 65535)
     {
-        printf("Module too long\n");
+        printf("Module too unsigned long int\n");
         exit(1);
     }
     return curr_addr;
@@ -768,7 +768,7 @@ GEN_TXT:
 #ifdef FASM
             sprintf(bufs, "\tdd\t_d%d@+%u\n", nommod, p->info.infon);
 #else
-            sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
+            sprintf(bufs, "\t.unsigned long int\t_d%d$+%u\n", nommod, p->info.infon);
 #endif
             fputs(bufs, syslin);
         }
@@ -782,14 +782,14 @@ GEN_TXT:
 #ifdef FASM
             fputs("\tdd\t", syslin);
 #else
-            fputs("\t.long\t", syslin);
+            fputs("\t.unsigned long int\t", syslin);
 #endif
 #else /* Windows - with underlining _*/
 /* BLF */
 #ifdef FASM
             fputs("\tdd\t_", syslin);
 #else
-            fputs("\t.long\t_", syslin);
+            fputs("\t.unsigned long int\t_", syslin);
 #endif
 #endif
             qx = first_ext;
@@ -993,10 +993,10 @@ JTERM:
 static union
 {
     char cc[2];
-    short ww;
+    unsigned short int ww;
 } stm, ksm;
 
-static unsigned char c;
+static char c;
 
 static void sfwrc()
 {

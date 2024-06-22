@@ -41,7 +41,7 @@ struct linkt
     union
     {
         char *pinf;
-        long intinf;
+        unsigned long int intinf;
         char chinf[2];
     } infoo;
 };
@@ -91,7 +91,7 @@ struct
 
 struct
 {            /* current statement element */
-    short t; /*    element type           */
+    unsigned short int t; /*    element type           */
     char ci; /*    variable index         */
     int v;
     struct linkt code;
@@ -103,12 +103,12 @@ typedef char *adr;
 FILE *sysin;
 FILE *sysprint;
 FILE *syslin;     /* for assem */
-extern long sysl; /* for obj   */
+extern unsigned long int sysl; /* for obj   */
 FILE *systerm;
 FILE *systxt; /* for module names */
 
-short m; /* current symbol number */
-short nommod;
+unsigned short int m; /* current symbol number */
+unsigned short int nommod;
 char strg_c[78];
 char parm_i[40];
 char cprc[] = "%%%";
@@ -120,13 +120,13 @@ char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) R
 
 char mod_i[13]; /* 8+4+1 (xxxxxxxx.yyy0) */
 int lbl_leng;
-short empcard;        /* flags for empty card  */
+unsigned short int empcard;        /* flags for empty card  */
 static char card[81]; /* card buffer (input) */
 char *card72 = card;
 
 static int cdnumb; /* card number */ /* kras */
 static int cardl;                    /* card length without tail blanks */
-static short dir;                    /* L,R - flag */
+static unsigned short int dir;                    /* L,R - flag */
 static int kolosh;
 static char ns_b = '\6';
 static char ns_cll = '\0';
@@ -144,16 +144,16 @@ static char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
 char *class = class72 + 6;
-static short scn_state; /* scanner station - in(1),out(0) literal chain */
-static short left_part;
+static unsigned short int scn_state; /* scanner station - in(1),out(0) literal chain */
+static unsigned short int left_part;
 static char *sarr[7]; /* abbreviated specifier table */
 static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
-static short fixm;                          /* start sentence position */
+static unsigned short int fixm;                          /* start sentence position */
 static char mod_name[9]; /* module name */  /* kras */
-static long mod_length; /* module length */ /* kras */
-static short again;                         /* next module processing feature */
+static unsigned long int mod_length; /* module length */ /* kras */
+static unsigned short int again;                         /* next module processing feature */
 static int _eoj; /* "sysin" end flag */     /* kras */
 static int cur;
 
@@ -671,7 +671,7 @@ RDCARD1:
 static void lblkey(int pr)
 {
     register int i;
-    short l, delta, fixm1;
+    unsigned short int l, delta, fixm1;
     if (pr == 0)
     {
     LK1:
@@ -727,7 +727,7 @@ extern void scan()
     static char id[40];
     static int id_leng;
     static char *p;
-    static short scode;
+    static unsigned short int scode;
     int i; /* kras */
     scn_e.code.tagg = 0;
     scn_e.code.infoo.pinf = NULL;
@@ -1436,8 +1436,8 @@ static void pch130()
 
 static int get_csmb(struct linkt *code, char id[40], int *lid) /* procedure read multiple symbol */
 {
-    long k;
-    long l;
+    unsigned long int k;
+    unsigned long int l;
     code->tagg = 0;
     code->infoo.pinf = NULL;
     EH ROMA0; /* kras */
