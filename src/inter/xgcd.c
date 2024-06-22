@@ -29,7 +29,7 @@
 
 static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
 {                                          /*  X - ukaz. na konec            */
-    long a, g, m, peren;
+    unsigned long int a, g, m, peren;
     int i, ip;
     peren = 0l;
     ip = 24 - j;
@@ -38,16 +38,16 @@ static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
     {
         g = gcoden(X);
         a = (g & m) << j;
-        pcoden(X, (long)(a | peren));
+        pcoden(X, (unsigned long int)(a | peren));
         peren = g >> ip;
         X = X->prev;
     }
 }
 
-static void ymn(long *a, long *b)
+static void ymn(unsigned long int *a, unsigned long int *b)
 { /* rez.: a - star., b - mlad. */
     int a1, a2, b1, b2, rr1, rr2, rr3, rr4;
-    long rr;
+    unsigned long int rr;
     if (*a == 0l)
     {
         *b = 0l;
@@ -62,16 +62,16 @@ static void ymn(long *a, long *b)
     b1 = (*b) >> 12;
     a2 = (*a) & 0xFFF;
     b2 = (*b) & 0xFFF;
-    rr = a2 * (long)b2;
+    rr = a2 * (unsigned long int)b2;
     *b = rr & 0xFFF;
     rr3 = rr >> 12;
-    rr = a1 * (long)b2;
+    rr = a1 * (unsigned long int)b2;
     rr3 += rr & 0xFFF;
     rr2 = rr >> 12;
-    rr = a2 * (long)b1;
+    rr = a2 * (unsigned long int)b1;
     rr3 += rr & 0xFFF;
     rr2 += rr >> 12;
-    rr = a1 * (long)b1;
+    rr = a1 * (unsigned long int)b1;
     rr2 += rr & 0xFFF;
     rr1 = rr >> 12;
     rr4 = rr3 >> 12;
@@ -83,9 +83,9 @@ static void gcd_()
 {
     int l[2], i, j, k, rez, la, lb, n;
     linkcb *hd[2], *tl[2], *pr, *p[2], *px, *py, *Xt, *Yt;
-    long a, a1, b, b1, c, A, B, AL, AH, BL, BH, RL, RH, x[2], y[2], xn, yn, Q;
-    long s[2], r0, r[2], v1, v2, q, peren, J;
-    long vs1, vs2, vs3, vs4;
+    unsigned long int a, a1, b, b1, c, A, B, AL, AH, BL, BH, RL, RH, x[2], y[2], xn, yn, Q;
+    unsigned long int s[2], r0, r[2], v1, v2, q, peren, J;
+    unsigned long int vs1, vs2, vs3, vs4;
 
     /*   sint. control */
     pr = refal.preva->next;

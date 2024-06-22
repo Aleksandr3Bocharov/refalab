@@ -13,7 +13,7 @@
 static void p1_()
 {
     linkcb *p;
-    long l;
+    unsigned long int l;
     p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
@@ -35,7 +35,7 @@ static void (*p1_1)() = p1_;
 static void m1_()
 {
     linkcb *p;
-    long l;
+    unsigned long int l;
     p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
@@ -70,7 +70,7 @@ static void numb_()
     linkcb *p, *pz, *p1;
     char str[12], zn;
     register int i;
-    long l;
+    unsigned long int l;
     p = refal.preva->next;
     zn = p->info.infoc;
     pz = p;
@@ -131,7 +131,7 @@ static void symb_()
     linkcb *p, *pz, *p1;
     char str[12], zn;
     register int i;
-    long l;
+    unsigned long int l;
     int j;
     p = refal.preva->next;
     zn = p->info.infoc;
@@ -197,7 +197,7 @@ static void first_()
 {
     linkcb *p, *pn;
     int k;
-    long n; /*eg*/
+    unsigned long int n; /*eg*/
     pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {
@@ -237,7 +237,7 @@ static void last_()
 {
     linkcb *pn, *p;
     int k;
-    long n; /*eg*/
+    unsigned long int n; /*eg*/
     pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {
@@ -280,7 +280,7 @@ static void (*last_1)() = last_;
 static void lengr_()
 {
     linkcb *p;
-    long n; /* kras */
+    unsigned long int n; /* kras */
     n = 0l;
     p = refal.preva->next;
     while (p != refal.nexta)
@@ -300,7 +300,7 @@ static void (*lengr_1)() = lengr_;
 static void lengw_()
 {
     linkcb *p;
-    long n; /* kras  */
+    unsigned long int n; /* kras  */
     n = 0l;
     p = refal.preva->next;
     while (p != refal.nexta)
@@ -322,7 +322,7 @@ static void (*lengw_1)() = lengw_;
 static void multe_()
 {
     linkcb *p, *pn, *q;
-    long n, k;
+    unsigned long int n, k;
     pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {

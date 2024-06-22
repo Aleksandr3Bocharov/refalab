@@ -1,5 +1,5 @@
 /*--------------- file -- REFAL.DEF -----------------*/
-/*       Turn on/off: STTIME, QC, turbo, VIDEO       */
+/*              Turn on/off: STTIME, QC              */
 /*          Last modification : 17.06.24		     */
 /*---------------------------------------------------*/
 #ifndef REFAL_DEF
@@ -31,21 +31,20 @@
 /* BLF pragma for 1 byte aligniment structure ------------*/
 #pragma pack(1)
 
-struct linkcb_
-{
-	struct linkcb_ *prev;
-	struct linkcb_ *next;
-	short tag;
-	union
-	{
-		char infoc;
-		long coden;
-		struct linkcb_ *codep;
-		char *codef;
-	} info;
-};
 
-/*#pragma pack(pop)*/
+	struct  linkcb_ {
+		struct	linkcb_ *prev;
+		struct	linkcb_ *next;
+		unsigned short int tag;
+		union {
+			char infoc;
+			unsigned long int coden;  
+			struct linkcb_ *codep;
+			char *codef;
+		} info;
+	};
+	
+/*#pragma pack(pop)*/ 
 #pragma pack()
 
 /* BLF ------------ end of pragma ------------------------------------ */
@@ -56,10 +55,10 @@ struct st_
 {
 	struct st_ *stprev;
 	struct st_ *stnext;
-	int state;
+	unsigned int state;
 	linkcb *dot;
-	long step;
-	long stop;
+	unsigned long int step;
+	unsigned long int stop;
 	linkcb *view;
 	linkcb *store;
 };
@@ -69,7 +68,7 @@ struct refal_
 {
 	st *crprev;
 	st *crnext;
-	int upshot;
+	unsigned int upshot;
 	linkcb *preva;
 	linkcb *nexta;
 	linkcb *prevr;
@@ -78,10 +77,10 @@ struct refal_
 	linkcb *flhead;
 	linkcb *svar;
 	linkcb *dvar;
-	int stmnmb;
-	int nostm;
-	int tmmode;
-	long tmintv;
+	unsigned int stmnmb;
+	unsigned int nostm;
+	unsigned int tmmode;
+	unsigned long int tmintv;
 };
 typedef struct refal_ REFAL;
 
@@ -89,10 +88,8 @@ typedef struct refal_ REFAL;
 #define FALSE 0
 
 /*---------- I B M - P C : -------------*/
-/* #define VIDEO  */ /* BLF */
 /* #define STTIME */
 #define QC /* BLF */
-/* #define turbo	*/
 
 #ifdef QC
 
@@ -140,7 +137,7 @@ typedef struct __ptr__
 } POINT;
 
 #define LBLL sizeof(POINT)
-#define SMBL (sizeof(short) + LBLL)
+#define SMBL (sizeof(unsigned short int) + LBLL)
 
 #endif
 /*-------  end of file REFAL.DEF ---------*/

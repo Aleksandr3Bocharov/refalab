@@ -17,10 +17,10 @@ typedef struct lw_ lw;
 
 static union {
    lw p1;
-   long p2;
+   unsigned long int p2;
 } pole;
 
-void pcoden(x,l) linkcb *x; long l;
+void pcoden(x,l) linkcb *x; unsigned long int l;
 {
    pole.p2 = l;
    x->info.codep = NULL;
@@ -29,7 +29,7 @@ void pcoden(x,l) linkcb *x; long l;
 
 }
 
-long gcoden(x) linkcb *x;
+unsigned long int gcoden(x) linkcb *x;
 {  pole.p1.i1 = x->info.coden;
    pole.p1.c2 = x->zzp;
    pole.p1.c3 = 0;

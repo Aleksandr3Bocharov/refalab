@@ -202,10 +202,10 @@ static int xmy()
     return 2; /* x=y */
 }
 
-static void ymn(long *a, long *b)
+static void ymn(unsigned long int *a, unsigned long int *b)
 { /* rez.: a - st., b - ml */
     int a1, a2, b1, b2, r1, r2, r3, r4;
-    long r;
+    unsigned long int r;
     if (*a == 0l)
     {
         *b = 0l;
@@ -220,16 +220,16 @@ static void ymn(long *a, long *b)
     b1 = (*b) >> 12;
     a2 = (*a) & 0xFFF;
     b2 = (*b) & 0xFFF;
-    r = a2 * (long)b2;
+    r = a2 * (unsigned long int)b2;
     *b = r & 0xFFF;
     r3 = r >> 12;
-    r = a1 * (long)b2;
+    r = a1 * (unsigned long int)b2;
     r3 += r & 0xFFF;
     r2 = r >> 12;
-    r = a2 * (long)b1;
+    r = a2 * (unsigned long int)b1;
     r3 += r & 0xFFF;
     r2 += r >> 12;
-    r = a1 * (long)b1;
+    r = a1 * (unsigned long int)b1;
     r2 += r & 0xFFF;
     r1 = r >> 12;
     r4 = r3 >> 12;
@@ -239,7 +239,7 @@ static void ymn(long *a, long *b)
 
 static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
 {                                          /*  X - ukaz. na konec            */
-    long a, g, m, peren;
+    unsigned long int a, g, m, peren;
     int i, ip;
     peren = 0l;
     ip = 24 - j;
@@ -248,7 +248,7 @@ static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
     {
         g = gcoden(X);
         a = (g & m) << j;
-        pcoden(X, (long)(a | peren));
+        pcoden(X, (unsigned long int)(a | peren));
         peren = g >> ip;
         X = X->prev;
     }
@@ -257,9 +257,9 @@ static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
 static void oper(int o, int prn)
 {
     linkcb *p, *r, *f, *Xt, *Yt;
-    long j, peren;
+    unsigned long int j, peren;
     int i, n = 0, a11, b11, a22, b22, r1, r2, r3, r4;
-    long a, a1, b, b1, c, d, x1, x2, y1, y2;
+    unsigned long int a, a1, b, b1, c, d, x1, x2, y1, y2;
 
     if (!dajarg())
     {
@@ -397,16 +397,16 @@ static void oper(int o, int prn)
                     }
                     a11 = a >> 12;
                     a22 = a & 0xFFF;
-                    c = a22 * (long)b22;
+                    c = a22 * (unsigned long int)b22;
                     b = c & 0xFFF;
                     r3 = c >> 12;
-                    c = a11 * (long)b22;
+                    c = a11 * (unsigned long int)b22;
                     r3 += c & 0xFFF;
                     r2 = c >> 12;
-                    c = a22 * (long)b11;
+                    c = a22 * (unsigned long int)b11;
                     r3 += c & 0xFFF;
                     r2 += c >> 12;
-                    c = a11 * (long)b11;
+                    c = a11 * (unsigned long int)b11;
                     r2 += c & 0xFFF;
                     r1 = c >> 12;
                     r4 = r3 >> 12;
@@ -529,7 +529,7 @@ static void oper(int o, int prn)
             a = gcoden(Xn), a1 = gcoden(Xn->next);
             b = gcoden(Yn);
             /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
-                                b,(long)gcoden(Yn->next));*/
+                                b,(unsigned long int)gcoden(Yn->next));*/
             if ((a == 0l) && (a1 < b))
                 c = 0l;
             else
@@ -552,7 +552,7 @@ static void oper(int o, int prn)
                     a = ((a % b) * 8) + (a1 & 7);
                     c = c + a / b;
                 }
-                /*printf("\nc=%ld oct=%ld",c,(long)(a%b));*/
+                /*printf("\nc=%ld oct=%ld",c,(unsigned long int)(a%b));*/
                 if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0l))
                 {
                     x1 = b1;
@@ -605,7 +605,7 @@ static void oper(int o, int prn)
                 }
                 if (peren != 0L)
                 {                   /* cifra welika  */
-                    /*long jj=0l;*/ /* !!! wremenno !!! */
+                    /*unsigned long int jj=0l;*/ /* !!! wremenno !!! */
                     do
                     {
                         /*jj++;*/

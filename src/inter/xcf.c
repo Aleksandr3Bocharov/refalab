@@ -9,7 +9,7 @@
 #include "rfintf.h"
 
 typedef char *adr;
-short func_n = 0;
+unsigned short int func_n = 0;
 adr *func_f = NULL;
 
 static void ftochar_()
@@ -17,11 +17,11 @@ static void ftochar_()
     union
     {
         char b[2];
-        short w;
+        unsigned short int w;
     } d;
     linkcb *p;
     char *u;
-    short i;
+    unsigned short int i;
     p = refal.preva->next;
     if (p->tag != TAGF)
         goto HEOT;
@@ -59,7 +59,7 @@ static void functab_()
 {
     linkcb *p;
     char *u;
-    short i;
+    unsigned short int i;
     p = refal.preva->next;
     if (p->tag != TAGF)
         goto HEOT;
@@ -88,11 +88,11 @@ static void chartof_()
     union
     {
         char b[2];
-        short w;
+        unsigned short int w;
     } d;
     linkcb *p;
     char *u, *j;
-    short i, k;
+    unsigned short int i, k;
     p = refal.preva->next;
     if (p == refal.nexta)
         goto HEOT;

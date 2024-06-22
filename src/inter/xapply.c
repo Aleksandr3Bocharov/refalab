@@ -14,7 +14,7 @@ static void appl_()
 {
     st *s_st, *upst;
     linkcb *px, *pk, *pd;
-    long l = (long)&s_st;
+    unsigned long int l = (unsigned long int)&s_st;
     if ((l & 0xffffL) < 200L)
     { /* printf("\nStack overflow!");*/
         goto LACK;

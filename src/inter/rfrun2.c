@@ -210,7 +210,7 @@ extern void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
     *az = tsp->ts2;
 }
 
-extern void move(int n, char *pf, char *pt)
+extern void move(int n, unsigned char *pf, unsigned char *pt)
 {
     int i;
     for (i = 0; i < n; i++)
@@ -242,7 +242,7 @@ int i;
 }
 */
 
-extern int cmpr(int n, char *p1, char *p2)
+extern int cmpr(int n, unsigned char *p1, unsigned char  *p2)
 {
     int i;
     for (i = 1; i <= n; i++)

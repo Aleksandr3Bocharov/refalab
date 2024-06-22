@@ -48,8 +48,8 @@ struct ts
 static struct ts *tsp; /*translation stack pointer*/
 
 static int tmmod;    /* timer state */
-static long tmstart; /* time at the start */
-static long tmstop;  /* time at the end    */
+static unsigned long int tmstart; /* time at the start */
+static unsigned long int tmstop;  /* time at the end    */
 
 struct sav_
 { /* save area for var-part of REFAL-block */
@@ -64,15 +64,15 @@ typedef struct sav_ sav;
 
 static union
 {
-    char c[2];
+    unsigned char c[2];
     int ii;
 } u;
 
 static union
 { /* structure for pointer and integer aligning */
-    char *ptr;
-    long *inr;
-    char chr[2];
+    unsigned char *ptr;
+    unsigned long int *inr;
+    unsigned char chr[2];
 } inch;
 
 /* definition of work variables and pointers*/
@@ -85,7 +85,7 @@ static linkcb *f0, *f1, *f;
 static char *vpca; /* additional vpc  */
 static int i, n, m;
 
-static char (*fptr)();
+static char (*fptr)(REFAL *);
 
 extern void rfrun(st *ast) /* adress of current state table */
 {
@@ -339,13 +339,13 @@ NEXTOP:
     };
     /* SETNOS(L);    */
 SETNOS:
-    move(LBLL, vpc + NMBL, &(inch.inr));
+    move(LBLL, vpc + NMBL, (unsigned char *)&(inch.inr));
     refal.nostm = (int)*(inch.inr);
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
     /* EOSSN (NN); */
 EOSSN:
-    move(NMBL + NMBL, vpc + NMBL, &(refal.stmnmb));
+    move(NMBL + NMBL, vpc + NMBL, (unsigned char *)&(refal.stmnmb));
     /* EOS;       */
 EOS:
     lastk->info.codep = et[1]->info.codep;
@@ -387,7 +387,7 @@ START:
         goto DONE;
     b0 = b2->info.codep;
     b1 = b0->next;
-    vpc = b1->info.codef;
+    vpc = (unsigned char *)b1->info.codef;
     if (b1->tag != TAGF)
         goto REF;
     /* here must be check on c-function */
@@ -400,7 +400,7 @@ START:
     goto NEXTOP;
     /* C-refal-function execution */
 CFUNC:;
-    move(LBLL, vpc + NMBL + Z_0, &fptr);
+    move(LBLL, vpc + NMBL + Z_0, (unsigned char *)&fptr);
     refal.upshot = 1;
     refal.prevr = b0->prev;
     refal.nextr = b0;
@@ -481,14 +481,14 @@ SWAPREF:
     goto ADVSTEP;
     /* LSC(S);       */
 LSC:
-    SHB1 if (cmpr(SMBL, vpc + NMBL, &(b1->tag)) == 0) goto FAIL;
+    SHB1 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)) == 0) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b1;
     nel++;
     goto NEXTOP;
     /* RSC(S);     */
 RSC:
-    SHB2 if (cmpr(SMBL, vpc + NMBL, &(b2->tag)) == 0) goto FAIL;
+    SHB2 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)) == 0) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b2;
     nel++;

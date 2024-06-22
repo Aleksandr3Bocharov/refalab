@@ -5,11 +5,11 @@
 #include "rfintf.h"
 
 /* BLF GO -> go */
-extern char *go;
+extern char go();
 
 int main()
 {
-  rfexec(go);
+  rfexec((char *)go);
 }
 
 /*---------  end of file MAINRF.C  ---------*/

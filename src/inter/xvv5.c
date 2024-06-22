@@ -16,7 +16,7 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static void open_()
 {
    linkcb *p;
-   short j;
+   unsigned short int j;
    char namf[41], c, s[2];
    register int i;
    for (i = 0; i < 40; i++)
@@ -30,7 +30,7 @@ static void open_()
       goto NEOT;
    else
    {
-      j = (short)p->info.coden;
+      j = (unsigned short int)p->info.coden;
       p = p->next;
    }
    if (j >= fmax)
@@ -74,7 +74,7 @@ static void close_()
 {
    linkcb *p;
    char c;
-   short j;
+   unsigned short int j;
    p = refal.preva->next;
    if (p->tag != TAGO)
       goto NEOT;
@@ -112,12 +112,12 @@ static void (*close_1)() = close_;
 static void get_()
 {
    linkcb *p;
-   short i, j;
+   unsigned short int i, j;
    char c, namf[11];
    p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   j = (short)p->info.coden;
+   j = (unsigned short int)p->info.coden;
    if (j >= fmax)
       goto NEOT;
    f = uniget[j];
@@ -161,13 +161,13 @@ static void (*get_1)() = get_;
 static void put_()
 {
    linkcb *p;
-   short j;
+   unsigned short int j;
    int i, cc;
    char namf[11];
    p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   j = (short)p->info.coden;
+   j = (unsigned short int)p->info.coden;
    p = p->next;
    if (j >= fmax)
       goto NEOT;

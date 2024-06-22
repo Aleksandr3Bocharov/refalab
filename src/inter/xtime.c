@@ -24,12 +24,12 @@
   static tm t0,t1;
 #endif
 
-long time();
+unsigned long int time();
 char *ctime();
 
 static void rftime_() {
  linkcb *p;
- long   tim; char *c;
+ unsigned long int   tim; char *c;
    tim=time(0l);
    c=ctime(&tim);
    p = refal.prevr;
