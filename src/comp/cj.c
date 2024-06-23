@@ -542,7 +542,7 @@ extern unsigned int jwhere()
 {
     if (curr_addr > 65535)
     {
-        printf("Module too unsigned long int\n");
+        printf("Module too long\n");
         exit(1);
     }
     return curr_addr;
@@ -768,7 +768,7 @@ GEN_TXT:
 #ifdef FASM
             sprintf(bufs, "\tdd\t_d%d@+%u\n", nommod, p->info.infon);
 #else
-            sprintf(bufs, "\t.unsigned long int\t_d%d$+%u\n", nommod, p->info.infon);
+            sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
 #endif
             fputs(bufs, syslin);
         }
@@ -782,14 +782,14 @@ GEN_TXT:
 #ifdef FASM
             fputs("\tdd\t", syslin);
 #else
-            fputs("\t.unsigned long int\t", syslin);
+            fputs("\t.long\t", syslin);
 #endif
 #else /* Windows - with underlining _*/
 /* BLF */
 #ifdef FASM
             fputs("\tdd\t_", syslin);
 #else
-            fputs("\t.unsigned long int\t_", syslin);
+            fputs("\t.long\t_", syslin);
 #endif
 #endif
             qx = first_ext;

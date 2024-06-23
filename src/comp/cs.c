@@ -275,7 +275,7 @@ extern struct u *fnref(char *idp, int lid)
     struct u *p;
     p = lookup(idp, lid);
     p->type = (p->type) | '\100';
-    return (p);
+    return p;
 }
 
 extern struct u *spref(char *idp, int lid, char d)
@@ -285,7 +285,7 @@ extern struct u *spref(char *idp, int lid, char d)
     p->type = (p->type) | '\200';
     if ((d != ')') && (((p->mode) & '\020') != '\020'))
         p505(idp, lid);
-    return (p);
+    return p;
 }
 
 extern void spdef(char *idp, int lid)

@@ -212,8 +212,8 @@ extern void cst(int dir, char *lbl, int lblleng)
     lastb = 0;
     nel = 0;
 GET_LPE: /* read left part element */
-    n++;
-    scan();
+    n++;      
+    scan(); 
     x[n].t = scn_e.t_;
     x[n].code.tag = scn_e._code.tag;
     x[n].code.info.pinf = scn_e._code.info.pinf;
@@ -376,7 +376,7 @@ RCG:
 RCGL:
     n = n1 + 1;
     if (n == n2)
-        goto NIL;
+        goto NIL;      
     switch (x[n].t)
     {
     case 1:

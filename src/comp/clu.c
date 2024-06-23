@@ -204,7 +204,7 @@ ISPRB: /* move up and correct */
     /* in this point kren != '\000' */
     if (kren != otnuz[tgld])
     {
-        (*p).k = '\000';
+        (*p).k = '\000';  
         return isk_uz;
     };
     /* tree turn */
@@ -273,7 +273,7 @@ ISPRB: /* move up and correct */
             (*adruz[tgld]).j = verquz;
         else
             (*adruz[tgld]).i = verquz;
-    };
+    };  
     return isk_uz;
 }
 

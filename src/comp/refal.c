@@ -37,7 +37,7 @@ int qindex;
 
 struct linkt
 {
-    size_t tagg;
+    unsigned short int tagg;
     union
     {
         char *pinf;
@@ -1468,7 +1468,7 @@ CSMBN2:
     goto CSMBEND;
 CSMBN3:
     code->tagg = TAGN;
-    code->infoo.intinf = k;
+    code->infoo.intinf = k;  
 CSMBEND:
     if (c[m] != '/')
         goto OSH113;

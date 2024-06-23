@@ -56,7 +56,7 @@ extern void gsymbol(struct linkti *code)
         return;
         /*      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC */
     };
-    r = code->infoo.codef;
+    r = (char *)&code->infoo.codef;
     if (code->tagg == 0)
     {
         jbyte(*r);
@@ -66,7 +66,9 @@ extern void gsymbol(struct linkti *code)
     }
     else
         for (i = 0; i < LBLL; i++)
+        {
             jbyte(*(r + i));
+        }
 }
 
 extern void gops(char k, struct linkti *code)
