@@ -34,7 +34,7 @@ struct wjs
     linkcb *jsb1;
     linkcb *jsb2;
     int jsnel;
-    char *jsvpc;
+    unsigned char *jsvpc;
 };
 static struct wjs js[64]; /* jump stack and planning translation stack*/
 static struct wjs *jsp;   /* jump stack pointer*/
@@ -47,7 +47,7 @@ struct ts
 };
 static struct ts *tsp; /*translation stack pointer*/
 
-static int tmmod;    /* timer state */
+static int tmmod;                 /* timer state */
 static unsigned long int tmstart; /* time at the start */
 static unsigned long int tmstop;  /* time at the end    */
 
@@ -82,7 +82,7 @@ static linkcb *lastk;      /* last acted sign-k adress */
 static linkcb *lastb;      /* last generated left bracket*/
 static linkcb *b0, *b1, *b2;
 static linkcb *f0, *f1, *f;
-static char *vpca; /* additional vpc  */
+static unsigned char *vpca; /* additional vpc  */
 static int i, n, m;
 
 static char (*fptr)(REFAL *);
@@ -786,7 +786,7 @@ RE:
     goto ADVANCE;
     /*SJUMP(L);     */
 SJUMP:
-    move(LBLL, vpc + NMBL, &(inch.ptr));
+    move(LBLL, vpc + NMBL, (unsigned char *)&(inch.ptr));
     putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
     jsp++;
     vpc = vpc + NMBL + LBLL;
@@ -825,7 +825,7 @@ LESC1:
         b1 = b1->info.codep;
         goto LESC1;
     }
-    if (cmpr(SMBL, vpca, &(b1->tag)) == 0)
+    if (cmpr(SMBL, vpca, (unsigned char *)&(b1->tag)) == 0)
         goto LESC1;
     jsp++;
     et[nel + 1] = b1->prev;
@@ -859,7 +859,7 @@ RESC1:
         b2 = b2->info.codep;
         goto RESC1;
     }
-    if (cmpr(SMBL, vpca, &(b2->tag)) == 0)
+    if (cmpr(SMBL, vpca, (unsigned char *)&(b2->tag)) == 0)
         goto RESC1;
     jsp++;
     et[nel + 2] = b2;
@@ -869,13 +869,13 @@ RESC1:
     /* LESD(N); */
 LESD:
     n = (unsigned)*(vpc + NMBL);
-    vpca = (char *)&(et[n]->tag);
+    vpca = (unsigned char *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto LESC0;
     /* RESD(N); */
 RESD:
-    n = (unsigned)*(vpc + NMBL);
-    vpca = (char *)&(et[n]->tag);
+    n = (unsigned int)*(vpc + NMBL);
+    vpca = (unsigned char *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto RESC0;
     /* PLEB; */
@@ -951,7 +951,7 @@ LSRCH1:
         b1 = b1->info.codep;
         goto LSRCH1;
     };
-    if (cmpr(SMBL, vpc + NMBL, &(b1->tag)) == 0)
+    if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)) == 0)
         goto LSRCH1;
     et[nel + 1] = b1->prev;
     et[nel + 2] = b1;
@@ -967,7 +967,7 @@ RSRCH1:
         b2 = b2->info.codep;
         goto RSRCH1;
     };
-    if (cmpr(SMBL, vpc + NMBL, &(b2->tag)) == 0)
+    if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)) == 0)
         goto RSRCH1;
     et[nel] = b2->next;
     et[nel + 2] = b2;
@@ -976,7 +976,7 @@ RSRCH1:
     goto NEXTOP;
     /* WSPC(L);  */
 WSPC:
-    if (spc(jsp + 1, vpc, et[nel - 1]) == 0)
+    if (spc((struct spcs *)(jsp + 1), vpc, et[nel - 1]) == 0)
         goto FAIL;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
@@ -988,7 +988,7 @@ ESPC:
         b0 = b0->next;
         if ((b0->tag & 0001) != 0)
             b0 = b0->info.codep;
-        if (spc(jsp + 1, vpc, b0) == 0)
+        if (spc((struct spcs *)(jsp + 1), vpc, b0) == 0)
             goto FAIL;
     };
     vpc = vpc + NMBL + LBLL;
@@ -1007,7 +1007,7 @@ PLESPC:
 LESPC:
     b1 = et[nel + 1];
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    if (spc(jsp + 1, vpc, b1) == 0)
+    if (spc((struct spcs *)(jsp + 1), vpc, b1) == 0)
         goto FAIL;
     jsp++;
     et[nel + 1] = b1;
@@ -1028,7 +1028,7 @@ PRESPC:
 RESPC:
     b2 = et[nel];
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    if (spc(jsp + 1, vpc, b2) == 0)
+    if (spc((struct spcs *)(jsp + 1), vpc, b2) == 0)
         goto FAIL;
     jsp++;
     et[nel] = b2;
@@ -1040,7 +1040,7 @@ LMAX:
     et[nel] = b1->next;
     while ((b1 = b1->next) != b2)
     {
-        if (spc(jsp + 1, vpc, b1) == 0)
+        if (spc((struct spcs *)(jsp + 1), vpc, b1) == 0)
             break;
         if ((b1->tag & 0001) != 0)
             b1 = b1->info.codep;
@@ -1055,7 +1055,7 @@ RMAX:
     et[nel + 1] = b2->prev;
     while ((b2 = b2->prev) != b1)
     {
-        if (spc(jsp + 1, vpc, b2) == 0)
+        if (spc((struct spcs *)(jsp + 1), vpc, b2) == 0)
             break;
         if ((b2->tag & 0001) != 0)
             b2 = b2->info.codep;
@@ -1075,7 +1075,7 @@ EOR:
     /* NS(S);  */
 NS:
     SHF
-        move(SMBL, vpc + NMBL, &(f->tag));
+        move(SMBL, vpc + NMBL, (unsigned char *)&(f->tag));
     vpc = vpc + NMBL + SMBL;
     goto NEXTOP;
     /* NSO(N);  */
@@ -1132,7 +1132,7 @@ BLF:
         f->info.codep = lastb;
     lastb = f;
     SHF
-        move(LBLL, vpc + NMBL, &(f->info.codef));
+        move(LBLL, vpc + NMBL, (unsigned char *)&(f->info.codef));
     f->tag = TAGF;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
@@ -1159,7 +1159,7 @@ ACT:
 MULS:
     n = (unsigned)*(vpc + NMBL);
     SHF
-        move(SMBL, &(et[n]->tag), &(f->tag));
+        move(SMBL, (unsigned char *)&(et[n]->tag), (unsigned char *)&(f->tag));
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
     /*MULE(N); */
@@ -1198,7 +1198,7 @@ MULE:
         }
         else
         {
-            move(SMBL, &(f0->tag), &(f->tag));
+            move(SMBL, (unsigned char *)&(f0->tag), (unsigned char *)&(f->tag));
         }
     };
     goto NEXTOP;

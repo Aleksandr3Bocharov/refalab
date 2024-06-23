@@ -13,7 +13,7 @@ struct wjs
     linkcb *jsb1;
     linkcb *jsb2;
     int jsnel;
-    char *jsvpc;
+    unsigned char *jsvpc;
 };
 
 struct ts
@@ -26,23 +26,23 @@ struct ts
 struct spcs
 {
     int spls;
-    char *svpc;
+    unsigned char *svpc;
 };
 
 static int letter(unsigned char s);
 static int digit(char s);
 static int not(int spcpls);
 
-extern int spc(struct spcs *pspcsp, char *vpc, linkcb *b)
+extern int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
 /* specifier interpreter */
 {
-    int spcwrk;         /* work variable */
-    int spcpls;         /* positiveness feature of specifier element */
-    struct spcs *spcsp; /* spcs-pointer */
-    char *spcvpc;       /* virtual specifier counter */
-    char spcopc;        /*specifier code */
+    int spcwrk;            /* work variable */
+    int spcpls;            /* positiveness feature of specifier element */
+    struct spcs *spcsp;    /* spcs-pointer */
+    unsigned char *spcvpc; /* virtual specifier counter */
+    unsigned char spcopc;  /*specifier code */
     spcsp = pspcsp;
-    move(LBLL, vpc + 1, spcvpc); /* spcvpc = L */
+    move(LBLL, vpc + 1, (unsigned char *)&spcvpc); /* spcvpc = L */
     spcpls = TRUE;
     goto SPCNXT;
 /* return from specifier element if "YES" */
@@ -95,7 +95,7 @@ SPCNXT:
 SPCCLL:
     spcsp->spls = spcpls;
     spcsp->svpc = spcvpc;
-    move(LBLL, spcvpc, spcvpc);
+    move(LBLL, spcvpc, (unsigned char *)&spcvpc);
     spcsp++;
     spcpls = TRUE;
     goto SPCNXT;
@@ -108,7 +108,7 @@ SPCNGW:
     spcpls = not(spcpls);
     goto SPCRET;
 SPCSC:
-    if (cmpr(SMBL, spcvpc, (char *)&(b->tag)) == 1)
+    if (cmpr(SMBL, spcvpc, (unsigned char *)&(b->tag)) == 1)
         goto SPCRET;
     spcvpc = spcvpc + SMBL;
     goto SPCNXT;
@@ -180,7 +180,7 @@ extern void link(linkcb *x, linkcb *y)
     y->prev = x;
 }
 
-extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
+extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, unsigned char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -188,7 +188,7 @@ extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char *
     jsp->jsvpc = *avpc;
 }
 
-extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, char **avpc)
+extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, unsigned char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -242,7 +242,7 @@ int i;
 }
 */
 
-extern int cmpr(int n, unsigned char *p1, unsigned char  *p2)
+extern int cmpr(int n, unsigned char *p1, unsigned char *p2)
 {
     int i;
     for (i = 1; i <= n; i++)

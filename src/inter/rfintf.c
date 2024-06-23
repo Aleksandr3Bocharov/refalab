@@ -407,7 +407,10 @@ extern int lcopy(linkcb *r, linkcb *p, linkcb *q)
         case TAGRB:
             f->info.codep = lastb;
             f->tag = TAGRB;
-            f1 = lastb->info.codep;
+            if (lastb != NULL)
+                f1 = lastb->info.codep;
+            else
+                return FALSE;
             lastb->info.codep = f;
             lastb->tag = TAGLB;
             lastb = f1;
