@@ -407,7 +407,9 @@ CFUNC:;
     refal.preva = b1;
     refal.nexta = b2;
     /*        call  C - function    */
+    printf("\nCFUNC B refal.upshot=%d fptr=%lx", refal.upshot, fptr);
     (*fptr)(&refal);
+    printf("\nCFUNC A refal.upshot=%d", refal.upshot);
     switch (refal.upshot)
     {
     case 1:
