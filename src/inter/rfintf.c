@@ -8,6 +8,8 @@
 #include "rfintf.h"
 #include "rfrun1.h"
 
+REFAL refal;
+
 static linkcb *last_block = NULL;
 static int rf_init = 1;
 static int curr_size = 0;
