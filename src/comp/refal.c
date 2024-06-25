@@ -33,29 +33,16 @@
     }         \
     }
 
-int qindex;
-
 struct
-{
-    unsigned was_72 : 1;
-    unsigned uzhe_krt : 1;
-    unsigned was_err : 1;
-    unsigned uzhe_zgl : 1;
-    unsigned uzhekrt_t : 1;
-} flags;
-
-struct
-{
-    unsigned source : 1;
-    unsigned mincomp : 1;
-    unsigned stm_nmb : 1;
-    unsigned extname : 1;
-    unsigned multmod : 1;
-    unsigned asmb : 1;
-    unsigned names : 1;
+{ /* compiling   options */
+    unsigned int source : 1;
+    unsigned int mincomp : 1;
+    unsigned int stmnmb : 1;
+    unsigned int extname : 1;
+    unsigned int multmod : 1;
+    unsigned int asmb : 1;
+    unsigned int names : 1;
 } options;
-
-typedef char *adr;
 
 struct
 { /* the table for corresponding with scanner */
@@ -74,13 +61,22 @@ struct
     struct linkti spec;
 } scn_e;
 
-FILE *sysin;
-FILE *sysprint;
-FILE *syslin;                  /* for assem */
-extern unsigned long int sysl; /* for obj   */
-FILE *systerm;
-FILE *systxt; /* for module names */
+static struct
+{
+    unsigned was_72 : 1;
+    unsigned uzhe_krt : 1;
+    unsigned was_err : 1;
+    unsigned uzhe_zgl : 1;
+    unsigned uzhekrt_t : 1;
+} flags;
 
+static FILE *sysin;
+FILE *sysprint, *systerm;
+FILE *syslin;                  /* for assem */
+FILE *systxt;                  /* for module names */
+extern unsigned long int sysl; /* for obj   */
+
+int qindex;
 unsigned short int m; /* current symbol number */
 unsigned short int nommod;
 char strg_c[78];
@@ -278,7 +274,7 @@ int main(int argc, char *argv[])
     SET_time();
 #endif
     options.source = 1;
-    options.stm_nmb = 0;
+    options.stmnmb = 0;
     options.extname = 0;
     options.multmod = 0;
     options.asmb = 1; /* BLF, instead 0, we need assembler code */

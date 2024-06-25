@@ -7,8 +7,6 @@
 #include "cerr.h"
 #include "refal.h"
 
-extern FILE *sysprint, *systerm;
-
 extern void pchosh(char *s)
 {
     char tmp[255];

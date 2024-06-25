@@ -14,6 +14,7 @@
 #include "refal.def"
 #include "cj.h"
 #include "cerr.h"
+#include "refal.h"
 
 /* BLF - for renaming add,sub,mul,div */
 char *oper_add;
@@ -75,17 +76,6 @@ typedef struct T_RL
     int delta;
 } T_RL;
 
-extern struct
-{
-    unsigned source : 1;
-    unsigned mincomp : 1;
-    unsigned stmnmb : 1;
-    unsigned extname : 1;
-    unsigned multmod : 1;
-    unsigned asmb : 1;
-    unsigned names : 1;
-} options;
-
 static union
 {
     char b[2];
@@ -95,8 +85,6 @@ static union
 extern char parm_i[]; /* sourse file name */
 extern char vers_i[]; /* compiler version */
 extern char mod_i[];  /* module name      */
-extern FILE *syslin;  /* asm file */
-extern FILE *systxt;  /* module names */
 extern unsigned short int nommod;
 
 struct BU_

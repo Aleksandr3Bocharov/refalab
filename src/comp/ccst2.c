@@ -51,17 +51,6 @@ extern struct
     unsigned short int n2;
 } h[50];
 
-extern struct
-{ /* compiling   options */
-    unsigned source : 1;
-    unsigned xref : 1;
-    unsigned stmnmb : 1;
-    unsigned extname : 1;
-    unsigned pgtitle : 1;
-    unsigned asmb : 1;
-    unsigned names : 1;
-} options;
-
 extern unsigned short int t_sc;
 extern unsigned short int t_lb;
 extern unsigned short int t_rb;

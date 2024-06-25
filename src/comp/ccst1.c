@@ -43,18 +43,6 @@ struct
     unsigned short int n1, n2;
 } h[30];
 
-/* compiling   options */
-extern struct
-{
-    unsigned int source : 1;
-    unsigned int xref : 1;
-    unsigned int stmnmb : 1;
-    unsigned int extname : 1;
-    unsigned int pgtitle : 1;
-    unsigned int asmb : 1;  /* kras */
-    unsigned int names : 1; /* kras */
-} options;
-
 unsigned short int t_sc = 1;
 unsigned short int t_lb = 2;
 unsigned short int t_rb = 3;
