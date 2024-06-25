@@ -184,17 +184,17 @@ extern void cst(int dir, char *lbl, int lblleng)
 GET_LPE: /* read left part element */
     n++;      
     scan(); 
-    x[n].t = scn_e.t_;
-    x[n].code.tag = scn_e._code.tag;
-    x[n].code.info.codef = scn_e._code.info.codef;
-    x[n].spec.tag = scn_e._spec.tag;
-    x[n].spec.info.codef = scn_e._spec.info.codef;
-    x[n].v = scn_e.v_;
+    x[n].t = scn_e.t;
+    x[n].code.tag = scn_e.code.tag;
+    x[n].code.info.codef = scn_e.code.info.codef;
+    x[n].spec.tag = scn_e.spec.tag;
+    x[n].spec.info.codef = scn_e.spec.info.codef;
+    x[n].v = scn_e.v;
     x[n].next = 0;
     x[n].pair = 0;
     x[n].eoemrk = 0;
     x[n].e_level = 0;
-    switch (scn_e.t_)
+    switch (scn_e.t)
     {
     case 0:
         goto LPE0;
@@ -284,7 +284,7 @@ LPE6: /*e- or v-varyable*/
     x[n].i = i;
     if (v[i]._t == 0) /*yet is't faced*/
         v[i]._t = 3;
-    else if ((v[i]._t == 3) && (v[i]._v == scn_e.v_))
+    else if ((v[i]._t == 3) && (v[i]._v == scn_e.v))
         ++(v[i].rem);
     else /*invalid type pointer*/
     {
@@ -1012,7 +1012,7 @@ RCGFIN:
 GET_RPE:
     scan();
 SW_RPE:
-    switch (scn_e.t_)
+    switch (scn_e.t)
     {
     case 0:
         goto RPE0;
@@ -1041,17 +1041,17 @@ SW_RPE:
 RPE0: /* scanner error */
     goto RP_OSH300;
 RPE1: /* symbol-constant */
-    if (scn_e._code.tag == TAGO)
+    if (scn_e.code.tag == TAGO)
         goto TEXT;
-    gops(n_ns, &scn_e._code);
+    gops(n_ns, &scn_e.code);
     goto GET_RPE;
 TEXT:
     kol_lit = 0;
 TEXT1:
     kol_lit++;
-    buf_lit[kol_lit] = scn_e._code.info.infoc[0];
+    buf_lit[kol_lit] = scn_e.code.info.infoc[0];
     scan();
-    if ((kol_lit < 80) && (scn_e.t_ == t_sc) && (scn_e._code.tag == TAGO))
+    if ((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO))
         goto TEXT1;
     if (kol_lit == 1)
         gopn(n_nso, buf_lit[1]);
@@ -1064,15 +1064,15 @@ TEXT1:
     goto SW_RPE;
 RPE2: /* left bracket */
     scan();
-    if (scn_e.t_ == t_rb)
+    if (scn_e.t == t_rb)
     {
         jbyte(n_blr);
         goto GET_RPE;
     };
     kol_skob[ur_skob]++;
-    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
+    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
     {
-        funcptr.info.codef = scn_e._code.info.codef;
+        funcptr.info.codef = scn_e.code.info.codef;
         gopl(n_blf, funcptr.info.codef);
         goto GET_RPE;
     }
@@ -1127,7 +1127,7 @@ RPE6: /* e- or v-varyable */
     isk_v();
     if (v[i]._t == 0)
         pch406();
-    else if ((v[i]._t == 3) && (v[i]._v == scn_e.v_))
+    else if ((v[i]._t == 3) && (v[i]._v == scn_e.v))
     {
         n = v[i].last;
         if (n == 0)
@@ -1154,9 +1154,9 @@ RPE7: /* sign "k" */
     };
     kol_skob[++ur_skob] = 0;
     scan();
-    if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
+    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
     {
-        funcptr.info.codef = scn_e._code.info.codef;
+        funcptr.info.codef = scn_e.code.info.codef;
         funcptr.tag = 0;
         gopl(n_blf, funcptr.info.codef);
         goto GET_RPE;

@@ -10,6 +10,7 @@
 #include "cj.h"
 #include "cgop.h"
 #include "clu.h"
+#include "refal.h"
 
 #define N_FAIL '\002'
 #define N_NIL '\030'

@@ -8,6 +8,7 @@
 #include "cj.h"
 #include "cgop.h"
 #include "cerr.h"
+#include "refal.h"
 
 /* the table of assembly language statement codes */
 #define n_sb1b2 '\003'
@@ -92,14 +93,14 @@ static int ortgn(unsigned short int n1, unsigned short int n2);
 extern void isk_v()
 {
     for (i = 1; i <= kol_per; i++)
-        if (v[i].ci == scn_e.ci_)
+        if (v[i].ci == scn_e.ci)
             return;
     i = ++kol_per;
-    v[i].ci = scn_e.ci_;
+    v[i].ci = scn_e.ci;
     v[i]._t = 0;
     v[i].rem = 1;
     v[i].last = 0;
-    v[i]._v = scn_e.v_;
+    v[i]._v = scn_e.v;
 }
 
 /*   generation of stoped brackets and setting boards   */
