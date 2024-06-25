@@ -35,17 +35,6 @@
 
 int qindex;
 
-struct linkt
-{
-    unsigned short int tagg;
-    union
-    {
-        char *pinf;
-        unsigned long int intinf;
-        char chinf[2];
-    } infoo;
-};
-
 static void lblkey(int pr);
 static void pch130();
 static void blout();
@@ -59,7 +48,7 @@ static void gsp(char n);
 static int specif(char tail);
 static int get_id(char id[], int *lid);
 static int get_idm(char id[8], int *lid);
-static int get_csmb(struct linkt *code, char id[40], int *lid);
+static int get_csmb(struct linkti *code, char id[40], int *lid);
 
 struct
 {
@@ -94,8 +83,8 @@ struct
     unsigned short int t; /*    element type           */
     char ci; /*    variable index         */
     int v;
-    struct linkt code;
-    struct linkt spec;
+    struct linkti code;
+    struct linkti spec;
 } scn_e;
 
 typedef char *adr;
@@ -729,11 +718,11 @@ extern void scan()
     static char *p;
     static unsigned short int scode;
     int i; /* kras */
-    scn_e.code.tagg = 0;
-    scn_e.code.infoo.pinf = NULL;
+    scn_e.code.tag = 0;
+    scn_e.code.info.codef = NULL;
     scn_e.v = 0;
-    scn_e.spec.tagg = 0;
-    scn_e.spec.infoo.pinf = NULL;
+    scn_e.spec.tag = 0;
+    scn_e.spec.info.codef = NULL;
     if (scn_state == 1)
         goto STATE1;
 STATE0:; /* among elements */
@@ -849,7 +838,7 @@ SCNV:
         EH ROMA;
         if (left_part == 1)
         {
-            p = scn_e.spec.infoo.pinf = (char *)genlbl();
+            p = scn_e.spec.info.codef = (char *)genlbl();
             jlabel((struct u *)p);
         }
         if (specif(')') == 1)
@@ -863,7 +852,7 @@ SCNV:
         if (get_id(id, &id_leng) == 0)
             goto SOSH203;
         if (left_part == 1)
-            scn_e.spec.infoo.pinf = (char *)spref(id, id_leng, ')');
+            scn_e.spec.info.codef = (char *)spref(id, id_leng, ')');
         if (c[m] == ':')
         {
             EH ROMA else goto SOSH204;
@@ -915,8 +904,8 @@ STATE1: /*within letter chain */
     scn_state = 0;
     goto STATE0;
 SCNCHR:
-    scn_e.code.tagg = TAGO;
-    scn_e.code.infoo.pinf = NULL;
+    scn_e.code.tag = TAGO;
+    scn_e.code.info.codef = NULL;
     if (c[m] == '\\')
     { /* control symbols */
         switch (c[++m])
@@ -980,7 +969,7 @@ SCNCHR:
         }
     }
 PROD:
-    scn_e.code.infoo.chinf[0] = c[m];
+    scn_e.code.info.infoc[0] = c[m];
     scn_e.t = 1;
     goto SCNGCR;
 FSCN:
@@ -1012,7 +1001,7 @@ SABBR:
             gsp((char)(scode + 7));
             gsp(ns_ngw);
         };
-        scn_e.spec.infoo.pinf = *(sarr + scode);
+        scn_e.spec.info.codef = *(sarr + scode);
     };
     EH ROMA;
     goto SCNVI;
@@ -1045,7 +1034,7 @@ static int specif(char tail)
     int neg;
     char id[255];
     int lid;
-    struct linkt code;
+    struct linkti code;
     char *p;
     neg = 0;
 SPCBLO:
@@ -1150,7 +1139,7 @@ SPCESC:
         goto OSH200;
     gsp(ns_sc);
     if (left_part == 1)
-        gsymbol((struct linkti *)&code);
+        gsymbol(&code);
     goto SPCGC;
 SPCSP:
     EH ROMA0; /* kras */
@@ -1175,10 +1164,10 @@ SPCA:
     gsp(ns_sc);
     if (left_part == 1)
     {
-        code.tagg = 0;
-        code.infoo.pinf = 0L;
-        code.infoo.chinf[0] = '\'';
-        gsymbol((struct linkti *)&code);
+        code.tag = 0;
+        code.info.codef = 0L;
+        code.info.infoc[0] = '\'';
+        gsymbol(&code);
     }
     goto SPCGC;
 SPCA1:
@@ -1248,10 +1237,10 @@ SPCA1:
             }
         }
     PROD:
-        code.tagg = 0;
-        code.infoo.pinf = 0L;
-        code.infoo.chinf[0] = c[m];
-        gsymbol((struct linkti *)&code);
+        code.tag = 0;
+        code.info.codef = 0L;
+        code.info.infoc[0] = c[m];
+        gsymbol(&code);
     }
     EH ROMA0; /* kras */
     if (m == 71)
@@ -1434,23 +1423,23 @@ static void pch130()
     pchosh("130 invalid record format");
 }
 
-static int get_csmb(struct linkt *code, char id[40], int *lid) /* procedure read multiple symbol */
+static int get_csmb(struct linkti *code, char id[40], int *lid) /* procedure read multiple symbol */
 {
     unsigned long int k;
     unsigned long int l;
-    code->tagg = 0;
-    code->infoo.pinf = NULL;
+    code->tag = 0;
+    code->info.codef = NULL;
     EH ROMA0; /* kras */
     if (class[m] == 'D')
         goto CSMBN;
     if (get_id(id, lid) == 0)
         goto OSH112;
-    code->infoo.pinf = (char *)fnref(id, *lid);
-    code->tagg = TAGF;
+    code->info.codef = (char *)fnref(id, *lid);
+    code->tag = TAGF;
     goto CSMBEND;
 CSMBN:
-    code->tagg = TAGN;
-    code->infoo.intinf = 0;
+    code->tag = TAGN;
+    code->info.coden = 0;
     k = c[m] - '0';
 CSMBN1:
     EH ROMA0; /* kras */
@@ -1467,8 +1456,8 @@ CSMBN2:
     pchosh("111 symbol-number > 16777215");
     goto CSMBEND;
 CSMBN3:
-    code->tagg = TAGN;
-    code->infoo.intinf = k;  
+    code->tag = TAGN;
+    code->info.coden = k;  
 CSMBEND:
     if (c[m] != '/')
         goto OSH113;

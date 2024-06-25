@@ -13,25 +13,14 @@
 #include "ccst2.h"
 #include "refal.h"
 
-struct linkt
-{
-    unsigned short int tag;
-    union
-    {
-        char *pinf;
-        /*      unsigned long int   intinf;*/
-        char chinf[2];
-    } info;
-};
-
 /* left part buffer elements */
 struct
 {
     unsigned short int p, q, t, i;
-    struct linkt code;
+    struct linkti code;
     unsigned short int next;
     unsigned short int pair;
-    struct linkt spec;
+    struct linkti spec;
     unsigned short int v;
     unsigned short int eoemrk;
     unsigned short int e_level;
@@ -81,8 +70,8 @@ extern struct
     unsigned short int t_;
     char ci_;
     int v_;
-    struct linkt _code;
-    struct linkt _spec;
+    struct linkti _code;
+    struct linkti _spec;
 } scn_e;
 
 unsigned short int t_sc = 1;
@@ -94,8 +83,8 @@ unsigned short int t_e = 6;
 unsigned short int t_k = 7;
 unsigned short int t_p = 8;
 
-struct linkt xncode;              /* work structure */
-struct linkt funcptr;             /* work pointer */
+struct linkti xncode;              /* work structure */
+struct linkti funcptr;             /* work pointer */
 unsigned short int n, n1, n2;     /* left part element pointers */
 unsigned short int i, ie;         /* element index */
 unsigned short int nel;           /* current element number */
@@ -216,9 +205,9 @@ GET_LPE: /* read left part element */
     scan(); 
     x[n].t = scn_e.t_;
     x[n].code.tag = scn_e._code.tag;
-    x[n].code.info.pinf = scn_e._code.info.pinf;
+    x[n].code.info.codef = scn_e._code.info.codef;
     x[n].spec.tag = scn_e._spec.tag;
-    x[n].spec.info.pinf = scn_e._spec.info.pinf;
+    x[n].spec.info.codef = scn_e._spec.info.codef;
     x[n].v = scn_e.v_;
     x[n].next = 0;
     x[n].pair = 0;
@@ -395,7 +384,7 @@ RCGL:
 LSW1: /*        constant symbol        */
     if (x[n].code.tag == TAGO)
         goto LTXT;
-    gops(n_lsc, (struct linkti *)&(x[n].code));
+    gops(n_lsc, &x[n].code);
     goto L1;
 LTXT:
     kol_lit = 1;
@@ -412,7 +401,7 @@ LTXT2:
     gopn(n_ltxt, (char)kol_lit);
 LTXT3:
     n++;
-    jbyte(x[n].code.info.chinf[0]);
+    jbyte(x[n].code.info.infoc[0]);
     x[n].p = x[n].q = nel;
     nel++;
     kol_lit--;
@@ -422,7 +411,7 @@ LTXT3:
     goto RCGL;
 LSCO:
     n = n1 + 1;
-    gopn(n_lsco, x[n].code.info.chinf[0]);
+    gopn(n_lsco, x[n].code.info.infoc[0]);
     goto L1;
 LSW4: /*    s-variable    */
     i = x[n].i;
@@ -437,8 +426,8 @@ LSMD:
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_wspc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
 L1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -453,8 +442,8 @@ LSW5: /*   w-variable  */
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_wspc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
     goto L2;
 LEM:
     v[i]._q = nel + 1;
@@ -475,8 +464,8 @@ LEMD:
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_espc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
 L2:
     x[n].p = nel;
     x[n].q = nel + 1;
@@ -505,8 +494,8 @@ LBCE:
     (v[i].rem)--;
     if (x[n].v != 0)
         jbyte(n_nnil);
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_espc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
     x[n].p = nel;
     x[n].q = nel + 1;
     nel += 2;
@@ -575,7 +564,7 @@ RCGR:
 RSW1: /*   constant symbol   */
     if (x[n].code.tag == TAGO)
         goto RTXT;
-    gops(n_rsc, (struct linkti *)&(x[n].code));
+    gops(n_rsc, &x[n].code);
     goto R1;
 RTXT:
     kol_lit = 1;
@@ -592,7 +581,7 @@ RTXT2:
     gopn(n_rtxt, (char)kol_lit);
 RTXT3:
     n--;
-    jbyte(x[n].code.info.chinf[0]);
+    jbyte(x[n].code.info.infoc[0]);
     x[n].p = x[n].q = nel;
     nel++;
     kol_lit--;
@@ -602,7 +591,7 @@ RTXT3:
     goto RCGR;
 RSCO:
     n = n2 - 1;
-    gopn(n_rsco, x[n].code.info.chinf[0]);
+    gopn(n_rsco, x[n].code.info.infoc[0]);
     goto R1;
 RSW4: /*     s_variable       */
     i = x[n].i;
@@ -617,8 +606,8 @@ RSMD:
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_wspc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
 R1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -633,8 +622,8 @@ RSW5: /*    w_variable   */
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_wspc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
     goto R2;
 REM:
     v[i]._q = nel + 1;
@@ -655,8 +644,8 @@ REMD:
     x[n].next = v[i].last;
     v[i].last = n;
     (v[i].rem)--;
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_espc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
 R2:
     x[n].p = nel;
     x[n].q = nel + 1;
@@ -685,8 +674,8 @@ RBCE:
     (v[i].rem)--;
     if (x[n].v != 0)
         jbyte(n_nnil);
-    if (x[n].spec.info.pinf != NULL)
-        gopl(n_espc, x[n].spec.info.pinf);
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
     x[n].p = nel;
     x[n].q = nel + 1;
     nel += 2;
@@ -740,7 +729,7 @@ CE: /*   closed including   */
     if (x[n].eoemrk != 0)
         goto IMPASSE;
 CE1:
-    if (x[n].spec.info.pinf == NULL)
+    if (x[n].spec.info.codef == NULL)
         goto CE2;
     if (dir == 1)
         goto LMAX;
@@ -853,7 +842,7 @@ OE:
         n = n2 - 1;
     else
         n = n1 + 1;
-    if (x[n].spec.info.pinf == NULL)
+    if (x[n].spec.info.codef == NULL)
         goto OE1;
 OE0:
     i = x[n].i;
@@ -878,19 +867,19 @@ OERMAX:
     n = n2 - 1;
     i = x[n].i;
 RMAX:
-    gopl(n_rmax, x[n].spec.info.pinf);
+    gopl(n_rmax, x[n].spec.info.codef);
     if (x[n].v == 1)
         jbyte(n_nnil);
-    x[n].spec.info.pinf = NULL;
+    x[n].spec.info.codef = NULL;
     goto REM;
 OELMAX:
     n = n1 + 1;
     i = x[n].i;
 LMAX:
-    gopl(n_lmax, x[n].spec.info.pinf);
+    gopl(n_lmax, x[n].spec.info.codef);
     if (x[n].v == 1)
         jbyte(n_nnil);
-    x[n].spec.info.pinf = NULL;
+    x[n].spec.info.codef = NULL;
     goto LEM;
 OE1:
     if (dir == 1)
@@ -925,19 +914,19 @@ LE_CASE:
     };
 LESW1: /*  ei 'a' . . .  */
     xncode.tag = x[n].code.tag;
-    xncode.info.pinf = x[n].code.info.pinf;
+    xncode.info.codef = x[n].code.info.codef;
     n++;
     if ((not_nil == 0) && (x[n].eoemrk == 1))
     {
         x[n].eoemrk = 0;
         x[n].e_level = 0;
         e_level--;
-        gops(n_lsrch, (struct linkti *)&xncode);
+        gops(n_lsrch, &xncode);
     }
     else
     {
         gpev(n_plesc, n_plvsc);
-        gops(n_lesc, (struct linkti *)&xncode);
+        gops(n_lesc, &xncode);
     };
     n--;
     goto L1;
@@ -987,19 +976,19 @@ RE_CASE:
     };
 RESW1: /*    . . .  'a' ei  */
     xncode.tag = x[n].code.tag;
-    xncode.info.pinf = x[n].code.info.pinf;
+    xncode.info.codef = x[n].code.info.codef;
     n--;
     if ((not_nil == 0) && (x[n].eoemrk == 1))
     {
         x[n].eoemrk = 0;
         x[n].e_level = 0;
         e_level--;
-        gops(n_rsrch, (struct linkti *)&xncode);
+        gops(n_rsrch, &xncode);
     }
     else
     {
         gpev(n_presc, n_prvsc);
-        gops(n_resc, (struct linkti *)&xncode);
+        gops(n_resc, &xncode);
     };
     n++;
     goto R1;
@@ -1073,13 +1062,13 @@ RPE0: /* scanner error */
 RPE1: /* symbol-constant */
     if (scn_e._code.tag == TAGO)
         goto TEXT;
-    gops(n_ns, (struct linkti *)&(scn_e._code));
+    gops(n_ns, &scn_e._code);
     goto GET_RPE;
 TEXT:
     kol_lit = 0;
 TEXT1:
     kol_lit++;
-    buf_lit[kol_lit] = scn_e._code.info.chinf[0];
+    buf_lit[kol_lit] = scn_e._code.info.infoc[0];
     scan();
     if ((kol_lit < 80) && (scn_e.t_ == t_sc) && (scn_e._code.tag == TAGO))
         goto TEXT1;
@@ -1102,8 +1091,8 @@ RPE2: /* left bracket */
     kol_skob[ur_skob]++;
     if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
     {
-        funcptr.info.pinf = scn_e._code.info.pinf;
-        gopl(n_blf, funcptr.info.pinf);
+        funcptr.info.codef = scn_e._code.info.codef;
+        gopl(n_blf, funcptr.info.codef);
         goto GET_RPE;
     }
     else
@@ -1186,9 +1175,9 @@ RPE7: /* sign "k" */
     scan();
     if ((scn_e.t_ == t_sc) && (scn_e._code.tag == TAGF))
     {
-        funcptr.info.pinf = scn_e._code.info.pinf;
+        funcptr.info.codef = scn_e._code.info.codef;
         funcptr.tag = 0;
-        gopl(n_blf, funcptr.info.pinf);
+        gopl(n_blf, funcptr.info.codef);
         goto GET_RPE;
     }
     else

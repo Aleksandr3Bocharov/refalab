@@ -6,17 +6,6 @@
 #include "cgop.h"
 #include "cj.h"
 
-struct linkti
-{
-    unsigned short int tagg;
-    union
-    {
-        char infoc;
-        /*      unsigned long int coden;*/
-        char *codef;
-    } infoo;
-};
-
 struct _TAG
 {
     char b1;
@@ -47,17 +36,17 @@ extern void gsymbol(struct linkti *code)
     struct _TAG *q;
     char *r;
     register int i;
-    q = (struct _TAG *)&(code->tagg);
+    q = (struct _TAG *)&(code->tag);
     jbyte(q->b1);
     jbyte(q->b2);
-    if (code->tagg == 2)
+    if (code->tag == 2)
     {
-        j3addr((T_U *)code->infoo.codef);
+        j3addr((T_U *)code->info.codef);
         return;
         /*      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC */
     };
-    r = (char *)&code->infoo.codef;
-    if (code->tagg == 0)
+    r = (char *)&code->info.codef;
+    if (code->tag == 0)
     {
         jbyte(*r);
         jbyte(*(r + 1));

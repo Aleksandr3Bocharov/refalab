@@ -22,24 +22,13 @@
 #define n_prespc '\071'
 #define n_respc '\072'
 
-struct linkt
-{ /*   bylo opisanie w ccst1 */
-    unsigned short int tag;
-    union
-    {
-        char *pinf;
-        /*     unsigned long int   intinf;*/
-        char chinf[2];
-    } info;
-};
-
 extern struct
 { /* left part buffer elements */
     unsigned short int p, q, t, i;
-    struct linkt code;
+    struct linkti code;
     unsigned short int next;
     unsigned short int pair;
-    struct linkt spec;
+    struct linkti spec;
     unsigned short int v;
     unsigned short int eoemrk;
     unsigned short int e_level;
@@ -85,8 +74,8 @@ extern struct
     unsigned short int t_;
     char ci_;
     int v_;
-    struct linkt _code;
-    struct linkt _spec;
+    struct linkti _code;
+    struct linkti _spec;
 } scn_e;
 
 extern unsigned short int t_sc;
@@ -98,8 +87,8 @@ extern unsigned short int t_e;
 extern unsigned short int t_k;
 extern unsigned short int t_p;
 
-extern struct linkt xncode;  /* work structure */
-extern struct linkt funcptr; /* work pointer */
+extern struct linkti xncode;  /* work structure */
+extern struct linkti funcptr; /* work pointer */
 
 extern unsigned short int n, n1, n2;     /* left part element pointers */
 extern unsigned short int i, ie;         /* element index */
@@ -199,7 +188,7 @@ LSG1:
     i = x[n].i;
     if ((i == ie) || (v[i].last != 0))
         goto LSG_;
-    if ((x[n].spec.info.pinf != NULL) || (v[i].rem != 1))
+    if ((x[n].spec.info.codef != NULL) || (v[i].rem != 1))
         goto GEN_LE;
     if (ortgn(n1, n) == 0)
         goto GEN_LE;
@@ -218,10 +207,10 @@ GEN_LE:
     nel += 2;
     e_level++;
     not_nil = x[n].v;
-    if (x[n].spec.info.pinf == NULL)
+    if (x[n].spec.info.codef == NULL)
         return 1;
     gpev(n_plespc, n_plv);
-    gopl(n_lespc, x[n].spec.info.pinf);
+    gopl(n_lespc, x[n].spec.info.codef);
     return 0;
 }
 
@@ -242,7 +231,7 @@ RSG1:
     i = x[n].i;
     if ((i == ie) || (v[i].last != 0))
         goto RSG_;
-    if ((x[n].spec.info.pinf != NULL) ||
+    if ((x[n].spec.info.codef != NULL) ||
         (v[i].rem != 1))
         goto GEN_RE;
     if (ortgn(n, n2) == 0)
@@ -262,10 +251,10 @@ GEN_RE:
     nel += 2;
     e_level++;
     not_nil = x[n].v;
-    if (x[n].spec.info.pinf == NULL)
+    if (x[n].spec.info.codef == NULL)
         return 1;
     gpev(n_prespc, n_prv);
-    gopl(n_respc, x[n].spec.info.pinf);
+    gopl(n_respc, x[n].spec.info.codef);
     return 0;
 }
 

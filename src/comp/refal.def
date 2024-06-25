@@ -12,12 +12,12 @@
 /*#define FASM*/
 
 /* BLF - DBLF for prokrutka - trace debug mode, see rfintf.c */
-/*#define DBLF*/
+#define DBLF
 
 /* BLF -  PRINT_CODE - for print operation code, see rfrun1.c */
-/*#define PRINT_CODE*/
+#define PRINT_CODE
 
-/*#define mdebug*/
+#define mdebug
 
 #define TAGO 0
 #define TAGF 2
@@ -40,7 +40,7 @@
 			char infoc;
 			unsigned long int coden;  
 			struct linkcb_ *codep;
-			char *codef;
+			unsigned char *codef;
 		} info;
 	};
 	
