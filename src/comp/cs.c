@@ -70,14 +70,6 @@ extern struct
     unsigned names : 1;
 } options;
 
-extern struct
-{
-    int nomkar;
-    char modname_var[40];
-    int modnmlen;
-    int curr_stmnmb;
-} scn_;
-
 static struct arr_lbl *first_arr_lbl = NULL;
 static int n_lbl = 15;
 static struct i_lbl *pfail = NULL;    /* statememt FAIL label */

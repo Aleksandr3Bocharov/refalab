@@ -28,27 +28,12 @@
     return;  \
     }        \
     }
-#define ROMA0   \
-    return 0;   \
-    }           \
+#define ROMA0 \
+    return 0; \
+    }         \
     }
 
 int qindex;
-
-static void lblkey(int pr);
-static void pch130();
-static void blout();
-static void trprev();
-static void ilm(void (*prog)(char *, int, char *, int));
-static void il(void (*prog)(char *, int));
-static void equ();
-static void pchzkl();
-static void pchk();
-static void gsp(char n);
-static int specif(char tail);
-static int get_id(char id[], int *lid);
-static int get_idm(char id[8], int *lid);
-static int get_csmb(struct linkti *code, char id[40], int *lid);
 
 struct
 {
@@ -70,8 +55,10 @@ struct
     unsigned names : 1;
 } options;
 
+typedef char *adr;
+
 struct
-{
+{ /* the table for corresponding with scanner */
     int nomkar;
     char modname_var[40]; /* module name */ /*  !!! */
     int modnmlen;                           /* module name length */
@@ -79,19 +66,17 @@ struct
 } scn_;
 
 struct
-{            /* current statement element */
+{                         /* current statement element */
     unsigned short int t; /*    element type           */
-    char ci; /*    variable index         */
+    char ci;              /*    variable index         */
     int v;
     struct linkti code;
     struct linkti spec;
 } scn_e;
 
-typedef char *adr;
-
 FILE *sysin;
 FILE *sysprint;
-FILE *syslin;     /* for assem */
+FILE *syslin;                  /* for assem */
 extern unsigned long int sysl; /* for obj   */
 FILE *systerm;
 FILE *systxt; /* for module names */
@@ -109,13 +94,13 @@ char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) R
 
 char mod_i[13]; /* 8+4+1 (xxxxxxxx.yyy0) */
 int lbl_leng;
-unsigned short int empcard;        /* flags for empty card  */
-static char card[81]; /* card buffer (input) */
+unsigned short int empcard; /* flags for empty card  */
+static char card[81];       /* card buffer (input) */
 char *card72 = card;
 
 static int cdnumb; /* card number */ /* kras */
 static int cardl;                    /* card length without tail blanks */
-static unsigned short int dir;                    /* L,R - flag */
+static unsigned short int dir;       /* L,R - flag */
 static int kolosh;
 static char ns_b = '\6';
 static char ns_cll = '\0';
@@ -140,11 +125,26 @@ static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
 static unsigned short int fixm;                          /* start sentence position */
-static char mod_name[9]; /* module name */  /* kras */
+static char mod_name[9]; /* module name */               /* kras */
 static unsigned long int mod_length; /* module length */ /* kras */
 static unsigned short int again;                         /* next module processing feature */
-static int _eoj; /* "sysin" end flag */     /* kras */
+static int _eoj; /* "sysin" end flag */                  /* kras */
 static int cur;
+
+static void lblkey(int pr);
+static void pch130();
+static void blout();
+static void trprev();
+static void ilm(void (*prog)(char *, int, char *, int));
+static void il(void (*prog)(char *, int));
+static void equ();
+static void pchzkl();
+static void pchk();
+static void gsp(char n);
+static int specif(char tail);
+static int get_id(char id[], int *lid);
+static int get_idm(char id[8], int *lid);
+static int get_csmb(struct linkti *code, char id[40], int *lid);
 
 #ifdef STTIME
 #include <time.h>
@@ -1457,7 +1457,7 @@ CSMBN2:
     goto CSMBEND;
 CSMBN3:
     code->tag = TAGN;
-    code->info.coden = k;  
+    code->info.coden = k;
 CSMBEND:
     if (c[m] != '/')
         goto OSH113;

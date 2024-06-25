@@ -61,23 +61,6 @@ extern struct
     unsigned names : 1;
 } options;
 
-extern struct
-{ /* the table for corresponding with scanner */
-    int nomkar;
-    char modname_var[40];
-    int modnmlen;
-    int curr_stmnmb;
-} scn_;
-
-extern struct
-{ /* the element of sentence */
-    unsigned short int t_;
-    char ci_;
-    int v_;
-    struct linkti _code;
-    struct linkti _spec;
-} scn_e;
-
 extern unsigned short int t_sc;
 extern unsigned short int t_lb;
 extern unsigned short int t_rb;

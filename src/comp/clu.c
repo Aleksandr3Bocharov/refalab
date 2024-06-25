@@ -8,6 +8,7 @@
 #include "refal.def"
 #include "plc.h"
 #include "clu.h"
+#include "refal.h"
 
 struct refw
 {
@@ -49,14 +50,6 @@ struct u
     char *id;              /* identifier */
 };
 typedef struct u T_U;
-
-extern struct
-{
-    int nomkar;
-    char modname_var[40];
-    int modnmlen;
-    int curr_stmnmb;
-} scn_;
 
 static struct u *korenj = NULL; /* tree koren */
 

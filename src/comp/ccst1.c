@@ -55,25 +55,6 @@ extern struct
     unsigned int names : 1; /* kras */
 } options;
 
-/* the table for corresponding with scanner */
-extern struct
-{
-    int nomkar;
-    char modname_var[40];
-    int modnmlen;
-    int curr_stmnmb;
-} scn_;
-
-/* the element of sentence */
-extern struct
-{
-    unsigned short int t_;
-    char ci_;
-    int v_;
-    struct linkti _code;
-    struct linkti _spec;
-} scn_e;
-
 unsigned short int t_sc = 1;
 unsigned short int t_lb = 2;
 unsigned short int t_rb = 3;
