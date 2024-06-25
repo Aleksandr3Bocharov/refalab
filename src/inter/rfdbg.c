@@ -18,7 +18,7 @@ int main()
         goto LACK;
     if (!lcre(&s_st))
         goto LACK;
-    if (!linskd(&s_st, (char *)go))
+    if (!linskd(&s_st, (unsigned char *)go))
         goto LACK;
     rfdbg(&s_st); /* there is exit */
 LACK:

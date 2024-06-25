@@ -26,34 +26,21 @@
     if (f == flhead) \
         goto LACK;
 
-static linkcb *et[256]; /* element table */
-static int nel;         /* adress of first free string in element table */
+static linkcb *et[256];  /* element table */
+static unsigned int nel; /* adress of first free string in element table */
 
-struct wjs
-{ /* jump stack structure */
-    linkcb *jsb1;
-    linkcb *jsb2;
-    int jsnel;
-    unsigned char *jsvpc;
-};
 static struct wjs js[64]; /* jump stack and planning translation stack*/
 static struct wjs *jsp;   /* jump stack pointer*/
 
-struct ts
-{ /* translation stack structure*/
-    linkcb *ts0;
-    linkcb *ts1;
-    linkcb *ts2;
-};
 static struct ts *tsp; /*translation stack pointer*/
 
-static int tmmod;                 /* timer state */
+static unsigned int tmmod;        /* timer state */
 static unsigned long int tmstart; /* time at the start */
 static unsigned long int tmstop;  /* time at the end    */
 
 struct sav_
 { /* save area for var-part of REFAL-block */
-    int upshot_;
+    unsigned int upshot_;
     linkcb *preva_;
     linkcb *nexta_;
     linkcb *prevr_;
@@ -65,25 +52,25 @@ typedef struct sav_ sav;
 static union
 {
     unsigned char c[2];
-    int ii;
+    unsigned int ii;
 } u;
 
 static union
 { /* structure for pointer and integer aligning */
     unsigned char *ptr;
     unsigned long int *inr;
-    unsigned char chr[2];
+    char chr[2];
 } inch;
 
 /* definition of work variables and pointers*/
-static char opc;           /* current statement code */
+static unsigned char opc;  /* current statement code */
 static unsigned char *vpc; /* virtual program counter */
 static linkcb *lastk;      /* last acted sign-k adress */
 static linkcb *lastb;      /* last generated left bracket*/
 static linkcb *b0, *b1, *b2;
 static linkcb *f0, *f1, *f;
 static unsigned char *vpca; /* additional vpc  */
-static int i, n, m;
+static unsigned int i, n, m;
 
 static char (*fptr)(REFAL *);
 
@@ -518,8 +505,8 @@ RB:
     goto ADVANCE;
     /* SB(N,M);  */
 SB:
-    n = (unsigned)*(vpc + NMBL);
-    m = (unsigned)*(vpc + NMBL + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
+    m = (unsigned int)*(vpc + NMBL + NMBL);
     b1 = et[n];
     b2 = et[m];
     vpc = vpc + 3 * NMBL;
@@ -582,7 +569,7 @@ RSCO:
     goto NEXTOP;
     /* LTXT(N,S1,...,SN); */
 LTXT:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
 LTXT1:
     SHB1 if (b1->tag != TAGO) goto FAIL;
@@ -597,7 +584,7 @@ LTXT1:
     goto NEXTOP;
     /*RTXT(N,S1,...,SN);*/
 RTXT:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
 RTXT1:
     SHB2 if (b2->tag != TAGO) goto FAIL;
@@ -625,7 +612,7 @@ RS:
     /* LSD(N);     */
 LSD:
     SHB1
-        n = (unsigned)*(vpc + NMBL);
+        n = (unsigned int)*(vpc + NMBL);
     if (b1->tag != et[n]->tag)
         goto FAIL;
     if (b1->info.codef != et[n]->info.codef)
@@ -637,7 +624,7 @@ LSD:
     /* RSD(N);         */
 RSD:
     SHB2
-        n = (unsigned)*(vpc + NMBL);
+        n = (unsigned int)*(vpc + NMBL);
     if (b2->tag != et[n]->tag)
         goto FAIL;
     if (b2->info.codef != et[n]->info.codef)
@@ -676,7 +663,7 @@ RBCE:
     goto ADVANCE;
     /*LED(N);  */
 LED:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     et[nel] = b1->next;
     b0 = et[n - 1]->prev;
 LED1:
@@ -696,7 +683,7 @@ LED2:
     goto NEXTOP;
     /*RED(N);   */
 RED:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     et[nel + 1] = b2->prev;
     b0 = et[n]->next;
 RED1:
@@ -870,7 +857,7 @@ RESC1:
     goto NEXTOP;
     /* LESD(N); */
 LESD:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpca = (unsigned char *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto LESC0;
@@ -936,7 +923,7 @@ REB1:
     goto ADVANCE;
     /* EOE(N);  */
 EOE:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     jsp = jsp - n;
     vpc = vpc + 2 * NMBL;
     goto NEXTOP;
@@ -1090,7 +1077,7 @@ NSO:
     goto NEXTOP;
     /* TEXT(N,S1,S2,...,SN); */
 TEXT:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     /* printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);*/
     vpc = vpc + NMBL + NMBL;
     for (i = 1; i <= n; i++)
@@ -1150,7 +1137,7 @@ BRACT:
     goto ADVANCE;
     /* ACT(N);  */
 ACT:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     lastk->info.codep = et[n];
     lastk->tag = TAGK;
     lastk = et[n]->info.codep;
@@ -1159,7 +1146,7 @@ ACT:
     goto NEXTOP;
     /* MULS;   */
 MULS:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     SHF
         move(SMBL, (unsigned char *)&(et[n]->tag), (unsigned char *)&(f->tag));
     vpc = vpc + NMBL + NMBL;
@@ -1171,7 +1158,7 @@ MULE:
     /*                        ferr = 0;}       */
     /*                    else                 */
     /*                        lastb1 = lastb;  */
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
     f0 = et[n - 1]->prev;
     while (f0 != et[n])
@@ -1208,8 +1195,8 @@ MULE:
     /*TPLM(N,M);*/
 TPL:;
 TPLM:
-    n = (unsigned)*(vpc + NMBL);
-    m = (unsigned)*(vpc + NMBL + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
+    m = (unsigned int)*(vpc + NMBL + NMBL);
     vpc = vpc + NMBL * 3;
     if (et[m]->next == et[n])
         goto NEXTOP;
@@ -1220,7 +1207,7 @@ TPLM:
     /* TPLV(N);                */
 TPLE:;
 TPLV:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
     if (et[n]->next == et[n - 1])
         goto NEXTOP;
@@ -1229,7 +1216,7 @@ TPLV:
     goto NEXTOP;
     /*TPLS(N); (= TPLM(N,N);) */
 TPLS:
-    n = (unsigned)*(vpc + NMBL);
+    n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
     putts(tsp, &f, &et[n], &et[n]);
     tsp++;

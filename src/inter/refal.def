@@ -40,7 +40,7 @@
 			char infoc;
 			unsigned long int coden;  
 			struct linkcb_ *codep;
-			char *codef;
+			unsigned char *codef;
 		} info;
 	};
 	

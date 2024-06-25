@@ -7,6 +7,7 @@
 #include "refal.def"
 #include "rfintf.h"
 #include "rfrun1.h"
+#include "d.h"
 
 void (*dba)(st *) = NULL;
 

@@ -10,11 +10,57 @@
 #include "rfintf.h"
 #include "rfrun1.h"
 
+typedef struct DET_TAB
+{
+    struct DET_TAB *det_next;
+    char gt;
+    char ge;
+    char eq;
+    char ne;
+    char lt;
+    char le;
+    char tr;
+    char *det_id;
+} DET_TAB;
+static DET_TAB *last_det = NULL;
+static DET_TAB *det_table;
+static DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
+
+static unsigned short int trace_cond = 0;
+static unsigned short int trap_cond = 0;
+static unsigned short int ge_all = 1;
+static unsigned short int eq_all = 1;
+static unsigned short int e1empty = 0;
+static unsigned long int s_from = 0L;
+static unsigned long int s_upto = 0L;
+static unsigned long int s_stop = 2147483647L;
+static unsigned int nogcl = 0; /* garbage collection counter */
+static unsigned int s_arg;
+static unsigned int l_arg;
+static char buff_id[100];
+static char buff[100];
+static char *arg = buff;
+static unsigned long int printed_step;
+static unsigned long int curr_step;
+static unsigned long int euc_step;
+static unsigned long int res_step;
+static unsigned short int was_ge;
+static unsigned short int was_le;
+static unsigned short int was_eq;
+static unsigned long int curr_step1;
+static unsigned long int curr_step2;
+static linkcb *nextk;
+static linkcb *res_prevk;
+static linkcb *res_nextd;
+static linkcb *pk, *prevk, *nextd;
+static linkcb *dot1, *prevk1, *nextd1;
+static linkcb *dot2, *prevk2, *nextd2;
+
 static void init_det_flags();
 static void get_arg();
-static int get_det();
-static int get_numb(unsigned long int *numb);
-static int get_yn(char *b);
+static unsigned int get_det();
+static unsigned int get_numb(unsigned long int *numb);
+static unsigned int get_yn(char *b);
 static void dbapp(st *ss_st);
 static void getpf(st *ss_st);
 static void one_step(st *ss_st);
@@ -25,6 +71,7 @@ static void pr_step();
 
 extern void rfdbg(st *s_st)
 {
+    unsigned int i, c2;
     /* read task for debugging */
     init_det_flags();
     /*----------------------------------*/
@@ -182,7 +229,7 @@ R4:
         s_from = 1;
     if (!s_upto && s_from)
         s_upto = 0x7FFFFFFFL;
-/*==================================*/
+    /*==================================*/
     /*  initialization  */
     dba = dbapp;
     printed_step = 0;
@@ -340,8 +387,7 @@ EOJ:
 
 static void dbapp(st *ss_st)
 {
-    int i;
-    int c2;
+    unsigned int i, c2;
     linkcb *v1, *v2, *v3, *v4, *v6, *v7;
     unsigned long int v5;
     v1 = prevk;
@@ -607,8 +653,8 @@ static void pr_finres(unsigned long int xstep, linkcb *xprevk, linkcb *xnextd)
 
 static void getpf(st *ss_st)
 {
-    int i;
-    unsigned short int id_l;
+    unsigned int i;
+    unsigned char id_l;
     char *p_id;
     curr_step = ss_st->step + 1;
     pk = ss_st->dot->info.codep;
@@ -622,10 +668,9 @@ static void getpf(st *ss_st)
     }
     else
     {
-        p_id = nextk->info.codef;
-        p_id--;
-        id_l = (unsigned short int)(*p_id);
-        p_id = p_id - id_l;
+        p_id = (char *)(nextk->info.codef - 1);
+        id_l = *p_id;
+        p_id -= id_l;
         for (i = 0; i < id_l; i++)
             buff_id[i] = rfcnv(*(p_id + i)); /* kras */
         buff_id[id_l] = '\0';
@@ -659,7 +704,7 @@ static void get_arg()
     return;
 }
 
-static int get_det()
+static unsigned int get_det()
 {
     register int i;
     det_table = last_det;
@@ -668,7 +713,7 @@ static int get_det()
         if (strncmp(det_table->det_id, arg, l_arg) == 0)
         {
             if (*(det_table->det_id + l_arg) == '\0')
-                return 1;
+                return TRUE;
         }
         det_table = det_table->det_next;
     }
@@ -692,28 +737,28 @@ static int get_det()
     det_table->le = 0;
     det_table->lt = 0;
     det_table->tr = 0;
-    return 1;
+    return TRUE;
 }
 
-static int get_numb(unsigned long int *numb)
+static unsigned int get_numb(unsigned long int *numb)
 {
     if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
     {
         printf("\n                        Invalid number; repeat please.");
-        return 0;
+        return FALSE;
     }
-    return 1;
+    return TRUE;
 }
 
-static int get_yn(char *b)
+static unsigned int get_yn(char *b)
 {
     if (*b != 'y' && *b != 'n')
     {
         printf("\n                        Answer is \"y/n\"; repeat please.");
-        return 0;
+        return FALSE;
     }
     if (*b == 'y')
         e1empty = 1;
-    return 1;
+    return TRUE;
 }
 /*---------  end of file DEBUG.C -----------*/

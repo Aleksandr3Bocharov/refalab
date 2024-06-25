@@ -8,36 +8,15 @@
 
 #define NMBL sizeof(char)
 
-struct wjs
-{
-    linkcb *jsb1;
-    linkcb *jsb2;
-    int jsnel;
-    unsigned char *jsvpc;
-};
+static unsigned int letter(char s);
+static unsigned int digit(char s);
+static unsigned int not(unsigned int spcpls);
 
-struct ts
-{
-    linkcb *ts0;
-    linkcb *ts1;
-    linkcb *ts2;
-};
-
-struct spcs
-{
-    int spls;
-    unsigned char *svpc;
-};
-
-static int letter(unsigned char s);
-static int digit(char s);
-static int not(int spcpls);
-
-extern int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
+extern unsigned int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
 /* specifier interpreter */
 {
-    int spcwrk;            /* work variable */
-    int spcpls;            /* positiveness feature of specifier element */
+    unsigned int spcwrk;   /* work variable */
+    unsigned int spcpls;   /* positiveness feature of specifier element */
     struct spcs *spcsp;    /* spcs-pointer */
     unsigned char *spcvpc; /* virtual specifier counter */
     unsigned char spcopc;  /*specifier code */
@@ -150,24 +129,24 @@ SPCL:
     goto SPCNXT;
 } /*             end      spc          */
 
-static int letter(unsigned char s)
+static unsigned int letter(char s)
 {
     if ((s >= 'A' && s <= 'Z') || /* A..Z     */
         (s >= 'a' && s <= 'z') || /* a..z     */
         (s > 127 && s < 176) ||   /* �..��..� */
         (s > 223 && s < 240))     /* �..�     */
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
-static int digit(char s)
+static unsigned int digit(char s)
 {
     if (s >= '0' && s <= '9')
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
-static int not(int spcpls)
+static unsigned int not(unsigned int spcpls)
 {
     if (spcpls == TRUE)
         return FALSE;
@@ -180,7 +159,7 @@ extern void link(linkcb *x, linkcb *y)
     y->prev = x;
 }
 
-extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, unsigned char **avpc)
+extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -188,7 +167,7 @@ extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, unsign
     jsp->jsvpc = *avpc;
 }
 
-extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, int *anel, unsigned char **avpc)
+extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -210,9 +189,9 @@ extern void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
     *az = tsp->ts2;
 }
 
-extern void move(int n, unsigned char *pf, unsigned char *pt)
+extern void move(unsigned int n, unsigned char *pf, unsigned char *pt)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < n; i++)
     {
         *pt = *pf;
@@ -242,16 +221,16 @@ int i;
 }
 */
 
-extern int cmpr(int n, unsigned char *p1, unsigned char *p2)
+extern unsigned int cmpr(unsigned int n, unsigned char *p1, unsigned char *p2)
 {
-    int i;
+    unsigned int i;
     for (i = 1; i <= n; i++)
     {
         if (*p1 != *p2)
-            return 0;
+            return FALSE;
         p1++;
         p2++;
     }
-    return 1;
+    return TRUE;
 }
 /*------------ end of file RFRUN2.C ----------*/

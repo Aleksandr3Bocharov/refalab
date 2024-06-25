@@ -11,12 +11,12 @@
 REFAL refal;
 
 static linkcb *last_block = NULL;
-static int rf_init = 1;
-static int curr_size = 0;
+static unsigned int rf_init = 1;
+static unsigned int curr_size = 0;
 static linkcb hd;
 
-static int lgcl();
-static void rflist(linkcb *par, int n);
+static unsigned int lgcl();
+static void rflist(linkcb *par, unsigned int n);
 
 extern void rfabe(char *amsg)
 {
@@ -24,11 +24,11 @@ extern void rfabe(char *amsg)
     exit(1);
 }
 
-extern int lincrm()
+extern unsigned int lincrm()
 {
     linkcb *first_free, *p;
     linkcb *new_block;
-    int was_coll, n;
+    unsigned int was_coll, n;
     if (last_block != NULL)
     {
         first_free = refal.flhead->next;
@@ -60,10 +60,10 @@ extern int lincrm()
 }
 
 /*  check a number of items in free items list */
-extern int lrqlk(int l)
+extern unsigned int lrqlk(unsigned int l)
 {
     linkcb *p;
-    int n;
+    unsigned int n;
     p = refal.flhead;
     for (n = 0; n < l; n++)
     {
@@ -74,9 +74,9 @@ extern int lrqlk(int l)
     return TRUE;
 }
 
-extern int lins(linkcb *p, int l)
+extern unsigned int lins(linkcb *p, unsigned int l)
 {
-    int n;
+    unsigned int n;
     linkcb *p1, *q, *q1, *r;
     if (l < 1)
         return TRUE;
@@ -101,7 +101,7 @@ extern int lins(linkcb *p, int l)
     return TRUE;
 }
 
-extern int slins(linkcb *p, int k)
+extern unsigned int slins(linkcb *p, unsigned int k)
 {
     while (!lrqlk(k))
     {
@@ -114,7 +114,7 @@ extern int slins(linkcb *p, int k)
     return lins(p, k);
 }
 
-extern int linskd(st *ast, char *f)
+extern unsigned int linskd(st *ast, unsigned char *f)
 {
     linkcb *p, *q, *r;
     if (!lexist(ast))
@@ -137,8 +137,8 @@ extern int linskd(st *ast, char *f)
 
 extern char rfcnv(char cm)
 {
-    int j;
-    j = (int)cm;
+    unsigned char j;
+    j = cm;
     if ((j > 96) && (j < 123))
         return cm - '\40';
     else
@@ -222,14 +222,14 @@ extern void rftermm()
     }
 }
 
-extern void rfexec(char *func)
+extern void rfexec(unsigned char *func)
 {
 
     /* BLF 17.07.2004 */
     linkcb *prevk, *nextd, *pk;
 
     st s_st;
-    if (rf_init == 1)
+    if (rf_init)
         rfinit();
     if (!lincrm())
         goto LACK;
@@ -311,8 +311,8 @@ LACK:
 extern void rfpexm(char *pt, linkcb *pr, linkcb *pn)
 {
     char *f;
-    unsigned char c;
-    int l, k, fr;
+    unsigned char l, k; 
+    unsigned int fr;
     linkcb *pr1;
 
     fr = 0;
@@ -352,9 +352,8 @@ extern void rfpexm(char *pt, linkcb *pr, linkcb *pn)
             else if (pr->tag == TAGF)
             {
                 putchar('/');
-                f = pr->info.codef - 1;
-                c = *f;
-                l = (int)c;
+                f = (char *)(pr->info.codef - 1);
+                l = *f;
                 f -= l;
                 for (k = 1; k <= l; k++, f++)
                     putchar(rfcnv(*f));
@@ -390,7 +389,7 @@ extern void rftpl(linkcb *r, linkcb *p, linkcb *q)
 }
 
 /*  copy expression and add it to nessecary place  */
-extern int lcopy(linkcb *r, linkcb *p, linkcb *q)
+extern unsigned int lcopy(linkcb *r, linkcb *p, linkcb *q)
 {
     linkcb *r1, *f, *f0, *f1, *lastb = NULL;
     f = refal.flhead;
@@ -437,7 +436,7 @@ extern int lcopy(linkcb *r, linkcb *p, linkcb *q)
     return TRUE;
 }
 
-extern int lexist(st *ast)
+extern unsigned int lexist(st *ast)
 {
     REFAL *p;
     p = &refal;
@@ -450,11 +449,11 @@ extern int lexist(st *ast)
     return FALSE;
 }
 
-extern int lcre(st *ast)
+extern unsigned int lcre(st *ast)
 {
     st *q;
     linkcb *flhead1;
-    if (rf_init == 1)
+    if (rf_init)
         rfinit();
     if (lexist(ast))
         rfabe("Lcre: process already exists");
@@ -514,10 +513,10 @@ UP:
     goto MRK;
 }
 
-static int lgcl()
+static unsigned int lgcl()
 {
     st *p;
-    int was_coll;
+    unsigned int was_coll;
     linkcb *pzero, *q, *r, *flhead1, *p1, hdvar, *hd;
     hd = &hdvar;
     if (refal.dvar == NULL)
@@ -574,11 +573,11 @@ static int lgcl()
     return was_coll;
 }
 
-static void rflist(linkcb *par, int n)
+static void rflist(linkcb *par, unsigned int n)
 {
     linkcb *p, *q;
-    int k;
-    if (rf_init != 0)
+    unsigned int k;
+    if (rf_init)
         rfinit();
     q = par;
     p = refal.flhead->prev;
@@ -599,8 +598,7 @@ static void rflist(linkcb *par, int n)
 extern void rfpex(char *pt, linkcb *pr, linkcb *pn)
 {
     char *f;
-    unsigned char c;
-    int l, k;
+    unsigned char l, k;
     linkcb *pr1;
     printf("\n%s", pt);
     while (pr != pn->prev)
@@ -624,10 +622,9 @@ extern void rfpex(char *pt, linkcb *pr, linkcb *pn)
         else if (pr->tag == TAGF)
         {
             putchar('\'');
-            f = pr->info.codef - 1;
-            c = *f;
-            l = (int)c;
-            f = f - l;
+            f = (char *)(pr->info.codef - 1);
+            l = *f;
+            f -= l;
             for (k = 1; k <= l; k++, f++)
                 putchar(rfcnv(*f));
             putchar('\'');
