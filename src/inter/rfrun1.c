@@ -74,7 +74,7 @@ static unsigned int i, n, m;
 
 static char (*fptr)(REFAL *);
 
-extern void rfrun(st *ast) /* adress of current state table */
+void rfrun(st *ast) /* adress of current state table */
 {
     /* dynamic area DSA */
     sav *savecr;

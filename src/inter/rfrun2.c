@@ -12,7 +12,7 @@ static unsigned int letter(char s);
 static unsigned int digit(char s);
 static unsigned int not(unsigned int spcpls);
 
-extern unsigned int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
+unsigned int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
 /* specifier interpreter */
 {
     unsigned int spcwrk;   /* work variable */
@@ -153,13 +153,13 @@ static unsigned int not(unsigned int spcpls)
     return TRUE;
 }
 
-extern void link(linkcb *x, linkcb *y)
+void link(linkcb *x, linkcb *y)
 {
     x->next = y;
     y->prev = x;
 }
 
-extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
+void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -167,7 +167,7 @@ extern void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *ane
     jsp->jsvpc = *avpc;
 }
 
-extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
+void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -175,21 +175,21 @@ extern void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *ane
     *avpc = jsp->jsvpc;
 }
 
-extern void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     tsp->ts0 = *ax;
     tsp->ts1 = *ay;
     tsp->ts2 = *az;
 }
 
-extern void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     *ax = tsp->ts0;
     *ay = tsp->ts1;
     *az = tsp->ts2;
 }
 
-extern void move(unsigned int n, unsigned char *pf, unsigned char *pt)
+void move(unsigned int n, unsigned char *pf, unsigned char *pt)
 {
     unsigned int i;
     for (i = 0; i < n; i++)
@@ -221,7 +221,7 @@ int i;
 }
 */
 
-extern unsigned int cmpr(unsigned int n, unsigned char *p1, unsigned char *p2)
+unsigned int cmpr(unsigned int n, unsigned char *p1, unsigned char *p2)
 {
     unsigned int i;
     for (i = 1; i <= n; i++)

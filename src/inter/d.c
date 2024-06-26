@@ -69,7 +69,7 @@ static void pr_finres(unsigned long int xstep, linkcb *xprevk, linkcb *xnextd);
 static void pr_imres();
 static void pr_step();
 
-extern void rfdbg(st *s_st)
+void rfdbg(st *s_st)
 {
     unsigned int i, c2;
     /* read task for debugging */
