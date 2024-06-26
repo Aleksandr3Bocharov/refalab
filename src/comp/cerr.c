@@ -7,7 +7,7 @@
 #include "cerr.h"
 #include "refal.h"
 
-extern void pchosh(char *s)
+void pchosh(char *s)
 {
     char tmp[255];
     oshibka();
@@ -27,7 +27,7 @@ static void pchosi(char *s, char *t)
     fputs(tmp, systerm);
 }
 
-extern void pchosj(char *s, char *sid, int lsid, char *s1)
+void pchosj(char *s, char *sid, int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
@@ -42,7 +42,7 @@ extern void pchosj(char *s, char *sid, int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-extern void pchosx(char *s, char *sid, int lsid, char *s1)
+void pchosx(char *s, char *sid, int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
@@ -57,7 +57,7 @@ extern void pchosx(char *s, char *sid, int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-extern void pchosa(char *s, char c)
+void pchosa(char *s, char c)
 {
     char tmp[255];
     oshibka();

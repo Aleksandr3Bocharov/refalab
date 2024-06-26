@@ -4,6 +4,8 @@
 typedef struct u T_U;
 typedef struct BU_ BU;
 
+extern BU sysl;
+
 extern void j3addr(T_U *pp);
 extern void jbyte(char bb);
 extern void jend();

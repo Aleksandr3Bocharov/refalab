@@ -82,11 +82,6 @@ static union
     unsigned short int w;
 } d;
 
-extern char parm_i[]; /* sourse file name */
-extern char vers_i[]; /* compiler version */
-extern char mod_i[];  /* module name      */
-extern unsigned short int nommod;
-
 struct BU_
 {
     unsigned len;

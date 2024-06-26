@@ -79,7 +79,7 @@ extern unsigned short int lrbxy;      /* stoped bracket flag */
 
 static int ortgn(unsigned short int n1, unsigned short int n2);
 
-extern void isk_v()
+void isk_v()
 {
     for (i = 1; i <= kol_per; i++)
         if (v[i].ci == scn_e.ci)
@@ -93,7 +93,7 @@ extern void isk_v()
 }
 
 /*   generation of stoped brackets and setting boards   */
-extern void gen_bsb()
+void gen_bsb()
 {
     switch (lrbxy)
     {
@@ -134,18 +134,18 @@ GEN_SB:
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
 }
 
-extern void pch303()
+void pch303()
 {
     pchosa("303 differents for variable ", v[i].ci);
 }
 
-extern void pch406()
+void pch406()
 {
     pchosa("406 in left part missing variable ", v[i].ci);
 }
 
 /*    attempt to extract left support group     */
-extern int lsg_p()
+int lsg_p()
 {
 LSG_:
     n++;
@@ -188,7 +188,7 @@ GEN_LE:
 }
 
 /*        attempt to extract right support group     */
-extern int rsg_p()
+int rsg_p()
 {
 RSG_:
     n--;
@@ -285,7 +285,7 @@ ORT3E:
     return res;
 }
 
-extern void gpev(char op1, char op2)
+void gpev(char op1, char op2)
 {
     if (not_nil)
         jbyte(op2);

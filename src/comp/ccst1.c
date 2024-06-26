@@ -160,7 +160,7 @@ unsigned short int lrbxy;      /* stoped bracket flag */
 #define n_eossn '\120'
 #define n_setnos '\121'
 
-extern void cst(int dir, char *lbl, int lblleng)
+void cst(int dir, char *lbl, int lblleng)
 /* dir;     matching feature :left to right or otherwise */
 /* lbl;   sentence label */
 /* lblleng; sentence label length */

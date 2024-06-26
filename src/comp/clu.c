@@ -53,7 +53,7 @@ typedef struct u T_U;
 
 static struct u *korenj = NULL; /* tree koren */
 
-extern void uns_sto()
+void uns_sto()
 {
     printf("\nNo memory for identifier table");
     exit(1);
@@ -92,7 +92,7 @@ static T_U *nov_uzel(char *idp, int lid)
     return p;
 }
 
-extern struct u *lookup(char *idp, int lid)
+struct u *lookup(char *idp, int lid)
 /* lid identifier length */
 {
     struct refw *r1, *q1;
@@ -285,7 +285,7 @@ static void traverse(struct u *ptr, void (*prog)(struct u *))
     return;
 }
 
-extern void through(void (*prog)(struct u *))
+void through(void (*prog)(struct u *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);
@@ -324,7 +324,7 @@ static void kil_tree(struct u *p)
     return;
 }
 
-extern void luterm()
+void luterm()
 {
     if (korenj != NULL)
     {

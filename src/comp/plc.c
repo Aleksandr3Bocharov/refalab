@@ -5,7 +5,7 @@
 
 #include "plc.h"
 
-extern int index_x(char *s, char *t)
+int index_x(char *s, char *t)
 /* first left insertion t into  s */
 /* if not: -1                     */
 {
@@ -56,11 +56,11 @@ extern int index_x(char *s, char *t)
 }
 */
 
-extern int cmpstr(int n, char *s1, char *s2)
+int cmpstr(unsigned int n, char *s1, char *s2)
 /* comparison two string . if s1<s2 then return < 0 */
 /* if s1 = s2 return 0. if s1>s2 then return > 0    */
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < n; i++)
         if (*(s1 + i) != *(s2 + i))
             return (*(s1 + i) - *(s2 + i));

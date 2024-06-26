@@ -33,33 +33,11 @@
     }         \
     }
 
-struct
-{ /* compiling   options */
-    unsigned int source : 1;
-    unsigned int mincomp : 1;
-    unsigned int stmnmb : 1;
-    unsigned int extname : 1;
-    unsigned int multmod : 1;
-    unsigned int asmb : 1;
-    unsigned int names : 1;
-} options;
+struct options;
 
-struct
-{ /* the table for corresponding with scanner */
-    int nomkar;
-    char modname_var[40]; /* module name */ /*  !!! */
-    int modnmlen;                           /* module name length */
-    int curr_stmnmb;
-} scn_;
+struct scn_;
 
-struct
-{                         /* current statement element */
-    unsigned short int t; /*    element type           */
-    char ci;              /*    variable index         */
-    int v;
-    struct linkti code;
-    struct linkti spec;
-} scn_e;
+struct scn_e;
 
 static struct
 {
@@ -70,34 +48,30 @@ static struct
     unsigned uzhekrt_t : 1;
 } flags;
 
-static FILE *sysin;
 FILE *sysprint, *systerm;
-FILE *syslin;                  /* for assem */
-FILE *systxt;                  /* for module names */
-extern unsigned long int sysl; /* for obj   */
+FILE *syslin; /* for assem */
+FILE *systxt; /* for module names */
 
-int qindex;
-unsigned short int m; /* current symbol number */
 unsigned short int nommod;
-char strg_c[78];
-char parm_i[40];
-char cprc[] = "%%%";
-char regnom[] = "000";
-int rn[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-
-/* Aleksandr Bocharov */
+char parm_i[40];         /* sourse file name */
+/* Aleksandr Bocharov */ /* compiler version */
 char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
-
 char mod_i[13]; /* 8+4+1 (xxxxxxxx.yyy0) */
-int lbl_leng;
-unsigned short int empcard; /* flags for empty card  */
-static char card[81];       /* card buffer (input) */
-char *card72 = card;
 
-static int cdnumb; /* card number */ /* kras */
-static int cardl;                    /* card length without tail blanks */
-static unsigned short int dir;       /* L,R - flag */
-static int kolosh;
+static FILE *sysin;
+static unsigned short int m; /* current symbol number */
+static char strg_c[78];
+static char cprc[] = "%%%";
+static char regnom[] = "000";
+static unsigned int rn[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+static unsigned int lbl_leng;
+static unsigned short int empcard; /* flags for empty card  */
+static char card[81];              /* card buffer (input) */
+static char *card72 = card;
+static unsigned int cdnumb; /* card number */ /* kras */
+static unsigned int cardl;                    /* card length without tail blanks */
+static unsigned short int dir;                /* L,R - flag */
+static unsigned int kolosh;
 static char ns_b = '\6';
 static char ns_cll = '\0';
 static char ns_d = '\13';
@@ -124,23 +98,23 @@ static unsigned short int fixm;                          /* start sentence posit
 static char mod_name[9]; /* module name */               /* kras */
 static unsigned long int mod_length; /* module length */ /* kras */
 static unsigned short int again;                         /* next module processing feature */
-static int _eoj; /* "sysin" end flag */                  /* kras */
-static int cur;
+static unsigned int _eoj; /* "sysin" end flag */         /* kras */
+static unsigned int cur;
 
-static void lblkey(int pr);
+static void lblkey(unsigned int pr);
 static void pch130();
 static void blout();
 static void trprev();
-static void ilm(void (*prog)(char *, int, char *, int));
-static void il(void (*prog)(char *, int));
+static void ilm(void (*prog)(char *, unsigned int, char *, unsigned int));
+static void il(void (*prog)(char *, unsigned int));
 static void equ();
 static void pchzkl();
 static void pchk();
 static void gsp(char n);
-static int specif(char tail);
-static int get_id(char id[], int *lid);
-static int get_idm(char id[8], int *lid);
-static int get_csmb(struct linkti *code, char id[40], int *lid);
+static unsigned int specif(char tail);
+static unsigned int get_id(char id[40], unsigned int *lid);
+static unsigned int get_idm(char id[8], unsigned int *lid);
+static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid);
 
 #ifdef STTIME
 #include <time.h>
@@ -199,7 +173,7 @@ static void GET_time()
 
 static void de()
 {
-    int i, k, l, n;
+    unsigned int i, k, l, n;
     n = atoi(regnom);
     l = strlen(vers_i);
     k = n % l;
@@ -217,7 +191,7 @@ static void de()
 int main(int argc, char *argv[])
 {
     char parm[40];
-    int i, j, temp;
+    unsigned int i, j, temp;
 
     systerm = NULL;
 
@@ -375,7 +349,7 @@ int main(int argc, char *argv[])
         else
         {
             strcat(parm, ".obj");
-            sfop_w(parm, (BU *)&sysl);
+            sfop_w(parm, &sysl);
         }
     }
     /*  print of page title missing here */
@@ -513,7 +487,7 @@ END_OF_SYSIN:
         if (options.asmb == 1)
             fclose(syslin);
         else
-            sfclose((BU *)&sysl);
+            sfclose(&sysl);
         if ((mod_length == 0) || (flags.was_err != 0))
             unlink(parm);
     }
@@ -534,7 +508,7 @@ END_OF_SYSIN:
 
 static void trprev()
 { /* perenos poslednej pustoj metki w tekuschuju */
-    int n;
+    unsigned int n;
     n = strlen(prevlb);
     if ((n != 0) && (lbl_leng == 0))
     {
@@ -548,7 +522,8 @@ static void trprev()
 
 static void rdline(char *s)
 { /* read 80 symbols from sysin */
-    int i, j, k, c;
+    unsigned int i, j, k;
+    int c;
     empcard = 1;
     for (i = 0; ((c = getc(sysin)) != '\n') && (c != EOF) && (i < 80); i++)
     {
@@ -575,7 +550,8 @@ static void rdline(char *s)
 
 static void translate(char *str, char *class1)
 { /* L,D,* - classification procedure */
-    int i, j;
+    unsigned int i;
+    int j;
     for (i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
@@ -653,9 +629,9 @@ RDCARD1:
 }
 
 /*    directive label and keyword extraction    */
-static void lblkey(int pr)
+static void lblkey(unsigned int pr)
 {
-    register int i;
+    register unsigned int i;
     unsigned short int l, delta, fixm1;
     if (pr == 0)
     {
@@ -707,13 +683,13 @@ LKEXIT:
     left_part = 1;
 }
 
-extern void scan()
+void scan()
 {
     static char id[40];
-    static int id_leng;
-    static char *p;
+    static unsigned int id_leng;
+    static unsigned char *p;
     static unsigned short int scode;
-    int i; /* kras */
+    unsigned int i; /* kras */
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
     scn_e.v = 0;
@@ -834,7 +810,7 @@ SCNV:
         EH ROMA;
         if (left_part == 1)
         {
-            p = scn_e.spec.info.codef = (char *)genlbl();
+            p = scn_e.spec.info.codef = (unsigned char *)genlbl();
             jlabel((struct u *)p);
         }
         if (specif(')') == 1)
@@ -848,7 +824,7 @@ SCNV:
         if (get_id(id, &id_leng) == 0)
             goto SOSH203;
         if (left_part == 1)
-            scn_e.spec.info.codef = (char *)spref(id, id_leng, ')');
+            scn_e.spec.info.codef = (unsigned char *)spref(id, id_leng, ')');
         if (c[m] == ':')
         {
             EH ROMA else goto SOSH204;
@@ -997,7 +973,7 @@ SABBR:
             gsp((char)(scode + 7));
             gsp(ns_ngw);
         };
-        scn_e.spec.info.codef = *(sarr + scode);
+        scn_e.spec.info.codef = (unsigned char *)*(sarr + scode);
     };
     EH ROMA;
     goto SCNVI;
@@ -1025,11 +1001,11 @@ static void gsp(char n)
         jbyte(n);
 }
 
-static int specif(char tail)
+static unsigned int specif(char tail)
 { /* specifier compiler */
-    int neg;
+    unsigned int neg;
     char id[255];
-    int lid;
+    unsigned int lid;
     struct linkti code;
     char *p;
     neg = 0;
@@ -1303,7 +1279,7 @@ OSH208:
 
 static void pchk()
 { /* writing of card into sysprint */
-    int i;
+    unsigned int i;
     char tmpstr[80];
     if (flags.uzhe_krt == 0 && sysprint != NULL)
     {
@@ -1339,10 +1315,10 @@ static void pchk_t()
     }
 }
 
-static void il(void (*prog)(char *, int)) /* treatment of directives having 'EMPTY' type */
+static void il(void (*prog)(char *, unsigned int)) /* treatment of directives having 'EMPTY' type */
 {
     char id[40];
-    int lid;
+    unsigned int lid;
     blout();
 IL1:
     if (get_id(id, &lid) == 0)
@@ -1362,10 +1338,10 @@ IL2:
     pch130();
 }
 
-static void ilm(void (*prog)(char *, int, char *, int)) /* treatment of directives having 'ENTRY' type*/
+static void ilm(void (*prog)(char *, unsigned int, char *, unsigned int)) /* treatment of directives having 'ENTRY' type*/
 {
     char id[40], ide[8];
-    int lid, lide;
+    unsigned int lid, lide;
     blout();
 ILM1:
     if (get_id(id, &lid) == 0)
@@ -1403,7 +1379,7 @@ ILM2:
 static void equ()
 { /* treatement of directives having 'EQU' type */
     char id[40];
-    int lid;
+    unsigned int lid;
     blout();
     if (get_id(id, &lid) == 0)
         goto EQU1;
@@ -1419,7 +1395,7 @@ static void pch130()
     pchosh("130 invalid record format");
 }
 
-static int get_csmb(struct linkti *code, char id[40], int *lid) /* procedure read multiple symbol */
+static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid) /* procedure read multiple symbol */
 {
     unsigned long int k;
     unsigned long int l;
@@ -1430,7 +1406,7 @@ static int get_csmb(struct linkti *code, char id[40], int *lid) /* procedure rea
         goto CSMBN;
     if (get_id(id, lid) == 0)
         goto OSH112;
-    code->info.codef = (char *)fnref(id, *lid);
+    code->info.codef = (unsigned char *)fnref(id, *lid);
     code->tag = TAGF;
     goto CSMBEND;
 CSMBN:
@@ -1479,9 +1455,9 @@ static char convert(char cm)
     return cm;
 }
 
-static int get_id(char id[], int *lid)
+static unsigned int get_id(char id[40], unsigned int *lid)
 { /* read identifier */
-    int i;
+    unsigned int i;
     for (i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
@@ -1504,16 +1480,16 @@ ID0:
 }
 
 /*read external identifier */
-static int get_idm(char id[8], int *lid)
+static unsigned int get_idm(char id[8], unsigned int *lid)
 {
     if (class[m] != 'L')
-        return 0;
+        return FALSE;
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
         EH ROMA0; /* kras */
         if ((class[m] != 'L') && (class[m] != 'D'))
-            return 1;
+            return TRUE;
         id[*lid] = convert(c[m]);
     }
     /* if identifier length > 8 then delete tail */
@@ -1522,7 +1498,7 @@ static int get_idm(char id[8], int *lid)
         EH ROMA0;
     } /* kras */
     (*lid)++;
-    return 1;
+    return TRUE;
 }
 
 /************************************************************/
@@ -1567,7 +1543,7 @@ static void pchzkl()
 #endif
 }
 
-extern void oshibka()
+void oshibka()
 {
     pchk();
     pchk_t();
