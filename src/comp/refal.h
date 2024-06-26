@@ -16,17 +16,17 @@ extern struct
 
 extern struct
 { /* the table for corresponding with scanner */
-    int nomkar;
+    unsigned int nomkar;
     char modname_var[40]; /* module name */ /*  !!! */
-    int modnmlen;                           /* module name length */
-    int curr_stmnmb;
+    unsigned int modnmlen;                  /* module name length */
+    unsigned int curr_stmnmb;
 } scn_;
 
 extern struct
 {                         /* current statement element */
     unsigned short int t; /*    element type           */
     char ci;              /*    variable index         */
-    int v;
+    unsigned int v;
     struct linkti code;
     struct linkti spec;
 } scn_e;

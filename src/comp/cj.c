@@ -15,6 +15,7 @@
 #include "cj.h"
 #include "cerr.h"
 #include "refal.h"
+#include "clu.h"
 
 /* BLF - for renaming add,sub,mul,div */
 char *oper_add;
@@ -23,33 +24,6 @@ char *oper_mul;
 char *oper_div;
 char *oper_rp;
 char *oper_ptr;
-
-struct refw
-{
-    struct refw *next;
-    int numb[6];
-};
-
-struct u
-{
-    union
-    {
-        unsigned infon;
-        struct u *infop;
-    } info;
-
-    char mode;
-    char type;
-    int l;
-    struct u *i;
-    struct u *j;
-    struct refw *last_ref;
-    struct refw ref;
-    int def;
-    char k;
-    char *id;
-};
-typedef struct u T_U;
 
 struct ent
 { /* entry table element */

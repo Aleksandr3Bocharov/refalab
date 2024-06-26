@@ -1,7 +1,8 @@
 #ifndef CJ_H
 #define CJ_H
 
-typedef struct u T_U;
+#include "clu.h"
+
 typedef struct BU_ BU;
 
 extern BU sysl;

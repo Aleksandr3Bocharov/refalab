@@ -11,37 +11,7 @@
 #include "cgop.h"
 #include "clu.h"
 #include "refal.h"
-
-#define N_FAIL '\002'
-#define N_NIL '\030'
-#define N_SJUMP '\001'
-#define N_SWAP '\116'
-#define N_SETNOS '\121'
-
-struct refw
-{
-    struct refw *next;
-    int numb[6];
-};
-
-struct u
-{ /* for comment see file named CLU.C */
-    union
-    {
-        int infon;
-        struct u *infop;
-    } info;
-    char mode;
-    char type;
-    int l;
-    struct u *i;
-    struct u *j;
-    struct refw *last_ref;
-    struct refw ref;
-    int def;
-    char k;
-    char *id;
-};
+#include "ccst1.h"
 
 struct i_lbl
 {
@@ -60,17 +30,6 @@ struct arr_lbl
 };
 typedef struct arr_lbl T_ARR_LBL;
 
-extern struct
-{
-    unsigned source : 1;
-    unsigned xref : 1;
-    unsigned stmnmb : 1;
-    unsigned extname : 1;
-    unsigned multmod : 1;
-    unsigned asmb : 1;
-    unsigned names : 1;
-} options;
-
 static struct arr_lbl *first_arr_lbl = NULL;
 static int n_lbl = 15;
 static struct i_lbl *pfail = NULL;    /* statememt FAIL label */
@@ -78,15 +37,15 @@ static struct i_lbl *next_stm = NULL; /* next statement label */
 static struct i_lbl *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 static void func_end();
-static void fnhead(char *idp, int lid);
+static void fnhead(char *idp, unsigned int lid);
 
-static void p504(char *idp, int lid)
+static void p504(char *idp, unsigned int lid)
 {
     pchosj("504 label", idp, lid, " is already defined");
     return; /* eg */
 }
 
-static void p505(char *idp, int lid)
+static void p505(char *idp, unsigned int lid)
 {
     pchosj("505 label", idp, lid, " is yet not defined");
     return; /* eg */
@@ -130,7 +89,7 @@ struct i_lbl *genlbl()
     return p;
 }
 
-void fndef(char *idp, int lid)
+void fndef(char *idp, unsigned int lid)
 {
     struct u *p;
     if (lid != 0)
@@ -150,9 +109,9 @@ void fndef(char *idp, int lid)
             if (options.stmnmb == 1)
             {
                 next_nos = alloc_lbl();
-                gopl(N_SETNOS, (char *)next_nos);
+                gopl(n_setnos, (char *)next_nos);
             };
-            gopl(N_SJUMP, (char *)next_stm);
+            gopl(n_sjump, (char *)next_stm);
         }
     }
     else
@@ -162,7 +121,7 @@ void fndef(char *idp, int lid)
         else
             p500();
         next_stm = alloc_lbl();
-        gopl(N_SJUMP, (char *)next_stm);
+        gopl(n_sjump, (char *)next_stm);
     };
     return; /*  eg */
 }
@@ -177,7 +136,7 @@ static void func_end()
         {
             pfail = next_stm;
             jlabel((struct u *)next_stm);
-            jbyte(N_FAIL);
+            jbyte(n_fail);
         }
         next_stm = NULL;
         if (options.stmnmb == 1)
@@ -189,7 +148,7 @@ static void func_end()
     return;
 }
 
-void sempty(char *idp, int lid)
+void sempty(char *idp, unsigned int lid)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -201,15 +160,15 @@ void sempty(char *idp, int lid)
         fnhead(idp, lid);
         p->def = scn_.nomkar;
         jlabel(p);
-        jbyte(N_FAIL);
+        jbyte(n_fail);
     }
     return;
 }
 
-void sswap(char *idp, int lid)
+void sswap(char *idp, unsigned int lid)
 {
     struct u *p;
-    int l0, j0, k0, kk;
+    unsigned int l0, j0, k0, kk;
     p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     if (p->mode & '\020')
@@ -229,7 +188,7 @@ void sswap(char *idp, int lid)
         fnhead(idp, lid);
         p->def = scn_.nomkar;
         jlabel(p);
-        jbyte(N_SWAP);
+        jbyte(n_swap);
         /*   kk = sizeof(int)+sizeof(unsigned long int)+sizeof(POINTER) * 2;  */
         kk = SMBL + LBLL * 2;
         for (k0 = 1; k0 <= kk; k0++)
@@ -238,7 +197,7 @@ void sswap(char *idp, int lid)
     return;
 }
 
-void sentry(char *idp, int lidp, char *ide, int lide)
+void sentry(char *idp, unsigned int lidp, char *ide, unsigned int lide)
 {
     struct u *p;
     p = lookup(idp, lidp);
@@ -246,7 +205,7 @@ void sentry(char *idp, int lidp, char *ide, int lide)
     return; /* eg */
 }
 
-void sextrn(char *idp, int lidp, char *ide, int lide)
+void sextrn(char *idp, unsigned int lidp, char *ide, unsigned int lide)
 /* idp internal name */
 /* ide external name */
 {
@@ -263,7 +222,7 @@ void sextrn(char *idp, int lidp, char *ide, int lide)
     return; /*  eg */
 }
 
-struct u *fnref(char *idp, int lid)
+struct u *fnref(char *idp, unsigned int lid)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -271,7 +230,7 @@ struct u *fnref(char *idp, int lid)
     return p;
 }
 
-struct u *spref(char *idp, int lid, char d)
+struct u *spref(char *idp, unsigned int lid, char d)
 {
     struct u *p;
     p = lookup(idp, lid);
@@ -281,7 +240,7 @@ struct u *spref(char *idp, int lid, char d)
     return p;
 }
 
-void spdef(char *idp, int lid)
+void spdef(char *idp, unsigned int lid)
 {
     struct u *p;
     if (lid == 0)
@@ -301,7 +260,7 @@ void spdef(char *idp, int lid)
     return; /*  eg */
 }
 
-void sequ(char *id1, int lid1, char *id0, int lid0)
+void sequ(char *id1, unsigned int lid1, char *id0, unsigned int lid0)
 {
     struct u *p0, *p1;
     p0 = lookup(id0, lid0);
@@ -330,10 +289,10 @@ void sequ(char *id1, int lid1, char *id0, int lid0)
     return; /* eg */
 }
 
-static void fnhead(char *idp, int lid)
+static void fnhead(char *idp, unsigned int lid)
 {
     char *idpm;
-    int k0, l0, ll;
+    unsigned int k0, l0, ll;
     if (options.names == 1)
     {
         if (options.extname == 1)

@@ -5,23 +5,11 @@
 #include <stdio.h>
 #include "refal.def"
 #include "ccst2.h"
+#include "ccst1.h"
 #include "cj.h"
 #include "cgop.h"
 #include "cerr.h"
 #include "refal.h"
-
-/* the table of assembly language statement codes */
-#define n_sb1b2 '\003'
-#define n_lb '\014'
-#define n_lby '\015'
-#define n_rb '\016'
-#define n_rby '\017'
-#define n_plv '\036'
-#define n_prv '\041'
-#define n_plespc '\067'
-#define n_lespc '\070'
-#define n_prespc '\071'
-#define n_respc '\072'
 
 extern struct
 { /* left part buffer elements */

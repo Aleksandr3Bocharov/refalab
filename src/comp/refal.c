@@ -41,11 +41,11 @@ struct scn_e;
 
 static struct
 {
-    unsigned was_72 : 1;
-    unsigned uzhe_krt : 1;
-    unsigned was_err : 1;
-    unsigned uzhe_zgl : 1;
-    unsigned uzhekrt_t : 1;
+    unsigned int was_72 : 1;
+    unsigned int uzhe_krt : 1;
+    unsigned int was_err : 1;
+    unsigned int uzhe_zgl : 1;
+    unsigned int uzhekrt_t : 1;
 } flags;
 
 FILE *sysprint, *systerm;
