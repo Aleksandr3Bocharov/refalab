@@ -20,9 +20,9 @@ void uns_sto()
     exit(1);
 }
 
-static T_U *nov_uzel(char *idp, int lid)
+static T_U *nov_uzel(char *idp, unsigned int lid)
 {
-    int m;
+    unsigned int m;
     T_U *p;
     char *q;
     p = (T_U *)calloc(1, sizeof(T_U));
@@ -53,17 +53,17 @@ static T_U *nov_uzel(char *idp, int lid)
     return p;
 }
 
-struct u *lookup(char *idp, int lid)
+struct u *lookup(char *idp, unsigned int lid)
 /* lid identifier length */
 {
     struct refw *r1, *q1;
     struct u *p, *q, *r, *isk_uz;
-    int k;
+    unsigned int k;
     struct u *verquz;
     char kren, nruk;
     struct u *adruz[36]; /* stack for tree work */
-    int otnuz[36];
-    int tgld; /* current  tree depth */
+    char otnuz[36];
+    unsigned int tgld; /* current  tree depth */
     if (korenj == NULL)
     { /* empty tree */
         korenj = nov_uzel(idp, lid);
@@ -158,7 +158,7 @@ ISPRB: /* move up and correct */
     /* in this point kren != '\000' */
     if (kren != otnuz[tgld])
     {
-        (*p).k = '\000';  
+        (*p).k = '\000';
         return isk_uz;
     };
     /* tree turn */
@@ -227,7 +227,7 @@ ISPRB: /* move up and correct */
             (*adruz[tgld]).j = verquz;
         else
             (*adruz[tgld]).i = verquz;
-    };  
+    };
     return isk_uz;
 }
 

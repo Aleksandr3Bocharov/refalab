@@ -17,20 +17,12 @@
 #include "refal.h"
 #include "clu.h"
 
-/* BLF - for renaming add,sub,mul,div */
-char *oper_add;
-char *oper_sub;
-char *oper_mul;
-char *oper_div;
-char *oper_rp;
-char *oper_ptr;
-
 struct ent
 { /* entry table element */
     struct ent *next;
     struct u *p;
     char e[8];
-    int le;
+    unsigned int le;
 };
 typedef struct ent T_ENT;
 
@@ -39,16 +31,31 @@ struct ext
     struct ext *next;
     struct u *p;
     char e[8];
-    int le;
-    int noms;
+    unsigned int le;
+    unsigned int noms;
 };
 typedef struct ext T_EXT;
 
 typedef struct T_RL
 {
     T_U *point;
-    int delta;
+    unsigned int delta;
 } T_RL;
+
+struct BU_
+{
+    unsigned int len;
+    unsigned int tek;
+    char *nam;
+    char *buf;
+    FILE *fil;
+};
+typedef struct BU_ BU;
+
+BU sysl = {0, 0, NULL, NULL, NULL};
+
+static BU sysut1 = {0, 0, NULL, NULL, NULL};
+static BU sysut2 = {0, 0, NULL, NULL, NULL};
 
 static union
 {
@@ -56,26 +63,14 @@ static union
     unsigned short int w;
 } d;
 
-struct BU_
-{
-    unsigned len;
-    unsigned tek;
-    char *nam;
-    char *buf;
-    FILE *fil;
-};
-typedef struct BU_ BU;
-
-static BU sysut1 = {0, 0, NULL, NULL, NULL};
-static BU sysut2 = {0, 0, NULL, NULL, NULL};
-BU sysl = {0, 0, NULL, NULL, NULL};
+/*
 int curr_r;
 int new_r;
-int equal_r; /* feature that new_r = curr_r */
+int equal_r; feature that new_r = curr_r
 char new_f[4];
-T_ENT *q, *r;
-T_EXT *qx, *rx;
-char *ccc;
+char *ccc;*/
+static T_ENT *q, *r;
+static T_EXT *qx, *rx;
 
 /*    MODE field value:
    00 - undefined;
@@ -94,16 +89,24 @@ static T_ENT *first_ent;
 static T_ENT *last_ent;
 static unsigned long int mod_length;
 static char mod_name[9];
-static int lnmmod;
+static unsigned int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
 static unsigned long int curr_addr; /* module generation files  */
-static int n_ext;
+static unsigned int n_ext;
 static T_RL rl;
-static int k;
-static int delta;
+static unsigned int k;
+static unsigned int delta;
 
-static void ksmn(char *b, int n);
+/* BLF - for renaming add,sub,mul,div */
+static char *oper_add;
+static char *oper_sub;
+static char *oper_mul;
+static char *oper_div;
+static char *oper_rp;
+static char *oper_ptr;
+
+static void ksmn(char *b, unsigned int n);
 
 static void oshi1()
 {
@@ -410,7 +413,7 @@ static void sfrd2()
     } /*while*/
 } /*sfrd2*/
 
-static void sfobmen(int n)
+static void sfobmen(unsigned int n)
 {
     unsigned int ost1, ost2;
     while (TRUE)
@@ -470,7 +473,7 @@ static void sfobmen(int n)
     } /*while*/
 } /*sfomen*/
 
-extern void jstart(char *ee, int ll)
+extern void jstart(char *ee, unsigned int ll)
 {
     delta = 0; /* kras */
     strncpy(mod_name, ee, ll);
@@ -544,7 +547,7 @@ extern void j3addr(T_U *pp)
     curr_addr += 4;
 }
 
-extern void jentry(struct u *pp, char *ee, int ll)
+extern void jentry(struct u *pp, char *ee, unsigned int ll)
 /* ee label  */
 {
     /* label length  */
@@ -574,7 +577,7 @@ extern void jentry(struct u *pp, char *ee, int ll)
     pp->mode |= '\040';
 } /*jentry*/
 
-extern void jextrn(struct u *pp, char *ee, int ll)
+extern void jextrn(struct u *pp, char *ee, unsigned int ll)
 /* ee label  */
 {
     /*  label length  */
@@ -628,7 +631,7 @@ extern void jend()
 {
     struct u *p, *pp;
     char bufs[81];
-    int i;
+    unsigned int i;
     zakon();
     if (options.multmod == 1)
     {
@@ -705,7 +708,6 @@ GEN_TXT:
 #else
             fputs("\t.byte\t", syslin);
 #endif
-
         }
         sprintf(bufs, "%d", d.w);
         fputs(bufs, syslin);
@@ -810,10 +812,10 @@ GEN_TXT:
 
     /* end text generating */
 
-/* BLF
-fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-fputs ("\tends\n",syslin);
-*/
+    /* BLF
+    fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+    fputs ("\tends\n",syslin);
+    */
 
     /*   external label generating    */
 
@@ -831,11 +833,11 @@ fputs ("\tends\n",syslin);
 #else
         fputs("\t.extern\t", syslin); /* BLF */
 #endif
-#else          /* Windows */
+#else        /* Windows */
 /* BLF */
 #ifndef FASM /* then GNU format */
         fputs("\t.extern\t_", syslin); /* BLF */
-#else          /* fasm format */
+#else        /* fasm format */
         fputs("\textrn\t_", syslin); /* BLF */
 #endif
 #endif
@@ -991,9 +993,9 @@ static void ksmb(char b)
     ksm.cc[1] = '\0';
 }
 
-static void ksmn(char *b, int n)
+static void ksmn(char *b, unsigned int n)
 {
-    int i;
+    unsigned int i;
     stm.cc[1] = 0;
     for (i = 0; i < n; i++)
     {
@@ -1020,9 +1022,9 @@ static void zakr()
     ksm.ww = 0;
 }
 
-static void imja(char *n, int l)
+static void imja(char *n, unsigned int l)
 {
-    int i;
+    unsigned int i;
     d.w = l;
     c = d.b[0];
     sfwrc();
@@ -1034,9 +1036,9 @@ static void imja(char *n, int l)
     }
 }
 
-static void imj_a(char *n, int l)
+static void imj_a(char *n, unsigned int l)
 {
-    int i;
+    unsigned int i;
     d.w = l + 1;
     c = d.b[0];
     sfwrc();
@@ -1051,7 +1053,7 @@ static void imj_a(char *n, int l)
     }
 }
 
-static void golowa(int len, int typ)
+static void golowa(unsigned int len, unsigned int typ)
 {
     d.w = typ;
     c = d.b[0];
@@ -1066,7 +1068,7 @@ extern void jendo()
 {
     struct u *p, *pp;
     T_EXT *qxn, *qxk;
-    int i, nomsim, smes;
+    unsigned int i, nomsim, smes;
     zakon();
     if (options.multmod == 1)
     {

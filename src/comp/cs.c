@@ -17,7 +17,7 @@ struct i_lbl
 {
     union
     {
-        int infoln;
+        unsigned int infoln;
         struct i_lbl *infolp;
     } infol;
     char model;

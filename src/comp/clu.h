@@ -3,15 +3,15 @@
 
 struct refw
 {
-    struct refw *next; /* on the next usage list */
-    int numb[6];       /* usage list element     */
+    struct refw *next;    /* on the next usage list */
+    unsigned int numb[6]; /* usage list element     */
 };
 
 struct u
 {
     union
     {
-        int infon;
+        unsigned int infon;
         struct u *infop;
     } info;
     char mode;
@@ -28,12 +28,12 @@ struct u
     char type;             /* type field : 00 - unknown type  */
                            /*              01 - function      */
                            /*              10 - specifier     */
-    int l;                 /* identifier length */
+    unsigned int l;        /* identifier length */
     struct u *i;           /* left reference */
     struct u *j;           /* right reference */
     struct refw *last_ref; /* on the end of using list */
     struct refw ref;       /* where used */
-    int def;               /* where defined */
+    unsigned int def;      /* where defined */
     char k;                /* kren feature:      '00'B - kren no    */
                            /*                    '01'B - left kren  */
                            /*                    '10'B - right kren */
@@ -41,7 +41,7 @@ struct u
 };
 typedef struct u T_U;
 
-extern struct u *lookup(char *idp, int lid);
+extern struct u *lookup(char *idp, unsigned int lid);
 extern void luterm();
 extern void through(void (*prog)(struct u *));
 extern void uns_sto();

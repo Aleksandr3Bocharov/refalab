@@ -27,11 +27,11 @@ static void pchosi(char *s, char *t)
     fputs(tmp, systerm);
 }
 
-void pchosj(char *s, char *sid, int lsid, char *s1)
+void pchosj(char *s, char *sid, unsigned int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
-    int i;
+    unsigned int i;
     oshibka();
     for (i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
@@ -42,11 +42,11 @@ void pchosj(char *s, char *sid, int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-void pchosx(char *s, char *sid, int lsid, char *s1)
+void pchosx(char *s, char *sid, unsigned int lsid, char *s1)
 {
     char tmp[255];
     char tmp1[255];
-    int i;
+    unsigned int i;
     oshibka();
     for (i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
@@ -67,11 +67,11 @@ void pchosa(char *s, char c)
     fputs(tmp, systerm);
 }
 
-static void pchose(char *s, char *t, int lt)
+static void pchose(char *s, char *t, unsigned int lt)
 {
     char tmp[255];
     char tmp1[255];
-    int i;
+    unsigned int i;
     oshibka();
     for (i = 0; i < lt; i++)
         tmp1[i] = *(t + i);

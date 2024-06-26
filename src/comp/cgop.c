@@ -35,7 +35,7 @@ extern void gsymbol(struct linkti *code)
 {
     struct _TAG *q;
     char *r;
-    register int i;
+    register unsigned int i;
     q = (struct _TAG *)&(code->tag);
     jbyte(q->b1);
     jbyte(q->b2);
