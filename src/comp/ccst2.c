@@ -11,60 +11,6 @@
 #include "cerr.h"
 #include "refal.h"
 
-extern struct
-{ /* left part buffer elements */
-    unsigned short int p, q, t, i;
-    struct linkti code;
-    unsigned short int next;
-    unsigned short int pair;
-    struct linkti spec;
-    unsigned short int v;
-    unsigned short int eoemrk;
-    unsigned short int e_level;
-} x[100];
-
-extern struct
-{ /* variable table elements */
-    unsigned short int _t, _q;
-    unsigned short int rem;
-    unsigned short int last;
-    char ci;
-    unsigned short int _v;
-} v[30];
-
-extern struct
-{ /* whole list */
-    unsigned short int _next;
-    unsigned short int n1;
-    unsigned short int n2;
-} h[50];
-
-extern unsigned short int t_sc;
-extern unsigned short int t_lb;
-extern unsigned short int t_rb;
-extern unsigned short int t_s;
-extern unsigned short int t_w;
-extern unsigned short int t_e;
-extern unsigned short int t_k;
-extern unsigned short int t_p;
-
-extern struct linkti xncode;  /* work structure */
-extern struct linkti funcptr; /* work pointer */
-
-extern unsigned short int n, n1, n2;     /* left part element pointers */
-extern unsigned short int i, ie;         /* element index */
-extern unsigned short int nel;           /* current element number */
-extern unsigned short int lastb, lastb1; /* variables for brackets linkage  */
-extern unsigned short int e_level;       /* counter of the longing levels */
-extern unsigned short int not_nil;       /* working variables */
-extern unsigned short int k;
-extern unsigned short int nh;         /* current whole number */
-extern unsigned short int next_nh;    /* next whole number */
-extern unsigned short int kol_per;    /* subprogram of search in variable table */
-                                      /* table pointer */
-extern unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets)  */
-extern unsigned short int lrbxy;      /* stoped bracket flag */
-
 static int ortgn(unsigned short int n1, unsigned short int n2);
 
 void isk_v()
@@ -220,7 +166,6 @@ GEN_RE:
 }
 
 /*    check ortogonality of this sentence against left part */
-
 static int ortgn(unsigned short int n1, unsigned short int n2)
 {
     unsigned short int n;

@@ -14,70 +14,55 @@
 #include "refal.h"
 
 /* left part buffer elements */
-struct
-{
-    unsigned short int p, q, t, i;
-    struct linkti code;
-    unsigned short int next;
-    unsigned short int pair;
-    struct linkti spec;
-    unsigned short int v;
-    unsigned short int eoemrk;
-    unsigned short int e_level;
-} x[100];
+struct x;
 
 /* whole list */
-struct
-{
-    unsigned short int _t, _q;
-    unsigned short int rem;
-    unsigned short int last;
-    char ci;
-    unsigned short int _v;
-} v[50];
+struct v;
+
+unsigned short int t_lb = 2;
+unsigned short int t_rb = 3;
+unsigned short int t_e = 6;
+
+unsigned short int n, n1, n2;            /* left part element pointers */
+unsigned short int i, ie;                /* element index */
+unsigned short int nel;                  /* current element number */
+unsigned short int e_level;              /* counter of the longing levels */
+unsigned short int not_nil;        /* working variables */
+unsigned short int nh;         /* current whole number */
+unsigned short int kol_per;    /* subprogram of search in variable table */
+                               /* table pointer */
+unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets) */
+unsigned short int lrbxy;      /* stoped bracket flag */
 
 /* variable table elements */
-struct
+static struct
 {
     unsigned short int _next;
     unsigned short int n1, n2;
 } h[30];
 
-unsigned short int t_sc = 1;
-unsigned short int t_lb = 2;
-unsigned short int t_rb = 3;
-unsigned short int t_s = 4;
-unsigned short int t_w = 5;
-unsigned short int t_e = 6;
-unsigned short int t_k = 7;
-unsigned short int t_p = 8;
+static struct linkti xncode;  /* work structure */
+static struct linkti funcptr; /* work pointer */
 
-struct linkti xncode;              /* work structure */
-struct linkti funcptr;             /* work pointer */
-unsigned short int n, n1, n2;     /* left part element pointers */
-unsigned short int i, ie;         /* element index */
-unsigned short int nel;           /* current element number */
-unsigned short int lastb, lastb1; /* variables for brackets linkage  */
-unsigned short int kol_lit;       /* counter of the symbol number */
-unsigned short int e_level;       /* counter of the longing levels */
-unsigned short int diff_e_level;
-unsigned short int not_nil; /* working variables */
-int kol_skob[100];          /* stack for counting of the brackets balance */
-int ur_skob;
-char buf_lit[80]; /* buffer for generating of the "text" statement */
-unsigned short int k;
-unsigned short int fh;      /* free segment number in the whole  list */
-unsigned short int nh;      /* current whole number */
-unsigned short int next_nh; /* next whole number */
-/* subprogram of search in variable table */
-/* table pointer */
-unsigned short int kol_per;
-unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets) */
-unsigned short int lrbxy;      /* stoped bracket flag */
+static unsigned short int t_sc = 1;
+static unsigned short int t_s = 4;
+static unsigned short int t_w = 5;
+static unsigned short int t_k = 7;
+static unsigned short int t_p = 8;
+
+static unsigned short int lastb, lastb1; /* variables for brackets linkage  */
+static unsigned short int kol_lit;       /* counter of the symbol number */
+static unsigned short int diff_e_level;
+static unsigned int kol_skob[100]; /* stack for counting of the brackets balance */
+static unsigned int ur_skob;
+static char buf_lit[80]; /* buffer for generating of the "text" statement */
+static unsigned short int k;
+static unsigned short int fh;  /* free segment number in the whole  list */
+static unsigned short int next_nh;    /* next whole number */
+
 /* read left part   */
 /* and full array X */
-
-void cst(int dir, char *lbl, int lblleng)
+void cst(unsigned int dir, char *lbl, unsigned int lblleng)
 /* dir;     matching feature :left to right or otherwise */
 /* lbl;   sentence label */
 /* lblleng; sentence label length */
@@ -87,8 +72,8 @@ void cst(int dir, char *lbl, int lblleng)
     lastb = 0;
     nel = 0;
 GET_LPE: /* read left part element */
-    n++;      
-    scan(); 
+    n++;
+    scan();
     x[n].t = scn_e.t;
     x[n].code.tag = scn_e.code.tag;
     x[n].code.info.codef = scn_e.code.info.codef;
@@ -251,7 +236,7 @@ RCG:
 RCGL:
     n = n1 + 1;
     if (n == n2)
-        goto NIL;      
+        goto NIL;
     switch (x[n].t)
     {
     case 1:

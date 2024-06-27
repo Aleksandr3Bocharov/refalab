@@ -1,6 +1,8 @@
 #ifndef CCST1_H
 #define CCST1_H
 
+#include "cgop.h"
+
 /* the table of assembly language statement codes */
 #define n_sjump '\001'
 #define n_fail '\002'
@@ -84,6 +86,42 @@
 #define n_eossn '\120'
 #define n_setnos '\121'
 
-extern void cst(int dir, char *lbl, int lblleng);
+extern struct
+{ /* left part buffer elements */
+    unsigned short int p, q, t, i;
+    struct linkti code;
+    unsigned short int next;
+    unsigned short int pair;
+    struct linkti spec;
+    unsigned short int v;
+    unsigned short int eoemrk;
+    unsigned short int e_level;
+} x[100];
+
+extern struct
+{ /* variable table elements */
+    unsigned short int _t, _q;
+    unsigned short int rem;
+    unsigned short int last;
+    char ci;
+    unsigned short int _v;
+} v[50];
+
+extern unsigned short int t_lb;
+extern unsigned short int t_rb;
+extern unsigned short int t_e;
+
+extern unsigned short int n, n1, n2;  /* left part element pointers */
+extern unsigned short int i, ie;      /* element index */
+extern unsigned short int nel;        /* current element number */
+extern unsigned short int e_level;    /* counter of the longing levels */
+extern unsigned short int not_nil;    /* working variables */
+extern unsigned short int nh;         /* current whole number */
+extern unsigned short int kol_per;    /* subprogram of search in variable table */
+                                      /* table pointer */
+extern unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets)  */
+extern unsigned short int lrbxy;      /* stoped bracket flag */
+
+extern void cst(unsigned int dir, char *lbl, unsigned int lblleng);
 
 #endif

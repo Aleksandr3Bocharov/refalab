@@ -109,9 +109,9 @@ void fndef(char *idp, unsigned int lid)
             if (options.stmnmb == 1)
             {
                 next_nos = alloc_lbl();
-                gopl(n_setnos, (char *)next_nos);
+                gopl(n_setnos, (unsigned char *)next_nos);
             };
-            gopl(n_sjump, (char *)next_stm);
+            gopl(n_sjump, (unsigned char *)next_stm);
         }
     }
     else
@@ -121,7 +121,7 @@ void fndef(char *idp, unsigned int lid)
         else
             p500();
         next_stm = alloc_lbl();
-        gopl(n_sjump, (char *)next_stm);
+        gopl(n_sjump, (unsigned char *)next_stm);
     };
     return; /*  eg */
 }

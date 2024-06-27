@@ -25,7 +25,7 @@ extern void gopnm(char k, char n, char m)
     jbyte(m);
 }
 
-extern void gopl(char k, char *l)
+extern void gopl(char k, unsigned char *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
