@@ -14,20 +14,20 @@
 #include "refal.h"
 
 /* left part buffer elements */
-struct x;
+X_T x[100];
 
 /* whole list */
-struct v;
+V_T v[50];
 
-unsigned short int t_lb = 2;
-unsigned short int t_rb = 3;
-unsigned short int t_e = 6;
+const unsigned short int t_lb = 2;
+const unsigned short int t_rb = 3;
+const unsigned short int t_e = 6;
 
-unsigned short int n, n1, n2;            /* left part element pointers */
-unsigned short int i, ie;                /* element index */
-unsigned short int nel;                  /* current element number */
-unsigned short int e_level;              /* counter of the longing levels */
-unsigned short int not_nil;        /* working variables */
+unsigned short int n, n1, n2;  /* left part element pointers */
+unsigned short int i, ie;      /* element index */
+unsigned short int nel;        /* current element number */
+unsigned short int e_level;    /* counter of the longing levels */
+unsigned short int not_nil;    /* working variables */
 unsigned short int nh;         /* current whole number */
 unsigned short int kol_per;    /* subprogram of search in variable table */
                                /* table pointer */
@@ -44,11 +44,11 @@ static struct
 static struct linkti xncode;  /* work structure */
 static struct linkti funcptr; /* work pointer */
 
-static unsigned short int t_sc = 1;
-static unsigned short int t_s = 4;
-static unsigned short int t_w = 5;
-static unsigned short int t_k = 7;
-static unsigned short int t_p = 8;
+static const unsigned short int t_sc = 1;
+static const unsigned short int t_s = 4;
+static const unsigned short int t_w = 5;
+static const unsigned short int t_k = 7;
+static const unsigned short int t_p = 8;
 
 static unsigned short int lastb, lastb1; /* variables for brackets linkage  */
 static unsigned short int kol_lit;       /* counter of the symbol number */
@@ -57,8 +57,8 @@ static unsigned int kol_skob[100]; /* stack for counting of the brackets balance
 static unsigned int ur_skob;
 static char buf_lit[80]; /* buffer for generating of the "text" statement */
 static unsigned short int k;
-static unsigned short int fh;  /* free segment number in the whole  list */
-static unsigned short int next_nh;    /* next whole number */
+static unsigned short int fh;      /* free segment number in the whole  list */
+static unsigned short int next_nh; /* next whole number */
 
 /* read left part   */
 /* and full array X */

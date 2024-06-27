@@ -33,11 +33,11 @@
     }         \
     }
 
-struct options;
+OPT_T options;
 
-struct scn_;
+SCN_T scn_;
 
-struct scn_e;
+SCN_E_T scn_e;
 
 static struct
 {
@@ -811,7 +811,7 @@ SCNV:
         if (left_part == 1)
         {
             p = scn_e.spec.info.codef = (unsigned char *)genlbl();
-            jlabel((struct u *)p);
+            jlabel((T_U *)p);
         }
         if (specif(')') == 1)
         {
@@ -969,7 +969,7 @@ SABBR:
         if ((*(sarr + scode)) == NULL)
         {
             *(sarr + scode) = (char *)genlbl();
-            jlabel((struct u *)(sarr + scode));
+            jlabel((T_U *)(sarr + scode));
             gsp((char)(scode + 7));
             gsp(ns_ngw);
         };

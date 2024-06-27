@@ -3,7 +3,7 @@
 
 #include "cgop.h"
 
-extern struct
+struct opt_
 { /* compiling   options */
     unsigned int source : 1;
     unsigned int mincomp : 1;
@@ -12,24 +12,33 @@ extern struct
     unsigned int multmod : 1;
     unsigned int asmb : 1;
     unsigned int names : 1;
-} options;
+};
+typedef struct opt_ OPT_T;
 
-extern struct
+extern OPT_T options;
+
+struct scn_
 { /* the table for corresponding with scanner */
     unsigned int nomkar;
-    char modname_var[40]; /* module name */ /*  !!! */
-    unsigned int modnmlen;                  /* module name length */
+    char modname_var[40];  /* module name */
+    unsigned int modnmlen; /* module name length */
     unsigned int curr_stmnmb;
-} scn_;
+};
+typedef struct scn_ SCN_T;
 
-extern struct
+extern SCN_T scn_;
+
+struct scn_e_
 {                         /* current statement element */
     unsigned short int t; /*    element type           */
     char ci;              /*    variable index         */
     unsigned int v;
     struct linkti code;
     struct linkti spec;
-} scn_e;
+};
+typedef struct scn_e_ SCN_E_T;
+
+extern SCN_E_T scn_e;
 
 extern FILE *sysprint, *systerm;
 extern FILE *syslin; /* for assem */

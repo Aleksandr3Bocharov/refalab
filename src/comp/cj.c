@@ -20,7 +20,7 @@
 struct ent
 { /* entry table element */
     struct ent *next;
-    struct u *p;
+    T_U *p;
     char e[8];
     unsigned int le;
 };
@@ -29,7 +29,7 @@ typedef struct ent T_ENT;
 struct ext
 { /* external pointer table element */
     struct ext *next;
-    struct u *p;
+    T_U *p;
     char e[8];
     unsigned int le;
     unsigned int noms;
@@ -50,7 +50,6 @@ struct BU_
     char *buf;
     FILE *fil;
 };
-typedef struct BU_ BU;
 
 BU sysl = {0, 0, NULL, NULL, NULL};
 
@@ -87,26 +86,18 @@ static T_EXT *qx, *rx;
 
 static T_ENT *first_ent;
 static T_ENT *last_ent;
-static unsigned long int mod_length;
+static long int mod_length;
 static char mod_name[9];
 static unsigned int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
-static unsigned long int curr_addr; /* module generation files  */
+static long int curr_addr; /* module generation files  */
 static unsigned int n_ext;
 static T_RL rl;
 static unsigned int k;
 static unsigned int delta;
 
-/* BLF - for renaming add,sub,mul,div */
-static char *oper_add;
-static char *oper_sub;
-static char *oper_mul;
-static char *oper_div;
-static char *oper_rp;
-static char *oper_ptr;
-
-static void ksmn(char *b, unsigned int n);
+static void ksmn(const char *b, unsigned int n);
 
 static void oshi1()
 {
@@ -177,10 +168,8 @@ static void oshex()
     exit(1);
 }
 
-extern void sfop_w(char *s, BU *b)
+extern void sfop_w(const char *s, BU *b)
 {
-    unsigned int un = 0;
-    unsigned long int lon;
     if (b->nam != NULL)
     {
         free(b->nam);
@@ -194,6 +183,7 @@ extern void sfop_w(char *s, BU *b)
     printf("\nmalloc(cj): b->nam=%lx", b->nam);
 #endif
     strcpy(b->nam, s);
+    unsigned int un = 0;
     if (b->buf == NULL)
     {
         if (options.mincomp == 1)
@@ -210,6 +200,7 @@ extern void sfop_w(char *s, BU *b)
             else
                 un = 65528; /* 65536-8 (for bc mojno - 4) */
         }
+        unsigned long int lon;
         while (TRUE)
         {
             if ((b->buf = (char *)malloc(un)) != NULL)
@@ -255,7 +246,7 @@ static void sfop_r(BU *b)
     b->tek = 0;
 }
 
-static void sfcl(BU *b)
+static void sfcl(const BU *b)
 {
     if (b->fil != NULL)
     {
@@ -337,7 +328,7 @@ static void sfwr2()
     } /*while*/
 } /*sfwr2*/
 
-static void sfwr(char *c, unsigned int n, BU *b)
+static void sfwr(const char *c, unsigned int n, BU *b)
 {
     unsigned int ost;
     while (TRUE)
@@ -473,7 +464,7 @@ static void sfobmen(unsigned int n)
     } /*while*/
 } /*sfomen*/
 
-extern void jstart(char *ee, unsigned int ll)
+extern void jstart(const char *ee, unsigned int ll)
 {
     delta = 0; /* kras */
     strncpy(mod_name, ee, ll);
@@ -547,7 +538,7 @@ extern void j3addr(T_U *pp)
     curr_addr += 4;
 }
 
-extern void jentry(struct u *pp, char *ee, unsigned int ll)
+extern void jentry(T_U *pp, const char *ee, unsigned int ll)
 /* ee label  */
 {
     /* label length  */
@@ -577,7 +568,7 @@ extern void jentry(struct u *pp, char *ee, unsigned int ll)
     pp->mode |= '\040';
 } /*jentry*/
 
-extern void jextrn(struct u *pp, char *ee, unsigned int ll)
+extern void jextrn(T_U *pp, const char *ee, unsigned int ll)
 /* ee label  */
 {
     /*  label length  */
@@ -603,13 +594,13 @@ extern void jextrn(struct u *pp, char *ee, unsigned int ll)
     pp->info.infon = n_ext;
 } /*jextrn*/
 
-extern void jlabel(struct u *pp)
+extern void jlabel(T_U *pp)
 {
     pp->mode |= '\120';
     pp->info.infon = curr_addr;
 }
 
-extern void jequ(struct u *pp, struct u *qq)
+extern void jequ(T_U *pp, T_U *qq)
 {
     pp->info.infop = qq;
     pp->mode |= '\320';
@@ -629,9 +620,6 @@ static void zakon()
 
 extern void jend()
 {
-    struct u *p, *pp;
-    char bufs[81];
-    unsigned int i;
     zakon();
     if (options.multmod == 1)
     {
@@ -670,10 +658,11 @@ extern void jend()
     fputs(".data\n", syslin); /* BLF */
 #endif
 
-/* BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin); */
-/* BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin); */
-/* BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin); */
-/* BLF */
+    /* BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin); */
+    /* BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin); */
+    /* BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin); */
+    /* BLF */
+    char bufs[81];
 #ifdef FASM
     sprintf(bufs, "_d%d@:\n", nommod); /* BLF */
 #else
@@ -715,7 +704,7 @@ GEN_TXT:
             fputc(',', syslin);
     }
     fputc('\n', syslin);
-    p = rl.point;
+    const T_U *p = rl.point;
     if (p != NULL)
     {
         while (((p->mode) & '\300') == '\300')
@@ -752,7 +741,7 @@ GEN_TXT:
 #endif
 #endif
             qx = first_ext;
-            for (i = 1; i < p->info.infon; i++)
+            for (unsigned int i = 1; i < p->info.infon; i++)
                 qx = qx->next;
 
 #ifdef UNIX
@@ -767,42 +756,42 @@ GEN_TXT:
             on the fly that refal operation to
                 ad_, su_, mu_ ... accordingly.
             */
-            oper_add = "ad_";
-            oper_sub = "su_";
-            oper_mul = "mu_";
-            oper_div = "di_";
-            oper_rp = "r_";
-            oper_ptr = "pt_";
+            const char oper_add[] = "ad_";
+            const char oper_sub[] = "su_";
+            const char oper_mul[] = "mu_";
+            const char oper_div[] = "di_";
+            const char oper_rp[] = "r_";
+            const char oper_ptr[] = "pt_";
 
             /* BLF - debug printf ("%s\n",qx->e) ; */
             if (cmpstr(qx->le, qx->e, "ADD") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_add[i];
 
             else if (cmpstr(qx->le, qx->e, "SUB") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_sub[i];
 
             else if (cmpstr(qx->le, qx->e, "MUL") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_mul[i];
 
             else if (cmpstr(qx->le, qx->e, "DIV") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_div[i];
 
             else if (cmpstr(qx->le, qx->e, "RP") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_rp[i];
 
             else if (cmpstr(qx->le, qx->e, "PTR") == 0)
-                for (i = 0; i < (qx->le); i++)
+                for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_ptr[i];
 
 #endif
             /* BLF ------- end renaming --------------- */
 
-            for (i = 0; i < qx->le; i++)
+            for (unsigned int i = 0; i < qx->le; i++)
                 /* BLF    fputc (*((qx->e) + i),syslin);*/
                 fputc(tolower(*((qx->e) + i)), syslin); /* BLF */
             fputs("\n", syslin);
@@ -841,7 +830,7 @@ GEN_TXT:
         fputs("\textrn\t_", syslin); /* BLF */
 #endif
 #endif
-        for (i = 0; i < qx->le; i++)
+        for (unsigned int i = 0; i < qx->le; i++)
             /* BLF fputc (*((qx->e) + i),syslin);*/
             fputc(tolower(*((qx->e) + i)), syslin); /* BLF */
         fputs(":byte\n", syslin);
@@ -870,10 +859,10 @@ GEN_TXT:
         fputc('_', syslin);
 #endif
 
-        for (i = 0; i < q->le; i++)
+        for (unsigned int i = 0; i < q->le; i++)
             /* BLF translate name to lower case */
             fputc(tolower(*((q->e) + i)), syslin);
-        pp = q->p;
+        const T_U *pp = q->p;
         while (((pp->mode) & '\300') == '\300')
             pp = pp->info.infop;
 /* BLF */
@@ -894,7 +883,7 @@ GEN_TXT:
 #endif
 #endif
         fputs(bufs, syslin);
-        for (i = 0; i < q->le; i++)
+        for (unsigned int i = 0; i < q->le; i++)
             /* BLF translate name to lower case */
             fputc(tolower(*((q->e) + i)), syslin);
         fputc('\n', syslin);
@@ -993,11 +982,10 @@ static void ksmb(char b)
     ksm.cc[1] = '\0';
 }
 
-static void ksmn(char *b, unsigned int n)
+static void ksmn(const char *b, unsigned int n)
 {
-    unsigned int i;
     stm.cc[1] = 0;
-    for (i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         stm.cc[0] = *(b + i);
         ksm.ww += stm.ww;
@@ -1022,9 +1010,8 @@ static void zakr()
     ksm.ww = 0;
 }
 
-static void imja(char *n, unsigned int l)
+static void imja(const char *n, unsigned int l)
 {
-    unsigned int i;
     d.w = l;
     c = d.b[0];
     sfwrc();
@@ -1036,9 +1023,8 @@ static void imja(char *n, unsigned int l)
     }
 }
 
-static void imj_a(char *n, unsigned int l)
+static void imj_a(const char *n, unsigned int l)
 {
-    unsigned int i;
     d.w = l + 1;
     c = d.b[0];
     sfwrc();
@@ -1066,9 +1052,6 @@ static void golowa(unsigned int len, unsigned int typ)
 
 extern void jendo()
 {
-    struct u *p, *pp;
-    T_EXT *qxn, *qxk;
-    unsigned int i, nomsim, smes;
     zakon();
     if (options.multmod == 1)
     {
@@ -1077,8 +1060,8 @@ extern void jendo()
     }
     stm.ww = 0;
     ksm.ww = 0;
-    nomsim = 1;
-    smes = 0;
+    unsigned int nomsim = 1;
+    unsigned int smes = 0;
 
     /* heading generating  */
     golowa(2 + strlen(parm_i), 0x80);
@@ -1088,7 +1071,7 @@ extern void jendo()
     /* version number  */
     k = strlen(vers_i);
     golowa(3 + k, 0x88);
-    i = 0;
+    unsigned int i = 0;
     sfwr((char *)&i, 2, &sysl);
     sfwr(vers_i, k, &sysl);
     ksmn(vers_i, k);
@@ -1123,10 +1106,10 @@ extern void jendo()
     qx = first_ext->next;
     while (qx != NULL)
     {
-        qxn = qx;
+        T_EXT *qxn = qx;
         for (i = 0; (i < 1000) && (qx != NULL); qx = qx->next)
             i += (qx->le + 3);
-        qxk = qx;
+        const T_EXT *qxk = qx;
         golowa(i + 1, 0x8C);
         for (qx = qxn; qx != qxk; qx = qx->next)
         {
@@ -1148,7 +1131,7 @@ extern void jendo()
         c = 1;
         sfwrc();
         imj_a(q->e, q->le);
-        pp = q->p;
+        const T_U *pp = q->p;
         while (((pp->mode) & '\300') == '\300')
             pp = pp->info.infop;
         d.w = pp->info.infon;
@@ -1186,7 +1169,7 @@ GEN_TXT:
         sfobmen(1020);
         zakr();
     }
-    p = rl.point;
+    const T_U *p = rl.point;
     if (p != NULL)
         golowa(8 + delta, 0xA0);
     else

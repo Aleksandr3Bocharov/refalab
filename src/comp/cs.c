@@ -91,7 +91,7 @@ struct i_lbl *genlbl()
 
 void fndef(char *idp, unsigned int lid)
 {
-    struct u *p;
+    T_U *p;
     if (lid != 0)
     { /* new function */
         func_end();
@@ -117,7 +117,7 @@ void fndef(char *idp, unsigned int lid)
     else
     { /*  next statement in function   */
         if (next_stm != NULL)
-            jlabel((struct u *)next_stm);
+            jlabel((T_U *)next_stm);
         else
             p500();
         next_stm = alloc_lbl();
@@ -131,17 +131,17 @@ static void func_end()
     if (next_stm != NULL)
     {
         if (pfail != NULL)
-            jequ((struct u *)next_stm, (struct u *)pfail);
+            jequ((T_U *)next_stm, (T_U *)pfail);
         else
         {
             pfail = next_stm;
-            jlabel((struct u *)next_stm);
+            jlabel((T_U *)next_stm);
             jbyte(n_fail);
         }
         next_stm = NULL;
         if (options.stmnmb == 1)
         {
-            jlabel((struct u *)next_nos);
+            jlabel((T_U *)next_nos);
             ghw(scn_.curr_stmnmb);
         }
     }
@@ -150,7 +150,7 @@ static void func_end()
 
 void sempty(char *idp, unsigned int lid)
 {
-    struct u *p;
+    T_U *p;
     p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     if (p->mode & '\020')
@@ -167,7 +167,7 @@ void sempty(char *idp, unsigned int lid)
 
 void sswap(char *idp, unsigned int lid)
 {
-    struct u *p;
+    T_U *p;
     unsigned int l0, j0, k0, kk;
     p = lookup(idp, lid);
     p->type = (p->type) | '\100';
@@ -199,7 +199,7 @@ void sswap(char *idp, unsigned int lid)
 
 void sentry(char *idp, unsigned int lidp, char *ide, unsigned int lide)
 {
-    struct u *p;
+    T_U *p;
     p = lookup(idp, lidp);
     jentry(p, ide, lide);
     return; /* eg */
@@ -210,7 +210,7 @@ void sextrn(char *idp, unsigned int lidp, char *ide, unsigned int lide)
 /* ide external name */
 {
     /*  int ind; */ /* eg */
-    struct u *p;
+    T_U *p;
     p = lookup(idp, lidp);
     if ((p->mode) & '\020')
         p504(idp, lidp);
@@ -222,17 +222,17 @@ void sextrn(char *idp, unsigned int lidp, char *ide, unsigned int lide)
     return; /*  eg */
 }
 
-struct u *fnref(char *idp, unsigned int lid)
+T_U *fnref(char *idp, unsigned int lid)
 {
-    struct u *p;
+    T_U *p;
     p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     return p;
 }
 
-struct u *spref(char *idp, unsigned int lid, char d)
+T_U *spref(char *idp, unsigned int lid, char d)
 {
-    struct u *p;
+    T_U *p;
     p = lookup(idp, lid);
     p->type = (p->type) | '\200';
     if ((d != ')') && (((p->mode) & '\020') != '\020'))
@@ -242,7 +242,7 @@ struct u *spref(char *idp, unsigned int lid, char d)
 
 void spdef(char *idp, unsigned int lid)
 {
-    struct u *p;
+    T_U *p;
     if (lid == 0)
         p500();
     else
@@ -262,7 +262,7 @@ void spdef(char *idp, unsigned int lid)
 
 void sequ(char *id1, unsigned int lid1, char *id0, unsigned int lid0)
 {
-    struct u *p0, *p1;
+    T_U *p0, *p1;
     p0 = lookup(id0, lid0);
     if (lid1 == 0)
     {
@@ -316,9 +316,9 @@ static void fnhead(char *idp, unsigned int lid)
     return; /* eg */
 }
 
-static void check_id(struct u *pp) /* check identifier attributes on confirmness */
+static void check_id(T_U *pp) /* check identifier attributes on confirmness */
 {
-    struct u *q;
+    T_U *q;
     q = pp;
     /* printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode); */
     while (((q->mode) & '\300') == '\300')

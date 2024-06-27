@@ -9,8 +9,8 @@
 
 void pchosh(char *s)
 {
-    char tmp[255];
     oshibka();
+    char tmp[255];
     sprintf(tmp, "***** %s\n", s);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -19,8 +19,8 @@ void pchosh(char *s)
 
 static void pchosi(char *s, char *t)
 {
-    char tmp[255];
     oshibka();
+    char tmp[255];
     sprintf(tmp, "***** %s %s\n", s, t);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -29,13 +29,12 @@ static void pchosi(char *s, char *t)
 
 void pchosj(char *s, char *sid, unsigned int lsid, char *s1)
 {
-    char tmp[255];
-    char tmp1[255];
-    unsigned int i;
     oshibka();
-    for (i = 0; i < lsid; i++)
+    char tmp1[255];
+    for (unsigned int i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
+    char tmp[255];
     sprintf(tmp, "***** %s %s %s\n", s, tmp1, s1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -44,13 +43,12 @@ void pchosj(char *s, char *sid, unsigned int lsid, char *s1)
 
 void pchosx(char *s, char *sid, unsigned int lsid, char *s1)
 {
-    char tmp[255];
-    char tmp1[255];
-    unsigned int i;
     oshibka();
-    for (i = 0; i < lsid; i++)
+    char tmp1[255];
+    for (unsigned int i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
+    char tmp[255];
     sprintf(tmp, "***** %s %s %s\n", s, tmp1, s1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -59,8 +57,8 @@ void pchosx(char *s, char *sid, unsigned int lsid, char *s1)
 
 void pchosa(char *s, char c)
 {
-    char tmp[255];
     oshibka();
+    char tmp[255];
     sprintf(tmp, "***** %s %c\n", s, c);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
@@ -69,13 +67,12 @@ void pchosa(char *s, char c)
 
 static void pchose(char *s, char *t, unsigned int lt)
 {
-    char tmp[255];
-    char tmp1[255];
-    unsigned int i;
     oshibka();
-    for (i = 0; i < lt; i++)
+    char tmp1[255];
+    for (unsigned int i = 0; i < lt; i++)
         tmp1[i] = *(t + i);
     tmp1[lt] = '\0';
+    char tmp[255];
     sprintf(tmp, "***** %s %s\n", s, tmp1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);

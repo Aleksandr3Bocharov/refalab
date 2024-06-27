@@ -11,14 +11,14 @@ extern void j3addr(T_U *pp);
 extern void jbyte(char bb);
 extern void jend();
 extern void jendo();
-extern void jentry(struct u *pp, char *ee, unsigned int ll);
-extern void jequ(struct u *pp, struct u *qq);
-extern void jextrn(struct u *pp, char *ee, unsigned int ll);
-extern void jlabel(struct u *pp);
-extern void jstart(char *ee, unsigned int ll);
+extern void jentry(T_U *pp, const char *ee, unsigned int ll);
+extern void jequ(T_U *pp, T_U *qq);
+extern void jextrn(T_U *pp, const char *ee, unsigned int ll);
+extern void jlabel(T_U *pp);
+extern void jstart(const char *ee, unsigned int ll);
 extern unsigned int jwhere();
 
 extern void sfclose(BU *b);
-extern void sfop_w(char *s, BU *b);
+extern void sfop_w(const char *s, BU *b);
 
 #endif

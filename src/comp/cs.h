@@ -5,8 +5,8 @@ extern struct i_lbl *genlbl();
 
 extern void fndef(char *idp, unsigned int lid);
 extern void spdef(char *idp, unsigned int lid);
-extern struct u *fnref(char *idp, unsigned int lid);
-extern struct u *spref(char *idp, unsigned int lid, char d);
+extern T_U *fnref(char *idp, unsigned int lid);
+extern T_U *spref(char *idp, unsigned int lid, char d);
 
 extern void sempty(char *idp, unsigned int lid);
 extern void sentry(char *idp, unsigned int lidp, char *ide, unsigned int lide);

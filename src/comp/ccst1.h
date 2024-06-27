@@ -86,7 +86,7 @@
 #define n_eossn '\120'
 #define n_setnos '\121'
 
-extern struct
+struct x_
 { /* left part buffer elements */
     unsigned short int p, q, t, i;
     struct linkti code;
@@ -96,20 +96,26 @@ extern struct
     unsigned short int v;
     unsigned short int eoemrk;
     unsigned short int e_level;
-} x[100];
+};
+typedef struct x_ X_T;
 
-extern struct
+extern X_T x[];
+
+struct v_
 { /* variable table elements */
     unsigned short int _t, _q;
     unsigned short int rem;
     unsigned short int last;
     char ci;
     unsigned short int _v;
-} v[50];
+};
+typedef struct v_ V_T;
 
-extern unsigned short int t_lb;
-extern unsigned short int t_rb;
-extern unsigned short int t_e;
+extern V_T v[];
+
+extern const unsigned short int t_lb;
+extern const unsigned short int t_rb;
+extern const unsigned short int t_e;
 
 extern unsigned short int n, n1, n2;  /* left part element pointers */
 extern unsigned short int i, ie;      /* element index */

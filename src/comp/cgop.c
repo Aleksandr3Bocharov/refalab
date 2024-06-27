@@ -25,18 +25,15 @@ extern void gopnm(char k, char n, char m)
     jbyte(m);
 }
 
-extern void gopl(char k, unsigned char *l)
+extern void gopl(char k, const unsigned char *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
 }
 
-extern void gsymbol(struct linkti *code)
+extern void gsymbol(const struct linkti *code)
 {
-    struct _TAG *q;
-    char *r;
-    register unsigned int i;
-    q = (struct _TAG *)&(code->tag);
+    const struct _TAG *q = (struct _TAG *)&(code->tag);
     jbyte(q->b1);
     jbyte(q->b2);
     if (code->tag == 2)
@@ -45,7 +42,7 @@ extern void gsymbol(struct linkti *code)
         return;
         /*      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC */
     };
-    r = (char *)&code->info.codef;
+    const char *r = (char *)&code->info.codef;
     if (code->tag == 0)
     {
         jbyte(*r);
@@ -54,13 +51,13 @@ extern void gsymbol(struct linkti *code)
         jbyte('\0');
     }
     else
-        for (i = 0; i < LBLL; i++)
+        for (unsigned int i = 0; i < LBLL; i++)
         {
             jbyte(*(r + i));
         }
 }
 
-extern void gops(char k, struct linkti *code)
+extern void gops(char k, const struct linkti *code)
 {
     jbyte(k);
     gsymbol(code);
@@ -68,8 +65,7 @@ extern void gops(char k, struct linkti *code)
 
 extern void ghw(unsigned short int h)
 {
-    struct _TAG *po;
-    po = (struct _TAG *)&h; /*  eg */
+    const struct _TAG *po = (struct _TAG *)&h; /*  eg */
     jbyte(po->b1);
     jbyte(po->b2);
 }

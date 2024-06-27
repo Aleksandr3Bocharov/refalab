@@ -12,7 +12,7 @@
 
 typedef struct refw T_REFW;
 
-static struct u *korenj = NULL; /* tree koren */
+static T_U *korenj = NULL; /* tree koren */
 
 void uns_sto()
 {
@@ -53,15 +53,15 @@ static T_U *nov_uzel(char *idp, unsigned int lid)
     return p;
 }
 
-struct u *lookup(char *idp, unsigned int lid)
+T_U *lookup(char *idp, unsigned int lid)
 /* lid identifier length */
 {
     struct refw *r1, *q1;
-    struct u *p, *q, *r, *isk_uz;
+    T_U *p, *q, *r, *isk_uz;
     unsigned int k;
-    struct u *verquz;
+    T_U *verquz;
     char kren, nruk;
-    struct u *adruz[36]; /* stack for tree work */
+    T_U *adruz[36]; /* stack for tree work */
     char otnuz[36];
     unsigned int tgld; /* current  tree depth */
     if (korenj == NULL)
@@ -231,9 +231,9 @@ ISPRB: /* move up and correct */
     return isk_uz;
 }
 
-static void traverse(struct u *ptr, void (*prog)(struct u *))
+static void traverse(T_U *ptr, void (*prog)(T_U *))
 {
-    struct u *q, *r;
+    T_U *q, *r;
     q = ptr;
     do
     {
@@ -246,16 +246,16 @@ static void traverse(struct u *ptr, void (*prog)(struct u *))
     return;
 }
 
-void through(void (*prog)(struct u *))
+void through(void (*prog)(T_U *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);
     return;
 }
 
-static void kil_tree(struct u *p)
+static void kil_tree(T_U *p)
 {
-    struct u *r, *q;
+    T_U *r, *q;
     struct refw *r1, *r2;
     q = p;
     do
