@@ -13,9 +13,9 @@ struct opt_
     unsigned int asmb : 1;
     unsigned int names : 1;
 };
-typedef struct opt_ OPT_T;
+typedef struct opt_ T_OPT;
 
-extern OPT_T options;
+extern T_OPT options;
 
 struct scn_
 { /* the table for corresponding with scanner */
@@ -24,9 +24,9 @@ struct scn_
     unsigned int modnmlen; /* module name length */
     unsigned int curr_stmnmb;
 };
-typedef struct scn_ SCN_T;
+typedef struct scn_ T_SCN;
 
-extern SCN_T scn_;
+extern T_SCN scn_;
 
 struct scn_e_
 {                         /* current statement element */
@@ -36,9 +36,9 @@ struct scn_e_
     struct linkti code;
     struct linkti spec;
 };
-typedef struct scn_e_ SCN_E_T;
+typedef struct scn_e_ T_SCN_E;
 
-extern SCN_E_T scn_e;
+extern T_SCN_E scn_e;
 
 extern FILE *sysprint, *systerm;
 extern FILE *syslin; /* for assem */

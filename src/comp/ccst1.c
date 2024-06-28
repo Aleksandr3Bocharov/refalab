@@ -14,10 +14,10 @@
 #include "refal.h"
 
 /* left part buffer elements */
-X_T x[100];
+T_X x[100];
 
 /* whole list */
-V_T v[50];
+T_V v[50];
 
 const unsigned short int t_lb = 2;
 const unsigned short int t_rb = 3;

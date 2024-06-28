@@ -42,9 +42,9 @@ struct u
 };
 typedef struct u T_U;
 
-extern T_U *lookup(char *idp, unsigned int lid);
+extern T_U *lookup(const char *idp, unsigned int lid);
 extern void luterm();
-extern void through(const void (*prog)(const T_U *));
+extern void through(void (*prog)(const T_U *));
 extern void uns_sto();
 
 #endif

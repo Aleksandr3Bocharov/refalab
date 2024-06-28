@@ -37,7 +37,7 @@ static T_I_LBL *next_stm = NULL; /* next statement label */
 static T_I_LBL *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 static void func_end();
-static void fnhead(char *idp, unsigned int lid);
+static void fnhead(const char *idp, unsigned int lid);
 
 static void p504(const char *idp, unsigned int lid)
 {
@@ -60,7 +60,6 @@ static void p500()
 static T_I_LBL *alloc_lbl()
 {
     T_ARR_LBL *q;
-    T_I_LBL *p;
     if (n_lbl == 15)
     {
         q = calloc(1, sizeof(T_ARR_LBL));
@@ -77,25 +76,23 @@ static T_I_LBL *alloc_lbl()
         }
     }
     n_lbl = n_lbl + 1;
-    p = &(first_arr_lbl->lbl[n_lbl]);
+    T_I_LBL *p = &(first_arr_lbl->lbl[n_lbl]);
     p->model = '\000';
     return p;
 }
 
 T_I_LBL *genlbl()
 {
-    T_I_LBL *p;
-    p = alloc_lbl();
+    T_I_LBL *p = alloc_lbl();
     return p;
 }
 
-void fndef(char *idp, unsigned int lid)
+void fndef(const char *idp, unsigned int lid)
 {
-    T_U *p;
     if (lid != 0)
     { /* new function */
         func_end();
-        p = lookup(idp, lid);
+        T_U *p = lookup(idp, lid);
         scn_.curr_stmnmb = 0;
         next_stm = alloc_lbl();
         p->type = (p->type) | '\100';
@@ -148,10 +145,9 @@ static void func_end()
     return;
 }
 
-void sempty(char *idp, unsigned int lid)
+void sempty(const char *idp, unsigned int lid)
 {
-    T_U *p;
-    p = lookup(idp, lid);
+    T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     if (p->mode & '\020')
         p504(idp, lid);
@@ -165,17 +161,16 @@ void sempty(char *idp, unsigned int lid)
     return;
 }
 
-void sswap(char *idp, unsigned int lid)
+void sswap(const char *idp, unsigned int lid)
 {
-    T_U *p;
-    unsigned int l0, j0, k0, kk;
-    p = lookup(idp, lid);
-    p->type = (p->type) | '\100';
+    T_U *p = lookup(idp, lid);
+    p->type = p->type | '\100';
     if (p->mode & '\020')
         p504(idp, lid);
     else
     { /*  align box head on the word board */
-        j0 = jwhere();
+        unsigned int j0 = jwhere();
+        unsigned int l0;
         if (options.extname == 1)
             l0 = 255 > (scn_.modnmlen + lid + 1) ? (scn_.modnmlen + lid + 1) : 255;
         else
@@ -183,35 +178,33 @@ void sswap(char *idp, unsigned int lid)
         j0 = (j0 + l0 + 2) % 4;
         if (j0 != 0)
             j0 = 4 - j0;
-        for (k0 = 1; k0 <= j0; k0++)
+        for (unsigned int k0 = 1; k0 <= j0; k0++)
             jbyte(' ');
         fnhead(idp, lid);
         p->def = scn_.nomkar;
         jlabel(p);
         jbyte(n_swap);
         /*   kk = sizeof(int)+sizeof(unsigned long int)+sizeof(POINTER) * 2;  */
-        kk = SMBL + LBLL * 2;
-        for (k0 = 1; k0 <= kk; k0++)
+        const unsigned int kk = SMBL + LBLL * 2;
+        for (unsigned int k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
     }
     return;
 }
 
-void sentry(char *idp, unsigned int lidp, char *ide, unsigned int lide)
+void sentry(const char *idp, unsigned int lidp, const char *ide, unsigned int lide)
 {
-    T_U *p;
-    p = lookup(idp, lidp);
+    T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
     return; /* eg */
 }
 
-void sextrn(char *idp, unsigned int lidp, char *ide, unsigned int lide)
+void sextrn(const char *idp, unsigned int lidp, const char *ide, unsigned int lide)
 /* idp internal name */
 /* ide external name */
 {
     /*  int ind; */ /* eg */
-    T_U *p;
-    p = lookup(idp, lidp);
+    T_U *p = lookup(idp, lidp);
     if ((p->mode) & '\020')
         p504(idp, lidp);
     else
@@ -222,32 +215,29 @@ void sextrn(char *idp, unsigned int lidp, char *ide, unsigned int lide)
     return; /*  eg */
 }
 
-T_U *fnref(char *idp, unsigned int lid)
+T_U *fnref(const char *idp, unsigned int lid)
 {
-    T_U *p;
-    p = lookup(idp, lid);
+    T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     return p;
 }
 
-T_U *spref(char *idp, unsigned int lid, char d)
+T_U *spref(const char *idp, unsigned int lid, char d)
 {
-    T_U *p;
-    p = lookup(idp, lid);
+    T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\200';
     if ((d != ')') && (((p->mode) & '\020') != '\020'))
         p505(idp, lid);
     return p;
 }
 
-void spdef(char *idp, unsigned int lid)
+void spdef(const char *idp, unsigned int lid)
 {
-    T_U *p;
     if (lid == 0)
         p500();
     else
     { /* label exist */
-        p = lookup(idp, lid);
+        T_U *p = lookup(idp, lid);
         p->type = (p->type) | '\200';
         if ((p->mode) & '\020')
             p504(idp, lid);
@@ -260,16 +250,15 @@ void spdef(char *idp, unsigned int lid)
     return; /*  eg */
 }
 
-void sequ(char *id1, unsigned int lid1, char *id0, unsigned int lid0)
+void sequ(const char *id1, unsigned int lid1, const char *id0, unsigned int lid0)
 {
-    T_U *p0, *p1;
-    p0 = lookup(id0, lid0);
+    T_U *p0 = lookup(id0, lid0);
     if (lid1 == 0)
     {
         p500();
         return;
     }
-    p1 = lookup(id1, lid1);
+    T_U *p1 = lookup(id1, lid1);
     if (p0 == p1)
         return;
     if (((p1->mode) & '\300') == '\000')
@@ -289,15 +278,14 @@ void sequ(char *id1, unsigned int lid1, char *id0, unsigned int lid0)
     return; /* eg */
 }
 
-static void fnhead(char *idp, unsigned int lid)
+static void fnhead(const char *idp, unsigned int lid)
 {
-    char *idpm;
-    unsigned int k0, l0, ll;
     if (options.names == 1)
     {
+        unsigned int k0, l0, ll;
         if (options.extname == 1)
         {
-            idpm = scn_.modname_var; /* eg */
+            const char *idpm = scn_.modname_var; /* eg */
             l0 = scn_.modnmlen;
             for (k0 = 0; k0 < l0 && k0 < 8; k0++)
                 jbyte(*(idpm + k0));
@@ -316,10 +304,9 @@ static void fnhead(char *idp, unsigned int lid)
     return; /* eg */
 }
 
-static void check_id(T_U *pp) /* check identifier attributes on confirmness */
+static void check_id(const T_U *pp) /* check identifier attributes on confirmness */
 {
-    T_U *q;
-    q = pp;
+    const T_U *q = pp;
     /* printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode); */
     while (((q->mode) & '\300') == '\300')
         q = q->info.infop;
@@ -351,11 +338,10 @@ void s_init()
 
 void s_term()
 { /* module termination */
-    T_ARR_LBL *p, *p1;
-    p = first_arr_lbl;
+    T_ARR_LBL *p = first_arr_lbl;
     while (p != NULL)
     {
-        p1 = p->nextl;
+        T_ARR_LBL *p1 = p->nextl;
 #ifdef mdebug
         printf("\nfree(cs): p=%lx", p);
 #endif

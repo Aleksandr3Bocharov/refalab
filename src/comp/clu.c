@@ -48,7 +48,7 @@ static T_U *nov_uzel(const char *idp, unsigned int lid)
     return p;
 }
 
-T_U *lookup(char *idp, unsigned int lid)
+T_U *lookup(const char *idp, unsigned int lid)
 /* lid identifier length */
 {
     T_U *isk_uz;
@@ -225,7 +225,7 @@ ISPRB: /* move up and correct */
     return isk_uz;
 }
 
-static void traverse(const T_U *ptr, const void (*prog)(const T_U *))
+static void traverse(const T_U *ptr, void (*prog)(const T_U *))
 {
     const T_U *q = ptr;
     do
@@ -239,7 +239,7 @@ static void traverse(const T_U *ptr, const void (*prog)(const T_U *))
     return;
 }
 
-void through(const void (*prog)(const T_U *))
+void through(void (*prog)(const T_U *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);

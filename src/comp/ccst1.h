@@ -97,9 +97,9 @@ struct x_
     unsigned short int eoemrk;
     unsigned short int e_level;
 };
-typedef struct x_ X_T;
+typedef struct x_ T_X;
 
-extern X_T x[];
+extern T_X x[];
 
 struct v_
 { /* variable table elements */
@@ -109,9 +109,9 @@ struct v_
     char ci;
     unsigned short int _v;
 };
-typedef struct v_ V_T;
+typedef struct v_ T_V;
 
-extern V_T v[];
+extern T_V v[];
 
 extern const unsigned short int t_lb;
 extern const unsigned short int t_rb;

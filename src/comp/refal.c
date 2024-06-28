@@ -33,11 +33,11 @@
     }         \
     }
 
-OPT_T options;
+T_OPT options;
 
-SCN_T scn_;
+T_SCN scn_;
 
-SCN_E_T scn_e;
+T_SCN_E scn_e;
 
 static struct
 {
@@ -191,7 +191,8 @@ static void de()
 int main(int argc, char *argv[])
 {
     char parm[40];
-    unsigned int i, j, temp;
+    unsigned int j;
+    int i, temp;
 
     systerm = NULL;
 

@@ -5,14 +5,13 @@
 
 #include "plc.h"
 
-int index_x(char *s, char *t)
+int index_x(const char *s, const char *t)
 /* first left insertion t into  s */
 /* if not: -1                     */
 {
-    int l = 0, m, imax;
-    int i, j, k;
-    imax = 40;
-    for (i = 0; i < imax; i++)
+    const unsigned int imax = 40;
+    unsigned int l = 0;
+    for (unsigned int i = 0; i < imax; i++)
     {
         if (*(s + i) == '\0')
             break;
@@ -20,7 +19,8 @@ int index_x(char *s, char *t)
             l = i + 1;
     } /* l - length of s */
 
-    for (i = 0; i < imax; i++)
+    unsigned int m;
+    for (unsigned int i = 0; i < imax; i++)
     {
         if (*(t + i) == '\0')
             break;
@@ -28,8 +28,8 @@ int index_x(char *s, char *t)
             m = i + 1;
     } /* m - length of t */
 
-    for (i = 0; (i < l) && (*(s + i) != '\0'); i++)
-        for (j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)
+    for (unsigned int i = 0; (i < l) && (*(s + i) != '\0'); i++)
+        for (unsigned int j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)
         {
             if (*(s + j) != *(t + k))
                 break;
@@ -56,12 +56,11 @@ int index_x(char *s, char *t)
 }
 */
 
-int cmpstr(unsigned int n, char *s1, char *s2)
+int cmpstr(unsigned int n, const char *s1, const char *s2)
 /* comparison two string . if s1<s2 then return < 0 */
 /* if s1 = s2 return 0. if s1>s2 then return > 0    */
 {
-    unsigned int i;
-    for (i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
         if (*(s1 + i) != *(s2 + i))
             return (*(s1 + i) - *(s2 + i));
     return 0;
