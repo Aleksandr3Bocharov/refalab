@@ -10,8 +10,6 @@
 #include "plc.h"
 #include "refal.h"
 
-typedef struct refw T_REFW;
-
 static T_U *korenj = NULL; /* tree koren */
 
 void uns_sto()
@@ -20,12 +18,9 @@ void uns_sto()
     exit(1);
 }
 
-static T_U *nov_uzel(char *idp, unsigned int lid)
+static T_U *nov_uzel(const char *idp, unsigned int lid)
 {
-    unsigned int m;
-    T_U *p;
-    char *q;
-    p = (T_U *)calloc(1, sizeof(T_U));
+    T_U *p = (T_U *)calloc(1, sizeof(T_U));
 #ifdef mdebug
     printf("\ncalloc(clu-nov_uzel): p=%lx l=%d t=%o", p, p->l, p->type);
 #endif
@@ -37,11 +32,11 @@ static T_U *nov_uzel(char *idp, unsigned int lid)
     p->type = '\000';
     p->last_ref = &(p->ref);
     p->ref.next = NULL;
-    for (m = 1; m <= 5; m++)
+    for (unsigned int m = 1; m <= 5; m++)
         p->ref.numb[m] = 0;
     p->ref.numb[0] = scn_.nomkar;
     p->def = 0;
-    q = calloc(1, lid);
+    char *q = calloc(1, lid);
 #ifdef mdebug
     printf("\ncalloc(clu-id): q=%lx l=%d", q, lid);
 #endif
@@ -56,14 +51,7 @@ static T_U *nov_uzel(char *idp, unsigned int lid)
 T_U *lookup(char *idp, unsigned int lid)
 /* lid identifier length */
 {
-    struct refw *r1, *q1;
-    T_U *p, *q, *r, *isk_uz;
-    unsigned int k;
-    T_U *verquz;
-    char kren, nruk;
-    T_U *adruz[36]; /* stack for tree work */
-    char otnuz[36];
-    unsigned int tgld; /* current  tree depth */
+    T_U *isk_uz;
     if (korenj == NULL)
     { /* empty tree */
         korenj = nov_uzel(idp, lid);
@@ -72,15 +60,16 @@ T_U *lookup(char *idp, unsigned int lid)
     }
     /* tree is't empty,begin push. */
     /* remember path in stack */
-    tgld = 0;
-    p = korenj;
+    unsigned int tgld = 0; /* current  tree depth */
+    T_U *p = korenj;
 SHAG: /* search step */
+    char kren;
     if (strncmp(idp, p->id, (lid < p->l) ? lid : p->l) == 0)
     {
         if (lid == p->l)
         { /* include usage number to list */
-            q1 = (*p).last_ref;
-            k = 5;
+            T_REFW *q1 = (*p).last_ref;
+            unsigned int k = 5;
             while ((*q1).numb[k] == 0)
                 k--;
             if ((*q1).numb[k] != scn_.nomkar)
@@ -91,7 +80,7 @@ SHAG: /* search step */
                     (*q1).numb[k + 1] = scn_.nomkar;
                 else
                 { /* create new item */
-                    r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
+                    T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
 #ifdef mdebug
                     printf("\ncalloc(clu-lookup): r1=%lx", r1);
 #endif
@@ -122,10 +111,13 @@ SHAG: /* search step */
     else
         kren = '\200';
 FINT:
+    T_U *adruz[36]; /* stack for tree work */
     adruz[tgld] = p;
+    char otnuz[36];
     otnuz[tgld] = kren;
     tgld++;
     /* step down in tree */
+    T_U *q;
     if (kren == '\100')
         q = (*p).j;
     else
@@ -168,6 +160,7 @@ ISPRB: /* move up and correct */
         q = (*p).j;
     else
         q = (*p).i;
+    T_U *verquz;
     if (kren == (*q).k)
     {
         if (kren == '\100')
@@ -185,6 +178,7 @@ ISPRB: /* move up and correct */
     }
     else
     { /* twos turn */
+        T_U *r;
         if (kren == '\100')
         {
             r = (*q).i;
@@ -201,7 +195,7 @@ ISPRB: /* move up and correct */
             (*r).j = p;
             (*r).i = q;
         };
-        nruk = (!((*r).k)) & '\300';
+        const char nruk = (!((*r).k)) & '\300';
         if ((*r).k == '\000')
             (*q).k = (*p).k = '\000';
         else if (nruk == kren)
@@ -231,13 +225,12 @@ ISPRB: /* move up and correct */
     return isk_uz;
 }
 
-static void traverse(T_U *ptr, void (*prog)(T_U *))
+static void traverse(const T_U *ptr, const void (*prog)(const T_U *))
 {
-    T_U *q, *r;
-    q = ptr;
+    const T_U *q = ptr;
     do
     {
-        r = (*q).i;
+        const T_U *r = (*q).i;
         if (r != NULL)
             traverse(r, prog);
         (*prog)(q);
@@ -246,7 +239,7 @@ static void traverse(T_U *ptr, void (*prog)(T_U *))
     return;
 }
 
-void through(void (*prog)(T_U *))
+void through(const void (*prog)(const T_U *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);
@@ -255,18 +248,16 @@ void through(void (*prog)(T_U *))
 
 static void kil_tree(T_U *p)
 {
-    T_U *r, *q;
-    struct refw *r1, *r2;
-    q = p;
+    T_U *q = p;
     do
     {
-        r = (*q).i;
+        T_U *r = (*q).i;
         if (r != NULL)
             kil_tree(r);
-        r2 = (*q).ref.next;
+        T_REFW *r2 = (*q).ref.next;
         while (r2 != NULL)
         {
-            r1 = (*r2).next;
+            T_REFW *r1 = (*r2).next;
 #ifdef mdebug
             printf("\nfree(clu): r2=%lx", r2);
 #endif

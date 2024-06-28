@@ -6,6 +6,7 @@ struct refw
     struct refw *next;    /* on the next usage list */
     unsigned int numb[6]; /* usage list element     */
 };
+typedef struct refw T_REFW;
 
 struct u
 {
@@ -31,8 +32,8 @@ struct u
     unsigned int l;        /* identifier length */
     struct u *i;           /* left reference */
     struct u *j;           /* right reference */
-    struct refw *last_ref; /* on the end of using list */
-    struct refw ref;       /* where used */
+    T_REFW *last_ref; /* on the end of using list */
+    T_REFW ref;       /* where used */
     unsigned int def;      /* where defined */
     char k;                /* kren feature:      '00'B - kren no    */
                            /*                    '01'B - left kren  */
@@ -43,7 +44,7 @@ typedef struct u T_U;
 
 extern T_U *lookup(char *idp, unsigned int lid);
 extern void luterm();
-extern void through(void (*prog)(T_U *));
+extern void through(const void (*prog)(const T_U *));
 extern void uns_sto();
 
 #endif
