@@ -7,7 +7,7 @@
 #include "cerr.h"
 #include "refal.h"
 
-void pchosh(char *s)
+void pchosh(const char *s)
 {
     oshibka();
     char tmp[255];
@@ -17,7 +17,7 @@ void pchosh(char *s)
     fputs(tmp, systerm);
 }
 
-static void pchosi(char *s, char *t)
+static void pchosi(const char *s, const char *t)
 {
     oshibka();
     char tmp[255];
@@ -27,7 +27,7 @@ static void pchosi(char *s, char *t)
     fputs(tmp, systerm);
 }
 
-void pchosj(char *s, char *sid, unsigned int lsid, char *s1)
+void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
@@ -41,7 +41,7 @@ void pchosj(char *s, char *sid, unsigned int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-void pchosx(char *s, char *sid, unsigned int lsid, char *s1)
+void pchosx(const char *s, const char *sid, unsigned int lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
@@ -55,7 +55,7 @@ void pchosx(char *s, char *sid, unsigned int lsid, char *s1)
     fputs(tmp, systerm);
 }
 
-void pchosa(char *s, char c)
+void pchosa(const char *s, const char c)
 {
     oshibka();
     char tmp[255];
@@ -65,7 +65,7 @@ void pchosa(char *s, char c)
     fputs(tmp, systerm);
 }
 
-static void pchose(char *s, char *t, unsigned int lt)
+static void pchose(const char *s, const char *t, unsigned int lt)
 {
     oshibka();
     char tmp1[255];

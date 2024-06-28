@@ -1,7 +1,11 @@
 #ifndef CH_H
 #define CH_H
 
-extern struct i_lbl *genlbl();
+#include "clu.h"
+
+typedef struct i_lbl T_I_LBL;
+
+extern T_I_LBL *genlbl();
 
 extern void fndef(char *idp, unsigned int lid);
 extern void spdef(char *idp, unsigned int lid);

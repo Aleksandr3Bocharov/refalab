@@ -11,7 +11,7 @@
 #include "cerr.h"
 #include "refal.h"
 
-static int ortgn(unsigned short int n1, unsigned short int n2);
+static unsigned int ortgn(unsigned short int n1, unsigned short int n2);
 
 void isk_v()
 {
@@ -79,7 +79,7 @@ void pch406()
 }
 
 /*    attempt to extract left support group     */
-int lsg_p()
+unsigned int lsg_p()
 {
 LSG_:
     n++;
@@ -115,14 +115,14 @@ GEN_LE:
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
-        return 1;
+        return TRUE;
     gpev(n_plespc, n_plv);
     gopl(n_lespc, x[n].spec.info.codef);
-    return 0;
+    return FALSE;
 }
 
 /*        attempt to extract right support group     */
-int rsg_p()
+unsigned int rsg_p()
 {
 RSG_:
     n--;
@@ -159,19 +159,16 @@ GEN_RE:
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
-        return 1;
+        return TRUE;
     gpev(n_prespc, n_prv);
     gopl(n_respc, x[n].spec.info.codef);
-    return 0;
+    return FALSE;
 }
 
 /*    check ortogonality of this sentence against left part */
-static int ortgn(unsigned short int n1, unsigned short int n2)
+static unsigned int ortgn(unsigned short int n1, unsigned short int n2)
 {
-    unsigned short int n;
-    unsigned short int i;
-    int res;
-    n = n1;
+    unsigned short int n = n1;
 ORT1:
     n++;
     if (n == n2)
@@ -179,13 +176,13 @@ ORT1:
     if (x[n].t <= 3)
         goto ORT1;
 ORT1V:
-    i = x[n].i;
+    unsigned short int i = x[n].i;
     if (v[i].last != 0)
         goto ORT1;
     (v[i].rem)--;
     goto ORT1;
 ORT1E:
-    res = 1;
+    unsigned int res = TRUE;
     n = n1;
 ORT2:
     n++;
@@ -199,7 +196,7 @@ ORT2V:
         goto ORT2;
     if (v[i].rem == 0)
         goto ORT2;
-    res = 0;
+    res = FALSE;
 ORT2E:
     n = n1;
 ORT3:

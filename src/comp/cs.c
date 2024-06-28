@@ -26,26 +26,26 @@ struct i_lbl
 struct arr_lbl
 {
     struct arr_lbl *nextl;
-    struct i_lbl lbl[16];
+    T_I_LBL lbl[16];
 };
 typedef struct arr_lbl T_ARR_LBL;
 
-static struct arr_lbl *first_arr_lbl = NULL;
+static T_ARR_LBL *first_arr_lbl = NULL;
 static int n_lbl = 15;
-static struct i_lbl *pfail = NULL;    /* statememt FAIL label */
-static struct i_lbl *next_stm = NULL; /* next statement label */
-static struct i_lbl *next_nos = NULL; /* next halfword label with  */
+static T_I_LBL *pfail = NULL;    /* statememt FAIL label */
+static T_I_LBL *next_stm = NULL; /* next statement label */
+static T_I_LBL *next_nos = NULL; /* next halfword label with  */
                                       /* a number of statements    */
 static void func_end();
 static void fnhead(char *idp, unsigned int lid);
 
-static void p504(char *idp, unsigned int lid)
+static void p504(const char *idp, unsigned int lid)
 {
     pchosj("504 label", idp, lid, " is already defined");
     return; /* eg */
 }
 
-static void p505(char *idp, unsigned int lid)
+static void p505(const char *idp, unsigned int lid)
 {
     pchosj("505 label", idp, lid, " is yet not defined");
     return; /* eg */
@@ -57,10 +57,10 @@ static void p500()
     return; /* eg */
 }
 
-static struct i_lbl *alloc_lbl()
+static T_I_LBL *alloc_lbl()
 {
-    struct arr_lbl *q;
-    struct i_lbl *p;
+    T_ARR_LBL *q;
+    T_I_LBL *p;
     if (n_lbl == 15)
     {
         q = calloc(1, sizeof(T_ARR_LBL));
@@ -82,9 +82,9 @@ static struct i_lbl *alloc_lbl()
     return p;
 }
 
-struct i_lbl *genlbl()
+T_I_LBL *genlbl()
 {
-    struct i_lbl *p;
+    T_I_LBL *p;
     p = alloc_lbl();
     return p;
 }
@@ -351,7 +351,7 @@ void s_init()
 
 void s_term()
 { /* module termination */
-    struct arr_lbl *p, *p1;
+    T_ARR_LBL *p, *p1;
     p = first_arr_lbl;
     while (p != NULL)
     {

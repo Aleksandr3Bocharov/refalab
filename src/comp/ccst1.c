@@ -62,7 +62,7 @@ static unsigned short int next_nh; /* next whole number */
 
 /* read left part   */
 /* and full array X */
-void cst(unsigned int dir, char *lbl, unsigned int lblleng)
+void cst(unsigned int dir, unsigned char *lbl, unsigned int lblleng)
 /* dir;     matching feature :left to right or otherwise */
 /* lbl;   sentence label */
 /* lblleng; sentence label length */

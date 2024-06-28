@@ -8,7 +8,7 @@ extern void isk_v();
 extern void pch303();
 extern void pch406();
 
-extern int lsg_p();
-extern int rsg_p();
+extern unsigned int lsg_p();
+extern unsigned int rsg_p();
 
 #endif
