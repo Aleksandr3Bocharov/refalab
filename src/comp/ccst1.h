@@ -128,6 +128,6 @@ extern unsigned short int kol_per;    /* subprogram of search in variable table 
 extern unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets)  */
 extern unsigned short int lrbxy;      /* stoped bracket flag */
 
-extern void cst(unsigned int dir, unsigned char *lbl, unsigned int lblleng);
+extern void cst(unsigned int dir, char *lbl, unsigned int lblleng);
 
 #endif

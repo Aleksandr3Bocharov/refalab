@@ -1,6 +1,7 @@
 #ifndef REFAL_H
 #define REFAL_H
 
+#include <stdio.h>
 #include "cgop.h"
 
 struct opt_
@@ -45,9 +46,9 @@ extern FILE *syslin; /* for assem */
 extern FILE *systxt; /* for module names */
 
 extern unsigned short int nommod;
-extern char parm_i[]; /* sourse file name */
-extern char vers_i[]; /* compiler version */
-extern char mod_i[];  /* module name      */
+extern char parm_i[];       /* sourse file name */
+extern const char vers_i[]; /* compiler version */
+extern char mod_i[];        /* module name      */
 
 extern void oshibka();
 extern void scan();

@@ -55,39 +55,36 @@ FILE *systxt; /* for module names */
 unsigned short int nommod;
 char parm_i[40];         /* sourse file name */
 /* Aleksandr Bocharov */ /* compiler version */
-char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
+const char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
 char mod_i[13]; /* 8+4+1 (xxxxxxxx.yyy0) */
 
 static FILE *sysin;
 static unsigned short int m; /* current symbol number */
 static char strg_c[78];
-static char cprc[] = "%%%";
-static char regnom[] = "000";
-static unsigned int rn[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
 static unsigned int lbl_leng;
 static unsigned short int empcard; /* flags for empty card  */
 static char card[81];              /* card buffer (input) */
-static char *card72 = card;
+static const char *card72 = card;
 static unsigned int cdnumb; /* card number */ /* kras */
 static unsigned int cardl;                    /* card length without tail blanks */
 static unsigned short int dir;                /* L,R - flag */
 static unsigned int kolosh;
-static char ns_b = '\6';
-static char ns_cll = '\0';
-static char ns_d = '\13';
-static char ns_f = '\7';
-static char ns_l = '\14';
-static char ns_n = '\10';
-static char ns_ng = '\2';
-static char ns_ngw = '\3';
-static char ns_o = '\12';
-static char ns_r = '\11';
-static char ns_s = '\5';
-static char ns_sc = '\4';
-static char ns_w = '\1';
+static const char ns_b = '\6';
+static const char ns_cll = '\0';
+static const char ns_d = '\13';
+static const char ns_f = '\7';
+static const char ns_l = '\14';
+static const char ns_n = '\10';
+static const char ns_ng = '\2';
+static const char ns_ngw = '\3';
+static const char ns_o = '\12';
+static const char ns_r = '\11';
+static const char ns_s = '\5';
+static const char ns_sc = '\4';
+static const char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
-char *class = class72 + 6;
+static char *class = class72 + 6;
 static unsigned short int scn_state; /* scanner station - in(1),out(0) literal chain */
 static unsigned short int left_part;
 static char *sarr[7]; /* abbreviated specifier table */
@@ -105,8 +102,8 @@ static void lblkey(unsigned int pr);
 static void pch130();
 static void blout();
 static void trprev();
-static void ilm(void (*prog)(char *, unsigned int, char *, unsigned int));
-static void il(void (*prog)(char *, unsigned int));
+static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int));
+static void il(void (*prog)(const char *, unsigned int));
 static void equ();
 static void pchzkl();
 static void pchk();
@@ -171,29 +168,8 @@ static void GET_time()
 }
 #endif
 
-static void de()
-{
-    unsigned int i, k, l, n;
-    n = atoi(regnom);
-    l = strlen(vers_i);
-    k = n % l;
-    for (i = 0; i < 10; i++)
-    {
-        if ((rn[i] - n) / 99 != vers_i[k])
-        {
-            printf("\nError in Reg.number!");
-            exit(0);
-        }
-        k = (k + 1) % l;
-    }
-}
-
 int main(int argc, char *argv[])
 {
-    char parm[40];
-    unsigned int j;
-    int i, temp;
-
     systerm = NULL;
 
     /*   qindex = index_x ("abcd","xbc");
@@ -206,7 +182,6 @@ int main(int argc, char *argv[])
     nommod = 0;
     printf("\n"); /* BLF */
     printf("%s", vers_i);
-    /* BLF  de();  ---------------------------------*/
     if (argc < 2)
     {
         /* BLF      printf("\nSer. No %s",regnom);      */
@@ -226,6 +201,8 @@ int main(int argc, char *argv[])
         exit(1);
     };
 
+    char parm[40];
+    int i;
     for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; i++)
         ;
 
@@ -255,7 +232,7 @@ int main(int argc, char *argv[])
     options.asmb = 1; /* BLF, instead 0, we need assembler code */
     options.names = 1;
     options.mincomp = 0;
-    for (j = 2; j < argc; ++j)
+    for (unsigned int j = 2; j < argc; ++j)
     {
         for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
             ;
@@ -263,6 +240,7 @@ int main(int argc, char *argv[])
         {
             for (i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
             {
+                int temp;
                 if (*(parm + i) == 'a') /*  kras */
                     options.asmb = 1;
                 else if (strncmp((parm + i), "nn", 2) == 0) /*  kras */
@@ -1316,7 +1294,7 @@ static void pchk_t()
     }
 }
 
-static void il(void (*prog)(char *, unsigned int)) /* treatment of directives having 'EMPTY' type */
+static void il(void (*prog)(const char *, unsigned int)) /* treatment of directives having 'EMPTY' type */
 {
     char id[40];
     unsigned int lid;
@@ -1339,7 +1317,7 @@ IL2:
     pch130();
 }
 
-static void ilm(void (*prog)(char *, unsigned int, char *, unsigned int)) /* treatment of directives having 'ENTRY' type*/
+static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) /* treatment of directives having 'ENTRY' type*/
 {
     char id[40], ide[8];
     unsigned int lid, lide;
