@@ -66,7 +66,7 @@ static unsigned short int empcard; /* flags for empty card  */
 static char card[81];              /* card buffer (input) */
 static const char *card72 = card;
 static unsigned int cdnumb; /* card number */ /* kras */
-static unsigned int cardl;                    /* card length without tail blanks */
+static int cardl;                             /* card length without tail blanks */
 static unsigned short int dir;                /* L,R - flag */
 static unsigned int kolosh;
 static const char ns_b = '\6';
@@ -487,8 +487,7 @@ END_OF_SYSIN:
 
 static void trprev()
 { /* perenos poslednej pustoj metki w tekuschuju */
-    unsigned int n;
-    n = strlen(prevlb);
+    unsigned int n = strlen(prevlb);
     if ((n != 0) && (lbl_leng == 0))
     {
         strcpy(stmlbl, prevlb);
@@ -501,15 +500,15 @@ static void trprev()
 
 static void rdline(char *s)
 { /* read 80 symbols from sysin */
-    unsigned int i, j, k;
-    int c;
     empcard = 1;
+    unsigned int i;
+    int c;
     for (i = 0; ((c = getc(sysin)) != '\n') && (c != EOF) && (i < 80); i++)
     {
         if (c == '\t')
         {
-            k = 8 - (i & 7);
-            for (j = 0; j < k; j++)
+            const unsigned int k = 8 - (i & 7);
+            for (unsigned int j = 0; j < k; j++)
                 *(s + i + j) = ' ';
             i += (k - 1);
         }
@@ -527,14 +526,12 @@ static void rdline(char *s)
         *(s + i) = ' ';
 }
 
-static void translate(char *str, char *class1)
+static void translate(const char *str, char *class1)
 { /* L,D,* - classification procedure */
-    unsigned int i;
-    int j;
-    for (i = 0; i < 72; ++i)
+    for (unsigned int i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
-        j = (int)(*(str + i));
+        const int j = (int)(*(str + i));
         if (j > 47)
             if (j < 58)
             {
@@ -560,15 +557,15 @@ static void translate(char *str, char *class1)
     }
 }
 
-static int komm()
+static unsigned int komm()
 {
-    char *k;
+    const char *k;
     for (k = c; (*k == ' ') || (*k == '\t'); k++)
         ;
     if (*k == '*')
-        return 1;
+        return TRUE;
     else
-        return 0;
+        return FALSE;
 }
 
 static void rdcard()
@@ -610,8 +607,6 @@ RDCARD1:
 /*    directive label and keyword extraction    */
 static void lblkey(unsigned int pr)
 {
-    register unsigned int i;
-    unsigned short int l, delta, fixm1;
     if (pr == 0)
     {
     LK1:
@@ -625,18 +620,18 @@ static void lblkey(unsigned int pr)
         }
     }
     blout();
-    for (i = 0; i < 6; i++)
+    for (unsigned int i = 0; i < 6; i++)
         stmkey[i] = ' ';
     if (c[m] == ' ')
         goto LKEXIT;
     fixm = m;
-    l = 0;
+    unsigned short int l = 0;
     while (c[m] != ' ')
     {
         if (m == 71)
         {
-            delta = 71 - fixm;
-            fixm1 = 0 - delta;
+            const unsigned short int delta = 71 - fixm;
+            const short int fixm1 = 0 - delta;
             for (m = 0; m != delta; m++)
             {
                 c[fixm1 + m] = c[fixm + m];
@@ -664,9 +659,9 @@ LKEXIT:
 
 void scan()
 {
-    static char id[40];
-    static unsigned int id_leng;
-    static unsigned char *p;
+    static const char id[40];
+    static const unsigned int id_leng;
+    static const unsigned char *p;
     static unsigned short int scode;
     unsigned int i; /* kras */
     scn_e.code.tag = 0;
@@ -982,12 +977,7 @@ static void gsp(char n)
 
 static unsigned int specif(char tail)
 { /* specifier compiler */
-    unsigned int neg;
-    char id[255];
-    unsigned int lid;
-    struct linkti code;
-    char *p;
-    neg = 0;
+    unsigned int neg = 0;
 SPCBLO:
     blout();
 SPCPRC:
@@ -1086,6 +1076,9 @@ SPCR3:
     gsp(ns_ngw);
     return 1;
 SPCESC:
+    const char id[255];
+    const unsigned int lid;
+    struct linkti code;
     if (get_csmb(&code, id, &lid) == 0)
         goto OSH200;
     gsp(ns_sc);
@@ -1098,7 +1091,7 @@ SPCSP:
         goto OSH203;
     if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
         pchosh("209 specifier is defined through itself");
-    p = (char *)spref(id, lid, tail);
+    const unsigned char *p = (unsigned char *)spref(id, lid, tail);
     gsp(ns_cll);
     if (left_part == 1)
         j3addr((T_U *)p);
