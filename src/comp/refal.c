@@ -659,8 +659,8 @@ LKEXIT:
 
 void scan()
 {
-    static const char id[40];
-    static const unsigned int id_leng;
+    static char id[40];
+    static unsigned int id_leng;
     static const unsigned char *p;
     static unsigned short int scode;
     unsigned int i; /* kras */
@@ -1041,7 +1041,7 @@ SPCFF:
         pchosh("207 within specifier default ')' ");
     if (tail == ')')
         goto OSH206;
-    return 1;
+    return TRUE;
 SPCL:
     if (neg == 1)
         goto OSH202;
@@ -1074,10 +1074,10 @@ SPCR2:
         goto OSH206;
 SPCR3:
     gsp(ns_ngw);
-    return 1;
+    return TRUE;
 SPCESC:
-    const char id[255];
-    const unsigned int lid;
+    char id[255];
+    unsigned int lid;
     struct linkti code;
     if (get_csmb(&code, id, &lid) == 0)
         goto OSH200;
@@ -1228,7 +1228,7 @@ SPCGC:
     goto SPCBLO;
 OSH200:
     pchosh("200 specifier is't scaned");
-    return 0;
+    return FALSE;
 OSH202:
     pchosh("202 specifier has too many '(' ");
     goto OSH200;
@@ -1251,15 +1251,15 @@ OSH208:
 
 static void pchk()
 { /* writing of card into sysprint */
-    unsigned int i;
-    char tmpstr[80];
     if (flags.uzhe_krt == 0 && sysprint != NULL)
     {
         flags.uzhe_krt = 1;
         card[72] = '\0';
         if (_eoj == 0)
         {
+            char tmpstr[80];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
+            unsigned int i;
             for (i = 76; i > 4; i--)
                 if (tmpstr[i] != ' ')
                     break;
@@ -1274,13 +1274,13 @@ static void pchk()
 
 static void pchk_t()
 { /* card writing into systerm */
-    char tmpstr[80];
     if (flags.uzhekrt_t == 0)
     {
         flags.uzhekrt_t = 1;
         card[72] = '\0';
         if (_eoj == 0)
         {
+            char tmpstr[80];
             sprintf(tmpstr, "%4d %s\n", cdnumb, card);
             fputs(tmpstr, systerm);
         }
@@ -1289,10 +1289,10 @@ static void pchk_t()
 
 static void il(void (*prog)(const char *, unsigned int)) /* treatment of directives having 'EMPTY' type */
 {
-    char id[40];
-    unsigned int lid;
     blout();
 IL1:
+    char id[40];
+    unsigned int lid;
     if (get_id(id, &lid) == 0)
         goto IL2;
     (*prog)(id, lid);
@@ -1312,12 +1312,14 @@ IL2:
 
 static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) /* treatment of directives having 'ENTRY' type*/
 {
-    char id[40], ide[8];
-    unsigned int lid, lide;
     blout();
 ILM1:
+    char id[40];
+    unsigned int lid;
     if (get_id(id, &lid) == 0)
         goto ILM2;
+    char ide[8];
+    unsigned int lide;
     if (c[m] == '(')
     {
         EH ROMA;
@@ -1350,9 +1352,9 @@ ILM2:
 
 static void equ()
 { /* treatement of directives having 'EQU' type */
+    blout();
     char id[40];
     unsigned int lid;
-    blout();
     if (get_id(id, &lid) == 0)
         goto EQU1;
     sequ(stmlbl, lbl_leng, id, lid);
@@ -1369,8 +1371,6 @@ static void pch130()
 
 static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid) /* procedure read multiple symbol */
 {
-    unsigned long int k;
-    unsigned long int l;
     code->tag = 0;
     code->info.codef = NULL;
     EH ROMA0; /* kras */
@@ -1384,12 +1384,12 @@ static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid
 CSMBN:
     code->tag = TAGN;
     code->info.coden = 0;
-    k = c[m] - '0';
+    unsigned long int k = c[m] - '0';
 CSMBN1:
     EH ROMA0; /* kras */
     if (class[m] != 'D')
         goto CSMBN3;
-    l = c[m] - '0';
+    const unsigned long int l = c[m] - '0';
     k = k * 10L + l;
     if (k <= 16777215L)
         goto CSMBN1;
@@ -1405,19 +1405,18 @@ CSMBN3:
 CSMBEND:
     if (c[m] != '/')
         goto OSH113;
-    return 1;
+    return TRUE;
 OSH112:
     pchosh("112 unknown type of the multiple symbol ");
-    return 0;
+    return FALSE;
 OSH113:
     pchosh("113 default '/' under multiple symbol ");
-    return 0;
+    return FALSE;
 }
 
 static char convert(char cm)
 {
-    int j;
-    j = (int)cm;
+    const int j = (int)cm;
     if ((j > 96) && (j < 123))
         cm = cm - '\40';
     if ((j > -97) && (j < -80))
@@ -1429,11 +1428,10 @@ static char convert(char cm)
 
 static unsigned int get_id(char id[40], unsigned int *lid)
 { /* read identifier */
-    unsigned int i;
-    for (i = 0; i < 40; id[i++] = ' ')
+    for (unsigned int i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
-        return 0;
+        return FALSE;
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
@@ -1448,7 +1446,7 @@ static unsigned int get_id(char id[40], unsigned int *lid)
         EH ROMA0;
     } /* kras */
 ID0:
-    return 1;
+    return TRUE;
 }
 
 /*read external identifier */
