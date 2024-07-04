@@ -22,15 +22,18 @@ typedef struct DET_TAB
     char tr;
     char *det_id;
 } DET_TAB;
-static DET_TAB *last_det = NULL;
+static const DET_TAB *last_det = NULL;
 static DET_TAB *det_table;
-static DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
+static const DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
-static unsigned short int trace_cond = 0;
-static unsigned short int trap_cond = 0;
-static unsigned short int ge_all = 1;
-static unsigned short int eq_all = 1;
-static unsigned short int e1empty = 0;
+static unsigned int trace_cond = FALSE;
+static unsigned int trap_cond = FALSE;
+static unsigned int ge_all = TRUE;
+static unsigned int eq_all = TRUE;
+static unsigned short int e1empty = FALSE;
+static unsigned int was_ge;
+static unsigned int was_le;
+static unsigned int was_eq;
 static unsigned long int s_from = 0L;
 static unsigned long int s_upto = 0L;
 static unsigned long int s_stop = 2147483647L;
@@ -44,17 +47,16 @@ static unsigned long int printed_step;
 static unsigned long int curr_step;
 static unsigned long int euc_step;
 static unsigned long int res_step;
-static unsigned short int was_ge;
-static unsigned short int was_le;
-static unsigned short int was_eq;
 static unsigned long int curr_step1;
 static unsigned long int curr_step2;
-static linkcb *nextk;
-static linkcb *res_prevk;
-static linkcb *res_nextd;
-static linkcb *pk, *prevk, *nextd;
-static linkcb *dot1, *prevk1, *nextd1;
-static linkcb *dot2, *prevk2, *nextd2;
+static const linkcb *nextk;
+static const linkcb *res_prevk;
+static const linkcb *res_nextd;
+static linkcb *pk;
+static const linkcb *prevk;
+static const linkcb *nextd;
+static const linkcb *dot1, *prevk1, *nextd1;
+static const linkcb *dot2, *prevk2, *nextd2;
 
 static void init_det_flags();
 static void get_arg();
@@ -71,7 +73,6 @@ static void pr_step();
 
 void rfdbg(st *s_st)
 {
-    unsigned int i, c2;
     /* read task for debugging */
     init_det_flags();
     /*----------------------------------*/
@@ -79,13 +80,14 @@ void rfdbg(st *s_st)
 
     printf("\n > (function list) : ");
     fgets(buff, 100, stdin);
+    unsigned int i;
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
-        ge_all = 0;
+        trace_cond = TRUE;
+        ge_all = FALSE;
         while (*arg != '\n')
         {
             get_arg();
@@ -101,8 +103,8 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
-        ge_all = 0;
+        trace_cond = TRUE;
+        ge_all = FALSE;
         while (*arg != '\n')
         {
             get_arg();
@@ -118,8 +120,8 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
-        eq_all = 0;
+        trace_cond = TRUE;
+        eq_all = FALSE;
         while (*arg != '\n')
         {
             get_arg();
@@ -135,7 +137,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
+        trace_cond = TRUE;
         while (*arg != '\n')
         {
             get_arg();
@@ -151,7 +153,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
+        trace_cond = TRUE;
         while (*arg != '\n')
         {
             get_arg();
@@ -167,7 +169,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = 1;
+        trace_cond = TRUE;
         while (*arg != '\n')
         {
             get_arg();
@@ -183,7 +185,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trap_cond = 1;
+        trap_cond = TRUE;
         while (*arg != '\n')
         {
             get_arg();
@@ -254,10 +256,10 @@ NOT_YET:
     }
     /* enter into station "is already"  */
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
-        was_ge = 0;
+        was_ge = FALSE;
     else
     {
-        was_ge = 1;
+        was_ge = TRUE;
         if (!ge_all)
             pr_euc();
     }
@@ -278,10 +280,10 @@ ALREADY:
     {
         /*  "isn't already" */
         if (det_table->lt)
-            was_le = 0;
+            was_le = FALSE;
         else
         {
-            was_le = 1;
+            was_le = TRUE;
             pr_euc();
         }
         /*   cut    */
@@ -312,17 +314,17 @@ ALREADY:
         curr_step = s_st->step;
         s_st->dot = dot2;
         if (was_le)
-            pr_finres((unsigned long int)curr_step2, prevk2, nextd2);
+            pr_finres(curr_step2, prevk2, nextd2);
     } /* for label ALREADY */
     else
     { /* step in station "is already" */
         if (s_stop < s_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
-            was_eq = 0;
+            was_eq = FALSE;
         else
         {
-            was_eq = 1;
+            was_eq = TRUE;
             pr_euc();
         }
         if (det_table->tr)
@@ -341,7 +343,7 @@ ALREADY:
     /*  joint */
     s_st->dot = dot1;
     if (!ge_all && was_ge)
-        pr_finres((unsigned long int)curr_step1, prevk1, nextd1);
+        pr_finres(curr_step1, prevk1, nextd1);
     goto NOT_YET;
 DONE:
     printf("\nConcretization is executed ");
@@ -387,8 +389,7 @@ EOJ:
 
 static void dbapp(st *ss_st)
 {
-    unsigned int i, c2;
-    linkcb *v1, *v2, *v3, *v4, *v6, *v7;
+    const linkcb *v1, *v2, *v3, *v4, *v6, *v7;
     unsigned long int v5;
     v1 = prevk;
     v2 = nextd;
@@ -414,10 +415,10 @@ NOT_YET:
     }
     /* enter into station "is already"  */
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
-        was_ge = 0;
+        was_ge = FALSE;
     else
     {
-        was_ge = 1;
+        was_ge = TRUE;
         if (!ge_all)
             pr_euc();
     }
@@ -438,10 +439,10 @@ ALREADY:
     {
         /*  "isn't already" */
         if (det_table->lt)
-            was_le = 0;
+            was_le = FALSE;
         else
         {
-            was_le = 1;
+            was_le = TRUE;
             pr_euc();
         }
         /*   cut    */
@@ -472,17 +473,17 @@ ALREADY:
         curr_step = ss_st->step;
         ss_st->dot = dot2;
         if (was_le)
-            pr_finres((unsigned long int)curr_step2, prevk2, nextd2);
+            pr_finres(curr_step2, prevk2, nextd2);
     } /* for label ALREADY */
     else
     { /* step in station "is already" */
         if (s_stop < ss_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
-            was_eq = 0;
+            was_eq = FALSE;
         else
         {
-            was_eq = 1;
+            was_eq = TRUE;
             pr_euc();
         }
         if (det_table->tr)
@@ -501,7 +502,7 @@ ALREADY:
     /*  joint */
     ss_st->dot = dot1;
     if (!ge_all && was_ge)
-        pr_finres((unsigned long int)curr_step1, prevk1, nextd1);
+        pr_finres(curr_step1, prevk1, nextd1);
     goto NOT_YET;
 TRAP:
     printf("\nFunction name trap");
@@ -758,7 +759,7 @@ static unsigned int get_yn(char *b)
         return FALSE;
     }
     if (*b == 'y')
-        e1empty = 1;
+        e1empty = TRUE;
     return TRUE;
 }
 /*---------  end of file DEBUG.C -----------*/
