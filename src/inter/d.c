@@ -63,7 +63,7 @@ static const linkcb *prevk2, *nextd2;
 static void init_det_flags();
 static void get_arg();
 static unsigned int get_det();
-static unsigned int get_numb(const unsigned long int *numb);
+static unsigned int get_numb(long int *numb);
 static unsigned int get_yn(const char *b);
 static void dbapp(st *ss_st);
 static void getpf(const st *ss_st);
@@ -202,7 +202,7 @@ R1:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb(&s_stop) == 0)
+        if (get_numb((long int *)&s_stop) == FALSE)
             goto R1;
 R2:
     printf("\n FROM (step number) : ");
@@ -210,7 +210,7 @@ R2:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb(&s_from) == 0)
+        if (get_numb((long int *)&s_from) == FALSE)
             goto R2;
 R3:
     printf("\n TO (step number) : ");
@@ -218,7 +218,7 @@ R3:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb(&s_upto) == 0)
+        if (get_numb((long int *)&s_upto) == FALSE)
             goto R3;
 R4:
     printf("\n E1= (y/n) : ");
@@ -391,8 +391,8 @@ EOJ:
 
 static void dbapp(st *ss_st)
 {
-    const linkcb *v1 = prevk;
-    const linkcb *v2 = nextd;
+    linkcb *v1 = prevk;
+    linkcb *v2 = nextd;
     linkcb *v3 = pk;
     const linkcb *v4 = nextk;
     unsigned long int v5 = res_step;
@@ -739,7 +739,7 @@ static unsigned int get_det()
     return TRUE;
 }
 
-static unsigned int get_numb(const unsigned long int *numb)
+static unsigned int get_numb(long int *numb)
 {
     if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
     {
