@@ -10,15 +10,15 @@
 
 REFAL refal;
 
-static linkcb *last_block = NULL;
+static const linkcb *last_block = NULL;
 static unsigned int rf_init = 1;
 static unsigned int curr_size = 0;
-static linkcb hd;
+static const linkcb hd;
 
 static unsigned int lgcl();
-static void rflist(linkcb *par, unsigned int n);
+static void rflist(const linkcb *par, unsigned int n);
 
-void rfabe(char *amsg)
+void rfabe(const char *amsg)
 {
     printf("\n *** refal-abend *** %s", amsg);
     exit(1);
@@ -26,16 +26,14 @@ void rfabe(char *amsg)
 
 unsigned int lincrm()
 {
-    linkcb *first_free, *p;
-    linkcb *new_block;
-    unsigned int was_coll, n;
+    unsigned int n;
     if (last_block != NULL)
     {
-        first_free = refal.flhead->next;
-        was_coll = lgcl();
+        const linkcb *first_free = refal.flhead->next;
+        const unsigned int was_coll = lgcl();
         if (was_coll == 1)
         {
-            p = refal.flhead->next;
+            const linkcb *p = refal.flhead->next;
             n = 0;
             while ((p != first_free) && (n != 1000))
             {
@@ -46,7 +44,7 @@ unsigned int lincrm()
                 return TRUE;
         }
     }
-    new_block = malloc(1001 * sizeof(linkcb)); /* kras 06.12.88 */
+    linkcb *new_block = malloc(1001 * sizeof(linkcb)); /* kras 06.12.88 */
 #ifdef mdebug
     printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
 #endif
@@ -62,10 +60,8 @@ unsigned int lincrm()
 /*  check a number of items in free items list */
 unsigned int lrqlk(unsigned int l)
 {
-    linkcb *p;
-    unsigned int n;
-    p = refal.flhead;
-    for (n = 0; n < l; n++)
+    const linkcb *p = refal.flhead;
+    for (unsigned int n = 0; n < l; n++)
     {
         p = p->next;
         if (p == refal.flhead)
@@ -76,12 +72,10 @@ unsigned int lrqlk(unsigned int l)
 
 unsigned int lins(linkcb *p, unsigned int l)
 {
-    unsigned int n;
-    linkcb *p1, *q, *q1, *r;
     if (l < 1)
         return TRUE;
-    q1 = refal.flhead;
-    for (n = 0; n < l; n++)
+    linkcb *q1 = refal.flhead;
+    for (unsigned int n = 0; n < l; n++)
     {
         q1 = q1->next;
         if (q1 == refal.flhead)
@@ -89,11 +83,11 @@ unsigned int lins(linkcb *p, unsigned int l)
         q1->tag = TAGO;
         q1->info.codep = NULL;
     }
-    r = q1->next;
-    q = refal.flhead->next;
+    linkcb *r = q1->next;
+    linkcb *q = refal.flhead->next;
     refal.flhead->next = r;
     r->prev = refal.flhead;
-    p1 = p->next;
+    linkcb *p1 = p->next;
     q1->next = p1;
     p1->prev = q1;
     p->next = q;
@@ -114,18 +108,17 @@ unsigned int slins(linkcb *p, unsigned int k)
     return lins(p, k);
 }
 
-unsigned int linskd(st *ast, unsigned char *f)
+unsigned int linskd(st *ast, const unsigned char *f)
 {
-    linkcb *p, *q, *r;
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
     if (ast->dot != NULL)
         rfabe("Linskd: there are 'k'-signes in view field");
     if (!slins(ast->view, 3))
         return FALSE;
-    p = ast->view->next;
-    r = p->next;
-    q = ast->view->prev;
+    linkcb *p = ast->view->next;
+    linkcb *r = p->next;
+    linkcb *q = ast->view->prev;
     p->tag = TAGK;
     q->tag = TAGD;
     q->info.codep = p;
@@ -137,8 +130,7 @@ unsigned int linskd(st *ast, unsigned char *f)
 
 char rfcnv(char cm)
 {
-    unsigned char j;
-    j = cm;
+    const int j = cm;
     if ((j > 96) && (j < 123))
         return cm - '\40';
     else
@@ -147,10 +139,8 @@ char rfcnv(char cm)
 
 void rfinit()
 {
-    REFAL *p;
-    linkcb *phd;
     rf_init = 0;
-    p = &refal;
+    REFAL *p = &refal;
     p->crprev = (st *)&refal;
     p->crnext = (st *)&refal;
     p->upshot = 1;
@@ -158,7 +148,7 @@ void rfinit()
     p->svar = NULL;
     p->dvar = NULL;
     p->flhead = &hd;
-    phd = &hd;
+    linkcb *phd = &hd;
     phd->prev = phd;
     phd->next = phd;
     phd->tag = 0;
@@ -169,9 +159,8 @@ void rfinit()
     p->tmintv = 0;
 }
 
-void rfcanc(st *ast)
+void rfcanc(const st *ast)
 {
-    linkcb *flhead1, *view1, *store1;
     if (rf_init)
         rfinit();
     if (!lexist(ast))
@@ -180,9 +169,9 @@ void rfcanc(st *ast)
         rfabe("Rfcanc: process is in job yet");
     ast->stprev->stnext = ast->stnext;
     ast->stnext->stprev = ast->stprev;
-    flhead1 = refal.flhead->prev;
-    view1 = ast->view->prev;
-    store1 = ast->store->prev;
+    linkcb *flhead1 = refal.flhead->prev;
+    linkcb *view1 = ast->view->prev;
+    linkcb *store1 = ast->store->prev;
     flhead1->next = ast->view;
     ast->view->prev = flhead1;
     view1->next = ast->store;
@@ -194,12 +183,11 @@ void rfcanc(st *ast)
 /*    delete part of list and add it to free memory list */
 void rfdel(linkcb *p, linkcb *q)
 {
-    linkcb *p1, *q1, *r;
-    p1 = p->next;
+    linkcb *p1 = p->next;
     if (p1 == q)
         return;
-    q1 = q->prev;
-    r = refal.flhead->prev;
+    linkcb *q1 = q->prev;
+    linkcb *r = refal.flhead->prev;
     p->next = q;
     q->prev = p;
     q1->next = refal.flhead;
@@ -210,10 +198,9 @@ void rfdel(linkcb *p, linkcb *q)
 
 void rftermm()
 {
-    linkcb *new_block;
     while (last_block != NULL)
     {
-        new_block = last_block;
+        const linkcb *new_block = last_block;
         last_block = new_block->prev;
         free(new_block);
 #ifdef mdebug
@@ -222,12 +209,8 @@ void rftermm()
     }
 }
 
-void rfexec(unsigned char *func)
+void rfexec(const unsigned char *func)
 {
-
-    /* BLF 17.07.2004 */
-    linkcb *prevk, *nextd, *pk;
-
     st s_st;
     if (rf_init)
         rfinit();
@@ -247,9 +230,9 @@ AGAIN:
     while (s_st.state == 1 && s_st.dot != NULL)
     {
         s_st.stop = s_st.step + 1;
-        pk = s_st.dot->info.codep;
-        prevk = pk->prev;
-        nextd = s_st.dot->next;
+        const linkcb *pk = s_st.dot->info.codep;
+        const linkcb *prevk = pk->prev;
+        const linkcb *nextd = s_st.dot->next;
         printf("\n step: %d", s_st.stop);
         rfpexm(" Term: ", prevk, nextd);
 
@@ -308,35 +291,30 @@ LACK:
     rftermm();
 }
 
-void rfpexm(char *pt, linkcb *pr, linkcb *pn)
+void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
 {
-    char *f;
-    unsigned char l, k; 
-    unsigned int fr;
-    linkcb *pr1;
-
-    fr = 0;
     printf("\n%s", pt);
+    unsigned int fr = FALSE;
     while (pr != pn->prev)
     {
-        pr1 = pr;
+        const linkcb *pr1 = pr;
         pr = pr->next;
         if (pr->prev != pr1)
             rfabe("rfpexm: list structure violation");
         if (pr->tag == TAGO)
         {
-            if (fr == 0)
+            if (fr == FALSE)
             {
-                fr = 1;
+                fr = TRUE;
                 putchar('\'');
             };
             putchar(pr->info.infoc);
         }
         else
         {
-            if (fr == 1)
+            if (fr == TRUE)
             {
-                fr = 0;
+                fr = FALSE;
                 putchar('\'');
             };
             if (pr->tag == TAGK)
@@ -352,10 +330,10 @@ void rfpexm(char *pt, linkcb *pr, linkcb *pn)
             else if (pr->tag == TAGF)
             {
                 putchar('/');
-                f = (char *)(pr->info.codef - 1);
-                l = *f;
+                const char *f = (char *)(pr->info.codef - 1);
+                const unsigned char l = *f;
                 f -= l;
-                for (k = 1; k <= l; k++, f++)
+                for (unsigned int k = 1; k <= l; k++, f++)
                     putchar(rfcnv(*f));
                 putchar('/');
             }
@@ -367,7 +345,7 @@ void rfpexm(char *pt, linkcb *pr, linkcb *pn)
                 printf("/<%x>,%lx/", pr->tag, pr->info.codep);
         }
     }
-    if (fr == 1)
+    if (fr == TRUE)
         putchar('\'');
     return;
 }
@@ -573,7 +551,7 @@ static unsigned int lgcl()
     return was_coll;
 }
 
-static void rflist(linkcb *par, unsigned int n)
+static void rflist(const linkcb *par, unsigned int n)
 {
     linkcb *p, *q;
     unsigned int k;

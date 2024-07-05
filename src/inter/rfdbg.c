@@ -8,7 +8,7 @@
 #include "d.h"
 #include "rfintf.h"
 
-static st s_st;
+static const st s_st;
 extern char go();
 
 int main()
