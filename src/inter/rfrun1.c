@@ -26,18 +26,6 @@
     if (f == flhead) \
         goto LACK;
 
-static linkcb *et[256];  /* element table */
-static unsigned int nel; /* adress of first free string in element table */
-
-static struct wjs js[64]; /* jump stack and planning translation stack*/
-static struct wjs *jsp;   /* jump stack pointer*/
-
-static struct ts *tsp; /*translation stack pointer*/
-
-static unsigned int tmmod;        /* timer state */
-static unsigned long int tmstart; /* time at the start */
-static unsigned long int tmstop;  /* time at the end    */
-
 struct sav_
 { /* save area for var-part of REFAL-block */
     unsigned int upshot_;
@@ -47,7 +35,7 @@ struct sav_
     linkcb *nextr_;
     st *currst_;
 };
-typedef struct sav_ sav;
+typedef struct sav_ T_SAV;
 
 static union
 {
@@ -62,6 +50,18 @@ static union
     char chr[2];
 } inch;
 
+static linkcb *et[256];  /* element table */
+static unsigned int nel; /* adress of first free string in element table */
+
+static T_WJS js[64]; /* jump stack and planning translation stack*/
+static T_WJS *jsp;   /* jump stack pointer*/
+
+static T_TS *tsp; /*translation stack pointer*/
+
+static unsigned int tmmod;        /* timer state */
+static unsigned long int tmstart; /* time at the start */
+static unsigned long int tmstop;  /* time at the end    */
+
 /* definition of work variables and pointers*/
 static unsigned char opc;  /* current statement code */
 static unsigned char *vpc; /* virtual program counter */
@@ -69,19 +69,15 @@ static linkcb *lastk;      /* last acted sign-k adress */
 static linkcb *lastb;      /* last generated left bracket*/
 static linkcb *b0, *b1, *b2;
 static linkcb *f0, *f1, *f;
-static unsigned char *vpca; /* additional vpc  */
+static const unsigned char *vpca; /* additional vpc  */
 static unsigned int i, n, m;
 
-static char (*fptr)(REFAL *);
+static char (*fptr)(const REFAL *);
 
 void rfrun(st *ast) /* adress of current state table */
 {
     /* dynamic area DSA */
-    sav *savecr;
-    linkcb quasik;  /* quasi-sign k */
-    linkcb *flhead; /* adress of free memory list head */
-    linkcb *nextr;  /* item adress followed by result */
-    savecr = malloc(sizeof(sav));
+    T_SAV *savecr = malloc(sizeof(T_SAV));
     u.ii = 0;
     if (!lexist(ast))
         rfabe("rfrun: attempt to run unexisting process");
@@ -100,8 +96,10 @@ void rfrun(st *ast) /* adress of current state table */
     refal.tmmode = 0;
     refal.currst = ast;
     ast->state = 4;
+    linkcb quasik; /* quasi-sign k */
     quasik.info.codep = ast->dot;
-    flhead = refal.flhead;
+    /* adress of free memory list head */
+    linkcb *flhead = refal.flhead;
     if (tmmod == 1)
         tmstart = time(0l);
     goto START;
@@ -337,10 +335,11 @@ EOSSN:
 EOS:
     lastk->info.codep = et[1]->info.codep;
     lastk->tag = TAGK;
-    nextr = f->next;
+    /* item adress followed by result */
+    linkcb *nextr = f->next;
     /* execute planned transplantation */
     /* EOS1:    */
-    while (tsp != (struct ts *)js)
+    while (tsp != (T_TS *)js)
     {
         tsp = tsp - 1;
         getts(tsp, &f, &f0, &f1);
@@ -965,7 +964,7 @@ RSRCH1:
     goto NEXTOP;
     /* WSPC(L);  */
 WSPC:
-    if (spc((struct spcs *)(jsp + 1), vpc, et[nel - 1]) == 0)
+    if (spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]) == 0)
         goto FAIL;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
@@ -977,7 +976,7 @@ ESPC:
         b0 = b0->next;
         if ((b0->tag & 0001) != 0)
             b0 = b0->info.codep;
-        if (spc((struct spcs *)(jsp + 1), vpc, b0) == 0)
+        if (spc((T_SPCS *)(jsp + 1), vpc, b0) == 0)
             goto FAIL;
     };
     vpc = vpc + NMBL + LBLL;
@@ -996,7 +995,7 @@ PLESPC:
 LESPC:
     b1 = et[nel + 1];
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    if (spc((struct spcs *)(jsp + 1), vpc, b1) == 0)
+    if (spc((T_SPCS *)(jsp + 1), vpc, b1) == 0)
         goto FAIL;
     jsp++;
     et[nel + 1] = b1;
@@ -1017,7 +1016,7 @@ PRESPC:
 RESPC:
     b2 = et[nel];
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    if (spc((struct spcs *)(jsp + 1), vpc, b2) == 0)
+    if (spc((T_SPCS *)(jsp + 1), vpc, b2) == 0)
         goto FAIL;
     jsp++;
     et[nel] = b2;
@@ -1029,7 +1028,7 @@ LMAX:
     et[nel] = b1->next;
     while ((b1 = b1->next) != b2)
     {
-        if (spc((struct spcs *)(jsp + 1), vpc, b1) == 0)
+        if (spc((T_SPCS *)(jsp + 1), vpc, b1) == 0)
             break;
         if ((b1->tag & 0001) != 0)
             b1 = b1->info.codep;
@@ -1044,7 +1043,7 @@ RMAX:
     et[nel + 1] = b2->prev;
     while ((b2 = b2->prev) != b1)
     {
-        if (spc((struct spcs *)(jsp + 1), vpc, b2) == 0)
+        if (spc((T_SPCS *)(jsp + 1), vpc, b2) == 0)
             break;
         if ((b2->tag & 0001) != 0)
             b2 = b2->info.codep;
@@ -1059,7 +1058,7 @@ EOR:
     f = flhead;
     lastk = &quasik;
     lastb = NULL;
-    tsp = (struct ts *)js;
+    tsp = (T_TS *)js;
     goto ADVANCE;
     /* NS(S);  */
 NS:

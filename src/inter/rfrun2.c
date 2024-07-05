@@ -12,24 +12,23 @@ static unsigned int letter(char s);
 static unsigned int digit(char s);
 static unsigned int not(unsigned int spcpls);
 
-unsigned int spc(struct spcs *pspcsp, unsigned char *vpc, linkcb *b)
+unsigned int spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
 /* specifier interpreter */
 {
-    unsigned int spcwrk;   /* work variable */
-    unsigned int spcpls;   /* positiveness feature of specifier element */
-    struct spcs *spcsp;    /* spcs-pointer */
+    /* spcs-pointer */
+    T_SPCS *spcsp = pspcsp;
     unsigned char *spcvpc; /* virtual specifier counter */
-    unsigned char spcopc;  /*specifier code */
-    spcsp = pspcsp;
     move(LBLL, vpc + 1, (unsigned char *)&spcvpc); /* spcvpc = L */
-    spcpls = TRUE;
+    /* positiveness feature of specifier element */
+    unsigned int spcpls = TRUE;
     goto SPCNXT;
 /* return from specifier element if "YES" */
 SPCRET:
     if (spcsp == pspcsp)
         return spcpls;
     spcsp--;
-    spcwrk = spcpls;
+    /* work variable */
+    const unsigned int spcwrk = spcpls;
     spcpls = spcsp->spls; /*getss (spcpls,spcvpc);*/
     spcvpc = spcsp->svpc;
     if (spcwrk == TRUE)
@@ -37,7 +36,8 @@ SPCRET:
     spcvpc = spcvpc + LBLL;
 /* return from specifier element if "NO" */
 SPCNXT:
-    spcopc = *spcvpc;
+    /*specifier code */
+    const unsigned char spcopc = *spcvpc;
     spcvpc = spcvpc + NMBL;
     /* switch   */
     /* SPCOP    */
@@ -159,7 +159,7 @@ void link(linkcb *x, linkcb *y)
     y->prev = x;
 }
 
-void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
+void putjs(T_WJS *jsp, linkcb **ab1, linkcb **ab2, const unsigned int *anel, unsigned char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -167,7 +167,7 @@ void putjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsi
     jsp->jsvpc = *avpc;
 }
 
-void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
+void getjs(const T_WJS *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -175,24 +175,23 @@ void getjs(struct wjs *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsi
     *avpc = jsp->jsvpc;
 }
 
-void putts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void putts(T_TS *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     tsp->ts0 = *ax;
     tsp->ts1 = *ay;
     tsp->ts2 = *az;
 }
 
-void getts(struct ts *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void getts(const T_TS *tsp, linkcb **ax, linkcb **ay, linkcb **az)
 {
     *ax = tsp->ts0;
     *ay = tsp->ts1;
     *az = tsp->ts2;
 }
 
-void move(unsigned int n, unsigned char *pf, unsigned char *pt)
+void move(unsigned int n, const unsigned char *pf, unsigned char *pt)
 {
-    unsigned int i;
-    for (i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         *pt = *pf;
         pt++;
@@ -221,10 +220,9 @@ int i;
 }
 */
 
-unsigned int cmpr(unsigned int n, unsigned char *p1, unsigned char *p2)
+unsigned int cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2)
 {
-    unsigned int i;
-    for (i = 1; i <= n; i++)
+    for (unsigned int i = 1; i <= n; i++)
     {
         if (*p1 != *p2)
             return FALSE;
