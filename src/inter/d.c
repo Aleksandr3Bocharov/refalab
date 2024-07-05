@@ -22,9 +22,9 @@ typedef struct DET_TAB
     char tr;
     char *det_id;
 } DET_TAB;
-static const DET_TAB *last_det = NULL;
+static DET_TAB *last_det = NULL;
 static DET_TAB *det_table;
-static const DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
+static DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
 static unsigned int trace_cond = FALSE;
 static unsigned int trap_cond = FALSE;
@@ -55,19 +55,21 @@ static const linkcb *res_nextd;
 static linkcb *pk;
 static const linkcb *prevk;
 static const linkcb *nextd;
-static const linkcb *dot1, *prevk1, *nextd1;
-static const linkcb *dot2, *prevk2, *nextd2;
+static linkcb *dot1;
+static const linkcb *prevk1, *nextd1;
+static linkcb *dot2;
+static const linkcb *prevk2, *nextd2;
 
 static void init_det_flags();
 static void get_arg();
 static unsigned int get_det();
-static unsigned int get_numb(unsigned long int *numb);
-static unsigned int get_yn(char *b);
+static unsigned int get_numb(const unsigned long int *numb);
+static unsigned int get_yn(const char *b);
 static void dbapp(st *ss_st);
-static void getpf(st *ss_st);
+static void getpf(const st *ss_st);
 static void one_step(st *ss_st);
 static void pr_euc();
-static void pr_finres(unsigned long int xstep, linkcb *xprevk, linkcb *xnextd);
+static void pr_finres(unsigned long int xstep, const linkcb *xprevk, const linkcb *xnextd);
 static void pr_imres();
 static void pr_step();
 
@@ -389,15 +391,13 @@ EOJ:
 
 static void dbapp(st *ss_st)
 {
-    const linkcb *v1, *v2, *v3, *v4, *v6, *v7;
-    unsigned long int v5;
-    v1 = prevk;
-    v2 = nextd;
-    v3 = pk;
-    v4 = nextk;
-    v5 = res_step;
-    v6 = res_prevk;
-    v7 = res_nextd;
+    const linkcb *v1 = prevk;
+    const linkcb *v2 = nextd;
+    linkcb *v3 = pk;
+    const linkcb *v4 = nextk;
+    unsigned long int v5 = res_step;
+    const linkcb *v6 = res_prevk;
+    const linkcb *v7 = res_nextd;
 NOT_YET:
     if (ss_st->dot == NULL)
         goto DO;
@@ -542,11 +542,10 @@ AB1:
 /*    procedures    */
 static void init_det_flags()
 {
-    DET_TAB *det, *det1;
-    for (det = last_det; det != NULL; det = det->det_next)
+    for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
     {
         free(det->det_id);
-        det1 = det;
+        DET_TAB *det1 = det;
         free(det1);
     }
     last_det = NULL;
@@ -624,7 +623,7 @@ static void pr_imres()
     return;
 }
 
-static void pr_finres(unsigned long int xstep, linkcb *xprevk, linkcb *xnextd)
+static void pr_finres(unsigned long int xstep, const linkcb *xprevk, const linkcb *xnextd)
 {
     if ((curr_step > s_upto) || (curr_step < s_from))
         return;
@@ -652,16 +651,16 @@ static void pr_finres(unsigned long int xstep, linkcb *xprevk, linkcb *xnextd)
     return;
 }
 
-static void getpf(st *ss_st)
+static void getpf(const st *ss_st)
 {
-    unsigned int i;
-    unsigned char id_l;
-    char *p_id;
     curr_step = ss_st->step + 1;
     pk = ss_st->dot->info.codep;
     prevk = pk->prev;
     nextd = ss_st->dot->next;
     nextk = pk->next;
+    unsigned int i;
+    unsigned char id_l;
+    const unsigned char *p_id;
     if (nextk->tag != TAGF)
     {
         buff_id[0] = '%';
@@ -669,7 +668,7 @@ static void getpf(st *ss_st)
     }
     else
     {
-        p_id = (char *)(nextk->info.codef - 1);
+        p_id = nextk->info.codef - 1;
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
@@ -707,7 +706,6 @@ static void get_arg()
 
 static unsigned int get_det()
 {
-    register int i;
     det_table = last_det;
     while (det_table != NULL)
     {
@@ -726,7 +724,7 @@ static unsigned int get_det()
     }
     if ((det_table->det_id = malloc(l_arg + 1)) == NULL)
         goto AB;
-    for (i = 0; i < l_arg; i++)
+    for (unsigned int i = 0; i < l_arg; i++)
         *(det_table->det_id + i) = *(arg + i);
     *(det_table->det_id + l_arg) = '\0';
     det_table->det_next = last_det;
@@ -741,7 +739,7 @@ static unsigned int get_det()
     return TRUE;
 }
 
-static unsigned int get_numb(unsigned long int *numb)
+static unsigned int get_numb(const unsigned long int *numb)
 {
     if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
     {
@@ -751,7 +749,7 @@ static unsigned int get_numb(unsigned long int *numb)
     return TRUE;
 }
 
-static unsigned int get_yn(char *b)
+static unsigned int get_yn(const char *b)
 {
     if (*b != 'y' && *b != 'n')
     {
