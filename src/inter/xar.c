@@ -17,7 +17,7 @@
 #define MAX 16777216L
 #define SMAX 24
 
-static void oper(int o, int prn);
+static void oper(unsigned int o, unsigned int prn);
 
 static void add_() { oper(Oadd, 0); }
 
@@ -101,11 +101,11 @@ static char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
 G_L_B char divn = '\122';
 static void (*divn_1)() = divn_;
 
-static linkcb *x, *y, *nach, *kon, *Xn, *Yn, *Xk, *Yk;
-static int dl, Xdl, Ydl;
+static linkcb *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
+static unsigned int dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
-static int dajch()
+static unsigned int dajch()
 {
     zn = '+';
     kon = y->prev;
@@ -137,7 +137,7 @@ static int dajch()
     return TRUE;
 }
 
-static int dajarg()
+static unsigned int dajarg()
 {
     x = refal.preva->next;
     if (x->tag != TAGLB)
@@ -168,20 +168,16 @@ static int dajarg()
 
 static void obmen()
 {
-    linkcb *p;
-    int i;
-    char c;
-
-    p = Xn;
+    linkcb *p = Xn;
     Xn = Yn;
     Yn = p;
     p = Xk;
     Xk = Yk;
     Yk = p;
-    i = Xdl;
+    const unsigned int i = Xdl;
     Xdl = Ydl;
     Ydl = i;
-    c = Xzn;
+    const char c = Xzn;
     Xzn = Yzn;
     Yzn = c;
 }
@@ -204,8 +200,6 @@ static int xmy()
 
 static void ymn(unsigned long int *a, unsigned long int *b)
 { /* rez.: a - st., b - ml */
-    int a1, a2, b1, b2, r1, r2, r3, r4;
-    unsigned long int r;
     if (*a == 0l)
     {
         *b = 0l;
@@ -216,56 +210,50 @@ static void ymn(unsigned long int *a, unsigned long int *b)
         *a = 0l;
         return;
     }
-    a1 = (*a) >> 12;
-    b1 = (*b) >> 12;
-    a2 = (*a) & 0xFFF;
-    b2 = (*b) & 0xFFF;
-    r = a2 * (unsigned long int)b2;
+    const unsigned int a1 = (*a) >> 12;
+    const unsigned int b1 = (*b) >> 12;
+    const unsigned int a2 = (*a) & 0xFFF;
+    const unsigned int b2 = (*b) & 0xFFF;
+    unsigned long int r = a2 * (unsigned long int)b2;
     *b = r & 0xFFF;
-    r3 = r >> 12;
+    unsigned int r3 = r >> 12;
     r = a1 * (unsigned long int)b2;
     r3 += r & 0xFFF;
-    r2 = r >> 12;
+    unsigned int r2 = r >> 12;
     r = a2 * (unsigned long int)b1;
     r3 += r & 0xFFF;
     r2 += r >> 12;
     r = a1 * (unsigned long int)b1;
     r2 += r & 0xFFF;
-    r1 = r >> 12;
-    r4 = r3 >> 12;
+    const unsigned int r1 = r >> 12;
+    const unsigned int r4 = r3 >> 12;
     *a = r1 * HMAX + r2 + r4;
     *b += (r3 & 0xFFF) * HMAX;
 }
 
-static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
-{                                          /*  X - ukaz. na konec            */
-    unsigned long int a, g, m, peren;
-    int i, ip;
-    peren = 0l;
-    ip = 24 - j;
-    m = 0xFFFFFFl >> j; /* maska */
-    for (i = 0; i < dl; i++)
+static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posledov. makrocifr */
+{                                                            /*  X - ukaz. na konec            */
+    unsigned long int peren = 0l;
+    const unsigned int ip = 24 - j;
+    const unsigned long int m = 0xFFFFFFl >> j; /* maska */
+    for (unsigned int i = 0; i < dl; i++)
     {
-        g = gcoden(X);
-        a = (g & m) << j;
-        pcoden(X, (unsigned long int)(a | peren));
+        const unsigned long int g = gcoden(X);
+        const unsigned long int a = (g & m) << j;
+        pcoden(X, a | peren);
         peren = g >> ip;
         X = X->prev;
     }
 }
 
-static void oper(int o, int prn)
+static void oper(unsigned int o, unsigned int prn)
 {
-    linkcb *p, *r, *f, *Xt, *Yt;
-    unsigned long int j, peren;
-    int i, n = 0, a11, b11, a22, b22, r1, r2, r3, r4;
-    unsigned long int a, a1, b, b1, c, d, x1, x2, y1, y2;
-
     if (!dajarg())
     {
         refal.upshot = 2;
         return;
     }
+    unsigned long int a, b;
     switch (o)
     {
     case Osub: /* izmenim znak i skladywaem  */
@@ -274,6 +262,8 @@ static void oper(int o, int prn)
         else
             Yzn = '-';
     case Oadd:
+        long int j;
+        unsigned long int peren;
         if ((Xdl == 0) && (Ydl == 0))
         {
         REZ0:
@@ -363,8 +353,8 @@ static void oper(int o, int prn)
             refal.upshot = 3;
             return;
         }
-        p = refal.preva;
-        r = p->next;
+        linkcb *p = refal.preva;
+        linkcb *r = p->next;
         lins(p, Xdl + Ydl + 1); /*  1 zweno dlja znaka  */
         p = p->next;
         r = r->prev;
@@ -379,14 +369,16 @@ static void oper(int o, int prn)
         Xn = Xn->prev;
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
+        linkcb *f;
+        unsigned long int c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
         {
-            d = gcoden(y);
+            const unsigned long int d = gcoden(y);
             if (d != 0l)
             { /* umn. na 1 cifru  */
                 peren = 0L;
-                b11 = d >> 12;
-                b22 = d & 0xFFF;
+                const unsigned int b11 = d >> 12;
+                const unsigned int b22 = d & 0xFFF;
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
                 {
                     a = gcoden(x);
@@ -395,21 +387,21 @@ static void oper(int o, int prn)
                         b = 0l;
                         goto ret;
                     }
-                    a11 = a >> 12;
-                    a22 = a & 0xFFF;
+                    const unsigned int a11 = a >> 12;
+                    const unsigned int a22 = a & 0xFFF;
                     c = a22 * (unsigned long int)b22;
                     b = c & 0xFFF;
-                    r3 = c >> 12;
+                    unsigned int r3 = c >> 12;
                     c = a11 * (unsigned long int)b22;
                     r3 += c & 0xFFF;
-                    r2 = c >> 12;
+                    unsigned int r2 = c >> 12;
                     c = a22 * (unsigned long int)b11;
                     r3 += c & 0xFFF;
                     r2 += c >> 12;
                     c = a11 * (unsigned long int)b11;
                     r2 += c & 0xFFF;
-                    r1 = c >> 12;
-                    r4 = r3 >> 12;
+                    const unsigned int r1 = c >> 12;
+                    const unsigned int r4 = r3 >> 12;
                     a = r1 * HMAX + r2 + r4;
                     b += (r3 & 0xFFF) * HMAX;
                     /* ymn (&a,&b); */ /* rez:a-st, b-ml  */
@@ -508,11 +500,13 @@ static void oper(int o, int prn)
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
         Xdl++;
+        unsigned int i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
             ;
         y = Yn->prev;
         y->tag = TAGN;
         pcoden(y, 0l);
+        unsigned int n = 0;
         if (Ydl != 0)
         { /* wozmovna normalizacija */
             b = gcoden(Yn);
@@ -526,7 +520,8 @@ static void oper(int o, int prn)
         }
         do
         {
-            a = gcoden(Xn), a1 = gcoden(Xn->next);
+            a = gcoden(Xn);
+            const unsigned long int a1 = gcoden(Xn->next);
             b = gcoden(Yn);
             /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
                                 b,(unsigned long int)gcoden(Yn->next));*/
@@ -534,6 +529,7 @@ static void oper(int o, int prn)
                 c = 0l;
             else
             {
+                unsigned long int b1;
                 if ((a == 0l) && (a1 >= b))
                 {
                     c = 1l; /*  t.k. b - normalizowano */
@@ -555,11 +551,11 @@ static void oper(int o, int prn)
                 /*printf("\nc=%ld oct=%ld",c,(unsigned long int)(a%b));*/
                 if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0l))
                 {
-                    x1 = b1;
-                    x2 = c;
+                    unsigned long int x1 = b1;
+                    unsigned long int x2 = c;
                     ymn(&x1, &x2);
-                    y1 = a % b;
-                    y2 = gcoden(Xn->next->next);
+                    unsigned long int y1 = a % b;
+                    const unsigned long int y2 = gcoden(Xn->next->next);
                     /*printf("\nBegin: c=%ld ",c);
                     printf(" x=%lx_%lx (b1*c)",x1,x2);
                     printf(" y=%lx_%lx (o..a2)",y1,y2);*/
@@ -583,8 +579,8 @@ static void oper(int o, int prn)
             /* umnovenie  delitelja  na 'c' i wychit. iz X */
             if (c != 0L)
             {
-                Yt = Yk;
-                Xt = x;
+                const linkcb *Yt = Yk;
+                linkcb *Xt = x;
                 peren = 0L;
                 for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                 {
@@ -604,7 +600,7 @@ static void oper(int o, int prn)
                     peren += a;
                 }
                 if (peren != 0L)
-                {                   /* cifra welika  */
+                {                                /* cifra welika  */
                     /*unsigned long int jj=0l;*/ /* !!! wremenno !!! */
                     do
                     {
@@ -766,12 +762,12 @@ odnc: /* wywod rezultata delenija, kogda ostatok i chastnoe */
 
 static void nrel_()
 {
-    char c;
     if (!dajarg())
     {
         refal.upshot = 2;
         return;
     }
+    char c;
     if ((Xdl == 0) && (Ydl == 0))
         c = '=';
     else

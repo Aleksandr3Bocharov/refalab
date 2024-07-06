@@ -13,17 +13,16 @@ void (*dba)(st *) = NULL;
 
 static void appl_()
 {
-    st *s_st, *upst;
-    linkcb *px, *pk, *pd;
+    st *s_st;
     unsigned long int l = (unsigned long int)&s_st;
     if ((l & 0xffffL) < 200L)
     { /* printf("\nStack overflow!");*/
         goto LACK;
     }
-    upst = refal.currst;
+    st *upst = refal.currst;
     if (!slins(refal.prevr, 1))
         return;
-    px = refal.prevr->next;
+    linkcb *px = refal.prevr->next;
     if ((s_st = malloc(sizeof(st))) == NULL)
         goto LACK;
     if (!lcre(s_st))
@@ -33,8 +32,8 @@ static void appl_()
         rfcanc(s_st);
         goto LACK;
     }
-    pk = s_st->view->next;
-    pd = pk->next;
+    linkcb *pk = s_st->view->next;
+    linkcb *pd = pk->next;
     pk->info.codep = NULL;
     pk->tag = TAGK;
     pd->info.codep = pk;

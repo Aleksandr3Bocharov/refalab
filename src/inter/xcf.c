@@ -9,23 +9,21 @@
 #include "rfintf.h"
 
 typedef char *adr;
+
 unsigned short int func_n = 0;
 adr *func_f = NULL;
 
 static void ftochar_()
 {
+    linkcb *p = refal.preva->next;
+    if (p->tag != TAGF)
+        goto HEOT;
+    const char *u = (char *)p->info.codef - 1;
     union
     {
         char b[2];
         unsigned short int w;
     } d;
-    linkcb *p;
-    char *u;
-    unsigned short int i;
-    p = refal.preva->next;
-    if (p->tag != TAGF)
-        goto HEOT;
-    u = p->info.codef - 1;
     d.b[0] = *u;
     d.b[1] = 0; /* d.w - dlina */
     u -= d.w;
@@ -38,7 +36,7 @@ static void ftochar_()
             return;
         }
     lins(p, d.w);
-    for (i = 0; i < d.w; i++)
+    for (unsigned int i = 0; i < d.w; i++)
     {
         p = p->next;
         p->tag = TAGO;
@@ -57,14 +55,11 @@ static void (*ftochar_1)() = ftochar_;
 
 static void functab_()
 {
-    linkcb *p;
-    char *u;
-    unsigned short int i;
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
     if (p->tag != TAGF)
         goto HEOT;
-    u = p->info.codef;
-    for (i = 0; i < func_n; i++)
+    char *u = (char *)p->info.codef;
+    for (unsigned int i = 0; i < func_n; i++)
         if (u == func_f[i])
             return;
     if (func_n == 0)
@@ -85,31 +80,30 @@ static void (*functab_1)() = functab_;
 
 static void chartof_()
 {
-    union
-    {
-        char b[2];
-        unsigned short int w;
-    } d;
-    linkcb *p;
-    char *u, *j;
-    unsigned short int i, k;
-    p = refal.preva->next;
+    linkcb *p = refal.preva->next;
     if (p == refal.nexta)
         goto HEOT;
+    unsigned int i;
     for (i = 0; p != refal.nexta; i++, p = p->next)
         if (p->tag != TAGO)
             goto HEOT;
     if (i > 255)
         goto HEOT;
     p = refal.preva->next;
-    u = (char *)malloc(i + 2);
+    char *u = (char *)malloc(i + 2);
     for (i = 0; p != refal.nexta; i++, p = p->next)
         u[i] = rfcnv(p->info.infoc);
-    u[i] = i++;
+    u[i] = i;
+    ++i;
     u[i] = 2; /* HEOT */
-    j = u + i;
+    char *j = u + i;
+    union
+    {
+        char b[2];
+        unsigned short int w;
+    } d;
     d.b[1] = 0;
-    for (k = 0; k < func_n; k++)
+    for (unsigned int k = 0; k < func_n; k++)
     {
         d.b[0] = *(func_f[k] - 1);
         if ((i == d.w + 1) && (strncmp(u, func_f[k] - (d.w + 1), d.w) == 0))
@@ -118,7 +112,7 @@ static void chartof_()
             /* poetomu w m.o. imja d.b. napisano zaglawnymi!      */
             p = refal.preva->next;
             p->tag = TAGF;
-            p->info.codef = func_f[k];
+            p->info.codef = (unsigned char *)func_f[k];
             if (p->next != refal.nexta)
                 rfdel(p, refal.nexta);
             rftpl(refal.prevr, p->prev, p->next);
@@ -134,7 +128,7 @@ static void chartof_()
     func_n++;
     p = refal.preva->next;
     p->tag = TAGF;
-    p->info.codef = j;
+    p->info.codef = (unsigned char *)j;
     if (p->next != refal.nexta)
         rfdel(p, refal.nexta);
     rftpl(refal.prevr, p->prev, p->next);
