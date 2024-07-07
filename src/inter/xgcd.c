@@ -10,35 +10,16 @@
 #define HMAX 4096L
 #define MASKA 0xffffffL
 
-#define l1 l[0]
-#define l2 l[1]
-#define h1 hd[0]
-#define h2 hd[1]
-#define t1 tl[0]
-#define t2 tl[1]
-#define p1 p[0]
-#define p2 p[1]
-#define x1 x[0]
-#define x2 x[1]
-#define y1 y[0]
-#define y2 y[1]
-#define s1 s[0]
-#define s2 s[1]
-#define r1 r[0]
-#define r2 r[1]
-
-static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
-{                                          /*  X - ukaz. na konec            */
-    unsigned long int a, g, m, peren;
-    int i, ip;
-    peren = 0l;
-    ip = 24 - j;
-    m = MASKA >> j; /* maska */
-    for (i = 0; i < dl; i++)
+static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posledov. makrocifr */
+{                                                            /*  X - ukaz. na konec            */
+    unsigned long int peren = 0l;
+    const unsigned int ip = 24 - j;
+    const unsigned long int m = MASKA >> j; /* maska */
+    for (unsigned int i = 0; i < dl; i++)
     {
-        g = gcoden(X);
-        a = (g & m) << j;
-        pcoden(X, (unsigned long int)(a | peren));
+        const unsigned long int g = gcoden(X);
+        const unsigned long int a = (g & m) << j;
+        pcoden(X, a | peren);
         peren = g >> ip;
         X = X->prev;
     }
@@ -46,8 +27,6 @@ static void norm(linkcb *X, int dl, int j) /*  normaliz. posledov. makrocifr */
 
 static void ymn(unsigned long int *a, unsigned long int *b)
 { /* rez.: a - star., b - mlad. */
-    int a1, a2, b1, b2, rr1, rr2, rr3, rr4;
-    unsigned long int rr;
     if (*a == 0l)
     {
         *b = 0l;
@@ -58,43 +37,40 @@ static void ymn(unsigned long int *a, unsigned long int *b)
         *a = 0l;
         return;
     }
-    a1 = (*a) >> 12;
-    b1 = (*b) >> 12;
-    a2 = (*a) & 0xFFF;
-    b2 = (*b) & 0xFFF;
-    rr = a2 * (unsigned long int)b2;
+    const unsigned int a1 = (*a) >> 12;
+    const unsigned int b1 = (*b) >> 12;
+    const unsigned int a2 = (*a) & 0xFFF;
+    const unsigned int b2 = (*b) & 0xFFF;
+    unsigned long int rr = a2 * (unsigned long int)b2;
     *b = rr & 0xFFF;
-    rr3 = rr >> 12;
+    unsigned int rr3 = rr >> 12;
     rr = a1 * (unsigned long int)b2;
     rr3 += rr & 0xFFF;
-    rr2 = rr >> 12;
+    unsigned int rr2 = rr >> 12;
     rr = a2 * (unsigned long int)b1;
     rr3 += rr & 0xFFF;
     rr2 += rr >> 12;
     rr = a1 * (unsigned long int)b1;
     rr2 += rr & 0xFFF;
-    rr1 = rr >> 12;
-    rr4 = rr3 >> 12;
+    const unsigned int rr1 = rr >> 12;
+    const unsigned int rr4 = rr3 >> 12;
     *a = rr1 * HMAX + rr2 + rr4;
     *b += (rr3 & 0xFFF) * HMAX;
 }
 
 static void gcd_()
 {
-    int l[2], i, j, k, rez, la, lb, n;
-    linkcb *hd[2], *tl[2], *pr, *p[2], *px, *py, *Xt, *Yt;
-    unsigned long int a, a1, b, b1, c, A, B, AL, AH, BL, BH, RL, RH, x[2], y[2], xn, yn, Q;
-    unsigned long int s[2], r0, r[2], v1, v2, q, peren, J;
-    unsigned long int vs1, vs2, vs3, vs4;
+    unsigned long int a, a1, b, b1, c, A, B, AL, AH, BL, BH, RL, RH, xn, yn, Q;
 
     /*   sint. control */
-    pr = refal.preva->next;
+    linkcb *pr = refal.preva->next;
     if (pr->tag != TAGLB)
         goto NEOT;
-    p1 = pr;
-    t1 = pr->info.codep;
-    p2 = t1;
-    t2 = refal.nexta;
+    const linkcb *tl[] = {pr->info.codep, refal.nexta};
+    linkcb *p[] = {pr, tl[0]};
+    linkcb *hd[2];
+    unsigned int l[2];
+    unsigned int i;
     for (i = 0; i < 2; i++)
     {
         pr = p[i]->next;
@@ -114,65 +90,68 @@ static void gcd_()
 
 OC: /********   ob. cikl  ************/
     /*   unicht. lewyh nulej */
-    if (l1 != 0)
-        while (gcoden(h1) == 0l && l1 > 0)
+    if (l[0] != 0)
+        while (gcoden(hd[0]) == 0l && l[0] > 0)
         {
-            h1 = h1->next;
-            l1--;
+            hd[0] = hd[0]->next;
+            l[0]--;
         }
-    if (l2 != 0)
-        while (gcoden(h2) == 0l && l2 > 0)
+    if (l[1] != 0)
+        while (gcoden(hd[1]) == 0l && l[1] > 0)
         {
-            h2 = h2->next;
-            l2--;
+            hd[1] = hd[1]->next;
+            l[1]--;
         }
-    if (l1 == 0)
+    unsigned int rez;
+    if (l[0] == 0)
     {
         rez = 1;
         goto FIN1;
     }
-    if (l2 == 0)
+    if (l[1] == 0)
     {
         rez = 0;
         goto FIN1;
     }
     /*   delaem 1 > 2  */
-    if (l1 == l2)
+    unsigned long int v1, v2;
+    if (l[0] == l[1])
     {
-        p1 = h1;
-        p2 = h2;
-        for (i = 0; i < l1; i++)
+        p[0] = hd[0];
+        p[1] = hd[1];
+        for (i = 0; i < l[0]; i++)
         {
-            v1 = gcoden(p1);
-            v2 = gcoden(p2);
+            v1 = gcoden(p[0]);
+            v2 = gcoden(p[1]);
             if (v1 < v2)
                 goto M12;
             else if (v1 > v2)
                 goto M21;
-            p1 = p1->next;
-            p2 = p2->next;
+            p[0] = p[0]->next;
+            p[1] = p[1]->next;
         }
         rez = 0;
         goto FIN1;
     }
-    else if (l1 < l2)
+    else if (l[0] < l[1])
     {
     M12:
-        pr = h1;
-        h1 = h2;
-        h2 = pr;
-        pr = t1;
-        t1 = t2;
-        t2 = pr;
-        i = l1;
-        l1 = l2;
-        l2 = i;
+        pr = hd[0];
+        hd[0] = hd[1];
+        hd[1] = pr;
+        pr = tl[0];
+        tl[0] = tl[1];
+        tl[1] = pr;
+        i = l[0];
+        l[0] = l[1];
+        l[1] = i;
     }
 M21:
     /*   wybor metoda */
     A = 0l;
-    pr = h1;
-    for (k = 0; k < l1; k++)
+    pr = hd[0];
+    unsigned int k;
+    for (k = 0; k < l[0]; k++)
     {
         if (A >= 128L)
             break;
@@ -180,13 +159,13 @@ M21:
         A += gcoden(pr);
         pr = pr->next;
     }
-    if ((l1 == 1) || (l1 == 2 && k == 2))
+    if ((l[0] == 1) || (l[0] == 2 && k == 2))
     {
         /* Evklid nad korotkimi */
-        /* UTV: l1 >= l2 */
+        /* UTV: l[0] >= l[1] */
         B = 0l;
-        pr = h2;
-        for (k = 0; k < l2; k++)
+        pr = hd[1];
+        for (k = 0; k < l[1]; k++)
         {
             B = B << 24;
             B += gcoden(pr);
@@ -217,41 +196,45 @@ M21:
     }
     /*    A - pribligenie  */
     /*    k={ 1/2 }        */
-    la = k;
-    lb = l2 - (l1 - la);
+    const unsigned int la = k;
+    const int lb = l[1] - (l[0] - la);
+    long int x[2];
+    unsigned long int y[2];
     if (lb <= 0)
     {
         /*  shag delenija (normal)   */
         /*  A nabrano s nedostatkom  */
-        /*  l1 > l2   l2 >0          */
+        /*  l[0] > l[1]   l[1] >0          */
         /*  B nabiraem s izbytkom    */
     SHD:
         /*  delenie mnogih  cifr  */
-        h1 = h1->prev;
-        h1->tag = TAGN;
-        pcoden(h1, 0l);
-        l1++;
-        for (i = 0, px = h1; i < l2; i++, px = px->next)
+        hd[0] = hd[0]->prev;
+        hd[0]->tag = TAGN;
+        pcoden(hd[0], 0l);
+        l[0]++;
+        linkcb *px;
+        for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
             ;
-        py = h2->prev;
+        linkcb *py = hd[1]->prev;
         py->tag = TAGN;
         pcoden(py, 0l);
-        if (l2 != 0)
+        unsigned int n;
+        if (l[1] != 0)
         { /* wozmovna normalizacija */
-            b = gcoden(h2);
+            b = gcoden(hd[1]);
             for (n = 0; b < 8388608l; n++, b += b)
                 ;
             if (n != 0)
             {
-                norm(t1, l1, n);
-                norm(t2, l2, n);
+                norm(tl[0], l[0], n);
+                norm(tl[1], l[1], n);
             }
         }
-        peren = 0l;
+        unsigned long int peren = 0l;
         do
         {
-            a = gcoden(h1), a1 = gcoden(h1->next);
-            b = gcoden(h2);
+            a = gcoden(hd[0]), a1 = gcoden(hd[0]->next);
+            b = gcoden(hd[1]);
             if ((a == 0l) && (a1 < b))
                 c = 0l;
             else
@@ -274,22 +257,22 @@ M21:
                     a = ((a % b) * 8) + (a1 & 7);
                     c = c + a / b;
                 }
-                if ((l2 > 1) && ((b1 = gcoden(h2->next)) != 0l))
+                if ((l[1] > 1) && ((b1 = gcoden(hd[1]->next)) != 0l))
                 {
-                    x1 = b1;
-                    x2 = c;
-                    ymn(&x1, &x2);
-                    y1 = a % b;
-                    y2 = gcoden(h1->next->next);
+                    x[0] = b1;
+                    x[1] = c;
+                    ymn(&x[0], &x[1]);
+                    y[0] = a % b;
+                    y[1] = gcoden(hd[0]->next->next);
                     i = 0;
-                    while ((x1 > y1) || (x1 == y1 && x2 > y2))
+                    while ((x[0] > y[0]) || (x[0] == y[0] && x[1] > y[1]))
                     {
                         c--;
                         i = 1;
-                        x1 = b1;
-                        x2 = c;
-                        ymn(&x1, &x2);
-                        y1 += b;
+                        x[0] = b1;
+                        x[1] = c;
+                        ymn(&x[0], &x[1]);
+                        y[0] += b;
                     }
                     if (i == 1)
                         c++; /* na wcjakij sluchaj */
@@ -298,9 +281,10 @@ M21:
             /* umnovenie  delitelja  na 'c' i wychit. iz X */
             if (c != 0L)
             {
-                Yt = t2;
-                Xt = px;
+                const linkcb *Yt = tl[1];
+                linkcb *Xt = px;
                 peren = 0L;
+                unsigned long int J;
                 for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                 {
                     b = gcoden(Yt);
@@ -324,7 +308,7 @@ M21:
                     {
                         c -= 1L;
                         Xt = px;
-                        Yt = t2;
+                        Yt = tl[1];
                         J = 0L;
                         for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                         {
@@ -342,18 +326,18 @@ M21:
                 }
             }
             px = px->next;
-            h1 = h1->next;
-            l1--;
-        } while (px != t1->next);
-        h1 = h1->prev;
-        l1++;
+            hd[0] = hd[0]->next;
+            l[0]--;
+        } while (px != tl[0]->next);
+        hd[0] = hd[0]->prev;
+        l[0]++;
         if (n != 0)
         {
             peren = 0L;
             i = 24 - n;
             c = MASKA >> i;
             /* denormalizacija ostatka */
-            for (px = h1; px != t1->next; px = px->next)
+            for (px = hd[0]; px != tl[0]->next; px = px->next)
             {
                 a = gcoden(px);
                 b = (a >> n) | (peren << i);
@@ -362,7 +346,7 @@ M21:
             }
             /* denormalizacija delitelja */
             peren = 0L;
-            for (px = h2; px != t2->next; px = px->next)
+            for (px = hd[1]; px != tl[1]->next; px = px->next)
             {
                 a = gcoden(px);
                 b = (a >> n) | (peren << i);
@@ -370,17 +354,17 @@ M21:
                 pcoden(px, b);
             }
         }
-        /*   printf("\n l1=%d l2=%d",l1,l2);
-        for(i=0,px=h1; px != t1->next; px=px->next,i++)
+        /*   printf("\n l[0]=%d l[1]=%d",l[0],l[1]);
+        for(i=0,px=hd[0]; px != tl[0]->next; px=px->next,i++)
            printf("\n A(%d)=%lx",i,gcoden(px));
-        for(i=0,px=h2; px != t2->next; px=px->next,i++)
+        for(i=0,px=hd[1]; px != tl[1]->next; px=px->next,i++)
            printf("\n B(%d)=%lx",i,gcoden(px));  */
         goto OC;
     }
-    /* UTV:  l2 > hvosta,  */
-    /* UTV:  l1 = {1/2} */
+    /* UTV:  l[1] > hvosta,  */
+    /* UTV:  l[0] = {1/2} */
     B = 0l;
-    pr = h2;
+    pr = hd[1];
     for (k = 0; k < lb; k++)
     {
         B = B << 24;
@@ -391,15 +375,15 @@ M21:
         goto SHD;
     /*  metod Lemera         */
     /*  A i B s nedostatkom  */
-    /*printf("\nP.chast: A=%ld B=%ld l1=%d l2=%d la=%d lb=%d",A,B,l1,l2,la,lb);*/
+    /*printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb);*/
     AL = A;
     AH = A + 1;
     BL = B;
     BH = B + 1;
-    x1 = 1;
-    x2 = 0;
-    y1 = 0;
-    y2 = 1;
+    x[0] = 1;
+    x[1] = 0;
+    y[0] = 0;
+    y[1] = 1;
     /*  vychisl koeff. X i Y  */
     while (BL != 0)
     {
@@ -415,33 +399,32 @@ M21:
         AH = BH;
         BL = RL;
         BH = RH;
-        xn = x1 - Q * x2;
-        yn = y1 - Q * y2;
-        x1 = x2;
-        y1 = y2;
-        x2 = xn;
-        y2 = yn;
+        xn = x[0] - Q * x[1];
+        yn = y[0] - Q * y[1];
+        x[0] = x[1];
+        y[0] = y[1];
+        x[1] = xn;
+        y[1] = yn;
     }
     /*   vyravnivanie dlin  */
-    if (l1 != l2)
+    if (l[0] != l[1])
     {
-        h2 = h2->prev;
-        h2->tag = TAGN;
-        pcoden(h2, 0l);
-        l2++;
+        hd[1] = hd[1]->prev;
+        hd[1]->tag = TAGN;
+        pcoden(hd[1], 0l);
+        l[1]++;
     }
-    p1 = t1;
-    p2 = t2;
-    r1 = 0;
-    r2 = 0;
-    for (k = 0; k < l1; k++)
+    p[0] = tl[0];
+    p[1] = tl[1];
+    long int r[] = {0, 0};
+    for (k = 0; k < l[0]; k++)
     {
-        s1 = gcoden(p1);
-        s2 = gcoden(p2);
+        const unsigned long int s[] = {gcoden(p[0]), gcoden(p[1])};
+        long int vs3, vs4;
         for (i = 0; i < 2; i++)
         {
-            vs1 = s1;
-            vs2 = s2;
+            long int vs1 = s[0];
+            long int vs2 = s[1];
             if (x[i] < 0)
             {
                 vs3 = 0 - x[i];
@@ -464,7 +447,7 @@ M21:
                 vs2 = 0 - vs2;
                 vs4 = 0 - vs4;
             }
-            r0 = r[i] + vs3 + vs4;
+            long int r0 = r[i] + vs3 + vs4;
             if (r0 < 0)
             {
                 vs3 = r0 / d24;
@@ -485,8 +468,8 @@ M21:
             p[i] = p[i]->prev;
         }
     }
-    /*printf("\nFIN Posl chast: r1=%ld r2=%ld",r1,r2); */
-    /*  UTV: R1 i R2 ===0 */
+    /*printf("\nFIN Posl chast: r[0]=%ld r[1]=%ld",r[0],r[1]); */
+    /*  UTV: r[0] i r[1] ===0 */
     goto OC;
 FIN1: /* rez: odno iz chisel */
     if (l[rez] == 0)
