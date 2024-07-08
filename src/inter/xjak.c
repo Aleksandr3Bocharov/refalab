@@ -9,22 +9,21 @@
 
 #define N_SWAP 0116
 
-static int enter(int emp, linkcb **pp, linkcb **rp)
+static unsigned int enter(unsigned int emp, linkcb **pp, linkcb **rp)
 {
-    linkcb *p, *r;
-    char *q;
-    r = refal.preva->next;
+    linkcb *r = refal.preva->next;
     if (r == refal.nexta)
-        return 0;
+        return FALSE;
     if (emp && (r->next != refal.nexta))
-        return 0;
+        return TRUE;
+    linkcb *p;
     if (r->tag == TAGR)
         p = r->info.codep;
     else if (r->tag == TAGF)
     {
-        q = r->info.codef;
+        const unsigned char *q = r->info.codef;
         if (*q != N_SWAP)
-            return 0;
+            return FALSE;
         q++;
         p = (linkcb *)q; /*eg*/
         if (p->prev == NULL)
@@ -36,18 +35,16 @@ static int enter(int emp, linkcb **pp, linkcb **rp)
         }
     }
     else
-        return 0;
+        return FALSE;
     *pp = p;
     *rp = r;
-    return 1;
+    return TRUE;
 }
 
 static void br_()
 {
-    st *ast;
-    linkcb *p, *pr, *pl;
-    ast = refal.currst;
-    p = refal.preva;
+    const st *ast = refal.currst;
+    const linkcb *p = refal.preva;
     while ((p->tag != TAGO) || (p->info.infoc != '='))
     {
         p = p->next;
@@ -62,8 +59,8 @@ static void br_()
         refal.upshot = 3;
         return;
     }; /* LACK */
-    pl = ast->store->next;
-    pr = pl->next;
+    linkcb *pl = ast->store->next;
+    linkcb *pr = pl->next;
     pl->info.codep = pr;
     pl->tag = TAGLB;
     pr->info.codep = pl;
@@ -76,12 +73,10 @@ static void (*br_1)() = br_;
 
 static void dg_()
 {
-    linkcb *pl, *pr, *q;
-    st *ast;
-    ast = refal.currst;
-    pr = ast->store;
+    const st *ast = refal.currst;
+    linkcb *pr = ast->store;
 DG1:
-    pl = pr->next;
+    linkcb *pl = pr->next;
     if (pl == ast->store)
         return;
     if (pl->tag != TAGLB)
@@ -90,6 +85,7 @@ DG1:
         return;
     }; /* FAIL */
     pr = pl->info.codep;
+    linkcb *q;
     if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
         goto DG1;
     if ((q->tag != TAGO) || (q->info.infoc != '='))
@@ -105,8 +101,7 @@ static void (*dg_1)() = dg_;
 
 static void dgall_()
 {
-    st *ast;
-    ast = refal.currst;
+    const st *ast = refal.currst;
     if (refal.preva->next != refal.nexta)
         refal.upshot = 2; /* FAIL */
     else
@@ -118,9 +113,8 @@ static void (*dgal_1)() = dgall_;
 
 static void gtr_()
 {
+    const unsigned int emp = TRUE;
     linkcb *p, *r;
-    int emp;
-    emp = 1;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -134,9 +128,8 @@ static void (*gtr_1)() = gtr_;
 
 static void rdr_()
 {
+    const unsigned int emp = TRUE;
     linkcb *p, *r;
-    int emp;
-    emp = 1;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -154,15 +147,14 @@ static void (*rdr_1)() = rdr_;
 
 static void ptr_()
 {
-    linkcb *p, *r, *q;
-    int emp;
-    emp = 0;
+    const unsigned int emp = FALSE;
+    linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
         return;
     }; /* FAIL */
-    q = p->prev;
+    linkcb *q = p->prev;
     rftpl(q, r, refal.nexta);
 }
 /* BLF */
@@ -178,9 +170,8 @@ static void (*ptr_1)() = ptr_;
 
 static void wtr_()
 {
+    const unsigned int emp = FALSE;
     linkcb *p, *r;
-    int emp;
-    emp = 0;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -195,9 +186,8 @@ static void (*wtr_1)() = wtr_;
 
 static void swr_()
 {
+    const unsigned int emp = FALSE;
     linkcb *p, *r;
-    int emp;
-    emp = 0;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -212,19 +202,17 @@ static void (*swr_1)() = swr_;
 
 static void rp_()
 {
-    st *ast;
-    linkcb *p, *pr, *pl, *q;
-    ast = refal.currst;
-    p = refal.preva;
+    const st *ast = refal.currst;
+    linkcb *p = refal.preva;
     while ((p->tag != TAGO) || (p->info.infoc != '='))
     {
         p = p->next;
         if (p == refal.nexta)
             goto FAIL;
     };
-    pr = ast->store;
+    linkcb *pr = ast->store;
 RP1:
-    pl = pr->next;
+    linkcb *pl = pr->next;
     if (pl == ast->store)
     {
         if (!lins(ast->store, 2))
@@ -245,6 +233,7 @@ RP1:
         if (pl->tag != TAGLB)
             goto FAIL;
         pr = pl->info.codep;
+        linkcb *q;
         if ((q = lldupl(refal.preva, p, pl)) == 0)
             goto RP1;
         if ((q->tag != TAGO) || (q->info.infoc != '='))
@@ -271,12 +260,10 @@ static void (*rp_1)() = rp_;
 
 static void cp_()
 {
-    st *ast;
-    linkcb *pl, *pr, *q;
-    ast = refal.currst;
-    pr = ast->store;
+    const st *ast = refal.currst;
+    const linkcb *pr = ast->store;
 CP1:
-    pl = pr->next;
+    const linkcb *pl = pr->next;
     if (pl == ast->store)
         return;
     if (pl->tag != TAGLB)
@@ -285,6 +272,7 @@ CP1:
         return;
     }; /* FAIL */
     pr = pl->info.codep;
+    const linkcb *q;
     if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
         goto CP1;
     if ((q->tag != TAGO) || (q->info.infoc != '='))
@@ -298,16 +286,15 @@ static void (*cp_1)() = cp_;
 
 static void new_()
 {
-    linkcb *p, *r;
     if (!lins(refal.prevr, 1))
     {
         refal.upshot = 3;
         return;
     }; /* LACK */
-    r = refal.prevr->next;
+    linkcb *r = refal.prevr->next;
     r->info.codep = refal.preva;
     r->tag = TAGR;
-    p = refal.nexta->prev;
+    linkcb *p = refal.nexta->prev;
     p->next = refal.preva;
     refal.preva->prev = p;
     refal.nextr->next = refal.nexta;

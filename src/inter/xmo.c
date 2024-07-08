@@ -12,16 +12,14 @@
 
 static void p1_()
 {
-    linkcb *p;
-    unsigned long int l;
-    p = refal.preva->next;
+    linkcb *p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
     NEOT:
         refal.upshot = 2;
         return;
     }
-    l = gcoden(p) + 1;
+    const unsigned long int l = gcoden(p) + 1;
     if (l > 16777215l)
         goto NEOT;
     pcoden(p, l);
@@ -34,16 +32,14 @@ static void (*p1_1)() = p1_;
 
 static void m1_()
 {
-    linkcb *p;
-    unsigned long int l;
-    p = refal.preva->next;
+    linkcb *p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
     NEOT:
         refal.upshot = 2;
         return;
     }
-    l = gcoden(p) - 1;
+    const long int l = gcoden(p) - 1;
     if (l < 0)
         goto NEOT;
     pcoden(p, l);
@@ -54,12 +50,11 @@ static char m1_0[] = {Z2 'M', '1', '\002'};
 G_L_B char m1 = '\122';
 static void (*m1_1)() = m1_;
 
-static int cmpstr(int n, char *s1, char *s2)
+static int cmpstr(unsigned int n, const char *s1, const char *s2)
 {
     /* comparison two string . if s1<s2 then return < 0 */
     /* if s1 = s2 return 0. if s1>s2 then return > 0    */
-    int i;
-    for (i = 0; i < n; i++, s1++, s2++)
+    for (unsigned int i = 0; i < n; i++, s1++, s2++)
         if (*s1 != *s2)
             return *s1 - *s2;
     return 0;
@@ -67,22 +62,20 @@ static int cmpstr(int n, char *s1, char *s2)
 
 static void numb_()
 {
-    linkcb *p, *pz, *p1;
-    char str[12], zn;
-    register int i;
-    unsigned long int l;
-    p = refal.preva->next;
-    zn = p->info.infoc;
-    pz = p;
+    const linkcb *p = refal.preva->next;
+    const char zn = p->info.infoc;
+    const linkcb *pz = p;
     if ((p->tag == TAGO) && ((zn == '-') || (zn == '+')))
     {
         p = p->next;
         if (zn == '+')
             pz = p;
     }
-    p1 = p;
+    linkcb *p1 = p;
     while ((p->tag == TAGO) && (p->info.infoc == '0'))
         p = p->next;
+    char str[12];
+    unsigned int i;
     for (i = 0; p != refal.nexta; i++)
     {
         if ((p->tag != TAGO) || (i == 11))
@@ -109,7 +102,7 @@ static void numb_()
         p1 = refal.nexta->prev;
         pz = p1;
     }
-    l = atol(str);
+    unsigned long int l = atol(str);
     p1->tag = TAGN;
     if (l > 16777215l)
     {

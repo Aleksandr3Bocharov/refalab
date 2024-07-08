@@ -25,7 +25,7 @@ static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posle
     }
 }
 
-static void ymn(unsigned long int *a, unsigned long int *b)
+static void ymn(long int *a, long int *b)
 { /* rez.: a - star., b - mlad. */
     if (*a == 0l)
     {
@@ -60,13 +60,11 @@ static void ymn(unsigned long int *a, unsigned long int *b)
 
 static void gcd_()
 {
-    unsigned long int a, a1, b, b1, c, A, B, AL, AH, BL, BH, RL, RH, xn, yn, Q;
-
     /*   sint. control */
     linkcb *pr = refal.preva->next;
     if (pr->tag != TAGLB)
         goto NEOT;
-    const linkcb *tl[] = {pr->info.codep, refal.nexta};
+    linkcb *tl[] = {pr->info.codep, refal.nexta};
     linkcb *p[] = {pr, tl[0]};
     linkcb *hd[2];
     unsigned int l[2];
@@ -148,7 +146,7 @@ OC: /********   ob. cikl  ************/
     }
 M21:
     /*   wybor metoda */
-    A = 0l;
+   unsigned long int A = 0l;
     pr = hd[0];
     unsigned int k;
     for (k = 0; k < l[0]; k++)
@@ -159,6 +157,7 @@ M21:
         A += gcoden(pr);
         pr = pr->next;
     }
+    unsigned long int B;
     if ((l[0] == 1) || (l[0] == 2 && k == 2))
     {
         /* Evklid nad korotkimi */
@@ -219,6 +218,7 @@ M21:
         py->tag = TAGN;
         pcoden(py, 0l);
         unsigned int n;
+        unsigned long int b;
         if (l[1] != 0)
         { /* wozmovna normalizacija */
             b = gcoden(hd[1]);
@@ -231,14 +231,17 @@ M21:
             }
         }
         unsigned long int peren = 0l;
+        long int a, c;
         do
         {
-            a = gcoden(hd[0]), a1 = gcoden(hd[0]->next);
+            a = gcoden(hd[0]);
+            const unsigned long int a1 = gcoden(hd[0]->next);
             b = gcoden(hd[1]);
             if ((a == 0l) && (a1 < b))
                 c = 0l;
             else
             {
+                unsigned long int b1;
                 if ((a == 0l) && (a1 >= b))
                 {
                     c = 1l; /*  t.k. b - normalizowano */
@@ -376,10 +379,10 @@ M21:
     /*  metod Lemera         */
     /*  A i B s nedostatkom  */
     /*printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb);*/
-    AL = A;
-    AH = A + 1;
-    BL = B;
-    BH = B + 1;
+    unsigned long int AL = A;
+    unsigned long int AH = A + 1;
+    unsigned long int BL = B;
+    unsigned long int BH = B + 1;
     x[0] = 1;
     x[1] = 0;
     y[0] = 0;
@@ -387,20 +390,20 @@ M21:
     /*  vychisl koeff. X i Y  */
     while (BL != 0)
     {
-        Q = AL / BH;
+        const unsigned long int Q = AL / BH;
         /*  UTV:   Q>0  */
         if (Q != AH / BL)
             break;
-        RL = AL - Q * BH;
-        RH = AH - Q * BL;
+        const unsigned long int RL = AL - Q * BH;
+        const unsigned long int RH = AH - Q * BL;
         /*  UTV:   RL>=0  */
         /*  UTV:   RH>0   */
         AL = BL;
         AH = BH;
         BL = RL;
         BH = RH;
-        xn = x[0] - Q * x[1];
-        yn = y[0] - Q * y[1];
+        const long int xn = x[0] - Q * x[1];
+        const long int yn = y[0] - Q * y[1];
         x[0] = x[1];
         y[0] = y[1];
         x[1] = xn;
