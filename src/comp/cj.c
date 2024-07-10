@@ -4,9 +4,6 @@
 /*           Last edition date :  14.06.24              */
 /*------------------------------------------------------*/
 
-/* BLF - changes was made for Windows - COFF or GNU and
-    for  Unix - ELF or GNU format */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -635,39 +632,14 @@ extern void jend()
 
     /* heading generating */
 
-/* BLF */
-#ifdef UNIX /*3*/
-
-/* BLF */
-#ifdef FASM
-    fputs("format ELF\n", syslin);
-#endif
-
-#else /*3*/
-
-#ifdef FASM
-    fputs("format COFF\n", syslin);
-#endif
-
-#endif /*3*/
-
-/* BLF */
-#ifdef FASM
-    fputs("section '.data'\n", syslin); /* BLF */
-#else
     fputs(".data\n", syslin); /* BLF */
-#endif
 
     /* BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin); */
     /* BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin); */
     /* BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin); */
     /* BLF */
     char bufs[81];
-#ifdef FASM
-    sprintf(bufs, "_d%d@:\n", nommod); /* BLF */
-#else
     sprintf(bufs, "_d%d$:\n", nommod); /* BLF */
-#endif
 
     fputs(bufs, syslin);
 
@@ -691,12 +663,7 @@ GEN_TXT:
             if (k != 0)
                 fputc('\n', syslin);
 
-/* BLF */
-#ifdef FASM
-            fputs("\tdb\t", syslin);
-#else
             fputs("\t.byte\t", syslin);
-#endif
         }
         sprintf(bufs, "%d", d.w);
         fputs(bufs, syslin);
@@ -711,13 +678,8 @@ GEN_TXT:
             p = p->info.infop;
         if (((p->mode) & '\300') != '\200')
         {
-/*    nonexternal label   */
-/* BLF */
-#ifdef FASM
-            sprintf(bufs, "\tdd\t_d%d@+%u\n", nommod, p->info.infon);
-#else
+            /*    nonexternal label   */
             sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
-#endif
             fputs(bufs, syslin);
         }
         else
@@ -726,19 +688,9 @@ GEN_TXT:
 /* BLF */
 #ifdef UNIX
             /* begin name without underlining _ */
-/* BLF */
-#ifdef FASM
-            fputs("\tdd\t", syslin);
-#else
             fputs("\t.long\t", syslin);
-#endif
 #else /* Windows - with underlining _*/
-/* BLF */
-#ifdef FASM
-            fputs("\tdd\t_", syslin);
-#else
             fputs("\t.long\t_", syslin);
-#endif
 #endif
             qx = first_ext;
             for (unsigned int i = 1; i < p->info.infon; i++)
@@ -815,20 +767,10 @@ GEN_TXT:
 /* BLF     fputs ("\textrn\t_",syslin);*/
 /* BLF */
 #ifdef UNIX
-/* begin name without underlining _ */
-/* BLF */
-#ifdef FASM
-        fputs("\textrn\t", syslin); /* BLF */
-#else
+        /* begin name without underlining _ */
         fputs("\t.extern\t", syslin); /* BLF */
-#endif
-#else        /* Windows */
-/* BLF */
-#ifndef FASM /* then GNU format */
+#else                                 /* Windows */
         fputs("\t.extern\t_", syslin); /* BLF */
-#else        /* fasm format */
-        fputs("\textrn\t_", syslin); /* BLF */
-#endif
 #endif
         for (unsigned int i = 0; i < qx->le; i++)
             /* BLF fputc (*((qx->e) + i),syslin);*/
@@ -840,12 +782,7 @@ GEN_TXT:
     /* BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin); */
     /* BLF  fputs ("\tsegment byte public 'CODE'\n",syslin); */
 
-/* BLF */
-#ifdef FASM
-    fputs("section '.data'\n", syslin); /* BLF */
-#else
     fputs(".data\n", syslin); /* BLF */
-#endif
 
     /* entry label generating */
 
@@ -867,20 +804,11 @@ GEN_TXT:
             pp = pp->info.infop;
 /* BLF */
 #ifdef UNIX
-            /* begin name without underlining _ */
-/* BLF */
-#ifdef FASM
-        sprintf(bufs, "\t=_d%d@+%d\n\tpublic\t", nommod, pp->info.infon);
-#else
+        /* begin name without underlining _ */
+
         sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t", nommod, pp->info.infon);
-#endif
 #else /* Windows */
-/* BLF */
-#ifdef FASM
-        sprintf(bufs, "\t=_d%d@+%d\n\tpublic\t_", nommod, pp->info.infon);
-#else
         sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
-#endif
 #endif
         fputs(bufs, syslin);
         for (unsigned int i = 0; i < q->le; i++)
@@ -893,11 +821,6 @@ GEN_TXT:
     /* termination */
 
 JTERM:
-    /* BLF - the old following how (with fasm) not needed
-    fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    fputs ("\tends\n",syslin);
-    fputs ("\tend\n",syslin);
-    */
 
     sfclr(&sysut1);
     sfclr(&sysut2);

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "refal.def"
 #include "refal.h"
 #include "cerr.h"
@@ -13,8 +14,6 @@
 #include "plc.h"
 #include "cs.h"
 #include "ccst1.h"
-
-/* #define  STTIME */
 
 #define EH                               \
     if (m != 71)                         \
@@ -113,60 +112,52 @@ static unsigned int get_id(char id[40], unsigned int *lid);
 static unsigned int get_idm(char id[8], unsigned int *lid);
 static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid);
 
-#ifdef STTIME
-#include <time.h>
-#include <dos.h>
-
-#ifdef QC
-#define time dostime_t
-#define gettime _dos_gettime
-#define ti_hund hsecond
-#define ti_sec second
-#define ti_min minute
-#define ti_hour hour
-#endif
-typedef struct time tm;
-static tm t0;
+typedef struct timespec timespec;
+typedef struct tm tm;
+static timespec t0;
 
 static void SET_time()
 {
-    gettime(&t0);
+    timespec_get(&t0, TIME_UTC);
 }
 
 static void GET_time()
 {
-    int ih = 0, im = 0, is = 0, ik, i;
-    char s[12];
-    tm t1;
-    gettime(&t1);
-    ik = t1.ti_hund - t0.ti_hund;
-    if (ik < 0)
+    timespec t1;
+    timespec_get(&t1, TIME_UTC);
+    long int in = t1.tv_nsec - t0.tv_nsec;
+    int is = 0;
+    if (in < 0)
     {
-        ik += 100;
+        in += 1000000000;
         is--;
     }
-    is += (t1.ti_sec - t0.ti_sec);
+    const tm tm0 = *gmtime(&t0.tv_sec);
+    const tm tm1 = *gmtime(&t1.tv_sec);
+    is += (tm1.tm_sec - tm0.tm_sec);
+    int im = 0;
     if (is < 0)
     {
         is += 60;
         im--;
     }
-    im += (t1.ti_min - t0.ti_min);
+    im += (tm1.tm_min - tm0.tm_min);
+    int ih = 0;
     if (im < 0)
     {
         im += 60;
         ih--;
     }
-    ih += (t1.ti_hour - t0.ti_hour);
+    ih += (tm1.tm_hour - tm0.tm_hour);
     if (ih < 0)
         ih += 24;
-    sprintf(s, "%2d:%2d:%2d.%2d", ih, im, is, ik);
-    for (i = 0; i < 10; i += 3)
+    char s[19];
+    sprintf(s, "%2d:%2d:%2d.%09ld", ih, im, is, in);
+    for (unsigned int i = 0; i < 7; i += 3)
         if (s[i] == ' ')
             s[i] = '0';
     printf("                       elapsed time      = %s\n", s);
 }
-#endif
 
 int main(int argc, char *argv[])
 {
@@ -222,9 +213,8 @@ int main(int argc, char *argv[])
     systerm = stdout;
     sysprint = NULL;
 
-#ifdef STTIME
     SET_time();
-#endif
+
     options.source = 1;
     options.stmnmb = 0;
     options.extname = 0;
@@ -1508,9 +1498,7 @@ static void pchzkl()
     if (options.source == 1)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
-#ifdef STTIME
     GET_time();
-#endif
 }
 
 void oshibka()
