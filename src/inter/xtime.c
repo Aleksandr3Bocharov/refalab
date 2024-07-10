@@ -7,22 +7,9 @@
 #include "refal.def"
 
 /*
-#ifdef IBM_PC
 #include "\refal\time.h"
-#include "\refal\dos.h"
-
-#ifdef QC
-#define gettime _dos_gettime
-#define ti_hund hsecond
-#define ti_sec second
-#define ti_min minute
-#define ti_hour hour
-  typedef struct dostime_t tm;
-#else
-  typedef struct time tm;
-#endif
-  static tm t0,t1;
-#endif
+typedef struct time tm;
+static tm t0,t1;
 
 unsigned long int time();
 char *ctime();
@@ -53,14 +40,10 @@ static void rftm_() {
       switch (c) {
          case 's':
          case 'S':
-#ifdef IBM_PC
             gettime(&t0);
-#endif
             return;
          case 'g':
          case 'G':
-#ifdef IBM_PC
-
          /* BLF            gettime(&t1);
             ik = t1.ti_hund - t0.ti_hund;
             if( ik<0 ) {
@@ -72,7 +55,6 @@ static void rftm_() {
             if( im<0 ) {
                im += 60;  ih--; }
             ih += (t1.ti_hour - t0.ti_hour);
-#endif
             if( ih<0 ) ih += 24;
             sprintf(s,"%2d:%2d:%2d.%2d",
                        ih, im, is, ik);

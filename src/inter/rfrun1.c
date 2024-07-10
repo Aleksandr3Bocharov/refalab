@@ -142,7 +142,7 @@ ADVANCE:
     vpc = vpc + NMBL;
 NEXTOP:
     opc = *vpc;
-#ifdef PRINT_CODE
+#ifdef mdebug
     printf("\n switcher");
 
     /* BLF 03.07.2004 */

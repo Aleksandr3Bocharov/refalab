@@ -1,5 +1,4 @@
 /*--------------- file -- REFAL.DEF -----------------*/
-/*              Turn on/off: STTIME, QC              */
 /*          Last modification : 17.06.24		     */
 /*---------------------------------------------------*/
 #ifndef REFAL_DEF
@@ -7,15 +6,6 @@
 
 /* BLF - UNIX for operation system Linux, FreeBSD */
 /*#define UNIX*/
-
-/* BLF - FASM for fasm assembler format */
-/*#define FASM*/
-
-/* BLF - DBLF for prokrutka - trace debug mode, see rfintf.c */
-#define DBLF
-
-/* BLF -  PRINT_CODE - for print operation code, see rfrun1.c */
-#define PRINT_CODE
 
 #define mdebug
 
@@ -87,8 +77,6 @@ typedef struct refal_ REFAL;
 #define TRUE 1
 #define FALSE 0
 
-/*---------- I B M - P C : -------------*/
-/* #define STTIME */
 #define QC /* BLF */
 
 #ifdef QC
@@ -126,8 +114,6 @@ typedef struct refal_ REFAL;
 #endif
 
 #define G_L_B
-#define Wbin "wb"
-#define Rbin "rb"
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W;
 

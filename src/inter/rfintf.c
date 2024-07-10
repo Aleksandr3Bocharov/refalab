@@ -224,7 +224,7 @@ void rfexec(const unsigned char *func)
 AGAIN:
 
 /* BLF 17.07.2004 */
-#ifdef DBLF
+#ifdef mdebug
     /*	step by step execution with full debug trace information
        see refal-2 user manual (3.14 - example of processing control) */
     while (s_st.state == 1 && s_st.dot != NULL)
