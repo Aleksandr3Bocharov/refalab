@@ -9,10 +9,9 @@
 
 static void unlnk_()
 {
-    linkcb *p;
+    const linkcb *p = refal.preva->next;
+    unsigned int i;
     char namf[40];
-    int i;
-    p = refal.preva->next;
     for (i = 0; p != refal.nexta; i++)
     {
         if ((p->tag != TAGO) || (i >= 40))
@@ -43,10 +42,9 @@ static void (*unlnk_1)() = unlnk_;
 
 static void renam_()
 {
-    linkcb *p;
-    char namf[40], namt[40]; /* from => to */
-    int i;
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
+    unsigned int i;
+    char namf[40];
     for (i = 0; p->tag != TAGO || p->info.infoc != ' '; i++)
     {
         if ((p->tag != TAGO) || (i >= 40))
@@ -59,6 +57,7 @@ static void renam_()
     }
     namf[i] = '\0';
     p = p->next;
+    char namt[40]; /* from => to */
     for (i = 0; p != refal.nexta; i++)
     {
         if ((p->tag != TAGO) || (i >= 40))

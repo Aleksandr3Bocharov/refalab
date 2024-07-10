@@ -15,26 +15,25 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
 static void open_()
 {
-   linkcb *p;
-   unsigned short int j;
-   char namf[41], c, s[2];
-   register int i;
-   for (i = 0; i < 40; i++)
+   char namf[41];
+   for (unsigned int i = 0; i < 40; i++)
       namf[i] = '\0';
-   p = refal.preva->next;
+   const linkcb *p = refal.preva->next;
    if (p->tag != TAGO)
       goto NEOT;
-   c = p->info.infoc;
+   const char c = p->info.infoc;
    p = p->next;
+   unsigned long int j;
    if (p->tag != TAGN)
       goto NEOT;
    else
    {
-      j = (unsigned short int)p->info.coden;
+      j = p->info.coden;
       p = p->next;
    }
    if (j >= fmax)
       goto NEOT;
+   char s[2];
    s[1] = 0;
    if (c == 'R' || c == 'r')
       s[0] = 'r';
@@ -42,7 +41,7 @@ static void open_()
       s[0] = 'w';
    else
       goto NEOT;
-   for (i = 0; p != refal.nexta; i++)
+   for (unsigned int i = 0; p != refal.nexta; i++)
       if ((p->tag != TAGO) || (i == 40))
          goto NEOT;
       else
@@ -72,17 +71,14 @@ static void (*open_1)() = open_;
 
 static void close_()
 {
-   linkcb *p;
-   char c;
-   unsigned short int j;
-   p = refal.preva->next;
+   const linkcb *p = refal.preva->next;
    if (p->tag != TAGO)
       goto NEOT;
-   c = p->info.infoc;
+   const char c = p->info.infoc;
    p = p->next;
    if (p->tag != TAGN)
       goto NEOT;
-   j = (short)p->info.coden;
+   const unsigned long int j = p->info.coden;
    if (j >= fmax)
       goto NEOT;
    if (c == 'R' || c == 'r')
@@ -111,18 +107,16 @@ static void (*close_1)() = close_;
 
 static void get_()
 {
-   linkcb *p;
-   unsigned short int i, j;
-   char c, namf[11];
-   p = refal.preva->next;
+   linkcb *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   j = (unsigned short int)p->info.coden;
+   const unsigned long int j = p->info.coden;
    if (j >= fmax)
       goto NEOT;
    f = uniget[j];
    if (f == NULL)
    {
+      char namf[11];
       strcpy(namf, "REFAL0.DAT");
       namf[5] = j + '0';
       if ((f = fopen(namf, "r")) == NULL)
@@ -133,6 +127,7 @@ static void get_()
       uniget[j] = f;
    }
    p = refal.prevr;
+   char c;
    while ((c = getc(f)) != '\n')
    {
       if (slins(p, 1) == 0)
@@ -160,20 +155,17 @@ static void (*get_1)() = get_;
 
 static void put_()
 {
-   linkcb *p;
-   unsigned short int j;
-   int i, cc;
-   char namf[11];
-   p = refal.preva->next;
+   const linkcb *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   j = (unsigned short int)p->info.coden;
+   const unsigned long int j = p->info.coden;
    p = p->next;
    if (j >= fmax)
       goto NEOT;
    f = uniput[j];
    if (f == NULL)
    {
+      char namf[11];
       strcpy(namf, "REFAL0.DAT");
       namf[5] = j + '0';
       if ((f = fopen(namf, "w")) == NULL)
@@ -185,6 +177,7 @@ static void put_()
    }
    while (p != refal.nexta)
    {
+      int cc;
       if (p->tag != TAGO)
       {
          if ((p->tag != TAGLB) && (p->tag != TAGRB))

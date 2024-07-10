@@ -8,21 +8,19 @@
 
 #define fmax 5
 
-FILE *inr;
-FILE *inw;
+static FILE *inr, *inw;
 static FILE *uniput[fmax], *uniget[fmax];
-static int junp = 1;
-static int jung = 1;
+static unsigned int junp = 1;
+static unsigned int jung = 1;
 static unsigned long int jl;
 
 static void opng_()
 {
-    linkcb *p;
+    unsigned int i;
     char namf[40];
-    register int i;
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0; /* jung zamenila na jl */
     else
@@ -63,15 +61,12 @@ static void (*opng_1)() = opng_;
 
 static void opnp_()
 {
-    linkcb *p;
+    unsigned int i;
     char namf[40];
-    char *m;
-    int i;
-
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
-    p = refal.preva->next;
-    m = "w";
+    const linkcb *p = refal.preva->next;
+    const char *m = "w";
     if (p->tag == TAGO && p->info.infoc == '*')
     {
         m = "a";
@@ -116,8 +111,7 @@ static void (*opnp_1)() = opnp_;
 
 static void clsg_()
 {
-    linkcb *p;
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -144,8 +138,7 @@ static void (*clsg_1)() = clsg_;
 
 static void clsp_()
 {
-    linkcb *p;
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -172,15 +165,12 @@ static void (*clsp_1)() = clsp_;
 
 static void libg_()
 {
-    linkcb *p;
-    char s[128];
-    int i, j, c, new;
-    p = refal.preva->next;
-    new = 0;
+    linkcb *p = refal.preva->next;
+    unsigned int new = FALSE;
     if (p->tag != TAGN)
     {
         jl = 0;
-        new = 1;
+        new = TRUE;
     }
     else
     {
@@ -192,12 +182,16 @@ static void libg_()
     else
         jung = jl;
     inr = uniget[jung];
+    char s[128];
     s[0] = ' ';
+    int c;
+    unsigned int i;
     for (i = 0; ((c = getc(inr)) != '\n') && (c != EOF) && (i < 128); i++)
         s[i] = c;
     if (c == EOF)
         return;
-    if (new == 1)
+    unsigned int j;
+    if (new == TRUE)
     { /* sovmestimost s ES */
         p = refal.prevr;
         if (slins(p, 80) == 0)
@@ -254,10 +248,7 @@ static void (*libg_1)() = libg_;
 
 static void libp_()
 {
-    linkcb *p;
-    char s[81];
-    int i, c;
-    p = refal.preva->next;
+    const linkcb *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -270,6 +261,8 @@ static void libp_()
     else
         junp = jl;
     inw = uniput[junp];
+    int c;
+    unsigned int i;
     for (i = 0; p != refal.nexta; i++)
     {
         if ((p->tag != TAGO) && (p->tag != TAGLB) && (p->tag != TAGRB))
@@ -311,11 +304,10 @@ static void (*libp_1)() = libp_;
 
 static void card_()
 {
-    linkcb *p;
-    char c;
     if (refal.preva->next != refal.nexta) /* refal.upshot = 2; */
         rfpex("", refal.preva, refal.nexta);
-    p = refal.prevr;
+    linkcb *p = refal.prevr;
+    char c;
     while ((c = getchar()) != '\n')
     {
         if (slins(p, 1) == 0)

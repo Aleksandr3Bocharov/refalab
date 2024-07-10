@@ -10,8 +10,8 @@
 
 typedef char *adr;
 
-unsigned short int func_n = 0;
-adr *func_f = NULL;
+static unsigned short int func_n = 0;
+static adr *func_f = NULL;
 
 static void ftochar_()
 {
