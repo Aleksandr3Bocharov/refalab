@@ -9,7 +9,7 @@ extern char go();
 
 int main()
 {
-  rfexec((unsigned char *)go);
+    rfexec((unsigned char *)go);
 }
 
 /*---------  end of file MAINRF.C  ---------*/

@@ -1,11 +1,11 @@
-/*--------------- file -- REFAL.DEF -----------------*/
-/*          Last modification : 11.07.24		     */
-/*---------------------------------------------------*/
+//--------------- file -- REFAL.DEF ----------------- 
+//          Last modification : 11.07.24		      
+//--------------------------------------------------- 
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
-/* BLF - UNIX for operation system Linux, FreeBSD */
-/*#define UNIX*/
+// BLF - UNIX for operation system Linux, FreeBSD  
+//#define UNIX 
 
 //#define mdebug
 
@@ -18,7 +18,7 @@
 #define TAGK 5
 #define TAGD 7
 
-/* BLF pragma for 1 byte aligniment structure ------------*/
+// BLF pragma for 1 byte aligniment structure ------------ 
 #pragma pack(1)
 
 
@@ -34,10 +34,10 @@
 		} info;
 	};
 	
-/*#pragma pack(pop)*/ 
+//#pragma pack(pop)  
 #pragma pack()
 
-/* BLF ------------ end of pragma ------------------------------------ */
+// BLF ------------ end of pragma ------------------------------------  
 
 typedef struct linkcb_ linkcb;
 
@@ -77,11 +77,11 @@ typedef struct refal_ REFAL;
 #define TRUE 1
 #define FALSE 0
 
-#define QC /* BLF */
+#define QC // BLF  
 
 #ifdef QC
 
-/* BLF 09.07.2004 (VAX version for IBM PC) */
+// BLF 09.07.2004 (VAX version for IBM PC)  
 
 #define Z_0 0
 #define Z2
@@ -126,4 +126,4 @@ typedef struct __ptr__
 #define SMBL (sizeof(unsigned short int) + LBLL)
 
 #endif
-/*-------  end of file REFAL.DEF ---------*/
+//-------  end of file REFAL.DEF --------- 
