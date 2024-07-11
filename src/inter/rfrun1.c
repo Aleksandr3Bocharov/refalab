@@ -72,7 +72,7 @@ static linkcb *f0, *f1, *f;
 static const unsigned char *vpca; /* additional vpc  */
 static unsigned int i, n, m;
 
-static char (*fptr)(const REFAL *);
+static char (*fptr)(REFAL *);
 
 void rfrun(st *ast) /* adress of current state table */
 {
@@ -393,9 +393,7 @@ CFUNC:;
     refal.preva = b1;
     refal.nexta = b2;
     /*        call  C - function    */
-    printf("\nCFUNC B refal.upshot=%d fptr=%lx", refal.upshot, fptr);
     (*fptr)(&refal);
-    printf("\nCFUNC A refal.upshot=%d", refal.upshot);
     switch (refal.upshot)
     {
     case 1:

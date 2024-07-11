@@ -7,7 +7,7 @@
 /* BLF - UNIX for operation system Linux, FreeBSD */
 /*#define UNIX*/
 
-#define mdebug
+//#define mdebug
 
 #define TAGO 0
 #define TAGF 2
