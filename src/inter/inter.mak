@@ -37,7 +37,6 @@ SOURCES =		\
 	$(S)\xapply.c 	\
 	$(S)\xar.c 	\
 	$(S)\xcf.c 	\
-	$(S)\xcoden.c 	\
 	$(S)\xgcd.c 	\
 	$(S)\xjak.c 	\
 	$(S)\xmo.c 	\
@@ -57,7 +56,6 @@ OBJECTS =		\
 	$(S)\xapply.o 	\
 	$(S)\xar.o 	\
 	$(S)\xcf.o 	\
-	$(S)\xcoden.o 	\
 	$(S)\xcv.o 	\
 	$(S)\xgcd.o 	\
 	$(S)\xjak.o 	\
@@ -87,7 +85,7 @@ $(REFLIB): $(OBJECTS)
 
 ####### Dependences
 
-$(S)\d.o:	$(S)\d.c $(S)\refal.def $(S)\d.h
+$(S)\d.o:	    $(S)\d.c $(S)\refal.def
 
 $(S)\mainrf.o: 	$(S)\mainrf.c
 
@@ -104,8 +102,6 @@ $(S)\xapply.o: 	$(S)\xapply.c $(S)\refal.def
 $(S)\xar.o: 	$(S)\xar.c $(S)\refal.def
 
 $(S)\xcf.o: 	$(S)\xcf.c $(S)\refal.def
-
-$(S)\xcoden.o: 	$(S)\xcoden.c $(S)\refal.def
 
 $(S)\xgcd.o: 	$(S)\xgcd.c $(S)\refal.def
 

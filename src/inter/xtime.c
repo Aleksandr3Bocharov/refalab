@@ -4,75 +4,92 @@
 /*         Last edition date : 09.09.90  BLF */
 /*-------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <locale.h>
 #include "refal.def"
+#include "rfintf.h"
 
-/*
-#include "\refal\time.h"
-typedef struct time tm;
-static tm t0,t1;
+typedef struct timespec timespec;
+static timespec t0, t1;
 
-unsigned long int time();
-char *ctime();
-
-static void rftime_() {
- linkcb *p;
- unsigned long int   tim; char *c;
-   tim=time(0l);
-   c=ctime(&tim);
-   p = refal.prevr;
-   while( *c >= ' ' ){
-      if( !slins(p,1) ) { refal.upshot=2; return; }
-      p = p->next;
-      p->tag = TAGO; p->info.codep=NULL;  p->info.infoc = *c;
-      c++;
-   }
-}
-static char rftime_0[] = {Z6      'R','F','T','I','M','E','\006'};
-G_L_B char rftime = '\122';   static void (*rftime_1)() = rftime_;
-
-static void rftm_() {
- linkcb *p; int ih=0,im=0,is=0,ik,i;
- char c,s[12];
-   p = refal.preva->next;
-   if( p != refal.nexta ){
-      if( p->tag != TAGO ) goto NEOT;
-      c = p->info.infoc;
-      switch (c) {
-         case 's':
-         case 'S':
-            gettime(&t0);
+static void rftime_()
+{
+    setlocale(LC_TIME, setlocale(LC_TIME, ""));
+    const time_t tim = time(NULL);
+    char s[70];
+    strftime(s, sizeof(s), "%c", localtime(&tim));
+    linkcb *p = refal.prevr;
+    const char *c = s;
+    while (*c >= ' ')
+    {
+        if (!slins(p, 1))
+        {
+            refal.upshot = 2;
             return;
-         case 'g':
-         case 'G':
-         /* BLF            gettime(&t1);
-            ik = t1.ti_hund - t0.ti_hund;
-            if( ik<0 ) {
-               ik += 100;  is--; }
-            is += (t1.ti_sec - t0.ti_sec);
-            if( is<0 ) {
-               is += 60;  im--; }
-            im += (t1.ti_min - t0.ti_min);
-            if( im<0 ) {
-               im += 60;  ih--; }
-            ih += (t1.ti_hour - t0.ti_hour);
-            if( ih<0 ) ih += 24;
-            sprintf(s,"%2d:%2d:%2d.%2d",
-                       ih, im, is, ik);
-            for( i=0; i<10; i+=3 )
-               if(s[i]==' ') s[i]='0';
+        }
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = *c;
+        c++;
+    }
+}
+static char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
+G_L_B char rftime = '\122';
+static void (*rftime_1)() = rftime_;
+
+static void rftm_()
+{
+    linkcb *p = refal.preva->next;
+    if (p != refal.nexta)
+    {
+        if (p->tag != TAGO)
+            goto NEOT;
+        const char c = p->info.infoc;
+        switch (c)
+        {
+        case 's':
+        case 'S':
+            timespec_get(&t0, TIME_UTC);
+            return;
+        case 'g':
+        case 'G':
+            timespec_get(&t1, TIME_UTC);
+            long int in = t1.tv_nsec - t0.tv_nsec;
+            unsigned long int is = difftime(t1.tv_sec, t0.tv_sec);
+            if (in < 0)
+            {
+                in += 1000000000;
+                is--;
+            }
+            unsigned long int im = is / 60;
+            is %= 60;
+            const unsigned long int ih = im / 60;
+            im %= 60;
+            char s[25];
+            sprintf(s, "%02ld:%02ld:%02ld.%09ld", ih, im, is, in);
             p = refal.prevr;
-            if ( !slins(p,strlen(s)) ) return;
-            for( i=0; s[i] != 0; i++ ){
-               p = p->next;
-               p->tag = TAGO; p->info.codep=NULL; p->info.infoc = s[i];
+            if (!slins(p, strlen(s)))
+                return;
+            for (unsigned int i = 0; s[i] != 0; i++)
+            {
+                p = p->next;
+                p->tag = TAGO;
+                p->info.codep = NULL;
+                p->info.infoc = s[i];
             }
             return;
-         default : goto NEOT;
-      }
-   }
-NEOT: refal.upshot = 2; return;
+        default:
+            goto NEOT;
+        }
+    }
+NEOT:
+    refal.upshot = 2;
+    return;
 }
-static char rftm_0[] = {Z4          'R','F','T','M','\004'};
-G_L_B char rftm = '\122';   static void (*rftm_1)() = rftm_;
-*/
+static char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
+G_L_B char rftm = '\122';
+static void (*rftm_1)() = rftm_;
+
 /*------------------ end of file  XTIME.C ----------------*/
