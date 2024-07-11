@@ -1,6 +1,6 @@
 /*-------------  file  CCST2.C  ------------*/
 /*     The second of two compiler files     */
-/*        Last edition date : 14.06.24      */
+/*        Last edition date : 11.07.24      */
 /*------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"

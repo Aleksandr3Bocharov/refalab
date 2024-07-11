@@ -1,12 +1,11 @@
 /*-----------  file  --  REFAL.C -------------*/
 /*      The main file of refal compiler       */
-/*       Last modification : 15.06.24         */
+/*       Last modification : 11.07.24         */
 /*--------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <locale.h>
 #include "refal.def"
 #include "refal.h"
 #include "cerr.h"

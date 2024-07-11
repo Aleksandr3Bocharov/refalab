@@ -1,6 +1,6 @@
 /*------------------file----CGOP.C--------------------*/
 /*    generation of the assembly language operators   */
-/*          Last edition date : 14.06.2024            */
+/*          Last edition date : 11.07.2024            */
 /*----------------------------------------------------*/
 #include "refal.def"
 #include "cgop.h"

@@ -1,7 +1,7 @@
 /*-----------------  file  --  cj_blf.C  ---------------*/
 /*             generator of object module               */
 /*                (or assembler text)                   */
-/*           Last edition date :  14.06.24              */
+/*           Last edition date :  11.07.24              */
 /*------------------------------------------------------*/
 
 #include <stdio.h>

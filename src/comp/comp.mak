@@ -7,7 +7,7 @@
 # Copyright (C) Refal-2 Team
 # Author: Leonid Belous (aka BLF) 
 # E-mail: belous@ilt.kharkov.ua
-# Last edition date : 12.06.24
+# Last edition date : 11.07.24
 #############################################################################
 
 ####### Compiler, tools and options
