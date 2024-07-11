@@ -1,7 +1,7 @@
-/*----------------  file  --  CLU.C  -------------------*/
-/*    AVL-tree construction for identifier table        */
-/*           Last edition date : 11.07.24               */
-/*------------------------------------------------------*/
+//----------------  file  --  CLU.C  ------------------- 
+//    AVL-tree construction for identifier table         
+//           Last edition date : 11.07.24                
+//------------------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +10,7 @@
 #include "plc.h"
 #include "refal.h"
 
-static T_U *korenj = NULL; /* tree koren */
+static T_U *korenj = NULL; // tree koren  
 
 void uns_sto()
 {
@@ -49,37 +49,37 @@ static T_U *nov_uzel(const char *idp, unsigned int lid)
 }
 
 T_U *lookup(const char *idp, unsigned int lid)
-/* lid identifier length */
+// lid identifier length  
 {
     T_U *isk_uz;
     if (korenj == NULL)
-    { /* empty tree */
+    { // empty tree  
         korenj = nov_uzel(idp, lid);
         isk_uz = korenj;
         return isk_uz;
     }
-    /* tree is't empty,begin push. */
-    /* remember path in stack */
-    unsigned int tgld = 0; /* current  tree depth */
+    // tree is't empty,begin push.  
+    // remember path in stack  
+    unsigned int tgld = 0; // current  tree depth  
     T_U *p = korenj;
-SHAG: /* search step */
+SHAG: // search step  
     char kren;
     if (strncmp(idp, p->id, (lid < p->l) ? lid : p->l) == 0)
     {
         if (lid == p->l)
-        { /* include usage number to list */
+        { // include usage number to list  
             T_REFW *q1 = (*p).last_ref;
             unsigned int k = 5;
             while ((*q1).numb[k] == 0)
                 k--;
             if ((*q1).numb[k] != scn_.nomkar)
             {
-                /* include number to list */
+                // include number to list  
                 if ((*q1).numb[5] == 0)
-                    /* it's free field in current item */
+                    // it's free field in current item  
                     (*q1).numb[k + 1] = scn_.nomkar;
                 else
-                { /* create new item */
+                { // create new item  
                     T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
 #ifdef mdebug
                     printf("\ncalloc(clu-lookup): r1=%lx", r1);
@@ -111,12 +111,12 @@ SHAG: /* search step */
     else
         kren = '\200';
 FINT:
-    T_U *adruz[36]; /* stack for tree work */
+    T_U *adruz[36]; // stack for tree work  
     adruz[tgld] = p;
     char otnuz[36];
     otnuz[tgld] = kren;
     tgld++;
-    /* step down in tree */
+    // step down in tree  
     T_U *q;
     if (kren == '\100')
         q = (*p).j;
@@ -127,16 +127,16 @@ FINT:
         p = q;
         goto SHAG;
     };
-    /* include new node to tree */
+    // include new node to tree  
     isk_uz = nov_uzel(idp, lid);
     q = isk_uz;
     if (kren == '\100')
         (*p).j = q;
     else
         (*p).i = q;
-    /* necessary node is new */
-ISPRB: /* move up and correct */
-    /* balance  features */
+    // necessary node is new  
+ISPRB: // move up and correct  
+    // balance  features  
     tgld--;
     p = adruz[tgld];
     kren = (*p).k;
@@ -147,15 +147,15 @@ ISPRB: /* move up and correct */
             goto ISPRB;
         return isk_uz;
     };
-    /* in this point kren != '\000' */
+    // in this point kren != '\000'  
     if (kren != otnuz[tgld])
     {
         (*p).k = '\000';
         return isk_uz;
     };
-    /* tree turn */
-    /* if kren = '\100' -- left turn */
-    /* if ( kren = '\200' -- right turn */
+    // tree turn  
+    // if kren = '\100' -- left turn  
+    // if ( kren = '\200' -- right turn  
     if (kren == '\100')
         q = (*p).j;
     else
@@ -164,7 +164,7 @@ ISPRB: /* move up and correct */
     if (kren == (*q).k)
     {
         if (kren == '\100')
-        { /* once turn */
+        { // once turn  
             (*p).j = (*q).i;
             (*q).i = p;
         }
@@ -177,7 +177,7 @@ ISPRB: /* move up and correct */
         verquz = q;
     }
     else
-    { /* twos turn */
+    { // twos turn  
         T_U *r;
         if (kren == '\100')
         {
@@ -210,8 +210,8 @@ ISPRB: /* move up and correct */
         };
         (*r).k = '\000';
         verquz = r;
-    }; /* end of twos turn */
-    /* correct upper reference */
+    }; // end of twos turn  
+    // correct upper reference  
     if (tgld == 0)
         korenj = verquz;
     else
@@ -285,4 +285,4 @@ void luterm()
     }
     return;
 }
-/*-----------  end of file CLU.C  ----------*/
+//-----------  end of file CLU.C  ---------- 

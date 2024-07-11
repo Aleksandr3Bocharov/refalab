@@ -1,7 +1,7 @@
-/*-----------  file  --  REFAL.C -------------*/
-/*      The main file of refal compiler       */
-/*       Last modification : 11.07.24         */
-/*--------------------------------------------*/
+//-----------  file  --  REFAL.C ------------- 
+//      The main file of refal compiler        
+//       Last modification : 11.07.24          
+//-------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,25 +48,25 @@ static struct
 } flags;
 
 FILE *sysprint, *systerm;
-FILE *syslin; /* for assem */
-FILE *systxt; /* for module names */
+FILE *syslin; // for assem  
+FILE *systxt; // for module names  
 
 unsigned short int nommod;
-char parm_i[40];         /* sourse file name */
-/* Aleksandr Bocharov */ /* compiler version */
+char parm_i[40];         // sourse file name  
+// Aleksandr Bocharov   // compiler version  
 const char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
-char mod_i[13]; /* 8+4+1 (xxxxxxxx.yyy0) */
+char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)  
 
 static FILE *sysin;
-static unsigned short int m; /* current symbol number */
+static unsigned short int m; // current symbol number  
 static char strg_c[78];
 static unsigned int lbl_leng;
-static unsigned short int empcard; /* flags for empty card  */
-static char card[81];              /* card buffer (input) */
+static unsigned short int empcard; // flags for empty card   
+static char card[81];              // card buffer (input)  
 static const char *card72 = card;
-static unsigned int cdnumb; /* card number */ /* kras */
-static int cardl;                             /* card length without tail blanks */
-static unsigned short int dir;                /* L,R - flag */
+static unsigned int cdnumb; // card number   // kras  
+static int cardl;                             // card length without tail blanks  
+static unsigned short int dir;                // L,R - flag  
 static unsigned int kolosh;
 static const char ns_b = '\6';
 static const char ns_cll = '\0';
@@ -84,17 +84,17 @@ static const char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
 static char *class = class72 + 6;
-static unsigned short int scn_state; /* scanner station - in(1),out(0) literal chain */
+static unsigned short int scn_state; // scanner station - in(1),out(0) literal chain  
 static unsigned short int left_part;
-static char *sarr[7]; /* abbreviated specifier table */
+static char *sarr[7]; // abbreviated specifier table  
 static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
-static unsigned short int fixm;                          /* start sentence position */
-static char mod_name[9]; /* module name */               /* kras */
-static unsigned long int mod_length; /* module length */ /* kras */
-static unsigned short int again;                         /* next module processing feature */
-static unsigned int _eoj; /* "sysin" end flag */         /* kras */
+static unsigned short int fixm;                          // start sentence position  
+static char mod_name[9]; // module name                 // kras  
+static unsigned long int mod_length; // module length   // kras  
+static unsigned short int again;                         // next module processing feature  
+static unsigned int _eoj; // "sysin" end flag           // kras  
 static unsigned int cur;
 
 static void lblkey(unsigned int pr);
@@ -150,12 +150,12 @@ int main(int argc, char *argv[])
     */
 
     nommod = 0;
-    printf("\n"); /* BLF */
+    printf("\n"); // BLF  
     printf("%s", vers_i);
     if (argc < 2)
     {
-        /* BLF      printf("\nSer. No %s",regnom);      */
-        printf("\n"); /* BLF */
+        // BLF      printf("\nSer. No %s",regnom);       
+        printf("\n"); // BLF  
         printf("\nSyntax: refal source_file [(option,...,option)]");
         printf("\nOptions:");
         printf("\n   mm  multi_module");
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
         */
         printf("\n   fn  full_names");
         printf("\n   cm  minimal_memory_for_compiler");
-        printf("\n\n"); /* BLF */
+        printf("\n\n"); // BLF  
         exit(1);
     };
 
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
     for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; i++)
         ;
 
-    /* BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref"); */
+    // BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");  
     if (index_x(parm, ".") < 0)
         strcat(parm, ".ref");
 
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
     options.stmnmb = 0;
     options.extname = 0;
     options.multmod = 0;
-    options.asmb = 1; /* BLF, instead 0, we need assembler code */
+    options.asmb = 1; // BLF, instead 0, we need assembler code  
     options.names = 1;
     options.mincomp = 0;
     for (unsigned int j = 2; j < argc; ++j)
@@ -210,9 +210,9 @@ int main(int argc, char *argv[])
             for (i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
             {
                 int temp;
-                if (*(parm + i) == 'a') /*  kras */
+                if (*(parm + i) == 'a') //  kras  
                     options.asmb = 1;
-                else if (strncmp((parm + i), "nn", 2) == 0) /*  kras */
+                else if (strncmp((parm + i), "nn", 2) == 0) //  kras  
                     options.names = 0;
                 else if (strncmp((parm + i), "ns", 2) == 0)
                     options.source = 0;
@@ -234,11 +234,11 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 temp = i;
-                /* BLF  i = index((parm + i),40-i,",",1) + 1 ; */
+                // BLF  i = index((parm + i),40-i,",",1) + 1 ;  
                 i = index_x((parm + i), ",") + 1;
                 if (i == 0)
                 {
-                    /* BLF     i = index((parm + temp),40-temp,")",1) ; */
+                    // BLF     i = index((parm + temp),40-temp,")",1) ;  
                     i = index_x((parm + temp), ")");
                     if (i == -1)
                     {
@@ -247,16 +247,16 @@ int main(int argc, char *argv[])
                     }
                 }
                 i += temp;
-            } /* end for */
+            } // end for  
             for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
                 ;
-        } /* end if */
+        } // end if  
         else
         {
             printf("Illegal options definition: %s\n", parm);
             exit(1);
         }
-    } /* end for */
+    } // end for  
     for (i = 0; ((parm[i] = *(argv[1] + i)) != '\0') && (parm[i] != '.'); ++i)
         ;
     parm[i] = '\0';
@@ -300,13 +300,13 @@ int main(int argc, char *argv[])
             sfop_w(parm, &sysl);
         }
     }
-    /*  print of page title missing here */
+    //  print of page title missing here  
     flags.was_err = 0;
     flags.uzhe_zgl = 0;
     cdnumb = 0;
     scn_.nomkar = 0;
 START_OF_MODULE:
-    /*  time processing missing here */
+    //  time processing missing here  
     kolosh = 0;
     nommod++;
     flags.was_72 = 0;
@@ -314,12 +314,12 @@ START_OF_MODULE:
     _eoj = 0;
     card[80] = '\n';
     prevlb[0] = '\0';
-    mod_length = 0l; /* kras */
+    mod_length = 0l; // kras  
     for (i = 0; i < 9; i++)
-        mod_name[i] = '\0'; /* kras */
+        mod_name[i] = '\0'; // kras  
     for (i = 0; i < 7; ++i)
         sarr[i] = NULL;
-    /* "start" - directive work  */
+    // "start" - directive work   
     lblkey(0);
     if (_eoj == 1)
         goto END_OF_SYSIN;
@@ -338,7 +338,7 @@ START_OF_MODULE:
     strncpy(scn_.modname_var, stmlbl, lbl_leng);
     scn_.modnmlen = lbl_leng;
     jstart(mod_name, 8 < lbl_leng ? 8 : lbl_leng);
-NEXT_STM:; /* read of next sentence */
+NEXT_STM:; // read of next sentence  
     lblkey(0);
 KEYS:
     if ((strncmp(stmkey, "l ", 2) == 0) || (strncmp(stmkey, "L ", 2) == 0))
@@ -392,7 +392,7 @@ KEYS:
     }
     else
     {
-        m = fixm; /* return to left */
+        m = fixm; // return to left  
         dir = 1;
         trprev();
         cst(dir, stmlbl, lbl_leng);
@@ -448,14 +448,14 @@ END_OF_SYSIN:
     else
     {
         if (nommod <= 1 && options.multmod == 1)
-            unlink(parm); /* for multimod. */
+            unlink(parm); // for multimod.  
         exit(0);
     }
     return 0;
-} /* main program  end  */
+} // main program  end   
 
 static void trprev()
-{ /* perenos poslednej pustoj metki w tekuschuju */
+{ // perenos poslednej pustoj metki w tekuschuju  
     unsigned int n = strlen(prevlb);
     if ((n != 0) && (lbl_leng == 0))
     {
@@ -468,7 +468,7 @@ static void trprev()
 }
 
 static void rdline(char *s)
-{ /* read 80 symbols from sysin */
+{ // read 80 symbols from sysin  
     empcard = 1;
     unsigned int i;
     int c;
@@ -496,7 +496,7 @@ static void rdline(char *s)
 }
 
 static void translate(const char *str, char *class1)
-{ /* L,D,* - classification procedure */
+{ // L,D,* - classification procedure  
     for (unsigned int i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
@@ -538,14 +538,14 @@ static unsigned int komm()
 }
 
 static void rdcard()
-{ /* read card procedure */
+{ // read card procedure  
 RDCARD1:
     rdline(card);
     strncpy(c, card72, 72);
     translate(card72, class);
     ++scn_.nomkar;
     ++cdnumb;
-    /*  printf("\ncard %d",cdnumb); */
+    //  printf("\ncard %d",cdnumb);  
     for (cardl = 79; cardl > -1; cardl--)
         if (card[cardl] != ' ')
             break;
@@ -569,11 +569,11 @@ RDCARD1:
     else
         flags.was_72 = 0;
     if (*(c + 71) != ' ')
-        *(c + 71) = '+'; /*!!!*/
+        *(c + 71) = '+'; //!!! 
     m = 0;
 }
 
-/*    directive label and keyword extraction    */
+//    directive label and keyword extraction     
 static void lblkey(unsigned int pr)
 {
     if (pr == 0)
@@ -632,7 +632,7 @@ void scan()
     static unsigned int id_leng;
     static const unsigned char *p;
     static unsigned short int scode;
-    unsigned int i; /* kras */
+    unsigned int i; // kras  
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
     scn_e.v = 0;
@@ -640,7 +640,7 @@ void scan()
     scn_e.spec.info.codef = NULL;
     if (scn_state == 1)
         goto STATE1;
-STATE0:; /* among elements */
+STATE0:; // among elements  
     blout();
     switch (c[m])
     {
@@ -673,7 +673,7 @@ STATE0:; /* among elements */
     case 'V':
         goto SCNVV;
     case '<':
-        goto SCNKK; /* kras */
+        goto SCNKK; // kras  
     case 'k':
         goto SCNK;
     case 'K':
@@ -681,7 +681,7 @@ STATE0:; /* among elements */
     case '.':
         goto SCNP;
     case '>':
-        goto SCNP; /* kras */
+        goto SCNP; // kras  
     case '=':
         goto SCNEOL;
     case 'f':
@@ -781,7 +781,7 @@ SCNVI:
 SCNK:
     scn_e.t = 7;
     goto SCNGCR;
-SCNKK: /* kras */
+SCNKK: // kras  
     scn_e.t = 7;
     if (c[m + 1] != ' ')
     {
@@ -808,7 +808,7 @@ SCNEOL:
 SCNEOS:
     scn_e.t = 10;
     goto SCNRET;
-STATE1: /*within letter chain */
+STATE1: //within letter chain  
     if (m == 71)
         goto OSH101;
     if (c[m] != '\'')
@@ -822,7 +822,7 @@ SCNCHR:
     scn_e.code.tag = TAGO;
     scn_e.code.info.codef = NULL;
     if (c[m] == '\\')
-    { /* control symbols */
+    { // control symbols  
         switch (c[++m])
         {
         case '\\':
@@ -945,7 +945,7 @@ static void gsp(char n)
 }
 
 static unsigned int specif(char tail)
-{ /* specifier compiler */
+{ // specifier compiler  
     unsigned int neg = 0;
 SPCBLO:
     blout();
@@ -1020,7 +1020,7 @@ SPCL:
 SPCR:
     if (neg == 0)
         goto SPCR1;
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     blout();
     if (c[m] == '(')
         goto SPCGC;
@@ -1055,7 +1055,7 @@ SPCESC:
         gsymbol(&code);
     goto SPCGC;
 SPCSP:
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (get_id(id, &lid) == 0)
         goto OSH203;
     if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
@@ -1069,7 +1069,7 @@ SPCSP:
     else
         goto OSH204;
 SPCA:
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (m == 71)
         goto OSH205;
     if (c[m] != '\'')
@@ -1088,7 +1088,7 @@ SPCA1:
     if (left_part == 1)
     {
         if (c[m] == '\\')
-        { /* control symbols ---------------*/
+        { // control symbols --------------- 
             switch (c[++m])
             {
             case '\\':
@@ -1155,12 +1155,12 @@ SPCA1:
         code.info.infoc[0] = c[m];
         gsymbol(&code);
     }
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (m == 71)
         goto OSH205;
     if (c[m] != '\'')
         goto SPCA1;
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (c[m] == '\'')
         goto SPCA1;
     else
@@ -1193,7 +1193,7 @@ SPCED:
     gsp(ns_d);
     goto SPCGC;
 SPCGC:
-    EH ROMA0; /* kras  */
+    EH ROMA0; // kras   
     goto SPCBLO;
 OSH200:
     pchosh("200 specifier is't scaned");
@@ -1219,7 +1219,7 @@ OSH208:
 }
 
 static void pchk()
-{ /* writing of card into sysprint */
+{ // writing of card into sysprint  
     if (flags.uzhe_krt == 0 && sysprint != NULL)
     {
         flags.uzhe_krt = 1;
@@ -1242,7 +1242,7 @@ static void pchk()
 }
 
 static void pchk_t()
-{ /* card writing into systerm */
+{ // card writing into systerm  
     if (flags.uzhekrt_t == 0)
     {
         flags.uzhekrt_t = 1;
@@ -1256,7 +1256,7 @@ static void pchk_t()
     }
 }
 
-static void il(void (*prog)(const char *, unsigned int)) /* treatment of directives having 'EMPTY' type */
+static void il(void (*prog)(const char *, unsigned int)) // treatment of directives having 'EMPTY' type  
 {
     blout();
 IL1:
@@ -1279,7 +1279,7 @@ IL2:
     pch130();
 }
 
-static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) /* treatment of directives having 'ENTRY' type*/
+static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) // treatment of directives having 'ENTRY' type 
 {
     blout();
 ILM1:
@@ -1320,7 +1320,7 @@ ILM2:
 }
 
 static void equ()
-{ /* treatement of directives having 'EQU' type */
+{ // treatement of directives having 'EQU' type  
     blout();
     char id[40];
     unsigned int lid;
@@ -1338,11 +1338,11 @@ static void pch130()
     pchosh("130 invalid record format");
 }
 
-static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid) /* procedure read multiple symbol */
+static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid) // procedure read multiple symbol  
 {
     code->tag = 0;
     code->info.codef = NULL;
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (class[m] == 'D')
         goto CSMBN;
     if (get_id(id, lid) == 0)
@@ -1355,7 +1355,7 @@ CSMBN:
     code->info.coden = 0;
     unsigned long int k = c[m] - '0';
 CSMBN1:
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (class[m] != 'D')
         goto CSMBN3;
     const unsigned long int l = c[m] - '0';
@@ -1363,7 +1363,7 @@ CSMBN1:
     if (k <= 16777215L)
         goto CSMBN1;
 CSMBN2:
-    EH ROMA0; /* kras */
+    EH ROMA0; // kras  
     if (class[m] == 'D')
         goto CSMBN2;
     pchosh("111 symbol-number > 16777215");
@@ -1396,7 +1396,7 @@ static char convert(char cm)
 }
 
 static unsigned int get_id(char id[40], unsigned int *lid)
-{ /* read identifier */
+{ // read identifier  
     for (unsigned int i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
@@ -1404,21 +1404,21 @@ static unsigned int get_id(char id[40], unsigned int *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
-        EH ROMA0; /* kras */
+        EH ROMA0; // kras  
         if ((class[m] != 'L') && (class[m] != 'D') && (c[m] != '_') && (c[m] != '-'))
             goto ID0;
         id[*lid] = convert(c[m]);
     }
-    /*if identifier length > 40 then delete tail*/
+    //if identifier length > 40 then delete tail 
     while ((class[m] == 'L') || (class[m] == 'D') || (c[m] == '_') || (c[m] == '-'))
     {
         EH ROMA0;
-    } /* kras */
+    } // kras  
 ID0:
     return TRUE;
 }
 
-/*read external identifier */
+//read external identifier  
 static unsigned int get_idm(char id[8], unsigned int *lid)
 {
     if (class[m] != 'L')
@@ -1426,25 +1426,25 @@ static unsigned int get_idm(char id[8], unsigned int *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
-        EH ROMA0; /* kras */
+        EH ROMA0; // kras  
         if ((class[m] != 'L') && (class[m] != 'D'))
             return TRUE;
         id[*lid] = convert(c[m]);
     }
-    /* if identifier length > 8 then delete tail */
+    // if identifier length > 8 then delete tail  
     while ((class[m] == 'L') || (class[m] == 'D'))
     {
         EH ROMA0;
-    } /* kras */
+    } // kras  
     (*lid)++;
     return TRUE;
 }
 
-/************************************************************/
-/*                  missing blanks                          */
-/*       before call: (m = 71) !! (m != 71)                 */
-/*  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' ')) */
-/************************************************************/
+//********************************************************** 
+//                  missing blanks                           
+//       before call: (m = 71) !! (m != 71)                  
+//  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' '))  
+//********************************************************** 
 static void blout()
 {
 BLOUT1:
@@ -1460,7 +1460,7 @@ BLOUT1:
 }
 
 static void pchzkl()
-{ /* print conclusion */
+{ // print conclusion  
     char pr_line[180];
     sprintf(pr_line,
             "mod_name = %-8s    mod_length(lines) = %d\n", mod_name, cdnumb);
@@ -1486,4 +1486,4 @@ void oshibka()
     pchk_t();
     kolosh++;
 }
-/*----------  end of file REFAL.C  -------------------*/
+//----------  end of file REFAL.C  ------------------- 

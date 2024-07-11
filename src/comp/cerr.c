@@ -1,7 +1,7 @@
-/*-------------  file  --  CERR.C  ---------------*/
-/*               Print error file                 */
-/*        Last edition date : 11.07.24            */
-/*------------------------------------------------*/
+//-------------  file  --  CERR.C  --------------- 
+//               Print error file                  
+//        Last edition date : 11.07.24             
+//------------------------------------------------ 
 #include <stdio.h>
 #include "refal.def"
 #include "cerr.h"
@@ -78,4 +78,4 @@ static void pchose(const char *s, const char *t, unsigned int lt)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
 }
-/*--------  end  of  file  CERR.C  ---------*/
+//--------  end  of  file  CERR.C  --------- 

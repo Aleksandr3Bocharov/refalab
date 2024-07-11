@@ -1,7 +1,7 @@
-/*-------------  file  CCST2.C  ------------*/
-/*     The second of two compiler files     */
-/*        Last edition date : 11.07.24      */
-/*------------------------------------------*/
+//-------------  file  CCST2.C  ------------ 
+//     The second of two compiler files      
+//        Last edition date : 11.07.24       
+//------------------------------------------ 
 #include <stdio.h>
 #include "refal.def"
 #include "ccst2.h"
@@ -26,7 +26,7 @@ void isk_v()
     v[i]._v = scn_e.v;
 }
 
-/*   generation of stoped brackets and setting boards   */
+//   generation of stoped brackets and setting boards    
 void gen_bsb()
 {
     switch (lrbxy)
@@ -38,11 +38,11 @@ void gen_bsb()
     case 2:
         goto SW2;
     };
-SW0: /* no stoped brackets */
+SW0: // no stoped brackets  
     if (nh != nh_x)
         goto GEN_SB;
     return;
-SW1: /* left stoped brackets */
+SW1: // left stoped brackets  
     if (nh == nh_x)
         jbyte(n_lb);
     else if (nh == nh_y)
@@ -53,7 +53,7 @@ SW1: /* left stoped brackets */
         goto GEN_SB;
     };
     return;
-SW2: /* right stoped brackets */
+SW2: // right stoped brackets  
     if (nh == nh_x)
         jbyte(n_rb);
     else if (nh == nh_y)
@@ -78,7 +78,7 @@ void pch406()
     pchosa("406 in left part missing variable ", v[i].ci);
 }
 
-/*    attempt to extract left support group     */
+//    attempt to extract left support group      
 unsigned int lsg_p()
 {
 LSG_:
@@ -121,7 +121,7 @@ GEN_LE:
     return FALSE;
 }
 
-/*        attempt to extract right support group     */
+//        attempt to extract right support group      
 unsigned int rsg_p()
 {
 RSG_:
@@ -165,7 +165,7 @@ GEN_RE:
     return FALSE;
 }
 
-/*    check ortogonality of this sentence against left part */
+//    check ortogonality of this sentence against left part  
 static unsigned int ortgn(unsigned short int n1, unsigned short int n2)
 {
     unsigned short int n = n1;
@@ -222,4 +222,4 @@ void gpev(char op1, char op2)
     else
         jbyte(op1);
 }
-/*--------  end  of  file  CCST2.C  --------*/
+//--------  end  of  file  CCST2.C  -------- 

@@ -1,11 +1,11 @@
-/*--------------- file -- REFAL.DEF -----------------*/
-/*          Last modification : 10.07.24		     */
-/*---------------------------------------------------*/
+//--------------- file -- REFAL.DEF ----------------- 
+//          Last modification : 10.07.24		      
+//--------------------------------------------------- 
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
-/* BLF - UNIX for operation system Linux, FreeBSD */
-/*#define UNIX*/
+// BLF - UNIX for operation system Linux, FreeBSD  
+//#define UNIX 
 
 #define mdebug
 
@@ -33,4 +33,4 @@ typedef struct __ptr__
 #define SMBL (sizeof(unsigned short int) + LBLL)
 
 #endif
-/*-------  end of file REFAL.DEF ---------*/
+//-------  end of file REFAL.DEF --------- 

@@ -3,7 +3,7 @@
 
 #include "cgop.h"
 
-/* the table of assembly language statement codes */
+// the table of assembly language statement codes  
 #define n_sjump '\001'
 #define n_fail '\002'
 #define n_sb1b2 '\003'
@@ -87,7 +87,7 @@
 #define n_setnos '\121'
 
 struct x_
-{ /* left part buffer elements */
+{ // left part buffer elements  
     unsigned short int p, q, t, i;
     struct linkti code;
     unsigned short int next;
@@ -102,7 +102,7 @@ typedef struct x_ T_X;
 extern T_X x[];
 
 struct v_
-{ /* variable table elements */
+{ // variable table elements  
     unsigned short int _t, _q;
     unsigned short int rem;
     unsigned short int last;
@@ -117,16 +117,16 @@ extern const unsigned short int t_lb;
 extern const unsigned short int t_rb;
 extern const unsigned short int t_e;
 
-extern unsigned short int n, n1, n2;  /* left part element pointers */
-extern unsigned short int i, ie;      /* element index */
-extern unsigned short int nel;        /* current element number */
-extern unsigned short int e_level;    /* counter of the longing levels */
-extern unsigned short int not_nil;    /* working variables */
-extern unsigned short int nh;         /* current whole number */
-extern unsigned short int kol_per;    /* subprogram of search in variable table */
-                                      /* table pointer */
-extern unsigned short int nh_x, nh_y; /* hole numbers (under enter in brackets)  */
-extern unsigned short int lrbxy;      /* stoped bracket flag */
+extern unsigned short int n, n1, n2;  // left part element pointers  
+extern unsigned short int i, ie;      // element index  
+extern unsigned short int nel;        // current element number  
+extern unsigned short int e_level;    // counter of the longing levels  
+extern unsigned short int not_nil;    // working variables  
+extern unsigned short int nh;         // current whole number  
+extern unsigned short int kol_per;    // subprogram of search in variable table  
+                                      // table pointer  
+extern unsigned short int nh_x, nh_y; // hole numbers (under enter in brackets)   
+extern unsigned short int lrbxy;      // stoped bracket flag  
 
 extern void cst(unsigned int dir, char *lbl, unsigned int lblleng);
 
