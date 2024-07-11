@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <locale.h>
 #include "refal.def"
 #include "refal.h"
 #include "cerr.h"
@@ -113,7 +114,6 @@ static unsigned int get_idm(char id[8], unsigned int *lid);
 static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid);
 
 typedef struct timespec timespec;
-typedef struct tm tm;
 static timespec t0;
 
 static void SET_time()
@@ -126,36 +126,16 @@ static void GET_time()
     timespec t1;
     timespec_get(&t1, TIME_UTC);
     long int in = t1.tv_nsec - t0.tv_nsec;
-    int is = 0;
+    unsigned long int is = difftime(t1.tv_sec, t0.tv_sec);
     if (in < 0)
     {
         in += 1000000000;
         is--;
     }
-    const tm tm0 = *gmtime(&t0.tv_sec);
-    const tm tm1 = *gmtime(&t1.tv_sec);
-    is += (tm1.tm_sec - tm0.tm_sec);
-    int im = 0;
-    if (is < 0)
-    {
-        is += 60;
-        im--;
-    }
-    im += (tm1.tm_min - tm0.tm_min);
-    int ih = 0;
-    if (im < 0)
-    {
-        im += 60;
-        ih--;
-    }
-    ih += (tm1.tm_hour - tm0.tm_hour);
-    if (ih < 0)
-        ih += 24;
-    char s[19];
-    sprintf(s, "%2d:%2d:%2d.%09ld", ih, im, is, in);
-    for (unsigned int i = 0; i < 7; i += 3)
-        if (s[i] == ' ')
-            s[i] = '0';
+    const unsigned long int im = is / 60;
+    is %= 60;
+    char s[25];
+    sprintf(s, "%02ld:%02ld.%09ld", im, is, in);
     printf("                       elapsed time      = %s\n", s);
 }
 
