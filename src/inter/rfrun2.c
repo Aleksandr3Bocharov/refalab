@@ -1,6 +1,6 @@
 /*----------- file RFRUN2.c -----------------*/
 /*      Refal-interpretator (part 2)         */
-/*      Last edition date: 19.06.2024        */
+/*      Last edition date: 11.07.2024        */
 /*-------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"

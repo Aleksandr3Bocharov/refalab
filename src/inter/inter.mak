@@ -7,7 +7,7 @@
 #Copyright(C) Refal - 2 Team
 #Author : Leonid Belous(aka BLF)
 #E - mail : belous @ilt.kharkov.ua
-#Date : 19.06.2024
+#Date : 11.07.2024
 #############################################################################
 
 ####### Compiler, tools and options
@@ -21,10 +21,9 @@ REFXCV	=	src\inter\refxcv.bat 	# refal2 + assembler for xcv
 TAR	=	tar -cf
 GZIP	=	gzip -9f
 DEL	=	del
-REFLIB	=	lib\librefal2.a
-USERLIB	=	lib\libr2user.a
+REFLIB	=	lib\libr2.a
 S	=      	src\inter
-OBJ	=	lib\r2objects
+OBJ	=	lib\
 ####### Files
 
 SOURCES =		\
@@ -78,7 +77,6 @@ all: $(REFLIB)
 
 $(REFLIB): $(OBJECTS)
 	$(AR) rs $(REFLIB) $(OBJECTS) 
-	$(AR) rs $(USERLIB)
 	-copy $(S)\mainrf.o $(OBJ)
 	-copy $(S)\rfdbg.o $(OBJ)
 

@@ -8,7 +8,7 @@ rem
 rem Copyright (C) Refal-2 Team
 rem Author: Leonid Belous (aka BLF)
 rem E-mail: belous@ilt.kharkov.ua
-rem Date: 28.05.2005
+rem Date: 11.07.2024
 rem *******************************************************************
 
 bin\refal2 src\inter\xcv.ref > src\inter\xcv.log

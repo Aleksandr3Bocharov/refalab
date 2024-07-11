@@ -1,6 +1,6 @@
 /*--------- file -- DEBUG.C ----------------*/
 /*       REFAL-Debugger functions           */
-/*     Last edition date : 19.06.2024       */
+/*     Last edition date : 11.07.2024       */
 /*------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>

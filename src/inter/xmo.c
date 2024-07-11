@@ -2,7 +2,7 @@
 /*                 General MO:              */
 /*     p1, m1, numb, symb, first, last,     */
 /*     lengr, lengw, multe, crel, delf      */
-/*      Last edition date : 19.06.24        */
+/*      Last edition date : 11.07.24        */
 /*------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,6 +1,6 @@
 /*-------------- file -- XGCD.C ------------*/
 /*      MO: gcd - great common divider      */
-/*      Last edition date : 19.06.24        */
+/*      Last edition date : 11.07.24        */
 /*------------------------------------------*/
 #include <stdio.h>
 #include "refal.def"

@@ -1,6 +1,6 @@
 /*-----------  file  --  XAPPLY.C ------------*/
 /*                 MO: apply                  */
-/*       Last modification : 19.06.2024       */
+/*       Last modification : 11.07.2024       */
 /*--------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
