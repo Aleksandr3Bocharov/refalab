@@ -59,10 +59,10 @@ static union
     unsigned short int w;
 } d;
 
-/*
+
 int curr_r;
 int new_r;
-int equal_r; feature that new_r = curr_r
+int equal_r; //feature that new_r = curr_r
 char new_f[4];
 char *ccc; 
 static T_ENT *q, *r;
