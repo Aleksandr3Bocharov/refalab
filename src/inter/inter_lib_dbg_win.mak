@@ -1,6 +1,6 @@
 #############################################################################
 #inter_lib_dbg_win.mak
-#Makefile for interpreter library(libr2_dbg.a) creation,
+#Makefile for interpreter library(libr2_dbg.a) (debug mode) creation,
 #result lib\libr2_dbg.a library
 #Version for Windows(Win95 / 98 / ME / NT / 2000 / XP)
 #
