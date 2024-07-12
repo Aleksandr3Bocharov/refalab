@@ -6,11 +6,10 @@
 # Copyright (C) Refal-2 Team
 # Author: Leonid Belous (aka BLF)
 # E-mail: belous@ilt.kharkov.ua
-# Date: 28.05.2005
+# Date: 12.07.2024
 #############################################################################
 
 MAKE	=	mingw32-make
-DEL	=	del
 
 all:
 
@@ -18,13 +17,20 @@ all:
 # Make the compiler from refal-2 language, 
 # result bin\refal2 executable module
 	
-	$(MAKE) -f src\comp\comp.mak
+	$(MAKE) -f src\comp\comp_win.mak
+	src\comp\delbin.bat
 
 # PHASE II:
 # Make the interpreter from "jazyk sborki",  
-# result lib/librefal2.a - set of object modules.
-# Empty  lib/libr2user.a also created.
+# result lib/libr2.a - set of object modules.
+# result lib/libr2_dbg.a - set of object modules (debug mode).
 	
-	$(MAKE) -f src\inter\inter.mak
+	$(MAKE) -f src\inter\inter_lib_win.mak
+	src\inter\delbin.bat
+	$(MAKE) -f src\inter\inter_lib_dbg_win.mak
+	src\inter\delbin.bat
+	$(MAKE) -f src\inter\inter_o_win.mak
+	src\inter\copy_obj.bat
+	src\inter\delbin.bat
 
 #### end of Makefile
