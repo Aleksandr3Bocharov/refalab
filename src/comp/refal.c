@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "refal.h"
 #include "cerr.h"
@@ -107,10 +108,10 @@ static void equ();
 static void pchzkl();
 static void pchk();
 static void gsp(char n);
-static unsigned int specif(char tail);
-static unsigned int get_id(char id[40], unsigned int *lid);
-static unsigned int get_idm(char id[8], unsigned int *lid);
-static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid);
+static bool specif(char tail);
+static bool get_id(char id[40], unsigned int *lid);
+static bool get_idm(char id[8], unsigned int *lid);
+static bool get_csmb(struct linkti *code, char id[40], unsigned int *lid);
 
 typedef struct timespec timespec;
 static timespec t0;
@@ -526,15 +527,15 @@ static void translate(const char *str, char *class1)
     }
 }
 
-static unsigned int komm()
+static bool komm()
 {
     const char *k;
     for (k = c; (*k == ' ') || (*k == '\t'); k++)
         ;
     if (*k == '*')
-        return TRUE;
+        return true;
     else
-        return FALSE;
+        return false;
 }
 
 static void rdcard()
@@ -582,7 +583,7 @@ static void lblkey(unsigned int pr)
         rdcard();
         if (c[0] == ' ')
             lbl_leng = 0;
-        else if (get_id(stmlbl, &lbl_leng) == 0)
+        else if (!get_id(stmlbl, &lbl_leng))
         {
             pchosh("120 the first symbol is not letter or blank");
             goto LK1;
@@ -756,7 +757,7 @@ SCNV:
             p = scn_e.spec.info.codef = (unsigned char *)genlbl();
             jlabel((T_U *)p);
         }
-        if (specif(')') == 1)
+        if (specif(')'))
         {
             EH ROMA else goto SCNERR;
         }
@@ -764,7 +765,7 @@ SCNV:
     else if (c[m] == ':')
     {
         EH ROMA;
-        if (get_id(id, &id_leng) == 0)
+        if (!get_id(id, &id_leng))
             goto SOSH203;
         if (left_part == 1)
             scn_e.spec.info.codef = (unsigned char *)spref(id, id_leng, ')');
@@ -944,9 +945,9 @@ static void gsp(char n)
         jbyte(n);
 }
 
-static unsigned int specif(char tail)
+static bool specif(char tail)
 { // specifier compiler  
-    unsigned int neg = 0;
+    bool neg = false;
 SPCBLO:
     blout();
 SPCPRC:
@@ -1006,19 +1007,19 @@ SPCPRC:
     goto OSH200;
 SPCFF:
     gsp(ns_ngw);
-    if (neg == 1)
+    if (neg)
         pchosh("207 within specifier default ')' ");
     if (tail == ')')
         goto OSH206;
-    return TRUE;
+    return true;
 SPCL:
-    if (neg == 1)
+    if (neg)
         goto OSH202;
-    neg = 1;
+    neg = true;
     gsp(ns_ng);
     goto SPCGC;
 SPCR:
-    if (neg == 0)
+    if (!neg)
         goto SPCR1;
     EH ROMA0; // kras  
     blout();
@@ -1028,7 +1029,7 @@ SPCR:
         goto SPCR1;
     if (c[m] == ' ')
         goto SPCR2;
-    neg = 0;
+    neg = false;
     gsp(ns_ng);
     goto SPCPRC;
 SPCR1:
@@ -1043,7 +1044,7 @@ SPCR2:
         goto OSH206;
 SPCR3:
     gsp(ns_ngw);
-    return TRUE;
+    return true;
 SPCESC:
     char id[255];
     unsigned int lid;
@@ -1056,7 +1057,7 @@ SPCESC:
     goto SPCGC;
 SPCSP:
     EH ROMA0; // kras  
-    if (get_id(id, &lid) == 0)
+    if (!get_id(id, &lid))
         goto OSH203;
     if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
         pchosh("209 specifier is defined through itself");
@@ -1197,7 +1198,7 @@ SPCGC:
     goto SPCBLO;
 OSH200:
     pchosh("200 specifier is't scaned");
-    return FALSE;
+    return false;
 OSH202:
     pchosh("202 specifier has too many '(' ");
     goto OSH200;
@@ -1262,7 +1263,7 @@ static void il(void (*prog)(const char *, unsigned int)) // treatment of directi
 IL1:
     char id[40];
     unsigned int lid;
-    if (get_id(id, &lid) == 0)
+    if (!get_id(id, &lid))
         goto IL2;
     (*prog)(id, lid);
     blout();
@@ -1285,14 +1286,14 @@ static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned 
 ILM1:
     char id[40];
     unsigned int lid;
-    if (get_id(id, &lid) == 0)
+    if (!get_id(id, &lid))
         goto ILM2;
     char ide[8];
     unsigned int lide;
     if (c[m] == '(')
     {
         EH ROMA;
-        if (get_idm(ide, &lide) == 0)
+        if (!get_idm(ide, &lide))
             goto ILM2;
         (*prog)(id, lid, ide, lide);
         if (c[m] != ')')
@@ -1324,7 +1325,7 @@ static void equ()
     blout();
     char id[40];
     unsigned int lid;
-    if (get_id(id, &lid) == 0)
+    if (!get_id(id, &lid))
         goto EQU1;
     sequ(stmlbl, lbl_leng, id, lid);
     if (c[m] == ' ')
@@ -1338,14 +1339,14 @@ static void pch130()
     pchosh("130 invalid record format");
 }
 
-static unsigned int get_csmb(struct linkti *code, char id[40], unsigned int *lid) // procedure read multiple symbol  
+static bool get_csmb(struct linkti *code, char id[40], unsigned int *lid) // procedure read multiple symbol  
 {
     code->tag = 0;
     code->info.codef = NULL;
     EH ROMA0; // kras  
     if (class[m] == 'D')
         goto CSMBN;
-    if (get_id(id, lid) == 0)
+    if (!get_id(id, lid))
         goto OSH112;
     code->info.codef = (unsigned char *)fnref(id, *lid);
     code->tag = TAGF;
@@ -1374,13 +1375,13 @@ CSMBN3:
 CSMBEND:
     if (c[m] != '/')
         goto OSH113;
-    return TRUE;
+    return true;
 OSH112:
     pchosh("112 unknown type of the multiple symbol ");
-    return FALSE;
+    return false;
 OSH113:
     pchosh("113 default '/' under multiple symbol ");
-    return FALSE;
+    return false;
 }
 
 static char convert(char cm)
@@ -1395,12 +1396,12 @@ static char convert(char cm)
     return cm;
 }
 
-static unsigned int get_id(char id[40], unsigned int *lid)
+static bool get_id(char id[40], unsigned int *lid)
 { // read identifier  
     for (unsigned int i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
-        return FALSE;
+        return false;
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
@@ -1415,20 +1416,20 @@ static unsigned int get_id(char id[40], unsigned int *lid)
         EH ROMA0;
     } // kras  
 ID0:
-    return TRUE;
+    return true;
 }
 
 //read external identifier  
-static unsigned int get_idm(char id[8], unsigned int *lid)
+static bool get_idm(char id[8], unsigned int *lid)
 {
     if (class[m] != 'L')
-        return FALSE;
+        return false;
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
         EH ROMA0; // kras  
         if ((class[m] != 'L') && (class[m] != 'D'))
-            return TRUE;
+            return true;
         id[*lid] = convert(c[m]);
     }
     // if identifier length > 8 then delete tail  
@@ -1437,7 +1438,7 @@ static unsigned int get_idm(char id[8], unsigned int *lid)
         EH ROMA0;
     } // kras  
     (*lid)++;
-    return TRUE;
+    return true;
 }
 
 //********************************************************** 

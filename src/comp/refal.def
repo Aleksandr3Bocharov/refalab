@@ -16,9 +16,6 @@
 #define TAGK 5
 #define TAGD 7
 
-#define TRUE 1
-#define FALSE 0
-
 #define Wbin "wb"
 #define Rbin "rb"
 

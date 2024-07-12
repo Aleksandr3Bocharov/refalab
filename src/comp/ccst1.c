@@ -762,7 +762,7 @@ LOE:
     ie = x[n].i;
     //         attempt to extract left support group      
 LSG:
-    if (lsg_p() == 1)
+    if (lsg_p())
         goto LE_CASE;
     else
         goto RCGL;
@@ -824,7 +824,7 @@ ROE:
     ie = x[n].i;
 //                 attempt to extract right support group      
 RSG:
-    if (rsg_p() == 1)
+    if (rsg_p())
         goto RE_CASE;
     else
         goto RCGR;

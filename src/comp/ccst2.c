@@ -3,6 +3,7 @@
 //        Last edition date : 11.07.24       
 //------------------------------------------ 
 #include <stdio.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "ccst2.h"
 #include "ccst1.h"
@@ -11,7 +12,7 @@
 #include "cerr.h"
 #include "refal.h"
 
-static unsigned int ortgn(unsigned short int n1, unsigned short int n2);
+static bool ortgn(unsigned short int n1, unsigned short int n2);
 
 void isk_v()
 {
@@ -79,7 +80,7 @@ void pch406()
 }
 
 //    attempt to extract left support group      
-unsigned int lsg_p()
+bool lsg_p()
 {
 LSG_:
     n++;
@@ -97,7 +98,7 @@ LSG1:
         goto LSG_;
     if ((x[n].spec.info.codef != NULL) || (v[i].rem != 1))
         goto GEN_LE;
-    if (ortgn(n1, n) == 0)
+    if (!ortgn(n1, n))
         goto GEN_LE;
     x[n].eoemrk = 1;
     x[n].e_level = e_level;
@@ -115,14 +116,14 @@ GEN_LE:
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
-        return TRUE;
+        return true;
     gpev(n_plespc, n_plv);
     gopl(n_lespc, x[n].spec.info.codef);
-    return FALSE;
+    return false;
 }
 
 //        attempt to extract right support group      
-unsigned int rsg_p()
+bool rsg_p()
 {
 RSG_:
     n--;
@@ -141,7 +142,7 @@ RSG1:
     if ((x[n].spec.info.codef != NULL) ||
         (v[i].rem != 1))
         goto GEN_RE;
-    if (ortgn(n, n2) == 0)
+    if (!ortgn(n, n2))
         goto GEN_RE;
     x[n].eoemrk = 1;
     x[n].e_level = e_level;
@@ -159,14 +160,14 @@ GEN_RE:
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
-        return TRUE;
+        return true;
     gpev(n_prespc, n_prv);
     gopl(n_respc, x[n].spec.info.codef);
-    return FALSE;
+    return false;
 }
 
 //    check ortogonality of this sentence against left part  
-static unsigned int ortgn(unsigned short int n1, unsigned short int n2)
+static bool ortgn(unsigned short int n1, unsigned short int n2)
 {
     unsigned short int n = n1;
 ORT1:
@@ -182,7 +183,7 @@ ORT1V:
     (v[i].rem)--;
     goto ORT1;
 ORT1E:
-    unsigned int res = TRUE;
+    bool res = true;
     n = n1;
 ORT2:
     n++;
@@ -196,7 +197,7 @@ ORT2V:
         goto ORT2;
     if (v[i].rem == 0)
         goto ORT2;
-    res = FALSE;
+    res = false;
 ORT2E:
     n = n1;
 ORT3:

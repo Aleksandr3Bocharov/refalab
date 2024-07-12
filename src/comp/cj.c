@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "cj.h"
 #include "cerr.h"
@@ -198,7 +199,7 @@ extern void sfop_w(const char *s, BU *b)
                 un = 65528; // 65536-8 (for bc mojno - 4)  
         }
         unsigned long int lon;
-        while (TRUE)
+        while (true)
         {
             if ((b->buf = (char *)malloc(un)) != NULL)
             {
@@ -299,7 +300,7 @@ extern void sfclose(BU *b)
 static void sfwr2()
 {
     unsigned int ost;
-    while (TRUE)
+    while (true)
     {
         ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
@@ -328,7 +329,7 @@ static void sfwr2()
 static void sfwr(const char *c, unsigned int n, BU *b)
 {
     unsigned int ost;
-    while (TRUE)
+    while (true)
     {
         ost = b->len - b->tek;
         if (ost >= n)
@@ -360,7 +361,7 @@ static void sfwr(const char *c, unsigned int n, BU *b)
 static void sfrd1(char *c, unsigned int n)
 {
     unsigned int ost;
-    while (TRUE)
+    while (true)
     {
         ost = sysut1.len - sysut1.tek;
         if (ost >= n)
@@ -383,7 +384,7 @@ static void sfrd1(char *c, unsigned int n)
 static void sfrd2()
 {
     unsigned int ost;
-    while (TRUE)
+    while (true)
     {
         ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
@@ -404,7 +405,7 @@ static void sfrd2()
 static void sfobmen(unsigned int n)
 {
     unsigned int ost1, ost2;
-    while (TRUE)
+    while (true)
     {
         ost1 = sysut1.len - sysut1.tek;
         //printf("\obmen: n=%d ost1=%d",n,ost1); 
