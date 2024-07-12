@@ -73,9 +73,6 @@ struct refal_
 };
 typedef struct refal_ REFAL;
 
-#define TRUE 1
-#define FALSE 0
-
 #define QC // BLF
 
 #ifdef QC

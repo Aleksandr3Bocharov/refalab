@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "d.h"
 #include "rfintf.h"
@@ -26,14 +27,14 @@ static DET_TAB *last_det = NULL;
 static DET_TAB *det_table;
 static DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
-static unsigned int trace_cond = FALSE;
-static unsigned int trap_cond = FALSE;
-static unsigned int ge_all = TRUE;
-static unsigned int eq_all = TRUE;
-static unsigned short int e1empty = FALSE;
-static unsigned int was_ge;
-static unsigned int was_le;
-static unsigned int was_eq;
+static bool trace_cond = false;
+static bool trap_cond = false;
+static bool ge_all = true;
+static bool eq_all = true;
+static bool e1empty = false;
+static bool was_ge;
+static bool was_le;
+static bool was_eq;
 static unsigned long int s_from = 0L;
 static unsigned long int s_upto = 0L;
 static unsigned long int s_stop = 2147483647L;
@@ -62,9 +63,9 @@ static const linkcb *prevk2, *nextd2;
 
 static void init_det_flags();
 static void get_arg();
-static unsigned int get_det();
-static unsigned int get_numb(long int *numb);
-static unsigned int get_yn(const char *b);
+static bool get_det();
+static bool get_numb(long int *numb);
+static bool get_yn(const char *b);
 static void dbapp(st *ss_st);
 static void getpf(const st *ss_st);
 static void one_step(st *ss_st);
@@ -88,8 +89,8 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
-        ge_all = FALSE;
+        trace_cond = true;
+        ge_all = false;
         while (*arg != '\n')
         {
             get_arg();
@@ -105,8 +106,8 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
-        ge_all = FALSE;
+        trace_cond = true;
+        ge_all = false;
         while (*arg != '\n')
         {
             get_arg();
@@ -122,8 +123,8 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
-        eq_all = FALSE;
+        trace_cond = true;
+        eq_all = false;
         while (*arg != '\n')
         {
             get_arg();
@@ -139,7 +140,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
+        trace_cond = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -155,7 +156,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
+        trace_cond = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -171,7 +172,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = TRUE;
+        trace_cond = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -187,7 +188,7 @@ void rfdbg(st *s_st)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trap_cond = TRUE;
+        trap_cond = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -202,7 +203,7 @@ R1:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb((long int *)&s_stop) == FALSE)
+        if (!get_numb((long int *)&s_stop))
             goto R1;
 R2:
     printf("\n FROM (step number) : ");
@@ -210,7 +211,7 @@ R2:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb((long int *)&s_from) == FALSE)
+        if (!get_numb((long int *)&s_from))
             goto R2;
 R3:
     printf("\n TO (step number) : ");
@@ -218,7 +219,7 @@ R3:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_numb((long int *)&s_upto) == FALSE)
+        if (!get_numb((long int *)&s_upto))
             goto R3;
 R4:
     printf("\n E1= (y/n) : ");
@@ -226,7 +227,7 @@ R4:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (get_yn(buff + i) == 0)
+        if (!get_yn(buff + i))
             goto R4;
     //  set FROM and TO   
     if (!s_from && (s_upto || trace_cond))
@@ -258,10 +259,10 @@ NOT_YET:
     }
     // enter into station "is already"   
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
-        was_ge = FALSE;
+        was_ge = false;
     else
     {
-        was_ge = TRUE;
+        was_ge = true;
         if (!ge_all)
             pr_euc();
     }
@@ -282,10 +283,10 @@ ALREADY:
     {
         //  "isn't already"  
         if (det_table->lt)
-            was_le = FALSE;
+            was_le = false;
         else
         {
-            was_le = TRUE;
+            was_le = true;
             pr_euc();
         }
         //   cut     
@@ -323,10 +324,10 @@ ALREADY:
         if (s_stop < s_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
-            was_eq = FALSE;
+            was_eq = false;
         else
         {
-            was_eq = TRUE;
+            was_eq = true;
             pr_euc();
         }
         if (det_table->tr)
@@ -415,10 +416,10 @@ NOT_YET:
     }
     // enter into station "is already"   
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
-        was_ge = FALSE;
+        was_ge = false;
     else
     {
-        was_ge = TRUE;
+        was_ge = true;
         if (!ge_all)
             pr_euc();
     }
@@ -439,10 +440,10 @@ ALREADY:
     {
         //  "isn't already"  
         if (det_table->lt)
-            was_le = FALSE;
+            was_le = false;
         else
         {
-            was_le = TRUE;
+            was_le = true;
             pr_euc();
         }
         //   cut     
@@ -480,10 +481,10 @@ ALREADY:
         if (s_stop < ss_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
-            was_eq = FALSE;
+            was_eq = false;
         else
         {
-            was_eq = TRUE;
+            was_eq = true;
             pr_euc();
         }
         if (det_table->tr)
@@ -704,7 +705,7 @@ static void get_arg()
     return;
 }
 
-static unsigned int get_det()
+static bool get_det()
 {
     det_table = last_det;
     while (det_table != NULL)
@@ -712,7 +713,7 @@ static unsigned int get_det()
         if (strncmp(det_table->det_id, arg, l_arg) == 0)
         {
             if (*(det_table->det_id + l_arg) == '\0')
-                return TRUE;
+                return true;
         }
         det_table = det_table->det_next;
     }
@@ -736,28 +737,28 @@ static unsigned int get_det()
     det_table->le = 0;
     det_table->lt = 0;
     det_table->tr = 0;
-    return TRUE;
+    return true;
 }
 
-static unsigned int get_numb(long int *numb)
+static bool get_numb(long int *numb)
 {
     if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
     {
         printf("\n                        Invalid number; repeat please.");
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
-static unsigned int get_yn(const char *b)
+static bool get_yn(const char *b)
 {
     if (*b != 'y' && *b != 'n')
     {
         printf("\n                        Answer is \"y/n\"; repeat please.");
-        return FALSE;
+        return false;
     }
     if (*b == 'y')
-        e1empty = TRUE;
-    return TRUE;
+        e1empty = true;
+    return true;
 }
 //---------  end of file DEBUG.C ----------- 

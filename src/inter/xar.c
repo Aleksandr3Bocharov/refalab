@@ -5,6 +5,7 @@
 //      Last edition date : 11.07.2024       
 //------------------------------------------ 
 #include <stdio.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfintf.h"
 
@@ -105,14 +106,14 @@ static linkcb *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static unsigned int dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
-static unsigned int dajch()
+static bool dajch()
 {
     zn = '+';
     kon = y->prev;
     if (x == kon)
     { // pustoe chislo  
         dl = 0;
-        return TRUE;
+        return true;
     }
     x = x->next;
     if ((x->tag == TAGO) &&
@@ -121,7 +122,7 @@ static unsigned int dajch()
         zn = x->info.infoc;
         x = x->next;
         if (x == y)
-            return FALSE; //  w chisle - lish znak  
+            return false; //  w chisle - lish znak  
     }
     for (; (x->tag == TAGN) && (gcoden(x) == 0l); x = x->next)
         ;
@@ -132,16 +133,16 @@ static unsigned int dajch()
         for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
             ;
         if (x != y)
-            return FALSE; // ne makrocifra  
+            return false; // ne makrocifra  
     }
-    return TRUE;
+    return true;
 }
 
-static unsigned int dajarg()
+static bool dajarg()
 {
     x = refal.preva->next;
     if (x->tag != TAGLB)
-        return FALSE;
+        return false;
     y = x->info.codep;
     if (dajch())
     {
@@ -151,7 +152,7 @@ static unsigned int dajarg()
         Xdl = dl;
     }
     else
-        return FALSE;
+        return false;
     x = y;
     y = refal.nexta;
     if (dajch())
@@ -160,10 +161,10 @@ static unsigned int dajarg()
         Yk = kon;
         Yzn = zn;
         Ydl = dl;
-        return TRUE;
+        return true;
     }
     else
-        return FALSE;
+        return false;
 }
 
 static void obmen()
@@ -182,18 +183,18 @@ static void obmen()
     Yzn = c;
 }
 
-static int xmy()
-{ //  if X < Y then TRUE  ( po modulju)  
+static unsigned int xmy()
+{ //  if X < Y then true  ( po modulju)  
     if (Xdl < Ydl)
-        return TRUE;
+        return 1;
     if (Xdl > Ydl)
-        return FALSE;
+        return 0;
     for (x = Xn, y = Yn; (x != Xk->next); x = x->next, y = y->next)
     {
         if (gcoden(x) < gcoden(y))
-            return TRUE;
+            return 1;
         if (gcoden(x) > gcoden(y))
-            return FALSE;
+            return 0;
     }
     return 2; // x=y  
 }
@@ -348,7 +349,7 @@ static void oper(unsigned int o, unsigned int prn)
     case Omul:
         if ((Xdl == 0) || (Ydl == 0))
             goto REZ0;
-        if (lrqlk(Xdl + Ydl + 1) == 0)
+        if (!lrqlk(Xdl + Ydl + 1))
         {
             refal.upshot = 3;
             return;
@@ -485,7 +486,7 @@ static void oper(unsigned int o, unsigned int prn)
             goto odnc;
         }
         //  delenie mnogih  cifr   
-        if (lrqlk((Xdl - Ydl) + 2) == 0)
+        if (!lrqlk((Xdl - Ydl) + 2))
         {
             refal.upshot = 3;
             return;
@@ -708,7 +709,7 @@ static void oper(unsigned int o, unsigned int prn)
     return;
 odnc: // wywod rezultata delenija, kogda ostatok i chastnoe  
     // rawno po odnoj makrocifre a - ost., b - chastnoe   
-    if (slins(refal.preva, 2) == 0)
+    if (!slins(refal.preva, 2))
     {
         refal.upshot = 3;
         return;

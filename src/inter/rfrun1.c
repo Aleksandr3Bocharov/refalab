@@ -467,14 +467,14 @@ SWAPREF:
     goto ADVSTEP;
     // LSC(S);        
 LSC:
-    SHB1 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)) == 0) goto FAIL;
+    SHB1 if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag))) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b1;
     nel++;
     goto NEXTOP;
     // RSC(S);      
 RSC:
-    SHB2 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)) == 0) goto FAIL;
+    SHB2 if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag))) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b2;
     nel++;
@@ -811,7 +811,7 @@ LESC1:
         b1 = b1->info.codep;
         goto LESC1;
     }
-    if (cmpr(SMBL, vpca, (unsigned char *)&(b1->tag)) == 0)
+    if (!cmpr(SMBL, vpca, (unsigned char *)&(b1->tag)))
         goto LESC1;
     jsp++;
     et[nel + 1] = b1->prev;
@@ -845,7 +845,7 @@ RESC1:
         b2 = b2->info.codep;
         goto RESC1;
     }
-    if (cmpr(SMBL, vpca, (unsigned char *)&(b2->tag)) == 0)
+    if (!cmpr(SMBL, vpca, (unsigned char *)&(b2->tag)))
         goto RESC1;
     jsp++;
     et[nel + 2] = b2;
@@ -937,7 +937,7 @@ LSRCH1:
         b1 = b1->info.codep;
         goto LSRCH1;
     };
-    if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)) == 0)
+    if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)))
         goto LSRCH1;
     et[nel + 1] = b1->prev;
     et[nel + 2] = b1;
@@ -953,7 +953,7 @@ RSRCH1:
         b2 = b2->info.codep;
         goto RSRCH1;
     };
-    if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)) == 0)
+    if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)))
         goto RSRCH1;
     et[nel] = b2->next;
     et[nel + 2] = b2;
@@ -962,7 +962,7 @@ RSRCH1:
     goto NEXTOP;
     // WSPC(L);   
 WSPC:
-    if (spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]) == 0)
+    if (!spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]))
         goto FAIL;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
@@ -974,7 +974,7 @@ ESPC:
         b0 = b0->next;
         if ((b0->tag & 0001) != 0)
             b0 = b0->info.codep;
-        if (spc((T_SPCS *)(jsp + 1), vpc, b0) == 0)
+        if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
             goto FAIL;
     };
     vpc = vpc + NMBL + LBLL;
@@ -993,7 +993,7 @@ PLESPC:
 LESPC:
     b1 = et[nel + 1];
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    if (spc((T_SPCS *)(jsp + 1), vpc, b1) == 0)
+    if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
         goto FAIL;
     jsp++;
     et[nel + 1] = b1;
@@ -1014,7 +1014,7 @@ PRESPC:
 RESPC:
     b2 = et[nel];
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    if (spc((T_SPCS *)(jsp + 1), vpc, b2) == 0)
+    if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
         goto FAIL;
     jsp++;
     et[nel] = b2;
@@ -1026,7 +1026,7 @@ LMAX:
     et[nel] = b1->next;
     while ((b1 = b1->next) != b2)
     {
-        if (spc((T_SPCS *)(jsp + 1), vpc, b1) == 0)
+        if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
             break;
         if ((b1->tag & 0001) != 0)
             b1 = b1->info.codep;
@@ -1041,7 +1041,7 @@ RMAX:
     et[nel + 1] = b2->prev;
     while ((b2 = b2->prev) != b1)
     {
-        if (spc((T_SPCS *)(jsp + 1), vpc, b2) == 0)
+        if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
             break;
         if ((b2->tag & 0001) != 0)
             b2 = b2->info.codep;

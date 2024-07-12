@@ -130,7 +130,7 @@ static void get_()
    char c;
    while ((c = getc(f)) != '\n')
    {
-      if (slins(p, 1) == 0)
+      if (!slins(p, 1))
          return;
       p = p->next;
       p->info.codep = NULL;

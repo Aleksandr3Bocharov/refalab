@@ -3,16 +3,16 @@
 //      Last edition date: 11.07.2024         
 //------------------------------------------- 
 #include <stdio.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfrun2.h"
 
 #define NMBL sizeof(char)
 
-static unsigned int letter(char s);
-static unsigned int digit(char s);
-static unsigned int not(unsigned int spcpls);
+static bool letter(char s);
+static bool digit(char s);
 
-unsigned int spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
+bool spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
 // specifier interpreter  
 {
     // spcs-pointer  
@@ -20,7 +20,7 @@ unsigned int spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
     unsigned char *spcvpc; // virtual specifier counter  
     move(LBLL, vpc + 1, (unsigned char *)&spcvpc); // spcvpc = L  
     // positiveness feature of specifier element  
-    unsigned int spcpls = TRUE;
+    bool spcpls = true;
     goto SPCNXT;
 // return from specifier element if "YES"  
 SPCRET:
@@ -28,10 +28,10 @@ SPCRET:
         return spcpls;
     spcsp--;
     // work variable  
-    const unsigned int spcwrk = spcpls;
+    const bool spcwrk = spcpls;
     spcpls = spcsp->spls; //getss (spcpls,spcvpc); 
     spcvpc = spcsp->svpc;
-    if (spcwrk == TRUE)
+    if (spcwrk)
         goto SPCRET;
     spcvpc = spcvpc + LBLL;
 // return from specifier element if "NO"  
@@ -76,18 +76,18 @@ SPCCLL:
     spcsp->svpc = spcvpc;
     move(LBLL, spcvpc, (unsigned char *)&spcvpc);
     spcsp++;
-    spcpls = TRUE;
+    spcpls = true;
     goto SPCNXT;
 SPCW:
     goto SPCRET;
 SPCNG:
-    spcpls = not(spcpls);
+    spcpls = !spcpls;
     goto SPCNXT;
 SPCNGW:
-    spcpls = not(spcpls);
+    spcpls = !spcpls;
     goto SPCRET;
 SPCSC:
-    if (cmpr(SMBL, spcvpc, (unsigned char *)&(b->tag)) == 1)
+    if (cmpr(SMBL, spcvpc, (unsigned char *)&(b->tag)))
         goto SPCRET;
     spcvpc = spcvpc + SMBL;
     goto SPCNXT;
@@ -129,28 +129,21 @@ SPCL:
     goto SPCNXT;
 } //             end      spc           
 
-static unsigned int letter(char s)
+static bool letter(char s)
 {
     if ((s >= 'A' && s <= 'Z') || // A..Z      
         (s >= 'a' && s <= 'z') || // a..z      
         (s > 127 && s < 176) ||   // �..��..�  
         (s > 223 && s < 240))     // �..�      
-        return TRUE;
-    return FALSE;
+        return true;
+    return false;
 }
 
-static unsigned int digit(char s)
+static bool digit(char s)
 {
     if (s >= '0' && s <= '9')
-        return TRUE;
-    return FALSE;
-}
-
-static unsigned int not(unsigned int spcpls)
-{
-    if (spcpls == TRUE)
-        return FALSE;
-    return TRUE;
+        return true;
+    return false;
 }
 
 void link(linkcb *x, linkcb *y)
@@ -220,15 +213,15 @@ int i;
 }*/
  
 
-unsigned int cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2)
+bool cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2)
 {
     for (unsigned int i = 1; i <= n; i++)
     {
         if (*p1 != *p2)
-            return FALSE;
+            return false;
         p1++;
         p2++;
     }
-    return TRUE;
+    return true;
 }
 //------------ end of file RFRUN2.C ---------- 

@@ -4,18 +4,19 @@
 //      Last edition date : 11.07.2024       
 //------------------------------------------ 
 #include <stdio.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfintf.h"
 
 #define N_SWAP 0116
 
-static unsigned int enter(unsigned int emp, linkcb **pp, linkcb **rp)
+static bool enter(bool emp, linkcb **pp, linkcb **rp)
 {
     linkcb *r = refal.preva->next;
     if (r == refal.nexta)
-        return FALSE;
+        return false;
     if (emp && (r->next != refal.nexta))
-        return TRUE;
+        return true;
     linkcb *p;
     if (r->tag == TAGR)
         p = r->info.codep;
@@ -23,7 +24,7 @@ static unsigned int enter(unsigned int emp, linkcb **pp, linkcb **rp)
     {
         const unsigned char *q = r->info.codef;
         if (*q != N_SWAP)
-            return FALSE;
+            return false;
         q++;
         p = (linkcb *)q; //eg 
         if (p->prev == NULL)
@@ -35,10 +36,10 @@ static unsigned int enter(unsigned int emp, linkcb **pp, linkcb **rp)
         }
     }
     else
-        return FALSE;
+        return false;
     *pp = p;
     *rp = r;
-    return TRUE;
+    return true;
 }
 
 static void br_()
@@ -113,7 +114,7 @@ static void (*dgal_1)() = dgall_;
 
 static void gtr_()
 {
-    const unsigned int emp = TRUE;
+    const bool emp = true;
     linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {
@@ -128,7 +129,7 @@ static void (*gtr_1)() = gtr_;
 
 static void rdr_()
 {
-    const unsigned int emp = TRUE;
+    const bool emp = true;
     linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {
@@ -147,7 +148,7 @@ static void (*rdr_1)() = rdr_;
 
 static void ptr_()
 {
-    const unsigned int emp = FALSE;
+    const bool emp = false;
     linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {
@@ -170,7 +171,7 @@ static void (*ptr_1)() = ptr_;
 
 static void wtr_()
 {
-    const unsigned int emp = FALSE;
+    const bool emp = false;
     linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {
@@ -186,7 +187,7 @@ static void (*wtr_1)() = wtr_;
 
 static void swr_()
 {
-    const unsigned int emp = FALSE;
+    const bool emp = false;
     linkcb *p, *r;
     if (!enter(emp, &p, &r))
     {

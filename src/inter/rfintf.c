@@ -4,6 +4,7 @@
 //-------------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfintf.h"
 #include "rfrun1.h"
@@ -11,11 +12,11 @@
 REFAL refal;
 
 static linkcb *last_block = NULL;
-static unsigned int rf_init = 1;
+static bool rf_init = true;
 static unsigned int curr_size = 0;
 static linkcb hd;
 
-static unsigned int lgcl();
+static bool lgcl();
 static void rflist(linkcb *par, unsigned int n);
 
 void rfabe(const char *amsg)
@@ -24,14 +25,14 @@ void rfabe(const char *amsg)
     exit(1);
 }
 
-unsigned int lincrm()
+bool lincrm()
 {
     unsigned int n;
     if (last_block != NULL)
     {
         const linkcb *first_free = refal.flhead->next;
-        const unsigned int was_coll = lgcl();
-        if (was_coll == 1)
+        const bool was_coll = lgcl();
+        if (was_coll)
         {
             const linkcb *p = refal.flhead->next;
             n = 0;
@@ -41,7 +42,7 @@ unsigned int lincrm()
                 p = p->next;
             }
             if (n == 1000)
-                return TRUE;
+                return true;
         }
     }
     linkcb *new_block = malloc(1001 * sizeof(linkcb)); // kras 06.12.88  
@@ -49,37 +50,37 @@ unsigned int lincrm()
     printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
 #endif
     if (new_block == NULL)
-        return FALSE;
+        return false;
     new_block->prev = last_block;
     last_block = new_block;
     curr_size = curr_size + 1000; // kras 06.12.88  
     rflist(new_block + 1, 1000);  // kras 06.12.88  
-    return TRUE;
+    return true;
 }
 
 //  check a number of items in free items list  
-unsigned int lrqlk(unsigned int l)
+bool lrqlk(unsigned int l)
 {
     const linkcb *p = refal.flhead;
     for (unsigned int n = 0; n < l; n++)
     {
         p = p->next;
         if (p == refal.flhead)
-            return FALSE;
+            return false;
     }
-    return TRUE;
+    return true;
 }
 
-unsigned int lins(linkcb *p, unsigned int l)
+bool lins(linkcb *p, unsigned int l)
 {
     if (l < 1)
-        return TRUE;
+        return true;
     linkcb *q1 = refal.flhead;
     for (unsigned int n = 0; n < l; n++)
     {
         q1 = q1->next;
         if (q1 == refal.flhead)
-            return FALSE;
+            return false;
         q1->tag = TAGO;
         q1->info.codep = NULL;
     }
@@ -92,30 +93,30 @@ unsigned int lins(linkcb *p, unsigned int l)
     p1->prev = q1;
     p->next = q;
     q->prev = p;
-    return TRUE;
+    return true;
 }
 
-unsigned int slins(linkcb *p, unsigned int k)
+bool slins(linkcb *p, unsigned int k)
 {
     while (!lrqlk(k))
     {
         if (!lincrm())
         {
             refal.upshot = 3;
-            return FALSE;
+            return false;
         }
     }
     return lins(p, k);
 }
 
-unsigned int linskd(st *ast, const unsigned char *f)
+bool linskd(st *ast, const unsigned char *f)
 {
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
     if (ast->dot != NULL)
         rfabe("Linskd: there are 'k'-signes in view field");
     if (!slins(ast->view, 3))
-        return FALSE;
+        return false;
     linkcb *p = ast->view->next;
     linkcb *r = p->next;
     linkcb *q = ast->view->prev;
@@ -125,7 +126,7 @@ unsigned int linskd(st *ast, const unsigned char *f)
     r->tag = TAGF;
     r->info.codep = (linkcb *)f;
     ast->dot = q;
-    return TRUE;
+    return true;
 }
 
 char rfcnv(char cm)
@@ -139,7 +140,7 @@ char rfcnv(char cm)
 
 void rfinit()
 {
-    rf_init = 0;
+    rf_init = false;
     REFAL *p = &refal;
     p->crprev = (st *)&refal;
     p->crnext = (st *)&refal;
@@ -294,7 +295,7 @@ LACK:
 void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
 {
     printf("\n%s", pt);
-    unsigned int fr = FALSE;
+    bool fr = false;
     while (pr != pn->prev)
     {
         const linkcb *pr1 = pr;
@@ -303,18 +304,18 @@ void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
             rfabe("rfpexm: list structure violation");
         if (pr->tag == TAGO)
         {
-            if (fr == FALSE)
+            if (!fr)
             {
-                fr = TRUE;
+                fr = true;
                 putchar('\'');
             };
             putchar(pr->info.infoc);
         }
         else
         {
-            if (fr == TRUE)
+            if (fr)
             {
-                fr = FALSE;
+                fr = false;
                 putchar('\'');
             };
             if (pr->tag == TAGK)
@@ -345,7 +346,7 @@ void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
                 printf("/<%x>,%lx/", pr->tag, pr->info.codep);
         }
     }
-    if (fr == TRUE)
+    if (fr)
         putchar('\'');
     return;
 }
@@ -366,7 +367,7 @@ void rftpl(linkcb *r, linkcb *p, linkcb *q)
 }
 
 //  copy expression and add it to nessecary place   
-unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
+bool lcopy(linkcb *r, const linkcb *p, const linkcb *q)
 {
     linkcb *f = refal.flhead;
     linkcb *f0 = p->next;
@@ -375,7 +376,7 @@ unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
     {
         f = f->next;
         if (f == refal.flhead)
-            return FALSE;
+            return false;
         switch (f0->tag)
         {
         case TAGLB:
@@ -389,7 +390,7 @@ unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
             if (lastb != NULL)
                 f1 = lastb->info.codep;
             else
-                return FALSE;
+                return false;
             lastb->info.codep = f;
             lastb->tag = TAGLB;
             lastb = f1;
@@ -401,7 +402,7 @@ unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
         f0 = f0->next;
     }
     if (refal.flhead == f)
-        return TRUE;
+        return true;
     f0 = refal.flhead->next;
     f1 = f->next;
     refal.flhead->next = f1;
@@ -411,22 +412,22 @@ unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
     r1->prev = f;
     r->next = f0;
     f0->prev = r;
-    return TRUE;
+    return true;
 }
 
-unsigned int lexist(const st *ast)
+bool lexist(const st *ast)
 {
     const REFAL *p = &refal;
     do
     {
         p = (REFAL *)(p->crnext);
         if (p == (REFAL *)ast)
-            return TRUE;
+            return true;
     } while (p != &refal);
-    return FALSE;
+    return false;
 }
 
-unsigned int lcre(st *ast)
+bool lcre(st *ast)
 {
     if (rf_init)
         rfinit();
@@ -434,10 +435,10 @@ unsigned int lcre(st *ast)
         rfabe("Lcre: process already exists");
     ast->view = refal.flhead->next;
     if (ast->view == refal.flhead)
-        return FALSE;
+        return false;
     ast->store = ast->view->next;
     if (ast->store == refal.flhead)
-        return FALSE;
+        return false;
     linkcb *flhead1 = ast->store->next;
     refal.flhead->next = flhead1;
     flhead1->prev = refal.flhead;
@@ -454,7 +455,7 @@ unsigned int lcre(st *ast)
     ast->dot = NULL;
     ast->step = 0L;
     ast->stop = -1L;
-    return TRUE;
+    return true;
 }
 
 static void mark(linkcb *root)
@@ -488,14 +489,14 @@ UP:
     goto MRK;
 }
 
-static unsigned int lgcl()
+static bool lgcl()
 {
     linkcb hdvar;
     linkcb *hd = &hdvar;
     if (refal.dvar == NULL)
-        return FALSE;
+        return false;
     // mark boxes achieved from view field & burriage  
-    unsigned int was_coll = FALSE;
+    bool was_coll = false;
     const linkcb *pzero = NULL;
     const st *p = refal.crnext;
     while (p != (st *)&refal)
@@ -526,7 +527,7 @@ static unsigned int lgcl()
             }
             else
             { // remove box      
-                was_coll = TRUE;
+                was_coll = true;
                 p1->info.codep = q->info.codep;
                 p1->tag = q->tag;
                 r = q->prev;

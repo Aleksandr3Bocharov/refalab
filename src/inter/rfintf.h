@@ -16,14 +16,14 @@ extern void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn);
 extern void rftermm();
 extern void rftpl(linkcb *r, linkcb *p, linkcb *q);
 
-extern unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q);
-extern unsigned int lcre(st *ast);
-extern unsigned int lexist(const st *ast);
-extern unsigned int lincrm();
-extern unsigned int lins(linkcb *p, unsigned int l);
-extern unsigned int slins(linkcb *p, unsigned int k);
-extern unsigned int linskd(st *ast, const unsigned char *f);
+extern bool lcopy(linkcb *r, const linkcb *p, const linkcb *q);
+extern bool lcre(st *ast);
+extern bool lexist(const st *ast);
+extern bool lincrm();
+extern bool lins(linkcb *p, unsigned int l);
+extern bool slins(linkcb *p, unsigned int k);
+extern bool linskd(st *ast, const unsigned char *f);
 extern linkcb *lldupl(const linkcb *p, const linkcb *q, const linkcb *u);
-extern unsigned int lrqlk(unsigned int l);
+extern bool lrqlk(unsigned int l);
 
 #endif

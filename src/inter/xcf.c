@@ -28,8 +28,8 @@ static void ftochar_()
     d.b[1] = 0; // d.w - dlina  
     u -= d.w;
     p = refal.prevr;
-    if (lrqlk(d.w) == 0)
-        if (lincrm() == 0)
+    if (!lrqlk(d.w))
+        if (!lincrm())
         {
             rfdel(refal.prevr, refal.nextr);
             refal.upshot = 3;

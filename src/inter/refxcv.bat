@@ -11,5 +11,5 @@ rem E-mail: belous@ilt.kharkov.ua
 rem Date: 11.07.2024
 rem *******************************************************************
 
-bin\refal2 src\inter\xcv.ref > src\inter\xcv.log
+bin\refal2 src\inter\xcv > src\inter\xcv.log
 as -o src\inter\xcv.o src\inter\xcv.asm >> src\inter\xcv.log 

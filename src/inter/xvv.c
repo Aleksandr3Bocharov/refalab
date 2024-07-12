@@ -3,6 +3,7 @@
 //      Last edition date : 11.07.24        
 //----------------------------------------- 
 #include <stdio.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfintf.h"
 
@@ -166,11 +167,11 @@ static void (*clsp_1)() = clsp_;
 static void libg_()
 {
     linkcb *p = refal.preva->next;
-    unsigned int new = FALSE;
+    bool new = false;
     if (p->tag != TAGN)
     {
         jl = 0;
-        new = TRUE;
+        new = true;
     }
     else
     {
@@ -191,10 +192,10 @@ static void libg_()
     if (c == EOF)
         return;
     unsigned int j;
-    if (new == TRUE)
+    if (new)
     { // sovmestimost s ES  
         p = refal.prevr;
-        if (slins(p, 80) == 0)
+        if (!slins(p, 80))
             return;
         for (j = 0; j < i; j++)
         {
@@ -310,7 +311,7 @@ static void card_()
     char c;
     while ((c = getchar()) != '\n')
     {
-        if (slins(p, 1) == 0)
+        if (!slins(p, 1))
             return;
         p = p->next;
         p->info.codep = NULL;
