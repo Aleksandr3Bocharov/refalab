@@ -1,7 +1,7 @@
-/*-----------  file  --  XAPPLY.C ------------*/
-/*                 MO: apply                  */
-/*       Last modification : 11.07.2024       */
-/*--------------------------------------------*/
+//-----------  file  --  XAPPLY.C ------------ 
+//                 MO: apply                   
+//       Last modification : 11.07.2024        
+//-------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
@@ -16,7 +16,7 @@ static void appl_()
     st *s_st;
     unsigned long int l = (unsigned long int)&s_st;
     if ((l & 0xffffL) < 200L)
-    { /* printf("\nStack overflow!");*/
+    { // printf("\nStack overflow!"); 
         goto LACK;
     }
     st *upst = refal.currst;
@@ -42,21 +42,21 @@ static void appl_()
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    /*   printf("\nEnter: %ld",upst->step); */
+    //   printf("\nEnter: %ld",upst->step);  
     s_st->stop = 0x7FFFFFFFl;
     do
     {
         if (dba == NULL)
-            rfrun(s_st); /* net prokrutki */
+            rfrun(s_st); // net prokrutki  
         else
-            (*dba)(s_st); /* prokrutka vkluchena */
+            (*dba)(s_st); // prokrutka vkluchena  
         if (s_st->state == 3)
             if (lincrm())
                 s_st->state = 1;
     } while ((s_st->state == 1) && (s_st->dot != NULL));
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
-    /*   printf("\nOut: %ld %lx",upst->step,upst);  */
+    //   printf("\nOut: %ld %lx",upst->step,upst);   
     switch (s_st->state)
     {
     case 1:
@@ -84,4 +84,4 @@ static char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', '\005'};
 G_L_B char apply = '\122';
 static void (*appl_1)() = appl_;
 
-/*----------  end of file XAPPLY.C  -----------*/
+//----------  end of file XAPPLY.C  ----------- 

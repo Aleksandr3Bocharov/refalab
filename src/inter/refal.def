@@ -1,13 +1,13 @@
-//--------------- file -- REFAL.DEF ----------------- 
-//          Last modification : 11.07.24		      
-//--------------------------------------------------- 
+//--------------- file -- REFAL.DEF -----------------
+//          Last modification : 11.07.24
+//---------------------------------------------------
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
-// BLF - UNIX for operation system Linux, FreeBSD  
-//#define UNIX 
+// BLF - UNIX for operation system Linux, FreeBSD
+// #define UNIX
 
-//#define mdebug
+// #define mdebug
 
 #define TAGO 0
 #define TAGF 2
@@ -18,70 +18,71 @@
 #define TAGK 5
 #define TAGD 7
 
-// BLF pragma for 1 byte aligniment structure ------------ 
+// BLF pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
+struct linkcb_
+{
+    struct linkcb_ *prev;
+    struct linkcb_ *next;
+    unsigned short int tag;
+    union
+    {
+        char infoc;
+        unsigned long int coden;
+        struct linkcb_ *codep;
+        unsigned char *codef;
+    } info;
+};
 
-	struct  linkcb_ {
-		struct	linkcb_ *prev;
-		struct	linkcb_ *next;
-		unsigned short int tag;
-		union {
-			char infoc;
-			unsigned long int coden;  
-			struct linkcb_ *codep;
-			unsigned char *codef;
-		} info;
-	};
-	
-//#pragma pack(pop)  
+// #pragma pack(pop)
 #pragma pack()
 
-// BLF ------------ end of pragma ------------------------------------  
+// BLF ------------ end of pragma ------------------------------------
 
 typedef struct linkcb_ linkcb;
 
 struct st_
 {
-	struct st_ *stprev;
-	struct st_ *stnext;
-	unsigned int state;
-	linkcb *dot;
-	unsigned long int step;
-	unsigned long int stop;
-	linkcb *view;
-	linkcb *store;
+    struct st_ *stprev;
+    struct st_ *stnext;
+    unsigned int state;
+    linkcb *dot;
+    unsigned long int step;
+    unsigned long int stop;
+    linkcb *view;
+    linkcb *store;
 };
 typedef struct st_ st;
 
 struct refal_
 {
-	st *crprev;
-	st *crnext;
-	unsigned int upshot;
-	linkcb *preva;
-	linkcb *nexta;
-	linkcb *prevr;
-	linkcb *nextr;
-	st *currst;
-	linkcb *flhead;
-	linkcb *svar;
-	linkcb *dvar;
-	unsigned int stmnmb;
-	unsigned int nostm;
-	unsigned int tmmode;
-	unsigned long int tmintv;
+    st *crprev;
+    st *crnext;
+    unsigned int upshot;
+    linkcb *preva;
+    linkcb *nexta;
+    linkcb *prevr;
+    linkcb *nextr;
+    st *currst;
+    linkcb *flhead;
+    linkcb *svar;
+    linkcb *dvar;
+    unsigned int stmnmb;
+    unsigned int nostm;
+    unsigned int tmmode;
+    unsigned long int tmintv;
 };
 typedef struct refal_ REFAL;
 
 #define TRUE 1
 #define FALSE 0
 
-#define QC // BLF  
+#define QC // BLF
 
 #ifdef QC
 
-// BLF 09.07.2004 (VAX version for IBM PC)  
+// BLF 09.07.2004 (VAX version for IBM PC)
 
 #define Z_0 0
 #define Z2
@@ -92,7 +93,7 @@ typedef struct refal_ REFAL;
 #define Z7 '0', '0', '0',
 
 /* BLF - initial version for IBM PC,
-	give error in alignment C-function entry */
+    give error in alignment C-function entry */
 /*
 #define Z_0 1
 #define Z2 '0',
@@ -119,11 +120,11 @@ typedef struct refal_ REFAL;
 
 typedef struct __ptr__
 {
-	char *_ptr_;
+    char *_ptr_;
 } POINT;
 
 #define LBLL sizeof(POINT)
 #define SMBL (sizeof(unsigned short int) + LBLL)
 
 #endif
-//-------  end of file REFAL.DEF --------- 
+//-------  end of file REFAL.DEF ---------

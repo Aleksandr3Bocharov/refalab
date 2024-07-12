@@ -1,7 +1,7 @@
-/*-------------- file -- XGCD.C ------------*/
-/*      MO: gcd - great common divider      */
-/*      Last edition date : 11.07.24        */
-/*------------------------------------------*/
+//-------------- file -- XGCD.C ------------ 
+//      MO: gcd - great common divider       
+//      Last edition date : 11.07.24         
+//------------------------------------------ 
 #include <stdio.h>
 #include "refal.def"
 #include "rfintf.h"
@@ -10,11 +10,11 @@
 #define HMAX 4096L
 #define MASKA 0xffffffL
 
-static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posledov. makrocifr */
-{                                                            /*  X - ukaz. na konec            */
+static void norm(linkcb *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
+{                                                            //  X - ukaz. na konec             
     unsigned long int peren = 0l;
     const unsigned int ip = 24 - j;
-    const unsigned long int m = MASKA >> j; /* maska */
+    const unsigned long int m = MASKA >> j; // maska  
     for (unsigned int i = 0; i < dl; i++)
     {
         const unsigned long int g = gcoden(X);
@@ -26,7 +26,7 @@ static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posle
 }
 
 static void ymn(long int *a, long int *b)
-{ /* rez.: a - star., b - mlad. */
+{ // rez.: a - star., b - mlad.  
     if (*a == 0l)
     {
         *b = 0l;
@@ -60,7 +60,7 @@ static void ymn(long int *a, long int *b)
 
 static void gcd_()
 {
-    /*   sint. control */
+    //   sint. control  
     linkcb *pr = refal.preva->next;
     if (pr->tag != TAGLB)
         goto NEOT;
@@ -86,8 +86,8 @@ static void gcd_()
         tl[i] = pr->prev;
     }
 
-OC: /********   ob. cikl  ************/
-    /*   unicht. lewyh nulej */
+OC: //*******   ob. cikl  *********** 
+    //   unicht. lewyh nulej  
     if (l[0] != 0)
         while (gcoden(hd[0]) == 0l && l[0] > 0)
         {
@@ -111,7 +111,7 @@ OC: /********   ob. cikl  ************/
         rez = 0;
         goto FIN1;
     }
-    /*   delaem 1 > 2  */
+    //   delaem 1 > 2   
     unsigned long int v1, v2;
     if (l[0] == l[1])
     {
@@ -145,7 +145,7 @@ OC: /********   ob. cikl  ************/
         l[1] = i;
     }
 M21:
-    /*   wybor metoda */
+    //   wybor metoda  
    unsigned long int A = 0l;
     pr = hd[0];
     unsigned int k;
@@ -160,8 +160,8 @@ M21:
     unsigned long int B;
     if ((l[0] == 1) || (l[0] == 2 && k == 2))
     {
-        /* Evklid nad korotkimi */
-        /* UTV: l[0] >= l[1] */
+        // Evklid nad korotkimi  
+        // UTV: l[0] >= l[1]  
         B = 0l;
         pr = hd[1];
         for (k = 0; k < l[1]; k++)
@@ -177,7 +177,7 @@ M21:
             A = B;
             B = v2;
         }
-        /* UTV: rez v A */
+        // UTV: rez v A  
         pr = refal.preva->next;
         v1 = A >> 24;
         if (v1 != 0l)
@@ -193,20 +193,20 @@ M21:
         rftpl(refal.prevr, refal.preva, pr);
         return;
     }
-    /*    A - pribligenie  */
-    /*    k={ 1/2 }        */
+    //    A - pribligenie   
+    //    k={ 1/2 }         
     const unsigned int la = k;
     const int lb = l[1] - (l[0] - la);
     long int x[2];
     unsigned long int y[2];
     if (lb <= 0)
     {
-        /*  shag delenija (normal)   */
-        /*  A nabrano s nedostatkom  */
-        /*  l[0] > l[1]   l[1] >0          */
-        /*  B nabiraem s izbytkom    */
+        //  shag delenija (normal)    
+        //  A nabrano s nedostatkom   
+        //  l[0] > l[1]   l[1] >0           
+        //  B nabiraem s izbytkom     
     SHD:
-        /*  delenie mnogih  cifr  */
+        //  delenie mnogih  cifr   
         hd[0] = hd[0]->prev;
         hd[0]->tag = TAGN;
         pcoden(hd[0], 0l);
@@ -220,7 +220,7 @@ M21:
         unsigned int n;
         unsigned long int b;
         if (l[1] != 0)
-        { /* wozmovna normalizacija */
+        { // wozmovna normalizacija  
             b = gcoden(hd[1]);
             for (n = 0; b < 8388608l; n++, b += b)
                 ;
@@ -244,11 +244,11 @@ M21:
                 unsigned long int b1;
                 if ((a == 0l) && (a1 >= b))
                 {
-                    c = 1l; /*  t.k. b - normalizowano */
+                    c = 1l; //  t.k. b - normalizowano  
                     a = a1;
                 }
                 else
-                { /* delim a,a1 na b */
+                { // delim a,a1 na b  
                     a = (a * 128) + (a1 >> 17);
                     c = (a / b) << 17;
                     b1 = a1 >> 10;
@@ -278,10 +278,10 @@ M21:
                         y[0] += b;
                     }
                     if (i == 1)
-                        c++; /* na wcjakij sluchaj */
+                        c++; // na wcjakij sluchaj  
                 }
             }
-            /* umnovenie  delitelja  na 'c' i wychit. iz X */
+            // umnovenie  delitelja  na 'c' i wychit. iz X  
             if (c != 0L)
             {
                 const linkcb *Yt = tl[1];
@@ -306,7 +306,7 @@ M21:
                     peren += a;
                 }
                 if (peren != 0L)
-                { /* cifra welika  */
+                { // cifra welika   
                     do
                     {
                         c -= 1L;
@@ -339,7 +339,7 @@ M21:
             peren = 0L;
             i = 24 - n;
             c = MASKA >> i;
-            /* denormalizacija ostatka */
+            // denormalizacija ostatka  
             for (px = hd[0]; px != tl[0]->next; px = px->next)
             {
                 a = gcoden(px);
@@ -347,7 +347,7 @@ M21:
                 peren = a & c;
                 pcoden(px, b);
             }
-            /* denormalizacija delitelja */
+            // denormalizacija delitelja  
             peren = 0L;
             for (px = hd[1]; px != tl[1]->next; px = px->next)
             {
@@ -364,8 +364,8 @@ M21:
            printf("\n B(%d)=%lx",i,gcoden(px));  */
         goto OC;
     }
-    /* UTV:  l[1] > hvosta,  */
-    /* UTV:  l[0] = {1/2} */
+    // UTV:  l[1] > hvosta,   
+    // UTV:  l[0] = {1/2}  
     B = 0l;
     pr = hd[1];
     for (k = 0; k < lb; k++)
@@ -376,9 +376,9 @@ M21:
     }
     if ((A / (B + 1) != (A + 1) / B))
         goto SHD;
-    /*  metod Lemera         */
-    /*  A i B s nedostatkom  */
-    /*printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb);*/
+    //  metod Lemera          
+    //  A i B s nedostatkom   
+    //printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb); 
     unsigned long int AL = A;
     unsigned long int AH = A + 1;
     unsigned long int BL = B;
@@ -387,17 +387,17 @@ M21:
     x[1] = 0;
     y[0] = 0;
     y[1] = 1;
-    /*  vychisl koeff. X i Y  */
+    //  vychisl koeff. X i Y   
     while (BL != 0)
     {
         const unsigned long int Q = AL / BH;
-        /*  UTV:   Q>0  */
+        //  UTV:   Q>0   
         if (Q != AH / BL)
             break;
         const unsigned long int RL = AL - Q * BH;
         const unsigned long int RH = AH - Q * BL;
-        /*  UTV:   RL>=0  */
-        /*  UTV:   RH>0   */
+        //  UTV:   RL>=0   
+        //  UTV:   RH>0    
         AL = BL;
         AH = BH;
         BL = RL;
@@ -409,7 +409,7 @@ M21:
         x[1] = xn;
         y[1] = yn;
     }
-    /*   vyravnivanie dlin  */
+    //   vyravnivanie dlin   
     if (l[0] != l[1])
     {
         hd[1] = hd[1]->prev;
@@ -471,10 +471,10 @@ M21:
             p[i] = p[i]->prev;
         }
     }
-    /*printf("\nFIN Posl chast: r[0]=%ld r[1]=%ld",r[0],r[1]); */
-    /*  UTV: r[0] i r[1] ===0 */
+    //printf("\nFIN Posl chast: r[0]=%ld r[1]=%ld",r[0],r[1]);  
+    //  UTV: r[0] i r[1] ===0  
     goto OC;
-FIN1: /* rez: odno iz chisel */
+FIN1: // rez: odno iz chisel  
     if (l[rez] == 0)
         goto NEOT;
     rftpl(refal.prevr, hd[rez]->prev, tl[rez]->next);
@@ -490,4 +490,4 @@ static char add_0[] = {Z3 'G', 'C', 'D', '\003'};
 G_L_B char gcd = '\122';
 static void (*gcd_1)() = gcd_;
 
-/*------------------ end of file  XGCD.C ----------------*/
+//------------------ end of file  XGCD.C ---------------- 

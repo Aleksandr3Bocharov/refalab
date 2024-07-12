@@ -1,7 +1,7 @@
-/*-------------- file -- XVV.C ------------*/
-/*           MO: file input/output         */
-/*      Last edition date : 11.07.24       */
-/*-----------------------------------------*/
+//-------------- file -- XVV.C ------------ 
+//           MO: file input/output          
+//      Last edition date : 11.07.24        
+//----------------------------------------- 
 #include <stdio.h>
 #include "refal.def"
 #include "rfintf.h"
@@ -22,7 +22,7 @@ static void opng_()
         namf[i] = '\0';
     const linkcb *p = refal.preva->next;
     if (p->tag != TAGN)
-        jl = 0; /* jung zamenila na jl */
+        jl = 0; // jung zamenila na jl  
     else
     {
         jl = p->info.coden;
@@ -41,7 +41,7 @@ static void opng_()
             p = p->next;
         }
     inr = fopen(namf, "r");
-    /*printf("\n opn, namf=%s flg=%d fd=%d",namf,inr->flags,inr->fd);*/
+    //printf("\n opn, namf=%s flg=%d fd=%d",namf,inr->flags,inr->fd); 
     if (inr == NULL)
     {
         printf("\nopnget: can't open file %s", namf);
@@ -91,7 +91,7 @@ static void opnp_()
             p = p->next;
         }
     inw = fopen(namf, m);
-    /*printf("\n opnput, namf=%s mode=%s",namf,m);*/
+    //printf("\n opnput, namf=%s mode=%s",namf,m); 
     if (inw == NULL)
     {
         printf("\nopnput: can't open file %s", namf);
@@ -124,7 +124,7 @@ static void clsg_()
     else
         jung = jl;
     inr = uniget[jung];
-    /*printf("\n cls, flg=%d fd=%d",inr->flags,inr->fd);*/
+    //printf("\n cls, flg=%d fd=%d",inr->flags,inr->fd); 
     fclose(inr);
     return;
 HEOT:
@@ -151,7 +151,7 @@ static void clsp_()
     else
         junp = jl;
     inw = uniput[junp];
-    /*printf("\n cls, flg=%d fd=%d",inw->flags,inw->fd);*/
+    //printf("\n cls, flg=%d fd=%d",inw->flags,inw->fd); 
     fclose(inw);
     return;
 HEOT:
@@ -192,7 +192,7 @@ static void libg_()
         return;
     unsigned int j;
     if (new == TRUE)
-    { /* sovmestimost s ES */
+    { // sovmestimost s ES  
         p = refal.prevr;
         if (slins(p, 80) == 0)
             return;
@@ -304,7 +304,7 @@ static void (*libp_1)() = libp_;
 
 static void card_()
 {
-    if (refal.preva->next != refal.nexta) /* refal.upshot = 2; */
+    if (refal.preva->next != refal.nexta) // refal.upshot = 2;  
         rfpex("", refal.preva, refal.nexta);
     linkcb *p = refal.prevr;
     char c;
@@ -366,4 +366,4 @@ static char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
 G_L_B char proutm = '\122';
 static void (*pr4_1)() = pr4_;
 
-/*------------------ end of file  XVV.C ----------------*/
+//------------------ end of file  XVV.C ---------------- 

@@ -1,8 +1,8 @@
-/*-------------- file -- XTIME.C ------------*/
-/*        MO: rftime (date and time)         */
-/*            rftm (current process time)    */
-/*         Last edition date : 11.07.24      */
-/*-------------------------------------------*/
+//-------------- file -- XTIME.C ------------ 
+//        MO: rftime (date and time)          
+//            rftm (current process time)     
+//         Last edition date : 11.07.24       
+//------------------------------------------- 
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -92,4 +92,4 @@ static char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
 G_L_B char rftm = '\122';
 static void (*rftm_1)() = rftm_;
 
-/*------------------ end of file  XTIME.C ----------------*/
+//------------------ end of file  XTIME.C ---------------- 

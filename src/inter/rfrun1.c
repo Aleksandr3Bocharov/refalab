@@ -1,7 +1,7 @@
-/*----------- file RFRUN1.c -------------------*/
-/*      Refal-interpretator (part 1)           */
-/*      Last edition date: 11.07.2024          */
-/*---------------------------------------------*/
+//----------- file RFRUN1.c ------------------- 
+//      Refal-interpretator (part 1)            
+//      Last edition date: 11.07.2024           
+//--------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -10,7 +10,7 @@
 #include "rfintf.h"
 #include "rfrun2.h"
 
-/* for unlooping: */
+// for unlooping:  
 
 #define NMBL sizeof(char)
 #define SHB1       \
@@ -27,7 +27,7 @@
         goto LACK;
 
 struct sav_
-{ /* save area for var-part of REFAL-block */
+{ // save area for var-part of REFAL-block  
     unsigned int upshot_;
     linkcb *preva_;
     linkcb *nexta_;
@@ -44,39 +44,39 @@ static union
 } u;
 
 static union
-{ /* structure for pointer and integer aligning */
+{ // structure for pointer and integer aligning  
     unsigned char *ptr;
     unsigned long int *inr;
     char chr[2];
 } inch;
 
-static linkcb *et[256];  /* element table */
-static unsigned int nel; /* adress of first free string in element table */
+static linkcb *et[256];  // element table  
+static unsigned int nel; // adress of first free string in element table  
 
-static T_WJS js[64]; /* jump stack and planning translation stack*/
-static T_WJS *jsp;   /* jump stack pointer*/
+static T_WJS js[64]; // jump stack and planning translation stack 
+static T_WJS *jsp;   // jump stack pointer 
 
-static T_TS *tsp; /*translation stack pointer*/
+static T_TS *tsp; //translation stack pointer 
 
-static unsigned int tmmod;        /* timer state */
-static unsigned long int tmstart; /* time at the start */
-static unsigned long int tmstop;  /* time at the end    */
+static unsigned int tmmod;        // timer state  
+static unsigned long int tmstart; // time at the start  
+static unsigned long int tmstop;  // time at the end     
 
-/* definition of work variables and pointers*/
-static unsigned char opc;  /* current statement code */
-static unsigned char *vpc; /* virtual program counter */
-static linkcb *lastk;      /* last acted sign-k adress */
-static linkcb *lastb;      /* last generated left bracket*/
+// definition of work variables and pointers 
+static unsigned char opc;  // current statement code  
+static unsigned char *vpc; // virtual program counter  
+static linkcb *lastk;      // last acted sign-k adress  
+static linkcb *lastb;      // last generated left bracket 
 static linkcb *b0, *b1, *b2;
 static linkcb *f0, *f1, *f;
-static const unsigned char *vpca; /* additional vpc  */
+static const unsigned char *vpca; // additional vpc   
 static unsigned int i, n, m;
 
 static char (*fptr)(REFAL *);
 
-void rfrun(st *ast) /* adress of current state table */
+void rfrun(st *ast) // adress of current state table  
 {
-    /* dynamic area DSA */
+    // dynamic area DSA  
     T_SAV *savecr = malloc(sizeof(T_SAV));
     u.ii = 0;
     if (!lexist(ast))
@@ -84,7 +84,7 @@ void rfrun(st *ast) /* adress of current state table */
     if (ast->state == 4)
         rfabe("rfrun: attampt to run process in state 4");
 
-    /* saving part of refal-block */
+    // saving part of refal-block  
 
     savecr->upshot_ = refal.upshot;
     savecr->preva_ = refal.preva;
@@ -96,32 +96,32 @@ void rfrun(st *ast) /* adress of current state table */
     refal.tmmode = 0;
     refal.currst = ast;
     ast->state = 4;
-    linkcb quasik; /* quasi-sign k */
+    linkcb quasik; // quasi-sign k  
     quasik.info.codep = ast->dot;
-    /* adress of free memory list head */
+    // adress of free memory list head  
     linkcb *flhead = refal.flhead;
     if (tmmod == 1)
         tmstart = time(0l);
     goto START;
-    /* interpreter exits */
-    /* store state       */
+    // interpreter exits  
+    // store state        
 DONE:
-    ast->state = 1; /* normal end*/
+    ast->state = 1; // normal end 
     goto EXIT;
 RCGIMP:
-    ast->state = 2; /* recognition impossible */
+    ast->state = 2; // recognition impossible  
     goto EXIT;
 LACK:
-    ast->state = 3; /* end of free memory*/
+    ast->state = 3; // end of free memory 
     quasik.info.codep = et[2];
     goto EXIT;
-    /* state remove from */
+    // state remove from  
 EXIT:
     if (tmmod == 1)
         tmstop = time(0l);
 EXIT0:
     ast->dot = quasik.info.codep;
-    /* restore REFAL-block */
+    // restore REFAL-block  
     refal.upshot = savecr->upshot_;
     refal.preva = savecr->preva_;
     refal.nexta = savecr->nexta_;
@@ -132,12 +132,12 @@ EXIT0:
     free(savecr);
     if (tmmod == 1)
     {
-        /*printf("\nn=%ld k=%ld",tmstart,tmstop);*/
+        //printf("\nn=%ld k=%ld",tmstart,tmstop); 
         refal.tmintv = (tmstop - tmstart) * 1000000l;
     }
     return;
 
-    /* select next statement assembly language */
+    // select next statement assembly language  
 ADVANCE:
     vpc = vpc + NMBL;
 NEXTOP:
@@ -145,13 +145,13 @@ NEXTOP:
 #ifdef mdebug
     printf("\n switcher");
 
-    /* BLF 03.07.2004 */
+    // BLF 03.07.2004  
     printf(" code8=%o\t(D=%d,H=%x)", opc, opc, opc);
 #endif
 
-    /* operation switcher */
-    /*       OPSWITCH     */
-    /*  printf("\n  ego opc=%o NMBL=%o LBLL=%o SMBL=%o",opc,NMBL,LBLL,SMBL);*/
+    // operation switcher  
+    //       OPSWITCH      
+    //  printf("\n  ego opc=%o NMBL=%o LBLL=%o SMBL=%o",opc,NMBL,LBLL,SMBL); 
 
     switch (opc)
     {
@@ -322,23 +322,23 @@ NEXTOP:
     case 0122:
         goto CFUNC;
     };
-    /* SETNOS(L);    */
+    // SETNOS(L);     
 SETNOS:
     move(LBLL, vpc + NMBL, (unsigned char *)&(inch.inr));
     refal.nostm = (int)*(inch.inr);
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* EOSSN (NN); */
+    // EOSSN (NN);  
 EOSSN:
     move(NMBL + NMBL, vpc + NMBL, (unsigned char *)&(refal.stmnmb));
-    /* EOS;       */
+    // EOS;        
 EOS:
     lastk->info.codep = et[1]->info.codep;
     lastk->tag = TAGK;
-    /* item adress followed by result */
+    // item adress followed by result  
     linkcb *nextr = f->next;
-    /* execute planned transplantation */
-    /* EOS1:    */
+    // execute planned transplantation  
+    // EOS1:     
     while (tsp != (T_TS *)js)
     {
         tsp = tsp - 1;
@@ -347,8 +347,8 @@ EOS:
         link(f1, f->next);
         link(f, f0);
     }
-    /* include replace result */
-    /* INSRES:                */
+    // include replace result  
+    // INSRES:                 
     if (flhead->next == nextr)
         link(et[1]->prev, et[2]->next);
     else
@@ -356,15 +356,15 @@ EOS:
         link(nextr->prev, et[2]->next);
         link(et[1]->prev, flhead->next);
     };
-    /*  delete k and  . */
-    /* DELKD            */
+    //  delete k and  .  
+    // DELKD             
     link(et[2], nextr);
     link(flhead, et[1]);
-    /* increase step number */
+    // increase step number  
 ADVSTEP:
     (ast->step)++;
 
-    /* start of next step */
+    // start of next step  
 START:
     if (ast->step >= ast->stop)
         goto DONE;
@@ -376,15 +376,15 @@ START:
     vpc = (unsigned char *)b1->info.codef;
     if (b1->tag != TAGF)
         goto REF;
-    /* here must be check on c-function */
-    /* if (c) goto CFUNC;               */
+    // here must be check on c-function  
+    // if (c) goto CFUNC;                
     jsp = js;
     et[1] = b0;
     et[2] = b2;
     et[3] = b1;
     nel = 4;
     goto NEXTOP;
-    /* C-refal-function execution */
+    // C-refal-function execution  
 CFUNC:;
     move(LBLL, vpc + NMBL + Z_0, (unsigned char *)&fptr);
     refal.upshot = 1;
@@ -392,7 +392,7 @@ CFUNC:;
     refal.nextr = b0;
     refal.preva = b1;
     refal.nexta = b2;
-    /*        call  C - function    */
+    //        call  C - function     
     (*fptr)(&refal);
     switch (refal.upshot)
     {
@@ -405,16 +405,16 @@ CFUNC:;
     default:
         goto CFDONE;
     }
-    /*        return from C - function   */
-    /*          step is done             */
+    //        return from C - function    
+    //          step is done              
 CFDONE:
     quasik.info.codep = refal.nextr->info.codep;
     link(refal.nextr->prev, refal.nexta->next);
     link(refal.nexta, flhead->next);
     link(flhead, refal.nextr);
     goto ADVSTEP;
-    /*        return from C - function      */
-    /*     free memory exhausted            */
+    //        return from C - function       
+    //     free memory exhausted             
 CFLACK:
     if (refal.prevr->next != refal.nextr)
     {
@@ -425,7 +425,7 @@ CFLACK:
     ast->state = 3;
     goto EXIT;
 
-    /* symbol - reference execution */
+    // symbol - reference execution  
 REF:
     if (b1->tag != TAGR)
         goto RCGIMP;
@@ -434,8 +434,8 @@ REF:
     et[3] = b1;
     f = (linkcb *)vpc;
     goto SWAPREF;
-    /* SWAP;   */
-    /*  static box head is after operator code */
+    // SWAP;    
+    //  static box head is after operator code  
 SWAP:
     vpc = vpc + NMBL;
     f = (linkcb *)vpc;
@@ -465,26 +465,26 @@ SWAPREF:
     link(et[2], flhead->next);
     link(flhead, et[1]);
     goto ADVSTEP;
-    /* LSC(S);       */
+    // LSC(S);        
 LSC:
     SHB1 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)) == 0) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b1;
     nel++;
     goto NEXTOP;
-    /* RSC(S);     */
+    // RSC(S);      
 RSC:
     SHB2 if (cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)) == 0) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b2;
     nel++;
     goto NEXTOP;
-    /* NIL;      */
+    // NIL;       
 NIL:
     if (b1->next != b2)
         goto FAIL;
     goto ADVANCE;
-    /* LB;       */
+    // LB;        
 LB:
     SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
     b2 = b1->info.codep;
@@ -492,7 +492,7 @@ LB:
     et[nel + 1] = b2;
     nel = nel + 2;
     goto ADVANCE;
-    /* RB;      */
+    // RB;       
 RB:
     SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
     b1 = b2->info.codep;
@@ -500,7 +500,7 @@ RB:
     et[nel + 1] = b2;
     nel = nel + 2;
     goto ADVANCE;
-    /* SB(N,M);  */
+    // SB(N,M);   
 SB:
     n = (unsigned int)*(vpc + NMBL);
     m = (unsigned int)*(vpc + NMBL + NMBL);
@@ -508,7 +508,7 @@ SB:
     b2 = et[m];
     vpc = vpc + 3 * NMBL;
     goto NEXTOP;
-    /* LBY;    */
+    // LBY;     
 LBY:
     SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
     et[nel] = b1;
@@ -516,7 +516,7 @@ LBY:
     et[nel + 1] = b1;
     nel = nel + 2;
     goto ADVANCE;
-    /* RBY;    */
+    // RBY;     
 RBY:
     SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
     et[nel + 1] = b2;
@@ -524,7 +524,7 @@ RBY:
     et[nel] = b2;
     nel = nel + 2;
     goto ADVANCE;
-    /* LBNIL  */
+    // LBNIL   
 LBNIL:
     SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
     b0 = b1;
@@ -535,7 +535,7 @@ LBNIL:
     et[nel + 1] = b1;
     nel = nel + 2;
     goto ADVANCE;
-    /* RBNIL; */
+    // RBNIL;  
 RBNIL:
     SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
     b0 = b2;
@@ -546,7 +546,7 @@ RBNIL:
     et[nel + 1] = b0;
     nel = nel + 2;
     goto ADVANCE;
-    /* LSCO(N); */
+    // LSCO(N);  
 LSCO:
     SHB1 if (b1->tag != TAGO) goto FAIL;
     if (b1->info.infoc != *(vpc + NMBL))
@@ -555,7 +555,7 @@ LSCO:
     nel++;
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* RSCO(N);  */
+    // RSCO(N);   
 RSCO:
     SHB2 if (b2->tag != TAGO) goto FAIL;
     if (b2->info.infoc != *(vpc + NMBL))
@@ -564,7 +564,7 @@ RSCO:
     nel++;
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* LTXT(N,S1,...,SN); */
+    // LTXT(N,S1,...,SN);  
 LTXT:
     n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
@@ -579,7 +579,7 @@ LTXT1:
     if (n != 0)
         goto LTXT1;
     goto NEXTOP;
-    /*RTXT(N,S1,...,SN);*/
+    //RTXT(N,S1,...,SN); 
 RTXT:
     n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
@@ -594,19 +594,19 @@ RTXT1:
     if (n != 0)
         goto RTXT1;
     goto NEXTOP;
-    /*LS;           */
+    //LS;            
 LS:
     SHB1 if ((b1->tag & 0001) != 0) goto FAIL;
     et[nel] = b1;
     nel++;
     goto ADVANCE;
-    /* RS;         */
+    // RS;          
 RS:
     SHB2 if ((b2->tag & 0001) != 0) goto FAIL;
     et[nel] = b2;
     nel++;
     goto ADVANCE;
-    /* LSD(N);     */
+    // LSD(N);      
 LSD:
     SHB1
         n = (unsigned int)*(vpc + NMBL);
@@ -618,7 +618,7 @@ LSD:
     nel++;
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* RSD(N);         */
+    // RSD(N);          
 RSD:
     SHB2
         n = (unsigned int)*(vpc + NMBL);
@@ -630,13 +630,13 @@ RSD:
     nel++;
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* CE;       */
+    // CE;        
 CE:
     et[nel] = b1->next;
     et[nel + 1] = b2->prev;
     nel = nel + 2;
     goto ADVANCE;
-    /*LBCE;     */
+    //LBCE;      
 LBCE:
     SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
     b0 = b1;
@@ -647,7 +647,7 @@ LBCE:
     et[nel + 3] = b1->prev;
     nel = nel + 4;
     goto ADVANCE;
-    /*RBCE;    */
+    //RBCE;     
 RBCE:
     SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
     b0 = b2;
@@ -658,7 +658,7 @@ RBCE:
     et[nel + 3] = b0->prev;
     nel = nel + 4;
     goto ADVANCE;
-    /*LED(N);  */
+    //LED(N);   
 LED:
     n = (unsigned int)*(vpc + NMBL);
     et[nel] = b1->next;
@@ -678,7 +678,7 @@ LED2:
     nel = nel + 2;
     vpc = vpc + NMBL * 2;
     goto NEXTOP;
-    /*RED(N);   */
+    //RED(N);    
 RED:
     n = (unsigned int)*(vpc + NMBL);
     et[nel + 1] = b2->prev;
@@ -699,7 +699,7 @@ RED2:
     vpc = vpc + NMBL * 2;
     goto NEXTOP;
 
-    /*LW;    */
+    //LW;     
 LW:
     SHB1
         et[nel] = b1;
@@ -708,7 +708,7 @@ LW:
     et[nel + 1] = b1;
     nel = nel + 2;
     goto ADVANCE;
-    /*RW;    */
+    //RW;     
 RW:
     SHB2
         et[nel + 1] = b2;
@@ -717,12 +717,12 @@ RW:
     et[nel] = b2;
     nel = nel + 2;
     goto ADVANCE;
-    /*NNIL;   */
+    //NNIL;    
 NNIL:
     if (et[nel - 1]->next == et[nel - 2])
         goto FAIL;
     goto ADVANCE;
-    /*PLE;    */
+    //PLE;     
 PLE:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -731,14 +731,14 @@ PLE:
     et[nel + 1] = b1;
     nel = nel + 2;
     goto ADVANCE;
-    /*PLV;     */
+    //PLV;      
 PLV:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel] = b1->next;
     et[nel + 1] = b1;
     goto NEXTOP;
-    /*LE;      */
+    //LE;       
 LE:
     b1 = et[nel + 1];
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
@@ -746,7 +746,7 @@ LE:
     et[nel + 1] = b1;
     nel = nel + 2;
     goto ADVANCE;
-    /*PRE;      */
+    //PRE;       
 PRE:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -755,14 +755,14 @@ PRE:
     et[nel + 1] = b2->prev;
     nel = nel + 2;
     goto ADVANCE;
-    /*PRV;      */
+    //PRV;       
 PRV:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel] = b2;
     et[nel + 1] = b2->prev;
     goto NEXTOP;
-    /*RE;           */
+    //RE;            
 RE:
     b2 = et[nel];
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
@@ -770,28 +770,28 @@ RE:
     et[nel] = b2;
     nel = nel + 2;
     goto ADVANCE;
-    /*SJUMP(L);     */
+    //SJUMP(L);      
 SJUMP:
     move(LBLL, vpc + NMBL, (unsigned char *)&(inch.ptr));
     putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
     jsp++;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /*FAIL;         */
+    //FAIL;          
 FAIL:
     if (jsp == js)
         goto RCGIMP;
     jsp--;
     getjs(jsp, &b1, &b2, &nel, &vpc);
     goto NEXTOP;
-    /*PLESC;         */
+    //PLESC;          
 PLESC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel] = b1->next;
     et[nel + 2] = b1;
     goto NEXTOP;
-    /*PLVSC;        */
+    //PLVSC;         
 PLVSC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -799,7 +799,7 @@ PLVSC:
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
     et[nel + 2] = b1;
     goto NEXTOP;
-    /* LESC(S);    */
+    // LESC(S);     
 LESC:
     vpc = vpc + NMBL + SMBL;
     vpca = vpc - SMBL;
@@ -807,7 +807,7 @@ LESC0:
     b1 = et[nel + 2];
 LESC1:
     SHB1 if ((b1->tag & 0001) != 0)
-    { /* if(BRA(B1)) */
+    { // if(BRA(B1))  
         b1 = b1->info.codep;
         goto LESC1;
     }
@@ -818,14 +818,14 @@ LESC1:
     et[nel + 2] = b1;
     nel = nel + 3;
     goto NEXTOP;
-    /* PRESC; */
+    // PRESC;  
 PRESC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel + 1] = b2->prev;
     et[nel + 2] = b2;
     goto NEXTOP;
-    /* PRVSC; */
+    // PRVSC;  
 PRVSC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -833,7 +833,7 @@ PRVSC:
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
     et[nel + 2] = b2;
     goto NEXTOP;
-    /* RESC(S); */
+    // RESC(S);  
 RESC:
     vpc = vpc + NMBL + SMBL;
     vpca = vpc - SMBL;
@@ -841,7 +841,7 @@ RESC0:
     b2 = et[nel + 2];
 RESC1:
     SHB2 if ((b2->tag & 0001) != 0)
-    { /* if(BRA(B2)) */
+    { // if(BRA(B2))  
         b2 = b2->info.codep;
         goto RESC1;
     }
@@ -852,26 +852,26 @@ RESC1:
     et[nel] = b2->next;
     nel = nel + 3;
     goto NEXTOP;
-    /* LESD(N); */
+    // LESD(N);  
 LESD:
     n = (unsigned int)*(vpc + NMBL);
     vpca = (unsigned char *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto LESC0;
-    /* RESD(N); */
+    // RESD(N);  
 RESD:
     n = (unsigned int)*(vpc + NMBL);
     vpca = (unsigned char *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto RESC0;
-    /* PLEB; */
+    // PLEB;  
 PLEB:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel] = b1->next;
     et[nel + 3] = b1;
     goto NEXTOP;
-    /* PLVB; */
+    // PLVB;  
 PLVB:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -879,7 +879,7 @@ PLVB:
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
     et[nel + 3] = b1;
     goto NEXTOP;
-    /* LEB;  */
+    // LEB;   
 LEB:
     b1 = et[nel + 3];
 LEB1:
@@ -891,14 +891,14 @@ LEB1:
     et[nel + 3] = b2;
     nel = nel + 4;
     goto ADVANCE;
-    /* PREB; */
+    // PREB;  
 PREB:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
     et[nel + 1] = b2->prev;
     et[nel + 2] = b2;
     goto NEXTOP;
-    /* PRVB; */
+    // PRVB;  
 PRVB:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -906,7 +906,7 @@ PRVB:
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
     et[nel + 2] = b2;
     goto NEXTOP;
-    /*  REB;    */
+    //  REB;     
 REB:
     b2 = et[nel + 2];
 REB1:
@@ -918,17 +918,17 @@ REB1:
     et[nel + 2] = b1;
     nel = nel + 4;
     goto ADVANCE;
-    /* EOE(N);  */
+    // EOE(N);   
 EOE:
     n = (unsigned int)*(vpc + NMBL);
     jsp = jsp - n;
     vpc = vpc + 2 * NMBL;
     goto NEXTOP;
-    /* EOEI;   */
+    // EOEI;    
 EOEI:
     jsp--;
     goto ADVANCE;
-    /*LSRCH(S);  */
+    //LSRCH(S);   
 LSRCH:
     et[nel] = b1->next;
 LSRCH1:
@@ -944,7 +944,7 @@ LSRCH1:
     nel = nel + 3;
     vpc = vpc + NMBL + SMBL;
     goto NEXTOP;
-    /*RSRCH(S);  */
+    //RSRCH(S);   
 RSRCH:
     et[nel + 1] = b2->prev;
 RSRCH1:
@@ -960,13 +960,13 @@ RSRCH1:
     nel = nel + 3;
     vpc = vpc + NMBL + SMBL;
     goto NEXTOP;
-    /* WSPC(L);  */
+    // WSPC(L);   
 WSPC:
     if (spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]) == 0)
         goto FAIL;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* ESPC(L); */
+    // ESPC(L);  
 ESPC:
     b0 = et[nel - 2]->prev;
     while (b0 != et[nel - 1])
@@ -979,7 +979,7 @@ ESPC:
     };
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /*PLESPC;  */
+    //PLESPC;   
 PLESPC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -989,7 +989,7 @@ PLESPC:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* LESPC(L); */
+    // LESPC(L);  
 LESPC:
     b1 = et[nel + 1];
     SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
@@ -1000,7 +1000,7 @@ LESPC:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* PRESPC; */
+    // PRESPC;  
 PRESPC:
     vpc = vpc + NMBL;
     putjs(jsp, &b1, &b2, &nel, &vpc);
@@ -1010,7 +1010,7 @@ PRESPC:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* RESPC(L); */
+    // RESPC(L);  
 RESPC:
     b2 = et[nel];
     SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
@@ -1021,7 +1021,7 @@ RESPC:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* LMAX(L); */
+    // LMAX(L);  
 LMAX:
     et[nel] = b1->next;
     while ((b1 = b1->next) != b2)
@@ -1036,7 +1036,7 @@ LMAX:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* RMAX(L);  */
+    // RMAX(L);   
 RMAX:
     et[nel + 1] = b2->prev;
     while ((b2 = b2->prev) != b1)
@@ -1051,20 +1051,20 @@ RMAX:
     nel = nel + 2;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* EOR;     */
+    // EOR;      
 EOR:
     f = flhead;
     lastk = &quasik;
     lastb = NULL;
     tsp = (T_TS *)js;
     goto ADVANCE;
-    /* NS(S);  */
+    // NS(S);   
 NS:
     SHF
         move(SMBL, vpc + NMBL, (unsigned char *)&(f->tag));
     vpc = vpc + NMBL + SMBL;
     goto NEXTOP;
-    /* NSO(N);  */
+    // NSO(N);   
 NSO:
     SHF
         f->tag = TAGO;
@@ -1072,10 +1072,10 @@ NSO:
     f->info.infoc = *(vpc + 1);
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* TEXT(N,S1,S2,...,SN); */
+    // TEXT(N,S1,S2,...,SN);  
 TEXT:
     n = (unsigned int)*(vpc + NMBL);
-    /* printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);*/
+    // printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii); 
     vpc = vpc + NMBL + NMBL;
     for (i = 1; i <= n; i++)
     {
@@ -1086,13 +1086,13 @@ TEXT:
         vpc = vpc + NMBL;
     };
     goto NEXTOP;
-    /* BL;       */
+    // BL;        
 BL:
     SHF
         f->info.codep = lastb;
     lastb = f;
     goto ADVANCE;
-    /* BR;      */
+    // BR;       
 BR:
     SHF
         f->info.codep = lastb;
@@ -1102,7 +1102,7 @@ BR:
     f->tag = TAGRB;
     lastb = f1;
     goto ADVANCE;
-    /* BLR;  */
+    // BLR;   
 BLR:
     SHF
         f1 = f;
@@ -1112,7 +1112,7 @@ BLR:
     f1->tag = TAGLB;
     f->tag = TAGRB;
     goto ADVANCE;
-    /* BLF(L);  */
+    // BLF(L);   
 BLF:
     SHF
         f->info.codep = lastb;
@@ -1122,7 +1122,7 @@ BLF:
     f->tag = TAGF;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
-    /* BRACT;    */
+    // BRACT;     
 BRACT:
     SHF
         f->info.codep = lastb;
@@ -1132,7 +1132,7 @@ BRACT:
     lastk = lastb;
     lastb = lastb->info.codep;
     goto ADVANCE;
-    /* ACT(N);  */
+    // ACT(N);   
 ACT:
     n = (unsigned int)*(vpc + NMBL);
     lastk->info.codep = et[n];
@@ -1141,30 +1141,30 @@ ACT:
     et[n]->tag = TAGD;
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /* MULS;   */
+    // MULS;    
 MULS:
     n = (unsigned int)*(vpc + NMBL);
     SHF
         move(SMBL, (unsigned char *)&(et[n]->tag), (unsigned char *)&(f->tag));
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
-    /*MULE(N); */
+    //MULE(N);  
 MULE:
-    /*                    if(ferr == 1){       */
-    /*                        lastb = lastb1;  */
-    /*                        ferr = 0;}       */
-    /*                    else                 */
-    /*                        lastb1 = lastb;  */
+    //                    if(ferr == 1){        
+    //                        lastb = lastb1;   
+    //                        ferr = 0;}        
+    //                    else                  
+    //                        lastb1 = lastb;   
     n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
     f0 = et[n - 1]->prev;
     while (f0 != et[n])
     {
         f0 = f0->next;
-        SHF /*              f = f->next;       instead of SHF */
-            /*             if (f == flhead){                  */
-            /*               ferr = 1;                        */
-            /*               goto LACK;}                      */
+        SHF //              f = f->next;       instead of SHF  
+            //             if (f == flhead){                   
+            //               ferr = 1;                         
+            //               goto LACK;}                       
             if ((f0->tag & 0001) != 0)
         {
             if (f0->tag != TAGRB)
@@ -1188,8 +1188,8 @@ MULE:
         }
     };
     goto NEXTOP;
-    /*TPL(N,M); */
-    /*TPLM(N,M);*/
+    //TPL(N,M);  
+    //TPLM(N,M); 
 TPL:;
 TPLM:
     n = (unsigned int)*(vpc + NMBL);
@@ -1200,8 +1200,8 @@ TPLM:
     putts(tsp, &f, &et[n], &et[m]);
     tsp++;
     goto NEXTOP;
-    /* TPLE(N); (= TPL(N-1,N);)*/
-    /* TPLV(N);                */
+    // TPLE(N); (= TPL(N-1,N);) 
+    // TPLV(N);                 
 TPLE:;
 TPLV:
     n = (unsigned int)*(vpc + NMBL);
@@ -1211,7 +1211,7 @@ TPLV:
     putts(tsp, &f, &et[n - 1], &et[n]);
     tsp++;
     goto NEXTOP;
-    /*TPLS(N); (= TPLM(N,N);) */
+    //TPLS(N); (= TPLM(N,N);)  
 TPLS:
     n = (unsigned int)*(vpc + NMBL);
     vpc = vpc + NMBL + NMBL;
@@ -1219,4 +1219,4 @@ TPLS:
     tsp++;
     goto NEXTOP;
 }
-/*------------ end of file RFRUN1.C ----------*/
+//------------ end of file RFRUN1.C ---------- 

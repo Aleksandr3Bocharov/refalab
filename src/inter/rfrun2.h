@@ -4,7 +4,7 @@
 #include "refal.def"
 
 struct wjs
-{ /* jump stack structure */
+{ // jump stack structure  
     linkcb *jsb1;
     linkcb *jsb2;
     unsigned int jsnel;
@@ -13,7 +13,7 @@ struct wjs
 typedef struct wjs T_WJS;
 
 struct ts
-{ /* translation stack structure*/
+{ // translation stack structure 
     linkcb *ts0;
     linkcb *ts1;
     linkcb *ts2;

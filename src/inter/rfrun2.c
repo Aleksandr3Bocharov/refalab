@@ -1,7 +1,7 @@
-/*----------- file RFRUN2.c -----------------*/
-/*      Refal-interpretator (part 2)         */
-/*      Last edition date: 11.07.2024        */
-/*-------------------------------------------*/
+//----------- file RFRUN2.c ----------------- 
+//      Refal-interpretator (part 2)          
+//      Last edition date: 11.07.2024         
+//------------------------------------------- 
 #include <stdio.h>
 #include "refal.def"
 #include "rfrun2.h"
@@ -13,34 +13,34 @@ static unsigned int digit(char s);
 static unsigned int not(unsigned int spcpls);
 
 unsigned int spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
-/* specifier interpreter */
+// specifier interpreter  
 {
-    /* spcs-pointer */
+    // spcs-pointer  
     T_SPCS *spcsp = pspcsp;
-    unsigned char *spcvpc; /* virtual specifier counter */
-    move(LBLL, vpc + 1, (unsigned char *)&spcvpc); /* spcvpc = L */
-    /* positiveness feature of specifier element */
+    unsigned char *spcvpc; // virtual specifier counter  
+    move(LBLL, vpc + 1, (unsigned char *)&spcvpc); // spcvpc = L  
+    // positiveness feature of specifier element  
     unsigned int spcpls = TRUE;
     goto SPCNXT;
-/* return from specifier element if "YES" */
+// return from specifier element if "YES"  
 SPCRET:
     if (spcsp == pspcsp)
         return spcpls;
     spcsp--;
-    /* work variable */
+    // work variable  
     const unsigned int spcwrk = spcpls;
-    spcpls = spcsp->spls; /*getss (spcpls,spcvpc);*/
+    spcpls = spcsp->spls; //getss (spcpls,spcvpc); 
     spcvpc = spcsp->svpc;
     if (spcwrk == TRUE)
         goto SPCRET;
     spcvpc = spcvpc + LBLL;
-/* return from specifier element if "NO" */
+// return from specifier element if "NO"  
 SPCNXT:
-    /*specifier code */
+    //specifier code  
     const unsigned char spcopc = *spcvpc;
     spcvpc = spcvpc + NMBL;
-    /* switch   */
-    /* SPCOP    */
+    // switch    
+    // SPCOP     
     switch (spcopc)
     {
     case 0000:
@@ -70,7 +70,7 @@ SPCNXT:
     case 0014:
         goto SPCL;
     }
-    /* SPCCLL(L); */
+    // SPCCLL(L);  
 SPCCLL:
     spcsp->spls = spcpls;
     spcsp->svpc = spcvpc;
@@ -127,14 +127,14 @@ SPCL:
     if (letter(b->info.infoc) == 1)
         goto SPCRET;
     goto SPCNXT;
-} /*             end      spc          */
+} //             end      spc           
 
 static unsigned int letter(char s)
 {
-    if ((s >= 'A' && s <= 'Z') || /* A..Z     */
-        (s >= 'a' && s <= 'z') || /* a..z     */
-        (s > 127 && s < 176) ||   /* �..��..� */
-        (s > 223 && s < 240))     /* �..�     */
+    if ((s >= 'A' && s <= 'Z') || // A..Z      
+        (s >= 'a' && s <= 'z') || // a..z      
+        (s > 127 && s < 176) ||   // �..��..�  
+        (s > 223 && s < 240))     // �..�      
         return TRUE;
     return FALSE;
 }
@@ -199,7 +199,7 @@ void move(unsigned int n, const unsigned char *pf, unsigned char *pt)
     }
 }
 
-/* BLF 28.07.2004  - in case of macrodigit - shift -> 16 */
+// BLF 28.07.2004  - in case of macrodigit - shift -> 16  
 /* void move(n,pf,pt) int n; char *pf,*pt; {
 int i;
    if ( *pf == TAGN ) {
@@ -217,8 +217,8 @@ int i;
          *pt = *pf; pt++; pf++;
       }
    }
-}
-*/
+}*/
+ 
 
 unsigned int cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2)
 {
@@ -231,4 +231,4 @@ unsigned int cmpr(unsigned int n, const unsigned char *p1, const unsigned char *
     }
     return TRUE;
 }
-/*------------ end of file RFRUN2.C ----------*/
+//------------ end of file RFRUN2.C ---------- 

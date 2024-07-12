@@ -1,7 +1,7 @@
-/*------------ file -- RFDBG.C -------------*/
-/*          Standard REFAL-Debugger         */
-/*        Last modification : 11.07.24      */
-/*------------------------------------------*/
+//------------ file -- RFDBG.C ------------- 
+//          Standard REFAL-Debugger          
+//        Last modification : 11.07.24       
+//------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
@@ -20,11 +20,11 @@ int main()
         goto LACK;
     if (!linskd(&s_st, (unsigned char *)go))
         goto LACK;
-    rfdbg(&s_st); /* there is exit */
+    rfdbg(&s_st); // there is exit  
 LACK:
     printf("\nREFAL-debugger: no memory for initialization");
     fclose(stdin);
     rftermm();
     exit(1);
 }
-/*---------  end of file RFDBG.C -----------*/
+//---------  end of file RFDBG.C ----------- 

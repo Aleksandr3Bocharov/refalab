@@ -1,7 +1,7 @@
-/*--------- file -- DEBUG.C ----------------*/
-/*       REFAL-Debugger functions           */
-/*     Last edition date : 11.07.2024       */
-/*------------------------------------------*/
+//--------- file -- DEBUG.C ---------------- 
+//       REFAL-Debugger functions            
+//     Last edition date : 11.07.2024        
+//------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +37,7 @@ static unsigned int was_eq;
 static unsigned long int s_from = 0L;
 static unsigned long int s_upto = 0L;
 static unsigned long int s_stop = 2147483647L;
-static unsigned int nogcl = 0; /* garbage collection counter */
+static unsigned int nogcl = 0; // garbage collection counter  
 static unsigned int s_arg;
 static unsigned int l_arg;
 static char buff_id[100];
@@ -75,9 +75,9 @@ static void pr_step();
 
 void rfdbg(st *s_st)
 {
-    /* read task for debugging */
+    // read task for debugging  
     init_det_flags();
-    /*----------------------------------*/
+    //---------------------------------- 
     printf("\n ***** REFAL debugger ***** \n");
 
     printf("\n > (function list) : ");
@@ -228,19 +228,19 @@ R4:
     if (*(buff + i) != '\n')
         if (get_yn(buff + i) == 0)
             goto R4;
-    /*  set FROM and TO  */
+    //  set FROM and TO   
     if (!s_from && (s_upto || trace_cond))
         s_from = 1;
     if (!s_upto && s_from)
         s_upto = 0x7FFFFFFFL;
-    /*==================================*/
-    /*  initialization  */
+    //================================== 
+    //  initialization   
     dba = dbapp;
     printed_step = 0;
     euc_step = 0;
     res_step = 0;
     res_prevk = res_nextd = NULL;
-    /* station "not yet" */
+    // station "not yet"  
 NOT_YET:
     if (s_st->dot == NULL)
         goto DONE;
@@ -256,7 +256,7 @@ NOT_YET:
             goto ABEND;
         goto NOT_YET;
     }
-    /* enter into station "is already"  */
+    // enter into station "is already"   
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
         was_ge = FALSE;
     else
@@ -265,7 +265,7 @@ NOT_YET:
         if (!ge_all)
             pr_euc();
     }
-    /*  cut   */
+    //  cut    
     curr_step1 = curr_step;
     prevk1 = prevk;
     nextd1 = nextd;
@@ -276,11 +276,11 @@ NOT_YET:
         dot1 = pk->info.codep;
         pk->info.codep = NULL;
     }
-    /* "is already" station  */
+    // "is already" station   
 ALREADY:
     if ((det_table->le) || (det_table->lt))
     {
-        /*  "isn't already" */
+        //  "isn't already"  
         if (det_table->lt)
             was_le = FALSE;
         else
@@ -288,7 +288,7 @@ ALREADY:
             was_le = TRUE;
             pr_euc();
         }
-        /*   cut    */
+        //   cut     
         curr_step2 = curr_step;
         prevk2 = prevk;
         nextd2 = nextd;
@@ -299,7 +299,7 @@ ALREADY:
             dot2 = pk->info.codep;
             pk->info.codep = NULL;
         }
-        /* compute call entirely */
+        // compute call entirely  
         while (s_st->dot != NULL)
         {
             getpf(s_st);
@@ -312,14 +312,14 @@ ALREADY:
             if (s_st->state != 1)
                 goto ABEND;
         }
-        /*  joint   */
+        //  joint    
         curr_step = s_st->step;
         s_st->dot = dot2;
         if (was_le)
             pr_finres(curr_step2, prevk2, nextd2);
-    } /* for label ALREADY */
+    } // for label ALREADY  
     else
-    { /* step in station "is already" */
+    { // step in station "is already"  
         if (s_stop < s_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
@@ -342,7 +342,7 @@ ALREADY:
         getpf(s_st);
         goto ALREADY;
     }
-    /*  joint */
+    //  joint  
     s_st->dot = dot1;
     if (!ge_all && was_ge)
         pr_finres(curr_step1, prevk1, nextd1);
@@ -383,7 +383,7 @@ EOJ:
     rfcanc(s_st);
     rftermm();
 
-    /* BLF */
+    // BLF  
     printf("\n");
 
     exit(0);
@@ -413,7 +413,7 @@ NOT_YET:
             goto AB;
         goto NOT_YET;
     }
-    /* enter into station "is already"  */
+    // enter into station "is already"   
     if ((!ge_all && !(det_table->ge)) || det_table->gt)
         was_ge = FALSE;
     else
@@ -422,7 +422,7 @@ NOT_YET:
         if (!ge_all)
             pr_euc();
     }
-    /*  cut   */
+    //  cut    
     curr_step1 = curr_step;
     prevk1 = prevk;
     nextd1 = nextd;
@@ -433,11 +433,11 @@ NOT_YET:
         dot1 = pk->info.codep;
         pk->info.codep = NULL;
     }
-    /* "is already" station  */
+    // "is already" station   
 ALREADY:
     if ((det_table->le) || (det_table->lt))
     {
-        /*  "isn't already" */
+        //  "isn't already"  
         if (det_table->lt)
             was_le = FALSE;
         else
@@ -445,7 +445,7 @@ ALREADY:
             was_le = TRUE;
             pr_euc();
         }
-        /*   cut    */
+        //   cut     
         curr_step2 = curr_step;
         prevk2 = prevk;
         nextd2 = nextd;
@@ -456,7 +456,7 @@ ALREADY:
             dot2 = pk->info.codep;
             pk->info.codep = NULL;
         }
-        /* compute call entirely */
+        // compute call entirely  
         while (ss_st->dot != NULL)
         {
             getpf(ss_st);
@@ -469,14 +469,14 @@ ALREADY:
             if (ss_st->state != 1)
                 goto AB;
         }
-        /*  joint   */
+        //  joint    
         curr_step = ss_st->step;
         ss_st->dot = dot2;
         if (was_le)
             pr_finres(curr_step2, prevk2, nextd2);
-    } /* for label ALREADY */
+    } // for label ALREADY  
     else
-    { /* step in station "is already" */
+    { // step in station "is already"  
         if (s_stop < ss_st->step)
             goto ABEND;
         if ((!eq_all && !det_table->eq) || det_table->ne)
@@ -499,7 +499,7 @@ ALREADY:
         getpf(ss_st);
         goto ALREADY;
     }
-    /*  joint */
+    //  joint  
     ss_st->dot = dot1;
     if (!ge_all && was_ge)
         pr_finres(curr_step1, prevk1, nextd1);
@@ -539,7 +539,7 @@ AB1:
     return;
 }
 
-/*    procedures    */
+//    procedures     
 static void init_det_flags()
 {
     for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
@@ -585,7 +585,7 @@ RET:
 
 static void pr_step()
 {
-    /*printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step);*/
+    //printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step); 
     if (curr_step != printed_step)
     {
         printf("\n***** step %ld", curr_step);
@@ -672,7 +672,7 @@ static void getpf(const st *ss_st)
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
-            buff_id[i] = rfcnv(*(p_id + i)); /* kras */
+            buff_id[i] = rfcnv(*(p_id + i)); // kras  
         buff_id[id_l] = '\0';
     }
     det_table = last_det;
@@ -760,4 +760,4 @@ static unsigned int get_yn(const char *b)
         e1empty = TRUE;
     return TRUE;
 }
-/*---------  end of file DEBUG.C -----------*/
+//---------  end of file DEBUG.C ----------- 

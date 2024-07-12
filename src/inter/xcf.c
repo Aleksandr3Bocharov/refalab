@@ -1,7 +1,7 @@
-/*------------ file -- XCF.C ---------------*/
-/*   MO: ftochar, rftime, functab, chartof  */
-/*       Last edition date : 11.07.24       */
-/*------------------------------------------*/
+//------------ file -- XCF.C --------------- 
+//   MO: ftochar, rftime, functab, chartof   
+//       Last edition date : 11.07.24        
+//------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +25,7 @@ static void ftochar_()
         unsigned short int w;
     } d;
     d.b[0] = *u;
-    d.b[1] = 0; /* d.w - dlina */
+    d.b[1] = 0; // d.w - dlina  
     u -= d.w;
     p = refal.prevr;
     if (lrqlk(d.w) == 0)
@@ -95,7 +95,7 @@ static void chartof_()
         u[i] = rfcnv(p->info.infoc);
     u[i] = i;
     ++i;
-    u[i] = 2; /* HEOT */
+    u[i] = 2; // HEOT  
     char *j = u + i;
     union
     {
@@ -108,8 +108,8 @@ static void chartof_()
         d.b[0] = *(func_f[k] - 1);
         if ((i == d.w + 1) && (strncmp(u, func_f[k] - (d.w + 1), d.w) == 0))
         {
-            /* identificator iz tablicy ne preobr. w zaglawnye!!! */
-            /* poetomu w m.o. imja d.b. napisano zaglawnymi!      */
+            // identificator iz tablicy ne preobr. w zaglawnye!!!  
+            // poetomu w m.o. imja d.b. napisano zaglawnymi!       
             p = refal.preva->next;
             p->tag = TAGF;
             p->info.codef = (unsigned char *)func_f[k];
@@ -142,4 +142,4 @@ static char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
 G_L_B char chartof = '\122';
 static void (*chartof_1)() = chartof_;
 
-/*------------------ end of file  XCF.C ----------------*/
+//------------------ end of file  XCF.C ---------------- 

@@ -1,7 +1,7 @@
-/*-----------  file  --  RFINTF.C ------------------*/
-/*           C-interface functions                  */
-/*        Last modification : 11.07.2024            */
-/*--------------------------------------------------*/
+//-----------  file  --  RFINTF.C ------------------ 
+//           C-interface functions                   
+//        Last modification : 11.07.2024             
+//-------------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
@@ -44,7 +44,7 @@ unsigned int lincrm()
                 return TRUE;
         }
     }
-    linkcb *new_block = malloc(1001 * sizeof(linkcb)); /* kras 06.12.88 */
+    linkcb *new_block = malloc(1001 * sizeof(linkcb)); // kras 06.12.88  
 #ifdef mdebug
     printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
 #endif
@@ -52,12 +52,12 @@ unsigned int lincrm()
         return FALSE;
     new_block->prev = last_block;
     last_block = new_block;
-    curr_size = curr_size + 1000; /* kras 06.12.88 */
-    rflist(new_block + 1, 1000);  /* kras 06.12.88 */
+    curr_size = curr_size + 1000; // kras 06.12.88  
+    rflist(new_block + 1, 1000);  // kras 06.12.88  
     return TRUE;
 }
 
-/*  check a number of items in free items list */
+//  check a number of items in free items list  
 unsigned int lrqlk(unsigned int l)
 {
     const linkcb *p = refal.flhead;
@@ -134,7 +134,7 @@ char rfcnv(char cm)
     if ((j > 96) && (j < 123))
         return cm - '\40';
     else
-        return cm; /* perewod  a..z w A..Z */
+        return cm; // perewod  a..z w A..Z  
 }
 
 void rfinit()
@@ -180,7 +180,7 @@ void rfcanc(const st *ast)
     refal.flhead->prev = store1;
 }
 
-/*    delete part of list and add it to free memory list */
+//    delete part of list and add it to free memory list  
 void rfdel(linkcb *p, linkcb *q)
 {
     linkcb *p1 = p->next;
@@ -223,7 +223,7 @@ void rfexec(const unsigned char *func)
     s_st.stop = 0x7FFFFFFFL;
 AGAIN:
 
-/* BLF 17.07.2004 */
+// BLF 17.07.2004  
 #ifdef mdebug
     /*	step by step execution with full debug trace information
        see refal-2 user manual (3.14 - example of processing control) */
@@ -242,7 +242,7 @@ AGAIN:
             rfpexm(" Result: ", prevk, nextd);
     }
 #else
-    /* no debug info */
+    // no debug info  
     rfrun(&s_st);
     if (s_st.state == 3)
         if (lincrm())
@@ -250,7 +250,7 @@ AGAIN:
     if (s_st.dot != NULL)
         goto ABEND;
 #endif
-    /* BLF -- end correction 17.07.2004 */
+    // BLF -- end correction 17.07.2004  
 
 DONE:
     printf("\nConcretization is executed");
@@ -282,7 +282,7 @@ EOJ:
     rfcanc(&s_st);
     rftermm();
 
-    /* BLF */
+    // BLF  
     printf("\n");
 
     return;
@@ -365,7 +365,7 @@ void rftpl(linkcb *r, linkcb *p, linkcb *q)
     p1->prev = r;
 }
 
-/*  copy expression and add it to nessecary place  */
+//  copy expression and add it to nessecary place   
 unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
 {
     linkcb *f = refal.flhead;
@@ -396,7 +396,7 @@ unsigned int lcopy(linkcb *r, const linkcb *p, const linkcb *q)
             break;
         default:
             f->tag = f0->tag;
-            /*   pcoden(f,gcoden(f0)); */
+            //   pcoden(f,gcoden(f0));  
         }
         f0 = f0->next;
     }
@@ -494,7 +494,7 @@ static unsigned int lgcl()
     linkcb *hd = &hdvar;
     if (refal.dvar == NULL)
         return FALSE;
-    /* mark boxes achieved from view field & burriage */
+    // mark boxes achieved from view field & burriage  
     unsigned int was_coll = FALSE;
     const linkcb *pzero = NULL;
     const st *p = refal.crnext;
@@ -504,7 +504,7 @@ static unsigned int lgcl()
         mark(p->store);
         p = p->stnext;
     }
-    /* mark boxes achieved from static boxes    */
+    // mark boxes achieved from static boxes     
     if (refal.svar != NULL)
     {
         linkcb *r = refal.svar;
@@ -513,19 +513,19 @@ static unsigned int lgcl()
             mark(r);
             r = r->info.codep;
         } while (r != pzero);
-        /*   remove garbage   */
+        //   remove garbage    
         hd->info.codep = refal.dvar;
         linkcb *p1 = hd;
         linkcb *q = refal.dvar;
         do
         {
             if (q->tag != 0)
-            { /* box isn't removed */
+            { // box isn't removed  
                 q->tag = 0;
                 p1 = q;
             }
             else
-            { /* remove box     */
+            { // remove box      
                 was_coll = TRUE;
                 p1->info.codep = q->info.codep;
                 p1->tag = q->tag;
@@ -623,4 +623,4 @@ linkcb *lldupl(const linkcb *p, const linkcb *q, const linkcb *u)
     }
     return y;
 }
-/*----------- end of file  RFINTF.C ------------*/
+//----------- end of file  RFINTF.C ------------ 

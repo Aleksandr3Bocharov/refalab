@@ -1,8 +1,8 @@
-/*-------------- file -- XJAK.C ------------*/
-/*       MO: br, dg, dgall, rp, cp          */
-/*           gtr, rdr, wtr, swr, new        */
-/*      Last edition date : 11.07.2024      */
-/*------------------------------------------*/
+//-------------- file -- XJAK.C ------------ 
+//       MO: br, dg, dgall, rp, cp           
+//           gtr, rdr, wtr, swr, new         
+//      Last edition date : 11.07.2024       
+//------------------------------------------ 
 #include <stdio.h>
 #include "refal.def"
 #include "rfintf.h"
@@ -25,7 +25,7 @@ static unsigned int enter(unsigned int emp, linkcb **pp, linkcb **rp)
         if (*q != N_SWAP)
             return FALSE;
         q++;
-        p = (linkcb *)q; /*eg*/
+        p = (linkcb *)q; //eg 
         if (p->prev == NULL)
         {
             p->prev = p->next = p;
@@ -52,13 +52,13 @@ static void br_()
         {
             refal.upshot = 2;
             return;
-        }; /* FAIL */
+        }; // FAIL  
     }
     if (!lins(ast->store, 2))
     {
         refal.upshot = 3;
         return;
-    }; /* LACK */
+    }; // LACK  
     linkcb *pl = ast->store->next;
     linkcb *pr = pl->next;
     pl->info.codep = pr;
@@ -83,7 +83,7 @@ DG1:
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     pr = pl->info.codep;
     linkcb *q;
     if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
@@ -103,7 +103,7 @@ static void dgall_()
 {
     const st *ast = refal.currst;
     if (refal.preva->next != refal.nexta)
-        refal.upshot = 2; /* FAIL */
+        refal.upshot = 2; // FAIL  
     else
         rftpl(refal.prevr, ast->store, ast->store);
 }
@@ -119,7 +119,7 @@ static void gtr_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     rftpl(refal.prevr, p, p);
 }
 static char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
@@ -134,12 +134,12 @@ static void rdr_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     if (!lcopy(refal.prevr, p, p))
     {
         refal.upshot = 3;
         return;
-    }; /* LACK */
+    }; // LACK  
 }
 static char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
 G_L_B char rdr = '\122';
@@ -153,11 +153,11 @@ static void ptr_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     linkcb *q = p->prev;
     rftpl(q, r, refal.nexta);
 }
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
 G_L_B char pt_ = '\122';
@@ -176,7 +176,7 @@ static void wtr_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     rfdel(p, p);
     rftpl(p, r, refal.nexta);
 }
@@ -192,7 +192,7 @@ static void swr_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     rftpl(refal.prevr, p, p);
     rftpl(p, r, refal.nexta);
 }
@@ -219,7 +219,7 @@ RP1:
         {
             refal.upshot = 3;
             return;
-        }; /* LACK */
+        }; // LACK  
         pl = ast->store->next;
         pr = pl->next;
         pl->info.codep = pr;
@@ -247,7 +247,7 @@ FAIL:
     return;
 }
 
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char rp_0[] = {Z2 'R', '_', '\002'};
 G_L_B char r_ = '\122';
@@ -270,7 +270,7 @@ CP1:
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     pr = pl->info.codep;
     const linkcb *q;
     if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
@@ -278,7 +278,7 @@ CP1:
     if ((q->tag != TAGO) || (q->info.infoc != '='))
         goto CP1;
     if (!lcopy(refal.prevr, q, pr))
-        refal.upshot = 3; /* LACK */
+        refal.upshot = 3; // LACK  
 }
 static char cp_0[] = {Z2 'C', 'P', '\002'};
 G_L_B char cp = '\122';
@@ -290,7 +290,7 @@ static void new_()
     {
         refal.upshot = 3;
         return;
-    }; /* LACK */
+    }; // LACK  
     linkcb *r = refal.prevr->next;
     r->info.codep = refal.preva;
     r->tag = TAGR;
@@ -307,4 +307,4 @@ static char new_0[] = {Z3 'N', 'E', 'W', '\003'};
 G_L_B char new = '\122';
 static void (*new_1)() = new_;
 
-/*----------------- end of file  XJAK.C ----------------*/
+//----------------- end of file  XJAK.C ---------------- 

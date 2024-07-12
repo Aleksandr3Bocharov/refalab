@@ -1,9 +1,9 @@
-/*-------------- file -- xar_blf.c ---------*/
-/*              Multi-digits MO:            */
-/*       add, sub, mul, div, dr, nrel       */
-/*       addn, subn, muln, divn, drn,       */
-/*      Last edition date : 11.07.2024      */
-/*------------------------------------------*/
+//-------------- file -- xar_blf.c --------- 
+//              Multi-digits MO:             
+//       add, sub, mul, div, dr, nrel        
+//       addn, subn, muln, divn, drn,        
+//      Last edition date : 11.07.2024       
+//------------------------------------------ 
 #include <stdio.h>
 #include "refal.def"
 #include "rfintf.h"
@@ -21,7 +21,7 @@ static void oper(unsigned int o, unsigned int prn);
 
 static void add_() { oper(Oadd, 0); }
 
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char add_0[] = {Z3 'A', 'D', '_', '\003'};
 G_L_B char ad_ = '\122';
@@ -34,7 +34,7 @@ static void (*add_1)() = add_;
 
 static void sub_() { oper(Osub, 0); }
 
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char sub_0[] = {Z3 'S', 'U', '_', '\003'};
 G_L_B char su_ = '\122';
@@ -47,7 +47,7 @@ static void (*sub_1)() = sub_;
 
 static void mul_() { oper(Omul, 0); }
 
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char mul_0[] = {Z3 'M', 'U', '_', '\003'};
 G_L_B char mu_ = '\122';
@@ -65,7 +65,7 @@ static void (*dr_1)() = dr_;
 
 static void divv_() { oper(Odr, 2); }
 
-/* BLF */
+// BLF  
 #ifdef UNIX
 static char div_0[] = {Z3 'D', 'I', '_', '\003'};
 G_L_B char div_ = '\122';
@@ -110,7 +110,7 @@ static unsigned int dajch()
     zn = '+';
     kon = y->prev;
     if (x == kon)
-    { /* pustoe chislo */
+    { // pustoe chislo  
         dl = 0;
         return TRUE;
     }
@@ -121,18 +121,18 @@ static unsigned int dajch()
         zn = x->info.infoc;
         x = x->next;
         if (x == y)
-            return FALSE; /*  w chisle - lish znak */
+            return FALSE; //  w chisle - lish znak  
     }
     for (; (x->tag == TAGN) && (gcoden(x) == 0l); x = x->next)
         ;
     if (x == y)
-        dl = 0; /*  wse cifry - nuli */
+        dl = 0; //  wse cifry - nuli  
     else
     {
         for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
             ;
         if (x != y)
-            return FALSE; /* ne makrocifra */
+            return FALSE; // ne makrocifra  
     }
     return TRUE;
 }
@@ -183,7 +183,7 @@ static void obmen()
 }
 
 static int xmy()
-{ /*  if X < Y then TRUE  ( po modulju) */
+{ //  if X < Y then TRUE  ( po modulju)  
     if (Xdl < Ydl)
         return TRUE;
     if (Xdl > Ydl)
@@ -195,11 +195,11 @@ static int xmy()
         if (gcoden(x) > gcoden(y))
             return FALSE;
     }
-    return 2; /* x=y */
+    return 2; // x=y  
 }
 
 static void ymn(unsigned long int *a, unsigned long int *b)
-{ /* rez.: a - st., b - ml */
+{ // rez.: a - st., b - ml  
     if (*a == 0l)
     {
         *b = 0l;
@@ -231,11 +231,11 @@ static void ymn(unsigned long int *a, unsigned long int *b)
     *b += (r3 & 0xFFF) * HMAX;
 }
 
-static void norm(linkcb *X, unsigned int dl, unsigned int j) /*  normaliz. posledov. makrocifr */
-{                                                            /*  X - ukaz. na konec            */
+static void norm(linkcb *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
+{                                                            //  X - ukaz. na konec             
     unsigned long int peren = 0l;
     const unsigned int ip = 24 - j;
-    const unsigned long int m = 0xFFFFFFl >> j; /* maska */
+    const unsigned long int m = 0xFFFFFFl >> j; // maska  
     for (unsigned int i = 0; i < dl; i++)
     {
         const unsigned long int g = gcoden(X);
@@ -256,7 +256,7 @@ static void oper(unsigned int o, unsigned int prn)
     unsigned long int a, b;
     switch (o)
     {
-    case Osub: /* izmenim znak i skladywaem  */
+    case Osub: // izmenim znak i skladywaem   
         if (Yzn == '-')
             Yzn = '+';
         else
@@ -268,7 +268,7 @@ static void oper(unsigned int o, unsigned int prn)
         {
         REZ0:
             if (prn == 1)
-                return; /* dlja n-operacij */
+                return; // dlja n-operacij  
             x = refal.preva->next;
             x->tag = TAGN;
             pcoden(x, 0l);
@@ -276,7 +276,7 @@ static void oper(unsigned int o, unsigned int prn)
             return;
         }
         if (Xdl == 0)
-        { /*  rezult - wtoroe chislo  */
+        { //  rezult - wtoroe chislo   
             Xn = Yn;
             Xk = Yk;
             Xzn = Yzn;
@@ -284,13 +284,13 @@ static void oper(unsigned int o, unsigned int prn)
         else
         {
             if (Ydl != 0)
-            { /* summiruem  */
+            { // summiruem   
                 if (Xzn == Yzn)
-                { /*  skladywaem  */
+                { //  skladywaem   
                     if (Xdl < Ydl)
                         obmen();
-                    /*  X  dlinnee  Y  (ili =)  */
-                    Xn = Xn->prev; /*  pripisywaem  0  */
+                    //  X  dlinnee  Y  (ili =)   
+                    Xn = Xn->prev; //  pripisywaem  0   
                     Xn->tag = TAGN;
                     pcoden(Xn, 0l);
                     peren = 0L;
@@ -310,15 +310,15 @@ static void oper(unsigned int o, unsigned int prn)
                         }
                         else
                             peren = 0L;
-                    } /*for*/
+                    } //for 
                 }
                 else
-                { /* wychitaem  */
+                { // wychitaem   
                     if (xmy() == 2)
                         goto REZ0;
                     if (xmy())
-                        obmen();   /*  menjaem x i y  */
-                    Xn = Xn->prev; /*  pripisywaem 0  */
+                        obmen();   //  menjaem x i y   
+                    Xn = Xn->prev; //  pripisywaem 0   
                     Xn->tag = TAGN;
                     pcoden(Xn, 0l);
                     peren = 0L;
@@ -340,8 +340,8 @@ static void oper(unsigned int o, unsigned int prn)
                         else
                             peren = 0L;
                         pcoden(x, j);
-                    } /*for*/
-                } /*if*/
+                    } //for 
+                } //if 
             }
         }
         break;
@@ -355,17 +355,17 @@ static void oper(unsigned int o, unsigned int prn)
         }
         linkcb *p = refal.preva;
         linkcb *r = p->next;
-        lins(p, Xdl + Ydl + 1); /*  1 zweno dlja znaka  */
+        lins(p, Xdl + Ydl + 1); //  1 zweno dlja znaka   
         p = p->next;
         r = r->prev;
         for (x = p; x != r->next; x = x->next)
         {
             x->tag = TAGN;
             pcoden(x, 0l);
-        } /*  zanulen rezultat  */
+        } //  zanulen rezultat   
         if (Xdl < Ydl)
             obmen();
-        /*  dobawim 0 k X dlja summir. s perenosom  */
+        //  dobawim 0 k X dlja summir. s perenosom   
         Xn = Xn->prev;
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
@@ -375,7 +375,7 @@ static void oper(unsigned int o, unsigned int prn)
         {
             const unsigned long int d = gcoden(y);
             if (d != 0l)
-            { /* umn. na 1 cifru  */
+            { // umn. na 1 cifru   
                 peren = 0L;
                 const unsigned int b11 = d >> 12;
                 const unsigned int b22 = d & 0xFFF;
@@ -404,7 +404,7 @@ static void oper(unsigned int o, unsigned int prn)
                     const unsigned int r4 = r3 >> 12;
                     a = r1 * HMAX + r2 + r4;
                     b += (r3 & 0xFFF) * HMAX;
-                    /* ymn (&a,&b); */ /* rez:a-st, b-ml  */
+                    // ymn (&a,&b);   // rez:a-st, b-ml   
                 ret:
                     j = gcoden(p) + b + peren;
                     peren = 0L;
@@ -415,7 +415,7 @@ static void oper(unsigned int o, unsigned int prn)
                     }
                     peren += a;
                     pcoden(p, j);
-                } /*for*/
+                } //for 
             }
         }
         if (Xzn != Yzn)
@@ -440,15 +440,15 @@ static void oper(unsigned int o, unsigned int prn)
             goto odnc;
         }
         if (xmy() == 2)
-        { /*  rawny  */
+        { //  rawny   
             a = 0L;
             b = 1L;
             goto odnc;
         }
         if (xmy())
-        { /*  delimoe < delitelja  */
+        { //  delimoe < delitelja   
             if ((prn & 2) == 2)
-            { /* DIV, DIVN */
+            { // DIV, DIVN  
                 a = 0L;
                 b = 0L;
                 Xzn = '+';
@@ -477,24 +477,24 @@ static void oper(unsigned int o, unsigned int prn)
             rftpl(refal.prevr, Xn->prev, Xk->next);
             return;
         }
-        /*   delimoe > delitelja */
+        //   delimoe > delitelja  
         if (Xdl == 1)
-        { /*  oba po odnoj cifre  */
+        { //  oba po odnoj cifre   
             a = (gcoden(Xn)) % (gcoden(Yn));
             b = (gcoden(Xn)) / (gcoden(Yn));
             goto odnc;
         }
-        /*  delenie mnogih  cifr  */
+        //  delenie mnogih  cifr   
         if (lrqlk((Xdl - Ydl) + 2) == 0)
         {
             refal.upshot = 3;
             return;
         }
-        /* t.k. k chastnomu dob. 0 i zweno na znak */
+        // t.k. k chastnomu dob. 0 i zweno na znak  
         p = refal.preva;
         lins(p, (Xdl - Ydl) + 2);
-        p = p->next; /*  dlja znaka  */
-        r = p->next; /*  dlja  perwoj  cifry  */
+        p = p->next; //  dlja znaka   
+        r = p->next; //  dlja  perwoj  cifry   
         nach = r;
         Xn = Xn->prev;
         Xn->tag = TAGN;
@@ -508,7 +508,7 @@ static void oper(unsigned int o, unsigned int prn)
         pcoden(y, 0l);
         unsigned int n = 0;
         if (Ydl != 0)
-        { /* wozmovna normalizacija */
+        { // wozmovna normalizacija  
             b = gcoden(Yn);
             for (n = 0; b < 8388608; n++, b += b)
                 ;
@@ -532,11 +532,11 @@ static void oper(unsigned int o, unsigned int prn)
                 unsigned long int b1;
                 if ((a == 0l) && (a1 >= b))
                 {
-                    c = 1l; /*  t.k. b - normalizowano */
+                    c = 1l; //  t.k. b - normalizowano  
                     a = a1;
                 }
                 else
-                { /* delim a,a1 na b */
+                { // delim a,a1 na b  
                     a = (a * 128) + (a1 >> 17);
                     c = (a / b) << 17;
                     b1 = a1 >> 10;
@@ -548,7 +548,7 @@ static void oper(unsigned int o, unsigned int prn)
                     a = ((a % b) * 8) + (a1 & 7);
                     c = c + a / b;
                 }
-                /*printf("\nc=%ld oct=%ld",c,(unsigned long int)(a%b));*/
+                //printf("\nc=%ld oct=%ld",c,(unsigned long int)(a%b)); 
                 if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0l))
                 {
                     unsigned long int x1 = b1;
@@ -573,10 +573,10 @@ static void oper(unsigned int o, unsigned int prn)
                         printf(" y=%lx_%lx (o..a2)",y1,y2);*/
                     }
                     if (i == 1)
-                        c++; /* na wcjakij sluchaj */
+                        c++; // na wcjakij sluchaj  
                 }
             }
-            /* umnovenie  delitelja  na 'c' i wychit. iz X */
+            // umnovenie  delitelja  na 'c' i wychit. iz X  
             if (c != 0L)
             {
                 const linkcb *Yt = Yk;
@@ -600,11 +600,11 @@ static void oper(unsigned int o, unsigned int prn)
                     peren += a;
                 }
                 if (peren != 0L)
-                {                                /* cifra welika  */
-                    /*unsigned long int jj=0l;*/ /* !!! wremenno !!! */
+                {                                // cifra welika   
+                    //unsigned long int jj=0l;  // !!! wremenno !!!  
                     do
                     {
-                        /*jj++;*/
+                        //jj++; 
                         c -= 1L;
                         Xt = x;
                         Yt = Yk;
@@ -622,7 +622,7 @@ static void oper(unsigned int o, unsigned int prn)
                         }
                         peren -= j;
                     } while (peren != 0L);
-                    /*printf("\nc veliko jj=%ld",jj);*/
+                    //printf("\nc veliko jj=%ld",jj); 
                 }
             }
             r->tag = TAGN;
@@ -634,7 +634,7 @@ static void oper(unsigned int o, unsigned int prn)
         Xn = Xn->prev;
         r = r->prev;
         if (n != 0)
-        { /* denormalizacija ostatka */
+        { // denormalizacija ostatka  
             peren = 0L;
             i = 24 - n;
             c = 0xFFFFFFl >> i;
@@ -689,9 +689,9 @@ static void oper(unsigned int o, unsigned int prn)
         else
             rftpl(refal.prevr, x->prev, Xn);
         return;
-    } /* end case */
-    /*  wozwratim X */
-    /* podawim wed. nuli */
+    } // end case  
+    //  wozwratim X  
+    // podawim wed. nuli  
     for (x = Xn; gcoden(x) == 0l; x = x->next)
         ;
     if (prn == 1 && x == Xk && gcoden(x) == 0l)
@@ -703,17 +703,17 @@ static void oper(unsigned int o, unsigned int prn)
         x->info.codep = NULL;
         x->info.infoc = '-';
     }
-    /*  perenosim reultat */
+    //  perenosim reultat  
     rftpl(refal.prevr, x->prev, Xk->next);
     return;
-odnc: /* wywod rezultata delenija, kogda ostatok i chastnoe */
-    /* rawno po odnoj makrocifre a - ost., b - chastnoe  */
+odnc: // wywod rezultata delenija, kogda ostatok i chastnoe  
+    // rawno po odnoj makrocifre a - ost., b - chastnoe   
     if (slins(refal.preva, 2) == 0)
     {
         refal.upshot = 3;
         return;
     }
-    /* in bad case: /1/() - 3 zwena est uje + name */
+    // in bad case: /1/() - 3 zwena est uje + name  
     x = refal.preva;
     if (Xzn != Yzn)
     {
@@ -723,7 +723,7 @@ odnc: /* wywod rezultata delenija, kogda ostatok i chastnoe */
         x = x->next;
     }
     if (b != 0l || ((prn & 1) == 0))
-    { /* div/dr */
+    { // div/dr  
         x->tag = TAGN;
         pcoden(x, b);
         x = x->next;
@@ -740,7 +740,7 @@ odnc: /* wywod rezultata delenija, kogda ostatok i chastnoe */
         }
     }
     if (a != 0l || ((prn & 1) == 0))
-    { /* div/dr */
+    { // div/dr  
         y->tag = TAGN;
         pcoden(y, a);
         y = y->next;
@@ -750,11 +750,11 @@ odnc: /* wywod rezultata delenija, kogda ostatok i chastnoe */
     x->info.codep = y;
     y->info.codep = x;
     if ((prn & 2) == 0)
-    { /* dr/n */
+    { // dr/n  
         rftpl(refal.prevr, refal.preva->prev, y->next);
     }
     else
-    { /* div/n */
+    { // div/n  
         rftpl(refal.prevr, refal.preva->prev, x);
     }
     return;
@@ -794,4 +794,4 @@ static char nrel_0[] = {Z4 'N', 'R', 'E', 'L', '\004'};
 G_L_B char nrel = '\122';
 static void (*nrel_1)() = nrel_;
 
-/*-------------------- end of file  XAR.C ----------------*/
+//-------------------- end of file  XAR.C ---------------- 

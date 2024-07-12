@@ -1,9 +1,9 @@
-/*-------------- file -- XMO.C -------------*/
-/*                 General MO:              */
-/*     p1, m1, numb, symb, first, last,     */
-/*     lengr, lengw, multe, crel, delf      */
-/*      Last edition date : 11.07.24        */
-/*------------------------------------------*/
+//-------------- file -- XMO.C ------------- 
+//                 General MO:               
+//     p1, m1, numb, symb, first, last,      
+//     lengr, lengw, multe, crel, delf       
+//      Last edition date : 11.07.24         
+//------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,8 +52,8 @@ static void (*m1_1)() = m1_;
 
 static int cmpstr(unsigned int n, const char *s1, const char *s2)
 {
-    /* comparison two string . if s1<s2 then return < 0 */
-    /* if s1 = s2 return 0. if s1>s2 then return > 0    */
+    // comparison two string . if s1<s2 then return < 0  
+    // if s1 = s2 return 0. if s1>s2 then return > 0     
     for (unsigned int i = 0; i < n; i++, s1++, s2++)
         if (*s1 != *s2)
             return *s1 - *s2;
@@ -190,8 +190,8 @@ static void first_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
-    const unsigned long int n = gcoden(pn); /*eg*/
+    }; // FAIL  
+    const unsigned long int n = gcoden(pn); //eg 
     linkcb *p = pn;
     for (unsigned int k = 1; k <= n; k++)
     {
@@ -227,8 +227,8 @@ static void last_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
-    const unsigned long int n = gcoden(pn); /*eg*/
+    }; // FAIL  
+    const unsigned long int n = gcoden(pn); //eg 
     linkcb *p = refal.nexta;
     for (unsigned int k = 1; k <= n; k++)
     {
@@ -263,7 +263,7 @@ static void (*last_1)() = last_;
 
 static void lengr_()
 {
-    unsigned long int n = 0l; /* kras */
+    unsigned long int n = 0l; // kras  
     const linkcb *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -281,7 +281,7 @@ static void (*lengr_1)() = lengr_;
 
 static void lengw_()
 {
-    unsigned long int n = 0l; /* kras */
+    unsigned long int n = 0l; // kras  
     const linkcb *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -306,7 +306,7 @@ static void multe_()
     {
         refal.upshot = 2;
         return;
-    }; /* FAIL */
+    }; // FAIL  
     unsigned long int n = gcoden(pn);
     if (n == 0)
         return;
@@ -322,14 +322,14 @@ static void multe_()
             {
                 refal.upshot = 3;
                 return;
-            }; /* LACK */
+            }; // LACK  
             n--;
         } while (n >= 1);
     }
     else
     {
         if (!slins(refal.prevr, n))
-            return; /*  LACK */
+            return; //  LACK  
         linkcb *q = refal.prevr;
         for (unsigned long int k = 0; k < n; k++)
         {
@@ -350,7 +350,7 @@ static void delf_()
     {
         refal.upshot = 2;
         return;
-    } /*FAIL*/
+    } //FAIL 
     const linkcb *dot = refal.nexta;
     const linkcb *dot1 = refal.nextr->info.codep;
 REPEAT:
@@ -435,4 +435,4 @@ static char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
 G_L_B char crel = '\122';
 static void (*crel_1)() = crel_;
 
-/*-------------------- end of file  XMO.C ----------------*/
+//-------------------- end of file  XMO.C ---------------- 

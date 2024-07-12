@@ -1,7 +1,7 @@
-/*-----------  file  --  XVV5.C ------------*/
-/*    REFAL-5 compatible file input/output  */
-/*       Last modification : 11.07.24       */
-/*------------------------------------------*/
+//-----------  file  --  XVV5.C ------------ 
+//    REFAL-5 compatible file input/output   
+//       Last modification : 11.07.24        
+//------------------------------------------ 
 #include <stdio.h>
 #include <string.h>
 #include "refal.def"
@@ -93,7 +93,7 @@ static void close_()
    }
    else
       goto NEOT;
-   /*printf("\n close, flg=%d fd=%d",f->flags,f->fd);*/
+   //printf("\n close, flg=%d fd=%d",f->flags,f->fd); 
    fclose(f);
    return;
 NEOT:
@@ -214,4 +214,4 @@ static char put_0[] = {Z3 'P', 'U', 'T', '\003'};
 G_L_B char xput = '\122';
 static void (*put_1)() = put_;
 
-/*----------  end of file XVV5.C  -----------*/
+//----------  end of file XVV5.C  ----------- 
