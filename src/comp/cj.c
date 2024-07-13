@@ -1,8 +1,8 @@
-//-----------------  file  --  cj_blf.C  --------------- 
-//             generator of object module                
-//                (or assembler text)                    
-//           Last edition date :  11.07.24               
-//------------------------------------------------------ 
+//-----------------  file  --  cj_blf.C  ---------------
+//             generator of object module
+//                (or assembler text)
+//           Last edition date :  11.07.24
+//------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@
 #include "clu.h"
 
 typedef struct ent
-{ // entry table element  
+{ // entry table element
     struct ent *next;
     T_U *p;
     char e[8];
@@ -24,7 +24,7 @@ typedef struct ent
 } T_ENT;
 
 typedef struct ext
-{ // external pointer table element  
+{ // external pointer table element
     struct ext *next;
     T_U *p;
     char e[8];
@@ -49,12 +49,14 @@ static union
     unsigned short int w;
 } d;
 
+/*
+static int curr_r;
+static int new_r;
+static int equal_r; // feature that new_r = curr_r
+static char new_f[4];
+static const char *ccc;
+*/
 
-int curr_r;
-int new_r;
-int equal_r; //feature that new_r = curr_r
-char new_f[4];
-char *ccc; 
 static T_ENT *q, *r;
 static T_EXT *qx, *rx;
 
@@ -78,7 +80,7 @@ static char mod_name[9];
 static unsigned int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
-static long int curr_addr; // module generation files   
+static long int curr_addr; // module generation files
 static unsigned int n_ext;
 static T_RL rl;
 static unsigned int k;
@@ -176,16 +178,16 @@ extern void sfop_w(const char *s, BU *b)
         if (options.mincomp == 1)
         {
             if (b == &sysut2)
-                un = 2040; // 2040=340*6   
+                un = 2040; // 2040=340*6
             else
-                un = 2040; // 2040=2048-8  
+                un = 2040; // 2040=2048-8
         }
         else
         {
             if (b == &sysut2)
-                un = 49152; // 8192*6   
+                un = 49152; // 8192*6
             else
-                un = 65528; // 65536-8 (for bc mojno - 4)  
+                un = 65528; // 65536-8 (for bc mojno - 4)
         }
         unsigned long int lon;
         while (true)
@@ -208,7 +210,7 @@ extern void sfop_w(const char *s, BU *b)
                 if (un < 16)
                     oshex();
             }
-        } //while 
+        } // while
     }
     b->tek = 0;
     b->len = un;
@@ -312,8 +314,8 @@ static void sfwr2()
             exit(8);
         }
         sysut2.tek = 0;
-    } //while 
-} //sfwr2 
+    } // while
+} // sfwr2
 
 static void sfwr(const char *c, unsigned int n, BU *b)
 {
@@ -344,8 +346,8 @@ static void sfwr(const char *c, unsigned int n, BU *b)
         b->tek = 0;
         n -= ost;
         c += ost;
-    } //while 
-} //sfwr 
+    } // while
+} // sfwr
 
 static void sfrd1(char *c, unsigned int n)
 {
@@ -362,13 +364,13 @@ static void sfrd1(char *c, unsigned int n)
         memcpy(c, sysut1.buf + sysut1.tek, ost);
         if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
         {
-            //printf("Read i/o error in sysut1\n"); exit(8); 
+            // printf("Read i/o error in sysut1\n"); exit(8);
         }
         sysut1.tek = 0;
         n -= ost;
         c += ost;
-    } //while 
-} //sfrd1 
+    } // while
+} // sfrd1
 
 static void sfrd2()
 {
@@ -388,8 +390,8 @@ static void sfrd2()
             exit(8);*/
         }
         sysut2.tek = 0;
-    } //while 
-} //sfrd2 
+    } // while
+} // sfrd2
 
 static void sfobmen(unsigned int n)
 {
@@ -397,7 +399,7 @@ static void sfobmen(unsigned int n)
     while (true)
     {
         ost1 = sysut1.len - sysut1.tek;
-        //printf("\obmen: n=%d ost1=%d",n,ost1); 
+        // printf("\obmen: n=%d ost1=%d",n,ost1);
         if (n > ost1)
         {
             n -= ost1;
@@ -436,7 +438,7 @@ static void sfobmen(unsigned int n)
             ost1 -= ost2;
             sysl.tek = 0;
             sysut1.tek += ost2;
-        } //while 
+        } // while
         if (n != 0)
         {
             if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
@@ -448,12 +450,12 @@ static void sfobmen(unsigned int n)
         }
         else
             break;
-    } //while 
-} //sfomen 
+    } // while
+} // sfomen
 
 extern void jstart(const char *ee, unsigned int ll)
 {
-    delta = 0; // kras  
+    delta = 0; // kras
     strncpy(mod_name, ee, ll);
     lnmmod = ll;
     sfop_w("sysut1.rf", &sysut1);
@@ -474,7 +476,7 @@ extern void jstart(const char *ee, unsigned int ll)
     first_ext->next = NULL;
     curr_addr = 0;
     n_ext = 1;
-} //jstart 
+} // jstart
 
 extern unsigned int jwhere()
 {
@@ -488,7 +490,7 @@ extern unsigned int jwhere()
 
 extern void jbyte(char bb)
 {
-    // sfwr(&bb,1,&sysut1);    
+    // sfwr(&bb,1,&sysut1);
     if (sysut1.tek != sysut1.len)
     {
         *(sysut1.buf + sysut1.tek) = bb;
@@ -514,7 +516,7 @@ extern void jbyte(char bb)
     }
     delta++;
     curr_addr++;
-} //jbyte 
+} // jbyte
 
 extern void j3addr(T_U *pp)
 {
@@ -526,9 +528,9 @@ extern void j3addr(T_U *pp)
 }
 
 extern void jentry(T_U *pp, const char *ee, unsigned int ll)
-// ee label   
+// ee label
 {
-    // label length   
+    // label length
     /*if( (lnmmod==ll) && (strncmp(mod_name, ee, ll < lnmmod ? ll : lnmmod)==0) )
     pchosh("520 entry point name is equal module name");*/
     r = first_ent;
@@ -537,7 +539,7 @@ extern void jentry(T_U *pp, const char *ee, unsigned int ll)
         r = r->next;
         if ((r->le == ll) && (strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
         {
-            //pchose("521 two entry points has single name ", ee, ll); 
+            // pchose("521 two entry points has single name ", ee, ll);
             return;
         }
     }
@@ -553,12 +555,12 @@ extern void jentry(T_U *pp, const char *ee, unsigned int ll)
     r->le = 8 < ll ? 8 : ll;
     strncpy(r->e, ee, r->le);
     pp->mode |= '\040';
-} //jentry 
+} // jentry
 
 extern void jextrn(T_U *pp, const char *ee, unsigned int ll)
-// ee label   
+// ee label
 {
-    //  label length   
+    //  label length
     if ((rx = (T_EXT *)malloc(sizeof(T_EXT))) == NULL)
         oshex();
 #ifdef mdebug
@@ -579,7 +581,7 @@ extern void jextrn(T_U *pp, const char *ee, unsigned int ll)
     pp->mode |= '\220';
     n_ext++;
     pp->info.infon = n_ext;
-} //jextrn 
+} // jextrn
 
 extern void jlabel(T_U *pp)
 {
@@ -603,7 +605,7 @@ static void zakon()
     mod_length = curr_addr;
     if (mod_length < 0)
         mod_length = 65536L + mod_length;
-} //zakon 
+} // zakon
 
 extern void jend()
 {
@@ -620,24 +622,24 @@ extern void jend()
     }
     d.w = 0;
 
-    // heading generating  
+    // heading generating
 
-    fputs(".data\n", syslin); // BLF  
+    fputs(".data\n", syslin); // BLF
 
-    // BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);  
-    // BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin);  
-    // BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);  
-    // BLF  
+    // BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+    // BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin);
+    // BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);
+    // BLF
     char bufs[81];
-    sprintf(bufs, "_d%d$:\n", nommod); // BLF  
+    sprintf(bufs, "_d%d$:\n", nommod); // BLF
 
     fputs(bufs, syslin);
 
-    //  empty module test     
+    //  empty module test
     if (mod_length == 0)
         goto JTERM;
 
-    // text generating  
+    // text generating
 
     sfop_r(&sysut1);
     sfop_r(&sysut2);
@@ -668,18 +670,18 @@ GEN_TXT:
             p = p->info.infop;
         if (((p->mode) & '\300') != '\200')
         {
-            //    nonexternal label    
+            //    nonexternal label
             sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
             fputs(bufs, syslin);
         }
         else
         {
-//     external   label    
-// BLF  
+//     external   label
+// BLF
 #ifdef UNIX
-            // begin name without underlining _  
+            // begin name without underlining _
             fputs("\t.long\t", syslin);
-#else // Windows - with underlining _ 
+#else // Windows - with underlining _
             fputs("\t.long\t_", syslin);
 #endif
             qx = first_ext;
@@ -687,7 +689,7 @@ GEN_TXT:
                 qx = qx->next;
 
 #ifdef UNIX
-            // BLF ------- renaming add, sub, mul ... ---------------  
+            // BLF ------- renaming add, sub, mul ... ---------------
             /* For GCC under UNIX we have the
             following problem. Variable names have not
             underscore (_) in begin (as it is in Windows).
@@ -705,7 +707,7 @@ GEN_TXT:
             const char oper_rp[] = "r_";
             const char oper_ptr[] = "pt_";
 
-            // BLF - debug printf ("%s\n",qx->e) ;  
+            // BLF - debug printf ("%s\n",qx->e) ;
             if (cmpstr(qx->le, qx->e, "ADD") == 0)
                 for (unsigned int i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_add[i];
@@ -731,84 +733,84 @@ GEN_TXT:
                     *((qx->e) + i) = oper_ptr[i];
 
 #endif
-            // BLF ------- end renaming ---------------  
+            // BLF ------- end renaming ---------------
 
             for (unsigned int i = 0; i < qx->le; i++)
-                // BLF    fputc (*((qx->e) + i),syslin); 
-                fputc(tolower(*((qx->e) + i)), syslin); // BLF  
+                // BLF    fputc (*((qx->e) + i),syslin);
+                fputc(tolower(*((qx->e) + i)), syslin); // BLF
             fputs("\n", syslin);
         }
         goto GEN_TXT;
-    } //if 
+    } // if
 
-    // end text generating  
+    // end text generating
 
     /* BLF
     fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
     fputs ("\tends\n",syslin);
     */
 
-    //   external label generating     
+    //   external label generating
 
     qx = first_ext->next;
     while (qx != NULL)
     {
 
-// BLF     fputs ("\textrn\t_",syslin); 
-// BLF  
+// BLF     fputs ("\textrn\t_",syslin);
+// BLF
 #ifdef UNIX
-        // begin name without underlining _  
-        fputs("\t.extern\t", syslin); // BLF  
-#else                                 // Windows  
-        fputs("\t.extern\t_", syslin); // BLF  
+        // begin name without underlining _
+        fputs("\t.extern\t", syslin); // BLF
+#else                                 // Windows
+        fputs("\t.extern\t_", syslin); // BLF
 #endif
         for (unsigned int i = 0; i < qx->le; i++)
-            // BLF fputc (*((qx->e) + i),syslin); 
-            fputc(tolower(*((qx->e) + i)), syslin); // BLF  
+            // BLF fputc (*((qx->e) + i),syslin);
+            fputc(tolower(*((qx->e) + i)), syslin); // BLF
         fputs(":byte\n", syslin);
         qx = qx->next;
-    } //while 
+    } // while
 
-    // BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);  
-    // BLF  fputs ("\tsegment byte public 'CODE'\n",syslin);  
+    // BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+    // BLF  fputs ("\tsegment byte public 'CODE'\n",syslin);
 
-    fputs(".data\n", syslin); // BLF  
+    fputs(".data\n", syslin); // BLF
 
-    // entry label generating  
+    // entry label generating
 
     q = first_ent->next;
     while (q != NULL)
     {
 
-// BLF  
+// BLF
 #ifndef UNIX
-        // begin name with underlining _  
+        // begin name with underlining _
         fputc('_', syslin);
 #endif
 
         for (unsigned int i = 0; i < q->le; i++)
-            // BLF translate name to lower case  
+            // BLF translate name to lower case
             fputc(tolower(*((q->e) + i)), syslin);
         const T_U *pp = q->p;
         while (((pp->mode) & '\300') == '\300')
             pp = pp->info.infop;
-// BLF  
+// BLF
 #ifdef UNIX
-        // begin name without underlining _  
+        // begin name without underlining _
 
         sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t", nommod, pp->info.infon);
-#else // Windows  
+#else // Windows
         sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
 #endif
         fputs(bufs, syslin);
         for (unsigned int i = 0; i < q->le; i++)
-            // BLF translate name to lower case  
+            // BLF translate name to lower case
             fputc(tolower(*((q->e) + i)), syslin);
         fputc('\n', syslin);
         q = q->next;
     };
 
-    // termination  
+    // termination
 
 JTERM:
 
@@ -848,9 +850,9 @@ JTERM:
 #endif
         qx = rx;
     }
-} //jend 
+} // jend
 
-//--------------------- OBJ ------------------- 
+//--------------------- OBJ -------------------
 static union
 {
     char cc[2];
@@ -861,7 +863,7 @@ static char c;
 
 static void sfwrc()
 {
-    //  sfwr(&c,1,&sysl);   
+    //  sfwr(&c,1,&sysl);
     if (sysl.tek != sysl.len)
     {
         *(sysl.buf + sysl.tek) = c;
@@ -885,7 +887,7 @@ static void sfwrc()
         *(sysl.buf) = c;
         sysl.tek = 1;
     }
-} //sfwrc 
+} // sfwrc
 
 static void ksmb(char b)
 {
@@ -976,12 +978,12 @@ extern void jendo()
     unsigned int nomsim = 1;
     unsigned int smes = 0;
 
-    // heading generating   
+    // heading generating
     golowa(2 + strlen(parm_i), 0x80);
     imja(parm_i, strlen(parm_i));
     zakr();
 
-    // version number   
+    // version number
     k = strlen(vers_i);
     golowa(3 + k, 0x88);
     unsigned int i = 0;
@@ -990,7 +992,7 @@ extern void jendo()
     ksmn(vers_i, k);
     zakr();
 
-    // names  
+    // names
     golowa(9 + lnmmod, 0x96);
     c = '\0';
     sfwrc();
@@ -998,7 +1000,7 @@ extern void jendo()
     imj_a(mod_name, lnmmod);
     zakr();
 
-    // segment definition  
+    // segment definition
     golowa(7, 0x98);
     c = 0x48;
     sfwrc();
@@ -1015,7 +1017,7 @@ extern void jendo()
     ksmb('\006');
     zakr();
 
-    // external names  
+    // external names
     qx = first_ext->next;
     while (qx != NULL)
     {
@@ -1034,7 +1036,7 @@ extern void jendo()
         zakr();
     }
 
-    // entry labels  
+    // entry labels
     q = first_ent->next;
     while (q != NULL)
     {
@@ -1057,11 +1059,11 @@ extern void jendo()
         q = q->next;
     }
 
-    //  empty module test     
+    //  empty module test
     if (mod_length == 0)
         goto JTERM;
 
-    // text generation  
+    // text generation
     sfop_r(&sysut1);
     sfop_r(&sysut2);
 
@@ -1108,7 +1110,7 @@ GEN_TXT:
             p = p->info.infop;
         if (((p->mode) & '\300') != '\200')
         {
-            // nonexternal label  
+            // nonexternal label
             golowa(8, 0x9C);
             d.w = delta;
             c = d.b[1];
@@ -1129,7 +1131,7 @@ GEN_TXT:
         }
         else
         {
-            // external   label  
+            // external   label
             qx = first_ext;
             for (i = 1; i < p->info.infon; i++)
                 qx = qx->next;
@@ -1155,7 +1157,7 @@ GEN_TXT:
             }
             else
             {
-                // >127  
+                // >127
                 d.b[1] = c;
                 d.b[0] = (qx->noms >> 8) | 0x80;
                 sfwr((char *)&d, 2, &sysl);
@@ -1167,9 +1169,9 @@ GEN_TXT:
         }
         zakr();
         goto GEN_TXT;
-    } //if 
+    } // if
 
-    // termination  
+    // termination
 
 JTERM:
     golowa(2, 0x8A);
@@ -1217,4 +1219,4 @@ JTERM:
     }
 }
 
-//-------------  end  of  file  cj_blf.c  -------------- 
+//-------------  end  of  file  cj_blf.c  --------------
