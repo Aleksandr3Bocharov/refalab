@@ -11,24 +11,13 @@
 #include "cgop.h"
 #include "clu.h"
 #include "refal.h"
-#include "ccst1.h"
+#include "ccst.h"
 
-struct i_lbl
-{
-    union
-    {
-        unsigned int infoln;
-        struct i_lbl *infolp;
-    } infol;
-    char model;
-};
-
-struct arr_lbl
+typedef struct arr_lbl
 {
     struct arr_lbl *nextl;
     T_I_LBL lbl[16];
-};
-typedef struct arr_lbl T_ARR_LBL;
+} T_ARR_LBL;
 
 static T_ARR_LBL *first_arr_lbl = NULL;
 static int n_lbl = 15;

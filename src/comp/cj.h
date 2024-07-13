@@ -1,9 +1,17 @@
 #ifndef CJ_H
 #define CJ_H
 
+#include <stdio.h>
 #include "clu.h"
 
-typedef struct BU_ BU;
+typedef struct BU_
+{
+    unsigned int len;
+    unsigned int tek;
+    char *nam;
+    char *buf;
+    FILE *fil;
+} BU;
 
 extern BU sysl;
 

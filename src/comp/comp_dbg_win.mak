@@ -23,8 +23,7 @@ BIN_DIR		=	bin
 ####### Files
 
 SOURCES =			\
-		$(S)\ccst1.c 	\
-		$(S)\ccst2.c 	\
+		$(S)\ccst.c 	\
 		$(S)\cerr.c 	\
 		$(S)\cgop.c 	\
 		$(S)\cj.c 	\
@@ -34,8 +33,7 @@ SOURCES =			\
 		$(S)\refal.c
 
 OBJECTS =			\
-		$(S)\ccst1.o 	\
-		$(S)\ccst2.o 	\
+		$(S)\ccst.o 	\
 		$(S)\cerr.o 	\
 		$(S)\cgop.o 	\
 		$(S)\cj.o 	\
@@ -61,9 +59,7 @@ $(TARGET): $(OBJECTS)
 
 ####### Dependences
 
-$(S)\ccst1.o: $(S)\ccst1.c
-
-$(S)\ccst2.o: $(S)\ccst2.c
+$(S)\ccst.o: $(S)\ccst.c
 
 $(S)\cerr.o: $(S)\cerr.c $(S)\refal.def
 

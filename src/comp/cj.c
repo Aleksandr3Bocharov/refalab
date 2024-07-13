@@ -15,39 +15,28 @@
 #include "refal.h"
 #include "clu.h"
 
-struct ent
+typedef struct ent
 { // entry table element  
     struct ent *next;
     T_U *p;
     char e[8];
     unsigned int le;
-};
-typedef struct ent T_ENT;
+} T_ENT;
 
-struct ext
+typedef struct ext
 { // external pointer table element  
     struct ext *next;
     T_U *p;
     char e[8];
     unsigned int le;
     unsigned int noms;
-};
-typedef struct ext T_EXT;
+} T_EXT;
 
-typedef struct T_RL
+typedef struct rl
 {
     T_U *point;
     unsigned int delta;
 } T_RL;
-
-struct BU_
-{
-    unsigned int len;
-    unsigned int tek;
-    char *nam;
-    char *buf;
-    FILE *fil;
-};
 
 BU sysl = {0, 0, NULL, NULL, NULL};
 

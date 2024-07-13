@@ -6,11 +6,11 @@
 #include "cgop.h"
 #include "cj.h"
 
-struct _TAG
+typedef struct _TAG
 {
     char b1;
     char b2;
-};
+} T_TAG;
 
 extern void gopn(char k, char n)
 {
@@ -31,9 +31,9 @@ extern void gopl(char k, const unsigned char *l)
     j3addr((T_U *)l);
 }
 
-extern void gsymbol(const struct linkti *code)
+extern void gsymbol(const T_LINKTI *code)
 {
-    const struct _TAG *q = (struct _TAG *)&(code->tag);
+    const T_TAG *q = (T_TAG *)&(code->tag);
     jbyte(q->b1);
     jbyte(q->b2);
     if (code->tag == 2)
@@ -57,7 +57,7 @@ extern void gsymbol(const struct linkti *code)
         }
 }
 
-extern void gops(char k, const struct linkti *code)
+extern void gops(char k, const T_LINKTI *code)
 {
     jbyte(k);
     gsymbol(code);
@@ -65,7 +65,7 @@ extern void gops(char k, const struct linkti *code)
 
 extern void ghw(unsigned short int h)
 {
-    const struct _TAG *po = (struct _TAG *)&h; //  eg  
+    const T_TAG *po = (T_TAG *)&h; //  eg  
     jbyte(po->b1);
     jbyte(po->b2);
 }

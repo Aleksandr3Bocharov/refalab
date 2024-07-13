@@ -3,7 +3,15 @@
 
 #include "clu.h"
 
-typedef struct i_lbl T_I_LBL;
+typedef struct i_lbl
+{
+    union
+    {
+        unsigned int infoln;
+        struct i_lbl *infolp;
+    } infol;
+    char model;
+} T_I_LBL;
 
 extern T_I_LBL *genlbl();
 

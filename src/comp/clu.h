@@ -1,14 +1,13 @@
 #ifndef CLU_H
 #define CLU_H
 
-struct refw
+typedef struct refw
 {
     struct refw *next;    // on the next usage list  
     unsigned int numb[6]; // usage list element      
-};
-typedef struct refw T_REFW;
+} T_REFW;
 
-struct u
+typedef struct u
 {
     union
     {
@@ -39,8 +38,7 @@ struct u
                            //                    '01'B - left kren   
                            //                    '10'B - right kren  
     char *id;              // identifier  
-};
-typedef struct u T_U;
+} T_U;
 
 extern T_U *lookup(const char *idp, unsigned int lid);
 extern void luterm();
