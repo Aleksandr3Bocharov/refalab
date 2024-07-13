@@ -21,7 +21,7 @@ static void opng_()
     char namf[40];
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0; // jung zamenila na jl  
     else
@@ -66,7 +66,7 @@ static void opnp_()
     char namf[40];
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     const char *m = "w";
     if (p->tag == TAGO && p->info.infoc == '*')
     {
@@ -112,7 +112,7 @@ static void (*opnp_1)() = opnp_;
 
 static void clsg_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -139,7 +139,7 @@ static void (*clsg_1)() = clsg_;
 
 static void clsp_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -166,7 +166,7 @@ static void (*clsp_1)() = clsp_;
 
 static void libg_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     bool new = false;
     if (p->tag != TAGN)
     {
@@ -249,7 +249,7 @@ static void (*libg_1)() = libg_;
 
 static void libp_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
         jl = 0;
     else
@@ -307,7 +307,7 @@ static void card_()
 {
     if (refal.preva->next != refal.nexta) // refal.upshot = 2;  
         rfpex("", refal.preva, refal.nexta);
-    linkcb *p = refal.prevr;
+    T_LINKCB *p = refal.prevr;
     char c;
     while ((c = getchar()) != '\n')
     {

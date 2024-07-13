@@ -102,7 +102,7 @@ static char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
 G_L_B char divn = '\122';
 static void (*divn_1)() = divn_;
 
-static linkcb *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
+static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static unsigned int dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
@@ -169,7 +169,7 @@ static bool dajarg()
 
 static void obmen()
 {
-    linkcb *p = Xn;
+    T_LINKCB *p = Xn;
     Xn = Yn;
     Yn = p;
     p = Xk;
@@ -200,7 +200,7 @@ static unsigned int xmy()
 }
 
 static void ymn(unsigned long int *a, unsigned long int *b)
-{ // rez.: a - st., b - ml  
+{ // rez.: a - T_ST., b - ml  
     if (*a == 0l)
     {
         *b = 0l;
@@ -232,7 +232,7 @@ static void ymn(unsigned long int *a, unsigned long int *b)
     *b += (r3 & 0xFFF) * HMAX;
 }
 
-static void norm(linkcb *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
+static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
 {                                                            //  X - ukaz. na konec             
     unsigned long int peren = 0l;
     const unsigned int ip = 24 - j;
@@ -354,8 +354,8 @@ static void oper(unsigned int o, unsigned int prn)
             refal.upshot = 3;
             return;
         }
-        linkcb *p = refal.preva;
-        linkcb *r = p->next;
+        T_LINKCB *p = refal.preva;
+        T_LINKCB *r = p->next;
         lins(p, Xdl + Ydl + 1); //  1 zweno dlja znaka   
         p = p->next;
         r = r->prev;
@@ -370,7 +370,7 @@ static void oper(unsigned int o, unsigned int prn)
         Xn = Xn->prev;
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
-        linkcb *f;
+        T_LINKCB *f;
         unsigned long int c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
         {
@@ -405,7 +405,7 @@ static void oper(unsigned int o, unsigned int prn)
                     const unsigned int r4 = r3 >> 12;
                     a = r1 * HMAX + r2 + r4;
                     b += (r3 & 0xFFF) * HMAX;
-                    // ymn (&a,&b);   // rez:a-st, b-ml   
+                    // ymn (&a,&b);   // rez:a-T_ST, b-ml   
                 ret:
                     j = gcoden(p) + b + peren;
                     peren = 0L;
@@ -580,8 +580,8 @@ static void oper(unsigned int o, unsigned int prn)
             // umnovenie  delitelja  na 'c' i wychit. iz X  
             if (c != 0L)
             {
-                const linkcb *Yt = Yk;
-                linkcb *Xt = x;
+                const T_LINKCB *Yt = Yk;
+                T_LINKCB *Xt = x;
                 peren = 0L;
                 for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                 {

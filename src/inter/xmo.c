@@ -12,7 +12,7 @@
 
 static void p1_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
     NEOT:
@@ -32,7 +32,7 @@ static void (*p1_1)() = p1_;
 
 static void m1_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
     {
     NEOT:
@@ -62,16 +62,16 @@ static int cmpstr(unsigned int n, const char *s1, const char *s2)
 
 static void numb_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
-    const linkcb *pz = p;
+    const T_LINKCB *pz = p;
     if ((p->tag == TAGO) && ((zn == '-') || (zn == '+')))
     {
         p = p->next;
         if (zn == '+')
             pz = p;
     }
-    linkcb *p1 = p;
+    T_LINKCB *p1 = p;
     while ((p->tag == TAGO) && (p->info.infoc == '0'))
         p = p->next;
     char str[12];
@@ -121,16 +121,16 @@ static void (*numb_1)() = numb_;
 
 static void symb_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
-    linkcb *pz = p;
+    T_LINKCB *pz = p;
     if ((p->tag == TAGO) && ((zn == '-') || (zn == '+')))
     {
         p = p->next;
         if (zn == '+')
             pz = p;
     }
-    linkcb *p1 = p;
+    T_LINKCB *p1 = p;
     while ((p->tag == TAGN) && (gcoden(p) == 0l))
         p = p->next;
     unsigned int i;
@@ -185,14 +185,14 @@ static void (*symb_1)() = symb_;
 
 static void first_()
 {
-    linkcb *pn = refal.preva->next;
+    T_LINKCB *pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {
         refal.upshot = 2;
         return;
     }; // FAIL  
     const unsigned long int n = gcoden(pn); //eg 
-    linkcb *p = pn;
+    T_LINKCB *p = pn;
     for (unsigned int k = 1; k <= n; k++)
     {
         p = p->next;
@@ -222,14 +222,14 @@ static void (*first_1)() = first_;
 
 static void last_()
 {
-    linkcb *pn = refal.preva->next;
+    T_LINKCB *pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {
         refal.upshot = 2;
         return;
     }; // FAIL  
     const unsigned long int n = gcoden(pn); //eg 
-    linkcb *p = refal.nexta;
+    T_LINKCB *p = refal.nexta;
     for (unsigned int k = 1; k <= n; k++)
     {
         p = p->prev;
@@ -264,7 +264,7 @@ static void (*last_1)() = last_;
 static void lengr_()
 {
     unsigned long int n = 0l; // kras  
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
         n++;
@@ -282,7 +282,7 @@ static void (*lengr_1)() = lengr_;
 static void lengw_()
 {
     unsigned long int n = 0l; // kras  
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
         n++;
@@ -301,7 +301,7 @@ static void (*lengw_1)() = lengw_;
 
 static void multe_()
 {
-    const linkcb *pn = refal.preva->next;
+    const T_LINKCB *pn = refal.preva->next;
     if ((pn == refal.nexta) || (pn->tag != TAGN))
     {
         refal.upshot = 2;
@@ -310,7 +310,7 @@ static void multe_()
     unsigned long int n = gcoden(pn);
     if (n == 0)
         return;
-    linkcb *p = pn->next;
+    T_LINKCB *p = pn->next;
     if (p == refal.nexta)
         return;
     if (p->next != refal.nexta)
@@ -330,7 +330,7 @@ static void multe_()
     {
         if (!slins(refal.prevr, n))
             return; //  LACK  
-        linkcb *q = refal.prevr;
+        T_LINKCB *q = refal.prevr;
         for (unsigned long int k = 0; k < n; k++)
         {
             q = q->next;
@@ -351,14 +351,14 @@ static void delf_()
         refal.upshot = 2;
         return;
     } //FAIL 
-    const linkcb *dot = refal.nexta;
-    const linkcb *dot1 = refal.nextr->info.codep;
+    const T_LINKCB *dot = refal.nexta;
+    const T_LINKCB *dot1 = refal.nextr->info.codep;
 REPEAT:
-    const linkcb *sk = dot->info.codep;
+    const T_LINKCB *sk = dot->info.codep;
     if (sk == NULL)
         rfabe("delf: sign '#' missing ");
     dot = sk->info.codep;
-    linkcb *nd = dot->next;
+    T_LINKCB *nd = dot->next;
     if (nd->info.infoc != '#')
         goto REPEAT;
     while (dot1 != dot)
@@ -381,13 +381,13 @@ static void (*delf_1)() = delf_;
 
 static void crel_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGLB)
         goto FAIL;
-    const linkcb *p1 = p->info.codep;
+    const T_LINKCB *p1 = p->info.codep;
     p = p->next;
-    linkcb *q = p1->next;
-    const linkcb *q1 = refal.nexta;
+    T_LINKCB *q = p1->next;
+    const T_LINKCB *q1 = refal.nexta;
     char c = '=';
     for (; c == '=' && p != p1 && q != q1; p = p->next, q = q->next)
     {

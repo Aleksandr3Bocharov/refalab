@@ -9,21 +9,21 @@
 #include "rfrun1.h"
 #include "d.h"
 
-void (*dba)(st *) = NULL;
+void (*dba)(T_ST *) = NULL;
 
 static void appl_()
 {
-    st *s_st;
+    T_ST *s_st;
     unsigned long int l = (unsigned long int)&s_st;
     if ((l & 0xffffL) < 200L)
     { // printf("\nStack overflow!"); 
         goto LACK;
     }
-    st *upst = refal.currst;
+    T_ST *upst = refal.currst;
     if (!slins(refal.prevr, 1))
         return;
-    linkcb *px = refal.prevr->next;
-    if ((s_st = malloc(sizeof(st))) == NULL)
+    T_LINKCB *px = refal.prevr->next;
+    if ((s_st = malloc(sizeof(T_ST))) == NULL)
         goto LACK;
     if (!lcre(s_st))
         goto LACK;
@@ -32,8 +32,8 @@ static void appl_()
         rfcanc(s_st);
         goto LACK;
     }
-    linkcb *pk = s_st->view->next;
-    linkcb *pd = pk->next;
+    T_LINKCB *pk = s_st->view->next;
+    T_LINKCB *pd = pk->next;
     pk->info.codep = NULL;
     pk->tag = TAGK;
     pd->info.codep = pk;

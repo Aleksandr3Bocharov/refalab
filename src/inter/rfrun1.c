@@ -26,16 +26,15 @@
     if (f == flhead) \
         goto LACK;
 
-struct sav_
+typedef struct sav_
 { // save area for var-part of REFAL-block  
     unsigned int upshot_;
-    linkcb *preva_;
-    linkcb *nexta_;
-    linkcb *prevr_;
-    linkcb *nextr_;
-    st *currst_;
-};
-typedef struct sav_ T_SAV;
+    T_LINKCB *preva_;
+    T_LINKCB *nexta_;
+    T_LINKCB *prevr_;
+    T_LINKCB *nextr_;
+    T_ST *currst_;
+} T_SAV;
 
 static union
 {
@@ -50,7 +49,7 @@ static union
     char chr[2];
 } inch;
 
-static linkcb *et[256];  // element table  
+static T_LINKCB *et[256];  // element table  
 static unsigned int nel; // adress of first free string in element table  
 
 static T_WJS js[64]; // jump stack and planning translation stack 
@@ -65,16 +64,16 @@ static unsigned long int tmstop;  // time at the end
 // definition of work variables and pointers 
 static unsigned char opc;  // current statement code  
 static unsigned char *vpc; // virtual program counter  
-static linkcb *lastk;      // last acted sign-k adress  
-static linkcb *lastb;      // last generated left bracket 
-static linkcb *b0, *b1, *b2;
-static linkcb *f0, *f1, *f;
+static T_LINKCB *lastk;      // last acted sign-k adress  
+static T_LINKCB *lastb;      // last generated left bracket 
+static T_LINKCB *b0, *b1, *b2;
+static T_LINKCB *f0, *f1, *f;
 static const unsigned char *vpca; // additional vpc   
 static unsigned int i, n, m;
 
-static char (*fptr)(REFAL *);
+static char (*fptr)(T_REFAL *);
 
-void rfrun(st *ast) // adress of current state table  
+void rfrun(T_ST *ast) // adress of current state table  
 {
     // dynamic area DSA  
     T_SAV *savecr = malloc(sizeof(T_SAV));
@@ -96,10 +95,10 @@ void rfrun(st *ast) // adress of current state table
     refal.tmmode = 0;
     refal.currst = ast;
     ast->state = 4;
-    linkcb quasik; // quasi-sign k  
+    T_LINKCB quasik; // quasi-sign k  
     quasik.info.codep = ast->dot;
     // adress of free memory list head  
-    linkcb *flhead = refal.flhead;
+    T_LINKCB *flhead = refal.flhead;
     if (tmmod == 1)
         tmstart = time(0l);
     goto START;
@@ -336,7 +335,7 @@ EOS:
     lastk->info.codep = et[1]->info.codep;
     lastk->tag = TAGK;
     // item adress followed by result  
-    linkcb *nextr = f->next;
+    T_LINKCB *nextr = f->next;
     // execute planned transplantation  
     // EOS1:     
     while (tsp != (T_TS *)js)
@@ -432,13 +431,13 @@ REF:
     et[1] = b0;
     et[2] = b2;
     et[3] = b1;
-    f = (linkcb *)vpc;
+    f = (T_LINKCB *)vpc;
     goto SWAPREF;
     // SWAP;    
     //  static box head is after operator code  
 SWAP:
     vpc = vpc + NMBL;
-    f = (linkcb *)vpc;
+    f = (T_LINKCB *)vpc;
     if (f->prev != NULL)
         goto SWAPREF;
     link(f, f);

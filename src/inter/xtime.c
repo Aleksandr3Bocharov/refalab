@@ -19,7 +19,7 @@ static void rftime_()
     const time_t tim = time(NULL);
     char s[70];
     strftime(s, sizeof(s), "%c", localtime(&tim));
-    linkcb *p = refal.prevr;
+    T_LINKCB *p = refal.prevr;
     const char *c = s;
     while (*c >= ' ')
     {
@@ -41,7 +41,7 @@ static void (*rftime_1)() = rftime_;
 
 static void rftm_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if (p != refal.nexta)
     {
         if (p->tag != TAGO)

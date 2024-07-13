@@ -18,7 +18,7 @@ static void open_()
    char namf[41];
    for (unsigned int i = 0; i < 40; i++)
       namf[i] = '\0';
-   const linkcb *p = refal.preva->next;
+   const T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGO)
       goto NEOT;
    const char c = p->info.infoc;
@@ -71,7 +71,7 @@ static void (*open_1)() = open_;
 
 static void close_()
 {
-   const linkcb *p = refal.preva->next;
+   const T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGO)
       goto NEOT;
    const char c = p->info.infoc;
@@ -107,7 +107,7 @@ static void (*close_1)() = close_;
 
 static void get_()
 {
-   linkcb *p = refal.preva->next;
+   T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
    const unsigned long int j = p->info.coden;
@@ -155,7 +155,7 @@ static void (*get_1)() = get_;
 
 static void put_()
 {
-   const linkcb *p = refal.preva->next;
+   const T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
    const unsigned long int j = p->info.coden;

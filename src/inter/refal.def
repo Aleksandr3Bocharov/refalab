@@ -19,7 +19,7 @@
 // BLF pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
-struct linkcb_
+typedef struct linkcb_
 {
     struct linkcb_ *prev;
     struct linkcb_ *next;
@@ -31,47 +31,43 @@ struct linkcb_
         struct linkcb_ *codep;
         unsigned char *codef;
     } info;
-};
+} T_LINKCB;
 
 // #pragma pack(pop)
 #pragma pack()
 
 // BLF ------------ end of pragma ------------------------------------
 
-typedef struct linkcb_ linkcb;
-
-struct st_
+typedef struct st_
 {
     struct st_ *stprev;
     struct st_ *stnext;
     unsigned int state;
-    linkcb *dot;
+    T_LINKCB *dot;
     unsigned long int step;
     unsigned long int stop;
-    linkcb *view;
-    linkcb *store;
-};
-typedef struct st_ st;
+    T_LINKCB *view;
+    T_LINKCB *store;
+} T_ST;
 
-struct refal_
+typedef struct refal_
 {
-    st *crprev;
-    st *crnext;
+    T_ST *crprev;
+    T_ST *crnext;
     unsigned int upshot;
-    linkcb *preva;
-    linkcb *nexta;
-    linkcb *prevr;
-    linkcb *nextr;
-    st *currst;
-    linkcb *flhead;
-    linkcb *svar;
-    linkcb *dvar;
+    T_LINKCB *preva;
+    T_LINKCB *nexta;
+    T_LINKCB *prevr;
+    T_LINKCB *nextr;
+    T_ST *currst;
+    T_LINKCB *flhead;
+    T_LINKCB *svar;
+    T_LINKCB *dvar;
     unsigned int stmnmb;
     unsigned int nostm;
     unsigned int tmmode;
     unsigned long int tmintv;
-};
-typedef struct refal_ REFAL;
+} T_REFAL;
 
 #define QC // BLF
 

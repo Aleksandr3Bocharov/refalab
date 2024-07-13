@@ -15,7 +15,7 @@ static adr *func_f = NULL;
 
 static void ftochar_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
         goto HEOT;
     const char *u = (char *)p->info.codef - 1;
@@ -55,7 +55,7 @@ static void (*ftochar_1)() = ftochar_;
 
 static void functab_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
         goto HEOT;
     char *u = (char *)p->info.codef;
@@ -80,7 +80,7 @@ static void (*functab_1)() = functab_;
 
 static void chartof_()
 {
-    linkcb *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     if (p == refal.nexta)
         goto HEOT;
     unsigned int i;

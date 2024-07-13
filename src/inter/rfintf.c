@@ -9,15 +9,15 @@
 #include "rfintf.h"
 #include "rfrun1.h"
 
-REFAL refal;
+T_REFAL refal;
 
-static linkcb *last_block = NULL;
+static T_LINKCB *last_block = NULL;
 static bool rf_init = true;
 static unsigned int curr_size = 0;
-static linkcb hd;
+static T_LINKCB hd;
 
 static bool lgcl();
-static void rflist(linkcb *par, unsigned int n);
+static void rflist(T_LINKCB *par, unsigned int n);
 
 void rfabe(const char *amsg)
 {
@@ -30,11 +30,11 @@ bool lincrm()
     unsigned int n;
     if (last_block != NULL)
     {
-        const linkcb *first_free = refal.flhead->next;
+        const T_LINKCB *first_free = refal.flhead->next;
         const bool was_coll = lgcl();
         if (was_coll)
         {
-            const linkcb *p = refal.flhead->next;
+            const T_LINKCB *p = refal.flhead->next;
             n = 0;
             while ((p != first_free) && (n != 1000))
             {
@@ -45,7 +45,7 @@ bool lincrm()
                 return true;
         }
     }
-    linkcb *new_block = malloc(1001 * sizeof(linkcb)); // kras 06.12.88  
+    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88  
 #ifdef mdebug
     printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
 #endif
@@ -61,7 +61,7 @@ bool lincrm()
 //  check a number of items in free items list  
 bool lrqlk(unsigned int l)
 {
-    const linkcb *p = refal.flhead;
+    const T_LINKCB *p = refal.flhead;
     for (unsigned int n = 0; n < l; n++)
     {
         p = p->next;
@@ -71,11 +71,11 @@ bool lrqlk(unsigned int l)
     return true;
 }
 
-bool lins(linkcb *p, unsigned int l)
+bool lins(T_LINKCB *p, unsigned int l)
 {
     if (l < 1)
         return true;
-    linkcb *q1 = refal.flhead;
+    T_LINKCB *q1 = refal.flhead;
     for (unsigned int n = 0; n < l; n++)
     {
         q1 = q1->next;
@@ -84,11 +84,11 @@ bool lins(linkcb *p, unsigned int l)
         q1->tag = TAGO;
         q1->info.codep = NULL;
     }
-    linkcb *r = q1->next;
-    linkcb *q = refal.flhead->next;
+    T_LINKCB *r = q1->next;
+    T_LINKCB *q = refal.flhead->next;
     refal.flhead->next = r;
     r->prev = refal.flhead;
-    linkcb *p1 = p->next;
+    T_LINKCB *p1 = p->next;
     q1->next = p1;
     p1->prev = q1;
     p->next = q;
@@ -96,7 +96,7 @@ bool lins(linkcb *p, unsigned int l)
     return true;
 }
 
-bool slins(linkcb *p, unsigned int k)
+bool slins(T_LINKCB *p, unsigned int k)
 {
     while (!lrqlk(k))
     {
@@ -109,7 +109,7 @@ bool slins(linkcb *p, unsigned int k)
     return lins(p, k);
 }
 
-bool linskd(st *ast, const unsigned char *f)
+bool linskd(T_ST *ast, const unsigned char *f)
 {
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
@@ -117,14 +117,14 @@ bool linskd(st *ast, const unsigned char *f)
         rfabe("Linskd: there are 'k'-signes in view field");
     if (!slins(ast->view, 3))
         return false;
-    linkcb *p = ast->view->next;
-    linkcb *r = p->next;
-    linkcb *q = ast->view->prev;
+    T_LINKCB *p = ast->view->next;
+    T_LINKCB *r = p->next;
+    T_LINKCB *q = ast->view->prev;
     p->tag = TAGK;
     q->tag = TAGD;
     q->info.codep = p;
     r->tag = TAGF;
-    r->info.codep = (linkcb *)f;
+    r->info.codep = (T_LINKCB *)f;
     ast->dot = q;
     return true;
 }
@@ -141,15 +141,15 @@ char rfcnv(char cm)
 void rfinit()
 {
     rf_init = false;
-    REFAL *p = &refal;
-    p->crprev = (st *)&refal;
-    p->crnext = (st *)&refal;
+    T_REFAL *p = &refal;
+    p->crprev = (T_ST *)&refal;
+    p->crnext = (T_ST *)&refal;
     p->upshot = 1;
     p->currst = NULL;
     p->svar = NULL;
     p->dvar = NULL;
     p->flhead = &hd;
-    linkcb *phd = &hd;
+    T_LINKCB *phd = &hd;
     phd->prev = phd;
     phd->next = phd;
     phd->tag = 0;
@@ -160,7 +160,7 @@ void rfinit()
     p->tmintv = 0;
 }
 
-void rfcanc(const st *ast)
+void rfcanc(const T_ST *ast)
 {
     if (rf_init)
         rfinit();
@@ -170,9 +170,9 @@ void rfcanc(const st *ast)
         rfabe("Rfcanc: process is in job yet");
     ast->stprev->stnext = ast->stnext;
     ast->stnext->stprev = ast->stprev;
-    linkcb *flhead1 = refal.flhead->prev;
-    linkcb *view1 = ast->view->prev;
-    linkcb *store1 = ast->store->prev;
+    T_LINKCB *flhead1 = refal.flhead->prev;
+    T_LINKCB *view1 = ast->view->prev;
+    T_LINKCB *store1 = ast->store->prev;
     flhead1->next = ast->view;
     ast->view->prev = flhead1;
     view1->next = ast->store;
@@ -182,13 +182,13 @@ void rfcanc(const st *ast)
 }
 
 //    delete part of list and add it to free memory list  
-void rfdel(linkcb *p, linkcb *q)
+void rfdel(T_LINKCB *p, T_LINKCB *q)
 {
-    linkcb *p1 = p->next;
+    T_LINKCB *p1 = p->next;
     if (p1 == q)
         return;
-    linkcb *q1 = q->prev;
-    linkcb *r = refal.flhead->prev;
+    T_LINKCB *q1 = q->prev;
+    T_LINKCB *r = refal.flhead->prev;
     p->next = q;
     q->prev = p;
     q1->next = refal.flhead;
@@ -201,7 +201,7 @@ void rftermm()
 {
     while (last_block != NULL)
     {
-        linkcb *new_block = last_block;
+        T_LINKCB *new_block = last_block;
         last_block = new_block->prev;
         free(new_block);
 #ifdef mdebug
@@ -212,7 +212,7 @@ void rftermm()
 
 void rfexec(const unsigned char *func)
 {
-    st s_st;
+    T_ST s_st;
     if (rf_init)
         rfinit();
     if (!lincrm())
@@ -231,9 +231,9 @@ AGAIN:
     while (s_st.state == 1 && s_st.dot != NULL)
     {
         s_st.stop = s_st.step + 1;
-        const linkcb *pk = s_st.dot->info.codep;
-        const linkcb *prevk = pk->prev;
-        const linkcb *nextd = s_st.dot->next;
+        const T_LINKCB *pk = s_st.dot->info.codep;
+        const T_LINKCB *prevk = pk->prev;
+        const T_LINKCB *nextd = s_st.dot->next;
         printf("\n step: %d", s_st.stop);
         rfpexm(" Term: ", prevk, nextd);
 
@@ -292,13 +292,13 @@ LACK:
     rftermm();
 }
 
-void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
+void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
 {
     printf("\n%s", pt);
     bool fr = false;
     while (pr != pn->prev)
     {
-        const linkcb *pr1 = pr;
+        const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr->prev != pr1)
             rfabe("rfpexm: list structure violation");
@@ -351,13 +351,13 @@ void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn)
     return;
 }
 
-void rftpl(linkcb *r, linkcb *p, linkcb *q)
+void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q)
 {
-    linkcb *p1 = p->next;
+    T_LINKCB *p1 = p->next;
     if (p1 == q)
         return;
-    linkcb *r1 = r->next;
-    linkcb *q1 = q->prev;
+    T_LINKCB *r1 = r->next;
+    T_LINKCB *q1 = q->prev;
     p->next = q;
     q->prev = p;
     q1->next = r1;
@@ -367,11 +367,11 @@ void rftpl(linkcb *r, linkcb *p, linkcb *q)
 }
 
 //  copy expression and add it to nessecary place   
-bool lcopy(linkcb *r, const linkcb *p, const linkcb *q)
+bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
 {
-    linkcb *f = refal.flhead;
-    linkcb *f0 = p->next;
-    linkcb *f1;
+    T_LINKCB *f = refal.flhead;
+    T_LINKCB *f0 = p->next;
+    T_LINKCB *f1;
     while (f0 != q)
     {
         f = f->next;
@@ -380,7 +380,7 @@ bool lcopy(linkcb *r, const linkcb *p, const linkcb *q)
         switch (f0->tag)
         {
         case TAGLB:
-            linkcb *lastb = NULL;
+            T_LINKCB *lastb = NULL;
             f->info.codep = lastb;
             lastb = f;
             break;
@@ -407,7 +407,7 @@ bool lcopy(linkcb *r, const linkcb *p, const linkcb *q)
     f1 = f->next;
     refal.flhead->next = f1;
     f1->prev = refal.flhead;
-    linkcb *r1 = r->next;
+    T_LINKCB *r1 = r->next;
     f->next = r1;
     r1->prev = f;
     r->next = f0;
@@ -415,19 +415,19 @@ bool lcopy(linkcb *r, const linkcb *p, const linkcb *q)
     return true;
 }
 
-bool lexist(const st *ast)
+bool lexist(const T_ST *ast)
 {
-    const REFAL *p = &refal;
+    const T_REFAL *p = &refal;
     do
     {
-        p = (REFAL *)(p->crnext);
-        if (p == (REFAL *)ast)
+        p = (T_REFAL *)(p->crnext);
+        if (p == (T_REFAL *)ast)
             return true;
     } while (p != &refal);
     return false;
 }
 
-bool lcre(st *ast)
+bool lcre(T_ST *ast)
 {
     if (rf_init)
         rfinit();
@@ -439,15 +439,15 @@ bool lcre(st *ast)
     ast->store = ast->view->next;
     if (ast->store == refal.flhead)
         return false;
-    linkcb *flhead1 = ast->store->next;
+    T_LINKCB *flhead1 = ast->store->next;
     refal.flhead->next = flhead1;
     flhead1->prev = refal.flhead;
     (ast->view->next) = (ast->view);
     (ast->view->prev) = (ast->view);
     (ast->store->next) = (ast->store);
     (ast->store->prev) = (ast->store);
-    st *q = refal.crprev;
-    ast->stnext = (st *)&refal;
+    T_ST *q = refal.crprev;
+    ast->stnext = (T_ST *)&refal;
     refal.crprev = ast;
     q->stnext = ast;
     ast->stprev = q;
@@ -458,17 +458,17 @@ bool lcre(st *ast)
     return true;
 }
 
-static void mark(linkcb *root)
+static void mark(T_LINKCB *root)
 {
-    linkcb *p = root;
-    linkcb *h = p;
+    T_LINKCB *p = root;
+    T_LINKCB *h = p;
 MRK:
     if (p->next == h)
         goto UP;
     p = p->next;
     if (p->tag != TAGR)
         goto MRK;
-    linkcb *q = p->info.codep;
+    T_LINKCB *q = p->info.codep;
     if (q->tag != 0)
         goto MRK;
     q->tag = 0xFFFF;
@@ -481,7 +481,7 @@ UP:
         return;
     q = h->prev;
     h->prev = p;
-    linkcb *r = h;
+    T_LINKCB *r = h;
     h = q->info.codep;
     q->info.codep = r;
     q->tag = TAGR;
@@ -491,15 +491,15 @@ UP:
 
 static bool lgcl()
 {
-    linkcb hdvar;
-    linkcb *hd = &hdvar;
+    T_LINKCB hdvar;
+    T_LINKCB *hd = &hdvar;
     if (refal.dvar == NULL)
         return false;
     // mark boxes achieved from view field & burriage  
     bool was_coll = false;
-    const linkcb *pzero = NULL;
-    const st *p = refal.crnext;
-    while (p != (st *)&refal)
+    const T_LINKCB *pzero = NULL;
+    const T_ST *p = refal.crnext;
+    while (p != (T_ST *)&refal)
     {
         mark(p->view);
         mark(p->store);
@@ -508,7 +508,7 @@ static bool lgcl()
     // mark boxes achieved from static boxes     
     if (refal.svar != NULL)
     {
-        linkcb *r = refal.svar;
+        T_LINKCB *r = refal.svar;
         do
         {
             mark(r);
@@ -516,8 +516,8 @@ static bool lgcl()
         } while (r != pzero);
         //   remove garbage    
         hd->info.codep = refal.dvar;
-        linkcb *p1 = hd;
-        linkcb *q = refal.dvar;
+        T_LINKCB *p1 = hd;
+        T_LINKCB *q = refal.dvar;
         do
         {
             if (q->tag != 0)
@@ -531,7 +531,7 @@ static bool lgcl()
                 p1->info.codep = q->info.codep;
                 p1->tag = q->tag;
                 r = q->prev;
-                linkcb *flhead1 = refal.flhead->next;
+                T_LINKCB *flhead1 = refal.flhead->next;
                 r->next = flhead1;
                 flhead1->prev = r;
                 refal.flhead->next = q;
@@ -547,12 +547,12 @@ static bool lgcl()
     return was_coll;
 }
 
-static void rflist(linkcb *par, unsigned int n)
+static void rflist(T_LINKCB *par, unsigned int n)
 {
     if (rf_init)
         rfinit();
-    linkcb *q = par;
-    linkcb *p = refal.flhead->prev;
+    T_LINKCB *q = par;
+    T_LINKCB *p = refal.flhead->prev;
     for (unsigned int k = 0; k < n; k++)
     {
         p->next = q;
@@ -567,12 +567,12 @@ static void rflist(linkcb *par, unsigned int n)
     return;
 }
 
-void rfpex(const char *pt, const linkcb *pr, const linkcb *pn)
+void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
 {
     printf("\n%s", pt);
     while (pr != pn->prev)
     {
-        const linkcb *pr1 = pr;
+        const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->prev)
             rfabe("rfpex: list structure violation");
@@ -608,10 +608,10 @@ void rfpex(const char *pt, const linkcb *pr, const linkcb *pn)
     return;
 }
 
-linkcb *lldupl(const linkcb *p, const linkcb *q, const linkcb *u)
+T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
 {
-    const linkcb *x = p->next;
-    linkcb *y = u->next;
+    const T_LINKCB *x = p->next;
+    T_LINKCB *y = u->next;
     while (x != q)
     {
         if (x->tag != y->tag)

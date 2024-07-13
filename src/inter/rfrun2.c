@@ -12,7 +12,7 @@
 static bool letter(char s);
 static bool digit(char s);
 
-bool spc(T_SPCS *pspcsp, const unsigned char *vpc, const linkcb *b)
+bool spc(T_SPCS *pspcsp, const unsigned char *vpc, const T_LINKCB *b)
 // specifier interpreter  
 {
     // spcs-pointer  
@@ -146,13 +146,13 @@ static bool digit(char s)
     return false;
 }
 
-void link(linkcb *x, linkcb *y)
+void link(T_LINKCB *x, T_LINKCB *y)
 {
     x->next = y;
     y->prev = x;
 }
 
-void putjs(T_WJS *jsp, linkcb **ab1, linkcb **ab2, const unsigned int *anel, unsigned char **avpc)
+void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, unsigned char **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -160,7 +160,7 @@ void putjs(T_WJS *jsp, linkcb **ab1, linkcb **ab2, const unsigned int *anel, uns
     jsp->jsvpc = *avpc;
 }
 
-void getjs(const T_WJS *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, unsigned char **avpc)
+void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, unsigned char **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -168,14 +168,14 @@ void getjs(const T_WJS *jsp, linkcb **ab1, linkcb **ab2, unsigned int *anel, uns
     *avpc = jsp->jsvpc;
 }
 
-void putts(T_TS *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
     tsp->ts0 = *ax;
     tsp->ts1 = *ay;
     tsp->ts2 = *az;
 }
 
-void getts(const T_TS *tsp, linkcb **ax, linkcb **ay, linkcb **az)
+void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
     *ax = tsp->ts0;
     *ay = tsp->ts1;

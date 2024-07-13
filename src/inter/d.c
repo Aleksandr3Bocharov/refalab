@@ -50,31 +50,31 @@ static unsigned long int euc_step;
 static unsigned long int res_step;
 static unsigned long int curr_step1;
 static unsigned long int curr_step2;
-static const linkcb *nextk;
-static const linkcb *res_prevk;
-static const linkcb *res_nextd;
-static linkcb *pk;
-static linkcb *prevk;
-static linkcb *nextd;
-static linkcb *dot1;
-static const linkcb *prevk1, *nextd1;
-static linkcb *dot2;
-static const linkcb *prevk2, *nextd2;
+static const T_LINKCB *nextk;
+static const T_LINKCB *res_prevk;
+static const T_LINKCB *res_nextd;
+static T_LINKCB *pk;
+static T_LINKCB *prevk;
+static T_LINKCB *nextd;
+static T_LINKCB *dot1;
+static const T_LINKCB *prevk1, *nextd1;
+static T_LINKCB *dot2;
+static const T_LINKCB *prevk2, *nextd2;
 
 static void init_det_flags();
 static void get_arg();
 static bool get_det();
 static bool get_numb(long int *numb);
 static bool get_yn(const char *b);
-static void dbapp(st *ss_st);
-static void getpf(const st *ss_st);
-static void one_step(st *ss_st);
+static void dbapp(T_ST *ss_st);
+static void getpf(const T_ST *ss_st);
+static void one_step(T_ST *ss_st);
 static void pr_euc();
-static void pr_finres(unsigned long int xstep, const linkcb *xprevk, const linkcb *xnextd);
+static void pr_finres(unsigned long int xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
 static void pr_imres();
 static void pr_step();
 
-void rfdbg(st *s_st)
+void rfdbg(T_ST *s_st)
 {
     // read task for debugging  
     init_det_flags();
@@ -390,15 +390,15 @@ EOJ:
     exit(0);
 }
 
-static void dbapp(st *ss_st)
+static void dbapp(T_ST *ss_st)
 {
-    linkcb *v1 = prevk;
-    linkcb *v2 = nextd;
-    linkcb *v3 = pk;
-    const linkcb *v4 = nextk;
+    T_LINKCB *v1 = prevk;
+    T_LINKCB *v2 = nextd;
+    T_LINKCB *v3 = pk;
+    const T_LINKCB *v4 = nextk;
     unsigned long int v5 = res_step;
-    const linkcb *v6 = res_prevk;
-    const linkcb *v7 = res_nextd;
+    const T_LINKCB *v6 = res_prevk;
+    const T_LINKCB *v7 = res_nextd;
 NOT_YET:
     if (ss_st->dot == NULL)
         goto DO;
@@ -552,7 +552,7 @@ static void init_det_flags()
     last_det = NULL;
 }
 
-static void one_step(st *ss_st)
+static void one_step(T_ST *ss_st)
 {
     ss_st->stop = ss_st->step + 1;
 AGAIN:
@@ -624,7 +624,7 @@ static void pr_imres()
     return;
 }
 
-static void pr_finres(unsigned long int xstep, const linkcb *xprevk, const linkcb *xnextd)
+static void pr_finres(unsigned long int xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
 {
     if ((curr_step > s_upto) || (curr_step < s_from))
         return;
@@ -652,7 +652,7 @@ static void pr_finres(unsigned long int xstep, const linkcb *xprevk, const linkc
     return;
 }
 
-static void getpf(const st *ss_st)
+static void getpf(const T_ST *ss_st)
 {
     curr_step = ss_st->step + 1;
     pk = ss_st->dot->info.codep;

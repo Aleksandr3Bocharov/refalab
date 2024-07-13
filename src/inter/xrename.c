@@ -9,7 +9,7 @@
 
 static void unlnk_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     unsigned int i;
     char namf[40];
     for (i = 0; p != refal.nexta; i++)
@@ -42,7 +42,7 @@ static void (*unlnk_1)() = unlnk_;
 
 static void renam_()
 {
-    const linkcb *p = refal.preva->next;
+    const T_LINKCB *p = refal.preva->next;
     unsigned int i;
     char namf[40];
     for (i = 0; p->tag != TAGO || p->info.infoc != ' '; i++)

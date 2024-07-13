@@ -7,8 +7,8 @@
 
 #include "refal.def"
 
-extern void (*dba)(st *);
-extern void rfdbg(st *s_st);
+extern void (*dba)(T_ST *);
+extern void rfdbg(T_ST *s_st);
 
 #endif
 //---------  end of file DEBUG.DEF ----------- 

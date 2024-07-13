@@ -10,7 +10,7 @@
 #define HMAX 4096L
 #define MASKA 0xffffffL
 
-static void norm(linkcb *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
+static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
 {                                                            //  X - ukaz. na konec             
     unsigned long int peren = 0l;
     const unsigned int ip = 24 - j;
@@ -61,12 +61,12 @@ static void ymn(long int *a, long int *b)
 static void gcd_()
 {
     //   sint. control  
-    linkcb *pr = refal.preva->next;
+    T_LINKCB *pr = refal.preva->next;
     if (pr->tag != TAGLB)
         goto NEOT;
-    linkcb *tl[] = {pr->info.codep, refal.nexta};
-    linkcb *p[] = {pr, tl[0]};
-    linkcb *hd[2];
+    T_LINKCB *tl[] = {pr->info.codep, refal.nexta};
+    T_LINKCB *p[] = {pr, tl[0]};
+    T_LINKCB *hd[2];
     unsigned int l[2];
     unsigned int i;
     for (i = 0; i < 2; i++)
@@ -211,10 +211,10 @@ M21:
         hd[0]->tag = TAGN;
         pcoden(hd[0], 0l);
         l[0]++;
-        linkcb *px;
+        T_LINKCB *px;
         for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
             ;
-        linkcb *py = hd[1]->prev;
+        T_LINKCB *py = hd[1]->prev;
         py->tag = TAGN;
         pcoden(py, 0l);
         unsigned int n;
@@ -284,8 +284,8 @@ M21:
             // umnovenie  delitelja  na 'c' i wychit. iz X  
             if (c != 0L)
             {
-                const linkcb *Yt = tl[1];
-                linkcb *Xt = px;
+                const T_LINKCB *Yt = tl[1];
+                T_LINKCB *Xt = px;
                 peren = 0L;
                 unsigned long int J;
                 for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)

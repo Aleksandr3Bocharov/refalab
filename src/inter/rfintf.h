@@ -1,29 +1,30 @@
 #ifndef RFINTF_H
 #define RFINTF_H
 
+#include <stdbool.h>
 #include "refal.def"
 
-extern REFAL refal;
+extern T_REFAL refal;
 
 extern void rfabe(const char *amsg);
-extern void rfcanc(const st *ast);
+extern void rfcanc(const T_ST *ast);
 extern char rfcnv(char cm);
-extern void rfdel(linkcb *p, linkcb *q);
+extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(const unsigned char *func);
 extern void rfinit();
-extern void rfpex(const char *pt, const linkcb *pr, const linkcb *pn);
-extern void rfpexm(const char *pt, const linkcb *pr, const linkcb *pn);
+extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
+extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
 extern void rftermm();
-extern void rftpl(linkcb *r, linkcb *p, linkcb *q);
+extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
-extern bool lcopy(linkcb *r, const linkcb *p, const linkcb *q);
-extern bool lcre(st *ast);
-extern bool lexist(const st *ast);
+extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
+extern bool lcre(T_ST *ast);
+extern bool lexist(const T_ST *ast);
 extern bool lincrm();
-extern bool lins(linkcb *p, unsigned int l);
-extern bool slins(linkcb *p, unsigned int k);
-extern bool linskd(st *ast, const unsigned char *f);
-extern linkcb *lldupl(const linkcb *p, const linkcb *q, const linkcb *u);
+extern bool lins(T_LINKCB *p, unsigned int l);
+extern bool slins(T_LINKCB *p, unsigned int k);
+extern bool linskd(T_ST *ast, const unsigned char *f);
+extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool lrqlk(unsigned int l);
 
 #endif
