@@ -1,5 +1,5 @@
 //----------   file  CCST1.C  --------------
-//    The first of two compiler files
+//      Compiler file
 //      Last edition date : 11.07.24
 //------------------------------------------
 #include <stdio.h>
