@@ -94,7 +94,7 @@ static char prevlb[40];
 static char stmkey[6];
 static uint16_t fixm;      // start sentence position
 static char mod_name[9];             // module name                 // kras
-static unsigned long int mod_length; // module length   // kras
+static uint32_t mod_length; // module length   // kras
 static uint16_t again;     // next module processing feature
 static unsigned int _eoj;            // "sysin" end flag           // kras
 static unsigned int cur;
@@ -126,14 +126,14 @@ static void GET_time()
 {
     timespec t1;
     timespec_get(&t1, TIME_UTC);
-    long int in = t1.tv_nsec - t0.tv_nsec;
-    unsigned long int is = difftime(t1.tv_sec, t0.tv_sec);
+    int32_t in = t1.tv_nsec - t0.tv_nsec;
+    uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
     if (in < 0)
     {
         in += 1000000000;
         is--;
     }
-    const unsigned long int im = is / 60;
+    const uint32_t im = is / 60;
     is %= 60;
     char s[25];
     sprintf(s, "%02ld:%02ld.%09ld", im, is, in);
@@ -1355,12 +1355,12 @@ static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid) // procedur
 CSMBN:
     code->tag = TAGN;
     code->info.coden = 0;
-    unsigned long int k = c[m] - '0';
+    uint32_t k = c[m] - '0';
 CSMBN1:
     EH ROMA0; // kras
     if (class[m] != 'D')
         goto CSMBN3;
-    const unsigned long int l = c[m] - '0';
+    const uint32_t l = c[m] - '0';
     k = k * 10L + l;
     if (k <= 16777215L)
         goto CSMBN1;

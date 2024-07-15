@@ -9,7 +9,7 @@ typedef struct linkti
     union
     {
         char infoc[2];
-        unsigned long int coden;
+        uint32_t coden;
         uint8_t *codef;
     } info;
 } T_LINKTI;

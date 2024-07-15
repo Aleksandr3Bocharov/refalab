@@ -76,12 +76,12 @@ static T_EXT *qx, *rx;
 
 static T_ENT *first_ent;
 static T_ENT *last_ent;
-static long int mod_length;
+static int32_t mod_length;
 static char mod_name[9];
 static unsigned int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
-static long int curr_addr; // module generation files
+static int32_t curr_addr; // module generation files
 static unsigned int n_ext;
 static T_RL rl;
 static unsigned int k;
@@ -190,7 +190,7 @@ extern void sfop_w(const char *s, BU *b)
             else
                 un = 65528; // 65536-8 (for bc mojno - 4)
         }
-        unsigned long int lon;
+        uint32_t lon;
         while (true)
         {
             if ((b->buf = (char *)malloc(un)) != NULL)

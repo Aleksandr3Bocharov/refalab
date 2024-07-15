@@ -174,7 +174,7 @@ void sswap(const char *idp, unsigned int lid)
         p->def = scn_.nomkar;
         jlabel(p);
         jbyte(n_swap);
-        //   kk = sizeof(int)+sizeof(unsigned long int)+sizeof(POINTER) * 2;   
+        //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;   
         const unsigned int kk = SMBL + LBLL * 2;
         for (unsigned int k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
