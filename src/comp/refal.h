@@ -2,6 +2,7 @@
 #define REFAL_H
 
 #include <stdio.h>
+#include <stdint.h>
 #include "cgop.h"
 
 typedef struct opt_
@@ -29,7 +30,7 @@ extern T_SCN scn_;
 
 typedef struct scn_e_
 {                         // current statement element  
-    unsigned short int t; //    element type            
+    uint16_t t; //    element type            
     char ci;              //    variable index          
     unsigned int v;
     T_LINKTI code;
@@ -42,7 +43,7 @@ extern FILE *sysprint, *systerm;
 extern FILE *syslin; // for assem  
 extern FILE *systxt; // for module names  
 
-extern unsigned short int nommod;
+extern uint16_t nommod;
 extern char parm_i[];       // sourse file name  
 extern const char vers_i[]; // compiler version  
 extern char mod_i[];        // module name       

@@ -2,6 +2,7 @@
 //    generation of the assembly language operators    
 //          Last edition date : 11.07.2024             
 //---------------------------------------------------- 
+#include <stdint.h>
 #include "refal.def"
 #include "cgop.h"
 #include "cj.h"
@@ -25,7 +26,7 @@ extern void gopnm(char k, char n, char m)
     jbyte(m);
 }
 
-extern void gopl(char k, const unsigned char *l)
+extern void gopl(char k, const uint8_t *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
@@ -63,7 +64,7 @@ extern void gops(char k, const T_LINKTI *code)
     gsymbol(code);
 }
 
-extern void ghw(unsigned short int h)
+extern void ghw(uint16_t h)
 {
     const T_TAG *po = (T_TAG *)&h; //  eg  
     jbyte(po->b1);

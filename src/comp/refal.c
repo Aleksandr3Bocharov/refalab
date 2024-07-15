@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "refal.h"
 #include "cerr.h"
@@ -52,17 +53,17 @@ FILE *sysprint, *systerm;
 FILE *syslin; // for assem
 FILE *systxt; // for module names
 
-unsigned short int nommod;
+uint16_t nommod;
 char parm_i[40]; // sourse file name
 // Aleksandr Bocharov   // compiler version
 const char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 
 static FILE *sysin;
-static unsigned short int m; // current symbol number
+static uint16_t m; // current symbol number
 static char strg_c[78];
 static unsigned int lbl_leng;
-static unsigned short int empcard; // flags for empty card
+static uint16_t empcard; // flags for empty card
 static char card[81];              // card buffer (input)
 static const char *card72 = card;
 static unsigned int cdnumb; // card number   // kras
@@ -85,16 +86,16 @@ static const char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
 static char *class = class72 + 6;
-static unsigned short int scn_state; // scanner station - in(1),out(0) literal chain
-static unsigned short int left_part;
+static uint16_t scn_state; // scanner station - in(1),out(0) literal chain
+static uint16_t left_part;
 static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
-static unsigned short int fixm;      // start sentence position
+static uint16_t fixm;      // start sentence position
 static char mod_name[9];             // module name                 // kras
 static unsigned long int mod_length; // module length   // kras
-static unsigned short int again;     // next module processing feature
+static uint16_t again;     // next module processing feature
 static unsigned int _eoj;            // "sysin" end flag           // kras
 static unsigned int cur;
 
@@ -595,13 +596,13 @@ static void lblkey(unsigned int pr)
     if (c[m] == ' ')
         goto LKEXIT;
     fixm = m;
-    unsigned short int l = 0;
+    uint16_t l = 0;
     while (c[m] != ' ')
     {
         if (m == 71)
         {
-            const unsigned short int delta = 71 - fixm;
-            const short int fixm1 = 0 - delta;
+            const uint16_t delta = 71 - fixm;
+            const int16_t fixm1 = 0 - delta;
             for (m = 0; m != delta; m++)
             {
                 c[fixm1 + m] = c[fixm + m];
@@ -631,8 +632,8 @@ void scan()
 {
     static char id[40];
     static unsigned int id_leng;
-    static const unsigned char *p;
-    static unsigned short int scode;
+    static const uint8_t *p;
+    static uint16_t scode;
     unsigned int i; // kras
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
@@ -754,7 +755,7 @@ SCNV:
         EH ROMA;
         if (left_part == 1)
         {
-            p = scn_e.spec.info.codef = (unsigned char *)genlbl();
+            p = scn_e.spec.info.codef = (uint8_t *)genlbl();
             jlabel((T_U *)p);
         }
         if (specif(')'))
@@ -768,7 +769,7 @@ SCNV:
         if (!get_id(id, &id_leng))
             goto SOSH203;
         if (left_part == 1)
-            scn_e.spec.info.codef = (unsigned char *)spref(id, id_leng, ')');
+            scn_e.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
         if (c[m] == ':')
         {
             EH ROMA else goto SOSH204;
@@ -917,7 +918,7 @@ SABBR:
             gsp((char)(scode + 7));
             gsp(ns_ngw);
         };
-        scn_e.spec.info.codef = (unsigned char *)*(sarr + scode);
+        scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
     };
     EH ROMA;
     goto SCNVI;
@@ -1061,7 +1062,7 @@ SPCSP:
         goto OSH203;
     if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
         pchosh("209 specifier is defined through itself");
-    const unsigned char *p = (unsigned char *)spref(id, lid, tail);
+    const uint8_t *p = (uint8_t *)spref(id, lid, tail);
     gsp(ns_cll);
     if (left_part == 1)
         j3addr((T_U *)p);
@@ -1348,7 +1349,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid) // procedur
         goto CSMBN;
     if (!get_id(id, lid))
         goto OSH112;
-    code->info.codef = (unsigned char *)fnref(id, *lid);
+    code->info.codef = (uint8_t *)fnref(id, *lid);
     code->tag = TAGF;
     goto CSMBEND;
 CSMBN:

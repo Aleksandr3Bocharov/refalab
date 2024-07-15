@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "ccst.h"
 #include "cerr.h"
@@ -24,55 +25,55 @@
 
 static struct
 { // left part buffer elements
-    unsigned short int p, q, t, ind;
+    uint16_t p, q, t, ind;
     T_LINKTI code;
-    unsigned short int next;
-    unsigned short int pair;
+    uint16_t next;
+    uint16_t pair;
     T_LINKTI spec;
-    unsigned short int v;
-    unsigned short int eoemrk;
-    unsigned short int e_level;
+    uint16_t v;
+    uint16_t eoemrk;
+    uint16_t e_level;
 } x[100];
 
 // ???whole list
 static struct
 { // ???variable table elements
-    unsigned short int _t, _q;
-    unsigned short int rem;
-    unsigned short int last;
+    uint16_t _t, _q;
+    uint16_t rem;
+    uint16_t last;
     char ci;
-    unsigned short int _v;
+    uint16_t _v;
 } v[50];
 
 // ???variable table elements
 static struct
 {
-    unsigned short int _next;
-    unsigned short int n1, n2;
+    uint16_t _next;
+    uint16_t n1, n2;
 } h[30];
 
 static T_LINKTI xncode;  // work structure
 static T_LINKTI funcptr; // work pointer
 
-static unsigned short int n, n1, n2;     // left part element pointers
-static unsigned short int ind, ie;       // element index
-static unsigned short int nel;           // current element number
-static unsigned short int e_level;       // counter of the longing levels
-static unsigned short int not_nil;       // working variables
-static unsigned short int nh;            // current whole number
-static unsigned short int kol_per;       // subprogram of search in variable table
+static uint16_t n, n1, n2;     // left part element pointers
+static uint16_t ind, ie;       // element index
+static uint16_t nel;           // current element number
+static uint16_t e_level;       // counter of the longing levels
+static uint16_t not_nil;       // working variables
+static uint16_t nh;            // current whole number
+static uint16_t kol_per;       // subprogram of search in variable table
                                          // table pointer
-static unsigned short int nh_x, nh_y;    // hole numbers (under enter in brackets)
-static unsigned short int lrbxy;         // stoped bracket flag
-static unsigned short int lastb, lastb1; // variables for brackets linkage
-static unsigned short int kol_lit;       // counter of the symbol number
-static unsigned short int diff_e_level;
+static uint16_t nh_x, nh_y;    // hole numbers (under enter in brackets)
+static uint16_t lrbxy;         // stoped bracket flag
+static uint16_t lastb, lastb1; // variables for brackets linkage
+static uint16_t kol_lit;       // counter of the symbol number
+static uint16_t diff_e_level;
 static unsigned int kol_skob[100]; // stack for counting of the brackets balance
 static unsigned int ur_skob;
 static char buf_lit[80]; // buffer for generating of the "text" statement
-static unsigned short int k;
-static unsigned short int fh;      // free segment number in the whole  list
-static unsigned short int next_nh; // next whole number
+static uint16_t k;
+static uint16_t fh;      // free segment number in the whole  list
+static uint16_t next_nh; // next whole number
 
 static void isk_v();
 static void gen_bsb();
@@ -81,7 +82,7 @@ static void pch406();
 static bool lsg_p();
 static bool rsg_p();
 static void gpev(char op1, char op2);
-static bool ortgn(unsigned short int n1, unsigned short int n2);
+static bool ortgn(uint16_t n1, uint16_t n2);
 
 // read left part
 // and full array X
@@ -1261,9 +1262,9 @@ GEN_RE:
 }
 
 //    check ortogonality of this sentence against left part
-static bool ortgn(unsigned short int n1, unsigned short int n2)
+static bool ortgn(uint16_t n1, uint16_t n2)
 {
-    unsigned short int n = n1;
+    uint16_t n = n1;
 ORT1:
     n++;
     if (n == n2)
@@ -1271,7 +1272,7 @@ ORT1:
     if (x[n].t <= 3)
         goto ORT1;
 ORT1V:
-    unsigned short int ind = x[n].ind;
+    uint16_t ind = x[n].ind;
     if (v[ind].last != 0)
         goto ORT1;
     (v[ind].rem)--;

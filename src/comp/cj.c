@@ -9,6 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "cj.h"
 #include "cerr.h"
@@ -46,7 +47,7 @@ static BU sysut2 = {0, 0, NULL, NULL, NULL};
 static union
 {
     char b[2];
-    unsigned short int w;
+    uint16_t w;
 } d;
 
 /*
@@ -856,7 +857,7 @@ JTERM:
 static union
 {
     char cc[2];
-    unsigned short int ww;
+    uint16_t ww;
 } stm, ksm;
 
 static char c;

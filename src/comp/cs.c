@@ -4,6 +4,7 @@
 //---------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "refal.def"
 #include "cs.h"
 #include "cerr.h"
@@ -95,9 +96,9 @@ void fndef(const char *idp, unsigned int lid)
             if (options.stmnmb == 1)
             {
                 next_nos = alloc_lbl();
-                gopl(n_setnos, (unsigned char *)next_nos);
+                gopl(n_setnos, (uint8_t *)next_nos);
             };
-            gopl(n_sjump, (unsigned char *)next_stm);
+            gopl(n_sjump, (uint8_t *)next_stm);
         }
     }
     else
@@ -107,7 +108,7 @@ void fndef(const char *idp, unsigned int lid)
         else
             p500();
         next_stm = alloc_lbl();
-        gopl(n_sjump, (unsigned char *)next_stm);
+        gopl(n_sjump, (uint8_t *)next_stm);
     };
     return; //  eg  
 }

@@ -2,7 +2,6 @@
 #define CCST_H
 
 #include <stdbool.h>
-#include "cgop.h"
 
 // the table of assembly language statement codes  
 #define n_sjump '\001'
