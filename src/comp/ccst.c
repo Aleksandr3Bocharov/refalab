@@ -1051,9 +1051,7 @@ RPE6: // e- or v-varyable
             if (v[ind]._v == 1)
                 gopn(n_tplv, x[n].q);
             else
-            {
                 gopn(n_tple, x[n].q);
-            }
             v[ind].last = x[n].next;
         };
     }

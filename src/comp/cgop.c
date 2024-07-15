@@ -1,7 +1,7 @@
-//------------------file----CGOP.C-------------------- 
-//    generation of the assembly language operators    
-//          Last edition date : 11.07.2024             
-//---------------------------------------------------- 
+//------------------file----CGOP.C--------------------
+//    generation of the assembly language operators
+//          Last edition date : 11.07.2024
+//----------------------------------------------------
 #include <stdint.h>
 #include "refal.def"
 #include "cgop.h"
@@ -41,7 +41,7 @@ void gsymbol(const T_LINKTI *code)
     {
         j3addr((T_U *)code->info.codef);
         return;
-        //      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC  
+        //      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC
     };
     const char *r = (char *)&code->info.codef;
     if (code->tag == 0)
@@ -53,9 +53,7 @@ void gsymbol(const T_LINKTI *code)
     }
     else
         for (size_t i = 0; i < LBLL; i++)
-        {
             jbyte(*(r + i));
-        }
 }
 
 void gops(char k, const T_LINKTI *code)
@@ -66,7 +64,7 @@ void gops(char k, const T_LINKTI *code)
 
 void ghw(uint16_t h)
 {
-    const T_TAG *po = (T_TAG *)&h; //  eg  
+    const T_TAG *po = (T_TAG *)&h; //  eg
     jbyte(po->b1);
     jbyte(po->b2);
 }
