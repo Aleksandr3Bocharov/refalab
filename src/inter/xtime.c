@@ -56,16 +56,16 @@ static void rftm_()
         case 'g':
         case 'G':
             timespec_get(&t1, TIME_UTC);
-            long int in = t1.tv_nsec - t0.tv_nsec;
-            unsigned long int is = difftime(t1.tv_sec, t0.tv_sec);
+            int32_t in = t1.tv_nsec - t0.tv_nsec;
+            uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
             if (in < 0)
             {
                 in += 1000000000;
                 is--;
             }
-            unsigned long int im = is / 60;
+            uint32_t im = is / 60;
             is %= 60;
-            const unsigned long int ih = im / 60;
+            const uint32_t ih = im / 60;
             im %= 60;
             char s[25];
             sprintf(s, "%02ld:%02ld:%02ld.%09ld", ih, im, is, in);

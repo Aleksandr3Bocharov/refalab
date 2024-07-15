@@ -23,7 +23,7 @@ static void open_()
       goto NEOT;
    const char c = p->info.infoc;
    p = p->next;
-   unsigned long int j;
+   uint32_t j;
    if (p->tag != TAGN)
       goto NEOT;
    else
@@ -78,7 +78,7 @@ static void close_()
    p = p->next;
    if (p->tag != TAGN)
       goto NEOT;
-   const unsigned long int j = p->info.coden;
+   const uint32_t j = p->info.coden;
    if (j >= fmax)
       goto NEOT;
    if (c == 'R' || c == 'r')
@@ -110,7 +110,7 @@ static void get_()
    T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   const unsigned long int j = p->info.coden;
+   const uint32_t j = p->info.coden;
    if (j >= fmax)
       goto NEOT;
    f = uniget[j];
@@ -158,7 +158,7 @@ static void put_()
    const T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGN)
       goto NEOT;
-   const unsigned long int j = p->info.coden;
+   const uint32_t j = p->info.coden;
    p = p->next;
    if (j >= fmax)
       goto NEOT;

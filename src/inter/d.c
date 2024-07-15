@@ -36,21 +36,21 @@ static bool e1empty = false;
 static bool was_ge;
 static bool was_le;
 static bool was_eq;
-static unsigned long int s_from = 0L;
-static unsigned long int s_upto = 0L;
-static unsigned long int s_stop = 2147483647L;
+static uint32_t s_from = 0L;
+static uint32_t s_upto = 0L;
+static uint32_t s_stop = 2147483647L;
 static unsigned int nogcl = 0; // garbage collection counter  
 static unsigned int s_arg;
 static unsigned int l_arg;
 static char buff_id[100];
 static char buff[100];
 static char *arg = buff;
-static unsigned long int printed_step;
-static unsigned long int curr_step;
-static unsigned long int euc_step;
-static unsigned long int res_step;
-static unsigned long int curr_step1;
-static unsigned long int curr_step2;
+static uint32_t printed_step;
+static uint32_t curr_step;
+static uint32_t euc_step;
+static uint32_t res_step;
+static uint32_t curr_step1;
+static uint32_t curr_step2;
 static const T_LINKCB *nextk;
 static const T_LINKCB *res_prevk;
 static const T_LINKCB *res_nextd;
@@ -65,13 +65,13 @@ static const T_LINKCB *prevk2, *nextd2;
 static void init_det_flags();
 static void get_arg();
 static bool get_det();
-static bool get_numb(long int *numb);
+static bool get_numb(int32_t *numb);
 static bool get_yn(const char *b);
 static void dbapp(T_ST *ss_st);
 static void getpf(const T_ST *ss_st);
 static void one_step(T_ST *ss_st);
 static void pr_euc();
-static void pr_finres(unsigned long int xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
+static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
 static void pr_imres();
 static void pr_step();
 
@@ -204,7 +204,7 @@ R1:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (!get_numb((long int *)&s_stop))
+        if (!get_numb((int32_t *)&s_stop))
             goto R1;
 R2:
     printf("\n FROM (step number) : ");
@@ -212,7 +212,7 @@ R2:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (!get_numb((long int *)&s_from))
+        if (!get_numb((int32_t *)&s_from))
             goto R2;
 R3:
     printf("\n TO (step number) : ");
@@ -220,7 +220,7 @@ R3:
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
-        if (!get_numb((long int *)&s_upto))
+        if (!get_numb((int32_t *)&s_upto))
             goto R3;
 R4:
     printf("\n E1= (y/n) : ");
@@ -397,7 +397,7 @@ static void dbapp(T_ST *ss_st)
     T_LINKCB *v2 = nextd;
     T_LINKCB *v3 = pk;
     const T_LINKCB *v4 = nextk;
-    unsigned long int v5 = res_step;
+    uint32_t v5 = res_step;
     const T_LINKCB *v6 = res_prevk;
     const T_LINKCB *v7 = res_nextd;
 NOT_YET:
@@ -625,7 +625,7 @@ static void pr_imres()
     return;
 }
 
-static void pr_finres(unsigned long int xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
+static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
 {
     if ((curr_step > s_upto) || (curr_step < s_from))
         return;
@@ -741,7 +741,7 @@ static bool get_det()
     return true;
 }
 
-static bool get_numb(long int *numb)
+static bool get_numb(int32_t *numb)
 {
     if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
     {

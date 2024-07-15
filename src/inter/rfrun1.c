@@ -46,7 +46,7 @@ static union
 static union
 { // structure for pointer and integer aligning  
     uint8_t *ptr;
-    unsigned long int *inr;
+    uint32_t *inr;
     char chr[2];
 } inch;
 
@@ -59,8 +59,8 @@ static T_WJS *jsp;   // jump stack pointer
 static T_TS *tsp; //translation stack pointer 
 
 static unsigned int tmmod;        // timer state  
-static unsigned long int tmstart; // time at the start  
-static unsigned long int tmstop;  // time at the end     
+static uint32_t tmstart; // time at the start  
+static uint32_t tmstop;  // time at the end     
 
 // definition of work variables and pointers 
 static uint8_t opc;  // current statement code  

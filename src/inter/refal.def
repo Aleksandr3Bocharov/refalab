@@ -29,7 +29,7 @@ typedef struct linkcb_
     union
     {
         char infoc;
-        unsigned long int coden;
+        uint32_t coden;
         struct linkcb_ *codep;
         uint8_t *codef;
     } info;
@@ -46,8 +46,8 @@ typedef struct st_
     struct st_ *stnext;
     unsigned int state;
     T_LINKCB *dot;
-    unsigned long int step;
-    unsigned long int stop;
+    uint32_t step;
+    uint32_t stop;
     T_LINKCB *view;
     T_LINKCB *store;
 } T_ST;
@@ -68,7 +68,7 @@ typedef struct refal_
     unsigned int stmnmb;
     unsigned int nostm;
     unsigned int tmmode;
-    unsigned long int tmintv;
+    uint32_t tmintv;
 } T_REFAL;
 
 #define QC // BLF

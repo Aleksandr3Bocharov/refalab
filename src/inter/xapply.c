@@ -14,7 +14,7 @@ void (*dba)(T_ST *) = NULL;
 static void appl_()
 {
     T_ST *s_st;
-    unsigned long int l = (unsigned long int)&s_st;
+    uint32_t l = (uint32_t)&s_st;
     if ((l & 0xffffL) < 200L)
     { // printf("\nStack overflow!"); 
         goto LACK;

@@ -199,7 +199,7 @@ static unsigned int xmy()
     return 2; // x=y  
 }
 
-static void ymn(unsigned long int *a, unsigned long int *b)
+static void ymn(uint32_t *a, uint32_t *b)
 { // rez.: a - T_ST., b - ml  
     if (*a == 0l)
     {
@@ -215,16 +215,16 @@ static void ymn(unsigned long int *a, unsigned long int *b)
     const unsigned int b1 = (*b) >> 12;
     const unsigned int a2 = (*a) & 0xFFF;
     const unsigned int b2 = (*b) & 0xFFF;
-    unsigned long int r = a2 * (unsigned long int)b2;
+    uint32_t r = a2 * (uint32_t)b2;
     *b = r & 0xFFF;
     unsigned int r3 = r >> 12;
-    r = a1 * (unsigned long int)b2;
+    r = a1 * (uint32_t)b2;
     r3 += r & 0xFFF;
     unsigned int r2 = r >> 12;
-    r = a2 * (unsigned long int)b1;
+    r = a2 * (uint32_t)b1;
     r3 += r & 0xFFF;
     r2 += r >> 12;
-    r = a1 * (unsigned long int)b1;
+    r = a1 * (uint32_t)b1;
     r2 += r & 0xFFF;
     const unsigned int r1 = r >> 12;
     const unsigned int r4 = r3 >> 12;
@@ -234,13 +234,13 @@ static void ymn(unsigned long int *a, unsigned long int *b)
 
 static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
 {                                                            //  X - ukaz. na konec             
-    unsigned long int peren = 0l;
+    uint32_t peren = 0l;
     const unsigned int ip = 24 - j;
-    const unsigned long int m = 0xFFFFFFl >> j; // maska  
+    const uint32_t m = 0xFFFFFFl >> j; // maska  
     for (unsigned int i = 0; i < dl; i++)
     {
-        const unsigned long int g = gcoden(X);
-        const unsigned long int a = (g & m) << j;
+        const uint32_t g = gcoden(X);
+        const uint32_t a = (g & m) << j;
         pcoden(X, a | peren);
         peren = g >> ip;
         X = X->prev;
@@ -254,7 +254,7 @@ static void oper(unsigned int o, unsigned int prn)
         refal.upshot = 2;
         return;
     }
-    unsigned long int a, b;
+    uint32_t a, b;
     switch (o)
     {
     case Osub: // izmenim znak i skladywaem   
@@ -263,8 +263,8 @@ static void oper(unsigned int o, unsigned int prn)
         else
             Yzn = '-';
     case Oadd:
-        long int j;
-        unsigned long int peren;
+        int32_t j;
+        uint32_t peren;
         if ((Xdl == 0) && (Ydl == 0))
         {
         REZ0:
@@ -371,10 +371,10 @@ static void oper(unsigned int o, unsigned int prn)
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
         T_LINKCB *f;
-        unsigned long int c;
+        uint32_t c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
         {
-            const unsigned long int d = gcoden(y);
+            const uint32_t d = gcoden(y);
             if (d != 0l)
             { // umn. na 1 cifru   
                 peren = 0L;
@@ -390,16 +390,16 @@ static void oper(unsigned int o, unsigned int prn)
                     }
                     const unsigned int a11 = a >> 12;
                     const unsigned int a22 = a & 0xFFF;
-                    c = a22 * (unsigned long int)b22;
+                    c = a22 * (uint32_t)b22;
                     b = c & 0xFFF;
                     unsigned int r3 = c >> 12;
-                    c = a11 * (unsigned long int)b22;
+                    c = a11 * (uint32_t)b22;
                     r3 += c & 0xFFF;
                     unsigned int r2 = c >> 12;
-                    c = a22 * (unsigned long int)b11;
+                    c = a22 * (uint32_t)b11;
                     r3 += c & 0xFFF;
                     r2 += c >> 12;
-                    c = a11 * (unsigned long int)b11;
+                    c = a11 * (uint32_t)b11;
                     r2 += c & 0xFFF;
                     const unsigned int r1 = c >> 12;
                     const unsigned int r4 = r3 >> 12;
@@ -522,15 +522,15 @@ static void oper(unsigned int o, unsigned int prn)
         do
         {
             a = gcoden(Xn);
-            const unsigned long int a1 = gcoden(Xn->next);
+            const uint32_t a1 = gcoden(Xn->next);
             b = gcoden(Yn);
             /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
-                                b,(unsigned long int)gcoden(Yn->next));*/
+                                b,(uint32_t)gcoden(Yn->next));*/
             if ((a == 0l) && (a1 < b))
                 c = 0l;
             else
             {
-                unsigned long int b1;
+                uint32_t b1;
                 if ((a == 0l) && (a1 >= b))
                 {
                     c = 1l; //  t.k. b - normalizowano  
@@ -549,14 +549,14 @@ static void oper(unsigned int o, unsigned int prn)
                     a = ((a % b) * 8) + (a1 & 7);
                     c = c + a / b;
                 }
-                //printf("\nc=%ld oct=%ld",c,(unsigned long int)(a%b)); 
+                //printf("\nc=%ld oct=%ld",c,(uint32_t)(a%b)); 
                 if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0l))
                 {
-                    unsigned long int x1 = b1;
-                    unsigned long int x2 = c;
+                    uint32_t x1 = b1;
+                    uint32_t x2 = c;
                     ymn(&x1, &x2);
-                    unsigned long int y1 = a % b;
-                    const unsigned long int y2 = gcoden(Xn->next->next);
+                    uint32_t y1 = a % b;
+                    const uint32_t y2 = gcoden(Xn->next->next);
                     /*printf("\nBegin: c=%ld ",c);
                     printf(" x=%lx_%lx (b1*c)",x1,x2);
                     printf(" y=%lx_%lx (o..a2)",y1,y2);*/
@@ -602,7 +602,7 @@ static void oper(unsigned int o, unsigned int prn)
                 }
                 if (peren != 0L)
                 {                                // cifra welika   
-                    //unsigned long int jj=0l;  // !!! wremenno !!!  
+                    //uint32_t jj=0l;  // !!! wremenno !!!  
                     do
                     {
                         //jj++; 

@@ -19,7 +19,7 @@ static void p1_()
         refal.upshot = 2;
         return;
     }
-    const unsigned long int l = gcoden(p) + 1;
+    const uint32_t l = gcoden(p) + 1;
     if (l > 16777215l)
         goto NEOT;
     pcoden(p, l);
@@ -39,7 +39,7 @@ static void m1_()
         refal.upshot = 2;
         return;
     }
-    const long int l = gcoden(p) - 1;
+    const int32_t l = gcoden(p) - 1;
     if (l < 0)
         goto NEOT;
     pcoden(p, l);
@@ -102,7 +102,7 @@ static void numb_()
         p1 = refal.nexta->prev;
         pz = p1;
     }
-    unsigned long int l = atol(str);
+    uint32_t l = atol(str);
     p1->tag = TAGN;
     if (l > 16777215l)
     {
@@ -144,7 +144,7 @@ static void symb_()
         refal.upshot = 2;
         return;
     }
-    unsigned long int l = gcoden(p);
+    uint32_t l = gcoden(p);
     if (i == 2)
         l = l + 16777216l * gcoden(p1);
     if ((i == 0) || (l == 0l))
@@ -191,7 +191,7 @@ static void first_()
         refal.upshot = 2;
         return;
     }; // FAIL  
-    const unsigned long int n = gcoden(pn); //eg 
+    const uint32_t n = gcoden(pn); //eg 
     T_LINKCB *p = pn;
     for (unsigned int k = 1; k <= n; k++)
     {
@@ -228,7 +228,7 @@ static void last_()
         refal.upshot = 2;
         return;
     }; // FAIL  
-    const unsigned long int n = gcoden(pn); //eg 
+    const uint32_t n = gcoden(pn); //eg 
     T_LINKCB *p = refal.nexta;
     for (unsigned int k = 1; k <= n; k++)
     {
@@ -263,7 +263,7 @@ static void (*last_1)() = last_;
 
 static void lengr_()
 {
-    unsigned long int n = 0l; // kras  
+    uint32_t n = 0l; // kras  
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -281,7 +281,7 @@ static void (*lengr_1)() = lengr_;
 
 static void lengw_()
 {
-    unsigned long int n = 0l; // kras  
+    uint32_t n = 0l; // kras  
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -307,7 +307,7 @@ static void multe_()
         refal.upshot = 2;
         return;
     }; // FAIL  
-    unsigned long int n = gcoden(pn);
+    uint32_t n = gcoden(pn);
     if (n == 0)
         return;
     T_LINKCB *p = pn->next;
@@ -331,7 +331,7 @@ static void multe_()
         if (!slins(refal.prevr, n))
             return; //  LACK  
         T_LINKCB *q = refal.prevr;
-        for (unsigned long int k = 0; k < n; k++)
+        for (uint32_t k = 0; k < n; k++)
         {
             q = q->next;
             q->tag = p->tag;

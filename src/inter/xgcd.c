@@ -12,20 +12,20 @@
 
 static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr  
 {                                                            //  X - ukaz. na konec             
-    unsigned long int peren = 0l;
+    uint32_t peren = 0l;
     const unsigned int ip = 24 - j;
-    const unsigned long int m = MASKA >> j; // maska  
+    const uint32_t m = MASKA >> j; // maska  
     for (unsigned int i = 0; i < dl; i++)
     {
-        const unsigned long int g = gcoden(X);
-        const unsigned long int a = (g & m) << j;
+        const uint32_t g = gcoden(X);
+        const uint32_t a = (g & m) << j;
         pcoden(X, a | peren);
         peren = g >> ip;
         X = X->prev;
     }
 }
 
-static void ymn(long int *a, long int *b)
+static void ymn(int32_t *a, int32_t *b)
 { // rez.: a - star., b - mlad.  
     if (*a == 0l)
     {
@@ -41,16 +41,16 @@ static void ymn(long int *a, long int *b)
     const unsigned int b1 = (*b) >> 12;
     const unsigned int a2 = (*a) & 0xFFF;
     const unsigned int b2 = (*b) & 0xFFF;
-    unsigned long int rr = a2 * (unsigned long int)b2;
+    uint32_t rr = a2 * (uint32_t)b2;
     *b = rr & 0xFFF;
     unsigned int rr3 = rr >> 12;
-    rr = a1 * (unsigned long int)b2;
+    rr = a1 * (uint32_t)b2;
     rr3 += rr & 0xFFF;
     unsigned int rr2 = rr >> 12;
-    rr = a2 * (unsigned long int)b1;
+    rr = a2 * (uint32_t)b1;
     rr3 += rr & 0xFFF;
     rr2 += rr >> 12;
-    rr = a1 * (unsigned long int)b1;
+    rr = a1 * (uint32_t)b1;
     rr2 += rr & 0xFFF;
     const unsigned int rr1 = rr >> 12;
     const unsigned int rr4 = rr3 >> 12;
@@ -112,7 +112,7 @@ OC: //*******   ob. cikl  ***********
         goto FIN1;
     }
     //   delaem 1 > 2   
-    unsigned long int v1, v2;
+    uint32_t v1, v2;
     if (l[0] == l[1])
     {
         p[0] = hd[0];
@@ -146,7 +146,7 @@ OC: //*******   ob. cikl  ***********
     }
 M21:
     //   wybor metoda  
-   unsigned long int A = 0l;
+   uint32_t A = 0l;
     pr = hd[0];
     unsigned int k;
     for (k = 0; k < l[0]; k++)
@@ -157,7 +157,7 @@ M21:
         A += gcoden(pr);
         pr = pr->next;
     }
-    unsigned long int B;
+    uint32_t B;
     if ((l[0] == 1) || (l[0] == 2 && k == 2))
     {
         // Evklid nad korotkimi  
@@ -197,8 +197,8 @@ M21:
     //    k={ 1/2 }         
     const unsigned int la = k;
     const int lb = l[1] - (l[0] - la);
-    long int x[2];
-    unsigned long int y[2];
+    int32_t x[2];
+    uint32_t y[2];
     if (lb <= 0)
     {
         //  shag delenija (normal)    
@@ -218,7 +218,7 @@ M21:
         py->tag = TAGN;
         pcoden(py, 0l);
         unsigned int n;
-        unsigned long int b;
+        uint32_t b;
         if (l[1] != 0)
         { // wozmovna normalizacija  
             b = gcoden(hd[1]);
@@ -230,18 +230,18 @@ M21:
                 norm(tl[1], l[1], n);
             }
         }
-        unsigned long int peren = 0l;
-        long int a, c;
+        uint32_t peren = 0l;
+        int32_t a, c;
         do
         {
             a = gcoden(hd[0]);
-            const unsigned long int a1 = gcoden(hd[0]->next);
+            const uint32_t a1 = gcoden(hd[0]->next);
             b = gcoden(hd[1]);
             if ((a == 0l) && (a1 < b))
                 c = 0l;
             else
             {
-                unsigned long int b1;
+                uint32_t b1;
                 if ((a == 0l) && (a1 >= b))
                 {
                     c = 1l; //  t.k. b - normalizowano  
@@ -287,7 +287,7 @@ M21:
                 const T_LINKCB *Yt = tl[1];
                 T_LINKCB *Xt = px;
                 peren = 0L;
-                unsigned long int J;
+                uint32_t J;
                 for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                 {
                     b = gcoden(Yt);
@@ -379,10 +379,10 @@ M21:
     //  metod Lemera          
     //  A i B s nedostatkom   
     //printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb); 
-    unsigned long int AL = A;
-    unsigned long int AH = A + 1;
-    unsigned long int BL = B;
-    unsigned long int BH = B + 1;
+    uint32_t AL = A;
+    uint32_t AH = A + 1;
+    uint32_t BL = B;
+    uint32_t BH = B + 1;
     x[0] = 1;
     x[1] = 0;
     y[0] = 0;
@@ -390,20 +390,20 @@ M21:
     //  vychisl koeff. X i Y   
     while (BL != 0)
     {
-        const unsigned long int Q = AL / BH;
+        const uint32_t Q = AL / BH;
         //  UTV:   Q>0   
         if (Q != AH / BL)
             break;
-        const unsigned long int RL = AL - Q * BH;
-        const unsigned long int RH = AH - Q * BL;
+        const uint32_t RL = AL - Q * BH;
+        const uint32_t RH = AH - Q * BL;
         //  UTV:   RL>=0   
         //  UTV:   RH>0    
         AL = BL;
         AH = BH;
         BL = RL;
         BH = RH;
-        const long int xn = x[0] - Q * x[1];
-        const long int yn = y[0] - Q * y[1];
+        const int32_t xn = x[0] - Q * x[1];
+        const int32_t yn = y[0] - Q * y[1];
         x[0] = x[1];
         y[0] = y[1];
         x[1] = xn;
@@ -419,15 +419,15 @@ M21:
     }
     p[0] = tl[0];
     p[1] = tl[1];
-    long int r[] = {0, 0};
+    int32_t r[] = {0, 0};
     for (k = 0; k < l[0]; k++)
     {
-        const unsigned long int s[] = {gcoden(p[0]), gcoden(p[1])};
-        long int vs3, vs4;
+        const uint32_t s[] = {gcoden(p[0]), gcoden(p[1])};
+        int32_t vs3, vs4;
         for (i = 0; i < 2; i++)
         {
-            long int vs1 = s[0];
-            long int vs2 = s[1];
+            int32_t vs1 = s[0];
+            int32_t vs2 = s[1];
             if (x[i] < 0)
             {
                 vs3 = 0 - x[i];
@@ -450,7 +450,7 @@ M21:
                 vs2 = 0 - vs2;
                 vs4 = 0 - vs4;
             }
-            long int r0 = r[i] + vs3 + vs4;
+            int32_t r0 = r[i] + vs3 + vs4;
             if (r0 < 0)
             {
                 vs3 = r0 / d24;

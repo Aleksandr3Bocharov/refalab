@@ -13,7 +13,7 @@ static FILE *inr, *inw;
 static FILE *uniput[fmax], *uniget[fmax];
 static unsigned int junp = 1;
 static unsigned int jung = 1;
-static unsigned long int jl;
+static uint32_t jl;
 
 static void opng_()
 {
