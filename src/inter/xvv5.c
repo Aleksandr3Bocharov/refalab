@@ -16,7 +16,7 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static void open_()
 {
    char namf[41];
-   for (unsigned int i = 0; i < 40; i++)
+   for (size_t i = 0; i < 40; i++)
       namf[i] = '\0';
    const T_LINKCB *p = refal.preva->next;
    if (p->tag != TAGO)
@@ -41,7 +41,7 @@ static void open_()
       s[0] = 'w';
    else
       goto NEOT;
-   for (unsigned int i = 0; p != refal.nexta; i++)
+   for (size_t i = 0; p != refal.nexta; i++)
       if ((p->tag != TAGO) || (i == 40))
          goto NEOT;
       else

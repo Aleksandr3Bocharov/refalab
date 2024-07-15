@@ -63,7 +63,7 @@ bool lincrm()
 bool lrqlk(unsigned int l)
 {
     const T_LINKCB *p = refal.flhead;
-    for (unsigned int n = 0; n < l; n++)
+    for (size_t n = 0; n < l; n++)
     {
         p = p->next;
         if (p == refal.flhead)
@@ -77,7 +77,7 @@ bool lins(T_LINKCB *p, unsigned int l)
     if (l < 1)
         return true;
     T_LINKCB *q1 = refal.flhead;
-    for (unsigned int n = 0; n < l; n++)
+    for (size_t n = 0; n < l; n++)
     {
         q1 = q1->next;
         if (q1 == refal.flhead)
@@ -335,7 +335,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
                 const char *f = (char *)(pr->info.codef - 1);
                 const uint8_t l = *f;
                 f -= l;
-                for (unsigned int k = 1; k <= l; k++, f++)
+                for (size_t k = 1; k <= l; k++, f++)
                     putchar(rfcnv(*f));
                 putchar('/');
             }
@@ -554,7 +554,7 @@ static void rflist(T_LINKCB *par, unsigned int n)
         rfinit();
     T_LINKCB *q = par;
     T_LINKCB *p = refal.flhead->prev;
-    for (unsigned int k = 0; k < n; k++)
+    for (size_t k = 0; k < n; k++)
     {
         p->next = q;
         q->prev = p;

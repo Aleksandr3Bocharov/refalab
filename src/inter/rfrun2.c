@@ -185,7 +185,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 
 void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
 {
-    for (unsigned int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
         *pt = *pf;
         pt++;
@@ -216,7 +216,7 @@ int i;
 
 bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2)
 {
-    for (unsigned int i = 1; i <= n; i++)
+    for (size_t i = 1; i <= n; i++)
     {
         if (*p1 != *p2)
             return false;

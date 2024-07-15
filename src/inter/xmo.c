@@ -54,7 +54,7 @@ static int cmpstr(unsigned int n, const char *s1, const char *s2)
 {
     // comparison two string . if s1<s2 then return < 0  
     // if s1 = s2 return 0. if s1>s2 then return > 0     
-    for (unsigned int i = 0; i < n; i++, s1++, s2++)
+    for (size_t i = 0; i < n; i++, s1++, s2++)
         if (*s1 != *s2)
             return *s1 - *s2;
     return 0;
@@ -193,7 +193,7 @@ static void first_()
     }; // FAIL  
     const uint32_t n = gcoden(pn); //eg 
     T_LINKCB *p = pn;
-    for (unsigned int k = 1; k <= n; k++)
+    for (size_t k = 1; k <= n; k++)
     {
         p = p->next;
         if (p == refal.nexta)
@@ -230,7 +230,7 @@ static void last_()
     }; // FAIL  
     const uint32_t n = gcoden(pn); //eg 
     T_LINKCB *p = refal.nexta;
-    for (unsigned int k = 1; k <= n; k++)
+    for (size_t k = 1; k <= n; k++)
     {
         p = p->prev;
         if (p == pn)

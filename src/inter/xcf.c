@@ -37,7 +37,7 @@ static void ftochar_()
             return;
         }
     lins(p, d.w);
-    for (unsigned int i = 0; i < d.w; i++)
+    for (size_t i = 0; i < d.w; i++)
     {
         p = p->next;
         p->tag = TAGO;
@@ -60,7 +60,7 @@ static void functab_()
     if (p->tag != TAGF)
         goto HEOT;
     char *u = (char *)p->info.codef;
-    for (unsigned int i = 0; i < func_n; i++)
+    for (size_t i = 0; i < func_n; i++)
         if (u == func_f[i])
             return;
     if (func_n == 0)
@@ -104,7 +104,7 @@ static void chartof_()
         uint16_t w;
     } d;
     d.b[1] = 0;
-    for (unsigned int k = 0; k < func_n; k++)
+    for (size_t k = 0; k < func_n; k++)
     {
         d.b[0] = *(func_f[k] - 1);
         if ((i == d.w + 1) && (strncmp(u, func_f[k] - (d.w + 1), d.w) == 0))

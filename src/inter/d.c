@@ -726,7 +726,7 @@ static bool get_det()
     }
     if ((det_table->det_id = malloc(l_arg + 1)) == NULL)
         goto AB;
-    for (unsigned int i = 0; i < l_arg; i++)
+    for (size_t i = 0; i < l_arg; i++)
         *(det_table->det_id + i) = *(arg + i);
     *(det_table->det_id + l_arg) = '\0';
     det_table->det_next = last_det;

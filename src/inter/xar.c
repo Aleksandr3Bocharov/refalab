@@ -237,7 +237,7 @@ static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. pos
     uint32_t peren = 0l;
     const unsigned int ip = 24 - j;
     const uint32_t m = 0xFFFFFFl >> j; // maska  
-    for (unsigned int i = 0; i < dl; i++)
+    for (size_t i = 0; i < dl; i++)
     {
         const uint32_t g = gcoden(X);
         const uint32_t a = (g & m) << j;

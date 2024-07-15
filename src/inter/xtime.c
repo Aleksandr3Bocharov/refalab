@@ -72,7 +72,7 @@ static void rftm_()
             p = refal.prevr;
             if (!slins(p, strlen(s)))
                 return;
-            for (unsigned int i = 0; s[i] != 0; i++)
+            for (size_t i = 0; s[i] != 0; i++)
             {
                 p = p->next;
                 p->tag = TAGO;
