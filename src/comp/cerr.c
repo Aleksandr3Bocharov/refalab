@@ -31,7 +31,7 @@ void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
-    for (unsigned int i = 0; i < lsid; i++)
+    for (size_t i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
     char tmp[255];
@@ -45,7 +45,7 @@ void pchosx(const char *s, const char *sid, unsigned int lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
-    for (unsigned int i = 0; i < lsid; i++)
+    for (size_t i = 0; i < lsid; i++)
         tmp1[i] = *(sid + i);
     tmp1[lsid] = '\0';
     char tmp[255];
@@ -69,7 +69,7 @@ static void pchose(const char *s, const char *t, unsigned int lt)
 {
     oshibka();
     char tmp1[255];
-    for (unsigned int i = 0; i < lt; i++)
+    for (size_t i = 0; i < lt; i++)
         tmp1[i] = *(t + i);
     tmp1[lt] = '\0';
     char tmp[255];

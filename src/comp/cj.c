@@ -158,7 +158,7 @@ static void oshex()
     exit(1);
 }
 
-extern void sfop_w(const char *s, BU *b)
+void sfop_w(const char *s, BU *b)
 {
     if (b->nam != NULL)
     {
@@ -263,7 +263,7 @@ static void sfclr(BU *b)
     b->buf = NULL;
 }
 
-extern void sfclose(BU *b)
+void sfclose(BU *b)
 {
     if (b->fil == NULL)
     {
@@ -454,7 +454,7 @@ static void sfobmen(unsigned int n)
     } // while
 } // sfomen
 
-extern void jstart(const char *ee, unsigned int ll)
+void jstart(const char *ee, unsigned int ll)
 {
     delta = 0; // kras
     strncpy(mod_name, ee, ll);
@@ -479,7 +479,7 @@ extern void jstart(const char *ee, unsigned int ll)
     n_ext = 1;
 } // jstart
 
-extern unsigned int jwhere()
+unsigned int jwhere()
 {
     if (curr_addr > 65535)
     {
@@ -489,7 +489,7 @@ extern unsigned int jwhere()
     return curr_addr;
 }
 
-extern void jbyte(char bb)
+void jbyte(char bb)
 {
     // sfwr(&bb,1,&sysut1);
     if (sysut1.tek != sysut1.len)
@@ -519,7 +519,7 @@ extern void jbyte(char bb)
     curr_addr++;
 } // jbyte
 
-extern void j3addr(T_U *pp)
+void j3addr(T_U *pp)
 {
     rl.point = pp;
     rl.delta = delta;
@@ -528,7 +528,7 @@ extern void j3addr(T_U *pp)
     curr_addr += 4;
 }
 
-extern void jentry(T_U *pp, const char *ee, unsigned int ll)
+void jentry(T_U *pp, const char *ee, unsigned int ll)
 // ee label
 {
     // label length
@@ -558,7 +558,7 @@ extern void jentry(T_U *pp, const char *ee, unsigned int ll)
     pp->mode |= '\040';
 } // jentry
 
-extern void jextrn(T_U *pp, const char *ee, unsigned int ll)
+void jextrn(T_U *pp, const char *ee, unsigned int ll)
 // ee label
 {
     //  label length
@@ -584,13 +584,13 @@ extern void jextrn(T_U *pp, const char *ee, unsigned int ll)
     pp->info.infon = n_ext;
 } // jextrn
 
-extern void jlabel(T_U *pp)
+void jlabel(T_U *pp)
 {
     pp->mode |= '\120';
     pp->info.infon = curr_addr;
 }
 
-extern void jequ(T_U *pp, T_U *qq)
+void jequ(T_U *pp, T_U *qq)
 {
     pp->info.infop = qq;
     pp->mode |= '\320';
@@ -608,7 +608,7 @@ static void zakon()
         mod_length = 65536L + mod_length;
 } // zakon
 
-extern void jend()
+void jend()
 {
     zakon();
     if (options.multmod == 1)
@@ -686,7 +686,7 @@ GEN_TXT:
             fputs("\t.long\t_", syslin);
 #endif
             qx = first_ext;
-            for (unsigned int i = 1; i < p->info.infon; i++)
+            for (size_t i = 1; i < p->info.infon; i++)
                 qx = qx->next;
 
 #ifdef UNIX
@@ -710,33 +710,33 @@ GEN_TXT:
 
             // BLF - debug printf ("%s\n",qx->e) ;
             if (cmpstr(qx->le, qx->e, "ADD") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_add[i];
 
             else if (cmpstr(qx->le, qx->e, "SUB") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_sub[i];
 
             else if (cmpstr(qx->le, qx->e, "MUL") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_mul[i];
 
             else if (cmpstr(qx->le, qx->e, "DIV") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_div[i];
 
             else if (cmpstr(qx->le, qx->e, "RP") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_rp[i];
 
             else if (cmpstr(qx->le, qx->e, "PTR") == 0)
-                for (unsigned int i = 0; i < (qx->le); i++)
+                for (size_t i = 0; i < (qx->le); i++)
                     *((qx->e) + i) = oper_ptr[i];
 
 #endif
             // BLF ------- end renaming ---------------
 
-            for (unsigned int i = 0; i < qx->le; i++)
+            for (size_t i = 0; i < qx->le; i++)
                 // BLF    fputc (*((qx->e) + i),syslin);
                 fputc(tolower(*((qx->e) + i)), syslin); // BLF
             fputs("\n", syslin);
@@ -765,7 +765,7 @@ GEN_TXT:
 #else                                 // Windows
         fputs("\t.extern\t_", syslin); // BLF
 #endif
-        for (unsigned int i = 0; i < qx->le; i++)
+        for (size_t i = 0; i < qx->le; i++)
             // BLF fputc (*((qx->e) + i),syslin);
             fputc(tolower(*((qx->e) + i)), syslin); // BLF
         fputs(":byte\n", syslin);
@@ -789,7 +789,7 @@ GEN_TXT:
         fputc('_', syslin);
 #endif
 
-        for (unsigned int i = 0; i < q->le; i++)
+        for (size_t i = 0; i < q->le; i++)
             // BLF translate name to lower case
             fputc(tolower(*((q->e) + i)), syslin);
         const T_U *pp = q->p;
@@ -804,7 +804,7 @@ GEN_TXT:
         sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
 #endif
         fputs(bufs, syslin);
-        for (unsigned int i = 0; i < q->le; i++)
+        for (size_t i = 0; i < q->le; i++)
             // BLF translate name to lower case
             fputc(tolower(*((q->e) + i)), syslin);
         fputc('\n', syslin);
@@ -901,7 +901,7 @@ static void ksmb(char b)
 static void ksmn(const char *b, unsigned int n)
 {
     stm.cc[1] = 0;
-    for (unsigned int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
         stm.cc[0] = *(b + i);
         ksm.ww += stm.ww;
@@ -966,7 +966,7 @@ static void golowa(unsigned int len, unsigned int typ)
     ksum();
 }
 
-extern void jendo()
+void jendo()
 {
     zakon();
     if (options.multmod == 1)

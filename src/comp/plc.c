@@ -3,6 +3,7 @@
 //                Last edition date : 11.07.24               
 //---------------------------------------------------------- 
 
+#include <stdlib.h>
 #include "plc.h"
 
 int index_x(const char *s, const char *t)
@@ -11,7 +12,7 @@ int index_x(const char *s, const char *t)
 {
     const unsigned int imax = 40;
     unsigned int l = 0;
-    for (unsigned int i = 0; i < imax; i++)
+    for (size_t i = 0; i < imax; i++)
     {
         if (*(s + i) == '\0')
             break;
@@ -20,7 +21,7 @@ int index_x(const char *s, const char *t)
     } // l - length of s  
 
     unsigned int m;
-    for (unsigned int i = 0; i < imax; i++)
+    for (size_t i = 0; i < imax; i++)
     {
         if (*(t + i) == '\0')
             break;
@@ -28,8 +29,8 @@ int index_x(const char *s, const char *t)
             m = i + 1;
     } // m - length of t  
 
-    for (unsigned int i = 0; (i < l) && (*(s + i) != '\0'); i++)
-        for (unsigned int j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)
+    for (size_t i = 0; (i < l) && (*(s + i) != '\0'); i++)
+        for (size_t j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)
         {
             if (*(s + j) != *(t + k))
                 break;
@@ -60,7 +61,7 @@ int cmpstr(unsigned int n, const char *s1, const char *s2)
 // comparison two string . if s1<s2 then return < 0  
 // if s1 = s2 return 0. if s1>s2 then return > 0     
 {
-    for (unsigned int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
         if (*(s1 + i) != *(s2 + i))
             return (*(s1 + i) - *(s2 + i));
     return 0;

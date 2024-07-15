@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
     options.asmb = 1; // BLF, instead 0, we need assembler code
     options.names = 1;
     options.mincomp = 0;
-    for (unsigned int j = 2; j < argc; ++j)
+    for (size_t j = 2; j < argc; ++j)
     {
         for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
             ;
@@ -478,8 +478,8 @@ static void rdline(char *s)
     {
         if (c == '\t')
         {
-            const unsigned int k = 8 - (i & 7);
-            for (unsigned int j = 0; j < k; j++)
+            const size_t k = 8 - (i & 7);
+            for (size_t j = 0; j < k; j++)
                 *(s + i + j) = ' ';
             i += (k - 1);
         }
@@ -499,7 +499,7 @@ static void rdline(char *s)
 
 static void translate(const char *str, char *class1)
 { // L,D,* - classification procedure
-    for (unsigned int i = 0; i < 72; ++i)
+    for (size_t i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
         const int j = (int)(*(str + i));
@@ -591,7 +591,7 @@ static void lblkey(unsigned int pr)
         }
     }
     blout();
-    for (unsigned int i = 0; i < 6; i++)
+    for (size_t i = 0; i < 6; i++)
         stmkey[i] = ' ';
     if (c[m] == ' ')
         goto LKEXIT;
@@ -1399,7 +1399,7 @@ static char convert(char cm)
 
 static bool get_id(char id[40], unsigned int *lid)
 { // read identifier
-    for (unsigned int i = 0; i < 40; id[i++] = ' ')
+    for (size_t i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
         return false;

@@ -32,7 +32,7 @@ static T_U *nov_uzel(const char *idp, unsigned int lid)
     p->type = '\000';
     p->last_ref = &(p->ref);
     p->ref.next = NULL;
-    for (unsigned int m = 1; m <= 5; m++)
+    for (size_t m = 1; m <= 5; m++)
         p->ref.numb[m] = 0;
     p->ref.numb[0] = scn_.nomkar;
     p->def = 0;

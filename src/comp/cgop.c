@@ -13,26 +13,26 @@ typedef struct _TAG
     char b2;
 } T_TAG;
 
-extern void gopn(char k, char n)
+void gopn(char k, char n)
 {
     jbyte(k);
     jbyte(n);
 }
 
-extern void gopnm(char k, char n, char m)
+void gopnm(char k, char n, char m)
 {
     jbyte(k);
     jbyte(n);
     jbyte(m);
 }
 
-extern void gopl(char k, const uint8_t *l)
+void gopl(char k, const uint8_t *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
 }
 
-extern void gsymbol(const T_LINKTI *code)
+void gsymbol(const T_LINKTI *code)
 {
     const T_TAG *q = (T_TAG *)&(code->tag);
     jbyte(q->b1);
@@ -52,19 +52,19 @@ extern void gsymbol(const T_LINKTI *code)
         jbyte('\0');
     }
     else
-        for (unsigned int i = 0; i < LBLL; i++)
+        for (size_t i = 0; i < LBLL; i++)
         {
             jbyte(*(r + i));
         }
 }
 
-extern void gops(char k, const T_LINKTI *code)
+void gops(char k, const T_LINKTI *code)
 {
     jbyte(k);
     gsymbol(code);
 }
 
-extern void ghw(uint16_t h)
+void ghw(uint16_t h)
 {
     const T_TAG *po = (T_TAG *)&h; //  eg  
     jbyte(po->b1);

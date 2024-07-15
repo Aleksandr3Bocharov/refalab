@@ -168,7 +168,7 @@ void sswap(const char *idp, unsigned int lid)
         j0 = (j0 + l0 + 2) % 4;
         if (j0 != 0)
             j0 = 4 - j0;
-        for (unsigned int k0 = 1; k0 <= j0; k0++)
+        for (size_t k0 = 1; k0 <= j0; k0++)
             jbyte(' ');
         fnhead(idp, lid);
         p->def = scn_.nomkar;
@@ -176,7 +176,7 @@ void sswap(const char *idp, unsigned int lid)
         jbyte(n_swap);
         //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;   
         const unsigned int kk = SMBL + LBLL * 2;
-        for (unsigned int k0 = 1; k0 <= kk; k0++)
+        for (size_t k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
     }
     return;
