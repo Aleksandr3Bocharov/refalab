@@ -4,6 +4,7 @@
 //------------------------------------------ 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "refal.def"
 #include "d.h"
 #include "rfintf.h"
@@ -18,7 +19,7 @@ int main()
         goto LACK;
     if (!lcre(&s_st))
         goto LACK;
-    if (!linskd(&s_st, (unsigned char *)go))
+    if (!linskd(&s_st, (uint8_t *)go))
         goto LACK;
     rfdbg(&s_st); // there is exit  
 LACK:

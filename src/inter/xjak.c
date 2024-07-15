@@ -5,6 +5,7 @@
 //------------------------------------------ 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "rfintf.h"
 
@@ -22,7 +23,7 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
         p = r->info.codep;
     else if (r->tag == TAGF)
     {
-        const unsigned char *q = r->info.codef;
+        const uint8_t *q = r->info.codef;
         if (*q != N_SWAP)
             return false;
         q++;

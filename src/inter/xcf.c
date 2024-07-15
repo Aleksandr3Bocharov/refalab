@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "refal.def"
 #include "rfintf.h"
 
 typedef char *adr;
 
-static unsigned short int func_n = 0;
+static uint16_t func_n = 0;
 static adr *func_f = NULL;
 
 static void ftochar_()
@@ -22,7 +23,7 @@ static void ftochar_()
     union
     {
         char b[2];
-        unsigned short int w;
+        uint16_t w;
     } d;
     d.b[0] = *u;
     d.b[1] = 0; // d.w - dlina  
@@ -100,7 +101,7 @@ static void chartof_()
     union
     {
         char b[2];
-        unsigned short int w;
+        uint16_t w;
     } d;
     d.b[1] = 0;
     for (unsigned int k = 0; k < func_n; k++)
@@ -112,7 +113,7 @@ static void chartof_()
             // poetomu w m.o. imja d.b. napisano zaglawnymi!       
             p = refal.preva->next;
             p->tag = TAGF;
-            p->info.codef = (unsigned char *)func_f[k];
+            p->info.codef = (uint8_t *)func_f[k];
             if (p->next != refal.nexta)
                 rfdel(p, refal.nexta);
             rftpl(refal.prevr, p->prev, p->next);
@@ -128,7 +129,7 @@ static void chartof_()
     func_n++;
     p = refal.preva->next;
     p->tag = TAGF;
-    p->info.codef = (unsigned char *)j;
+    p->info.codef = (uint8_t *)j;
     if (p->next != refal.nexta)
         rfdel(p, refal.nexta);
     rftpl(refal.prevr, p->prev, p->next);

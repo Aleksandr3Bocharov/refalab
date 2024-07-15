@@ -4,6 +4,8 @@
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
+#include <stdint.h>
+
 // BLF - UNIX for operation system Linux, FreeBSD
 // #define UNIX
 
@@ -23,13 +25,13 @@ typedef struct linkcb_
 {
     struct linkcb_ *prev;
     struct linkcb_ *next;
-    unsigned short int tag;
+    uint16_t tag;
     union
     {
         char infoc;
         unsigned long int coden;
         struct linkcb_ *codep;
-        unsigned char *codef;
+        uint8_t *codef;
     } info;
 } T_LINKCB;
 
@@ -115,7 +117,7 @@ typedef struct __ptr__
 } POINT;
 
 #define LBLL sizeof(POINT)
-#define SMBL (sizeof(unsigned short int) + LBLL)
+#define SMBL (sizeof(uint16_t) + LBLL)
 
 #endif
 //-------  end of file REFAL.DEF ---------

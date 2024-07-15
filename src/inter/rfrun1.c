@@ -4,6 +4,7 @@
 //--------------------------------------------- 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include "refal.def"
 #include "rfrun1.h"
@@ -38,13 +39,13 @@ typedef struct sav_
 
 static union
 {
-    unsigned char c[2];
+    uint8_t c[2];
     unsigned int ii;
 } u;
 
 static union
 { // structure for pointer and integer aligning  
-    unsigned char *ptr;
+    uint8_t *ptr;
     unsigned long int *inr;
     char chr[2];
 } inch;
@@ -62,13 +63,13 @@ static unsigned long int tmstart; // time at the start
 static unsigned long int tmstop;  // time at the end     
 
 // definition of work variables and pointers 
-static unsigned char opc;  // current statement code  
-static unsigned char *vpc; // virtual program counter  
+static uint8_t opc;  // current statement code  
+static uint8_t *vpc; // virtual program counter  
 static T_LINKCB *lastk;      // last acted sign-k adress  
 static T_LINKCB *lastb;      // last generated left bracket 
 static T_LINKCB *b0, *b1, *b2;
 static T_LINKCB *f0, *f1, *f;
-static const unsigned char *vpca; // additional vpc   
+static const uint8_t *vpca; // additional vpc   
 static unsigned int i, n, m;
 
 static char (*fptr)(T_REFAL *);
@@ -323,13 +324,13 @@ NEXTOP:
     };
     // SETNOS(L);     
 SETNOS:
-    move(LBLL, vpc + NMBL, (unsigned char *)&(inch.inr));
+    move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
     refal.nostm = (int)*(inch.inr);
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
     // EOSSN (NN);  
 EOSSN:
-    move(NMBL + NMBL, vpc + NMBL, (unsigned char *)&(refal.stmnmb));
+    move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
     // EOS;        
 EOS:
     lastk->info.codep = et[1]->info.codep;
@@ -372,7 +373,7 @@ START:
         goto DONE;
     b0 = b2->info.codep;
     b1 = b0->next;
-    vpc = (unsigned char *)b1->info.codef;
+    vpc = (uint8_t *)b1->info.codef;
     if (b1->tag != TAGF)
         goto REF;
     // here must be check on c-function  
@@ -385,7 +386,7 @@ START:
     goto NEXTOP;
     // C-refal-function execution  
 CFUNC:;
-    move(LBLL, vpc + NMBL + Z_0, (unsigned char *)&fptr);
+    move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);
     refal.upshot = 1;
     refal.prevr = b0->prev;
     refal.nextr = b0;
@@ -466,14 +467,14 @@ SWAPREF:
     goto ADVSTEP;
     // LSC(S);        
 LSC:
-    SHB1 if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag))) goto FAIL;
+    SHB1 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag))) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b1;
     nel++;
     goto NEXTOP;
     // RSC(S);      
 RSC:
-    SHB2 if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag))) goto FAIL;
+    SHB2 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag))) goto FAIL;
     vpc = vpc + NMBL + SMBL;
     et[nel] = b2;
     nel++;
@@ -771,7 +772,7 @@ RE:
     goto ADVANCE;
     //SJUMP(L);      
 SJUMP:
-    move(LBLL, vpc + NMBL, (unsigned char *)&(inch.ptr));
+    move(LBLL, vpc + NMBL, (uint8_t *)&(inch.ptr));
     putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
     jsp++;
     vpc = vpc + NMBL + LBLL;
@@ -810,7 +811,7 @@ LESC1:
         b1 = b1->info.codep;
         goto LESC1;
     }
-    if (!cmpr(SMBL, vpca, (unsigned char *)&(b1->tag)))
+    if (!cmpr(SMBL, vpca, (uint8_t *)&(b1->tag)))
         goto LESC1;
     jsp++;
     et[nel + 1] = b1->prev;
@@ -844,7 +845,7 @@ RESC1:
         b2 = b2->info.codep;
         goto RESC1;
     }
-    if (!cmpr(SMBL, vpca, (unsigned char *)&(b2->tag)))
+    if (!cmpr(SMBL, vpca, (uint8_t *)&(b2->tag)))
         goto RESC1;
     jsp++;
     et[nel + 2] = b2;
@@ -854,13 +855,13 @@ RESC1:
     // LESD(N);  
 LESD:
     n = (unsigned int)*(vpc + NMBL);
-    vpca = (unsigned char *)&(et[n]->tag);
+    vpca = (uint8_t *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto LESC0;
     // RESD(N);  
 RESD:
     n = (unsigned int)*(vpc + NMBL);
-    vpca = (unsigned char *)&(et[n]->tag);
+    vpca = (uint8_t *)&(et[n]->tag);
     vpc = vpc + NMBL * 2;
     goto RESC0;
     // PLEB;  
@@ -936,7 +937,7 @@ LSRCH1:
         b1 = b1->info.codep;
         goto LSRCH1;
     };
-    if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b1->tag)))
+    if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
         goto LSRCH1;
     et[nel + 1] = b1->prev;
     et[nel + 2] = b1;
@@ -952,7 +953,7 @@ RSRCH1:
         b2 = b2->info.codep;
         goto RSRCH1;
     };
-    if (!cmpr(SMBL, vpc + NMBL, (unsigned char *)&(b2->tag)))
+    if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
         goto RSRCH1;
     et[nel] = b2->next;
     et[nel + 2] = b2;
@@ -1060,7 +1061,7 @@ EOR:
     // NS(S);   
 NS:
     SHF
-        move(SMBL, vpc + NMBL, (unsigned char *)&(f->tag));
+        move(SMBL, vpc + NMBL, (uint8_t *)&(f->tag));
     vpc = vpc + NMBL + SMBL;
     goto NEXTOP;
     // NSO(N);   
@@ -1117,7 +1118,7 @@ BLF:
         f->info.codep = lastb;
     lastb = f;
     SHF
-        move(LBLL, vpc + NMBL, (unsigned char *)&(f->info.codef));
+        move(LBLL, vpc + NMBL, (uint8_t *)&(f->info.codef));
     f->tag = TAGF;
     vpc = vpc + NMBL + LBLL;
     goto NEXTOP;
@@ -1144,7 +1145,7 @@ ACT:
 MULS:
     n = (unsigned int)*(vpc + NMBL);
     SHF
-        move(SMBL, (unsigned char *)&(et[n]->tag), (unsigned char *)&(f->tag));
+        move(SMBL, (uint8_t *)&(et[n]->tag), (uint8_t *)&(f->tag));
     vpc = vpc + NMBL + NMBL;
     goto NEXTOP;
     //MULE(N);  
@@ -1183,7 +1184,7 @@ MULE:
         }
         else
         {
-            move(SMBL, (unsigned char *)&(f0->tag), (unsigned char *)&(f->tag));
+            move(SMBL, (uint8_t *)&(f0->tag), (uint8_t *)&(f->tag));
         }
     };
     goto NEXTOP;

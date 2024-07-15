@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "d.h"
 #include "rfintf.h"
@@ -660,8 +661,8 @@ static void getpf(const T_ST *ss_st)
     nextd = ss_st->dot->next;
     nextk = pk->next;
     unsigned int i;
-    unsigned char id_l;
-    const unsigned char *p_id;
+    uint8_t id_l;
+    const uint8_t *p_id;
     if (nextk->tag != TAGF)
     {
         buff_id[0] = '%';

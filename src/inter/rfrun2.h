@@ -2,6 +2,7 @@
 #define RFRUN2_H
 
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 
 typedef struct wjs
@@ -9,7 +10,7 @@ typedef struct wjs
     T_LINKCB *jsb1;
     T_LINKCB *jsb2;
     unsigned int jsnel;
-    unsigned char *jsvpc;
+    uint8_t *jsvpc;
 } T_WJS;
 
 typedef struct ts
@@ -22,16 +23,16 @@ typedef struct ts
 typedef struct spcs
 {
     bool spls;
-    unsigned char *svpc;
+    uint8_t *svpc;
 } T_SPCS;
 
-extern bool cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2);
+extern bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2);
 extern void link(T_LINKCB *x, T_LINKCB *y);
-extern void move(unsigned int n, const unsigned char *pf, unsigned char *pt);
-extern bool spc(T_SPCS *pspcsp, const unsigned char *vpc, const T_LINKCB *b);
+extern void move(unsigned int n, const uint8_t *pf, uint8_t *pt);
+extern bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);
 
-extern void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, unsigned char **avpc);
-extern void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, unsigned char **avpc);
+extern void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, uint8_t **avpc);
+extern void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, uint8_t **avpc);
 extern void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 extern void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "rfintf.h"
 #include "rfrun1.h"
@@ -109,7 +110,7 @@ bool slins(T_LINKCB *p, unsigned int k)
     return lins(p, k);
 }
 
-bool linskd(T_ST *ast, const unsigned char *f)
+bool linskd(T_ST *ast, const uint8_t *f)
 {
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
@@ -210,7 +211,7 @@ void rftermm()
     }
 }
 
-void rfexec(const unsigned char *func)
+void rfexec(const uint8_t *func)
 {
     T_ST s_st;
     if (rf_init)
@@ -332,7 +333,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             {
                 putchar('/');
                 const char *f = (char *)(pr->info.codef - 1);
-                const unsigned char l = *f;
+                const uint8_t l = *f;
                 f -= l;
                 for (unsigned int k = 1; k <= l; k++, f++)
                     putchar(rfcnv(*f));
@@ -592,9 +593,9 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         {
             putchar('\'');
             const char *f = (char *)(pr->info.codef - 1);
-            const unsigned char l = *f;
+            const uint8_t l = *f;
             f -= l;
-            for (unsigned char k = 1; k <= l; k++, f++)
+            for (uint8_t k = 1; k <= l; k++, f++)
                 putchar(rfcnv(*f));
             putchar('\'');
         }

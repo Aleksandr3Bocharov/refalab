@@ -4,6 +4,7 @@
 //------------------------------------------- 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "refal.def"
 #include "rfrun2.h"
 
@@ -12,13 +13,13 @@
 static bool letter(char s);
 static bool digit(char s);
 
-bool spc(T_SPCS *pspcsp, const unsigned char *vpc, const T_LINKCB *b)
+bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
 // specifier interpreter  
 {
     // spcs-pointer  
     T_SPCS *spcsp = pspcsp;
-    unsigned char *spcvpc; // virtual specifier counter  
-    move(LBLL, vpc + 1, (unsigned char *)&spcvpc); // spcvpc = L  
+    uint8_t *spcvpc; // virtual specifier counter  
+    move(LBLL, vpc + 1, (uint8_t *)&spcvpc); // spcvpc = L  
     // positiveness feature of specifier element  
     bool spcpls = true;
     goto SPCNXT;
@@ -37,7 +38,7 @@ SPCRET:
 // return from specifier element if "NO"  
 SPCNXT:
     //specifier code  
-    const unsigned char spcopc = *spcvpc;
+    const uint8_t spcopc = *spcvpc;
     spcvpc = spcvpc + NMBL;
     // switch    
     // SPCOP     
@@ -74,7 +75,7 @@ SPCNXT:
 SPCCLL:
     spcsp->spls = spcpls;
     spcsp->svpc = spcvpc;
-    move(LBLL, spcvpc, (unsigned char *)&spcvpc);
+    move(LBLL, spcvpc, (uint8_t *)&spcvpc);
     spcsp++;
     spcpls = true;
     goto SPCNXT;
@@ -87,7 +88,7 @@ SPCNGW:
     spcpls = !spcpls;
     goto SPCRET;
 SPCSC:
-    if (cmpr(SMBL, spcvpc, (unsigned char *)&(b->tag)))
+    if (cmpr(SMBL, spcvpc, (uint8_t *)&(b->tag)))
         goto SPCRET;
     spcvpc = spcvpc + SMBL;
     goto SPCNXT;
@@ -152,7 +153,7 @@ void link(T_LINKCB *x, T_LINKCB *y)
     y->prev = x;
 }
 
-void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, unsigned char **avpc)
+void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, uint8_t **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -160,7 +161,7 @@ void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel,
     jsp->jsvpc = *avpc;
 }
 
-void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, unsigned char **avpc)
+void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, uint8_t **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -182,7 +183,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     *az = tsp->ts2;
 }
 
-void move(unsigned int n, const unsigned char *pf, unsigned char *pt)
+void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
 {
     for (unsigned int i = 0; i < n; i++)
     {
@@ -213,7 +214,7 @@ int i;
 }*/
  
 
-bool cmpr(unsigned int n, const unsigned char *p1, const unsigned char *p2)
+bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2)
 {
     for (unsigned int i = 1; i <= n; i++)
     {
