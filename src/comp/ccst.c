@@ -1270,10 +1270,10 @@ ORT1:
     if (x[n].t <= 3)
         goto ORT1;
 ORT1V:
-    uint16_t ind = x[n].ind;
-    if (v[ind].last != 0)
+    uint16_t i = x[n].ind;
+    if (v[i].last != 0)
         goto ORT1;
-    (v[ind].rem)--;
+    (v[i].rem)--;
     goto ORT1;
 ORT1E:
     bool res = true;
@@ -1285,10 +1285,10 @@ ORT2:
     if (x[n].t <= 3)
         goto ORT2;
 ORT2V:
-    ind = x[n].ind;
-    if (v[ind].last != 0)
+    i = x[n].ind;
+    if (v[i].last != 0)
         goto ORT2;
-    if (v[ind].rem == 0)
+    if (v[i].rem == 0)
         goto ORT2;
     res = false;
 ORT2E:
@@ -1300,10 +1300,10 @@ ORT3:
     if (x[n].t <= 3)
         goto ORT3;
 ORT3V:
-    ind = x[n].ind;
-    if (v[ind].last != 0)
+    i = x[n].ind;
+    if (v[i].last != 0)
         goto ORT3;
-    (v[ind].rem)++;
+    (v[i].rem)++;
     goto ORT3;
 ORT3E:
     return res;

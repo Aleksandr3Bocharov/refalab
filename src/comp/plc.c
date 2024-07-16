@@ -13,21 +13,19 @@ int index_x(const char *s, const char *t)
     const unsigned int imax = 40;
     unsigned int l = 0;
     for (size_t i = 0; i < imax; i++)
-    {
         if (*(s + i) == '\0')
             break;
         else
             l = i + 1;
-    } // l - length of s  
+    // l - length of s  
 
     unsigned int m;
     for (size_t i = 0; i < imax; i++)
-    {
         if (*(t + i) == '\0')
             break;
         else
             m = i + 1;
-    } // m - length of t  
+    // m - length of t  
 
     for (size_t i = 0; (i < l) && (*(s + i) != '\0'); i++)
         for (size_t j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)

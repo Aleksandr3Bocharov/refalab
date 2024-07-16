@@ -302,13 +302,11 @@ static void sfwr2()
             break;
         }
         if (sysut2.fil == NULL)
-        {
             if ((sysut2.fil = fopen(sysut2.nam, Wbin)) == NULL)
             {
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
-        }
         if (fwrite(sysut2.buf, sysut2.len, 1, sysut2.fil) <= 0)
         {
             printf("Write i/o error in sysut2\n");
@@ -332,13 +330,11 @@ static void sfwr(const char *c, unsigned int n, BU *b)
         }
         memcpy(b->buf + b->tek, c, ost);
         if (b->fil == NULL)
-        {
             if ((b->fil = fopen(b->nam, Wbin)) == NULL)
             {
                 printf("Can't open for write %s\n", b->nam);
                 exit(8);
             }
-        }
         if (fwrite(b->buf, b->len, 1, b->fil) <= 0)
         {
             printf("Write i/o error in %s\n", b->nam);
@@ -363,10 +359,10 @@ static void sfrd1(char *c, unsigned int n)
             break;
         }
         memcpy(c, sysut1.buf + sysut1.tek, ost);
-        if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
+        /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
         {
             // printf("Read i/o error in sysut1\n"); exit(8);
-        }
+        } */
         sysut1.tek = 0;
         n -= ost;
         c += ost;
@@ -402,9 +398,7 @@ static void sfobmen(unsigned int n)
         ost1 = sysut1.len - sysut1.tek;
         // printf("\obmen: n=%d ost1=%d",n,ost1);
         if (n > ost1)
-        {
             n -= ost1;
-        }
         else
         {
             ost1 = n;
@@ -424,13 +418,11 @@ static void sfobmen(unsigned int n)
             memcpy(sysl.buf + sysl.tek, sysut1.buf + sysut1.tek, ost2);
             ksmn(sysut1.buf + sysut1.tek, ost2);
             if (sysl.fil == NULL)
-            {
                 if ((sysl.fil = fopen(sysl.nam, Wbin)) == NULL)
                 {
                     printf("Can't open for write syslin\n");
                     exit(8);
                 }
-            }
             if (fwrite(sysl.buf, sysl.len, 1, sysl.fil) <= 0)
             {
                 printf("Write i/o error in syslin\n");
@@ -441,14 +433,14 @@ static void sfobmen(unsigned int n)
             sysut1.tek += ost2;
         } // while
         if (n != 0)
-        {
-            if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
+        //{
+            /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
             {
-                /*printf("Read i/o error in sysut1\n");
-                exit(8);*/
-            }
+                //printf("Read i/o error in sysut1\n");
+                //exit(8);
+            }*/
             sysut1.tek = 0;
-        }
+        //}
         else
             break;
     } // while
@@ -500,13 +492,11 @@ void jbyte(char bb)
     else
     {
         if (sysut1.fil == NULL)
-        {
             if ((sysut1.fil = fopen(sysut1.nam, Wbin)) == NULL)
             {
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
-        }
         if (fwrite(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
         {
             printf("Write i/o error in sysut1\n");
@@ -539,10 +529,10 @@ void jentry(T_U *pp, const char *ee, unsigned int ll)
     {
         r = r->next;
         if ((r->le == ll) && (strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
-        {
+        //{
             // pchose("521 two entry points has single name ", ee, ll);
             return;
-        }
+        //}
     }
     if ((r = (T_ENT *)malloc(sizeof(T_ENT))) == NULL)
         oshex();
@@ -655,7 +645,6 @@ GEN_TXT:
         {
             if (k != 0)
                 fputc('\n', syslin);
-
             fputs("\t.byte\t", syslin);
         }
         sprintf(bufs, "%d", d.w);
@@ -873,13 +862,11 @@ static void sfwrc()
     else
     {
         if (sysl.fil == NULL)
-        {
             if ((sysl.fil = fopen(sysl.nam, Wbin)) == NULL)
             {
                 printf("Can't open for write %s\n", sysl.nam);
                 exit(8);
             }
-        }
         if (fwrite(sysl.buf, sysl.len, 1, sysl.fil) <= 0)
         {
             printf("Write i/o error in %s\n", sysl.nam);

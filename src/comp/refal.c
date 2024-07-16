@@ -849,7 +849,6 @@ SCNCHR:
             {
                 int i, j;
                 for (i = 1, j = 0; i < 3; i++)
-                {
                     if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                         j = j * 8 + c[m + i] - '0';
                     else
@@ -857,7 +856,6 @@ SCNCHR:
                         m--;
                         goto PROD;
                     }
-                }
                 m += 2;
                 c[m] = j & 255;
             }
@@ -869,7 +867,6 @@ SCNCHR:
             {
                 int i, j;
                 for (i = 0, j = 0; i < 3; i++)
-                {
                     if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                         j = j * 8 + c[m + i] - '0';
                     else
@@ -877,7 +874,6 @@ SCNCHR:
                         m--;
                         goto PROD;
                     }
-                }
                 m += 2;
                 c[m] = j & 255;
             }
@@ -1115,7 +1111,6 @@ SPCA1:
                 {
                     int i, j;
                     for (i = 1, j = 0; i < 3; i++)
-                    {
                         if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                             j = j * 8 + c[m + i] - '0';
                         else
@@ -1123,7 +1118,6 @@ SPCA1:
                             m--;
                             goto PROD;
                         }
-                    }
                     m += 2;
                     c[m] = j & 255;
                 }
@@ -1135,7 +1129,6 @@ SPCA1:
                 {
                     int i, j;
                     for (i = 0, j = 0; i < 3; i++)
-                    {
                         if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                             j = j * 8 + c[m + i] - '0';
                         else
@@ -1143,7 +1136,6 @@ SPCA1:
                             m--;
                             goto PROD;
                         }
-                    }
                     m += 2;
                     c[m] = j & 255;
                 }
