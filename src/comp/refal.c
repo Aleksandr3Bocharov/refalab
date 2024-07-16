@@ -64,7 +64,7 @@ static uint16_t m; // current symbol number
 static char strg_c[78];
 static unsigned int lbl_leng;
 static uint16_t empcard; // flags for empty card
-static char card[81];              // card buffer (input)
+static char card[81];    // card buffer (input)
 static const char *card72 = card;
 static unsigned int cdnumb; // card number   // kras
 static int cardl;           // card length without tail blanks
@@ -92,11 +92,11 @@ static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
-static uint16_t fixm;      // start sentence position
-static char mod_name[9];             // module name                 // kras
+static uint16_t fixm;       // start sentence position
+static char mod_name[9];    // module name                 // kras
 static uint32_t mod_length; // module length   // kras
-static uint16_t again;     // next module processing feature
-static unsigned int _eoj;            // "sysin" end flag           // kras
+static uint16_t again;      // next module processing feature
+static unsigned int _eoj;   // "sysin" end flag           // kras
 static unsigned int cur;
 
 static void lblkey(unsigned int pr);
@@ -200,7 +200,6 @@ int main(int argc, char *argv[])
     options.stmnmb = 0;
     options.extname = 0;
     options.multmod = 0;
-    options.asmb = 1; // BLF, instead 0, we need assembler code
     options.names = 1;
     options.mincomp = 0;
     for (size_t j = 2; j < argc; ++j)
@@ -212,9 +211,7 @@ int main(int argc, char *argv[])
             for (i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
             {
                 int temp;
-                if (*(parm + i) == 'a') //  kras
-                    options.asmb = 1;
-                else if (strncmp((parm + i), "nn", 2) == 0) //  kras
+                if (strncmp((parm + i), "nn", 2) == 0) //  kras
                     options.names = 0;
                 else if (strncmp((parm + i), "ns", 2) == 0)
                     options.source = 0;
@@ -232,7 +229,7 @@ int main(int argc, char *argv[])
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
                     printf("Unknown option: %s\n", (parm + i));
-                    printf("Options may be: ns,nn,as,mm,fn,cm\n");
+                    printf("Options may be: ns,nn,mm,fn,cm\n");
                     exit(1);
                 }
                 temp = i;
@@ -286,20 +283,12 @@ int main(int argc, char *argv[])
     }
     else
     {
-        if (options.asmb == 1)
+        strcat(parm, ".asm");
+        syslin = fopen(parm, "w");
+        if (syslin == NULL)
         {
-            strcat(parm, ".asm");
-            syslin = fopen(parm, "w");
-            if (syslin == NULL)
-            {
-                printf("Can't open %s\n", parm);
-                exit(8);
-            }
-        }
-        else
-        {
-            strcat(parm, ".obj");
-            sfop_w(parm, &sysl);
+            printf("Can't open %s\n", parm);
+            exit(8);
         }
     }
     //  print of page title missing here
@@ -415,10 +404,7 @@ END_STATEMENT:
     }
     else
     {
-        if (options.asmb == 1)
-            jend();
-        else
-            jendo();
+        jend();
         mod_length = jwhere();
     }
     s_term();
@@ -434,10 +420,7 @@ END_OF_SYSIN:
     if (options.multmod == 0)
     {
         mod_length = jwhere();
-        if (options.asmb == 1)
-            fclose(syslin);
-        else
-            sfclose(&sysl);
+        fclose(syslin);
         if ((mod_length == 0) || (flags.was_err != 0))
             unlink(parm);
     }

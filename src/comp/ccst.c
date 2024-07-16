@@ -62,7 +62,7 @@ static uint16_t e_level;       // counter of the longing levels
 static uint16_t not_nil;       // working variables
 static uint16_t nh;            // current whole number
 static uint16_t kol_per;       // subprogram of search in variable table
-                                         // table pointer
+                               // table pointer
 static uint16_t nh_x, nh_y;    // hole numbers (under enter in brackets)
 static uint16_t lrbxy;         // stoped bracket flag
 static uint16_t lastb, lastb1; // variables for brackets linkage
@@ -1118,6 +1118,7 @@ static void isk_v()
     v[ind].rem = 1;
     v[ind].last = 0;
     v[ind]._v = scn_e.v;
+    return;
 }
 
 //   generation of stoped brackets and setting boards
@@ -1125,77 +1126,74 @@ static void gen_bsb()
 {
     switch (lrbxy)
     {
-    case 0:
-        goto SW0;
-    case 1:
-        goto SW1;
-    case 2:
-        goto SW2;
+    case 0: // no stoped brackets
+        if (nh != nh_x)
+            break;
+        return;
+    case 1: // left stoped brackets
+        if (nh == nh_x)
+            jbyte(n_lb);
+        else if (nh == nh_y)
+            jbyte(n_lby);
+        else
+        {
+            jbyte(n_lb);
+            break;
+        };
+        return;
+    case 2: // right stoped brackets
+        if (nh == nh_x)
+            jbyte(n_rb);
+        else if (nh == nh_y)
+            jbyte(n_rby);
+        else
+        {
+            jbyte(n_rb);
+            break;
+        };
+        return;
     };
-SW0: // no stoped brackets
-    if (nh != nh_x)
-        goto GEN_SB;
-    return;
-SW1: // left stoped brackets
-    if (nh == nh_x)
-        jbyte(n_lb);
-    else if (nh == nh_y)
-        jbyte(n_lby);
-    else
-    {
-        jbyte(n_lb);
-        goto GEN_SB;
-    };
-    return;
-SW2: // right stoped brackets
-    if (nh == nh_x)
-        jbyte(n_rb);
-    else if (nh == nh_y)
-        jbyte(n_rby);
-    else
-    {
-        jbyte(n_rb);
-        goto GEN_SB;
-    };
-    return;
-GEN_SB:
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
+    return;
 }
 
 static void pch303()
 {
     pchosa("303 differents for variable ", v[ind].ci);
+    return;
 }
 
 static void pch406()
 {
     pchosa("406 in left part missing variable ", v[ind].ci);
+    return;
 }
 
 //    attempt to extract left support group
 static bool lsg_p()
 {
-LSG_:
-    n++;
-    if (n == n2)
-        goto GEN_LE;
-    if (x[n].t != t_lb)
-        goto LSG1;
-    n = x[n].pair;
-    goto LSG_;
-LSG1:
-    if (x[n].t != t_e)
-        goto LSG_;
-    ind = x[n].ind;
-    if ((ind == ie) || (v[ind].last != 0))
-        goto LSG_;
-    if ((x[n].spec.info.codef != NULL) || (v[ind].rem != 1))
-        goto GEN_LE;
-    if (!ortgn(n1, n))
-        goto GEN_LE;
-    x[n].eoemrk = 1;
-    x[n].e_level = e_level;
-GEN_LE:
+    while (true)
+    {
+        n++;
+        if (n == n2)
+            break;
+        if (x[n].t != t_lb)
+        {
+            if (x[n].t != t_e)
+                continue;
+            ind = x[n].ind;
+            if ((ind == ie) || (v[ind].last != 0))
+                continue;
+            if ((x[n].spec.info.codef != NULL) || (v[ind].rem != 1))
+                break;
+            if (!ortgn(n1, n))
+                break;
+            x[n].eoemrk = 1;
+            x[n].e_level = e_level;
+            break;
+        }
+        n = x[n].pair;
+    }
     n1++;
     n = n1;
     ind = x[n].ind;
@@ -1218,28 +1216,29 @@ GEN_LE:
 //        attempt to extract right support group
 static bool rsg_p()
 {
-RSG_:
-    n--;
-    if (n == n1)
-        goto GEN_RE;
-    if (x[n].t != t_rb)
-        goto RSG1;
-    n = x[n].pair;
-    goto RSG_;
-RSG1:
-    if (x[n].t != t_e)
-        goto RSG_;
-    ind = x[n].ind;
-    if ((ind == ie) || (v[ind].last != 0))
-        goto RSG_;
-    if ((x[n].spec.info.codef != NULL) ||
-        (v[ind].rem != 1))
-        goto GEN_RE;
-    if (!ortgn(n, n2))
-        goto GEN_RE;
-    x[n].eoemrk = 1;
-    x[n].e_level = e_level;
-GEN_RE:
+    while (true)
+    {
+        n--;
+        if (n == n1)
+            break;
+        if (x[n].t != t_rb)
+        {
+            if (x[n].t != t_e)
+                continue;
+            ind = x[n].ind;
+            if ((ind == ie) || (v[ind].last != 0))
+                continue;
+            if ((x[n].spec.info.codef != NULL) ||
+                (v[ind].rem != 1))
+                break;
+            if (!ortgn(n, n2))
+                break;
+            x[n].eoemrk = 1;
+            x[n].e_level = e_level;
+            break;
+        }
+        n = x[n].pair;
+    }
     n2--;
     n = n2;
     ind = x[n].ind;
@@ -1263,49 +1262,49 @@ GEN_RE:
 static bool ortgn(uint16_t n1, uint16_t n2)
 {
     uint16_t n = n1;
-ORT1:
-    n++;
-    if (n == n2)
-        goto ORT1E;
-    if (x[n].t <= 3)
-        goto ORT1;
-ORT1V:
-    uint16_t i = x[n].ind;
-    if (v[i].last != 0)
-        goto ORT1;
-    (v[i].rem)--;
-    goto ORT1;
-ORT1E:
+    uint16_t i;
+    while (true)
+    {
+        n++;
+        if (n == n2)
+            break;
+        if (x[n].t <= 3)
+            continue;
+        i = x[n].ind;
+        if (v[i].last != 0)
+            continue;
+        (v[i].rem)--;
+    }
     bool res = true;
     n = n1;
-ORT2:
-    n++;
-    if (n == n2)
-        goto ORT2E;
-    if (x[n].t <= 3)
-        goto ORT2;
-ORT2V:
-    i = x[n].ind;
-    if (v[i].last != 0)
-        goto ORT2;
-    if (v[i].rem == 0)
-        goto ORT2;
-    res = false;
-ORT2E:
+    while (true)
+    {
+        n++;
+        if (n == n2)
+            break;
+        if (x[n].t <= 3)
+            continue;
+        i = x[n].ind;
+        if (v[i].last != 0)
+            continue;
+        if (v[i].rem == 0)
+            continue;
+        res = false;
+        break;
+    }
     n = n1;
-ORT3:
-    n++;
-    if (n == n2)
-        goto ORT3E;
-    if (x[n].t <= 3)
-        goto ORT3;
-ORT3V:
-    i = x[n].ind;
-    if (v[i].last != 0)
-        goto ORT3;
-    (v[i].rem)++;
-    goto ORT3;
-ORT3E:
+    while (true)
+    {
+        n++;
+        if (n == n2)
+            break;
+        if (x[n].t <= 3)
+            continue;
+        i = x[n].ind;
+        if (v[i].last != 0)
+            continue;
+        (v[i].rem)++;
+    }
     return res;
 }
 

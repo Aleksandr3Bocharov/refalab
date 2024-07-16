@@ -15,6 +15,7 @@ void pchosh(const char *s)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 
 static void pchosi(const char *s, const char *t)
@@ -25,6 +26,7 @@ static void pchosi(const char *s, const char *t)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 
 void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
@@ -39,6 +41,7 @@ void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 
 void pchosx(const char *s, const char *sid, unsigned int lsid, const char *s1)
@@ -53,6 +56,7 @@ void pchosx(const char *s, const char *sid, unsigned int lsid, const char *s1)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 
 void pchosa(const char *s, const char c)
@@ -63,6 +67,7 @@ void pchosa(const char *s, const char c)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 
 static void pchose(const char *s, const char *t, unsigned int lt)
@@ -77,5 +82,6 @@ static void pchose(const char *s, const char *t, unsigned int lt)
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
+    return;
 }
 //--------  end  of  file  CERR.C  --------- 

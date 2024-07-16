@@ -17,6 +17,7 @@ void gopn(char k, char n)
 {
     jbyte(k);
     jbyte(n);
+    return;
 }
 
 void gopnm(char k, char n, char m)
@@ -24,12 +25,14 @@ void gopnm(char k, char n, char m)
     jbyte(k);
     jbyte(n);
     jbyte(m);
+    return;
 }
 
 void gopl(char k, const uint8_t *l)
 {
     jbyte(k);
     j3addr((T_U *)l);
+    return;
 }
 
 void gsymbol(const T_LINKTI *code)
@@ -54,12 +57,14 @@ void gsymbol(const T_LINKTI *code)
     else
         for (size_t i = 0; i < LBLL; i++)
             jbyte(*(r + i));
+    return;
 }
 
 void gops(char k, const T_LINKTI *code)
 {
     jbyte(k);
     gsymbol(code);
+    return;
 }
 
 void ghw(uint16_t h)
@@ -67,4 +72,5 @@ void ghw(uint16_t h)
     const T_TAG *po = (T_TAG *)&h; //  eg
     jbyte(po->b1);
     jbyte(po->b2);
+    return;
 }

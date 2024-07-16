@@ -12,7 +12,6 @@ typedef struct opt_
     unsigned int stmnmb : 1;
     unsigned int extname : 1;
     unsigned int multmod : 1;
-    unsigned int asmb : 1;
     unsigned int names : 1;
 } T_OPT;
 

@@ -1,7 +1,6 @@
-//-----------------  file  --  cj_blf.C  ---------------
-//             generator of object module
-//                (or assembler text)
-//           Last edition date :  11.07.24
+//-----------------  file  --  cj.C  -------------------
+//             generator of assembler text
+//           Last edition date :  17.07.24
 //------------------------------------------------------
 
 #include <stdio.h>
@@ -39,7 +38,14 @@ typedef struct rl
     unsigned int delta;
 } T_RL;
 
-BU sysl = {0, 0, NULL, NULL, NULL};
+typedef struct BU_
+{
+    unsigned int len;
+    unsigned int tek;
+    char *nam;
+    char *buf;
+    FILE *fil;
+} BU;
 
 static BU sysut1 = {0, 0, NULL, NULL, NULL};
 static BU sysut2 = {0, 0, NULL, NULL, NULL};
@@ -87,78 +93,14 @@ static T_RL rl;
 static unsigned int k;
 static unsigned int delta;
 
-static void ksmn(const char *b, unsigned int n);
-
-static void oshi1()
-{
-    fputs("Can't open (in) file sysut1\n", stdout);
-    exit(8);
-    return;
-}
-
-static void oshi2()
-{
-    fputs("Can't open (in) file sysut2\n", stdout);
-    exit(8);
-    return;
-}
-
-static void osho1()
-{
-    fputs("Can't open (out) file sysut1\n", stdout);
-    exit(8);
-    return;
-}
-
-static void osho2()
-{
-    fputs("Can't open (out) file sysut2\n", stdout);
-    exit(8);
-    return;
-}
-
-static void oshd1()
-{
-    fputs("Unsufficient disk space for sysut1\n", stdout);
-    exit(8);
-    return;
-}
-
-static void oshd2()
-{
-    fputs("Unsufficient disk space for sysut2\n", stdout);
-    exit(8);
-    return;
-}
-
-static void oshdl()
-{
-    fputs("Unsufficient disk space for syslin\n", stdout);
-    exit(8);
-    return;
-}
-
-static void osher1()
-{
-    fputs("I/o error in file sysut1\n", stdout);
-    exit(8);
-    return;
-}
-
-static void osher2()
-{
-    fputs("I/o error in file sysut2\n", stdout);
-    exit(8);
-    return;
-}
-
 static void oshex()
 {
     fputs("\nOSHEX: no memory!!!", stdout);
     exit(1);
+    return;
 }
 
-void sfop_w(const char *s, BU *b)
+static void sfop_w(const char *s, BU *b)
 {
     if (b->nam != NULL)
     {
@@ -192,7 +134,6 @@ void sfop_w(const char *s, BU *b)
         }
         uint32_t lon;
         while (true)
-        {
             if ((b->buf = (char *)malloc(un)) != NULL)
             {
 #ifdef mdebug
@@ -211,11 +152,12 @@ void sfop_w(const char *s, BU *b)
                 if (un < 16)
                     oshex();
             }
-        } // while
+        // while
     }
     b->tek = 0;
     b->len = un;
     b->fil = NULL;
+    return;
 }
 
 static void sfop_r(BU *b)
@@ -227,26 +169,28 @@ static void sfop_r(BU *b)
             printf("Can't open for read %s\n", b->nam);
             exit(8);
         }
-        if (fread(b->buf, b->len, 1, b->fil) <= 0)
+        if (fread(b->buf, b->len, 1, b->fil) == 0)
         {
             printf("Read i/o error in %s\n", b->nam);
             exit(8);
         }
     }
     b->tek = 0;
+    return;
 }
 
 static void sfcl(const BU *b)
 {
     if (b->fil != NULL)
     {
-        if (fwrite(b->buf, b->tek, 1, b->fil) <= 0)
+        if (fwrite(b->buf, b->tek, 1, b->fil) == 0)
         {
             printf("Write i/o error in %s\n", b->nam);
             exit(8);
         }
         fclose(b->fil);
     }
+    return;
 }
 
 static void sfclr(BU *b)
@@ -261,45 +205,19 @@ static void sfclr(BU *b)
 #endif
     b->nam = NULL;
     b->buf = NULL;
-}
-
-void sfclose(BU *b)
-{
-    if (b->fil == NULL)
-    {
-        if ((b->fil = fopen(b->nam, Wbin)) == NULL)
-        {
-            printf("Can't open for write %s\n", b->nam);
-            exit(8);
-        }
-    }
-    if (fwrite(b->buf, b->tek, 1, b->fil) <= 0)
-    {
-        printf("Write i/o error in %s\n", b->nam);
-        exit(8);
-    }
-    fclose(b->fil);
-    free(b->nam);
-    free(b->buf);
-#ifdef mdebug
-    printf("\nfree(sfclose) b->nam(c 0)=%lx", b->nam);
-    printf("\n              b->buf(c 0)=%lx", b->buf);
-#endif
-    b->nam = NULL;
-    b->buf = NULL;
+    return;
 }
 
 static void sfwr2()
 {
-    unsigned int ost;
     while (true)
     {
-        ost = sysut2.len - sysut2.tek;
+        const unsigned int ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
         {
             memcpy(sysut2.buf + sysut2.tek, &rl, 6);
             sysut2.tek += 6;
-            break;
+            return;
         }
         if (sysut2.fil == NULL)
             if ((sysut2.fil = fopen(sysut2.nam, Wbin)) == NULL)
@@ -307,7 +225,7 @@ static void sfwr2()
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
-        if (fwrite(sysut2.buf, sysut2.len, 1, sysut2.fil) <= 0)
+        if (fwrite(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
         {
             printf("Write i/o error in sysut2\n");
             exit(8);
@@ -318,15 +236,14 @@ static void sfwr2()
 
 static void sfwr(const char *c, unsigned int n, BU *b)
 {
-    unsigned int ost;
     while (true)
     {
-        ost = b->len - b->tek;
+        const unsigned int ost = b->len - b->tek;
         if (ost >= n)
         {
             memcpy(b->buf + b->tek, c, n);
             b->tek += n;
-            break;
+            return;
         }
         memcpy(b->buf + b->tek, c, ost);
         if (b->fil == NULL)
@@ -335,7 +252,7 @@ static void sfwr(const char *c, unsigned int n, BU *b)
                 printf("Can't open for write %s\n", b->nam);
                 exit(8);
             }
-        if (fwrite(b->buf, b->len, 1, b->fil) <= 0)
+        if (fwrite(b->buf, b->len, 1, b->fil) == 0)
         {
             printf("Write i/o error in %s\n", b->nam);
             exit(8);
@@ -348,18 +265,17 @@ static void sfwr(const char *c, unsigned int n, BU *b)
 
 static void sfrd1(char *c, unsigned int n)
 {
-    unsigned int ost;
     while (true)
     {
-        ost = sysut1.len - sysut1.tek;
+        const unsigned int ost = sysut1.len - sysut1.tek;
         if (ost >= n)
         {
             memcpy(c, sysut1.buf + sysut1.tek, n);
             sysut1.tek += n;
-            break;
+            return;
         }
         memcpy(c, sysut1.buf + sysut1.tek, ost);
-        /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
+        /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) == 0)
         {
             // printf("Read i/o error in sysut1\n"); exit(8);
         } */
@@ -371,80 +287,23 @@ static void sfrd1(char *c, unsigned int n)
 
 static void sfrd2()
 {
-    unsigned int ost;
     while (true)
     {
-        ost = sysut2.len - sysut2.tek;
+        const unsigned int ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
         {
             memcpy(&rl, sysut2.buf + sysut2.tek, 6);
             sysut2.tek += 6;
-            break;
+            return;
         }
-        if (fread(sysut2.buf, sysut2.len, 1, sysut2.fil) <= 0)
+        /*if (fread(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
         {
-            /*printf("Read i/o error in sysut2\n");
-            exit(8);*/
-        }
+            //printf("Read i/o error in sysut2\n");
+            //exit(8);
+        }*/
         sysut2.tek = 0;
     } // while
 } // sfrd2
-
-static void sfobmen(unsigned int n)
-{
-    unsigned int ost1, ost2;
-    while (true)
-    {
-        ost1 = sysut1.len - sysut1.tek;
-        // printf("\obmen: n=%d ost1=%d",n,ost1);
-        if (n > ost1)
-            n -= ost1;
-        else
-        {
-            ost1 = n;
-            n = 0;
-        }
-        while (ost1 > 0)
-        {
-            ost2 = sysl.len - sysl.tek;
-            if (ost2 >= ost1)
-            {
-                memcpy(sysl.buf + sysl.tek, sysut1.buf + sysut1.tek, ost1);
-                ksmn(sysut1.buf + sysut1.tek, ost1);
-                sysl.tek += ost1;
-                sysut1.tek += ost1;
-                break;
-            }
-            memcpy(sysl.buf + sysl.tek, sysut1.buf + sysut1.tek, ost2);
-            ksmn(sysut1.buf + sysut1.tek, ost2);
-            if (sysl.fil == NULL)
-                if ((sysl.fil = fopen(sysl.nam, Wbin)) == NULL)
-                {
-                    printf("Can't open for write syslin\n");
-                    exit(8);
-                }
-            if (fwrite(sysl.buf, sysl.len, 1, sysl.fil) <= 0)
-            {
-                printf("Write i/o error in syslin\n");
-                exit(8);
-            }
-            ost1 -= ost2;
-            sysl.tek = 0;
-            sysut1.tek += ost2;
-        } // while
-        if (n != 0)
-        //{
-            /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
-            {
-                //printf("Read i/o error in sysut1\n");
-                //exit(8);
-            }*/
-            sysut1.tek = 0;
-        //}
-        else
-            break;
-    } // while
-} // sfomen
 
 void jstart(const char *ee, unsigned int ll)
 {
@@ -469,6 +328,7 @@ void jstart(const char *ee, unsigned int ll)
     first_ext->next = NULL;
     curr_addr = 0;
     n_ext = 1;
+    return;
 } // jstart
 
 unsigned int jwhere()
@@ -497,7 +357,7 @@ void jbyte(char bb)
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
-        if (fwrite(sysut1.buf, sysut1.len, 1, sysut1.fil) <= 0)
+        if (fwrite(sysut1.buf, sysut1.len, 1, sysut1.fil) == 0)
         {
             printf("Write i/o error in sysut1\n");
             exit(8);
@@ -507,6 +367,7 @@ void jbyte(char bb)
     }
     delta++;
     curr_addr++;
+    return;
 } // jbyte
 
 void j3addr(T_U *pp)
@@ -516,6 +377,7 @@ void j3addr(T_U *pp)
     delta = 0;
     sfwr2();
     curr_addr += 4;
+    return;
 }
 
 void jentry(T_U *pp, const char *ee, unsigned int ll)
@@ -546,6 +408,7 @@ void jentry(T_U *pp, const char *ee, unsigned int ll)
     r->le = 8 < ll ? 8 : ll;
     strncpy(r->e, ee, r->le);
     pp->mode |= '\040';
+    return;
 } // jentry
 
 void jextrn(T_U *pp, const char *ee, unsigned int ll)
@@ -572,18 +435,21 @@ void jextrn(T_U *pp, const char *ee, unsigned int ll)
     pp->mode |= '\220';
     n_ext++;
     pp->info.infon = n_ext;
+    return;
 } // jextrn
 
 void jlabel(T_U *pp)
 {
     pp->mode |= '\120';
     pp->info.infon = curr_addr;
+    return;
 }
 
 void jequ(T_U *pp, T_U *qq)
 {
     pp->info.infop = qq;
     pp->mode |= '\320';
+    return;
 }
 
 static void zakon()
@@ -596,6 +462,7 @@ static void zakon()
     mod_length = curr_addr;
     if (mod_length < 0)
         mod_length = 65536L + mod_length;
+    return;
 } // zakon
 
 void jend()
@@ -842,369 +709,11 @@ JTERM:
     }
 } // jend
 
-//--------------------- OBJ -------------------
-static union
-{
-    char cc[2];
-    uint16_t ww;
-} stm, ksm;
 
-static char c;
 
-static void sfwrc()
-{
-    //  sfwr(&c,1,&sysl);
-    if (sysl.tek != sysl.len)
-    {
-        *(sysl.buf + sysl.tek) = c;
-        sysl.tek++;
-    }
-    else
-    {
-        if (sysl.fil == NULL)
-            if ((sysl.fil = fopen(sysl.nam, Wbin)) == NULL)
-            {
-                printf("Can't open for write %s\n", sysl.nam);
-                exit(8);
-            }
-        if (fwrite(sysl.buf, sysl.len, 1, sysl.fil) <= 0)
-        {
-            printf("Write i/o error in %s\n", sysl.nam);
-            exit(8);
-        }
-        *(sysl.buf) = c;
-        sysl.tek = 1;
-    }
-} // sfwrc
 
-static void ksmb(char b)
-{
-    stm.cc[1] = 0;
-    stm.cc[0] = b;
-    ksm.ww += stm.ww;
-    ksm.cc[1] = '\0';
-}
 
-static void ksmn(const char *b, unsigned int n)
-{
-    stm.cc[1] = 0;
-    for (size_t i = 0; i < n; i++)
-    {
-        stm.cc[0] = *(b + i);
-        ksm.ww += stm.ww;
-    }
-    ksm.cc[1] = '\0';
-}
 
-static void ksum()
-{
-    stm.cc[0] = d.b[0];
-    ksm.ww += stm.ww;
-    stm.cc[0] = d.b[1];
-    ksm.ww += stm.ww;
-    ksm.cc[1] = '\0';
-}
 
-static void zakr()
-{
-    d.w = 256 - ksm.ww;
-    c = d.b[0];
-    sfwrc();
-    ksm.ww = 0;
-}
 
-static void imja(const char *n, unsigned int l)
-{
-    d.w = l;
-    c = d.b[0];
-    sfwrc();
-    ksmb(c);
-    if (l != 0)
-    {
-        sfwr(n, l, &sysl);
-        ksmn(n, l);
-    }
-}
 
-static void imj_a(const char *n, unsigned int l)
-{
-    d.w = l + 1;
-    c = d.b[0];
-    sfwrc();
-    ksmb(c);
-    c = '_';
-    sfwrc();
-    ksmb(c);
-    if (l != 0)
-    {
-        sfwr(n, l, &sysl);
-        ksmn(n, l);
-    }
-}
-
-static void golowa(unsigned int len, unsigned int typ)
-{
-    d.w = typ;
-    c = d.b[0];
-    sfwrc();
-    ksmb(c);
-    d.w = len;
-    sfwr((char *)&d, 2, &sysl);
-    ksum();
-}
-
-void jendo()
-{
-    zakon();
-    if (options.multmod == 1)
-    {
-        strcat(mod_i, ".obj");
-        sfop_w(mod_i, &sysl);
-    }
-    stm.ww = 0;
-    ksm.ww = 0;
-    unsigned int nomsim = 1;
-    unsigned int smes = 0;
-
-    // heading generating
-    golowa(2 + strlen(parm_i), 0x80);
-    imja(parm_i, strlen(parm_i));
-    zakr();
-
-    // version number
-    k = strlen(vers_i);
-    golowa(3 + k, 0x88);
-    unsigned int i = 0;
-    sfwr((char *)&i, 2, &sysl);
-    sfwr(vers_i, k, &sysl);
-    ksmn(vers_i, k);
-    zakr();
-
-    // names
-    golowa(9 + lnmmod, 0x96);
-    c = '\0';
-    sfwrc();
-    imja("CODE", 4);
-    imj_a(mod_name, lnmmod);
-    zakr();
-
-    // segment definition
-    golowa(7, 0x98);
-    c = 0x48;
-    sfwrc();
-    ksmb(c);
-    d.w = curr_addr;
-    sfwr((char *)&d.w, 2, &sysl);
-    ksum();
-    c = 3;
-    sfwrc();
-    c = 2;
-    sfwrc();
-    c = 1;
-    sfwrc();
-    ksmb('\006');
-    zakr();
-
-    // external names
-    qx = first_ext->next;
-    while (qx != NULL)
-    {
-        T_EXT *qxn = qx;
-        for (i = 0; (i < 1000) && (qx != NULL); qx = qx->next)
-            i += (qx->le + 3);
-        const T_EXT *qxk = qx;
-        golowa(i + 1, 0x8C);
-        for (qx = qxn; qx != qxk; qx = qx->next)
-        {
-            imj_a(qx->e, qx->le);
-            c = '\0';
-            sfwrc();
-            qx->noms = nomsim++;
-        }
-        zakr();
-    }
-
-    // entry labels
-    q = first_ent->next;
-    while (q != NULL)
-    {
-        golowa(8 + q->le, 0x90);
-        c = 0;
-        sfwrc();
-        c = 1;
-        sfwrc();
-        imj_a(q->e, q->le);
-        const T_U *pp = q->p;
-        while (((pp->mode) & '\300') == '\300')
-            pp = pp->info.infop;
-        d.w = pp->info.infon;
-        sfwr((char *)&d, 2, &sysl);
-        d.w++;
-        ksum();
-        c = 0;
-        sfwrc();
-        zakr();
-        q = q->next;
-    }
-
-    //  empty module test
-    if (mod_length == 0)
-        goto JTERM;
-
-    // text generation
-    sfop_r(&sysut1);
-    sfop_r(&sysut2);
-
-GEN_TXT:
-    sfrd2();
-    delta = rl.delta;
-    while (delta > 1020)
-    {
-        delta -= 1020;
-        golowa(1024, 0xA0);
-        c = 1;
-        sfwrc();
-        d.w = smes;
-        sfwr((char *)&d, 2, &sysl);
-        d.w++;
-        ksum();
-        smes += 1020;
-        sfobmen(1020);
-        zakr();
-    }
-    const T_U *p = rl.point;
-    if (p != NULL)
-        golowa(8 + delta, 0xA0);
-    else
-        golowa(4 + delta, 0xA0);
-    c = 1;
-    sfwrc();
-    d.w = smes;
-    sfwr((char *)&d, 2, &sysl);
-    d.w++;
-    ksum();
-    smes += (delta + 4);
-    sfobmen(delta);
-    if (p != NULL)
-    {
-        c = 0;
-        for (i = 0; i < 4; i++)
-            sfwrc();
-    }
-    zakr();
-    if (p != NULL)
-    {
-        while (((p->mode) & '\300') == '\300')
-            p = p->info.infop;
-        if (((p->mode) & '\300') != '\200')
-        {
-            // nonexternal label
-            golowa(8, 0x9C);
-            d.w = delta;
-            c = d.b[1];
-            d.b[1] = d.b[0];
-            d.b[0] = c | '\314';
-            sfwr((char *)&d, 2, &sysl);
-            ksum();
-            c = 0;
-            sfwrc();
-            c = 1;
-            sfwrc();
-            c = 1;
-            sfwrc();
-            d.w = p->info.infon;
-            sfwr((char *)&d, 2, &sysl);
-            d.w += 2;
-            ksum();
-        }
-        else
-        {
-            // external   label
-            qx = first_ext;
-            for (i = 1; i < p->info.infon; i++)
-                qx = qx->next;
-            if (qx->noms < 128)
-                golowa(6, 0x9C);
-            else
-                golowa(8, 0x9C);
-            d.w = delta;
-            c = d.b[1];
-            d.b[1] = d.b[0];
-            d.b[0] = c | '\314';
-            sfwr((char *)&d, 2, &sysl);
-            ksum();
-            c = 0x26;
-            sfwrc();
-            c = qx->noms;
-            if (qx->noms < 128)
-            {
-                sfwrc();
-                sfwrc();
-                d.w = (c * 2 + 0x26);
-                ksum();
-            }
-            else
-            {
-                // >127
-                d.b[1] = c;
-                d.b[0] = (qx->noms >> 8) | 0x80;
-                sfwr((char *)&d, 2, &sysl);
-                sfwr((char *)&d, 2, &sysl);
-                ksum();
-                ksum();
-                ksmb(0x26);
-            }
-        }
-        zakr();
-        goto GEN_TXT;
-    } // if
-
-    // termination
-
-JTERM:
-    golowa(2, 0x8A);
-    c = 0;
-    imja((char *)&c, 0);
-    zakr();
-    sfclr(&sysut1);
-    sfclr(&sysut2);
-    if (options.multmod == 1)
-    {
-        sfclose(&sysl);
-        if (mod_length != 0)
-        {
-            if (nommod != 1)
-                fputs("&\n", systxt);
-            fputs("-+", systxt);
-            fputs(mod_i, systxt);
-            fputc(' ', systxt);
-        }
-        else
-        {
-            nommod--;
-            unlink(mod_i);
-        }
-    }
-    q = first_ent;
-    while (q != NULL)
-    {
-        r = q->next;
-        free(q);
-#ifdef mdebug
-        printf("\nfree(cj) q=%lx", q);
-#endif
-        q = r;
-    }
-    qx = first_ext;
-    while (qx != NULL)
-    {
-        rx = qx->next;
-        free(qx);
-#ifdef mdebug
-        printf("\nfree(cj) qx=%lx", qx);
-#endif
-        qx = rx;
-    }
-}
-
-//-------------  end  of  file  cj_blf.c  --------------
