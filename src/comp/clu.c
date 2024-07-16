@@ -16,6 +16,7 @@ void uns_sto()
 {
     printf("\nNo memory for identifier table");
     exit(1);
+    return;
 }
 
 static T_U *nov_uzel(const char *idp, unsigned int lid)

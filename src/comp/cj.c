@@ -391,7 +391,7 @@ void jentry(T_U *pp, const char *ee, unsigned int ll)
     {
         r = r->next;
         if ((r->le == ll) && (strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
-        //{
+            //{
             // pchose("521 two entry points has single name ", ee, ll);
             return;
         //}
@@ -479,198 +479,170 @@ void jend()
         }
     }
     d.w = 0;
-
     // heading generating
-
     fputs(".data\n", syslin); // BLF
-
     // BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
     // BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin);
     // BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);
     // BLF
     char bufs[81];
     sprintf(bufs, "_d%d$:\n", nommod); // BLF
-
     fputs(bufs, syslin);
-
     //  empty module test
-    if (mod_length == 0)
-        goto JTERM;
-
-    // text generating
-
-    sfop_r(&sysut1);
-    sfop_r(&sysut2);
-
-GEN_TXT:
-    sfrd2();
-    delta = rl.delta;
-    for (k = 0; k < delta; k++)
+    if (mod_length != 0)
     {
-        sfrd1(&d.b[0], 1);
-        if ((k % 60) == 0)
+        // text generating
+        sfop_r(&sysut1);
+        sfop_r(&sysut2);
+        while (true)
         {
-            if (k != 0)
-                fputc('\n', syslin);
-            fputs("\t.byte\t", syslin);
-        }
-        sprintf(bufs, "%d", d.w);
-        fputs(bufs, syslin);
-        if (((k % 60) != 59) && (k != (delta - 1)))
-            fputc(',', syslin);
-    }
-    fputc('\n', syslin);
-    const T_U *p = rl.point;
-    if (p != NULL)
-    {
-        while (((p->mode) & '\300') == '\300')
-            p = p->info.infop;
-        if (((p->mode) & '\300') != '\200')
-        {
-            //    nonexternal label
-            sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
-            fputs(bufs, syslin);
-        }
-        else
-        {
+            sfrd2();
+            delta = rl.delta;
+            for (k = 0; k < delta; k++)
+            {
+                sfrd1(&d.b[0], 1);
+                if ((k % 60) == 0)
+                {
+                    if (k != 0)
+                        fputc('\n', syslin);
+                    fputs("\t.byte\t", syslin);
+                }
+                sprintf(bufs, "%d", d.w);
+                fputs(bufs, syslin);
+                if (((k % 60) != 59) && (k != (delta - 1)))
+                    fputc(',', syslin);
+            }
+            fputc('\n', syslin);
+            const T_U *p = rl.point;
+            if (p != NULL)
+            {
+                while (((p->mode) & '\300') == '\300')
+                    p = p->info.infop;
+                if (((p->mode) & '\300') != '\200')
+                {
+                    //    nonexternal label
+                    sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
+                    fputs(bufs, syslin);
+                }
+                else
+                {
 //     external   label
 // BLF
 #ifdef UNIX
-            // begin name without underlining _
-            fputs("\t.long\t", syslin);
+                    // begin name without underlining _
+                    fputs("\t.long\t", syslin);
 #else // Windows - with underlining _
-            fputs("\t.long\t_", syslin);
+                    fputs("\t.long\t_", syslin);
 #endif
-            qx = first_ext;
-            for (size_t i = 1; i < p->info.infon; i++)
-                qx = qx->next;
-
+                    qx = first_ext;
+                    for (size_t i = 1; i < p->info.infon; i++)
+                        qx = qx->next;
 #ifdef UNIX
-            // BLF ------- renaming add, sub, mul ... ---------------
-            /* For GCC under UNIX we have the
-            following problem. Variable names have not
-            underscore (_) in begin (as it is in Windows).
-            That is cause for collision names
-                add, sub, mul  ...
-            with corresponding assembler operation.
-            The solution which we propuse is to rename
-            on the fly that refal operation to
-                ad_, su_, mu_ ... accordingly.
-            */
-            const char oper_add[] = "ad_";
-            const char oper_sub[] = "su_";
-            const char oper_mul[] = "mu_";
-            const char oper_div[] = "di_";
-            const char oper_rp[] = "r_";
-            const char oper_ptr[] = "pt_";
-
-            // BLF - debug printf ("%s\n",qx->e) ;
-            if (cmpstr(qx->le, qx->e, "ADD") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_add[i];
-
-            else if (cmpstr(qx->le, qx->e, "SUB") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_sub[i];
-
-            else if (cmpstr(qx->le, qx->e, "MUL") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_mul[i];
-
-            else if (cmpstr(qx->le, qx->e, "DIV") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_div[i];
-
-            else if (cmpstr(qx->le, qx->e, "RP") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_rp[i];
-
-            else if (cmpstr(qx->le, qx->e, "PTR") == 0)
-                for (size_t i = 0; i < (qx->le); i++)
-                    *((qx->e) + i) = oper_ptr[i];
-
+                    // BLF ------- renaming add, sub, mul ... ---------------
+                    /* For GCC under UNIX we have the
+                    following problem. Variable names have not
+                    underscore (_) in begin (as it is in Windows).
+                    That is cause for collision names
+                        add, sub, mul  ...
+                    with corresponding assembler operation.
+                    The solution which we propuse is to rename
+                    on the fly that refal operation to
+                        ad_, su_, mu_ ... accordingly.
+                    */
+                    const char oper_add[] = "ad_";
+                    const char oper_sub[] = "su_";
+                    const char oper_mul[] = "mu_";
+                    const char oper_div[] = "di_";
+                    const char oper_rp[] = "r_";
+                    const char oper_ptr[] = "pt_";
+                    // BLF - debug printf ("%s\n",qx->e) ;
+                    if (cmpstr(qx->le, qx->e, "ADD") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_add[i];
+                    else if (cmpstr(qx->le, qx->e, "SUB") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_sub[i];
+                    else if (cmpstr(qx->le, qx->e, "MUL") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_mul[i];
+                    else if (cmpstr(qx->le, qx->e, "DIV") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_div[i];
+                    else if (cmpstr(qx->le, qx->e, "RP") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_rp[i];
+                    else if (cmpstr(qx->le, qx->e, "PTR") == 0)
+                        for (size_t i = 0; i < (qx->le); i++)
+                            *((qx->e) + i) = oper_ptr[i];
 #endif
-            // BLF ------- end renaming ---------------
-
-            for (size_t i = 0; i < qx->le; i++)
-                // BLF    fputc (*((qx->e) + i),syslin);
-                fputc(tolower(*((qx->e) + i)), syslin); // BLF
-            fputs("\n", syslin);
+                    // BLF ------- end renaming ---------------
+                    for (size_t i = 0; i < qx->le; i++)
+                        // BLF    fputc (*((qx->e) + i),syslin);
+                        fputc(tolower(*((qx->e) + i)), syslin); // BLF
+                    fputs("\n", syslin);
+                }
+                continue;
+            } // if
+            break;
         }
-        goto GEN_TXT;
-    } // if
-
-    // end text generating
-
-    /* BLF
-    fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    fputs ("\tends\n",syslin);
-    */
-
-    //   external label generating
-
-    qx = first_ext->next;
-    while (qx != NULL)
-    {
-
+        // end text generating
+        /* BLF
+        fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+        fputs ("\tends\n",syslin);
+        */
+        //   external label generating
+        qx = first_ext->next;
+        while (qx != NULL)
+        {
 // BLF     fputs ("\textrn\t_",syslin);
 // BLF
 #ifdef UNIX
-        // begin name without underlining _
-        fputs("\t.extern\t", syslin); // BLF
-#else                                 // Windows
-        fputs("\t.extern\t_", syslin); // BLF
+            // begin name without underlining _
+            fputs("\t.extern\t", syslin); // BLF
+#else                                     // Windows
+            fputs("\t.extern\t_", syslin); // BLF
 #endif
-        for (size_t i = 0; i < qx->le; i++)
-            // BLF fputc (*((qx->e) + i),syslin);
-            fputc(tolower(*((qx->e) + i)), syslin); // BLF
-        fputs(":byte\n", syslin);
-        qx = qx->next;
-    } // while
-
-    // BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    // BLF  fputs ("\tsegment byte public 'CODE'\n",syslin);
-
-    fputs(".data\n", syslin); // BLF
-
-    // entry label generating
-
-    q = first_ent->next;
-    while (q != NULL)
-    {
-
+            for (size_t i = 0; i < qx->le; i++)
+                // BLF fputc (*((qx->e) + i),syslin);
+                fputc(tolower(*((qx->e) + i)), syslin); // BLF
+            fputs(":byte\n", syslin);
+            qx = qx->next;
+        } // while
+        // BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+        // BLF  fputs ("\tsegment byte public 'CODE'\n",syslin);
+        fputs(".data\n", syslin); // BLF
+        // entry label generating
+        q = first_ent->next;
+        while (q != NULL)
+        {
 // BLF
 #ifndef UNIX
-        // begin name with underlining _
-        fputc('_', syslin);
+            // begin name with underlining _
+            fputc('_', syslin);
 #endif
-
-        for (size_t i = 0; i < q->le; i++)
-            // BLF translate name to lower case
-            fputc(tolower(*((q->e) + i)), syslin);
-        const T_U *pp = q->p;
-        while (((pp->mode) & '\300') == '\300')
-            pp = pp->info.infop;
+            for (size_t i = 0; i < q->le; i++)
+                // BLF translate name to lower case
+                fputc(tolower(*((q->e) + i)), syslin);
+            const T_U *pp = q->p;
+            while (((pp->mode) & '\300') == '\300')
+                pp = pp->info.infop;
 // BLF
 #ifdef UNIX
-        // begin name without underlining _
+            // begin name without underlining _
 
-        sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t", nommod, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t", nommod, pp->info.infon);
 #else // Windows
-        sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
 #endif
-        fputs(bufs, syslin);
-        for (size_t i = 0; i < q->le; i++)
-            // BLF translate name to lower case
-            fputc(tolower(*((q->e) + i)), syslin);
-        fputc('\n', syslin);
-        q = q->next;
-    };
-
+            fputs(bufs, syslin);
+            for (size_t i = 0; i < q->le; i++)
+                // BLF translate name to lower case
+                fputc(tolower(*((q->e) + i)), syslin);
+            fputc('\n', syslin);
+            q = q->next;
+        };
+    }
     // termination
-
-JTERM:
-
     sfclr(&sysut1);
     sfclr(&sysut2);
     if (options.multmod == 1)
@@ -707,13 +679,5 @@ JTERM:
 #endif
         qx = rx;
     }
+    return;
 } // jend
-
-
-
-
-
-
-
-
-
