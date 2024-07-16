@@ -77,7 +77,6 @@ static void numb_()
     char str[12];
     unsigned int i;
     for (i = 0; p != refal.nexta; i++)
-    {
         if ((p->tag != TAGO) || (i == 11))
         {
         NEOT:
@@ -93,7 +92,6 @@ static void numb_()
                 goto NEOT;
             p = p->next;
         }
-    }
     str[i] = '\0';
     if (strlen(str) == 0)
     {

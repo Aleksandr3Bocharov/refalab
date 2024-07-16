@@ -712,10 +712,8 @@ static bool get_det()
     while (det_table != NULL)
     {
         if (strncmp(det_table->det_id, arg, l_arg) == 0)
-        {
             if (*(det_table->det_id + l_arg) == '\0')
                 return true;
-        }
         det_table = det_table->det_next;
     }
     if ((det_table = (DET_TAB *)malloc(sizeof(DET_TAB))) == NULL)

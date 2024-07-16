@@ -100,13 +100,11 @@ bool lins(T_LINKCB *p, unsigned int l)
 bool slins(T_LINKCB *p, unsigned int k)
 {
     while (!lrqlk(k))
-    {
         if (!lincrm())
         {
             refal.upshot = 3;
             return false;
         }
-    }
     return lins(p, k);
 }
 

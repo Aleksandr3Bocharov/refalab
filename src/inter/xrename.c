@@ -13,7 +13,6 @@ static void unlnk_()
     unsigned int i;
     char namf[40];
     for (i = 0; p != refal.nexta; i++)
-    {
         if ((p->tag != TAGO) || (i >= 40))
             goto HEOT;
         else
@@ -21,7 +20,6 @@ static void unlnk_()
             namf[i] = p->info.infoc;
             p = p->next;
         }
-    }
     namf[i] = '\0';
     //   printf("\nUnlnk, namf=%s",namf); 
     if (unlink(namf) == -1)
@@ -46,7 +44,6 @@ static void renam_()
     unsigned int i;
     char namf[40];
     for (i = 0; p->tag != TAGO || p->info.infoc != ' '; i++)
-    {
         if ((p->tag != TAGO) || (i >= 40))
             goto HEOT;
         else
@@ -54,12 +51,10 @@ static void renam_()
             namf[i] = p->info.infoc;
             p = p->next;
         }
-    }
     namf[i] = '\0';
     p = p->next;
     char namt[40]; // from => to  
     for (i = 0; p != refal.nexta; i++)
-    {
         if ((p->tag != TAGO) || (i >= 40))
             goto HEOT;
         else
@@ -67,7 +62,6 @@ static void renam_()
             namt[i] = p->info.infoc;
             p = p->next;
         }
-    }
     namt[i] = '\0';
     //   printf("\nRenam: from=%s to=%s",namf,namt); 
     if (rename(namf, namt) == -1)

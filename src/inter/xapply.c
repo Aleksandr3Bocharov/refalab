@@ -16,9 +16,9 @@ static void appl_()
     T_ST *s_st;
     uint32_t l = (uint32_t)&s_st;
     if ((l & 0xffffL) < 200L)
-    { // printf("\nStack overflow!"); 
+    //{ // printf("\nStack overflow!"); 
         goto LACK;
-    }
+    //}
     T_ST *upst = refal.currst;
     if (!slins(refal.prevr, 1))
         return;
