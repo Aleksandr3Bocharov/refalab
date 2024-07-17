@@ -1277,7 +1277,7 @@ static bool ortgn(uint16_t n1, uint16_t n2)
     }
     bool res = true;
     n = n1;
-    while (true)
+    while(true)
     {
         n++;
         if (n == n2)
@@ -1291,7 +1291,7 @@ static bool ortgn(uint16_t n1, uint16_t n2)
             continue;
         res = false;
         break;
-    }
+    };
     n = n1;
     while (true)
     {
