@@ -307,12 +307,14 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
         pchosx("511 label", pp->id, pp->l, " both extern and entry");
     if (((q->mode) & '\300') == '\300')
         pchosx("502 label", pp->id, pp->l, " boht specifier and function");
+    return;
 }
 
 void s_end()
 {
     func_end();
     through(check_id);
+    return;
 }
 
 void s_init()
