@@ -494,7 +494,7 @@ void jend()
         // text generating
         sfop_r(&sysut1);
         sfop_r(&sysut2);
-        while(true)
+        while (true)
         {
             sfrd2();
             delta = rl.delta;

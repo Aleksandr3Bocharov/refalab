@@ -96,150 +96,141 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
     n = 0;
     lastb = 0;
     nel = 0;
-GET_LPE: // read left part element
-    n++;
-    scan();
-    x[n].t = scn_e.t;
-    x[n].code.tag = scn_e.code.tag;
-    x[n].code.info.codef = scn_e.code.info.codef;
-    x[n].spec.tag = scn_e.spec.tag;
-    x[n].spec.info.codef = scn_e.spec.info.codef;
-    x[n].v = scn_e.v;
-    x[n].next = 0;
-    x[n].pair = 0;
-    x[n].eoemrk = 0;
-    x[n].e_level = 0;
-    switch (scn_e.t)
-    {
-    case 0:
-        // scanner error
+    while (true)
+    { // read left part element
+        n++;
+        scan();
+        x[n].t = scn_e.t;
+        x[n].code.tag = scn_e.code.tag;
+        x[n].code.info.codef = scn_e.code.info.codef;
+        x[n].spec.tag = scn_e.spec.tag;
+        x[n].spec.info.codef = scn_e.spec.info.codef;
+        x[n].v = scn_e.v;
+        x[n].next = 0;
+        x[n].pair = 0;
+        x[n].eoemrk = 0;
+        x[n].e_level = 0;
+        switch (scn_e.t)
+        {
+        case 0:
+            // scanner error
+            fndef(lbl, lblleng);
+            pch300();
+            return;
+        case 1:
+            // constant symbol
+            nel++;
+            break;
+        case 2:
+            // left bracket
+            nel++;
+            x[n].pair = lastb;
+            lastb = n;
+            break;
+        case 3:
+            // right bracket
+            if (lastb == 0)
+            {
+                pchosh("302 too many ')' in left part");
+                n--;
+            }
+            else
+            {
+                nel++;
+                lastb1 = x[lastb].pair;
+                x[lastb].pair = n;
+                x[n].pair = lastb;
+                lastb = lastb1;
+            }
+            break;
+        case 4:
+            // s-varyable
+            isk_v();
+            x[n].ind = ind;
+            switch (v[ind]._t)
+            {
+            case 0:
+                v[ind]._t = 1; // yet isn't faced
+                break;
+            case 1:
+                ++(v[ind].rem); // next position
+                break;
+            default: // invalid type pointer
+                pch303();
+                n--;
+            }
+            nel++;
+            break;
+        case 5:
+            // w-varyable
+            isk_v();
+            x[n].ind = ind;
+            switch (v[ind]._t)
+            {
+            case 0:
+                v[ind]._t = 2; // yet isn't faced
+                break;
+            case 2:
+                ++(v[ind].rem); // next position
+                break;
+            default: // invalid type pointer
+                pch303();
+                n--;
+            }
+            nel += 2;
+            break;
+        case 6:
+            // e- or v-varyable
+            isk_v();
+            x[n].ind = ind;
+            if (v[ind]._t == 0) // yet is't faced
+                v[ind]._t = 3;
+            else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
+                ++(v[ind].rem);
+            else // invalid type pointer
+            {
+                pch303();
+                n--;
+            };
+            nel += 2;
+            break;
+        case 7:
+            // sign 'k'
+            pchosh("306 sign 'k' in left part");
+            n--;
+            break;
+        case 8:
+            // sign '.'
+            pchosh("307 sign '.' in left part");
+            n--;
+            break;
+        case 9:
+            // left part end
+            if (lastb == 0)
+                goto RCG;
+            pchosh("301 too many '(' in left part");
+            fndef(lbl, lblleng);
+            pch300();
+            return;
+        case 10:
+            // sentence end
+            pchosh("304 under left part default sign '=' ");
+            fndef(lbl, lblleng);
+            return;
+        default:
+            // scanner error
+            fndef(lbl, lblleng);
+            pch300();
+            return;
+        }
+        // end of element processing
+        if (nel <= 252)
+            continue;
+        pchosh("305 very large left part");
         fndef(lbl, lblleng);
         pch300();
         return;
-    case 1:
-        goto LPE1;
-    case 2:
-        goto LPE2;
-    case 3:
-        goto LPE3;
-    case 4:
-        goto LPE4;
-    case 5:
-        goto LPE5;
-    case 6:
-        goto LPE6;
-    case 7:
-        goto LPE7;
-    case 8:
-        goto LPE8;
-    case 9:
-        goto LPE9;
-    case 10:
-        goto LPE10;
-    default:
-        // scanner error
-        fndef(lbl, lblleng);
-        pch300();
-        return;
     }
-LPE1: // constant symbol
-    nel++;
-    goto NEXT_LPE;
-LPE2: // left bracket
-    nel++;
-    x[n].pair = lastb;
-    lastb = n;
-    goto NEXT_LPE;
-LPE3: // right bracket
-    if (lastb == 0)
-    {
-        pchosh("302 too many ')' in left part");
-        n--;
-    }
-    else
-    {
-        nel++;
-        lastb1 = x[lastb].pair;
-        x[lastb].pair = n;
-        x[n].pair = lastb;
-        lastb = lastb1;
-    }
-    goto NEXT_LPE;
-LPE4: // s-varyable
-    isk_v();
-    x[n].ind = ind;
-    switch (v[ind]._t)
-    {
-    case 0:
-        v[ind]._t = 1; // yet isn't faced
-        break;
-    case 1:
-        ++(v[ind].rem); // next position
-        break;
-    default: // invalid type pointer
-        pch303();
-        n--;
-    }
-    nel++;
-    goto NEXT_LPE;
-LPE5: // w-varyable
-    isk_v();
-    x[n].ind = ind;
-    switch (v[ind]._t)
-    {
-    case 0:
-        v[ind]._t = 2; // yet isn't faced
-        break;
-    case 2:
-        ++(v[ind].rem); // next position
-        break;
-    default: // invalid type pointer
-        pch303();
-        n--;
-    }
-    nel += 2;
-    goto NEXT_LPE;
-LPE6: // e- or v-varyable
-    isk_v();
-    x[n].ind = ind;
-    if (v[ind]._t == 0) // yet is't faced
-        v[ind]._t = 3;
-    else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
-        ++(v[ind].rem);
-    else // invalid type pointer
-    {
-        pch303();
-        n--;
-    };
-    nel += 2;
-    goto NEXT_LPE;
-LPE7: // sign 'k'
-    pchosh("306 sign 'k' in left part");
-    n--;
-    goto NEXT_LPE;
-LPE8: // sign '.'
-    pchosh("307 sign '.' in left part");
-    n--;
-    goto NEXT_LPE;
-LPE9: // left part end
-    if (lastb == 0)
-        goto RCG;
-    pchosh("301 too many '(' in left part");
-    fndef(lbl, lblleng);
-    pch300();
-    return;
-LPE10: // sentence end
-    pchosh("304 under left part default sign '=' ");
-    fndef(lbl, lblleng);
-    return;
-NEXT_LPE: // end of element processing
-    if (nel <= 252)
-        goto GET_LPE;
-    pchosh("305 very large left part");
-    fndef(lbl, lblleng);
-    pch300();
-    return;
-
     //--------------------------------------------
     //         left part compilation
     //--------------------------------------------
