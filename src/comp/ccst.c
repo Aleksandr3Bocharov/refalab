@@ -110,6 +110,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
         x[n].pair = 0;
         x[n].eoemrk = 0;
         x[n].e_level = 0;
+        bool rcg = false;
         switch (scn_e.t)
         {
         case 0:
@@ -207,7 +208,10 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
         case 9:
             // left part end
             if (lastb == 0)
-                goto RCG;
+            {
+                rcg = true;
+                break;
+            }
             pchosh("301 too many '(' in left part");
             fndef(lbl, lblleng);
             pch300();
@@ -223,6 +227,8 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             pch300();
             return;
         }
+        if (rcg)
+            break;
         // end of element processing
         if (nel <= 252)
             continue;
