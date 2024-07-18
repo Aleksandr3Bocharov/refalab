@@ -77,6 +77,7 @@ static uint16_t next_nh; // next whole number
 
 static void isk_v();
 static void gen_bsb();
+static void pch300();
 static void pch303();
 static void pch406();
 static bool lsg_p();
@@ -111,7 +112,10 @@ GET_LPE: // read left part element
     switch (scn_e.t)
     {
     case 0:
-        goto LPE0;
+        // scanner error
+        fndef(lbl, lblleng);
+        pch300();
+        return;
     case 1:
         goto LPE1;
     case 2:
@@ -132,10 +136,12 @@ GET_LPE: // read left part element
         goto LPE9;
     case 10:
         goto LPE10;
-    default:;
+    default:
+        // scanner error
+        fndef(lbl, lblleng);
+        pch300();
+        return;
     }
-LPE0: // scanner error
-    goto OSH300;
 LPE1: // constant symbol
     nel++;
     goto NEXT_LPE;
@@ -219,7 +225,9 @@ LPE9: // left part end
     if (lastb == 0)
         goto RCG;
     pchosh("301 too many '(' in left part");
-    goto OSH300;
+    fndef(lbl, lblleng);
+    pch300();
+    return;
 LPE10: // sentence end
     pchosh("304 under left part default sign '=' ");
     fndef(lbl, lblleng);
@@ -228,12 +236,10 @@ NEXT_LPE: // end of element processing
     if (nel <= 252)
         goto GET_LPE;
     pchosh("305 very large left part");
-    goto OSH300;
-OSH300:
     fndef(lbl, lblleng);
-RP_OSH300:
-    pchosh("300 sentence is't scanned");
+    pch300();
     return;
+
     //--------------------------------------------
     //         left part compilation
     //--------------------------------------------
@@ -953,7 +959,8 @@ SW_RPE:
     default:;
     };
 RPE0: // scanner error
-    goto RP_OSH300;
+    pch300();
+    return;
 RPE1: // symbol-constant
     if (scn_e.code.tag == TAGO)
         goto TEXT;
@@ -1062,7 +1069,8 @@ RPE7: // sign "k"
     if (ur_skob > 511)
     {
         pchosh("407 including of the signs 'k' > 511");
-        goto RP_OSH300;
+        pch300();
+        return;
     };
     kol_skob[++ur_skob] = 0;
     scan();
@@ -1154,6 +1162,12 @@ static void gen_bsb()
         return;
     };
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
+    return;
+}
+
+static void pch300()
+{
+    pchosh("300 sentence is't scanned");
     return;
 }
 
@@ -1277,7 +1291,7 @@ static bool ortgn(uint16_t n1, uint16_t n2)
     }
     bool res = true;
     n = n1;
-    while(true)
+    while (true)
     {
         n++;
         if (n == n2)
