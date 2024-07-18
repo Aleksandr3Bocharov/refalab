@@ -240,8 +240,6 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
     //--------------------------------------------
     //         left part compilation
     //--------------------------------------------
-
-RCG:
     fndef(lbl, lblleng);
     n1 = 0;
     n2 = n;
