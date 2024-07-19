@@ -265,7 +265,14 @@ RCGL:
     switch (x[n].t)
     {
     case 1:
-        goto LSW1;
+        //        constant symbol
+        if (x[n].code.tag == TAGO)
+        {
+            kol_lit = 1;
+            goto LTXT1;
+        }
+        gops(n_lsc, &x[n].code);
+        goto L1;
     case 2:
         goto LSW2;
     case 3:
@@ -277,13 +284,6 @@ RCGL:
     case 6:
         goto LSW6;
     };
-LSW1: //        constant symbol
-    if (x[n].code.tag == TAGO)
-        goto LTXT;
-    gops(n_lsc, &x[n].code);
-    goto L1;
-LTXT:
-    kol_lit = 1;
 LTXT1:
     n++;
     if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
