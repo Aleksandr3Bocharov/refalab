@@ -302,9 +302,48 @@ RCGL:
         gops(n_lsc, &x[n].code);
         goto L1;
     case 2:
-        goto LSW2;
+        //  left bracket
+        n1 = n;
+        n = x[n1].pair;
+        if (n1 + 1 == n)
+        {
+            jbyte(n_lbnil);
+            x[n1].p = x[n1].q = nel;
+            n1 = n;
+            x[n1].p = x[n1].q = nel + 1;
+            nel += 2;
+            goto RCGL;
+        }
+        if (n1 + 2 != n)
+            goto GEN_LB;
+        n = n1 + 1;
+        if (x[n].t != t_e)
+            goto GEN_LB;
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto GEN_LB;
+        nel += 2;
+        jbyte(n_lbce);
+        v[ind]._q = nel + 1;
+        x[n].next = v[ind].last;
+        v[ind].last = n;
+        (v[ind].rem)--;
+        if (x[n].v != 0)
+            jbyte(n_nnil);
+        if (x[n].spec.info.codef != NULL)
+            gopl(n_espc, x[n].spec.info.codef);
+        x[n].p = nel;
+        x[n].q = nel + 1;
+        nel += 2;
+        x[n1].p = x[n1].q = nel - 4;
+        n1 += 2;
+        x[n1].p = x[n1].q = nel - 3;
+        goto RCGL;
     case 3:
-        goto LSW3;
+        //                      place of compiler's error
+        printf("Compiler's error\n");
+        exit(1);
+        return;
     case 4:
         goto LSW4;
     case 5:
@@ -371,43 +410,6 @@ L2:
     nel += 2;
     n1 = n;
     goto RCGL;
-LSW2: //  left bracket
-    n1 = n;
-    n = x[n1].pair;
-    if (n1 + 1 == n)
-        goto LBNIL;
-    if (n1 + 2 != n)
-        goto GEN_LB;
-    n = n1 + 1;
-    if (x[n].t != t_e)
-        goto GEN_LB;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto GEN_LB;
-    nel += 2;
-    jbyte(n_lbce);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].v != 0)
-        jbyte(n_nnil);
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    x[n1].p = x[n1].q = nel - 4;
-    n1 += 2;
-    x[n1].p = x[n1].q = nel - 3;
-    goto RCGL;
-LBNIL:
-    jbyte(n_lbnil);
-    x[n1].p = x[n1].q = nel;
-    n1 = n;
-    x[n1].p = x[n1].q = nel + 1;
-    nel += 2;
-    goto RCGL;
 GEN_LB:
     n = n1;
     lrbxy = 1;
@@ -449,7 +451,10 @@ RCGR:
     case 1:
         goto RSW1;
     case 2:
-        goto RSW2;
+        //                      place of compiler's error
+        printf("Compiler's error\n");
+        exit(1);
+        return;
     case 3:
         goto RSW3;
     case 4:
@@ -563,7 +568,6 @@ RSW3: //     right bracket
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto GEN_RB;
-RBCE:
     nel += 2;
     jbyte(n_rbce);
     v[ind]._q = nel + 1;
@@ -651,11 +655,6 @@ CE2:
     h[nh].n2 = h[next_nh].n2;
     nh = next_nh;
     goto IMPASSE;
-    //                      place of compiler's error
-LSW3:
-RSW2:
-    printf("Compiler's error\n");
-    exit(1);
 //
 //          It is impossible movement
 //          on hard element here or
