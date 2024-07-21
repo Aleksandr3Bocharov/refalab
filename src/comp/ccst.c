@@ -269,7 +269,35 @@ RCGL:
         if (x[n].code.tag == TAGO)
         {
             kol_lit = 1;
-            goto LTXT1;
+            while (true)
+            {
+                n++;
+                if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+                {
+                    if (kol_lit == 1)
+                    {
+                        n = n1 + 1;
+                        gopn(n_lsco, x[n].code.info.infoc[0]);
+                        goto L1;
+                    }
+                    n = n1;
+                    gopn(n_ltxt, (char)kol_lit);
+                    while (true)
+                    {
+                        n++;
+                        jbyte(x[n].code.info.infoc[0]);
+                        x[n].p = x[n].q = nel;
+                        nel++;
+                        kol_lit--;
+                        if (kol_lit != 0)
+                            continue;
+                        break;
+                    }
+                    n1 = n;
+                    goto RCGL;
+                }
+                kol_lit++;
+            }
         }
         gops(n_lsc, &x[n].code);
         goto L1;
@@ -284,31 +312,6 @@ RCGL:
     case 6:
         goto LSW6;
     };
-LTXT1:
-    n++;
-    if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
-        goto LTXT2;
-    kol_lit++;
-    goto LTXT1;
-LTXT2:
-    if (kol_lit == 1)
-        goto LSCO;
-    n = n1;
-    gopn(n_ltxt, (char)kol_lit);
-LTXT3:
-    n++;
-    jbyte(x[n].code.info.infoc[0]);
-    x[n].p = x[n].q = nel;
-    nel++;
-    kol_lit--;
-    if (kol_lit != 0)
-        goto LTXT3;
-    n1 = n;
-    goto RCGL;
-LSCO:
-    n = n1 + 1;
-    gopn(n_lsco, x[n].code.info.infoc[0]);
-    goto L1;
 LSW4: //    s-variable
     ind = x[n].ind;
     if (v[ind].last != 0)
@@ -381,7 +384,6 @@ LSW2: //  left bracket
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto GEN_LB;
-LBCE:
     nel += 2;
     jbyte(n_lbce);
     v[ind]._q = nel + 1;
