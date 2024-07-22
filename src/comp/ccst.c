@@ -911,205 +911,197 @@ RE:
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
-
     //--------------------------------------------
     //         right part compilation
     //--------------------------------------------
-
     ur_skob = 1;
     kol_skob[ur_skob] = 0;
-
     //  read next element of right part
-
-GET_RPE:
-    scan();
-    goto SW_RPE;
-SW_RPE:
-    switch (scn_e.t)
+    while (true)
     {
-    case 0:
-        // scanner error
-        pch300();
-        return;
-    case 1:
-        goto RPE1;
-    case 2:
-        goto RPE2;
-    case 3:
-        goto RPE3;
-    case 4:
-        goto RPE4;
-    case 5:
-        goto RPE5;
-    case 6:
-        goto RPE6;
-    case 7:
-        goto RPE7;
-    case 8:
-        goto RPE8;
-    case 9:
-        goto RPE9;
-    case 10:
-        goto RPE10;
-    default:
-        // scanner error
-        pch300();
-        return;
-    };
-RPE1: // symbol-constant
-    if (scn_e.code.tag == TAGO)
-        goto TEXT;
-    gops(n_ns, &scn_e.code);
-    goto GET_RPE;
-TEXT:
-    kol_lit = 0;
-    goto TEXT1;
-TEXT1:
-    kol_lit++;
-    buf_lit[kol_lit] = scn_e.code.info.infoc[0];
-    scan();
-    if ((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO))
-        goto TEXT1;
-    if (kol_lit == 1)
-        gopn(n_nso, buf_lit[1]);
-    else
-    {
-        gopn(n_text, kol_lit);
-        for (k = 1; k <= kol_lit; k++)
-            jbyte(buf_lit[k]);
-    };
-    goto SW_RPE;
-RPE2: // left bracket
-    scan();
-    if (scn_e.t == t_rb)
-    {
-        jbyte(n_blr);
-        goto GET_RPE;
-    };
-    kol_skob[ur_skob]++;
-    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-    {
-        funcptr.info.codef = scn_e.code.info.codef;
-        gopl(n_blf, funcptr.info.codef);
-        goto GET_RPE;
-    }
-    else
-    {
-        jbyte(n_bl);
-        goto SW_RPE;
-    };
-RPE3: // right bracket
-    jbyte(n_br);
-    if (kol_skob[ur_skob] == 0)
-        pchosh("402 too many ')' in right part");
-    else
-        kol_skob[ur_skob]--;
-    goto GET_RPE;
-RPE4: // s - varyable
-    isk_v();
-    switch (v[ind]._t)
-    {
-    case 0:
-        pch406();
-        break;
-    case 1:
-        gopn(n_muls, v[ind]._q);
-        break;
-    default:
-        pch303();
-    };
-    goto GET_RPE;
-RPE5: // w - varyable
-    isk_v();
-    switch (v[ind]._t)
-    {
-    case 0:
-        pch406();
-        break;
-    case 2:
-        n = v[ind].last;
-        if (n == 0)
-            gopn(n_mule, v[ind]._q);
-        else
+        scan();
+        while (true)
         {
-            gopn(n_tplv, x[n].q);
-            v[ind].last = x[n].next;
-        };
-        break;
-    default:
-        pch303();
-    };
-    goto GET_RPE;
-RPE6: // e- or v-varyable
-    isk_v();
-    if (v[ind]._t == 0)
-        pch406();
-    else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
-    {
-        n = v[ind].last;
-        if (n == 0)
-            gopn(n_mule, v[ind]._q);
-        else
-        {
-            if (v[ind]._v == 1)
-                gopn(n_tplv, x[n].q);
-            else
-                gopn(n_tple, x[n].q);
-            v[ind].last = x[n].next;
-        };
+            switch (scn_e.t)
+            {
+            case 0:
+                // scanner error
+                pch300();
+                return;
+            case 1:
+                // symbol-constant
+                if (scn_e.code.tag == TAGO)
+                {
+                    kol_lit = 0;
+                    while (true)
+                    {
+                        kol_lit++;
+                        buf_lit[kol_lit] = scn_e.code.info.infoc[0];
+                        scan();
+                        if ((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO))
+                            continue;
+                        break;
+                    }
+                    if (kol_lit == 1)
+                        gopn(n_nso, buf_lit[1]);
+                    else
+                    {
+                        gopn(n_text, kol_lit);
+                        for (k = 1; k <= kol_lit; k++)
+                            jbyte(buf_lit[k]);
+                    };
+                    continue;
+                }
+                gops(n_ns, &scn_e.code);
+                break;
+            case 2:
+                // left bracket
+                scan();
+                if (scn_e.t == t_rb)
+                {
+                    jbyte(n_blr);
+                    break;
+                };
+                kol_skob[ur_skob]++;
+                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+                {
+                    funcptr.info.codef = scn_e.code.info.codef;
+                    gopl(n_blf, funcptr.info.codef);
+                    break;
+                }
+                else
+                {
+                    jbyte(n_bl);
+                    continue;
+                };
+            case 3:
+                // right bracket
+                jbyte(n_br);
+                if (kol_skob[ur_skob] == 0)
+                    pchosh("402 too many ')' in right part");
+                else
+                    kol_skob[ur_skob]--;
+                break;
+            case 4:
+                // s - varyable
+                isk_v();
+                switch (v[ind]._t)
+                {
+                case 0:
+                    pch406();
+                    break;
+                case 1:
+                    gopn(n_muls, v[ind]._q);
+                    break;
+                default:
+                    pch303();
+                };
+                break;
+            case 5:
+                // w - varyable
+                isk_v();
+                switch (v[ind]._t)
+                {
+                case 0:
+                    pch406();
+                    break;
+                case 2:
+                    n = v[ind].last;
+                    if (n == 0)
+                        gopn(n_mule, v[ind]._q);
+                    else
+                    {
+                        gopn(n_tplv, x[n].q);
+                        v[ind].last = x[n].next;
+                    };
+                    break;
+                default:
+                    pch303();
+                };
+                break;
+            case 6:
+                // e- or v-varyable
+                isk_v();
+                if (v[ind]._t == 0)
+                    pch406();
+                else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
+                {
+                    n = v[ind].last;
+                    if (n == 0)
+                        gopn(n_mule, v[ind]._q);
+                    else
+                    {
+                        if (v[ind]._v == 1)
+                            gopn(n_tplv, x[n].q);
+                        else
+                            gopn(n_tple, x[n].q);
+                        v[ind].last = x[n].next;
+                    };
+                }
+                else
+                    pch303();
+                break;
+            case 7:
+                // sign "k"
+                if (ur_skob > 511)
+                {
+                    pchosh("407 including of the signs 'k' > 511");
+                    pch300();
+                    return;
+                };
+                kol_skob[++ur_skob] = 0;
+                scan();
+                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+                {
+                    funcptr.info.codef = scn_e.code.info.codef;
+                    funcptr.tag = 0;
+                    gopl(n_blf, funcptr.info.codef);
+                    break;
+                }
+                else
+                {
+                    jbyte(n_bl);
+                    continue;
+                };
+            case 8:
+                // sign '.'
+                if (ur_skob == 1)
+                    pchosh("404 too many sign '.' in right part");
+                else
+                {
+                    if (kol_skob[ur_skob] != 0)
+                        pchosh("401 too many '(' in right part");
+                    jbyte(n_bract);
+                    ur_skob--;
+                };
+                break;
+            case 9:
+                // sign '=' in right part
+                pchosh("405 sign '=' in right part");
+                break;
+            case 10:
+                // sentence end
+                scn_.curr_stmnmb++;
+                if (options.stmnmb == 1)
+                {
+                    jbyte(n_eossn);
+                    ghw(scn_.curr_stmnmb);
+                }
+                else
+                    jbyte(n_eos);
+                if (ur_skob != 1)
+                    pchosh("403 too many signs 'k' in right part");
+                if (kol_skob[ur_skob] != 0)
+                    pchosh("401 too many '(' in right part");
+                return;
+            default:
+                // scanner error
+                pch300();
+                return;
+            };
+            break;
+        }
     }
-    else
-        pch303();
-    goto GET_RPE;
-RPE7: // sign "k"
-    if (ur_skob > 511)
-    {
-        pchosh("407 including of the signs 'k' > 511");
-        pch300();
-        return;
-    };
-    kol_skob[++ur_skob] = 0;
-    scan();
-    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-    {
-        funcptr.info.codef = scn_e.code.info.codef;
-        funcptr.tag = 0;
-        gopl(n_blf, funcptr.info.codef);
-        goto GET_RPE;
-    }
-    else
-    {
-        jbyte(n_bl);
-        goto SW_RPE;
-    };
-RPE8: // sign '.'
-    if (ur_skob == 1)
-        pchosh("404 too many sign '.' in right part");
-    else
-    {
-        if (kol_skob[ur_skob] != 0)
-            pchosh("401 too many '(' in right part");
-        jbyte(n_bract);
-        ur_skob--;
-    };
-    goto GET_RPE;
-RPE9: // sign '=' in right part
-    pchosh("405 sign '=' in right part");
-    goto GET_RPE;
-RPE10: // sentence end
-    scn_.curr_stmnmb++;
-    if (options.stmnmb == 1)
-    {
-        jbyte(n_eossn);
-        ghw(scn_.curr_stmnmb);
-    }
-    else
-        jbyte(n_eos);
-    if (ur_skob != 1)
-        pchosh("403 too many signs 'k' in right part");
-    if (kol_skob[ur_skob] != 0)
-        pchosh("401 too many '(' in right part");
-    return;
 }
 
 static void isk_v()
