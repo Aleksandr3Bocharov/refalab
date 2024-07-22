@@ -77,13 +77,14 @@ static uint16_t next_nh; // next whole number
 
 static void isk_v();
 static void gen_bsb();
+static void comp_error();
 static void pch300();
 static void pch303();
 static void pch406();
 static bool lsg_p();
 static bool rsg_p();
-static void gpev(char op1, char op2);
 static bool ortgn(uint16_t n1, uint16_t n2);
+static void gpev(char op1, char op2);
 
 // read left part
 // and full array X
@@ -341,26 +342,44 @@ RCGL:
         goto RCGL;
     case 3:
         //                      place of compiler's error
-        printf("Compiler's error\n");
-        exit(1);
+        comp_error();
         return;
     case 4:
-        goto LSW4;
+        //    s-variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            gopn(n_lsd, (char)v[ind]._q);
+        else
+        {
+            jbyte(n_ls);
+            v[ind]._q = nel;
+        };
+        goto LSMD;
     case 5:
-        goto LSW5;
+        //   w-variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto LED;
+        jbyte(n_lw);
+        v[ind]._q = nel + 1;
+        x[n].next = v[ind].last;
+        v[ind].last = n;
+        (v[ind].rem)--;
+        if (x[n].spec.info.codef != NULL)
+            gopl(n_wspc, x[n].spec.info.codef);
+        goto L2;
     case 6:
-        goto LSW6;
+        //   e-variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto LED;
+        if (dir)
+            goto RCGR;
+        if (n + 1 == n2)
+            goto CE;
+        else
+            goto IMPASSE;
     };
-LSW4: //    s-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        gopn(n_lsd, (char)v[ind]._q);
-    else
-    {
-        jbyte(n_ls);
-        v[ind]._q = nel;
-    };
-    goto LSMD;
 LSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
@@ -373,31 +392,9 @@ L1:
     nel++;
     n1 = n;
     goto RCGL;
-LSW5: //   w-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    jbyte(n_lw);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto L2;
 LEM:
     v[ind]._q = nel + 1;
     goto LEMD;
-LSW6: //   e-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    if (dir)
-        goto RCGR;
-    if (n + 1 == n2)
-        goto CE;
-    else
-        goto IMPASSE;
 LED:
     gopn(n_led, (char)v[ind]._q);
     goto LEMD;
@@ -492,8 +489,7 @@ RCGR:
         goto R1;
     case 2:
         //                      place of compiler's error
-        printf("Compiler's error\n");
-        exit(1);
+        comp_error();
         return;
     case 3:
         //     right bracket
@@ -534,22 +530,41 @@ RCGR:
         x[n2].p = x[n2].q = nel - 4;
         goto RCGR;
     case 4:
-        goto RSW4;
+        //     s_variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            gopn(n_rsd, (char)v[ind]._q);
+        else
+        {
+            jbyte(n_rs);
+            v[ind]._q = nel;
+        };
+        goto RSMD;
     case 5:
-        goto RSW5;
+        //    w_variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto RED;
+        jbyte(n_rw);
+        v[ind]._q = nel + 1;
+        x[n].next = v[ind].last;
+        v[ind].last = n;
+        (v[ind].rem)--;
+        if (x[n].spec.info.codef != NULL)
+            gopl(n_wspc, x[n].spec.info.codef);
+        goto R2;
     case 6:
-        goto RSW6;
+        //    e-variable
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto RED;
+        if (!dir)
+            goto RCGL;
+        if (n1 + 1 == n)
+            goto CE;
+        else
+            goto IMPASSE;
     };
-RSW4: //     s_variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        gopn(n_rsd, (char)v[ind]._q);
-    else
-    {
-        jbyte(n_rs);
-        v[ind]._q = nel;
-    };
-    goto RSMD;
 RSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
@@ -562,31 +577,9 @@ R1:
     nel++;
     n2 = n;
     goto RCGR;
-RSW5: //    w_variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RED;
-    jbyte(n_rw);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto R2;
 REM:
     v[ind]._q = nel + 1;
     goto REMD;
-RSW6: //    e-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RED;
-    if (!dir)
-        goto RCGL;
-    if (n1 + 1 == n)
-        goto CE;
-    else
-        goto IMPASSE;
 RED:
     gopn(n_red, (char)v[ind]._q);
     goto REMD;
@@ -866,7 +859,7 @@ LE:
 ROE:
     n = n2 - 1;
     ie = x[n].ind;
-//                 attempt to extract right support group
+    //                 attempt to extract right support group
     if (rsg_p())
         goto RE_CASE;
     else
@@ -927,8 +920,7 @@ RE:
     //                 place compiler error
 LESW3:
 RESW2:
-    printf("Compiler error\n");
-    exit(1);
+    comp_error();
     return;
     //                 identification end
 RCGFIN:
@@ -1179,6 +1171,14 @@ static void gen_bsb()
         return;
     };
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
+    return;
+}
+
+static void comp_error()
+{
+    //                      place of compiler's error
+    printf("Compiler's error\n");
+    exit(1);
     return;
 }
 
