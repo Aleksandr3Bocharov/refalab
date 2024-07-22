@@ -360,12 +360,14 @@ LSW4: //    s-variable
         jbyte(n_ls);
         v[ind]._q = nel;
     };
+    goto LSMD;
 LSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_wspc, x[n].spec.info.codef);
+    goto L1;
 L1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -398,12 +400,14 @@ LSW6: //   e-variable
         goto IMPASSE;
 LED:
     gopn(n_led, (char)v[ind]._q);
+    goto LEMD;
 LEMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_espc, x[n].spec.info.codef);
+    goto L2;
 L2:
     x[n].p = nel;
     x[n].q = nel + 1;
@@ -413,6 +417,7 @@ L2:
 GEN_LB:
     n = n1;
     lrbxy = 1;
+    goto LB1;
 LB1:
     if (dir)
     {
@@ -449,14 +454,85 @@ RCGR:
     switch (x[n].t)
     {
     case 1:
-        goto RSW1;
+        //   constant symbol
+        if (x[n].code.tag == TAGO)
+        {
+            kol_lit = 1;
+            while (true)
+            {
+                n--;
+                if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+                {
+                    if (kol_lit == 1)
+                    {
+                        n = n2 - 1;
+                        gopn(n_rsco, x[n].code.info.infoc[0]);
+                        goto R1;
+                    }
+                    n = n2;
+                    gopn(n_rtxt, (char)kol_lit);
+                    while (true)
+                    {
+                        n--;
+                        jbyte(x[n].code.info.infoc[0]);
+                        x[n].p = x[n].q = nel;
+                        nel++;
+                        kol_lit--;
+                        if (kol_lit != 0)
+                            continue;
+                        break;
+                    }
+                    n2 = n;
+                    goto RCGR;
+                }
+                kol_lit++;
+            }
+        }
+        gops(n_rsc, &x[n].code);
+        goto R1;
     case 2:
         //                      place of compiler's error
         printf("Compiler's error\n");
         exit(1);
         return;
     case 3:
-        goto RSW3;
+        //     right bracket
+        n2 = n;
+        n = x[n2].pair;
+        if (n + 1 == n2)
+        {
+            jbyte(n_rbnil);
+            x[n2].p = x[n2].q = nel + 1;
+            n2 = n;
+            x[n2].p = x[n2].q = nel;
+            nel += 2;
+            goto RCGR;
+        }
+        if (n + 2 != n2)
+            goto GEN_RB;
+        n = n2 - 1;
+        if (x[n].t != t_e)
+            goto GEN_RB;
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto GEN_RB;
+        nel += 2;
+        jbyte(n_rbce);
+        v[ind]._q = nel + 1;
+        x[n].next = v[ind].last;
+        v[ind].last = n;
+        (v[ind].rem)--;
+        if (x[n].v != 0)
+            jbyte(n_nnil);
+        if (x[n].spec.info.codef != NULL)
+            gopl(n_espc, x[n].spec.info.codef);
+        x[n].p = nel;
+        x[n].q = nel + 1;
+        nel += 2;
+        x[n2].p = x[n2].q = nel - 3;
+        n2 -= 2;
+        x[n2].p = x[n2].q = nel - 4;
+        goto RCGR;
     case 4:
         goto RSW4;
     case 5:
@@ -464,38 +540,6 @@ RCGR:
     case 6:
         goto RSW6;
     };
-RSW1: //   constant symbol
-    if (x[n].code.tag == TAGO)
-        goto RTXT;
-    gops(n_rsc, &x[n].code);
-    goto R1;
-RTXT:
-    kol_lit = 1;
-RTXT1:
-    n--;
-    if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
-        goto RTXT2;
-    kol_lit++;
-    goto RTXT1;
-RTXT2:
-    if (kol_lit == 1)
-        goto RSCO;
-    n = n2;
-    gopn(n_rtxt, (char)kol_lit);
-RTXT3:
-    n--;
-    jbyte(x[n].code.info.infoc[0]);
-    x[n].p = x[n].q = nel;
-    nel++;
-    kol_lit--;
-    if (kol_lit != 0)
-        goto RTXT3;
-    n2 = n;
-    goto RCGR;
-RSCO:
-    n = n2 - 1;
-    gopn(n_rsco, x[n].code.info.infoc[0]);
-    goto R1;
 RSW4: //     s_variable
     ind = x[n].ind;
     if (v[ind].last != 0)
@@ -505,12 +549,14 @@ RSW4: //     s_variable
         jbyte(n_rs);
         v[ind]._q = nel;
     };
+    goto RSMD;
 RSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_wspc, x[n].spec.info.codef);
+    goto R1;
 R1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -543,58 +589,24 @@ RSW6: //    e-variable
         goto IMPASSE;
 RED:
     gopn(n_red, (char)v[ind]._q);
+    goto REMD;
 REMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_espc, x[n].spec.info.codef);
+    goto R2;
 R2:
     x[n].p = nel;
     x[n].q = nel + 1;
     nel += 2;
     n2 = n;
     goto RCGR;
-RSW3: //     right bracket
-    n2 = n;
-    n = x[n2].pair;
-    if (n + 1 == n2)
-        goto RBNIL;
-    if (n + 2 != n2)
-        goto GEN_RB;
-    n = n2 - 1;
-    if (x[n].t != t_e)
-        goto GEN_RB;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto GEN_RB;
-    nel += 2;
-    jbyte(n_rbce);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].v != 0)
-        jbyte(n_nnil);
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    x[n2].p = x[n2].q = nel - 3;
-    n2 -= 2;
-    x[n2].p = x[n2].q = nel - 4;
-    goto RCGR;
-RBNIL:
-    jbyte(n_rbnil);
-    x[n2].p = x[n2].q = nel + 1;
-    n2 = n;
-    x[n2].p = x[n2].q = nel;
-    nel += 2;
-    goto RCGR;
 GEN_RB:
     n = n2;
     lrbxy = 2;
+    goto RB1;
 RB1:
     if (!dir)
     {
@@ -630,6 +642,7 @@ NIL: //     empty hole
 CE: //   closed including
     if (x[n].eoemrk != 0)
         goto IMPASSE;
+    goto CE1;
 CE1:
     if (x[n].spec.info.codef == NULL)
         goto CE2;
@@ -662,6 +675,7 @@ CE2:
 IMPASSE:
     lrbxy = 0;
     nh_x = nh;
+    goto HSCH;
 //          Search of hole with hard
 //          elements on its boards.
 //          If it not exist than project
@@ -672,6 +686,7 @@ HSCH:
     nh = 1;
     if (h[nh]._next == 0)
         goto RCGFIN;
+    goto NHOLE;
 NHOLE:
     n1 = h[nh].n1;
     n2 = h[nh].n2;
@@ -699,6 +714,7 @@ NHOLE:
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto RIGID;
+    goto NHOLE1;
 NHOLE1:
     nh = h[nh]._next;
     if (h[nh]._next == 0)
@@ -741,6 +757,7 @@ OE:
         n = n1 + 1;
     if (x[n].spec.info.codef == NULL)
         goto OE1;
+    goto OE0;
 OE0:
     ind = x[n].ind;
     if ((v[ind].last != 0) || (v[ind].rem != 1))
@@ -763,6 +780,7 @@ OE0:
 OERMAX:
     n = n2 - 1;
     ind = x[n].ind;
+    goto RMAX;
 RMAX:
     gopl(n_rmax, x[n].spec.info.codef);
     if (x[n].v == 1)
@@ -772,6 +790,7 @@ RMAX:
 OELMAX:
     n = n1 + 1;
     ind = x[n].ind;
+    goto LMAX;
 LMAX:
     gopl(n_lmax, x[n].spec.info.codef);
     if (x[n].v == 1)
@@ -787,7 +806,6 @@ LOE:
     n = n1 + 1;
     ie = x[n].ind;
     //         attempt to extract left support group
-LSG:
     if (lsg_p())
         goto LE_CASE;
     else
@@ -849,7 +867,6 @@ ROE:
     n = n2 - 1;
     ie = x[n].ind;
 //                 attempt to extract right support group
-RSG:
     if (rsg_p())
         goto RE_CASE;
     else
@@ -912,6 +929,7 @@ LESW3:
 RESW2:
     printf("Compiler error\n");
     exit(1);
+    return;
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
@@ -927,6 +945,7 @@ RCGFIN:
 
 GET_RPE:
     scan();
+    goto SW_RPE;
 SW_RPE:
     switch (scn_e.t)
     {
@@ -964,6 +983,7 @@ RPE1: // symbol-constant
     goto GET_RPE;
 TEXT:
     kol_lit = 0;
+    goto TEXT1;
 TEXT1:
     kol_lit++;
     buf_lit[kol_lit] = scn_e.code.info.infoc[0];
@@ -1109,6 +1129,7 @@ RPE10: // sentence end
         pchosh("403 too many signs 'k' in right part");
     if (kol_skob[ur_skob] != 0)
         pchosh("401 too many '(' in right part");
+    return;
 }
 
 static void isk_v()
