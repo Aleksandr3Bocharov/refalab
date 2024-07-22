@@ -392,9 +392,6 @@ L1:
     nel++;
     n1 = n;
     goto RCGL;
-LEM:
-    v[ind]._q = nel + 1;
-    goto LEMD;
 LED:
     gopn(n_led, (char)v[ind]._q);
     goto LEMD;
@@ -577,9 +574,6 @@ R1:
     nel++;
     n2 = n;
     goto RCGR;
-REM:
-    v[ind]._q = nel + 1;
-    goto REMD;
 RED:
     gopn(n_red, (char)v[ind]._q);
     goto REMD;
@@ -638,29 +632,30 @@ CE: //   closed including
     goto CE1;
 CE1:
     if (x[n].spec.info.codef == NULL)
-        goto CE2;
+    {
+        ind = x[n].ind;
+        v[ind]._q = nel + 1;
+        jbyte(n_ce);
+        x[n].next = v[ind].last;
+        v[ind].last = n;
+        (v[ind].rem)--;
+        if (x[n].v == 1)
+            jbyte(n_nnil);
+        x[n].p = nel;
+        x[n].q = nel + 1;
+        nel += 2;
+        next_nh = h[nh]._next;
+        h[nh]._next = h[next_nh]._next;
+        h[nh].n1 = h[next_nh].n1;
+        h[nh].n2 = h[next_nh].n2;
+        nh = next_nh;
+        goto IMPASSE;
+    }
     if (dir)
         goto LMAX;
     else
         goto RMAX;
-CE2:
-    ind = x[n].ind;
-    v[ind]._q = nel + 1;
-    jbyte(n_ce);
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].v == 1)
-        jbyte(n_nnil);
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    next_nh = h[nh]._next;
-    h[nh]._next = h[next_nh]._next;
-    h[nh].n1 = h[next_nh].n1;
-    h[nh].n2 = h[next_nh].n2;
-    nh = next_nh;
-    goto IMPASSE;
+
 //
 //          It is impossible movement
 //          on hard element here or
@@ -711,7 +706,65 @@ NHOLE:
 NHOLE1:
     nh = h[nh]._next;
     if (h[nh]._next == 0)
-        goto OE;
+    {
+        //  opened e_variable processing
+        nh = 1;
+        n1 = h[nh].n1;
+        n2 = h[nh].n2;
+        gen_bsb();
+        if (dir)
+            n = n1 + 1;
+        else
+            n = n2 - 1;
+        ind = x[n].ind;
+        if (x[n].eoemrk)
+        {
+            diff_e_level = e_level - x[n].e_level;
+            if (diff_e_level == 1)
+                jbyte(n_eoei);
+            else
+                gopn(n_eoe, (char)diff_e_level);
+            e_level = x[n].e_level;
+            x[n].eoemrk = 0;
+            x[n].e_level = 0;
+        };
+        if (n1 + 2 == n2)
+            goto CE1;
+        if (dir)
+            n = n2 - 1;
+        else
+            n = n1 + 1;
+        if (x[n].spec.info.codef == NULL)
+            goto OE1;
+        while (true)
+        {
+            ind = x[n].ind;
+            if ((v[ind].last != 0) || (v[ind].rem != 1))
+                goto OE1;
+            if (dir)
+            {
+                n--;
+                if (n == n1)
+                {
+                    n = n2 - 1;
+                    ind = x[n].ind;
+                    goto RMAX;
+                }
+            }
+            else
+            {
+                n++;
+                if (n == n2)
+                {
+                    n = n1 + 1;
+                    ind = x[n].ind;
+                    goto LMAX;
+                }
+            };
+            if ((x[n].t != t_e) || (x[n].v == 1))
+                goto OE1;
+        }
+    }
     else
         goto NHOLE;
 RIGID: //  hard element on the both hole boards
@@ -720,208 +773,141 @@ RIGID: //  hard element on the both hole boards
         goto RCGL;
     else
         goto RCGR;
-    //  opened e_variable processing
-OE:
-    nh = 1;
-    n1 = h[nh].n1;
-    n2 = h[nh].n2;
-    gen_bsb();
-    if (dir)
-        n = n1 + 1;
-    else
-        n = n2 - 1;
-    ind = x[n].ind;
-    if (x[n].eoemrk)
-    {
-        diff_e_level = e_level - x[n].e_level;
-        if (diff_e_level == 1)
-            jbyte(n_eoei);
-        else
-            gopn(n_eoe, (char)diff_e_level);
-        e_level = x[n].e_level;
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-    };
-    if (n1 + 2 == n2)
-        goto CE1;
-    if (dir)
-        n = n2 - 1;
-    else
-        n = n1 + 1;
-    if (x[n].spec.info.codef == NULL)
-        goto OE1;
-    goto OE0;
-OE0:
-    ind = x[n].ind;
-    if ((v[ind].last != 0) || (v[ind].rem != 1))
-        goto OE1;
-    if (dir)
-    {
-        n--;
-        if (n == n1)
-            goto OERMAX;
-    }
-    else
-    {
-        n++;
-        if (n == n2)
-            goto OELMAX;
-    };
-    if ((x[n].t != t_e) || (x[n].v == 1))
-        goto OE1;
-    goto OE0;
-OERMAX:
-    n = n2 - 1;
-    ind = x[n].ind;
-    goto RMAX;
 RMAX:
     gopl(n_rmax, x[n].spec.info.codef);
     if (x[n].v == 1)
         jbyte(n_nnil);
     x[n].spec.info.codef = NULL;
-    goto REM;
-OELMAX:
-    n = n1 + 1;
-    ind = x[n].ind;
-    goto LMAX;
+    v[ind]._q = nel + 1;
+    goto REMD;
 LMAX:
     gopl(n_lmax, x[n].spec.info.codef);
     if (x[n].v == 1)
         jbyte(n_nnil);
     x[n].spec.info.codef = NULL;
-    goto LEM;
+    v[ind]._q = nel + 1;
+    goto LEMD;
 OE1:
     if (dir)
-        goto LOE;
-    else
-        goto ROE;
-LOE:
-    n = n1 + 1;
-    ie = x[n].ind;
-    //         attempt to extract left support group
-    if (lsg_p())
-        goto LE_CASE;
-    else
-        goto RCGL;
-LE_CASE:
-    n = n1 + 1;
-    switch (x[n].t)
     {
-    case 1:
-        goto LESW1;
-    case 2:
-        goto LESW2;
-    case 3:
-        goto LESW3;
-    case 4:
-        goto LESW4;
-    case 5:
-        goto LESW5;
-    case 6:
-        goto LESW6;
-    };
-LESW1: //  ei 'a' . . .
-    xncode.tag = x[n].code.tag;
-    xncode.info.codef = x[n].code.info.codef;
-    n++;
-    if ((not_nil == 0) && (x[n].eoemrk == 1))
-    {
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-        e_level--;
-        gops(n_lsrch, &xncode);
+        n = n1 + 1;
+        ie = x[n].ind;
+        //         attempt to extract left support group
+        if (lsg_p())
+        {
+            n = n1 + 1;
+            switch (x[n].t)
+            {
+            case 1:
+                //  ei 'a' . . .
+                xncode.tag = x[n].code.tag;
+                xncode.info.codef = x[n].code.info.codef;
+                n++;
+                if ((not_nil == 0) && (x[n].eoemrk == 1))
+                {
+                    x[n].eoemrk = 0;
+                    x[n].e_level = 0;
+                    e_level--;
+                    gops(n_lsrch, &xncode);
+                }
+                else
+                {
+                    gpev(n_plesc, n_plvsc);
+                    gops(n_lesc, &xncode);
+                };
+                n--;
+                goto L1;
+            case 2:
+                //   ei ( . . . ) . . .
+                gpev(n_pleb, n_plvb);
+                jbyte(n_leb);
+                lrbxy = 0;
+                goto LB1;
+            case 3:
+                //                 place compiler error
+                comp_error();
+                return;
+            case 4:
+                //  ei sj . . .
+                ind = x[n].ind;
+                if (v[ind].last == 0)
+                    goto LE;
+                gpev(n_plesc, n_plvsc);
+                gopn(n_lesd, (char)v[ind]._q);
+                goto LSMD;
+            case 5:
+            case 6:
+                //  ei . . .
+                goto LE;
+            };
+        }
+        else
+            goto RCGL;
     }
     else
     {
-        gpev(n_plesc, n_plvsc);
-        gops(n_lesc, &xncode);
-    };
-    n--;
-    goto L1;
-LESW2: //   ei ( . . . ) . . .
-    gpev(n_pleb, n_plvb);
-    jbyte(n_leb);
-    lrbxy = 0;
-    goto LB1;
-LESW4: //  ei sj . . .
-    ind = x[n].ind;
-    if (v[ind].last == 0)
-        goto LE;
-    gpev(n_plesc, n_plvsc);
-    gopn(n_lesd, (char)v[ind]._q);
-    goto LSMD;
-LESW5:
-LESW6: //  ei . . .
+        n = n2 - 1;
+        ie = x[n].ind;
+        //                 attempt to extract right support group
+        if (rsg_p())
+        {
+            n = n2 - 1;
+            switch (x[n].t)
+            {
+            case 1:
+                //    . . .  'a' ei
+                xncode.tag = x[n].code.tag;
+                xncode.info.codef = x[n].code.info.codef;
+                n--;
+                if ((not_nil == 0) && (x[n].eoemrk == 1))
+                {
+                    x[n].eoemrk = 0;
+                    x[n].e_level = 0;
+                    e_level--;
+                    gops(n_rsrch, &xncode);
+                }
+                else
+                {
+                    gpev(n_presc, n_prvsc);
+                    gops(n_resc, &xncode);
+                };
+                n++;
+                goto R1;
+            case 2:
+                //                 place compiler error
+                comp_error();
+                return;
+            case 3:
+                // . . .  ( . . .  ) ei
+                gpev(n_preb, n_prvb);
+                jbyte(n_reb);
+                lrbxy = 0;
+                goto RB1;
+            case 4:
+                //  . . . sj ei
+                ind = x[n].ind;
+                if (v[ind].last == 0)
+                    goto RE;
+                gpev(n_presc, n_prvsc);
+                gopn(n_resd, (char)v[ind]._q);
+                goto RSMD;
+            case 5:
+            case 6:
+                // . . .  ei
+                goto RE;
+            };
+        }
+        else
+            goto RCGR;
+    }
 LE:
     gpev(n_ple, n_plv);
     jbyte(n_le);
     goto RCGL;
-ROE:
-    n = n2 - 1;
-    ie = x[n].ind;
-    //                 attempt to extract right support group
-    if (rsg_p())
-        goto RE_CASE;
-    else
-        goto RCGR;
-RE_CASE:
-    n = n2 - 1;
-    switch (x[n].t)
-    {
-    case 1:
-        goto RESW1;
-    case 2:
-        goto RESW2;
-    case 3:
-        goto RESW3;
-    case 4:
-        goto RESW4;
-    case 5:
-        goto RESW5;
-    case 6:
-        goto RESW6;
-    };
-RESW1: //    . . .  'a' ei
-    xncode.tag = x[n].code.tag;
-    xncode.info.codef = x[n].code.info.codef;
-    n--;
-    if ((not_nil == 0) && (x[n].eoemrk == 1))
-    {
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-        e_level--;
-        gops(n_rsrch, &xncode);
-    }
-    else
-    {
-        gpev(n_presc, n_prvsc);
-        gops(n_resc, &xncode);
-    };
-    n++;
-    goto R1;
-RESW3: // . . .  ( . . .  ) ei
-    gpev(n_preb, n_prvb);
-    jbyte(n_reb);
-    lrbxy = 0;
-    goto RB1;
-RESW4: //  . . . sj ei
-    ind = x[n].ind;
-    if (v[ind].last == 0)
-        goto RE;
-    gpev(n_presc, n_prvsc);
-    gopn(n_resd, (char)v[ind]._q);
-    goto RSMD;
-RESW5:
-RESW6: // . . .  ei
 RE:
     gpev(n_pre, n_prv);
     jbyte(n_re);
     goto RCGR;
-    //                 place compiler error
-LESW3:
-RESW2:
-    comp_error();
-    return;
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
@@ -942,7 +928,9 @@ SW_RPE:
     switch (scn_e.t)
     {
     case 0:
-        goto RPE0;
+        // scanner error
+        pch300();
+        return;
     case 1:
         goto RPE1;
     case 2:
@@ -963,11 +951,11 @@ SW_RPE:
         goto RPE9;
     case 10:
         goto RPE10;
-    default:;
+    default:
+        // scanner error
+        pch300();
+        return;
     };
-RPE0: // scanner error
-    pch300();
-    return;
 RPE1: // symbol-constant
     if (scn_e.code.tag == TAGO)
         goto TEXT;
