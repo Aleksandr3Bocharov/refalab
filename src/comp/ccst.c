@@ -674,99 +674,99 @@ HSCH:
     nh = 1;
     if (h[nh]._next == 0)
         goto RCGFIN;
-    goto NHOLE;
-NHOLE:
-    n1 = h[nh].n1;
-    n2 = h[nh].n2;
-    n = n1 + 1;
-    if (n == n2)
+    while (true)
     {
-        gen_bsb();
-        goto NIL;
-    };
-    if (x[n].t != t_e)
-        goto RIGID;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RIGID;
-    if (n + 1 == n2)
-    {
-        if (v[ind].rem == 1)
-            goto NHOLE1;
-        gen_bsb();
-        goto CE1;
-    };
-    n = n2 - 1;
-    if (x[n].t != t_e)
-        goto RIGID;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RIGID;
-    goto NHOLE1;
-NHOLE1:
-    nh = h[nh]._next;
-    if (h[nh]._next == 0)
-    {
-        //  opened e_variable processing
-        nh = 1;
         n1 = h[nh].n1;
         n2 = h[nh].n2;
-        gen_bsb();
-        if (dir)
-            n = n1 + 1;
-        else
-            n = n2 - 1;
-        ind = x[n].ind;
-        if (x[n].eoemrk)
+        n = n1 + 1;
+        if (n == n2)
         {
-            diff_e_level = e_level - x[n].e_level;
-            if (diff_e_level == 1)
-                jbyte(n_eoei);
-            else
-                gopn(n_eoe, (char)diff_e_level);
-            e_level = x[n].e_level;
-            x[n].eoemrk = 0;
-            x[n].e_level = 0;
+            gen_bsb();
+            goto NIL;
         };
-        if (n1 + 2 == n2)
-            goto CE1;
-        if (dir)
-            n = n2 - 1;
-        else
-            n = n1 + 1;
-        if (x[n].spec.info.codef == NULL)
-            goto OE1;
-        while (true)
+        if (x[n].t != t_e)
+            goto RIGID;
+        ind = x[n].ind;
+        if (v[ind].last != 0)
+            goto RIGID;
+        do
         {
-            ind = x[n].ind;
-            if ((v[ind].last != 0) || (v[ind].rem != 1))
-                goto OE1;
-            if (dir)
+            if (n + 1 == n2)
             {
-                n--;
-                if (n == n1)
-                {
-                    n = n2 - 1;
-                    ind = x[n].ind;
-                    goto RMAX;
-                }
-            }
-            else
-            {
-                n++;
-                if (n == n2)
-                {
-                    n = n1 + 1;
-                    ind = x[n].ind;
-                    goto LMAX;
-                }
+                if (v[ind].rem == 1)
+                    break;
+                gen_bsb();
+                goto CE1;
             };
-            if ((x[n].t != t_e) || (x[n].v == 1))
+            n = n2 - 1;
+            if (x[n].t != t_e)
+                goto RIGID;
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+                goto RIGID;
+        } while (false);
+        nh = h[nh]._next;
+        if (h[nh]._next == 0)
+        {
+            //  opened e_variable processing
+            nh = 1;
+            n1 = h[nh].n1;
+            n2 = h[nh].n2;
+            gen_bsb();
+            if (dir)
+                n = n1 + 1;
+            else
+                n = n2 - 1;
+            ind = x[n].ind;
+            if (x[n].eoemrk)
+            {
+                diff_e_level = e_level - x[n].e_level;
+                if (diff_e_level == 1)
+                    jbyte(n_eoei);
+                else
+                    gopn(n_eoe, (char)diff_e_level);
+                e_level = x[n].e_level;
+                x[n].eoemrk = 0;
+                x[n].e_level = 0;
+            };
+            if (n1 + 2 == n2)
+                goto CE1;
+            if (dir)
+                n = n2 - 1;
+            else
+                n = n1 + 1;
+            if (x[n].spec.info.codef == NULL)
                 goto OE1;
+            while (true)
+            {
+                ind = x[n].ind;
+                if ((v[ind].last != 0) || (v[ind].rem != 1))
+                    goto OE1;
+                if (dir)
+                {
+                    n--;
+                    if (n == n1)
+                    {
+                        n = n2 - 1;
+                        ind = x[n].ind;
+                        goto RMAX;
+                    }
+                }
+                else
+                {
+                    n++;
+                    if (n == n2)
+                    {
+                        n = n1 + 1;
+                        ind = x[n].ind;
+                        goto LMAX;
+                    }
+                };
+                if ((x[n].t != t_e) || (x[n].v == 1))
+                    goto OE1;
+            }
         }
     }
-    else
-        goto NHOLE;
 RIGID: //  hard element on the both hole boards
     gen_bsb();
     if (dir)
