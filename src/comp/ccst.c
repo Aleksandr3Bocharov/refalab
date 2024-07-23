@@ -315,14 +315,27 @@ RCGL:
             nel += 2;
             goto RCGL;
         }
+        bool gen_lb = false;
         if (n1 + 2 != n)
-            goto GEN_LB;
-        n = n1 + 1;
-        if (x[n].t != t_e)
-            goto GEN_LB;
-        ind = x[n].ind;
-        if (v[ind].last != 0)
-            goto GEN_LB;
+            gen_lb = true;
+        else
+        {
+            n = n1 + 1;
+            if (x[n].t != t_e)
+                gen_lb = true;
+            else
+            {
+                ind = x[n].ind;
+                if (v[ind].last != 0)
+                    gen_lb = true;
+            }
+        }
+        if (gen_lb)
+        {
+            n = n1;
+            lrbxy = 1;
+            goto LB1;
+        };
         nel += 2;
         jbyte(n_lbce);
         v[ind]._q = nel + 1;
@@ -411,10 +424,6 @@ L2:
     nel += 2;
     n1 = n;
     goto RCGL;
-GEN_LB:
-    n = n1;
-    lrbxy = 1;
-    goto LB1;
 LB1:
     if (dir)
     {
@@ -504,14 +513,27 @@ RCGR:
             nel += 2;
             goto RCGR;
         }
+        bool gen_rb = false;
         if (n + 2 != n2)
-            goto GEN_RB;
-        n = n2 - 1;
-        if (x[n].t != t_e)
-            goto GEN_RB;
-        ind = x[n].ind;
-        if (v[ind].last != 0)
-            goto GEN_RB;
+            gen_rb = true;
+        else
+        {
+            n = n2 - 1;
+            if (x[n].t != t_e)
+                gen_rb = true;
+            else
+            {
+                ind = x[n].ind;
+                if (v[ind].last != 0)
+                    gen_rb = true;
+            }
+        }
+        if (gen_rb)
+        {
+            n = n2;
+            lrbxy = 2;
+            goto RB1;
+        }
         nel += 2;
         jbyte(n_rbce);
         v[ind]._q = nel + 1;
@@ -596,10 +618,6 @@ R2:
     nel += 2;
     n2 = n;
     goto RCGR;
-GEN_RB:
-    n = n2;
-    lrbxy = 2;
-    goto RB1;
 RB1:
     if (!dir)
     {
@@ -741,35 +759,152 @@ HSCH:
                 n = n2 - 1;
             else
                 n = n1 + 1;
-            if (x[n].spec.info.codef == NULL)
-                goto OE1;
-            while (true)
-            {
-                ind = x[n].ind;
-                if ((v[ind].last != 0) || (v[ind].rem != 1))
-                    goto OE1;
-                if (dir)
+            if (x[n].spec.info.codef != NULL)
+                while (true)
                 {
-                    n--;
-                    if (n == n1)
+                    ind = x[n].ind;
+                    if ((v[ind].last != 0) || (v[ind].rem != 1))
+                        break;
+                    if (dir)
                     {
-                        n = n2 - 1;
-                        ind = x[n].ind;
-                        goto RMAX;
+                        n--;
+                        if (n == n1)
+                        {
+                            n = n2 - 1;
+                            ind = x[n].ind;
+                            goto RMAX;
+                        }
                     }
+                    else
+                    {
+                        n++;
+                        if (n == n2)
+                        {
+                            n = n1 + 1;
+                            ind = x[n].ind;
+                            goto LMAX;
+                        }
+                    };
+                    if ((x[n].t != t_e) || (x[n].v == 1))
+                        break;
+                }
+            if (dir)
+            {
+                n = n1 + 1;
+                ie = x[n].ind;
+                //         attempt to extract left support group
+                if (lsg_p())
+                {
+                    n = n1 + 1;
+                    switch (x[n].t)
+                    {
+                    case 1:
+                        //  ei 'a' . . .
+                        xncode.tag = x[n].code.tag;
+                        xncode.info.codef = x[n].code.info.codef;
+                        n++;
+                        if ((not_nil == 0) && (x[n].eoemrk == 1))
+                        {
+                            x[n].eoemrk = 0;
+                            x[n].e_level = 0;
+                            e_level--;
+                            gops(n_lsrch, &xncode);
+                        }
+                        else
+                        {
+                            gpev(n_plesc, n_plvsc);
+                            gops(n_lesc, &xncode);
+                        };
+                        n--;
+                        goto L1;
+                    case 2:
+                        //   ei ( . . . ) . . .
+                        gpev(n_pleb, n_plvb);
+                        jbyte(n_leb);
+                        lrbxy = 0;
+                        goto LB1;
+                    case 3:
+                        //                 place compiler error
+                        comp_error();
+                        return;
+                    case 4:
+                        //  ei sj . . .
+                        ind = x[n].ind;
+                        if (v[ind].last != 0)
+                        {
+                            gpev(n_plesc, n_plvsc);
+                            gopn(n_lesd, (char)v[ind]._q);
+                            goto LSMD;
+                        }
+                    case 5:
+                    case 6:
+                        //  ei . . .
+                        gpev(n_ple, n_plv);
+                        jbyte(n_le);
+                        goto RCGL;
+                    };
                 }
                 else
+                    goto RCGL;
+            }
+            else
+            {
+                n = n2 - 1;
+                ie = x[n].ind;
+                //                 attempt to extract right support group
+                if (rsg_p())
                 {
-                    n++;
-                    if (n == n2)
+                    n = n2 - 1;
+                    switch (x[n].t)
                     {
-                        n = n1 + 1;
+                    case 1:
+                        //    . . .  'a' ei
+                        xncode.tag = x[n].code.tag;
+                        xncode.info.codef = x[n].code.info.codef;
+                        n--;
+                        if ((not_nil == 0) && (x[n].eoemrk == 1))
+                        {
+                            x[n].eoemrk = 0;
+                            x[n].e_level = 0;
+                            e_level--;
+                            gops(n_rsrch, &xncode);
+                        }
+                        else
+                        {
+                            gpev(n_presc, n_prvsc);
+                            gops(n_resc, &xncode);
+                        };
+                        n++;
+                        goto R1;
+                    case 2:
+                        //                 place compiler error
+                        comp_error();
+                        return;
+                    case 3:
+                        // . . .  ( . . .  ) ei
+                        gpev(n_preb, n_prvb);
+                        jbyte(n_reb);
+                        lrbxy = 0;
+                        goto RB1;
+                    case 4:
+                        //  . . . sj ei
                         ind = x[n].ind;
-                        goto LMAX;
-                    }
-                };
-                if ((x[n].t != t_e) || (x[n].v == 1))
-                    goto OE1;
+                        if (v[ind].last != 0)
+                        {
+                            gpev(n_presc, n_prvsc);
+                            gopn(n_resd, (char)v[ind]._q);
+                            goto RSMD;
+                        }
+                    case 5:
+                    case 6:
+                        // . . .  ei
+                        gpev(n_pre, n_prv);
+                        jbyte(n_re);
+                        goto RCGR;
+                    };
+                }
+                else
+                    goto RCGR;
             }
         }
     }
@@ -793,125 +928,6 @@ LMAX:
     x[n].spec.info.codef = NULL;
     v[ind]._q = nel + 1;
     goto LEMD;
-OE1:
-    if (dir)
-    {
-        n = n1 + 1;
-        ie = x[n].ind;
-        //         attempt to extract left support group
-        if (lsg_p())
-        {
-            n = n1 + 1;
-            switch (x[n].t)
-            {
-            case 1:
-                //  ei 'a' . . .
-                xncode.tag = x[n].code.tag;
-                xncode.info.codef = x[n].code.info.codef;
-                n++;
-                if ((not_nil == 0) && (x[n].eoemrk == 1))
-                {
-                    x[n].eoemrk = 0;
-                    x[n].e_level = 0;
-                    e_level--;
-                    gops(n_lsrch, &xncode);
-                }
-                else
-                {
-                    gpev(n_plesc, n_plvsc);
-                    gops(n_lesc, &xncode);
-                };
-                n--;
-                goto L1;
-            case 2:
-                //   ei ( . . . ) . . .
-                gpev(n_pleb, n_plvb);
-                jbyte(n_leb);
-                lrbxy = 0;
-                goto LB1;
-            case 3:
-                //                 place compiler error
-                comp_error();
-                return;
-            case 4:
-                //  ei sj . . .
-                ind = x[n].ind;
-                if (v[ind].last != 0)
-                {
-                    gpev(n_plesc, n_plvsc);
-                    gopn(n_lesd, (char)v[ind]._q);
-                    goto LSMD;
-                }
-            case 5:
-            case 6:
-                //  ei . . .
-                gpev(n_ple, n_plv);
-                jbyte(n_le);
-                goto RCGL;
-            };
-        }
-        else
-            goto RCGL;
-    }
-    else
-    {
-        n = n2 - 1;
-        ie = x[n].ind;
-        //                 attempt to extract right support group
-        if (rsg_p())
-        {
-            n = n2 - 1;
-            switch (x[n].t)
-            {
-            case 1:
-                //    . . .  'a' ei
-                xncode.tag = x[n].code.tag;
-                xncode.info.codef = x[n].code.info.codef;
-                n--;
-                if ((not_nil == 0) && (x[n].eoemrk == 1))
-                {
-                    x[n].eoemrk = 0;
-                    x[n].e_level = 0;
-                    e_level--;
-                    gops(n_rsrch, &xncode);
-                }
-                else
-                {
-                    gpev(n_presc, n_prvsc);
-                    gops(n_resc, &xncode);
-                };
-                n++;
-                goto R1;
-            case 2:
-                //                 place compiler error
-                comp_error();
-                return;
-            case 3:
-                // . . .  ( . . .  ) ei
-                gpev(n_preb, n_prvb);
-                jbyte(n_reb);
-                lrbxy = 0;
-                goto RB1;
-            case 4:
-                //  . . . sj ei
-                ind = x[n].ind;
-                if (v[ind].last != 0)
-                {
-                    gpev(n_presc, n_prvsc);
-                    gopn(n_resd, (char)v[ind]._q);
-                    goto RSMD;
-                }
-            case 5:
-            case 6:
-                // . . .  ei
-                gpev(n_pre, n_prv);
-                jbyte(n_re);
-                goto RCGR;
-            };
-        }
-        else
-            goto RCGR;
-    }
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
