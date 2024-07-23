@@ -830,15 +830,18 @@ OE1:
             case 4:
                 //  ei sj . . .
                 ind = x[n].ind;
-                if (v[ind].last == 0)
-                    goto LE;
-                gpev(n_plesc, n_plvsc);
-                gopn(n_lesd, (char)v[ind]._q);
-                goto LSMD;
+                if (v[ind].last != 0)
+                {
+                    gpev(n_plesc, n_plvsc);
+                    gopn(n_lesd, (char)v[ind]._q);
+                    goto LSMD;
+                }
             case 5:
             case 6:
                 //  ei . . .
-                goto LE;
+                gpev(n_ple, n_plv);
+                jbyte(n_le);
+                goto RCGL;
             };
         }
         else
@@ -886,28 +889,23 @@ OE1:
             case 4:
                 //  . . . sj ei
                 ind = x[n].ind;
-                if (v[ind].last == 0)
-                    goto RE;
-                gpev(n_presc, n_prvsc);
-                gopn(n_resd, (char)v[ind]._q);
-                goto RSMD;
+                if (v[ind].last != 0)
+                {
+                    gpev(n_presc, n_prvsc);
+                    gopn(n_resd, (char)v[ind]._q);
+                    goto RSMD;
+                }
             case 5:
             case 6:
                 // . . .  ei
-                goto RE;
+                gpev(n_pre, n_prv);
+                jbyte(n_re);
+                goto RCGR;
             };
         }
         else
             goto RCGR;
     }
-LE:
-    gpev(n_ple, n_plv);
-    jbyte(n_le);
-    goto RCGL;
-RE:
-    gpev(n_pre, n_prv);
-    jbyte(n_re);
-    goto RCGR;
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
