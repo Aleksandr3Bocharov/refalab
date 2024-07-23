@@ -359,7 +359,10 @@ RCGL:
         //   w-variable
         ind = x[n].ind;
         if (v[ind].last != 0)
-            goto LED;
+        {
+            gopn(n_led, (char)v[ind]._q);
+            goto LEMD;
+        }
         jbyte(n_lw);
         v[ind]._q = nel + 1;
         x[n].next = v[ind].last;
@@ -372,7 +375,10 @@ RCGL:
         //   e-variable
         ind = x[n].ind;
         if (v[ind].last != 0)
-            goto LED;
+        {
+            gopn(n_led, (char)v[ind]._q);
+            goto LEMD;
+        }
         if (dir)
             goto RCGR;
         if (n + 1 == n2)
@@ -392,9 +398,6 @@ L1:
     nel++;
     n1 = n;
     goto RCGL;
-LED:
-    gopn(n_led, (char)v[ind]._q);
-    goto LEMD;
 LEMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
@@ -541,7 +544,10 @@ RCGR:
         //    w_variable
         ind = x[n].ind;
         if (v[ind].last != 0)
-            goto RED;
+        {
+            gopn(n_red, (char)v[ind]._q);
+            goto REMD;
+        }
         jbyte(n_rw);
         v[ind]._q = nel + 1;
         x[n].next = v[ind].last;
@@ -554,7 +560,10 @@ RCGR:
         //    e-variable
         ind = x[n].ind;
         if (v[ind].last != 0)
-            goto RED;
+        {
+            gopn(n_red, (char)v[ind]._q);
+            goto REMD;
+        }
         if (!dir)
             goto RCGL;
         if (n1 + 1 == n)
@@ -574,9 +583,6 @@ R1:
     nel++;
     n2 = n;
     goto RCGR;
-RED:
-    gopn(n_red, (char)v[ind]._q);
-    goto REMD;
 REMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
