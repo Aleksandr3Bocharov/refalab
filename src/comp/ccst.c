@@ -133,7 +133,7 @@ typedef enum states
     RPE7,
     RPE8,
     RPE9,
-    RPE10,  
+    RPE10,
     RP_OSH300,
     ERROR
 } T_STATES;
@@ -210,57 +210,80 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
     n = 0;
     lastb = 0;
     nel = 0;
-GET_LPE: // read left part element
-    n++;
-    scan();
-    x[n].t = scn_e.t;
-    x[n].code.tag = scn_e.code.tag;
-    x[n].code.info.codef = scn_e.code.info.codef;
-    x[n].spec.tag = scn_e.spec.tag;
-    x[n].spec.info.codef = scn_e.spec.info.codef;
-    x[n].v = scn_e.v;
-    x[n].next = 0;
-    x[n].pair = 0;
-    x[n].eoemrk = 0;
-    x[n].e_level = 0;
-    switch (scn_e.t)
-    {
-    case 0:
-        goto LPE0;
-    case 1:
-        goto LPE1;
-    case 2:
-        goto LPE2;
-    case 3:
-        goto LPE3;
-    case 4:
-        goto LPE4;
-    case 5:
-        goto LPE5;
-    case 6:
-        goto LPE6;
-    case 7:
-        goto LPE7;
-    case 8:
-        goto LPE8;
-    case 9:
-        goto LPE9;
-    case 10:
-        goto LPE10;
-    default:
-        goto OSH300;
-    }
-LPE0:
-    // scanner error
-    goto OSH300;
-LPE1: // constant symbol
-    nel++;
-    goto NEXT_LPE;
-LPE2: // left bracket
-    nel++;
-    x[n].pair = lastb;
-    lastb = n;
-    goto NEXT_LPE;
+    T_STATES state = GET_LPE;
+    while (true)
+        switch (state)
+        {
+        case GET_LPE:
+            // read left part element
+            n++;
+            scan();
+            x[n].t = scn_e.t;
+            x[n].code.tag = scn_e.code.tag;
+            x[n].code.info.codef = scn_e.code.info.codef;
+            x[n].spec.tag = scn_e.spec.tag;
+            x[n].spec.info.codef = scn_e.spec.info.codef;
+            x[n].v = scn_e.v;
+            x[n].next = 0;
+            x[n].pair = 0;
+            x[n].eoemrk = 0;
+            x[n].e_level = 0;
+            switch (scn_e.t)
+            {
+            case 0:
+                state = LPE0;
+                break;
+            case 1:
+                state = LPE1;
+                break;
+            case 2:
+                state = LPE2;
+                break;
+            case 3:
+                state = LPE3;
+                break;
+            case 4:
+                state = LPE4;
+                break;
+            case 5:
+                state = LPE5;
+                break;
+            case 6:
+                state = LPE6;
+                break;
+            case 7:
+                state = LPE7;
+                break;
+            case 8:
+                state = LPE8;
+                break;
+            case 9:
+                state = LPE9;
+                break;
+            case 10:
+                state = LPE10;
+                break;
+            default:
+                state = OSH300;
+            }
+            break;
+        case LPE0:
+            // scanner error
+            state = OSH300;
+            break;
+        case LPE1:
+            // constant symbol
+            nel++;
+            state = NEXT_LPE;
+            break;
+        case LPE2:
+            // left bracket
+            nel++;
+            x[n].pair = lastb;
+            lastb = n;
+            state = NEXT_LPE;
+            break;
+        }
 LPE3: // right bracket
     if (lastb == 0)
     {
