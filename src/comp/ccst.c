@@ -77,7 +77,6 @@ static uint16_t next_nh; // next whole number
 
 static void isk_v();
 static void gen_bsb();
-static void pch300();
 static void pch303();
 static void pch406();
 static bool lsg_p();
@@ -112,10 +111,7 @@ GET_LPE: // read left part element
     switch (scn_e.t)
     {
     case 0:
-        // scanner error
-        fndef(lbl, lblleng);
-        pch300();
-        return;
+        goto LPE0;
     case 1:
         goto LPE1;
     case 2:
@@ -137,11 +133,11 @@ GET_LPE: // read left part element
     case 10:
         goto LPE10;
     default:
-        // scanner error
-        fndef(lbl, lblleng);
-        pch300();
-        return;
+        goto OSH300;
     }
+LPE0:
+    // scanner error
+    goto OSH300;
 LPE1: // constant symbol
     nel++;
     goto NEXT_LPE;
@@ -225,9 +221,7 @@ LPE9: // left part end
     if (lastb == 0)
         goto RCG;
     pchosh("301 too many '(' in left part");
-    fndef(lbl, lblleng);
-    pch300();
-    return;
+    goto OSH300;
 LPE10: // sentence end
     pchosh("304 under left part default sign '=' ");
     fndef(lbl, lblleng);
@@ -236,8 +230,12 @@ NEXT_LPE: // end of element processing
     if (nel <= 252)
         goto GET_LPE;
     pchosh("305 very large left part");
+    goto OSH300;
+OSH300:
     fndef(lbl, lblleng);
-    pch300();
+    goto RP_OSH300;
+RP_OSH300:
+    pchosh("300 sentence is't scanned");
     return;
 
     //--------------------------------------------
@@ -289,6 +287,7 @@ LSW1: //        constant symbol
     goto L1;
 LTXT:
     kol_lit = 1;
+    goto LTXT1;
 LTXT1:
     n++;
     if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
@@ -300,6 +299,7 @@ LTXT2:
         goto LSCO;
     n = n1;
     gopn(n_ltxt, (char)kol_lit);
+    goto LTXT3;
 LTXT3:
     n++;
     jbyte(x[n].code.info.infoc[0]);
@@ -323,12 +323,14 @@ LSW4: //    s-variable
         jbyte(n_ls);
         v[ind]._q = nel;
     };
+    goto LSMD;
 LSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_wspc, x[n].spec.info.codef);
+    goto L1;
 L1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -361,12 +363,14 @@ LSW6: //   e-variable
         goto IMPASSE;
 LED:
     gopn(n_led, (char)v[ind]._q);
+    goto LEMD;
 LEMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_espc, x[n].spec.info.codef);
+    goto L2;
 L2:
     x[n].p = nel;
     x[n].q = nel + 1;
@@ -386,6 +390,7 @@ LSW2: //  left bracket
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto GEN_LB;
+    goto LBCE;
 LBCE:
     nel += 2;
     jbyte(n_lbce);
@@ -414,6 +419,7 @@ LBNIL:
 GEN_LB:
     n = n1;
     lrbxy = 1;
+    goto LB1;
 LB1:
     if (dir)
     {
@@ -469,6 +475,7 @@ RSW1: //   constant symbol
     goto R1;
 RTXT:
     kol_lit = 1;
+    goto RTXT1;
 RTXT1:
     n--;
     if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
@@ -480,6 +487,7 @@ RTXT2:
         goto RSCO;
     n = n2;
     gopn(n_rtxt, (char)kol_lit);
+    goto RTXT3;
 RTXT3:
     n--;
     jbyte(x[n].code.info.infoc[0]);
@@ -503,12 +511,14 @@ RSW4: //     s_variable
         jbyte(n_rs);
         v[ind]._q = nel;
     };
+    goto RSMD;
 RSMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_wspc, x[n].spec.info.codef);
+    goto R1;
 R1:
     x[n].p = x[n].q = nel;
     nel++;
@@ -541,12 +551,14 @@ RSW6: //    e-variable
         goto IMPASSE;
 RED:
     gopn(n_red, (char)v[ind]._q);
+    goto REMD;
 REMD:
     x[n].next = v[ind].last;
     v[ind].last = n;
     (v[ind].rem)--;
     if (x[n].spec.info.codef != NULL)
         gopl(n_espc, x[n].spec.info.codef);
+    goto R2;
 R2:
     x[n].p = nel;
     x[n].q = nel + 1;
@@ -566,6 +578,7 @@ RSW3: //     right bracket
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto GEN_RB;
+    goto RBCE;
 RBCE:
     nel += 2;
     jbyte(n_rbce);
@@ -594,6 +607,7 @@ RBNIL:
 GEN_RB:
     n = n2;
     lrbxy = 2;
+    goto RB1;
 RB1:
     if (!dir)
     {
@@ -629,6 +643,7 @@ NIL: //     empty hole
 CE: //   closed including
     if (x[n].eoemrk != 0)
         goto IMPASSE;
+    goto CE1;
 CE1:
     if (x[n].spec.info.codef == NULL)
         goto CE2;
@@ -654,11 +669,11 @@ CE2:
     h[nh].n2 = h[next_nh].n2;
     nh = next_nh;
     goto IMPASSE;
-    //                      place of compiler's error
+
 LSW3:
+    goto ERROR;
 RSW2:
-    printf("Compiler's error\n");
-    exit(1);
+    goto ERROR;
 //
 //          It is impossible movement
 //          on hard element here or
@@ -666,6 +681,7 @@ RSW2:
 IMPASSE:
     lrbxy = 0;
     nh_x = nh;
+    goto HSCH;
 //          Search of hole with hard
 //          elements on its boards.
 //          If it not exist than project
@@ -676,6 +692,7 @@ HSCH:
     nh = 1;
     if (h[nh]._next == 0)
         goto RCGFIN;
+    goto NHOLE;
 NHOLE:
     n1 = h[nh].n1;
     n2 = h[nh].n2;
@@ -703,6 +720,7 @@ NHOLE:
     ind = x[n].ind;
     if (v[ind].last != 0)
         goto RIGID;
+    goto NHOLE1;
 NHOLE1:
     nh = h[nh]._next;
     if (h[nh]._next == 0)
@@ -745,6 +763,7 @@ OE:
         n = n1 + 1;
     if (x[n].spec.info.codef == NULL)
         goto OE1;
+    goto OE0;
 OE0:
     ind = x[n].ind;
     if ((v[ind].last != 0) || (v[ind].rem != 1))
@@ -767,6 +786,7 @@ OE0:
 OERMAX:
     n = n2 - 1;
     ind = x[n].ind;
+    goto RMAX;
 RMAX:
     gopl(n_rmax, x[n].spec.info.codef);
     if (x[n].v == 1)
@@ -776,6 +796,7 @@ RMAX:
 OELMAX:
     n = n1 + 1;
     ind = x[n].ind;
+    goto LMAX;
 LMAX:
     gopl(n_lmax, x[n].spec.info.codef);
     if (x[n].v == 1)
@@ -790,6 +811,7 @@ OE1:
 LOE:
     n = n1 + 1;
     ie = x[n].ind;
+    goto LSG;
     //         attempt to extract left support group
 LSG:
     if (lsg_p())
@@ -844,7 +866,9 @@ LESW4: //  ei sj . . .
     gopn(n_lesd, (char)v[ind]._q);
     goto LSMD;
 LESW5:
+    goto LE;
 LESW6: //  ei . . .
+    goto LE;
 LE:
     gpev(n_ple, n_plv);
     jbyte(n_le);
@@ -852,6 +876,7 @@ LE:
 ROE:
     n = n2 - 1;
     ie = x[n].ind;
+    goto RSG;
 //                 attempt to extract right support group
 RSG:
     if (rsg_p())
@@ -906,16 +931,17 @@ RESW4: //  . . . sj ei
     gopn(n_resd, (char)v[ind]._q);
     goto RSMD;
 RESW5:
+    goto RE;
 RESW6: // . . .  ei
+    goto RE;
 RE:
     gpev(n_pre, n_prv);
     jbyte(n_re);
     goto RCGR;
-    //                 place compiler error
 LESW3:
+    goto ERROR;
 RESW2:
-    printf("Compiler error\n");
-    exit(1);
+    goto ERROR;
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
@@ -926,11 +952,13 @@ RCGFIN:
 
     ur_skob = 1;
     kol_skob[ur_skob] = 0;
+    goto GET_RPE;
 
     //  read next element of right part
 
 GET_RPE:
     scan();
+    goto SW_RPE;
 SW_RPE:
     switch (scn_e.t)
     {
@@ -956,11 +984,11 @@ SW_RPE:
         goto RPE9;
     case 10:
         goto RPE10;
-    default:;
+    default:
+        goto RP_OSH300;
     };
 RPE0: // scanner error
-    pch300();
-    return;
+    goto RP_OSH300;
 RPE1: // symbol-constant
     if (scn_e.code.tag == TAGO)
         goto TEXT;
@@ -968,6 +996,7 @@ RPE1: // symbol-constant
     goto GET_RPE;
 TEXT:
     kol_lit = 0;
+    goto TEXT1;
 TEXT1:
     kol_lit++;
     buf_lit[kol_lit] = scn_e.code.info.infoc[0];
@@ -1069,8 +1098,7 @@ RPE7: // sign "k"
     if (ur_skob > 511)
     {
         pchosh("407 including of the signs 'k' > 511");
-        pch300();
-        return;
+        goto RP_OSH300;
     };
     kol_skob[++ur_skob] = 0;
     scan();
@@ -1113,6 +1141,12 @@ RPE10: // sentence end
         pchosh("403 too many signs 'k' in right part");
     if (kol_skob[ur_skob] != 0)
         pchosh("401 too many '(' in right part");
+    return;
+//                      place of compiler's error
+ERROR:
+    printf("Compiler's error\n");
+    exit(1);
+    return;
 }
 
 static void isk_v()
@@ -1162,12 +1196,6 @@ static void gen_bsb()
         return;
     };
     gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
-    return;
-}
-
-static void pch300()
-{
-    pchosh("300 sentence is't scanned");
     return;
 }
 
