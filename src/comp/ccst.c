@@ -23,6 +23,121 @@
 #define t_k 7
 #define t_p 8
 
+typedef enum states
+{
+    GET_LPE,
+    LPE0,
+    LPE1,
+    LPE2,
+    LPE3,
+    LPE4,
+    LPE5,
+    LPE6,
+    LPE7,
+    LPE8,
+    LPE9,
+    LPE10,
+    NEXT_LPE,
+    OSH300,
+    RCG,
+    RCGL,
+    LSW1,
+    LTXT,
+    LTXT1,
+    LTXT2,
+    LTXT3,
+    LSCO,
+    LSW2,
+    LBCE,
+    LBNIL,
+    GEN_LB,
+    LB1,
+    LSW3,
+    LSW4,
+    LSMD,
+    L1,
+    LSW5,
+    LED,
+    LEMD,
+    L2,
+    LSW6,
+    RCGR,
+    RSW1,
+    RTXT,
+    RTXT1,
+    RTXT2,
+    RTXT3,
+    RSCO,
+    RSW2,
+    RBCE,
+    RBNIL,
+    GEN_RB,
+    RB1,
+    RSW3,
+    RSW4,
+    RSMD,
+    R1,
+    RSW5,
+    RED,
+    REMD,
+    R2,
+    RSW6,
+    NIL,
+    CE,
+    CE1,
+    CE2,
+    IMPASSE,
+    HSCH,
+    NHOLE,
+    NHOLE1,
+    RIGID,
+    OE,
+    OE0,
+    OERMAX,
+    RMAX,
+    REM,
+    OELMAX,
+    LMAX,
+    LEM,
+    OE1,
+    LOE,
+    LSG,
+    LE_CASE,
+    LESW1,
+    LESW2,
+    LESW3,
+    LESW4,
+    LESW5,
+    LESW6,
+    LE,
+    ROE,
+    RSG,
+    RE_CASE,
+    RESW1,
+    RESW2,
+    RESW3,
+    RESW4,
+    RESW5,
+    RESW6,
+    RE,
+    RCGFIN,
+    GET_RPE,
+    SW_RPE,
+    RPE0,
+    RPE1,
+    RPE2,
+    RPE3,
+    RPE4,
+    RPE5,
+    RPE6,
+    RPE7,
+    RPE8,
+    RPE9,
+    RPE10,  
+    RP_OSH300,
+    ERROR
+} T_STATES;
+
 static struct
 { // left part buffer elements
     uint16_t p, q, t, ind;
@@ -234,9 +349,6 @@ NEXT_LPE: // end of element processing
 OSH300:
     fndef(lbl, lblleng);
     goto RP_OSH300;
-RP_OSH300:
-    pchosh("300 sentence is't scanned");
-    return;
 
     //--------------------------------------------
     //         left part compilation
@@ -314,69 +426,6 @@ LSCO:
     n = n1 + 1;
     gopn(n_lsco, x[n].code.info.infoc[0]);
     goto L1;
-LSW4: //    s-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        gopn(n_lsd, (char)v[ind]._q);
-    else
-    {
-        jbyte(n_ls);
-        v[ind]._q = nel;
-    };
-    goto LSMD;
-LSMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto L1;
-L1:
-    x[n].p = x[n].q = nel;
-    nel++;
-    n1 = n;
-    goto RCGL;
-LSW5: //   w-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    jbyte(n_lw);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto L2;
-LEM:
-    v[ind]._q = nel + 1;
-    goto LEMD;
-LSW6: //   e-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    if (dir)
-        goto RCGR;
-    if (n + 1 == n2)
-        goto CE;
-    else
-        goto IMPASSE;
-LED:
-    gopn(n_led, (char)v[ind]._q);
-    goto LEMD;
-LEMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    goto L2;
-L2:
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    n1 = n;
-    goto RCGL;
 LSW2: //  left bracket
     n1 = n;
     n = x[n1].pair;
@@ -444,6 +493,68 @@ LB1:
     x[n2].p = x[n2].q = nel + 1;
     nel += 2;
     goto HSCH;
+LSW3:
+    goto ERROR;
+LSW4: //    s-variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        gopn(n_lsd, (char)v[ind]._q);
+    else
+    {
+        jbyte(n_ls);
+        v[ind]._q = nel;
+    };
+    goto LSMD;
+LSMD:
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
+    goto L1;
+L1:
+    x[n].p = x[n].q = nel;
+    nel++;
+    n1 = n;
+    goto RCGL;
+LSW5: //   w-variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        goto LED;
+    jbyte(n_lw);
+    v[ind]._q = nel + 1;
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
+    goto L2;
+LED:
+    gopn(n_led, (char)v[ind]._q);
+    goto LEMD;
+LEMD:
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
+    goto L2;
+L2:
+    x[n].p = nel;
+    x[n].q = nel + 1;
+    nel += 2;
+    n1 = n;
+    goto RCGL;
+LSW6: //   e-variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        goto LED;
+    if (dir)
+        goto RCGR;
+    if (n + 1 == n2)
+        goto CE;
+    else
+        goto IMPASSE;
 
     //                 hard element projection
     //                 from  right board of
@@ -502,69 +613,8 @@ RSCO:
     n = n2 - 1;
     gopn(n_rsco, x[n].code.info.infoc[0]);
     goto R1;
-RSW4: //     s_variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        gopn(n_rsd, (char)v[ind]._q);
-    else
-    {
-        jbyte(n_rs);
-        v[ind]._q = nel;
-    };
-    goto RSMD;
-RSMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto R1;
-R1:
-    x[n].p = x[n].q = nel;
-    nel++;
-    n2 = n;
-    goto RCGR;
-RSW5: //    w_variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RED;
-    jbyte(n_rw);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto R2;
-REM:
-    v[ind]._q = nel + 1;
-    goto REMD;
-RSW6: //    e-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RED;
-    if (!dir)
-        goto RCGL;
-    if (n1 + 1 == n)
-        goto CE;
-    else
-        goto IMPASSE;
-RED:
-    gopn(n_red, (char)v[ind]._q);
-    goto REMD;
-REMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    goto R2;
-R2:
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    n2 = n;
-    goto RCGR;
+RSW2:
+    goto ERROR;
 RSW3: //     right bracket
     n2 = n;
     n = x[n2].pair;
@@ -632,6 +682,66 @@ RB1:
     x[n2].p = x[n2].q = nel + 1;
     nel += 2;
     goto HSCH;
+RSW4: //     s_variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        gopn(n_rsd, (char)v[ind]._q);
+    else
+    {
+        jbyte(n_rs);
+        v[ind]._q = nel;
+    };
+    goto RSMD;
+RSMD:
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
+    goto R1;
+R1:
+    x[n].p = x[n].q = nel;
+    nel++;
+    n2 = n;
+    goto RCGR;
+RSW5: //    w_variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        goto RED;
+    jbyte(n_rw);
+    v[ind]._q = nel + 1;
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_wspc, x[n].spec.info.codef);
+    goto R2;
+RED:
+    gopn(n_red, (char)v[ind]._q);
+    goto REMD;
+REMD:
+    x[n].next = v[ind].last;
+    v[ind].last = n;
+    (v[ind].rem)--;
+    if (x[n].spec.info.codef != NULL)
+        gopl(n_espc, x[n].spec.info.codef);
+    goto R2;
+R2:
+    x[n].p = nel;
+    x[n].q = nel + 1;
+    nel += 2;
+    n2 = n;
+    goto RCGR;
+RSW6: //    e-variable
+    ind = x[n].ind;
+    if (v[ind].last != 0)
+        goto RED;
+    if (!dir)
+        goto RCGL;
+    if (n1 + 1 == n)
+        goto CE;
+    else
+        goto IMPASSE;
 NIL: //     empty hole
     jbyte(n_nil);
     next_nh = h[nh]._next;
@@ -669,11 +779,6 @@ CE2:
     h[nh].n2 = h[next_nh].n2;
     nh = next_nh;
     goto IMPASSE;
-
-LSW3:
-    goto ERROR;
-RSW2:
-    goto ERROR;
 //
 //          It is impossible movement
 //          on hard element here or
@@ -793,6 +898,9 @@ RMAX:
         jbyte(n_nnil);
     x[n].spec.info.codef = NULL;
     goto REM;
+REM:
+    v[ind]._q = nel + 1;
+    goto REMD;
 OELMAX:
     n = n1 + 1;
     ind = x[n].ind;
@@ -803,6 +911,9 @@ LMAX:
         jbyte(n_nnil);
     x[n].spec.info.codef = NULL;
     goto LEM;
+LEM:
+    v[ind]._q = nel + 1;
+    goto LEMD;
 OE1:
     if (dir)
         goto LOE;
@@ -858,6 +969,8 @@ LESW2: //   ei ( . . . ) . . .
     jbyte(n_leb);
     lrbxy = 0;
     goto LB1;
+LESW3:
+    goto ERROR;
 LESW4: //  ei sj . . .
     ind = x[n].ind;
     if (v[ind].last == 0)
@@ -918,6 +1031,8 @@ RESW1: //    . . .  'a' ei
     };
     n++;
     goto R1;
+RESW2:
+    goto ERROR;
 RESW3: // . . .  ( . . .  ) ei
     gpev(n_preb, n_prvb);
     jbyte(n_reb);
@@ -938,10 +1053,6 @@ RE:
     gpev(n_pre, n_prv);
     jbyte(n_re);
     goto RCGR;
-LESW3:
-    goto ERROR;
-RESW2:
-    goto ERROR;
     //                 identification end
 RCGFIN:
     jbyte(n_eor);
@@ -1141,6 +1252,9 @@ RPE10: // sentence end
         pchosh("403 too many signs 'k' in right part");
     if (kol_skob[ur_skob] != 0)
         pchosh("401 too many '(' in right part");
+    return;
+RP_OSH300:
+    pchosh("300 sentence is't scanned");
     return;
 //                      place of compiler's error
 ERROR:
