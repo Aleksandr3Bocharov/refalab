@@ -283,146 +283,175 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             lastb = n;
             state = NEXT_LPE;
             break;
+        case LPE3:
+            // right bracket
+            if (lastb == 0)
+            {
+                pchosh("302 too many ')' in left part");
+                n--;
+            }
+            else
+            {
+                nel++;
+                lastb1 = x[lastb].pair;
+                x[lastb].pair = n;
+                x[n].pair = lastb;
+                lastb = lastb1;
+            }
+            state = NEXT_LPE;
+            break;
+        case LPE4:
+            // s-varyable
+            isk_v();
+            x[n].ind = ind;
+            switch (v[ind]._t)
+            {
+            case 0:
+                v[ind]._t = 1; // yet isn't faced
+                break;
+            case 1:
+                ++(v[ind].rem); // next position
+                break;
+            default: // invalid type pointer
+                pch303();
+                n--;
+            }
+            nel++;
+            state = NEXT_LPE;
+            break;
+        case LPE5:
+            // w-varyable
+            isk_v();
+            x[n].ind = ind;
+            switch (v[ind]._t)
+            {
+            case 0:
+                v[ind]._t = 2; // yet isn't faced
+                break;
+            case 2:
+                ++(v[ind].rem); // next position
+                break;
+            default: // invalid type pointer
+                pch303();
+                n--;
+            }
+            nel += 2;
+            state = NEXT_LPE;
+            break;
+        case LPE6:
+            // e- or v-varyable
+            isk_v();
+            x[n].ind = ind;
+            if (v[ind]._t == 0) // yet is't faced
+                v[ind]._t = 3;
+            else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
+                ++(v[ind].rem);
+            else // invalid type pointer
+            {
+                pch303();
+                n--;
+            };
+            nel += 2;
+            state = NEXT_LPE;
+            break;
+        case LPE7:
+            // sign 'k'
+            pchosh("306 sign 'k' in left part");
+            n--;
+            state = NEXT_LPE;
+            break;
+        case LPE8:
+            // sign '.'
+            pchosh("307 sign '.' in left part");
+            n--;
+            state = NEXT_LPE;
+            break;
+        case LPE9:
+            // left part end
+            if (lastb == 0)
+                state = RCG;
+            else
+            {
+                pchosh("301 too many '(' in left part");
+                state = OSH300;
+            }
+            break;
+        case LPE10:
+            // sentence end
+            pchosh("304 under left part default sign '=' ");
+            fndef(lbl, lblleng);
+            return;
+        case NEXT_LPE:
+            // end of element processing
+            if (nel <= 252)
+                state = GET_LPE;
+            else
+            {
+                pchosh("305 very large left part");
+                state = OSH300;
+            }
+            break;
+        case OSH300:
+            fndef(lbl, lblleng);
+            state = RP_OSH300;
+            break;
+        //--------------------------------------------
+        //         left part compilation
+        //--------------------------------------------
+        case RCG:
+            fndef(lbl, lblleng);
+            n1 = 0;
+            n2 = n;
+            nel = 4;
+            x[n1].p = x[n1].q = 3;
+            x[n2].p = x[n2].q = 2;
+            h[28]._next = 0;
+            nh = 1;
+            h[1]._next = 28;
+            fh = 2;
+            e_level = 0;
+            if (dir)
+                state = RCGL;
+            else
+                state = RCGR;
+            break;
+        //    hard element projection from left part of current hole
+        case RCGL:
+            n = n1 + 1;
+            if (n == n2)
+                state = NIL;
+            else
+                switch (x[n].t)
+                {
+                case 1:
+                    state = LSW1;
+                case 2:
+                    state = LSW2;
+                case 3:
+                    state = LSW3;
+                case 4:
+                    state = LSW4;
+                case 5:
+                    state = LSW5;
+                case 6:
+                    state = LSW6;
+                };
+            break;
+        case LSW1:
+            //        constant symbol
+            if (x[n].code.tag == TAGO)
+                state = LTXT;
+            else
+            {
+                gops(n_lsc, &x[n].code);
+                state = L1;
+            }
+            break;
+        case LTXT:
+            kol_lit = 1;
+            state = LTXT1;
+            break;
         }
-LPE3: // right bracket
-    if (lastb == 0)
-    {
-        pchosh("302 too many ')' in left part");
-        n--;
-    }
-    else
-    {
-        nel++;
-        lastb1 = x[lastb].pair;
-        x[lastb].pair = n;
-        x[n].pair = lastb;
-        lastb = lastb1;
-    }
-    goto NEXT_LPE;
-LPE4: // s-varyable
-    isk_v();
-    x[n].ind = ind;
-    switch (v[ind]._t)
-    {
-    case 0:
-        v[ind]._t = 1; // yet isn't faced
-        break;
-    case 1:
-        ++(v[ind].rem); // next position
-        break;
-    default: // invalid type pointer
-        pch303();
-        n--;
-    }
-    nel++;
-    goto NEXT_LPE;
-LPE5: // w-varyable
-    isk_v();
-    x[n].ind = ind;
-    switch (v[ind]._t)
-    {
-    case 0:
-        v[ind]._t = 2; // yet isn't faced
-        break;
-    case 2:
-        ++(v[ind].rem); // next position
-        break;
-    default: // invalid type pointer
-        pch303();
-        n--;
-    }
-    nel += 2;
-    goto NEXT_LPE;
-LPE6: // e- or v-varyable
-    isk_v();
-    x[n].ind = ind;
-    if (v[ind]._t == 0) // yet is't faced
-        v[ind]._t = 3;
-    else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
-        ++(v[ind].rem);
-    else // invalid type pointer
-    {
-        pch303();
-        n--;
-    };
-    nel += 2;
-    goto NEXT_LPE;
-LPE7: // sign 'k'
-    pchosh("306 sign 'k' in left part");
-    n--;
-    goto NEXT_LPE;
-LPE8: // sign '.'
-    pchosh("307 sign '.' in left part");
-    n--;
-    goto NEXT_LPE;
-LPE9: // left part end
-    if (lastb == 0)
-        goto RCG;
-    pchosh("301 too many '(' in left part");
-    goto OSH300;
-LPE10: // sentence end
-    pchosh("304 under left part default sign '=' ");
-    fndef(lbl, lblleng);
-    return;
-NEXT_LPE: // end of element processing
-    if (nel <= 252)
-        goto GET_LPE;
-    pchosh("305 very large left part");
-    goto OSH300;
-OSH300:
-    fndef(lbl, lblleng);
-    goto RP_OSH300;
-
-    //--------------------------------------------
-    //         left part compilation
-    //--------------------------------------------
-
-RCG:
-    fndef(lbl, lblleng);
-    n1 = 0;
-    n2 = n;
-    nel = 4;
-    x[n1].p = x[n1].q = 3;
-    x[n2].p = x[n2].q = 2;
-    h[28]._next = 0;
-    nh = 1;
-    h[1]._next = 28;
-    fh = 2;
-    e_level = 0;
-    if (dir)
-        goto RCGL;
-    else
-        goto RCGR;
-
-    //    hard element projection from left part of current hole
-
-RCGL:
-    n = n1 + 1;
-    if (n == n2)
-        goto NIL;
-    switch (x[n].t)
-    {
-    case 1:
-        goto LSW1;
-    case 2:
-        goto LSW2;
-    case 3:
-        goto LSW3;
-    case 4:
-        goto LSW4;
-    case 5:
-        goto LSW5;
-    case 6:
-        goto LSW6;
-    };
-LSW1: //        constant symbol
-    if (x[n].code.tag == TAGO)
-        goto LTXT;
-    gops(n_lsc, &x[n].code);
-    goto L1;
-LTXT:
-    kol_lit = 1;
-    goto LTXT1;
 LTXT1:
     n++;
     if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
