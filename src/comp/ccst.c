@@ -451,166 +451,201 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             kol_lit = 1;
             state = LTXT1;
             break;
+        case LTXT1:
+            n++;
+            if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+                state = LTXT2;
+            else
+                kol_lit++;
+            break;
+        case LTXT2:
+            if (kol_lit == 1)
+                state = LSCO;
+            else
+            {
+                n = n1;
+                gopn(n_ltxt, (char)kol_lit);
+                state = LTXT3;
+            }
+            break;
+        case LTXT3:
+            n++;
+            jbyte(x[n].code.info.infoc[0]);
+            x[n].p = x[n].q = nel;
+            nel++;
+            kol_lit--;
+            if (kol_lit == 0)
+            {
+                n1 = n;
+                state = RCGL;
+            }
+            break;
+        case LSCO:
+            n = n1 + 1;
+            gopn(n_lsco, x[n].code.info.infoc[0]);
+            state = L1;
+            break;
+        case LSW2:
+            //  left bracket
+            n1 = n;
+            n = x[n1].pair;
+            if (n1 + 1 == n)
+                state = LBNIL;
+            else if (n1 + 2 != n)
+                state = GEN_LB;
+            else
+            {
+                n = n1 + 1;
+                if (x[n].t != t_e)
+                    state = GEN_LB;
+                else
+                {
+                    ind = x[n].ind;
+                    if (v[ind].last != 0)
+                        state = GEN_LB;
+                    else
+                        state = LBCE;
+                }
+            }
+            break;
+        case LBCE:
+            nel += 2;
+            jbyte(n_lbce);
+            v[ind]._q = nel + 1;
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].v != 0)
+                jbyte(n_nnil);
+            if (x[n].spec.info.codef != NULL)
+                gopl(n_espc, x[n].spec.info.codef);
+            x[n].p = nel;
+            x[n].q = nel + 1;
+            nel += 2;
+            x[n1].p = x[n1].q = nel - 4;
+            n1 += 2;
+            x[n1].p = x[n1].q = nel - 3;
+            state = RCGL;
+            break;
+        case LBNIL:
+            jbyte(n_lbnil);
+            x[n1].p = x[n1].q = nel;
+            n1 = n;
+            x[n1].p = x[n1].q = nel + 1;
+            nel += 2;
+            state = RCGL;
+            break;
+        case GEN_LB:
+            n = n1;
+            lrbxy = 1;
+            state = LB1;
+            break;
+        case LB1:
+            if (dir)
+            {
+                nh_x = nh;
+                nh_y = fh;
+            }
+            else
+            {
+                nh_x = fh;
+                nh_y = nh;
+            };
+            h[fh]._next = h[nh]._next;
+            h[nh]._next = fh;
+            fh++;
+            n1 = n;
+            n = n2;
+            n2 = x[n1].pair;
+            nh = nh_x;
+            h[nh_y].n1 = n2;
+            h[nh_y].n2 = n;
+            x[n1].p = x[n1].q = nel;
+            x[n2].p = x[n2].q = nel + 1;
+            nel += 2;
+            state = HSCH;
+            break;
+        case LSW3:
+            state = ERROR;
+            break;
+        case LSW4:
+            //    s-variable
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+                gopn(n_lsd, (char)v[ind]._q);
+            else
+            {
+                jbyte(n_ls);
+                v[ind]._q = nel;
+            };
+            state = LSMD;
+            break;
+        case LSMD:
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].spec.info.codef != NULL)
+                gopl(n_wspc, x[n].spec.info.codef);
+            state = L1;
+            break;
+        case L1:
+            x[n].p = x[n].q = nel;
+            nel++;
+            n1 = n;
+            state = RCGL;
+            break;
+        case LSW5:
+            //   w-variable
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+                state = LED;
+            else
+            {
+                jbyte(n_lw);
+                v[ind]._q = nel + 1;
+                x[n].next = v[ind].last;
+                v[ind].last = n;
+                (v[ind].rem)--;
+                if (x[n].spec.info.codef != NULL)
+                    gopl(n_wspc, x[n].spec.info.codef);
+                state = L2;
+            }
+            break;
+        case LED:
+            gopn(n_led, (char)v[ind]._q);
+            state = LEMD;
+            break;
+        case LEMD:
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].spec.info.codef != NULL)
+                gopl(n_espc, x[n].spec.info.codef);
+            state = L2;
+            break;
+        case L2:
+            x[n].p = nel;
+            x[n].q = nel + 1;
+            nel += 2;
+            n1 = n;
+            state = RCGL;
+            break;
+        case LSW6:
+            //   e-variable
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+                state = LED;
+            else if (dir)
+                state = RCGR;
+            else if (n + 1 == n2)
+                state = CE;
+            else
+                state = IMPASSE;
+            break;
+            //                 hard element projection
+            //                 from  right board of
+            //                    current hole
         }
-LTXT1:
-    n++;
-    if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
-        goto LTXT2;
-    kol_lit++;
-    goto LTXT1;
-LTXT2:
-    if (kol_lit == 1)
-        goto LSCO;
-    n = n1;
-    gopn(n_ltxt, (char)kol_lit);
-    goto LTXT3;
-LTXT3:
-    n++;
-    jbyte(x[n].code.info.infoc[0]);
-    x[n].p = x[n].q = nel;
-    nel++;
-    kol_lit--;
-    if (kol_lit != 0)
-        goto LTXT3;
-    n1 = n;
-    goto RCGL;
-LSCO:
-    n = n1 + 1;
-    gopn(n_lsco, x[n].code.info.infoc[0]);
-    goto L1;
-LSW2: //  left bracket
-    n1 = n;
-    n = x[n1].pair;
-    if (n1 + 1 == n)
-        goto LBNIL;
-    if (n1 + 2 != n)
-        goto GEN_LB;
-    n = n1 + 1;
-    if (x[n].t != t_e)
-        goto GEN_LB;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto GEN_LB;
-    goto LBCE;
-LBCE:
-    nel += 2;
-    jbyte(n_lbce);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].v != 0)
-        jbyte(n_nnil);
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    x[n1].p = x[n1].q = nel - 4;
-    n1 += 2;
-    x[n1].p = x[n1].q = nel - 3;
-    goto RCGL;
-LBNIL:
-    jbyte(n_lbnil);
-    x[n1].p = x[n1].q = nel;
-    n1 = n;
-    x[n1].p = x[n1].q = nel + 1;
-    nel += 2;
-    goto RCGL;
-GEN_LB:
-    n = n1;
-    lrbxy = 1;
-    goto LB1;
-LB1:
-    if (dir)
-    {
-        nh_x = nh;
-        nh_y = fh;
-    }
-    else
-    {
-        nh_x = fh;
-        nh_y = nh;
-    };
-    h[fh]._next = h[nh]._next;
-    h[nh]._next = fh;
-    fh++;
-    n1 = n;
-    n = n2;
-    n2 = x[n1].pair;
-    nh = nh_x;
-    h[nh_y].n1 = n2;
-    h[nh_y].n2 = n;
-    x[n1].p = x[n1].q = nel;
-    x[n2].p = x[n2].q = nel + 1;
-    nel += 2;
-    goto HSCH;
-LSW3:
-    goto ERROR;
-LSW4: //    s-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        gopn(n_lsd, (char)v[ind]._q);
-    else
-    {
-        jbyte(n_ls);
-        v[ind]._q = nel;
-    };
-    goto LSMD;
-LSMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto L1;
-L1:
-    x[n].p = x[n].q = nel;
-    nel++;
-    n1 = n;
-    goto RCGL;
-LSW5: //   w-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    jbyte(n_lw);
-    v[ind]._q = nel + 1;
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_wspc, x[n].spec.info.codef);
-    goto L2;
-LED:
-    gopn(n_led, (char)v[ind]._q);
-    goto LEMD;
-LEMD:
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].spec.info.codef != NULL)
-        gopl(n_espc, x[n].spec.info.codef);
-    goto L2;
-L2:
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    n1 = n;
-    goto RCGL;
-LSW6: //   e-variable
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto LED;
-    if (dir)
-        goto RCGR;
-    if (n + 1 == n2)
-        goto CE;
-    else
-        goto IMPASSE;
-
-    //                 hard element projection
-    //                 from  right board of
-    //                    current hole
 
 RCGR:
     n = n2 - 1;
