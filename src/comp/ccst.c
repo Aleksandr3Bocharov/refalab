@@ -993,84 +993,106 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             else
                 state = RCGR;
             break;
+            //  opened e_variable processing
+        case OE:
+            nh = 1;
+            n1 = h[nh].n1;
+            n2 = h[nh].n2;
+            gen_bsb();
+            if (dir)
+                n = n1 + 1;
+            else
+                n = n2 - 1;
+            ind = x[n].ind;
+            if (x[n].eoemrk)
+            {
+                diff_e_level = e_level - x[n].e_level;
+                if (diff_e_level == 1)
+                    jbyte(n_eoei);
+                else
+                    gopn(n_eoe, (char)diff_e_level);
+                e_level = x[n].e_level;
+                x[n].eoemrk = 0;
+                x[n].e_level = 0;
+            };
+            if (n1 + 2 == n2)
+                state = CE1;
+            else
+            {
+                if (dir)
+                    n = n2 - 1;
+                else
+                    n = n1 + 1;
+                if (x[n].spec.info.codef == NULL)
+                    state = OE1;
+                else
+                    state = OE0;
+            }
+            break;
+        case OE0:
+            ind = x[n].ind;
+            if ((v[ind].last != 0) || (v[ind].rem != 1))
+                state = OE1;
+            else
+            {
+                if (dir)
+                {
+                    n--;
+                    if (n == n1)
+                    {
+                        state = OERMAX;
+                        break;
+                    }
+                }
+                else
+                {
+                    n++;
+                    if (n == n2)
+                    {
+                        state = OELMAX;
+                        break;
+                    }
+                };
+                if ((x[n].t != t_e) || (x[n].v == 1))
+                    state = OE1;
+                else
+                    state = OE0;
+            }
+            break;
+        case OERMAX:
+            n = n2 - 1;
+            ind = x[n].ind;
+            state = RMAX;
+            break;
+        case RMAX:
+            gopl(n_rmax, x[n].spec.info.codef);
+            if (x[n].v == 1)
+                jbyte(n_nnil);
+            x[n].spec.info.codef = NULL;
+            state = REM;
+            break;
+        case REM:
+            v[ind]._q = nel + 1;
+            state = REMD;
+            break;
+        case OELMAX:
+            n = n1 + 1;
+            ind = x[n].ind;
+            state = LMAX;
+            break;
+        case LMAX:
+            gopl(n_lmax, x[n].spec.info.codef);
+            if (x[n].v == 1)
+                jbyte(n_nnil);
+            x[n].spec.info.codef = NULL;
+            state = LEM;
+            break;
+        case LEM:
+            v[ind]._q = nel + 1;
+            state = LEMD;
+            break;
         }
 
-    //  opened e_variable processing
-OE:
-    nh = 1;
-    n1 = h[nh].n1;
-    n2 = h[nh].n2;
-    gen_bsb();
-    if (dir)
-        n = n1 + 1;
-    else
-        n = n2 - 1;
-    ind = x[n].ind;
-    if (x[n].eoemrk)
-    {
-        diff_e_level = e_level - x[n].e_level;
-        if (diff_e_level == 1)
-            jbyte(n_eoei);
-        else
-            gopn(n_eoe, (char)diff_e_level);
-        e_level = x[n].e_level;
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-    };
-    if (n1 + 2 == n2)
-        goto CE1;
-    if (dir)
-        n = n2 - 1;
-    else
-        n = n1 + 1;
-    if (x[n].spec.info.codef == NULL)
-        goto OE1;
-    goto OE0;
-OE0:
-    ind = x[n].ind;
-    if ((v[ind].last != 0) || (v[ind].rem != 1))
-        goto OE1;
-    if (dir)
-    {
-        n--;
-        if (n == n1)
-            goto OERMAX;
-    }
-    else
-    {
-        n++;
-        if (n == n2)
-            goto OELMAX;
-    };
-    if ((x[n].t != t_e) || (x[n].v == 1))
-        goto OE1;
-    goto OE0;
-OERMAX:
-    n = n2 - 1;
-    ind = x[n].ind;
-    goto RMAX;
-RMAX:
-    gopl(n_rmax, x[n].spec.info.codef);
-    if (x[n].v == 1)
-        jbyte(n_nnil);
-    x[n].spec.info.codef = NULL;
-    goto REM;
-REM:
-    v[ind]._q = nel + 1;
-    goto REMD;
-OELMAX:
-    n = n1 + 1;
-    ind = x[n].ind;
-    goto LMAX;
-LMAX:
-    gopl(n_lmax, x[n].spec.info.codef);
-    if (x[n].v == 1)
-        jbyte(n_nnil);
-    x[n].spec.info.codef = NULL;
-    goto LEM;
-LEM:
-    v[ind]._q = nel + 1;
-    goto LEMD;
 OE1:
     if (dir)
         goto LOE;
