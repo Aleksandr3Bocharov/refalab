@@ -870,103 +870,131 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             else
                 state = IMPASSE;
             break;
+        case NIL:
+            //     empty hole
+            jbyte(n_nil);
+            next_nh = h[nh]._next;
+            h[nh]._next = h[next_nh]._next;
+            h[nh].n1 = h[next_nh].n1;
+            h[nh].n2 = h[next_nh].n2;
+            nh = next_nh;
+            state = IMPASSE;
+            break;
+        case CE:
+            //   closed including
+            if (x[n].eoemrk != 0)
+                state = IMPASSE;
+            else
+                state = CE1;
+            break;
+        case CE1:
+            if (x[n].spec.info.codef == NULL)
+                state = CE2;
+            else if (dir)
+                state = LMAX;
+            else
+                state = RMAX;
+            break;
+        case CE2:
+            ind = x[n].ind;
+            v[ind]._q = nel + 1;
+            jbyte(n_ce);
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].v == 1)
+                jbyte(n_nnil);
+            x[n].p = nel;
+            x[n].q = nel + 1;
+            nel += 2;
+            next_nh = h[nh]._next;
+            h[nh]._next = h[next_nh]._next;
+            h[nh].n1 = h[next_nh].n1;
+            h[nh].n2 = h[next_nh].n2;
+            nh = next_nh;
+            state = IMPASSE;
+            break;
+        //
+        //          It is impossible movement
+        //          on hard element here or
+        //          hole ended here
+        case IMPASSE:
+            lrbxy = 0;
+            nh_x = nh;
+            state = HSCH;
+            break;
+        //          Search of hole with hard
+        //          elements on its boards.
+        //          If it not exist than project
+        //          e-variable from first hole.
+        case HSCH:
+            h[nh].n1 = n1;
+            h[nh].n2 = n2;
+            nh = 1;
+            if (h[nh]._next == 0)
+                state = RCGFIN;
+            else
+                state = NHOLE;
+            break;
+        case NHOLE:
+            n1 = h[nh].n1;
+            n2 = h[nh].n2;
+            n = n1 + 1;
+            if (n == n2)
+            {
+                gen_bsb();
+                state = NIL;
+            }
+            else if (x[n].t != t_e)
+                state = RIGID;
+            else
+            {
+                ind = x[n].ind;
+                if (v[ind].last != 0)
+                    state = RIGID;
+                else if (n + 1 == n2)
+                {
+                    if (v[ind].rem == 1)
+                        state = NHOLE1;
+                    else
+                    {
+                        gen_bsb();
+                        state = CE1;
+                    }
+                }
+                else
+                {
+                    n = n2 - 1;
+                    if (x[n].t != t_e)
+                        state = RIGID;
+                    else
+                    {
+                        ind = x[n].ind;
+                        if (v[ind].last != 0)
+                            state = RIGID;
+                        else
+                            state = NHOLE1;
+                    }
+                }
+            }
+            break;
+        case NHOLE1:
+            nh = h[nh]._next;
+            if (h[nh]._next == 0)
+                state = OE;
+            else
+                state = NHOLE;
+            break;
+        case RIGID:
+            //  hard element on the both hole boards
+            gen_bsb();
+            if (dir)
+                state = RCGL;
+            else
+                state = RCGR;
+            break;
         }
-NIL: //     empty hole
-    jbyte(n_nil);
-    next_nh = h[nh]._next;
-    h[nh]._next = h[next_nh]._next;
-    h[nh].n1 = h[next_nh].n1;
-    h[nh].n2 = h[next_nh].n2;
-    nh = next_nh;
-    goto IMPASSE;
-CE: //   closed including
-    if (x[n].eoemrk != 0)
-        goto IMPASSE;
-    goto CE1;
-CE1:
-    if (x[n].spec.info.codef == NULL)
-        goto CE2;
-    if (dir)
-        goto LMAX;
-    else
-        goto RMAX;
-CE2:
-    ind = x[n].ind;
-    v[ind]._q = nel + 1;
-    jbyte(n_ce);
-    x[n].next = v[ind].last;
-    v[ind].last = n;
-    (v[ind].rem)--;
-    if (x[n].v == 1)
-        jbyte(n_nnil);
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
-    next_nh = h[nh]._next;
-    h[nh]._next = h[next_nh]._next;
-    h[nh].n1 = h[next_nh].n1;
-    h[nh].n2 = h[next_nh].n2;
-    nh = next_nh;
-    goto IMPASSE;
-//
-//          It is impossible movement
-//          on hard element here or
-//          hole ended here
-IMPASSE:
-    lrbxy = 0;
-    nh_x = nh;
-    goto HSCH;
-//          Search of hole with hard
-//          elements on its boards.
-//          If it not exist than project
-//          e-variable from first hole.
-HSCH:
-    h[nh].n1 = n1;
-    h[nh].n2 = n2;
-    nh = 1;
-    if (h[nh]._next == 0)
-        goto RCGFIN;
-    goto NHOLE;
-NHOLE:
-    n1 = h[nh].n1;
-    n2 = h[nh].n2;
-    n = n1 + 1;
-    if (n == n2)
-    {
-        gen_bsb();
-        goto NIL;
-    };
-    if (x[n].t != t_e)
-        goto RIGID;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RIGID;
-    if (n + 1 == n2)
-    {
-        if (v[ind].rem == 1)
-            goto NHOLE1;
-        gen_bsb();
-        goto CE1;
-    };
-    n = n2 - 1;
-    if (x[n].t != t_e)
-        goto RIGID;
-    ind = x[n].ind;
-    if (v[ind].last != 0)
-        goto RIGID;
-    goto NHOLE1;
-NHOLE1:
-    nh = h[nh]._next;
-    if (h[nh]._next == 0)
-        goto OE;
-    else
-        goto NHOLE;
-RIGID: //  hard element on the both hole boards
-    gen_bsb();
-    if (dir)
-        goto RCGL;
-    else
-        goto RCGR;
+
     //  opened e_variable processing
 OE:
     nh = 1;
