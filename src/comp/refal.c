@@ -568,17 +568,18 @@ RDCARD1:
 static void lblkey(unsigned int pr)
 {
     if (pr == 0)
-    {
-    LK1:
-        rdcard();
-        if (c[0] == ' ')
-            lbl_leng = 0;
-        else if (!get_id(stmlbl, &lbl_leng))
+        while (true)
         {
-            pchosh("120 the first symbol is not letter or blank");
-            goto LK1;
+            rdcard();
+            if (c[0] == ' ')
+                lbl_leng = 0;
+            else if (!get_id(stmlbl, &lbl_leng))
+            {
+                pchosh("120 the first symbol is not letter or blank");
+                continue;
+            }
+            break;
         }
-    }
     blout();
     for (size_t i = 0; i < 6; i++)
         stmkey[i] = ' ';
@@ -1246,64 +1247,70 @@ static void pchk_t()
 static void il(void (*prog)(const char *, unsigned int)) // treatment of directives having 'EMPTY' type
 {
     blout();
-IL1:
-    char id[40];
-    unsigned int lid;
-    if (!get_id(id, &lid))
-        goto IL2;
-    (*prog)(id, lid);
-    blout();
-    if (m == 71 && c[m] == ' ')
-        return;
-    if (c[m] == ',')
+    while (true)
     {
-        EH ROMA;
-        if (c[m] == ' ')
-            blout();
-        goto IL1;
+        char id[40];
+        unsigned int lid;
+        if (!get_id(id, &lid))
+            break;
+        (*prog)(id, lid);
+        blout();
+        if (m == 71 && c[m] == ' ')
+            return;
+        if (c[m] == ',')
+        {
+            EH ROMA;
+            if (c[m] == ' ')
+                blout();
+            continue;
+        }
+        break;
     }
-IL2:
     pch130();
+    return;
 }
 
 static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) // treatment of directives having 'ENTRY' type
 {
     blout();
-ILM1:
-    char id[40];
-    unsigned int lid;
-    if (!get_id(id, &lid))
-        goto ILM2;
-    char ide[8];
-    unsigned int lide;
-    if (c[m] == '(')
+    while (true)
     {
-        EH ROMA;
-        if (!get_idm(ide, &lide))
-            goto ILM2;
-        (*prog)(id, lid, ide, lide);
-        if (c[m] != ')')
-            goto ILM2;
-        EH ROMA;
+        char id[40];
+        unsigned int lid;
+        if (!get_id(id, &lid))
+            break;
+        char ide[8];
+        unsigned int lide;
+        if (c[m] == '(')
+        {
+            EH ROMA;
+            if (!get_idm(ide, &lide))
+                break;
+            (*prog)(id, lid, ide, lide);
+            if (c[m] != ')')
+                break;
+            EH ROMA;
+        }
+        else
+        {
+            lide = (lid > 8) ? 8 : lid;
+            strncpy(ide, id, lide);
+            (*prog)(id, lid, ide, lide);
+        }
+        blout();
+        if (m == 71 && c[m] == ' ')
+            return;
+        if (c[m] == ',')
+        {
+            EH ROMA;
+            if (c[m] == ' ')
+                blout();
+            continue;
+        }
+        break;
     }
-    else
-    {
-        lide = (lid > 8) ? 8 : lid;
-        strncpy(ide, id, lide);
-        (*prog)(id, lid, ide, lide);
-    }
-    blout();
-    if (m == 71 && c[m] == ' ')
-        return;
-    if (c[m] == ',')
-    {
-        EH ROMA;
-        if (c[m] == ' ')
-            blout();
-        goto ILM1;
-    }
-ILM2:
     pch130();
+    return;
 }
 
 static void equ()
@@ -1311,13 +1318,16 @@ static void equ()
     blout();
     char id[40];
     unsigned int lid;
-    if (!get_id(id, &lid))
-        goto EQU1;
-    sequ(stmlbl, lbl_leng, id, lid);
-    if (c[m] == ' ')
-        return;
-EQU1:
+    do
+    {
+        if (!get_id(id, &lid))
+            break;
+        sequ(stmlbl, lbl_leng, id, lid);
+        if (c[m] == ' ')
+            return;
+    } while (false);
     pch130();
+    return;
 }
 
 static void pch130()
@@ -1394,7 +1404,7 @@ static bool get_id(char id[40], unsigned int *lid)
     {
         EH ROMA0; // kras
         if ((class[m] != 'L') && (class[m] != 'D') && (c[m] != '_') && (c[m] != '-'))
-            goto ID0;
+            return true;
         id[*lid] = convert(c[m]);
     }
     // if identifier length > 40 then delete tail
@@ -1402,7 +1412,6 @@ static bool get_id(char id[40], unsigned int *lid)
     {
         EH ROMA0;
     } // kras
-ID0:
     return true;
 }
 
@@ -1435,17 +1444,19 @@ static bool get_idm(char id[8], unsigned int *lid)
 //**********************************************************
 static void blout()
 {
-BLOUT1:
-    while ((m != 71) && (c[m] == ' '))
-        m++;
-    if (c[m] == '+')
+    while (true)
     {
-        rdcard();
-        if (_eoj == 1)
-            return;
-        goto BLOUT1;
+        while ((m != 71) && (c[m] == ' '))
+            m++;
+        if (c[m] == '+')
+        {
+            rdcard();
+            if (_eoj == 1)
+                return;
+            continue;
+        }
+        return;
     }
-    return;
 }
 
 static void pchzkl()
