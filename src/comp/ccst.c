@@ -125,6 +125,8 @@ typedef enum states
     SW_RPE,
     RPE0,
     RPE1,
+    TEXT,
+    TEXT1,
     RPE2,
     RPE3,
     RPE4,
@@ -425,16 +427,22 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
                 {
                 case 1:
                     state = LSW1;
+                    break;
                 case 2:
                     state = LSW2;
+                    break;
                 case 3:
                     state = LSW3;
+                    break;
                 case 4:
                     state = LSW4;
+                    break;
                 case 5:
                     state = LSW5;
+                    break;
                 case 6:
                     state = LSW6;
+                    break;
                 };
             break;
         case LSW1:
@@ -654,16 +662,22 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
                 {
                 case 1:
                     state = RSW1;
+                    break;
                 case 2:
                     state = RSW2;
+                    break;
                 case 3:
                     state = RSW3;
+                    break;
                 case 4:
                     state = RSW4;
+                    break;
                 case 5:
                     state = RSW5;
+                    break;
                 case 6:
                     state = RSW6;
+                    break;
                 };
             break;
         case RSW1:
@@ -1091,355 +1105,440 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             v[ind]._q = nel + 1;
             state = LEMD;
             break;
-        }
-
-OE1:
-    if (dir)
-        goto LOE;
-    else
-        goto ROE;
-LOE:
-    n = n1 + 1;
-    ie = x[n].ind;
-    goto LSG;
-    //         attempt to extract left support group
-LSG:
-    if (lsg_p())
-        goto LE_CASE;
-    else
-        goto RCGL;
-LE_CASE:
-    n = n1 + 1;
-    switch (x[n].t)
-    {
-    case 1:
-        goto LESW1;
-    case 2:
-        goto LESW2;
-    case 3:
-        goto LESW3;
-    case 4:
-        goto LESW4;
-    case 5:
-        goto LESW5;
-    case 6:
-        goto LESW6;
-    };
-LESW1: //  ei 'a' . . .
-    xncode.tag = x[n].code.tag;
-    xncode.info.codef = x[n].code.info.codef;
-    n++;
-    if ((not_nil == 0) && (x[n].eoemrk == 1))
-    {
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-        e_level--;
-        gops(n_lsrch, &xncode);
-    }
-    else
-    {
-        gpev(n_plesc, n_plvsc);
-        gops(n_lesc, &xncode);
-    };
-    n--;
-    goto L1;
-LESW2: //   ei ( . . . ) . . .
-    gpev(n_pleb, n_plvb);
-    jbyte(n_leb);
-    lrbxy = 0;
-    goto LB1;
-LESW3:
-    goto ERROR;
-LESW4: //  ei sj . . .
-    ind = x[n].ind;
-    if (v[ind].last == 0)
-        goto LE;
-    gpev(n_plesc, n_plvsc);
-    gopn(n_lesd, (char)v[ind]._q);
-    goto LSMD;
-LESW5:
-    goto LE;
-LESW6: //  ei . . .
-    goto LE;
-LE:
-    gpev(n_ple, n_plv);
-    jbyte(n_le);
-    goto RCGL;
-ROE:
-    n = n2 - 1;
-    ie = x[n].ind;
-    goto RSG;
-//                 attempt to extract right support group
-RSG:
-    if (rsg_p())
-        goto RE_CASE;
-    else
-        goto RCGR;
-RE_CASE:
-    n = n2 - 1;
-    switch (x[n].t)
-    {
-    case 1:
-        goto RESW1;
-    case 2:
-        goto RESW2;
-    case 3:
-        goto RESW3;
-    case 4:
-        goto RESW4;
-    case 5:
-        goto RESW5;
-    case 6:
-        goto RESW6;
-    };
-RESW1: //    . . .  'a' ei
-    xncode.tag = x[n].code.tag;
-    xncode.info.codef = x[n].code.info.codef;
-    n--;
-    if ((not_nil == 0) && (x[n].eoemrk == 1))
-    {
-        x[n].eoemrk = 0;
-        x[n].e_level = 0;
-        e_level--;
-        gops(n_rsrch, &xncode);
-    }
-    else
-    {
-        gpev(n_presc, n_prvsc);
-        gops(n_resc, &xncode);
-    };
-    n++;
-    goto R1;
-RESW2:
-    goto ERROR;
-RESW3: // . . .  ( . . .  ) ei
-    gpev(n_preb, n_prvb);
-    jbyte(n_reb);
-    lrbxy = 0;
-    goto RB1;
-RESW4: //  . . . sj ei
-    ind = x[n].ind;
-    if (v[ind].last == 0)
-        goto RE;
-    gpev(n_presc, n_prvsc);
-    gopn(n_resd, (char)v[ind]._q);
-    goto RSMD;
-RESW5:
-    goto RE;
-RESW6: // . . .  ei
-    goto RE;
-RE:
-    gpev(n_pre, n_prv);
-    jbyte(n_re);
-    goto RCGR;
-    //                 identification end
-RCGFIN:
-    jbyte(n_eor);
-
-    //--------------------------------------------
-    //         right part compilation
-    //--------------------------------------------
-
-    ur_skob = 1;
-    kol_skob[ur_skob] = 0;
-    goto GET_RPE;
-
-    //  read next element of right part
-
-GET_RPE:
-    scan();
-    goto SW_RPE;
-SW_RPE:
-    switch (scn_e.t)
-    {
-    case 0:
-        goto RPE0;
-    case 1:
-        goto RPE1;
-    case 2:
-        goto RPE2;
-    case 3:
-        goto RPE3;
-    case 4:
-        goto RPE4;
-    case 5:
-        goto RPE5;
-    case 6:
-        goto RPE6;
-    case 7:
-        goto RPE7;
-    case 8:
-        goto RPE8;
-    case 9:
-        goto RPE9;
-    case 10:
-        goto RPE10;
-    default:
-        goto RP_OSH300;
-    };
-RPE0: // scanner error
-    goto RP_OSH300;
-RPE1: // symbol-constant
-    if (scn_e.code.tag == TAGO)
-        goto TEXT;
-    gops(n_ns, &scn_e.code);
-    goto GET_RPE;
-TEXT:
-    kol_lit = 0;
-    goto TEXT1;
-TEXT1:
-    kol_lit++;
-    buf_lit[kol_lit] = scn_e.code.info.infoc[0];
-    scan();
-    if ((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO))
-        goto TEXT1;
-    if (kol_lit == 1)
-        gopn(n_nso, buf_lit[1]);
-    else
-    {
-        gopn(n_text, kol_lit);
-        for (k = 1; k <= kol_lit; k++)
-            jbyte(buf_lit[k]);
-    };
-    goto SW_RPE;
-RPE2: // left bracket
-    scan();
-    if (scn_e.t == t_rb)
-    {
-        jbyte(n_blr);
-        goto GET_RPE;
-    };
-    kol_skob[ur_skob]++;
-    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-    {
-        funcptr.info.codef = scn_e.code.info.codef;
-        gopl(n_blf, funcptr.info.codef);
-        goto GET_RPE;
-    }
-    else
-    {
-        jbyte(n_bl);
-        goto SW_RPE;
-    };
-RPE3: // right bracket
-    jbyte(n_br);
-    if (kol_skob[ur_skob] == 0)
-        pchosh("402 too many ')' in right part");
-    else
-        kol_skob[ur_skob]--;
-    goto GET_RPE;
-RPE4: // s - varyable
-    isk_v();
-    switch (v[ind]._t)
-    {
-    case 0:
-        pch406();
-        break;
-    case 1:
-        gopn(n_muls, v[ind]._q);
-        break;
-    default:
-        pch303();
-    };
-    goto GET_RPE;
-RPE5: // w - varyable
-    isk_v();
-    switch (v[ind]._t)
-    {
-    case 0:
-        pch406();
-        break;
-    case 2:
-        n = v[ind].last;
-        if (n == 0)
-            gopn(n_mule, v[ind]._q);
-        else
-        {
-            gopn(n_tplv, x[n].q);
-            v[ind].last = x[n].next;
-        };
-        break;
-    default:
-        pch303();
-    };
-    goto GET_RPE;
-RPE6: // e- or v-varyable
-    isk_v();
-    if (v[ind]._t == 0)
-        pch406();
-    else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
-    {
-        n = v[ind].last;
-        if (n == 0)
-            gopn(n_mule, v[ind]._q);
-        else
-        {
-            if (v[ind]._v == 1)
-                gopn(n_tplv, x[n].q);
+        case OE1:
+            if (dir)
+                state = LOE;
             else
-                gopn(n_tple, x[n].q);
-            v[ind].last = x[n].next;
-        };
-    }
-    else
-        pch303();
-    goto GET_RPE;
-RPE7: // sign "k"
-    if (ur_skob > 511)
-    {
-        pchosh("407 including of the signs 'k' > 511");
-        goto RP_OSH300;
-    };
-    kol_skob[++ur_skob] = 0;
-    scan();
-    if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-    {
-        funcptr.info.codef = scn_e.code.info.codef;
-        funcptr.tag = 0;
-        gopl(n_blf, funcptr.info.codef);
-        goto GET_RPE;
-    }
-    else
-    {
-        jbyte(n_bl);
-        goto SW_RPE;
-    };
-RPE8: // sign '.'
-    if (ur_skob == 1)
-        pchosh("404 too many sign '.' in right part");
-    else
-    {
-        if (kol_skob[ur_skob] != 0)
-            pchosh("401 too many '(' in right part");
-        jbyte(n_bract);
-        ur_skob--;
-    };
-    goto GET_RPE;
-RPE9: // sign '=' in right part
-    pchosh("405 sign '=' in right part");
-    goto GET_RPE;
-RPE10: // sentence end
-    scn_.curr_stmnmb++;
-    if (options.stmnmb == 1)
-    {
-        jbyte(n_eossn);
-        ghw(scn_.curr_stmnmb);
-    }
-    else
-        jbyte(n_eos);
-    if (ur_skob != 1)
-        pchosh("403 too many signs 'k' in right part");
-    if (kol_skob[ur_skob] != 0)
-        pchosh("401 too many '(' in right part");
-    return;
-RP_OSH300:
-    pchosh("300 sentence is't scanned");
-    return;
-//                      place of compiler's error
-ERROR:
-    printf("Compiler's error\n");
-    exit(1);
-    return;
+                state = ROE;
+            break;
+        case LOE:
+            n = n1 + 1;
+            ie = x[n].ind;
+            state = LSG;
+            break;
+        //         attempt to extract left support group
+        case LSG:
+            if (lsg_p())
+                state = LE_CASE;
+            else
+                state = RCGL;
+            break;
+        case LE_CASE:
+            n = n1 + 1;
+            switch (x[n].t)
+            {
+            case 1:
+                state = LESW1;
+                break;
+            case 2:
+                state = LESW2;
+                break;
+            case 3:
+                state = LESW3;
+                break;
+            case 4:
+                state = LESW4;
+                break;
+            case 5:
+                state = LESW5;
+                break;
+            case 6:
+                state = LESW6;
+                break;
+            };
+            break;
+        case LESW1:
+            //  ei 'a' . . .
+            xncode.tag = x[n].code.tag;
+            xncode.info.codef = x[n].code.info.codef;
+            n++;
+            if ((not_nil == 0) && (x[n].eoemrk == 1))
+            {
+                x[n].eoemrk = 0;
+                x[n].e_level = 0;
+                e_level--;
+                gops(n_lsrch, &xncode);
+            }
+            else
+            {
+                gpev(n_plesc, n_plvsc);
+                gops(n_lesc, &xncode);
+            };
+            n--;
+            state = L1;
+            break;
+        case LESW2:
+            //   ei ( . . . ) . . .
+            gpev(n_pleb, n_plvb);
+            jbyte(n_leb);
+            lrbxy = 0;
+            state = LB1;
+            break;
+        case LESW3:
+            state = ERROR;
+            break;
+        case LESW4:
+            //  ei sj . . .
+            ind = x[n].ind;
+            if (v[ind].last == 0)
+                state = LE;
+            else
+            {
+                gpev(n_plesc, n_plvsc);
+                gopn(n_lesd, (char)v[ind]._q);
+                state = LSMD;
+            }
+            break;
+        case LESW5:
+        case LESW6:
+            //  ei . . .
+            state = LE;
+            break;
+        case LE:
+            gpev(n_ple, n_plv);
+            jbyte(n_le);
+            state = RCGL;
+            break;
+        case ROE:
+            n = n2 - 1;
+            ie = x[n].ind;
+            state = RSG;
+            break;
+        //                 attempt to extract right support group
+        case RSG:
+            if (rsg_p())
+                state = RE_CASE;
+            else
+                state = RCGR;
+            break;
+        case RE_CASE:
+            n = n2 - 1;
+            switch (x[n].t)
+            {
+            case 1:
+                state = RESW1;
+                break;
+            case 2:
+                state = RESW2;
+                break;
+            case 3:
+                state = RESW3;
+                break;
+            case 4:
+                state = RESW4;
+                break;
+            case 5:
+                state = RESW5;
+                break;
+            case 6:
+                state = RESW6;
+                break;
+            };
+            break;
+        case RESW1:
+            //    . . .  'a' ei
+            xncode.tag = x[n].code.tag;
+            xncode.info.codef = x[n].code.info.codef;
+            n--;
+            if ((not_nil == 0) && (x[n].eoemrk == 1))
+            {
+                x[n].eoemrk = 0;
+                x[n].e_level = 0;
+                e_level--;
+                gops(n_rsrch, &xncode);
+            }
+            else
+            {
+                gpev(n_presc, n_prvsc);
+                gops(n_resc, &xncode);
+            };
+            n++;
+            state = R1;
+            break;
+        case RESW2:
+            state = ERROR;
+            break;
+        case RESW3:
+            // . . .  ( . . .  ) ei
+            gpev(n_preb, n_prvb);
+            jbyte(n_reb);
+            lrbxy = 0;
+            state = RB1;
+            break;
+        case RESW4:
+            //  . . . sj ei
+            ind = x[n].ind;
+            if (v[ind].last == 0)
+                state = RE;
+            else
+            {
+                gpev(n_presc, n_prvsc);
+                gopn(n_resd, (char)v[ind]._q);
+                state = RSMD;
+            }
+            break;
+        case RESW5:
+        case RESW6:
+            // . . .  ei
+            state = RE;
+            break;
+        case RE:
+            gpev(n_pre, n_prv);
+            jbyte(n_re);
+            state = RCGR;
+            break;
+        //                 identification end
+        case RCGFIN:
+            jbyte(n_eor);
+            //--------------------------------------------
+            //         right part compilation
+            //--------------------------------------------
+            ur_skob = 1;
+            kol_skob[ur_skob] = 0;
+            state = GET_RPE;
+            break;
+        //  read next element of right part
+        case GET_RPE:
+            scan();
+            state = SW_RPE;
+            break;
+        case SW_RPE:
+            switch (scn_e.t)
+            {
+            case 0:
+                state = RPE0;
+                break;
+            case 1:
+                state = RPE1;
+                break;
+            case 2:
+                state = RPE2;
+                break;
+            case 3:
+                state = RPE3;
+                break;
+            case 4:
+                state = RPE4;
+                break;
+            case 5:
+                state = RPE5;
+                break;
+            case 6:
+                state = RPE6;
+                break;
+            case 7:
+                state = RPE7;
+                break;
+            case 8:
+                state = RPE8;
+                break;
+            case 9:
+                state = RPE9;
+                break;
+            case 10:
+                state = RPE10;
+                break;
+            default:
+                state = RP_OSH300;
+            };
+            break;
+        case RPE0:
+            // scanner error
+            state = RP_OSH300;
+            break;
+        case RPE1:
+            // symbol-constant
+            if (scn_e.code.tag == TAGO)
+                state = TEXT;
+            else
+            {
+                gops(n_ns, &scn_e.code);
+                state = GET_RPE;
+            }
+            break;
+        case TEXT:
+            kol_lit = 0;
+            state = TEXT1;
+            break;
+        case TEXT1:
+            kol_lit++;
+            buf_lit[kol_lit] = scn_e.code.info.infoc[0];
+            scan();
+            if (!((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO)))
+            {
+                if (kol_lit == 1)
+                    gopn(n_nso, buf_lit[1]);
+                else
+                {
+                    gopn(n_text, kol_lit);
+                    for (k = 1; k <= kol_lit; k++)
+                        jbyte(buf_lit[k]);
+                };
+                state = SW_RPE;
+            }
+            break;
+        case RPE2:
+            // left bracket
+            scan();
+            if (scn_e.t == t_rb)
+            {
+                jbyte(n_blr);
+                state = GET_RPE;
+            }
+            else
+            {
+                kol_skob[ur_skob]++;
+                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+                {
+                    funcptr.info.codef = scn_e.code.info.codef;
+                    gopl(n_blf, funcptr.info.codef);
+                    state = GET_RPE;
+                }
+                else
+                {
+                    jbyte(n_bl);
+                    state = SW_RPE;
+                }
+            }
+            break;
+        case RPE3:
+            // right bracket
+            jbyte(n_br);
+            if (kol_skob[ur_skob] == 0)
+                pchosh("402 too many ')' in right part");
+            else
+                kol_skob[ur_skob]--;
+            state = GET_RPE;
+            break;
+        case RPE4:
+            // s - varyable
+            isk_v();
+            switch (v[ind]._t)
+            {
+            case 0:
+                pch406();
+                break;
+            case 1:
+                gopn(n_muls, v[ind]._q);
+                break;
+            default:
+                pch303();
+            };
+            state = GET_RPE;
+            break;
+        case RPE5:
+            // w - varyable
+            isk_v();
+            switch (v[ind]._t)
+            {
+            case 0:
+                pch406();
+                break;
+            case 2:
+                n = v[ind].last;
+                if (n == 0)
+                    gopn(n_mule, v[ind]._q);
+                else
+                {
+                    gopn(n_tplv, x[n].q);
+                    v[ind].last = x[n].next;
+                };
+                break;
+            default:
+                pch303();
+            };
+            state = GET_RPE;
+            break;
+        case RPE6:
+            // e- or v-varyable
+            isk_v();
+            if (v[ind]._t == 0)
+                pch406();
+            else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
+            {
+                n = v[ind].last;
+                if (n == 0)
+                    gopn(n_mule, v[ind]._q);
+                else
+                {
+                    if (v[ind]._v == 1)
+                        gopn(n_tplv, x[n].q);
+                    else
+                        gopn(n_tple, x[n].q);
+                    v[ind].last = x[n].next;
+                };
+            }
+            else
+                pch303();
+            state = GET_RPE;
+            break;
+        case RPE7:
+            // sign "k"
+            if (ur_skob > 511)
+            {
+                pchosh("407 including of the signs 'k' > 511");
+                state = RP_OSH300;
+            }
+            else
+            {
+                kol_skob[++ur_skob] = 0;
+                scan();
+                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+                {
+                    funcptr.info.codef = scn_e.code.info.codef;
+                    funcptr.tag = 0;
+                    gopl(n_blf, funcptr.info.codef);
+                    state = GET_RPE;
+                }
+                else
+                {
+                    jbyte(n_bl);
+                    state = SW_RPE;
+                }
+            }
+            break;
+        case RPE8:
+            // sign '.'
+            if (ur_skob == 1)
+                pchosh("404 too many sign '.' in right part");
+            else
+            {
+                if (kol_skob[ur_skob] != 0)
+                    pchosh("401 too many '(' in right part");
+                jbyte(n_bract);
+                ur_skob--;
+            };
+            state = GET_RPE;
+            break;
+        case RPE9:
+            // sign '=' in right part
+            pchosh("405 sign '=' in right part");
+            state = GET_RPE;
+            break;
+        case RPE10:
+            // sentence end
+            scn_.curr_stmnmb++;
+            if (options.stmnmb == 1)
+            {
+                jbyte(n_eossn);
+                ghw(scn_.curr_stmnmb);
+            }
+            else
+                jbyte(n_eos);
+            if (ur_skob != 1)
+                pchosh("403 too many signs 'k' in right part");
+            if (kol_skob[ur_skob] != 0)
+                pchosh("401 too many '(' in right part");
+            return;
+        case RP_OSH300:
+            pchosh("300 sentence is't scanned");
+            return;
+        //                      place of compiler's error
+        case ERROR:
+            printf("Compiler's error\n");
+            exit(1);
+            return;
+        }
 }
 
 static void isk_v()
