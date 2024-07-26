@@ -120,6 +120,7 @@ static timespec t0;
 static void SET_time()
 {
     timespec_get(&t0, TIME_UTC);
+    return;
 }
 
 static void GET_time()
@@ -138,6 +139,7 @@ static void GET_time()
     char s[25];
     sprintf(s, "%02ld:%02ld.%09ld", im, is, in);
     printf("                       elapsed time      = %s\n", s);
+    return;
 }
 
 int main(int argc, char *argv[])
@@ -450,6 +452,7 @@ static void trprev()
     else if (n != 0)
         sempty(prevlb, n);
     prevlb[0] = '\0';
+    return;
 }
 
 static void rdline(char *s)
@@ -478,6 +481,7 @@ static void rdline(char *s)
         _eoj = 1;
     for (; i < 80; i++)
         *(s + i) = ' ';
+    return;
 }
 
 static void translate(const char *str, char *class1)
@@ -509,6 +513,7 @@ static void translate(const char *str, char *class1)
         if ((j == 35) || (j == 95))
             *(class1 + i) = 'L';
     }
+    return;
 }
 
 static bool komm()
@@ -556,6 +561,7 @@ RDCARD1:
     if (*(c + 71) != ' ')
         *(c + 71) = '+'; //!!!
     m = 0;
+    return;
 }
 
 //    directive label and keyword extraction
@@ -609,6 +615,7 @@ static void lblkey(unsigned int pr)
 LKEXIT:
     scn_state = 0;
     left_part = 1;
+    return;
 }
 
 void scan()
@@ -923,6 +930,7 @@ static void gsp(char n)
 {
     if (left_part == 1)
         jbyte(n);
+    return;
 }
 
 static bool specif(char tail)
@@ -1216,6 +1224,7 @@ static void pchk()
             fputs(tmpstr, sysprint);
         }
     }
+    return;
 }
 
 static void pchk_t()
@@ -1231,6 +1240,7 @@ static void pchk_t()
             fputs(tmpstr, systerm);
         }
     }
+    return;
 }
 
 static void il(void (*prog)(const char *, unsigned int)) // treatment of directives having 'EMPTY' type
@@ -1313,6 +1323,7 @@ EQU1:
 static void pch130()
 {
     pchosh("130 invalid record format");
+    return;
 }
 
 static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid) // procedure read multiple symbol
@@ -1434,6 +1445,7 @@ BLOUT1:
             return;
         goto BLOUT1;
     }
+    return;
 }
 
 static void pchzkl()
@@ -1455,6 +1467,7 @@ static void pchzkl()
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
     GET_time();
+    return;
 }
 
 void oshibka()
@@ -1462,5 +1475,6 @@ void oshibka()
     pchk();
     pchk_t();
     kolosh++;
+    return;
 }
 //----------  end of file REFAL.C  -------------------
