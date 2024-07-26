@@ -34,6 +34,39 @@
     }         \
     }
 
+typedef enum sp_states
+{
+    SPCBLO,
+    SPCPRC,
+    SPCFF,
+    SPCL,
+    SPCR,
+    SPCR1,
+    SPCR2,
+    SPCR3,
+    SPCESC,
+    SPCSP,
+    SPCA,
+    SPCA1,
+    SPCEW,
+    SPCES,
+    SPCEB,
+    SPCEF,
+    SPCEN,
+    SPCER,
+    SPCEO,
+    SPCEL,
+    SPCED,
+    SPCGC,
+    OSH200,
+    OSH202,
+    OSH203,
+    OSH204,
+    OSH205,
+    OSH206,
+    OSH208
+} T_SP_STATES;
+
 T_OPT options;
 
 T_SCN scn_;
@@ -940,63 +973,77 @@ static void gsp(char n)
 static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
-SPCBLO:
-    blout();
-SPCPRC:
-    switch (c[m])
-    {
-    case ' ':
-        goto SPCFF;
-    case '(':
-        goto SPCL;
-    case ')':
-        goto SPCR;
-    case '/':
-        goto SPCESC;
-    case ':':
-        goto SPCSP;
-    case '\'':
-        goto SPCA;
-    case 's':
-        goto SPCES;
-    case 'S':
-        goto SPCES;
-    case 'b':
-        goto SPCEB;
-    case 'B':
-        goto SPCEB;
-    case 'w':
-        goto SPCEW;
-    case 'W':
-        goto SPCEW;
-    case 'f':
-        goto SPCEF;
-    case 'F':
-        goto SPCEF;
-    case 'n':
-        goto SPCEN;
-    case 'N':
-        goto SPCEN;
-    case 'r':
-        goto SPCER;
-    case 'R':
-        goto SPCER;
-    case 'o':
-        goto SPCEO;
-    case 'O':
-        goto SPCEO;
-    case 'l':
-        goto SPCEL;
-    case 'L':
-        goto SPCEL;
-    case 'd':
-        goto SPCED;
-    case 'D':
-        goto SPCED;
-    default:;
-    }
-    pchosa("201 within specifier invalid symbol ", c[m]);
-    goto OSH200;
+    T_SP_STATES sp_state = SPCBLO;
+    while (true)
+        switch (sp_state)
+        {
+        case SPCBLO:
+            blout();
+            sp_state = SPCPRC;
+            break;
+        case SPCPRC:
+            switch (c[m])
+            {
+            case ' ':
+                sp_state = SPCFF;
+                break;
+            case '(':
+                sp_state = SPCL;
+                break;
+            case ')':
+                sp_state = SPCR;
+                break;
+            case '/':
+                sp_state = SPCESC;
+                break;
+            case ':':
+                sp_state = SPCSP;
+                break;
+            case '\'':
+                sp_state = SPCA;
+                break;
+            case 's':
+            case 'S':
+                sp_state = SPCES;
+                break;
+            case 'b':
+            case 'B':
+                sp_state = SPCEB;
+                break;
+            case 'w':
+            case 'W':
+                sp_state = SPCEW;
+                break;
+            case 'f':
+            case 'F':
+                sp_state = SPCEF;
+                break;
+            case 'n':
+            case 'N':
+                sp_state = SPCEN;
+                break;
+            case 'r':
+            case 'R':
+                sp_state = SPCER;
+                break;
+            case 'o':
+            case 'O':
+                sp_state = SPCEO;
+                break;
+            case 'l':
+            case 'L':
+                sp_state = SPCEL;
+                break;
+            case 'd':
+            case 'D':
+                sp_state = SPCED;
+                break;
+            default:
+                pchosa("201 within specifier invalid symbol ", c[m]);
+                sp_state = OSH200;
+            }
+        }
+
 SPCFF:
     gsp(ns_ngw);
     if (neg)
