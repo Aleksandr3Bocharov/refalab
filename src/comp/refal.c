@@ -529,30 +529,31 @@ static bool komm()
 
 static void rdcard()
 { // read card procedure
-RDCARD1:
-    rdline(card);
-    strncpy(c, card72, 72);
-    translate(card72, class);
-    ++scn_.nomkar;
-    ++cdnumb;
-    //  printf("\ncard %d",cdnumb);
-    for (cardl = 79; cardl > -1; cardl--)
-        if (card[cardl] != ' ')
-            break;
-    cardl++;
-    flags.uzhe_krt = 0;
-    flags.uzhekrt_t = 0;
-    if (options.source == 1)
-        pchk();
-
-    if ((flags.was_72 == 0) && komm())
-        goto RDCARD1;
-    if (empcard == 1)
+    while (true)
     {
-        if (_eoj == 1)
-            return;
-        else
-            goto RDCARD1;
+        rdline(card);
+        strncpy(c, card72, 72);
+        translate(card72, class);
+        ++scn_.nomkar;
+        ++cdnumb;
+        //  printf("\ncard %d",cdnumb);
+        for (cardl = 79; cardl > -1; cardl--)
+            if (card[cardl] != ' ')
+                break;
+        cardl++;
+        flags.uzhe_krt = 0;
+        flags.uzhekrt_t = 0;
+        if (options.source == 1)
+            pchk();
+        if ((flags.was_72 == 0) && komm())
+            continue;
+        if (empcard == 1)
+        {
+            if (_eoj == 1)
+                return;
+            continue;
+        }
+        break;
     }
     if (*(c + 71) != ' ')
         flags.was_72 = 1;
@@ -583,37 +584,39 @@ static void lblkey(unsigned int pr)
     blout();
     for (size_t i = 0; i < 6; i++)
         stmkey[i] = ' ';
-    if (c[m] == ' ')
-        goto LKEXIT;
-    fixm = m;
-    uint16_t l = 0;
-    while (c[m] != ' ')
+    do
     {
-        if (m == 71)
+        if (c[m] == ' ')
+            break;
+        fixm = m;
+        uint16_t l = 0;
+        while (c[m] != ' ')
         {
-            const uint16_t delta = 71 - fixm;
-            const int16_t fixm1 = 0 - delta;
-            for (m = 0; m != delta; m++)
+            if (m == 71)
             {
-                c[fixm1 + m] = c[fixm + m];
-                class[fixm1 + m] = class[fixm + m];
+                const uint16_t delta = 71 - fixm;
+                const int16_t fixm1 = 0 - delta;
+                for (m = 0; m != delta; m++)
+                {
+                    c[fixm1 + m] = c[fixm + m];
+                    class[fixm1 + m] = class[fixm + m];
+                }
+                rdcard();
+                fixm = fixm1;
+                if (c[0] == ' ')
+                    break;
             }
-            rdcard();
-            fixm = fixm1;
-            if (c[0] == ' ')
-                goto LKEXIT;
+            if (l == 6)
+            {
+                m = fixm;
+                stmkey[0] = 'l';
+                break;
+            }
+            stmkey[l] = c[m];
+            l++;
+            m++;
         }
-        if (l == 6)
-        {
-            m = fixm;
-            stmkey[0] = 'l';
-            goto LKEXIT;
-        }
-        stmkey[l] = c[m];
-        l++;
-        m++;
-    }
-LKEXIT:
+    } while (false);
     scn_state = 0;
     left_part = 1;
     return;
