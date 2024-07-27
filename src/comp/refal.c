@@ -96,8 +96,8 @@ static FILE *sysin;
 static uint16_t m; // current symbol number
 static char strg_c[78];
 static unsigned int lbl_leng;
-static uint16_t empcard; // flags for empty card
-static char card[81];    // card buffer (input)
+static bool empcard;  // flags for empty card
+static char card[81]; // card buffer (input)
 static const char *card72 = card;
 static unsigned int cdnumb; // card number   // kras
 static int cardl;           // card length without tail blanks
@@ -119,8 +119,8 @@ static const char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
 static char *class = class72 + 6;
-static uint16_t scn_state; // scanner station - in(1),out(0) literal chain
-static uint16_t left_part;
+static bool scn_state; // scanner station - in(1),out(0) literal chain
+static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[40];
 static char prevlb[40];
@@ -128,7 +128,7 @@ static char stmkey[6];
 static uint16_t fixm;       // start sentence position
 static char mod_name[9];    // module name                 // kras
 static uint32_t mod_length; // module length   // kras
-static uint16_t again;      // next module processing feature
+static bool again;          // next module processing feature
 static unsigned int _eoj;   // "sysin" end flag           // kras
 static unsigned int cur;
 
@@ -385,7 +385,7 @@ KEYS:
     {
         if (prevlb[0] != '\0')
             sempty(prevlb, strlen(prevlb));
-        again = 1;
+        again = true;
         goto END_STATEMENT;
     }
     else if ((strncmp(stmkey, "entry", 5) == 0) || (strncmp(stmkey, "ENTRY", 5) == 0) || (strncmp(stmkey, "BXO�H", 5) == 0))
@@ -428,7 +428,7 @@ KEYS:
 END_IS_MISSING:
     pchosh("003 end directive missing");
     kolosh++;
-    again = 0;
+    again = false;
 END_STATEMENT:
     s_end();
 
@@ -446,7 +446,7 @@ END_STATEMENT:
     pchzkl();
     if (_eoj == 1 || options.multmod == 0)
         goto END_OF_SYSIN;
-    if (again == 1)
+    if (again)
         goto START_OF_MODULE;
 END_OF_SYSIN:
     fclose(sysin);
@@ -490,7 +490,7 @@ static void trprev()
 
 static void rdline(char *s)
 { // read 80 symbols from sysin
-    empcard = 1;
+    empcard = true;
     unsigned int i;
     int c;
     for (i = 0; ((c = getc(sysin)) != '\n') && (c != EOF) && (i < 80); i++)
@@ -507,7 +507,7 @@ static void rdline(char *s)
         else
         {
             *(s + i) = c;
-            empcard = 0;
+            empcard = false;
         }
     }
     if ((c == EOF) && (i == 0))
@@ -580,7 +580,7 @@ static void rdcard()
             pchk();
         if ((flags.was_72 == 0) && komm())
             continue;
-        if (empcard == 1)
+        if (empcard)
         {
             if (_eoj == 1)
                 return;
@@ -650,8 +650,8 @@ static void lblkey(unsigned int pr)
             m++;
         }
     } while (false);
-    scn_state = 0;
-    left_part = 1;
+    scn_state = false;
+    left_part = true;
     return;
 }
 
@@ -666,7 +666,7 @@ void scan()
     scn_e.v = 0;
     scn_e.spec.tag = 0;
     scn_e.spec.info.codef = NULL;
-    if (scn_state == 1)
+    if (scn_state)
         goto STATE1;
 STATE0:; // among elements
     blout();
@@ -755,7 +755,7 @@ SCNA:
         goto OSH101;
     if (c[m] == '\'')
         goto SCNCHR;
-    scn_state = 1;
+    scn_state = true;
     goto SCNCHR;
 SCNL:
     scn_e.t = 2;
@@ -779,7 +779,7 @@ SCNV:
     if (c[m] == '(')
     {
         EH ROMA;
-        if (left_part == 1)
+        if (left_part)
         {
             p = scn_e.spec.info.codef = (uint8_t *)genlbl();
             jlabel((T_U *)p);
@@ -794,7 +794,7 @@ SCNV:
         EH ROMA;
         if (!get_id(id, &id_leng))
             goto SOSH203;
-        if (left_part == 1)
+        if (left_part)
             scn_e.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
         if (c[m] == ':')
         {
@@ -833,7 +833,7 @@ SCNP:
     goto SCNGCR;
 SCNEOL:
     scn_e.t = 9;
-    left_part = 0;
+    left_part = false;
     goto SCNGCR;
 SCNEOS:
     scn_e.t = 10;
@@ -846,7 +846,7 @@ STATE1: // within letter chain
     EH ROMA;
     if (c[m] == '\'')
         goto SCNCHR;
-    scn_state = 0;
+    scn_state = false;
     goto STATE0;
 SCNCHR:
     scn_e.code.tag = TAGO;
@@ -933,7 +933,7 @@ LSCN:
     goto SABBR;
 SABBR:
     scn_e.t = 4;
-    if (left_part == 1)
+    if (left_part)
     {
         if ((*(sarr + scode)) == NULL)
         {
@@ -966,7 +966,7 @@ SCNRET:;
 
 static void gsp(char n)
 {
-    if (left_part == 1)
+    if (left_part)
         jbyte(n);
     return;
 }
@@ -1108,7 +1108,7 @@ static bool specif(char tail)
             else
             {
                 gsp(ns_sc);
-                if (left_part == 1)
+                if (left_part)
                     gsymbol(&code);
                 sp_state = SPCGC;
             }
@@ -1123,7 +1123,7 @@ static bool specif(char tail)
                     pchosh("209 specifier is defined through itself");
                 T_U *p = spref(id, lid, tail);
                 gsp(ns_cll);
-                if (left_part == 1)
+                if (left_part)
                     j3addr(p);
                 if (c[m] == ':')
                     sp_state = SPCGC;
@@ -1140,7 +1140,7 @@ static bool specif(char tail)
             else
             {
                 gsp(ns_sc);
-                if (left_part == 1)
+                if (left_part)
                 {
                     code.tag = 0;
                     code.info.codef = 0L;
@@ -1152,7 +1152,7 @@ static bool specif(char tail)
             break;
         case SPCA1:
             gsp(ns_sc);
-            if (left_part == 1)
+            if (left_part)
             {
                 if (c[m] == '\\')
                     // control symbols ---------------
