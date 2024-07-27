@@ -661,7 +661,6 @@ void scan()
     static unsigned int id_leng;
     static const uint8_t *p;
     static uint16_t scode;
-    unsigned int i; // kras
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
     scn_e.v = 0;
@@ -802,6 +801,7 @@ SCNV:
             EH ROMA else goto SOSH204;
         }
     }
+    goto SCNVI;
 SCNVI:
     if ((class[m] != 'L') && (class[m] != 'D'))
         goto OSH102;
@@ -815,6 +815,7 @@ SCNKK: // kras
     if (c[m + 1] != ' ')
     {
         c[m - 1] = '/';
+        size_t i;
         for (i = 1;
              (class[m + i] == 'L') || (class[m + i] == 'D') || (c[m + i] == '_') || (c[m + i] == '-');
              i++)
@@ -851,7 +852,7 @@ SCNCHR:
     scn_e.code.tag = TAGO;
     scn_e.code.info.codef = NULL;
     if (c[m] == '\\')
-    { // control symbols
+        // control symbols
         switch (c[++m])
         {
         case '\\':
@@ -874,8 +875,8 @@ SCNCHR:
         case '0':
             if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
             {
-                int i, j;
-                for (i = 1, j = 0; i < 3; i++)
+                uint32_t j = 0;
+                for (size_t i = 1; i < 3; i++)
                     if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                         j = j * 8 + c[m + i] - '0';
                     else
@@ -892,8 +893,8 @@ SCNCHR:
         default:
             if ((c[m] >= '0') && (c[m] <= '7'))
             {
-                int i, j;
-                for (i = 0, j = 0; i < 3; i++)
+                uint32_t j = 0;
+                for (size_t i = 0; i < 3; i++)
                     if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                         j = j * 8 + c[m + i] - '0';
                     else
@@ -907,7 +908,7 @@ SCNCHR:
             else
                 m--;
         }
-    }
+    goto PROD;
 PROD:
     scn_e.code.info.infoc[0] = c[m];
     scn_e.t = 1;
