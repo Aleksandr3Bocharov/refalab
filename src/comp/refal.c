@@ -48,9 +48,9 @@ typedef enum sp_states
     SPCSP,
     SPCA,
     SPCA1,
-    SPCEW,
     SPCES,
     SPCEB,
+    SPCEW,
     SPCEF,
     SPCEN,
     SPCER,
@@ -973,6 +973,9 @@ static void gsp(char n)
 static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
+    char id[255];
+    unsigned int lid;
+    T_LINKTI code;
     T_SP_STATES sp_state = SPCBLO;
     while (true)
         switch (sp_state)
@@ -1042,173 +1045,200 @@ static bool specif(char tail)
                 pchosa("201 within specifier invalid symbol ", c[m]);
                 sp_state = OSH200;
             }
+            break;
+        case SPCFF:
+            gsp(ns_ngw);
+            if (neg)
+                pchosh("207 within specifier default ')' ");
+            if (tail == ')')
+                sp_state = OSH206;
+            else
+                return true;
+            break;
+        case SPCL:
+            if (neg)
+                sp_state = OSH202;
+            else
+            {
+                neg = true;
+                gsp(ns_ng);
+                sp_state = SPCGC;
+            }
+            break;
+        case SPCR:
+            if (!neg)
+                sp_state = SPCR1;
+            else
+            {
+                EH ROMA0; // kras
+                blout();
+                if (c[m] == '(')
+                    sp_state = SPCGC;
+                else if (c[m] == ')')
+                    sp_state = SPCR1;
+                else if (c[m] == ' ')
+                    sp_state = SPCR2;
+                else
+                {
+                    neg = false;
+                    gsp(ns_ng);
+                    sp_state = SPCPRC;
+                }
+            }
+            break;
+        case SPCR1:
+            if (tail == ')')
+                sp_state = SPCR3;
+            else
+                sp_state = OSH208;
+            break;
+        case SPCR2:
+            if (tail != ')')
+                sp_state = SPCR3;
+            else
+                sp_state = OSH206;
+            break;
+        case SPCR3:
+            gsp(ns_ngw);
+            return true;
+        case SPCESC:
+            if (get_csmb(&code, id, &lid) == 0)
+                sp_state = OSH200;
+            else
+            {
+                gsp(ns_sc);
+                if (left_part == 1)
+                    gsymbol(&code);
+                sp_state = SPCGC;
+            }
+            break;
+        case SPCSP:
+            EH ROMA0; // kras
+            if (!get_id(id, &lid))
+                sp_state = OSH203;
+            else
+            {
+                if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
+                    pchosh("209 specifier is defined through itself");
+                T_U *p = spref(id, lid, tail);
+                gsp(ns_cll);
+                if (left_part == 1)
+                    j3addr(p);
+                if (c[m] == ':')
+                    sp_state = SPCGC;
+                else
+                    sp_state = OSH204;
+            }
+            break;
+        case SPCA:
+            EH ROMA0; // kras
+            if (m == 71)
+                sp_state = OSH205;
+            else if (c[m] != '\'')
+                sp_state = SPCA1;
+            else
+            {
+                gsp(ns_sc);
+                if (left_part == 1)
+                {
+                    code.tag = 0;
+                    code.info.codef = 0L;
+                    code.info.infoc[0] = '\'';
+                    gsymbol(&code);
+                }
+                sp_state = SPCGC;
+            }
+            break;
+        case SPCA1:
+            gsp(ns_sc);
+            if (left_part == 1)
+            {
+                if (c[m] == '\\')
+                    // control symbols ---------------
+                    switch (c[++m])
+                    {
+                    case '\\':
+                        break;
+                    case 'n':
+                        c[m] = '\012';
+                        break;
+                    case 't':
+                        c[m] = '\011';
+                        break;
+                    case 'v':
+                        c[m] = '\013';
+                        break;
+                    case 'r':
+                        c[m] = '\015';
+                        break;
+                    case 'f':
+                        c[m] = '\014';
+                        break;
+                    case '0':
+                        if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
+                        {
+                            int32_t j = 0;
+                            for (size_t i = 1; i < 3; i++)
+                                if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                    j = j * 8 + c[m + i] - '0';
+                                else
+                                {
+                                    m--;
+                                    break;
+                                }
+                            m += 2;
+                            c[m] = j & 255;
+                        }
+                        else
+                            c[m] = 0;
+                        break;
+                    default:
+                        if ((c[m] >= '0') && (c[m] <= '7'))
+                        {
+                            int32_t j = 0;
+                            for (size_t i = 0; i < 3; i++)
+                                if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                    j = j * 8 + c[m + i] - '0';
+                                else
+                                {
+                                    m--;
+                                    break;
+                                }
+                            m += 2;
+                            c[m] = j & 255;
+                        }
+                        else
+                            m--;
+                    }
+                code.tag = 0;
+                code.info.codef = 0L;
+                code.info.infoc[0] = c[m];
+                gsymbol(&code);
+            }
+            EH ROMA0; // kras
+            if (m == 71)
+                sp_state = OSH205;
+            else if (c[m] != '\'')
+                sp_state = SPCA1;
+            else
+            {
+                EH ROMA0; // kras
+                if (c[m] == '\'')
+                    sp_state = SPCA1;
+                else
+                    sp_state = SPCBLO;
+            }
+            break;
         }
 
-SPCFF:
-    gsp(ns_ngw);
-    if (neg)
-        pchosh("207 within specifier default ')' ");
-    if (tail == ')')
-        goto OSH206;
-    return true;
-SPCL:
-    if (neg)
-        goto OSH202;
-    neg = true;
-    gsp(ns_ng);
-    goto SPCGC;
-SPCR:
-    if (!neg)
-        goto SPCR1;
-    EH ROMA0; // kras
-    blout();
-    if (c[m] == '(')
-        goto SPCGC;
-    if (c[m] == ')')
-        goto SPCR1;
-    if (c[m] == ' ')
-        goto SPCR2;
-    neg = false;
-    gsp(ns_ng);
-    goto SPCPRC;
-SPCR1:
-    if (tail == ')')
-        goto SPCR3;
-    else
-        goto OSH208;
-SPCR2:
-    if (tail != ')')
-        goto SPCR3;
-    else
-        goto OSH206;
-SPCR3:
-    gsp(ns_ngw);
-    return true;
-SPCESC:
-    char id[255];
-    unsigned int lid;
-    T_LINKTI code;
-    if (get_csmb(&code, id, &lid) == 0)
-        goto OSH200;
-    gsp(ns_sc);
-    if (left_part == 1)
-        gsymbol(&code);
-    goto SPCGC;
-SPCSP:
-    EH ROMA0; // kras
-    if (!get_id(id, &lid))
-        goto OSH203;
-    if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
-        pchosh("209 specifier is defined through itself");
-    const uint8_t *p = (uint8_t *)spref(id, lid, tail);
-    gsp(ns_cll);
-    if (left_part == 1)
-        j3addr((T_U *)p);
-    if (c[m] == ':')
-        goto SPCGC;
-    else
-        goto OSH204;
-SPCA:
-    EH ROMA0; // kras
-    if (m == 71)
-        goto OSH205;
-    if (c[m] != '\'')
-        goto SPCA1;
-    gsp(ns_sc);
-    if (left_part == 1)
-    {
-        code.tag = 0;
-        code.info.codef = 0L;
-        code.info.infoc[0] = '\'';
-        gsymbol(&code);
-    }
-    goto SPCGC;
-SPCA1:
-    gsp(ns_sc);
-    if (left_part == 1)
-    {
-        if (c[m] == '\\')
-        { // control symbols ---------------
-            switch (c[++m])
-            {
-            case '\\':
-                break;
-            case 'n':
-                c[m] = '\012';
-                break;
-            case 't':
-                c[m] = '\011';
-                break;
-            case 'v':
-                c[m] = '\013';
-                break;
-            case 'r':
-                c[m] = '\015';
-                break;
-            case 'f':
-                c[m] = '\014';
-                break;
-            case '0':
-                if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
-                {
-                    int i, j;
-                    for (i = 1, j = 0; i < 3; i++)
-                        if ((c[m + i] >= '0') && (c[m + i] <= '7'))
-                            j = j * 8 + c[m + i] - '0';
-                        else
-                        {
-                            m--;
-                            goto PROD;
-                        }
-                    m += 2;
-                    c[m] = j & 255;
-                }
-                else
-                    c[m] = 0;
-                break;
-            default:
-                if ((c[m] >= '0') && (c[m] <= '7'))
-                {
-                    int i, j;
-                    for (i = 0, j = 0; i < 3; i++)
-                        if ((c[m + i] >= '0') && (c[m + i] <= '7'))
-                            j = j * 8 + c[m + i] - '0';
-                        else
-                        {
-                            m--;
-                            goto PROD;
-                        }
-                    m += 2;
-                    c[m] = j & 255;
-                }
-                else
-                    m--;
-            }
-        }
-    PROD:
-        code.tag = 0;
-        code.info.codef = 0L;
-        code.info.infoc[0] = c[m];
-        gsymbol(&code);
-    }
-    EH ROMA0; // kras
-    if (m == 71)
-        goto OSH205;
-    if (c[m] != '\'')
-        goto SPCA1;
-    EH ROMA0; // kras
-    if (c[m] == '\'')
-        goto SPCA1;
-    else
-        goto SPCBLO;
-SPCEW:
-    gsp(ns_w);
-    goto SPCGC;
 SPCES:
     gsp(ns_s);
     goto SPCGC;
 SPCEB:
     gsp(ns_b);
+    goto SPCGC;
+SPCEW:
+    gsp(ns_w);
     goto SPCGC;
 SPCEF:
     gsp(ns_f);
