@@ -1177,7 +1177,7 @@ static bool specif(char tail)
                     case '0':
                         if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
                         {
-                            int32_t j = 0;
+                            uint32_t j = 0;
                             for (size_t i = 1; i < 3; i++)
                                 if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                                     j = j * 8 + c[m + i] - '0';
@@ -1195,7 +1195,7 @@ static bool specif(char tail)
                     default:
                         if ((c[m] >= '0') && (c[m] <= '7'))
                         {
-                            int32_t j = 0;
+                            uint32_t j = 0;
                             for (size_t i = 0; i < 3; i++)
                                 if ((c[m + i] >= '0') && (c[m + i] <= '7'))
                                     j = j * 8 + c[m + i] - '0';
@@ -1229,59 +1229,73 @@ static bool specif(char tail)
                     sp_state = SPCBLO;
             }
             break;
+        case SPCES:
+            gsp(ns_s);
+            sp_state = SPCGC;
+            break;
+        case SPCEB:
+            gsp(ns_b);
+            sp_state = SPCGC;
+            break;
+        case SPCEW:
+            gsp(ns_w);
+            sp_state = SPCGC;
+            break;
+        case SPCEF:
+            gsp(ns_f);
+            sp_state = SPCGC;
+            break;
+        case SPCEN:
+            gsp(ns_n);
+            sp_state = SPCGC;
+            break;
+        case SPCER:
+            gsp(ns_r);
+            sp_state = SPCGC;
+            break;
+        case SPCEO:
+            gsp(ns_o);
+            sp_state = SPCGC;
+            break;
+        case SPCEL:
+            gsp(ns_l);
+            sp_state = SPCGC;
+            break;
+        case SPCED:
+            gsp(ns_d);
+            sp_state = SPCGC;
+            break;
+        case SPCGC:
+            EH ROMA0; // kras
+            sp_state = SPCBLO;
+            break;
+        case OSH200:
+            pchosh("200 specifier is't scaned");
+            return false;
+        case OSH202:
+            pchosh("202 specifier has too many '(' ");
+            sp_state = OSH200;
+            break;
+        case OSH203:
+            pchosh("203 sign ':' followed by no letter within specifier ");
+            sp_state = OSH200;
+            break;
+        case OSH204:
+            pchosh("204 within specifier default last :");
+            sp_state = OSH200;
+            break;
+        case OSH205:
+            pchosh("205 within specifier default last apostroph");
+            sp_state = OSH200;
+            break;
+        case OSH206:
+            pchosh("206 default ')'in the specifier end ");
+            sp_state = OSH200;
+            break;
+        case OSH208:
+            pchosh("208 within specifier too many )");
+            sp_state = OSH200;
         }
-
-SPCES:
-    gsp(ns_s);
-    goto SPCGC;
-SPCEB:
-    gsp(ns_b);
-    goto SPCGC;
-SPCEW:
-    gsp(ns_w);
-    goto SPCGC;
-SPCEF:
-    gsp(ns_f);
-    goto SPCGC;
-SPCEN:
-    gsp(ns_n);
-    goto SPCGC;
-SPCER:
-    gsp(ns_r);
-    goto SPCGC;
-SPCEO:
-    gsp(ns_o);
-    goto SPCGC;
-SPCEL:
-    gsp(ns_l);
-    goto SPCGC;
-SPCED:
-    gsp(ns_d);
-    goto SPCGC;
-SPCGC:
-    EH ROMA0; // kras
-    goto SPCBLO;
-OSH200:
-    pchosh("200 specifier is't scaned");
-    return false;
-OSH202:
-    pchosh("202 specifier has too many '(' ");
-    goto OSH200;
-OSH203:
-    pchosh("203 sign ':' followed by no letter within specifier ");
-    goto OSH200;
-OSH204:
-    pchosh("204 within specifier default last :");
-    goto OSH200;
-OSH205:
-    pchosh("205 within specifier default last apostroph");
-    goto OSH200;
-OSH206:
-    pchosh("206 default ')'in the specifier end ");
-    goto OSH200;
-OSH208:
-    pchosh("208 within specifier too many )");
-    goto OSH200;
 }
 
 static void pchk()
