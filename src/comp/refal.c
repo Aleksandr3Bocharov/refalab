@@ -34,6 +34,44 @@
     }         \
     }
 
+typedef enum scn_states
+{
+    STATE0,
+    SCNEOS,
+    SCNSC,
+    EGO,
+    SCNA,
+    SCNL,
+    SCNR,
+    SCNS,
+    SCNW,
+    SCNVV,
+    SCNE,
+    SCNV,
+    SCNVI,
+    SCNKK,
+    SCNK,
+    SCNP,
+    SCNEOL,
+    STATE1,
+    SCNCHR,
+    PROD,
+    FSCN,
+    NSCN,
+    RSCN,
+    OSCN,
+    DSCN,
+    LSCN,
+    SABBR,
+    OSH101,
+    OSH102,
+    SOSH203,
+    SOSH204,
+    SCNGCR,
+    SCNERR,
+    SCNRET
+} T_SCN_STATES;
+
 typedef enum sp_states
 {
     SPCBLO,
@@ -119,7 +157,7 @@ static const char ns_w = '\1';
 static char *c = strg_c + 6;
 static char class72[78];
 static char *class = class72 + 6;
-static bool scn_state; // scanner station - in(1),out(0) literal chain
+static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[40];
@@ -650,7 +688,7 @@ static void lblkey(unsigned int pr)
             m++;
         }
     } while (false);
-    scn_state = false;
+    scn_station = false;
     left_part = true;
     return;
 }
@@ -666,81 +704,77 @@ void scan()
     scn_e.v = 0;
     scn_e.spec.tag = 0;
     scn_e.spec.info.codef = NULL;
-    if (scn_state)
-        goto STATE1;
-STATE0:; // among elements
-    blout();
-    switch (c[m])
-    {
-    case ' ':
-        goto SCNEOS;
-    case '\t':
-        goto SCNEOS;
-    case '/':
-        goto SCNSC;
-    case '\'':
-        goto SCNA;
-    case '(':
-        goto SCNL;
-    case ')':
-        goto SCNR;
-    case 's':
-        goto SCNS;
-    case 'S':
-        goto SCNS;
-    case 'w':
-        goto SCNW;
-    case 'W':
-        goto SCNW;
-    case 'e':
-        goto SCNE;
-    case 'E':
-        goto SCNE;
-    case 'v':
-        goto SCNVV;
-    case 'V':
-        goto SCNVV;
-    case '<':
-        goto SCNKK; // kras
-    case 'k':
-        goto SCNK;
-    case 'K':
-        goto SCNK;
-    case '.':
-        goto SCNP;
-    case '>':
-        goto SCNP; // kras
-    case '=':
-        goto SCNEOL;
-    case 'f':
-        goto FSCN;
-    case 'F':
-        goto FSCN;
-    case 'n':
-        goto NSCN;
-    case 'N':
-        goto NSCN;
-    case 'r':
-        goto RSCN;
-    case 'R':
-        goto RSCN;
-    case 'o':
-        goto OSCN;
-    case 'O':
-        goto OSCN;
-    case 'l':
-        goto LSCN;
-    case 'L':
-        goto LSCN;
-    case 'd':
-        goto DSCN;
-    case 'D':
-        goto DSCN;
-    default:;
-    }
-    pchosa("100 illegal symbol", c[m]);
-SCNERR:
-    scn_e.t = 0;
+    T_SCN_STATES scn_state = STATE0;
+    if (scn_station)
+        scn_state = STATE1;
+    while (true)
+        switch (scn_state)
+        {
+        case STATE0:
+            // among elements
+            blout();
+            switch (c[m])
+            {
+            case ' ':
+            case '\t':
+                goto SCNEOS;
+            case '/':
+                goto SCNSC;
+            case '\'':
+                goto SCNA;
+            case '(':
+                goto SCNL;
+            case ')':
+                goto SCNR;
+            case 's':
+            case 'S':
+                goto SCNS;
+            case 'w':
+            case 'W':
+                goto SCNW;
+            case 'v':
+            case 'V':
+                goto SCNVV;
+            case 'e':
+            case 'E':
+                goto SCNE;
+            case '<':
+                goto SCNKK; // kras
+            case 'k':
+            case 'K':
+                goto SCNK;
+            case '.':
+            case '>':
+                goto SCNP; // kras
+            case '=':
+                goto SCNEOL;
+            case 'f':
+            case 'F':
+                goto FSCN;
+            case 'n':
+            case 'N':
+                goto NSCN;
+            case 'r':
+            case 'R':
+                goto RSCN;
+            case 'o':
+            case 'O':
+                goto OSCN;
+            case 'd':
+            case 'D':
+                goto DSCN;
+            case 'l':
+            case 'L':
+                goto LSCN;
+            default:
+                pchosa("100 illegal symbol", c[m]);
+                goto SCNERR;
+            }
+            break;
+        }
+
+SCNEOS:
+    scn_e.t = 10;
     goto SCNRET;
 SCNSC:
     if (get_csmb(&(scn_e.code), id, &id_leng) == 1)
@@ -755,7 +789,7 @@ SCNA:
         goto OSH101;
     if (c[m] == '\'')
         goto SCNCHR;
-    scn_state = true;
+    scn_station = true;
     goto SCNCHR;
 SCNL:
     scn_e.t = 2;
@@ -771,6 +805,7 @@ SCNW:
     goto SCNV;
 SCNVV:
     scn_e.v = 1;
+    goto SCNE;
 SCNE:
     scn_e.t = 6;
     goto SCNV;
@@ -807,9 +842,6 @@ SCNVI:
         goto OSH102;
     scn_e.ci = c[m];
     goto SCNGCR;
-SCNK:
-    scn_e.t = 7;
-    goto SCNGCR;
 SCNKK: // kras
     scn_e.t = 7;
     if (c[m + 1] != ' ')
@@ -828,6 +860,9 @@ SCNKK: // kras
         m -= 2;
     }
     goto SCNGCR;
+SCNK:
+    scn_e.t = 7;
+    goto SCNGCR;
 SCNP:
     scn_e.t = 8;
     goto SCNGCR;
@@ -835,9 +870,6 @@ SCNEOL:
     scn_e.t = 9;
     left_part = false;
     goto SCNGCR;
-SCNEOS:
-    scn_e.t = 10;
-    goto SCNRET;
 STATE1: // within letter chain
     if (m == 71)
         goto OSH101;
@@ -846,7 +878,7 @@ STATE1: // within letter chain
     EH ROMA;
     if (c[m] == '\'')
         goto SCNCHR;
-    scn_state = false;
+    scn_station = false;
     goto STATE0;
 SCNCHR:
     scn_e.code.tag = TAGO;
@@ -960,7 +992,11 @@ SOSH204:
     goto SCNERR;
 SCNGCR:
     EH ROMA;
-SCNRET:;
+    goto SCNRET;
+SCNERR:
+    scn_e.t = 0;
+    goto SCNRET;
+SCNRET:
     return;
 }
 
