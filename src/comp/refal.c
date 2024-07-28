@@ -24,7 +24,7 @@
         if ((m == 71) && (c[71] != ' ')) \
         {                                \
             rdcard();                    \
-            if (_eoj == 1)
+            if (_eoj)
 #define ROMA \
     return;  \
     }        \
@@ -37,10 +37,9 @@
 typedef enum scn_states
 {
     STATE0,
-    SCNEOS,
+    SCNERR,
     SCNSC,
     EGO,
-    SCNA,
     SCNL,
     SCNR,
     SCNS,
@@ -53,6 +52,8 @@ typedef enum scn_states
     SCNK,
     SCNP,
     SCNEOL,
+    SCNEOS,
+    SCNA,
     STATE1,
     SCNCHR,
     PROD,
@@ -68,7 +69,6 @@ typedef enum scn_states
     SOSH203,
     SOSH204,
     SCNGCR,
-    SCNERR,
     SCNRET
 } T_SCN_STATES;
 
@@ -131,14 +131,14 @@ const char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 
 static FILE *sysin;
-static uint16_t m; // current symbol number
+static size_t m; // current symbol number
 static char strg_c[78];
 static unsigned int lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
 static unsigned int cdnumb; // card number   // kras
-static int cardl;           // card length without tail blanks
+static int32_t cardl;       // card length without tail blanks
 static bool dir;            // L,R - flag
 static unsigned int kolosh;
 static const char ns_b = '\6';
@@ -167,8 +167,7 @@ static uint16_t fixm;       // start sentence position
 static char mod_name[9];    // module name                 // kras
 static uint32_t mod_length; // module length   // kras
 static bool again;          // next module processing feature
-static unsigned int _eoj;   // "sysin" end flag           // kras
-static unsigned int cur;
+static bool _eoj;           // "sysin" end flag           // kras
 
 static void lblkey(unsigned int pr);
 static void pch130();
@@ -247,7 +246,7 @@ int main(int argc, char *argv[])
     };
 
     char parm[40];
-    int i;
+    size_t i;
     for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; i++)
         ;
 
@@ -281,9 +280,9 @@ int main(int argc, char *argv[])
             ;
         if (parm[0] == '(')
         {
-            for (i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
+            for (int32_t i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
             {
-                int temp;
+                int32_t temp;
                 if (strncmp((parm + i), "nn", 2) == 0) //  kras
                     options.names = 0;
                 else if (strncmp((parm + i), "ns", 2) == 0)
@@ -375,7 +374,7 @@ START_OF_MODULE:
     nommod++;
     flags.was_72 = 0;
     scn_.curr_stmnmb = 0;
-    _eoj = 0;
+    _eoj = false;
     card[80] = '\n';
     prevlb[0] = '\0';
     mod_length = 0l; // kras
@@ -385,7 +384,7 @@ START_OF_MODULE:
         sarr[i] = NULL;
     // "start" - directive work
     lblkey(0);
-    if (_eoj == 1)
+    if (_eoj)
         goto END_OF_SYSIN;
     s_init();
     if ((strncmp(stmkey, "start", 5) != 0) && (strncmp(stmkey, "START", 5) != 0) && (strncmp(stmkey, "CTAPT", 5) != 0))
@@ -461,7 +460,7 @@ KEYS:
         trprev();
         cst(dir, stmlbl, lbl_leng);
     }
-    if (_eoj != 1)
+    if (!_eoj)
         goto NEXT_STM;
 END_IS_MISSING:
     pchosh("003 end directive missing");
@@ -482,7 +481,7 @@ END_STATEMENT:
     }
     s_term();
     pchzkl();
-    if (_eoj == 1 || options.multmod == 0)
+    if (_eoj || options.multmod == 0)
         goto END_OF_SYSIN;
     if (again)
         goto START_OF_MODULE;
@@ -529,7 +528,7 @@ static void trprev()
 static void rdline(char *s)
 { // read 80 symbols from sysin
     empcard = true;
-    unsigned int i;
+    size_t i;
     int c;
     for (i = 0; ((c = getc(sysin)) != '\n') && (c != EOF) && (i < 80); i++)
     {
@@ -549,7 +548,7 @@ static void rdline(char *s)
         }
     }
     if ((c == EOF) && (i == 0))
-        _eoj = 1;
+        _eoj = true;
     for (; i < 80; i++)
         *(s + i) = ' ';
     return;
@@ -620,7 +619,7 @@ static void rdcard()
             continue;
         if (empcard)
         {
-            if (_eoj == 1)
+            if (_eoj)
                 return;
             continue;
         }
@@ -698,7 +697,7 @@ void scan()
     static char id[40];
     static unsigned int id_leng;
     static const uint8_t *p;
-    static uint16_t scode;
+    static size_t scode;
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
     scn_e.v = 0;
@@ -715,289 +714,363 @@ void scan()
             blout();
             switch (c[m])
             {
-            case ' ':
-            case '\t':
-                goto SCNEOS;
             case '/':
-                goto SCNSC;
-            case '\'':
-                goto SCNA;
+                scn_state = SCNSC;
+                break;
             case '(':
-                goto SCNL;
+                scn_state = SCNL;
+                break;
             case ')':
-                goto SCNR;
+                scn_state = SCNR;
+                break;
             case 's':
             case 'S':
-                goto SCNS;
+                scn_state = SCNS;
+                break;
             case 'w':
             case 'W':
-                goto SCNW;
+                scn_state = SCNW;
+                break;
             case 'v':
             case 'V':
-                goto SCNVV;
+                scn_state = SCNVV;
+                break;
             case 'e':
             case 'E':
-                goto SCNE;
+                scn_state = SCNE;
+                break;
             case '<':
-                goto SCNKK; // kras
+                scn_state = SCNKK; // kras
+                break;
             case 'k':
             case 'K':
-                goto SCNK;
+                scn_state = SCNK;
+                break;
             case '.':
             case '>':
-                goto SCNP; // kras
+                scn_state = SCNP; // kras
+                break;
             case '=':
-                goto SCNEOL;
+                scn_state = SCNEOL;
+                break;
+            case ' ':
+            case '\t':
+                scn_state = SCNEOS;
+                break;
+            case '\'':
+                scn_state = SCNA;
+                break;
             case 'f':
             case 'F':
-                goto FSCN;
+                scn_state = FSCN;
+                break;
             case 'n':
             case 'N':
-                goto NSCN;
+                scn_state = NSCN;
+                break;
             case 'r':
             case 'R':
-                goto RSCN;
+                scn_state = RSCN;
+                break;
             case 'o':
             case 'O':
-                goto OSCN;
+                scn_state = OSCN;
+                break;
             case 'd':
             case 'D':
-                goto DSCN;
+                scn_state = DSCN;
+                break;
             case 'l':
             case 'L':
-                goto LSCN;
+                scn_state = LSCN;
+                break;
             default:
                 pchosa("100 illegal symbol", c[m]);
-                goto SCNERR;
+                scn_state = SCNERR;
             }
             break;
-        }
-
-SCNEOS:
-    scn_e.t = 10;
-    goto SCNRET;
-SCNSC:
-    if (get_csmb(&(scn_e.code), id, &id_leng) == 1)
-        goto EGO;
-    goto SCNERR;
-EGO:
-    scn_e.t = 1;
-    goto SCNGCR;
-SCNA:
-    EH ROMA;
-    if (m == 71)
-        goto OSH101;
-    if (c[m] == '\'')
-        goto SCNCHR;
-    scn_station = true;
-    goto SCNCHR;
-SCNL:
-    scn_e.t = 2;
-    goto SCNGCR;
-SCNR:
-    scn_e.t = 3;
-    goto SCNGCR;
-SCNS:
-    scn_e.t = 4;
-    goto SCNV;
-SCNW:
-    scn_e.t = 5;
-    goto SCNV;
-SCNVV:
-    scn_e.v = 1;
-    goto SCNE;
-SCNE:
-    scn_e.t = 6;
-    goto SCNV;
-SCNV:
-    EH ROMA;
-    if (c[m] == '(')
-    {
-        EH ROMA;
-        if (left_part)
-        {
-            p = scn_e.spec.info.codef = (uint8_t *)genlbl();
-            jlabel((T_U *)p);
-        }
-        if (specif(')'))
-        {
-            EH ROMA else goto SCNERR;
-        }
-    }
-    else if (c[m] == ':')
-    {
-        EH ROMA;
-        if (!get_id(id, &id_leng))
-            goto SOSH203;
-        if (left_part)
-            scn_e.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
-        if (c[m] == ':')
-        {
-            EH ROMA else goto SOSH204;
-        }
-    }
-    goto SCNVI;
-SCNVI:
-    if ((class[m] != 'L') && (class[m] != 'D'))
-        goto OSH102;
-    scn_e.ci = c[m];
-    goto SCNGCR;
-SCNKK: // kras
-    scn_e.t = 7;
-    if (c[m + 1] != ' ')
-    {
-        c[m - 1] = '/';
-        size_t i;
-        for (i = 1;
-             (class[m + i] == 'L') || (class[m + i] == 'D') || (c[m + i] == '_') || (c[m + i] == '-');
-             i++)
-        {
-            c[m + i - 1] = c[m + i];
-            class[m + i - 1] = class[m + i];
-        }
-        c[m + i - 1] = '/';
-        class[m + i - 1] = '*';
-        m -= 2;
-    }
-    goto SCNGCR;
-SCNK:
-    scn_e.t = 7;
-    goto SCNGCR;
-SCNP:
-    scn_e.t = 8;
-    goto SCNGCR;
-SCNEOL:
-    scn_e.t = 9;
-    left_part = false;
-    goto SCNGCR;
-STATE1: // within letter chain
-    if (m == 71)
-        goto OSH101;
-    if (c[m] != '\'')
-        goto SCNCHR;
-    EH ROMA;
-    if (c[m] == '\'')
-        goto SCNCHR;
-    scn_station = false;
-    goto STATE0;
-SCNCHR:
-    scn_e.code.tag = TAGO;
-    scn_e.code.info.codef = NULL;
-    if (c[m] == '\\')
-        // control symbols
-        switch (c[++m])
-        {
-        case '\\':
+        case SCNERR:
+            scn_e.t = 0;
+            scn_state = SCNRET;
             break;
-        case 'n':
-            c[m] = '\012';
-            break;
-        case 't':
-            c[m] = '\011';
-            break;
-        case 'v':
-            c[m] = '\013';
-            break;
-        case 'r':
-            c[m] = '\015';
-            break;
-        case 'f':
-            c[m] = '\014';
-            break;
-        case '0':
-            if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
-            {
-                uint32_t j = 0;
-                for (size_t i = 1; i < 3; i++)
-                    if ((c[m + i] >= '0') && (c[m + i] <= '7'))
-                        j = j * 8 + c[m + i] - '0';
-                    else
-                    {
-                        m--;
-                        goto PROD;
-                    }
-                m += 2;
-                c[m] = j & 255;
-            }
+        case SCNSC:
+            if (get_csmb(&(scn_e.code), id, &id_leng) == 1)
+                scn_state = EGO;
             else
-                c[m] = 0;
+                scn_state = SCNERR;
             break;
-        default:
-            if ((c[m] >= '0') && (c[m] <= '7'))
+        case EGO:
+            scn_e.t = 1;
+            scn_state = SCNGCR;
+            break;
+        case SCNL:
+            scn_e.t = 2;
+            scn_state = SCNGCR;
+            break;
+        case SCNR:
+            scn_e.t = 3;
+            scn_state = SCNGCR;
+            break;
+        case SCNS:
+            scn_e.t = 4;
+            scn_state = SCNV;
+            break;
+        case SCNW:
+            scn_e.t = 5;
+            scn_state = SCNV;
+            break;
+        case SCNVV:
+            scn_e.v = 1;
+            scn_state = SCNE;
+            break;
+        case SCNE:
+            scn_e.t = 6;
+            scn_state = SCNV;
+            break;
+        case SCNV:
+            EH ROMA;
+            if (c[m] == '(')
             {
-                uint32_t j = 0;
-                for (size_t i = 0; i < 3; i++)
-                    if ((c[m + i] >= '0') && (c[m + i] <= '7'))
-                        j = j * 8 + c[m + i] - '0';
-                    else
+                EH ROMA;
+                if (left_part)
+                {
+                    p = scn_e.spec.info.codef = (uint8_t *)genlbl();
+                    jlabel((T_U *)p);
+                }
+                if (specif(')'))
+                {
+                    EH ROMA else
                     {
-                        m--;
-                        goto PROD;
+                        scn_state = SCNERR;
+                        break;
                     }
-                m += 2;
-                c[m] = j & 255;
+                }
             }
+            else if (c[m] == ':')
+            {
+                EH ROMA;
+                if (!get_id(id, &id_leng))
+                {
+                    scn_state = SOSH203;
+                    break;
+                }
+                if (left_part)
+                    scn_e.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
+                if (c[m] == ':')
+                {
+                    EH ROMA else
+                    {
+                        scn_state = SOSH204;
+                        break;
+                    }
+                }
+            }
+            scn_state = SCNVI;
+            break;
+        case SCNVI:
+            if ((class[m] != 'L') && (class[m] != 'D'))
+                scn_state = OSH102;
             else
-                m--;
+            {
+                scn_e.ci = c[m];
+                scn_state = SCNGCR;
+            }
+            break;
+        case SCNKK: // kras
+            scn_e.t = 7;
+            if (c[m + 1] != ' ')
+            {
+                c[m - 1] = '/';
+                size_t i;
+                for (i = 1;
+                     (class[m + i] == 'L') || (class[m + i] == 'D') || (c[m + i] == '_') || (c[m + i] == '-');
+                     i++)
+                {
+                    c[m + i - 1] = c[m + i];
+                    class[m + i - 1] = class[m + i];
+                }
+                c[m + i - 1] = '/';
+                class[m + i - 1] = '*';
+                m -= 2;
+            }
+            scn_state = SCNGCR;
+            break;
+        case SCNK:
+            scn_e.t = 7;
+            scn_state = SCNGCR;
+            break;
+        case SCNP:
+            scn_e.t = 8;
+            scn_state = SCNGCR;
+            break;
+        case SCNEOL:
+            scn_e.t = 9;
+            left_part = false;
+            scn_state = SCNGCR;
+            break;
+        case SCNEOS:
+            scn_e.t = 10;
+            scn_state = SCNRET;
+            break;
+        case SCNA:
+            EH ROMA;
+            if (m == 71)
+                scn_state = OSH101;
+            else if (c[m] == '\'')
+                scn_state = SCNCHR;
+            else
+            {
+                scn_station = true;
+                scn_state = SCNCHR;
+            }
+            break;
+        case STATE1: // within letter chain
+            if (m == 71)
+                scn_state = OSH101;
+            else if (c[m] != '\'')
+                scn_state = SCNCHR;
+            else
+            {
+                EH ROMA;
+                if (c[m] == '\'')
+                    scn_state = SCNCHR;
+                else
+                {
+                    scn_station = false;
+                    scn_state = STATE0;
+                }
+            }
+            break;
+        case SCNCHR:
+            scn_e.code.tag = TAGO;
+            scn_e.code.info.codef = NULL;
+            if (c[m] == '\\')
+                // control symbols
+                switch (c[++m])
+                {
+                case '\\':
+                    break;
+                case 'n':
+                    c[m] = '\012';
+                    break;
+                case 't':
+                    c[m] = '\011';
+                    break;
+                case 'v':
+                    c[m] = '\013';
+                    break;
+                case 'r':
+                    c[m] = '\015';
+                    break;
+                case 'f':
+                    c[m] = '\014';
+                    break;
+                case '0':
+                    if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
+                    {
+                        uint32_t j = 0;
+                        for (size_t i = 1; i < 3; i++)
+                            if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                j = j * 8 + c[m + i] - '0';
+                            else
+                            {
+                                m--;
+                                break;
+                            }
+                        m += 2;
+                        c[m] = j & 255;
+                    }
+                    else
+                        c[m] = 0;
+                    break;
+                default:
+                    if ((c[m] >= '0') && (c[m] <= '7'))
+                    {
+                        uint32_t j = 0;
+                        for (size_t i = 0; i < 3; i++)
+                            if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                j = j * 8 + c[m + i] - '0';
+                            else
+                            {
+                                m--;
+                                break;
+                            }
+                        m += 2;
+                        c[m] = j & 255;
+                    }
+                    else
+                        m--;
+                }
+            scn_state = PROD;
+            break;
+        case PROD:
+            scn_e.code.info.infoc[0] = c[m];
+            scn_e.t = 1;
+            scn_state = SCNGCR;
+            break;
+        case FSCN:
+            scode = 0;
+            scn_state = SABBR;
+            break;
+        case NSCN:
+            scode = 1;
+            scn_state = SABBR;
+            break;
+        case RSCN:
+            scode = 2;
+            scn_state = SABBR;
+            break;
+        case OSCN:
+            scode = 3;
+            scn_state = SABBR;
+            break;
+        case DSCN:
+            scode = 4;
+            scn_state = SABBR;
+            break;
+        case LSCN:
+            scode = 5;
+            scn_state = SABBR;
+            break;
+        case SABBR:
+            scn_e.t = 4;
+            if (left_part)
+            {
+                if (*(sarr + scode) == NULL)
+                {
+                    *(sarr + scode) = (char *)genlbl();
+                    jlabel((T_U *)(sarr + scode));
+                    gsp((char)(scode + 7));
+                    gsp(ns_ngw);
+                };
+                scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
+            };
+            EH ROMA;
+            scn_state = SCNVI;
+            break;
+        case OSH101:
+            pchosh("101 default of left apostroph");
+            scn_state = SCNERR;
+            break;
+        case OSH102:
+            pchosh("102 identifier index is't letter or digit");
+            scn_state = SCNERR;
+            break;
+        case SOSH203:
+            pchosh("203 sign ':' followed by no letter");
+            scn_state = SCNERR;
+            break;
+        case SOSH204:
+            pchosh("204 default last ':' within specifier");
+            scn_state = SCNERR;
+            break;
+        case SCNGCR:
+            EH ROMA;
+            scn_state = SCNRET;
+            break;
+        case SCNRET:
+            return;
         }
-    goto PROD;
-PROD:
-    scn_e.code.info.infoc[0] = c[m];
-    scn_e.t = 1;
-    goto SCNGCR;
-FSCN:
-    scode = 0;
-    goto SABBR;
-NSCN:
-    scode = 1;
-    goto SABBR;
-RSCN:
-    scode = 2;
-    goto SABBR;
-OSCN:
-    scode = 3;
-    goto SABBR;
-DSCN:
-    scode = 4;
-    goto SABBR;
-LSCN:
-    scode = 5;
-    goto SABBR;
-SABBR:
-    scn_e.t = 4;
-    if (left_part)
-    {
-        if ((*(sarr + scode)) == NULL)
-        {
-            *(sarr + scode) = (char *)genlbl();
-            jlabel((T_U *)(sarr + scode));
-            gsp((char)(scode + 7));
-            gsp(ns_ngw);
-        };
-        scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
-    };
-    EH ROMA;
-    goto SCNVI;
-OSH101:
-    pchosh("101 default of left apostroph");
-    goto SCNERR;
-OSH102:
-    pchosh("102 identifier index is't letter or digit");
-    goto SCNERR;
-SOSH203:
-    pchosh("203 sign ':' followed by no letter");
-    goto SCNERR;
-SOSH204:
-    pchosh("204 default last ':' within specifier");
-    goto SCNERR;
-SCNGCR:
-    EH ROMA;
-    goto SCNRET;
-SCNERR:
-    scn_e.t = 0;
-    goto SCNRET;
-SCNRET:
-    return;
 }
 
 static void gsp(char n)
@@ -1341,7 +1414,7 @@ static void pchk()
     {
         flags.uzhe_krt = 1;
         card[72] = '\0';
-        if (_eoj == 0)
+        if (!_eoj)
         {
             char tmpstr[80];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
@@ -1365,7 +1438,7 @@ static void pchk_t()
     {
         flags.uzhekrt_t = 1;
         card[72] = '\0';
-        if (_eoj == 0)
+        if (!_eoj)
         {
             char tmpstr[80];
             sprintf(tmpstr, "%4d %s\n", cdnumb, card);
@@ -1582,7 +1655,7 @@ static void blout()
         if (c[m] == '+')
         {
             rdcard();
-            if (_eoj == 1)
+            if (_eoj)
                 return;
             continue;
         }
