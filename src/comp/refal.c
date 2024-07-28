@@ -138,7 +138,6 @@ static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
 static unsigned int cdnumb; // card number   // kras
-static int32_t cardl;       // card length without tail blanks
 static bool dir;            // L,R - flag
 static unsigned int kolosh;
 static const char ns_b = '\6';
@@ -163,11 +162,11 @@ static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
-static uint16_t fixm;       // start sentence position
-static char mod_name[9];    // module name                 // kras
-static uint32_t mod_length; // module length   // kras
-static bool again;          // next module processing feature
-static bool _eoj;           // "sysin" end flag           // kras
+static size_t fixm;       // start sentence position
+static char mod_name[9];  // module name                 // kras
+static size_t mod_length; // module length   // kras
+static bool again;        // next module processing feature
+static bool _eoj;         // "sysin" end flag           // kras
 
 static void lblkey(unsigned int pr);
 static void pch130();
@@ -377,7 +376,7 @@ START_OF_MODULE:
     _eoj = false;
     card[80] = '\n';
     prevlb[0] = '\0';
-    mod_length = 0l; // kras
+    mod_length = 0; // kras
     for (i = 0; i < 9; i++)
         mod_name[i] = '\0'; // kras
     for (i = 0; i < 7; ++i)
@@ -607,10 +606,6 @@ static void rdcard()
         ++scn_.nomkar;
         ++cdnumb;
         //  printf("\ncard %d",cdnumb);
-        for (cardl = 79; cardl > -1; cardl--)
-            if (card[cardl] != ' ')
-                break;
-        cardl++;
         flags.uzhe_krt = 0;
         flags.uzhekrt_t = 0;
         if (options.source == 1)
