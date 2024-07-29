@@ -34,6 +34,16 @@
     }         \
     }
 
+typedef enum mod_states
+{
+    START_OF_MODULE,
+    NEXT_STM,
+    KEYS,
+    END_IS_MISSING,
+    END_STATEMENT,
+    END_OF_SYSIN
+} T_MOD_STATES;
+
 typedef enum scn_states
 {
     STATE0,
@@ -367,147 +377,169 @@ int main(int argc, char *argv[])
     flags.uzhe_zgl = 0;
     cdnumb = 0;
     scn_.nomkar = 0;
-START_OF_MODULE:
-    //  time processing missing here
-    kolosh = 0;
-    nommod++;
-    flags.was_72 = 0;
-    scn_.curr_stmnmb = 0;
-    _eoj = false;
-    card[80] = '\n';
-    prevlb[0] = '\0';
-    mod_length = 0; // kras
-    for (i = 0; i < 9; i++)
-        mod_name[i] = '\0'; // kras
-    for (i = 0; i < 7; ++i)
-        sarr[i] = NULL;
-    // "start" - directive work
-    lblkey(0);
-    if (_eoj)
-        goto END_OF_SYSIN;
-    s_init();
-    if ((strncmp(stmkey, "start", 5) != 0) && (strncmp(stmkey, "START", 5) != 0) && (strncmp(stmkey, "CTAPT", 5) != 0))
-    {
-        pchosh("001 START-directive missing");
-        scn_.modnmlen = 0;
-        jstart(mod_name, 0);
-        goto KEYS;
-    }
-    strncpy(mod_name, stmlbl, 8 > lbl_leng ? lbl_leng : 8);
-    for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
-        mod_i[i] = mod_name[i];
-    mod_i[i] = 0;
-    strncpy(scn_.modname_var, stmlbl, lbl_leng);
-    scn_.modnmlen = lbl_leng;
-    jstart(mod_name, 8 < lbl_leng ? 8 : lbl_leng);
-NEXT_STM:; // read of next sentence
-    lblkey(0);
-KEYS:
-    if ((strncmp(stmkey, "l ", 2) == 0) || (strncmp(stmkey, "L ", 2) == 0))
-    {
-        dir = true;
-        trprev();
-        cst(dir, stmlbl, lbl_leng);
-    }
-    else if ((strncmp(stmkey, "r ", 2) == 0) || (strncmp(stmkey, "R ", 2) == 0))
-    {
-        dir = false;
-        trprev();
-        cst(dir, stmlbl, lbl_leng);
-    }
-    else if ((strncmp(stmkey, "start", 5) == 0) || (strncmp(stmkey, "START", 5) == 0) || (strncmp(stmkey, "CTAPT", 5) == 0))
-        pchosh("002 too many start-directive");
-    else if ((strncmp(stmkey, "end", 3) == 0) || (strncmp(stmkey, "END", 3) == 0) || (strncmp(stmkey, "��H��", 5) == 0))
-    {
-        if (prevlb[0] != '\0')
-            sempty(prevlb, strlen(prevlb));
-        again = true;
-        goto END_STATEMENT;
-    }
-    else if ((strncmp(stmkey, "entry", 5) == 0) || (strncmp(stmkey, "ENTRY", 5) == 0) || (strncmp(stmkey, "BXO�H", 5) == 0))
-        ilm(sentry);
-    else if ((strncmp(stmkey, "extrn", 5) == 0) || (strncmp(stmkey, "EXTRN", 5) == 0) || (strncmp(stmkey, "BHE�H", 5) == 0))
-        ilm(sextrn);
-    else if ((strncmp(stmkey, "empty", 5) == 0) || (strncmp(stmkey, "EMPTY", 5) == 0) || (strncmp(stmkey, "��CTO", 5) == 0))
-        il(sempty);
-    else if ((strncmp(stmkey, "swap", 4) == 0) || (strncmp(stmkey, "SWAP", 4) == 0) || (strncmp(stmkey, "OBMEH", 5) == 0))
-        il(sswap);
-    else if ((strncmp(stmkey, "swop", 4) == 0) || (strncmp(stmkey, "SWOP", 4) == 0))
-        il(sswap);
-    else if ((strncmp(stmkey, "s ", 2) == 0) || (strncmp(stmkey, "S ", 2) == 0))
-    {
-        trprev();
-        spdef(stmlbl, lbl_leng);
-        specif(' ');
-    }
-    else if ((strncmp(stmkey, "equ", 3) == 0) || (strncmp(stmkey, "EQU", 3) == 0) || (strncmp(stmkey, "�KB", 3) == 0))
-        equ();
-    else if (stmkey[0] == ' ')
-    {
-        trprev();
-        if (lbl_leng != 0)
+    T_MOD_STATES mod_state = START_OF_MODULE;
+    while (true)
+        switch (mod_state)
         {
-            for (i = 0; i < lbl_leng; i++)
-                prevlb[i] = stmlbl[i];
-            prevlb[i] = '\0';
+        case START_OF_MODULE:
+            //  time processing missing here
+            kolosh = 0;
+            nommod++;
+            flags.was_72 = 0;
+            scn_.curr_stmnmb = 0;
+            _eoj = false;
+            card[80] = '\n';
+            prevlb[0] = '\0';
+            mod_length = 0; // kras
+            for (i = 0; i < 9; i++)
+                mod_name[i] = '\0'; // kras
+            for (i = 0; i < 7; ++i)
+                sarr[i] = NULL;
+            // "start" - directive work
+            lblkey(0);
+            if (_eoj)
+            {
+                mod_state = END_OF_SYSIN;
+                break;
+            }
+            s_init();
+            if ((strncmp(stmkey, "start", 5) != 0) && (strncmp(stmkey, "START", 5) != 0) && (strncmp(stmkey, "CTAPT", 5) != 0))
+            {
+                pchosh("001 START-directive missing");
+                scn_.modnmlen = 0;
+                jstart(mod_name, 0);
+                mod_state = KEYS;
+                break;
+            }
+            strncpy(mod_name, stmlbl, 8 > lbl_leng ? lbl_leng : 8);
+            for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
+                mod_i[i] = mod_name[i];
+            mod_i[i] = 0;
+            strncpy(scn_.modname_var, stmlbl, lbl_leng);
+            scn_.modnmlen = lbl_leng;
+            jstart(mod_name, 8 < lbl_leng ? 8 : lbl_leng);
+            mod_state = NEXT_STM;
+            break;
+        case NEXT_STM:
+            // read of next sentence
+            lblkey(0);
+            mod_state = KEYS;
+            break;
+        case KEYS:
+            if ((strncmp(stmkey, "l ", 2) == 0) || (strncmp(stmkey, "L ", 2) == 0))
+            {
+                dir = true;
+                trprev();
+                cst(dir, stmlbl, lbl_leng);
+            }
+            else if ((strncmp(stmkey, "r ", 2) == 0) || (strncmp(stmkey, "R ", 2) == 0))
+            {
+                dir = false;
+                trprev();
+                cst(dir, stmlbl, lbl_leng);
+            }
+            else if ((strncmp(stmkey, "start", 5) == 0) || (strncmp(stmkey, "START", 5) == 0) || (strncmp(stmkey, "CTAPT", 5) == 0))
+                pchosh("002 too many start-directive");
+            else if ((strncmp(stmkey, "end", 3) == 0) || (strncmp(stmkey, "END", 3) == 0) || (strncmp(stmkey, "��H��", 5) == 0))
+            {
+                if (prevlb[0] != '\0')
+                    sempty(prevlb, strlen(prevlb));
+                again = true;
+                mod_state = END_STATEMENT;
+                break;
+            }
+            else if ((strncmp(stmkey, "entry", 5) == 0) || (strncmp(stmkey, "ENTRY", 5) == 0) || (strncmp(stmkey, "BXO�H", 5) == 0))
+                ilm(sentry);
+            else if ((strncmp(stmkey, "extrn", 5) == 0) || (strncmp(stmkey, "EXTRN", 5) == 0) || (strncmp(stmkey, "BHE�H", 5) == 0))
+                ilm(sextrn);
+            else if ((strncmp(stmkey, "empty", 5) == 0) || (strncmp(stmkey, "EMPTY", 5) == 0) || (strncmp(stmkey, "��CTO", 5) == 0))
+                il(sempty);
+            else if ((strncmp(stmkey, "swap", 4) == 0) || (strncmp(stmkey, "SWAP", 4) == 0) || (strncmp(stmkey, "OBMEH", 5) == 0))
+                il(sswap);
+            else if ((strncmp(stmkey, "swop", 4) == 0) || (strncmp(stmkey, "SWOP", 4) == 0))
+                il(sswap);
+            else if ((strncmp(stmkey, "s ", 2) == 0) || (strncmp(stmkey, "S ", 2) == 0))
+            {
+                trprev();
+                spdef(stmlbl, lbl_leng);
+                specif(' ');
+            }
+            else if ((strncmp(stmkey, "equ", 3) == 0) || (strncmp(stmkey, "EQU", 3) == 0) || (strncmp(stmkey, "�KB", 3) == 0))
+                equ();
+            else if (stmkey[0] == ' ')
+            {
+                trprev();
+                if (lbl_leng != 0)
+                {
+                    for (i = 0; i < lbl_leng; i++)
+                        prevlb[i] = stmlbl[i];
+                    prevlb[i] = '\0';
+                }
+            }
+            else
+            {
+                m = fixm; // return to left
+                dir = true;
+                trprev();
+                cst(dir, stmlbl, lbl_leng);
+            }
+            if (!_eoj)
+                mod_state = NEXT_STM;
+            else
+                mod_state = END_IS_MISSING;
+            break;
+        case END_IS_MISSING:
+            pchosh("003 end directive missing");
+            kolosh++;
+            again = false;
+            mod_state = END_STATEMENT;
+            break;
+        case END_STATEMENT:
+            s_end();
+            if (kolosh != 0)
+            {
+                flags.was_err = 1;
+                mod_length = 0;
+            }
+            else
+            {
+                jend();
+                mod_length = jwhere();
+            }
+            s_term();
+            pchzkl();
+            if (_eoj || options.multmod == 0)
+                mod_state = END_OF_SYSIN;
+            else if (again)
+                mod_state = START_OF_MODULE;
+            else
+                mod_state = END_OF_SYSIN;
+            break;
+        case END_OF_SYSIN:
+            fclose(sysin);
+            if (options.source == 1)
+                fclose(sysprint);
+            if (options.multmod == 0)
+            {
+                mod_length = jwhere();
+                fclose(syslin);
+                if ((mod_length == 0) || (flags.was_err != 0))
+                    unlink(parm);
+            }
+            if (flags.was_err != 0)
+            {
+                if (options.multmod == 1)
+                    unlink(parm);
+                exit(1);
+            }
+            else
+            {
+                if (nommod <= 1 && options.multmod == 1)
+                    unlink(parm); // for multimod.
+                exit(0);
+            }
+            return 0;
         }
-    }
-    else
-    {
-        m = fixm; // return to left
-        dir = true;
-        trprev();
-        cst(dir, stmlbl, lbl_leng);
-    }
-    if (!_eoj)
-        goto NEXT_STM;
-END_IS_MISSING:
-    pchosh("003 end directive missing");
-    kolosh++;
-    again = false;
-END_STATEMENT:
-    s_end();
-
-    if (kolosh != 0)
-    {
-        flags.was_err = 1;
-        mod_length = 0;
-    }
-    else
-    {
-        jend();
-        mod_length = jwhere();
-    }
-    s_term();
-    pchzkl();
-    if (_eoj || options.multmod == 0)
-        goto END_OF_SYSIN;
-    if (again)
-        goto START_OF_MODULE;
-END_OF_SYSIN:
-    fclose(sysin);
-    if (options.source == 1)
-        fclose(sysprint);
-    if (options.multmod == 0)
-    {
-        mod_length = jwhere();
-        fclose(syslin);
-        if ((mod_length == 0) || (flags.was_err != 0))
-            unlink(parm);
-    }
-    if (flags.was_err != 0)
-    {
-        if (options.multmod == 1)
-            unlink(parm);
-        exit(1);
-    }
-    else
-    {
-        if (nommod <= 1 && options.multmod == 1)
-            unlink(parm); // for multimod.
-        exit(0);
-    }
-    return 0;
 } // main program  end
 
 static void trprev()
