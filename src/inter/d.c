@@ -276,155 +276,204 @@ void rfdbg(T_ST *s_st)
     euc_step = 0;
     res_step = 0;
     res_prevk = res_nextd = NULL;
-    // station "not yet"
-NOT_YET:
-    if (s_st->dot == NULL)
-        goto DONE;
-    if (s_stop < s_st->step)
-        goto ABEND;
-    getpf(s_st);
-    if (!ge_all && !(det_table->ge) && !(det_table->gt))
-    {
-        if (det_table->tr)
-            goto TRAP;
-        one_step(s_st);
-        if (s_st->state != 1)
-            goto ABEND;
-        goto NOT_YET;
-    }
-    // enter into station "is already"
-    if ((!ge_all && !(det_table->ge)) || det_table->gt)
-        was_ge = false;
-    else
-    {
-        was_ge = true;
-        if (!ge_all)
-            pr_euc();
-    }
-    //  cut
-    curr_step1 = curr_step;
-    prevk1 = prevk;
-    nextd1 = nextd;
-    if (pk->info.codep == NULL)
-        dot1 = NULL;
-    else
-    {
-        dot1 = pk->info.codep;
-        pk->info.codep = NULL;
-    }
-    goto ALREADY;
-    // "is already" station
-ALREADY:
-    if ((det_table->le) || (det_table->lt))
-    {
-        //  "isn't already"
-        if (det_table->lt)
-            was_le = false;
-        else
+    T_DBG_STATES dbg_state = DBG_NOT_YET;
+    while (true)
+        switch (dbg_state)
         {
-            was_le = true;
-            pr_euc();
-        }
-        //   cut
-        curr_step2 = curr_step;
-        prevk2 = prevk;
-        nextd2 = nextd;
-        if (pk->info.codep == NULL)
-            dot2 = NULL;
-        else
-        {
-            dot2 = pk->info.codep;
-            pk->info.codep = NULL;
-        }
-        // compute call entirely
-        while (s_st->dot != NULL)
-        {
-            getpf(s_st);
-            if (det_table->tr)
-                goto TRAP;
-            one_step(s_st);
+            // station "not yet"
+        case DBG_NOT_YET:
+            if (s_st->dot == NULL)
+            {
+                dbg_state = DBG_DONE;
+                break;
+            }
             if (s_stop < s_st->step)
-                goto ABEND;
-            curr_step = s_st->step + 1;
-            if (s_st->state != 1)
-                goto ABEND;
+            {
+                dbg_state = DBG_ABEND;
+                break;
+            }
+            getpf(s_st);
+            if (!ge_all && !(det_table->ge) && !(det_table->gt))
+            {
+                if (det_table->tr)
+                    dbg_state = DBG_TRAP;
+                else
+                {
+                    one_step(s_st);
+                    if (s_st->state != 1)
+                        dbg_state = DBG_ABEND;
+                    else
+                        dbg_state = DBG_NOT_YET;
+                }
+                break;
+            }
+            // enter into station "is already"
+            if ((!ge_all && !(det_table->ge)) || det_table->gt)
+                was_ge = false;
+            else
+            {
+                was_ge = true;
+                if (!ge_all)
+                    pr_euc();
+            }
+            //  cut
+            curr_step1 = curr_step;
+            prevk1 = prevk;
+            nextd1 = nextd;
+            if (pk->info.codep == NULL)
+                dot1 = NULL;
+            else
+            {
+                dot1 = pk->info.codep;
+                pk->info.codep = NULL;
+            }
+            dbg_state = DBG_ALREADY;
+            break;
+        // "is already" station
+        case DBG_ALREADY:
+            if ((det_table->le) || (det_table->lt))
+            {
+                //  "isn't already"
+                if (det_table->lt)
+                    was_le = false;
+                else
+                {
+                    was_le = true;
+                    pr_euc();
+                }
+                //   cut
+                curr_step2 = curr_step;
+                prevk2 = prevk;
+                nextd2 = nextd;
+                if (pk->info.codep == NULL)
+                    dot2 = NULL;
+                else
+                {
+                    dot2 = pk->info.codep;
+                    pk->info.codep = NULL;
+                }
+                // compute call entirely
+                bool quit = false;
+                while (s_st->dot != NULL)
+                {
+                    getpf(s_st);
+                    if (det_table->tr)
+                    {
+                        dbg_state = DBG_TRAP;
+                        quit = true;
+                        break;
+                    }
+                    one_step(s_st);
+                    if (s_stop < s_st->step)
+                    {
+                        dbg_state = DBG_ABEND;
+                        quit = true;
+                        break;
+                    }
+                    curr_step = s_st->step + 1;
+                    if (s_st->state != 1)
+                    {
+                        dbg_state = DBG_ABEND;
+                        quit = true;
+                        break;
+                    }
+                }
+                if (quit)
+                    break;
+                //  joint
+                curr_step = s_st->step;
+                s_st->dot = dot2;
+                if (was_le)
+                    pr_finres(curr_step2, prevk2, nextd2);
+            } // for label ALREADY
+            else
+            { // step in station "is already"
+                if (s_stop < s_st->step)
+                {
+                    dbg_state = DBG_ABEND;
+                    break;
+                }
+                if ((!eq_all && !det_table->eq) || det_table->ne)
+                    was_eq = false;
+                else
+                {
+                    was_eq = true;
+                    pr_euc();
+                }
+                if (det_table->tr)
+                {
+                    dbg_state = DBG_TRAP;
+                    break;
+                }
+                one_step(s_st);
+                if (s_st->state != 1)
+                {
+                    dbg_state = DBG_ABEND;
+                    break;
+                }
+                if (was_eq)
+                    pr_imres();
+            }
+            if (s_st->dot != NULL)
+            {
+                getpf(s_st);
+                dbg_state = DBG_ALREADY;
+            }
+            else
+            {
+                //  joint
+                s_st->dot = dot1;
+                if (!ge_all && was_ge)
+                    pr_finres(curr_step1, prevk1, nextd1);
+                dbg_state = DBG_NOT_YET;
+            }
+            break;
+        case DBG_DONE:
+            printf("\nConcretization is executed ");
+            dbg_state = DBG_EOJ;
+            break;
+        case DBG_TRAP:
+            printf("\nFunction name trap");
+            dbg_state = DBG_ABEND1;
+            break;
+        case DBG_ABEND:
+            switch (s_st->state)
+            {
+            case 1:
+                printf("\nStop on step number ");
+                break;
+            case 2:
+                printf("\nRecognition impossible");
+                break;
+            case 3:
+                printf("\nFree memory exhausted ");
+            }
+            getpf(s_st);
+            dbg_state = DBG_ABEND1;
+            break;
+        case DBG_ABEND1:
+            printf("\nLeading functional term: ");
+            rfpexm("     ", prevk, nextd);
+            dbg_state = DBG_EOJ;
+            break;
+        case DBG_EOJ:
+            printf("\nCompleted steps number = %ld", s_st->step);
+            printf("\nView field: ");
+            rfpexm("     ", s_st->view, s_st->view);
+            if ((s_st->store)->next != s_st->store)
+            {
+                printf("\nBurried: ");
+                rfpexm("     ", s_st->store, s_st->store);
+            }
+            if (nogcl != 0)
+                printf("\nGarbage collection number = %d", nogcl);
+            rfcanc(s_st);
+            rftermm();
+            // BLF
+            printf("\n");
+            exit(0);
+            return;
         }
-        //  joint
-        curr_step = s_st->step;
-        s_st->dot = dot2;
-        if (was_le)
-            pr_finres(curr_step2, prevk2, nextd2);
-    } // for label ALREADY
-    else
-    { // step in station "is already"
-        if (s_stop < s_st->step)
-            goto ABEND;
-        if ((!eq_all && !det_table->eq) || det_table->ne)
-            was_eq = false;
-        else
-        {
-            was_eq = true;
-            pr_euc();
-        }
-        if (det_table->tr)
-            goto TRAP;
-        one_step(s_st);
-        if (s_st->state != 1)
-            goto ABEND;
-        if (was_eq)
-            pr_imres();
-    }
-    if (s_st->dot != NULL)
-    {
-        getpf(s_st);
-        goto ALREADY;
-    }
-    //  joint
-    s_st->dot = dot1;
-    if (!ge_all && was_ge)
-        pr_finres(curr_step1, prevk1, nextd1);
-    goto NOT_YET;
-DONE:
-    printf("\nConcretization is executed ");
-    goto EOJ;
-TRAP:
-    printf("\nFunction name trap");
-    goto ABEND1;
-ABEND:
-    switch (s_st->state)
-    {
-    case 1:
-        printf("\nStop on step number ");
-        break;
-    case 2:
-        printf("\nRecognition impossible");
-        break;
-    case 3:
-        printf("\nFree memory exhausted ");
-    }
-    getpf(s_st);
-    goto ABEND1;
-ABEND1:
-    printf("\nLeading functional term: ");
-    rfpexm("     ", prevk, nextd);
-    goto EOJ;
-EOJ:
-    printf("\nCompleted steps number = %ld", s_st->step);
-    printf("\nView field: ");
-    rfpexm("     ", s_st->view, s_st->view);
-    if ((s_st->store)->next != s_st->store)
-    {
-        printf("\nBurried: ");
-        rfpexm("     ", s_st->store, s_st->store);
-    }
-    if (nogcl != 0)
-        printf("\nGarbage collection number = %d", nogcl);
-    rfcanc(s_st);
-    rftermm();
-    // BLF
-    printf("\n");
-    exit(0);
-    return;
 }
 
 static void dbapp(T_ST *ss_st)
