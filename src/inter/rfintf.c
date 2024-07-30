@@ -24,6 +24,7 @@ void rfabe(const char *amsg)
 {
     printf("\n *** refal-abend *** %s", amsg);
     exit(1);
+    return;
 }
 
 bool lincrm()
@@ -157,6 +158,7 @@ void rfinit()
     p->stmnmb = 0;
     p->tmmode = 0;
     p->tmintv = 0;
+    return;
 }
 
 void rfcanc(const T_ST *ast)
@@ -178,6 +180,7 @@ void rfcanc(const T_ST *ast)
     ast->store->prev = view1;
     store1->next = refal.flhead;
     refal.flhead->prev = store1;
+    return;
 }
 
 //    delete part of list and add it to free memory list  
@@ -194,6 +197,7 @@ void rfdel(T_LINKCB *p, T_LINKCB *q)
     refal.flhead->prev = q1;
     r->next = p1;
     p1->prev = r;
+    return;
 }
 
 void rftermm()
@@ -363,6 +367,7 @@ void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q)
     r1->prev = q1;
     r->next = p1;
     p1->prev = r;
+    return;
 }
 
 //  copy expression and add it to nessecary place   

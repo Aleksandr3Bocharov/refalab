@@ -181,6 +181,7 @@ static void obmen()
     const char c = Xzn;
     Xzn = Yzn;
     Yzn = c;
+    return;
 }
 
 static unsigned int xmy()
@@ -230,6 +231,7 @@ static void ymn(uint32_t *a, uint32_t *b)
     const unsigned int r4 = r3 >> 12;
     *a = r1 * HMAX + r2 + r4;
     *b += (r3 & 0xFFF) * HMAX;
+    return;
 }
 
 static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr
@@ -245,6 +247,7 @@ static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. pos
         peren = g >> ip;
         X = X->prev;
     }
+    return;
 }
 
 static void oper(unsigned int o, unsigned int prn)

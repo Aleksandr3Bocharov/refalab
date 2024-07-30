@@ -34,6 +34,7 @@ static void rftime_()
         p->info.infoc = *c;
         c++;
     }
+    return;
 }
 static char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
 G_L_B char rftime = '\122';

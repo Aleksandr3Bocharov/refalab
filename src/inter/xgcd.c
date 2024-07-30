@@ -23,6 +23,7 @@ static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. pos
         peren = g >> ip;
         X = X->prev;
     }
+    return;
 }
 
 static void ymn(int32_t *a, int32_t *b)
@@ -56,6 +57,7 @@ static void ymn(int32_t *a, int32_t *b)
     const unsigned int rr4 = rr3 >> 12;
     *a = rr1 * HMAX + rr2 + rr4;
     *b += (rr3 & 0xFFF) * HMAX;
+    return;
 }
 
 static void gcd_()

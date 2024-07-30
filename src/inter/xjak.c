@@ -68,6 +68,7 @@ static void br_()
     pr->info.codep = pl;
     pr->tag = TAGRB;
     rftpl(pl, refal.preva, refal.nexta);
+    return;
 }
 static char br_0[] = {Z2 'B', 'R', '\002'};
 G_L_B char br = '\122';
@@ -96,6 +97,7 @@ DG1:
     pl = pl->prev;
     pr = pr->next;
     rfdel(pl, pr);
+    return;
 }
 static char dg_0[] = {Z2 'D', 'G', '\002'};
 G_L_B char dg = '\122';
@@ -108,6 +110,7 @@ static void dgall_()
         refal.upshot = 2; // FAIL  
     else
         rftpl(refal.prevr, ast->store, ast->store);
+    return;
 }
 static char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
 G_L_B char dgall = '\122';
@@ -123,6 +126,7 @@ static void gtr_()
         return;
     }; // FAIL  
     rftpl(refal.prevr, p, p);
+    return;
 }
 static char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
 G_L_B char gtr = '\122';
@@ -141,7 +145,8 @@ static void rdr_()
     {
         refal.upshot = 3;
         return;
-    }; // LACK  
+    }; // LACK 
+    return; 
 }
 static char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
 G_L_B char rdr = '\122';
@@ -158,6 +163,7 @@ static void ptr_()
     }; // FAIL  
     T_LINKCB *q = p->prev;
     rftpl(q, r, refal.nexta);
+    return;
 }
 // BLF  
 #ifdef UNIX
@@ -181,6 +187,7 @@ static void wtr_()
     }; // FAIL  
     rfdel(p, p);
     rftpl(p, r, refal.nexta);
+    return;
 }
 static char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
 G_L_B char wtr = '\122';
@@ -197,6 +204,7 @@ static void swr_()
     }; // FAIL  
     rftpl(refal.prevr, p, p);
     rftpl(p, r, refal.nexta);
+    return;
 }
 static char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
 G_L_B char swr = '\122';
@@ -281,6 +289,7 @@ CP1:
         goto CP1;
     if (!lcopy(refal.prevr, q, pr))
         refal.upshot = 3; // LACK  
+    return;
 }
 static char cp_0[] = {Z2 'C', 'P', '\002'};
 G_L_B char cp = '\122';
@@ -304,6 +313,7 @@ static void new_()
     refal.preva->info.codep = refal.dvar;
     refal.preva->tag = 0;
     refal.dvar = refal.preva;
+    return;
 }
 static char new_0[] = {Z3 'N', 'E', 'W', '\003'};
 G_L_B char new = '\122';

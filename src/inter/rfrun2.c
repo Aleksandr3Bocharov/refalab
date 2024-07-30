@@ -151,6 +151,7 @@ void link(T_LINKCB *x, T_LINKCB *y)
 {
     x->next = y;
     y->prev = x;
+    return;
 }
 
 void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, uint8_t **avpc)
@@ -159,6 +160,7 @@ void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel,
     jsp->jsb2 = *ab2;
     jsp->jsnel = *anel;
     jsp->jsvpc = *avpc;
+    return;
 }
 
 void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, uint8_t **avpc)
@@ -167,6 +169,7 @@ void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel,
     *ab2 = jsp->jsb2;
     *anel = jsp->jsnel;
     *avpc = jsp->jsvpc;
+    return;
 }
 
 void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
@@ -174,6 +177,7 @@ void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     tsp->ts0 = *ax;
     tsp->ts1 = *ay;
     tsp->ts2 = *az;
+    return;
 }
 
 void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
@@ -181,6 +185,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     *ax = tsp->ts0;
     *ay = tsp->ts1;
     *az = tsp->ts2;
+    return;
 }
 
 void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
@@ -191,6 +196,7 @@ void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
         pt++;
         pf++;
     }
+    return;
 }
 
 // BLF 28.07.2004  - in case of macrodigit - shift -> 16  
