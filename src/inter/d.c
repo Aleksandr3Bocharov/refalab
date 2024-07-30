@@ -384,11 +384,10 @@ EOJ:
         printf("\nGarbage collection number = %d", nogcl);
     rfcanc(s_st);
     rftermm();
-
     // BLF  
     printf("\n");
-
     exit(0);
+    return;
 }
 
 static void dbapp(T_ST *ss_st)
@@ -551,6 +550,7 @@ static void init_det_flags()
         free(det1);
     }
     last_det = NULL;
+    return;
 }
 
 static void one_step(T_ST *ss_st)
