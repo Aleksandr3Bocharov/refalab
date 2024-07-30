@@ -12,15 +12,26 @@
 #include "rfintf.h"
 #include "rfrun1.h"
 
+typedef enum dbg_states
+{
+    DBG_NOT_YET,
+    DBG_ALREADY,
+    DBG_DONE,
+    DBG_TRAP,
+    DBG_ABEND,
+    DBG_ABEND1,
+    DBG_EOJ
+} T_DBG_STATES;
+
 typedef enum db_states
 {
-    NOT_YET,
-    ALREADY,
-    TRAP,
-    ABEND,
-    EOJ,
-    DO,
-    AB,
+    DB_NOT_YET,
+    DB_ALREADY,
+    DB_TRAP,
+    DB_ABEND,
+    DB_EOJ,
+    DB_DO,
+    DB_AB
 } T_DB_STATES;
 
 typedef struct DET_TAB
@@ -95,7 +106,7 @@ void rfdbg(T_ST *s_st)
 
     printf("\n > (function list) : ");
     fgets(buff, 100, stdin);
-    unsigned int i;
+    size_t i;
     for (i = 0; *(buff + i) == ' '; i++)
         ;
     if (*(buff + i) != '\n')
@@ -209,38 +220,50 @@ void rfdbg(T_ST *s_st)
             arg = arg + l_arg + s_arg;
         }
     }
-R1:
-    printf("\n STOP (step number) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
-        ;
-    if (*(buff + i) != '\n')
-        if (!get_numb((int32_t *)&s_stop))
-            goto R1;
-R2:
-    printf("\n FROM (step number) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
-        ;
-    if (*(buff + i) != '\n')
-        if (!get_numb((int32_t *)&s_from))
-            goto R2;
-R3:
-    printf("\n TO (step number) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
-        ;
-    if (*(buff + i) != '\n')
-        if (!get_numb((int32_t *)&s_upto))
-            goto R3;
-R4:
-    printf("\n E1= (y/n) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
-        ;
-    if (*(buff + i) != '\n')
-        if (!get_yn(buff + i))
-            goto R4;
+    while (true)
+    {
+        printf("\n STOP (step number) : ");
+        fgets(buff, 100, stdin);
+        for (i = 0; *(buff + i) == ' '; i++)
+            ;
+        if (*(buff + i) != '\n')
+            if (!get_numb((int32_t *)&s_stop))
+                continue;
+        break;
+    }
+    while (true)
+    {
+        printf("\n FROM (step number) : ");
+        fgets(buff, 100, stdin);
+        for (i = 0; *(buff + i) == ' '; i++)
+            ;
+        if (*(buff + i) != '\n')
+            if (!get_numb((int32_t *)&s_from))
+                continue;
+        break;
+    }
+    while (true)
+    {
+        printf("\n TO (step number) : ");
+        fgets(buff, 100, stdin);
+        for (i = 0; *(buff + i) == ' '; i++)
+            ;
+        if (*(buff + i) != '\n')
+            if (!get_numb((int32_t *)&s_upto))
+                continue;
+        break;
+    }
+    while (true)
+    {
+        printf("\n E1= (y/n) : ");
+        fgets(buff, 100, stdin);
+        for (i = 0; *(buff + i) == ' '; i++)
+            ;
+        if (*(buff + i) != '\n')
+            if (!get_yn(buff + i))
+                continue;
+        break;
+    }
     //  set FROM and TO
     if (!s_from && (s_upto || trace_cond))
         s_from = 1;
@@ -289,6 +312,7 @@ NOT_YET:
         dot1 = pk->info.codep;
         pk->info.codep = NULL;
     }
+    goto ALREADY;
     // "is already" station
 ALREADY:
     if ((det_table->le) || (det_table->lt))
@@ -379,9 +403,11 @@ ABEND:
         printf("\nFree memory exhausted ");
     }
     getpf(s_st);
+    goto ABEND1;
 ABEND1:
     printf("\nLeading functional term: ");
     rfpexm("     ", prevk, nextd);
+    goto EOJ;
 EOJ:
     printf("\nCompleted steps number = %ld", s_st->step);
     printf("\nView field: ");
@@ -410,33 +436,33 @@ static void dbapp(T_ST *ss_st)
     uint32_t v5 = res_step;
     const T_LINKCB *v6 = res_prevk;
     const T_LINKCB *v7 = res_nextd;
-    T_DB_STATES db_state = NOT_YET;
+    T_DB_STATES db_state = DB_NOT_YET;
     while (true)
         switch (db_state)
         {
-        case NOT_YET:
+        case DB_NOT_YET:
             if (ss_st->dot == NULL)
             {
-                db_state = DO;
+                db_state = DB_DO;
                 break;
             }
             if (s_stop < ss_st->step)
             {
-                db_state = ABEND;
+                db_state = DB_ABEND;
                 break;
             }
             getpf(ss_st);
             if (!ge_all && !(det_table->ge) && !(det_table->gt))
             {
                 if (det_table->tr)
-                    db_state = TRAP;
+                    db_state = DB_TRAP;
                 else
                 {
                     one_step(ss_st);
                     if (ss_st->state != 1)
-                        db_state = AB;
+                        db_state = DB_AB;
                     else
-                        db_state = NOT_YET;
+                        db_state = DB_NOT_YET;
                 }
                 break;
             }
@@ -460,10 +486,10 @@ static void dbapp(T_ST *ss_st)
                 dot1 = pk->info.codep;
                 pk->info.codep = NULL;
             }
-            db_state = ALREADY;
+            db_state = DB_ALREADY;
             break;
         // "is already" station
-        case ALREADY:
+        case DB_ALREADY:
             if ((det_table->le) || (det_table->lt))
             {
                 //  "isn't already"
@@ -492,21 +518,21 @@ static void dbapp(T_ST *ss_st)
                     getpf(ss_st);
                     if (det_table->tr)
                     {
-                        db_state = TRAP;
+                        db_state = DB_TRAP;
                         quit = true;
                         break;
                     }
                     one_step(ss_st);
                     if (s_stop < ss_st->step)
                     {
-                        db_state = ABEND;
+                        db_state = DB_ABEND;
                         quit = true;
                         break;
                     }
                     curr_step = ss_st->step + 1;
                     if (ss_st->state != 1)
                     {
-                        db_state = AB;
+                        db_state = DB_AB;
                         quit = true;
                         break;
                     }
@@ -523,7 +549,7 @@ static void dbapp(T_ST *ss_st)
             { // step in station "is already"
                 if (s_stop < ss_st->step)
                 {
-                    db_state = ABEND;
+                    db_state = DB_ABEND;
                     break;
                 }
                 if ((!eq_all && !det_table->eq) || det_table->ne)
@@ -535,13 +561,13 @@ static void dbapp(T_ST *ss_st)
                 }
                 if (det_table->tr)
                 {
-                    db_state = TRAP;
+                    db_state = DB_TRAP;
                     break;
                 }
                 one_step(ss_st);
                 if (ss_st->state != 1)
                 {
-                    db_state = AB;
+                    db_state = DB_AB;
                     break;
                 }
                 if (was_eq)
@@ -550,7 +576,7 @@ static void dbapp(T_ST *ss_st)
             if (ss_st->dot != NULL)
             {
                 getpf(ss_st);
-                db_state = ALREADY;
+                db_state = DB_ALREADY;
             }
             else
             {
@@ -558,19 +584,19 @@ static void dbapp(T_ST *ss_st)
                 ss_st->dot = dot1;
                 if (!ge_all && was_ge)
                     pr_finres(curr_step1, prevk1, nextd1);
-                db_state = NOT_YET;
+                db_state = DB_NOT_YET;
             }
             break;
-        case TRAP:
+        case DB_TRAP:
             printf("\nFunction name trap");
-            db_state = ABEND;
+            db_state = DB_ABEND;
             break;
-        case ABEND:
+        case DB_ABEND:
             printf("\nLeading functional term: ");
             rfpexm("     ", prevk, nextd);
-            db_state = EOJ;
+            db_state = DB_EOJ;
             break;
-        case EOJ:
+        case DB_EOJ:
             printf("\nCompleted steps number = %ld", ss_st->step);
             printf("\nView field: ");
             rfpexm("     ", ss_st->view, ss_st->view);
@@ -583,8 +609,8 @@ static void dbapp(T_ST *ss_st)
                 printf("\nGarbage collection number = %d", nogcl);
             exit(0);
             return;
-        case DO:
-        case AB:
+        case DB_DO:
+        case DB_AB:
             prevk = v1;
             nextd = v2;
             pk = v3;
