@@ -1,7 +1,7 @@
-//------------ file -- XCF.C --------------- 
-//   MO: ftochar, rftime, functab, chartof   
-//       Last edition date : 11.07.24        
-//------------------------------------------ 
+//------------ file -- XCF.C ---------------
+//   MO: ftochar, rftime, functab, chartof
+//       Last edition date : 11.07.24
+//------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +18,11 @@ static void ftochar_()
 {
     T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
-        goto HEOT;
+    {
+        printf("\nFtochar: format error");
+        refal.upshot = 2;
+        return;
+    }
     const char *u = (char *)p->info.codef - 1;
     union
     {
@@ -26,7 +30,7 @@ static void ftochar_()
         uint16_t w;
     } d;
     d.b[0] = *u;
-    d.b[1] = 0; // d.w - dlina  
+    d.b[1] = 0; // d.w - dlina
     u -= d.w;
     p = refal.prevr;
     if (!lrqlk(d.w))
@@ -45,10 +49,6 @@ static void ftochar_()
         p->info.infoc = *(u + i);
     }
     return;
-HEOT:
-    printf("\nFtochar: format error");
-    refal.upshot = 2;
-    return;
 }
 static char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', '\007'};
 G_L_B char ftochar = '\122';
@@ -58,7 +58,11 @@ static void functab_()
 {
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
-        goto HEOT;
+    {
+        printf("\nFunctab: format error");
+        refal.upshot = 2;
+        return;
+    }
     char *u = (char *)p->info.codef;
     for (size_t i = 0; i < func_n; i++)
         if (u == func_f[i])
@@ -70,10 +74,6 @@ static void functab_()
     func_f[func_n] = u;
     func_n++;
     return;
-HEOT:
-    printf("\nFunctab: format error");
-    refal.upshot = 2;
-    return;
 }
 static char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', '\007'};
 G_L_B char functab = '\122';
@@ -84,7 +84,7 @@ static void chartof_()
     T_LINKCB *p = refal.preva->next;
     if (p == refal.nexta)
         goto HEOT;
-    unsigned int i;
+    size_t i;
     for (i = 0; p != refal.nexta; i++, p = p->next)
         if (p->tag != TAGO)
             goto HEOT;
@@ -96,7 +96,7 @@ static void chartof_()
         u[i] = rfcnv(p->info.infoc);
     u[i] = i;
     ++i;
-    u[i] = 2; // HEOT  
+    u[i] = 2; // HEOT
     char *j = u + i;
     union
     {
@@ -109,8 +109,8 @@ static void chartof_()
         d.b[0] = *(func_f[k] - 1);
         if ((i == d.w + 1) && (strncmp(u, func_f[k] - (d.w + 1), d.w) == 0))
         {
-            // identificator iz tablicy ne preobr. w zaglawnye!!!  
-            // poetomu w m.o. imja d.b. napisano zaglawnymi!       
+            // identificator iz tablicy ne preobr. w zaglawnye!!!
+            // poetomu w m.o. imja d.b. napisano zaglawnymi!
             p = refal.preva->next;
             p->tag = TAGF;
             p->info.codef = (uint8_t *)func_f[k];
@@ -143,4 +143,4 @@ static char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
 G_L_B char chartof = '\122';
 static void (*chartof_1)() = chartof_;
 
-//------------------ end of file  XCF.C ---------------- 
+//------------------ end of file  XCF.C ----------------

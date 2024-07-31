@@ -258,6 +258,8 @@ static void oper(unsigned int o, unsigned int prn)
         return;
     }
     uint32_t a, b;
+    bool rez0 = false;
+    bool odnc = false;
     switch (o)
     {
     case Osub: // izmenim znak i skladywaem
@@ -270,14 +272,8 @@ static void oper(unsigned int o, unsigned int prn)
         uint32_t peren;
         if ((Xdl == 0) && (Ydl == 0))
         {
-        REZ0:
-            if (prn == 1)
-                return; // dlja n-operacij
-            x = refal.preva->next;
-            x->tag = TAGN;
-            pcoden(x, 0l);
-            rftpl(refal.prevr, x->prev, x->next);
-            return;
+            rez0 = true;
+            break;
         }
         if (Xdl == 0)
         { //  rezult - wtoroe chislo
@@ -317,7 +313,10 @@ static void oper(unsigned int o, unsigned int prn)
             else
             { // wychitaem
                 if (xmy() == 2)
-                    goto REZ0;
+                {
+                    rez0 = true;
+                    break;
+                }
                 if (xmy())
                     obmen();   //  menjaem x i y
                 Xn = Xn->prev; //  pripisywaem 0
@@ -348,7 +347,10 @@ static void oper(unsigned int o, unsigned int prn)
         break;
     case Omul:
         if ((Xdl == 0) || (Ydl == 0))
-            goto REZ0;
+        {
+            rez0 = true;
+            break;
+        }
         if (!lrqlk(Xdl + Ydl + 1))
         {
             refal.upshot = 3;
@@ -384,29 +386,28 @@ static void oper(unsigned int o, unsigned int prn)
                 {
                     a = gcoden(x);
                     if (a == 0l)
-                    {
                         b = 0l;
-                        goto ret;
+                    else
+                    {
+                        const unsigned int a11 = a >> 12;
+                        const unsigned int a22 = a & 0xFFF;
+                        c = a22 * (uint32_t)b22;
+                        b = c & 0xFFF;
+                        unsigned int r3 = c >> 12;
+                        c = a11 * (uint32_t)b22;
+                        r3 += c & 0xFFF;
+                        unsigned int r2 = c >> 12;
+                        c = a22 * (uint32_t)b11;
+                        r3 += c & 0xFFF;
+                        r2 += c >> 12;
+                        c = a11 * (uint32_t)b11;
+                        r2 += c & 0xFFF;
+                        const unsigned int r1 = c >> 12;
+                        const unsigned int r4 = r3 >> 12;
+                        a = r1 * HMAX + r2 + r4;
+                        b += (r3 & 0xFFF) * HMAX;
+                        // ymn (&a,&b);   // rez:a-T_ST, b-ml
                     }
-                    const unsigned int a11 = a >> 12;
-                    const unsigned int a22 = a & 0xFFF;
-                    c = a22 * (uint32_t)b22;
-                    b = c & 0xFFF;
-                    unsigned int r3 = c >> 12;
-                    c = a11 * (uint32_t)b22;
-                    r3 += c & 0xFFF;
-                    unsigned int r2 = c >> 12;
-                    c = a22 * (uint32_t)b11;
-                    r3 += c & 0xFFF;
-                    r2 += c >> 12;
-                    c = a11 * (uint32_t)b11;
-                    r2 += c & 0xFFF;
-                    const unsigned int r1 = c >> 12;
-                    const unsigned int r4 = r3 >> 12;
-                    a = r1 * HMAX + r2 + r4;
-                    b += (r3 & 0xFFF) * HMAX;
-                    // ymn (&a,&b);   // rez:a-T_ST, b-ml
-                ret:
                     j = gcoden(p) + b + peren;
                     peren = 0L;
                     if (j >= MAX)
@@ -438,13 +439,15 @@ static void oper(unsigned int o, unsigned int prn)
             b = 0L;
             Xzn = '+';
             Yzn = '+';
-            goto odnc;
+            odnc = true;
+            break;
         }
         if (xmy() == 2)
         { //  rawny
             a = 0L;
             b = 1L;
-            goto odnc;
+            odnc = true;
+            break;
         }
         if (xmy())
         { //  delimoe < delitelja
@@ -454,7 +457,8 @@ static void oper(unsigned int o, unsigned int prn)
                 b = 0L;
                 Xzn = '+';
                 Yzn = '+';
-                goto odnc;
+                odnc = true;
+                break;
             }
             if (Xzn == '-')
             {
@@ -483,7 +487,8 @@ static void oper(unsigned int o, unsigned int prn)
         { //  oba po odnoj cifre
             a = (gcoden(Xn)) % (gcoden(Yn));
             b = (gcoden(Xn)) / (gcoden(Yn));
-            goto odnc;
+            odnc = true;
+            break;
         }
         //  delenie mnogih  cifr
         if (!lrqlk((Xdl - Ydl) + 2))
@@ -601,7 +606,7 @@ static void oper(unsigned int o, unsigned int prn)
                     peren += a;
                 }
                 if (peren != 0L)
-                //{                                // cifra welika
+                    //{                                // cifra welika
                     // uint32_t jj=0l;  // !!! wremenno !!!
                     do
                     {
@@ -691,23 +696,36 @@ static void oper(unsigned int o, unsigned int prn)
             rftpl(refal.prevr, x->prev, Xn);
         return;
     } // end case
-    //  wozwratim X
-    // podawim wed. nuli
-    for (x = Xn; gcoden(x) == 0l; x = x->next)
-        ;
-    if (prn == 1 && x == Xk && gcoden(x) == 0l)
-        return;
-    if (Xzn == '-')
+    if (rez0)
     {
-        x = x->prev;
-        x->tag = TAGO;
-        x->info.codep = NULL;
-        x->info.infoc = '-';
+        if (prn == 1)
+            return; // dlja n-operacij
+        x = refal.preva->next;
+        x->tag = TAGN;
+        pcoden(x, 0l);
+        rftpl(refal.prevr, x->prev, x->next);
+        return;
     }
-    //  perenosim reultat
-    rftpl(refal.prevr, x->prev, Xk->next);
-    return;
-odnc: // wywod rezultata delenija, kogda ostatok i chastnoe
+    if (!odnc)
+    {
+        //  wozwratim X
+        // podawim wed. nuli
+        for (x = Xn; gcoden(x) == 0l; x = x->next)
+            ;
+        if (prn == 1 && x == Xk && gcoden(x) == 0l)
+            return;
+        if (Xzn == '-')
+        {
+            x = x->prev;
+            x->tag = TAGO;
+            x->info.codep = NULL;
+            x->info.infoc = '-';
+        }
+        //  perenosim reultat
+        rftpl(refal.prevr, x->prev, Xk->next);
+        return;
+    }
+    // wywod rezultata delenija, kogda ostatok i chastnoe
     // rawno po odnoj makrocifre a - ost., b - chastnoe
     if (!slins(refal.preva, 2))
     {
@@ -749,10 +767,10 @@ odnc: // wywod rezultata delenija, kogda ostatok i chastnoe
     x->info.codep = y;
     y->info.codep = x;
     if ((prn & 2) == 0)
-    // dr/n
+        // dr/n
         rftpl(refal.prevr, refal.preva->prev, y->next);
     else
-    // div/n
+        // div/n
         rftpl(refal.prevr, refal.preva->prev, x);
     return;
 }
