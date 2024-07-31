@@ -82,14 +82,27 @@ static void (*functab_1)() = functab_;
 static void chartof_()
 {
     T_LINKCB *p = refal.preva->next;
-    if (p == refal.nexta)
-        goto HEOT;
     size_t i;
-    for (i = 0; p != refal.nexta; i++, p = p->next)
-        if (p->tag != TAGO)
-            goto HEOT;
-    if (i > 255)
-        goto HEOT;
+    bool heot = false;
+    if (p == refal.nexta)
+        heot = true;
+    else
+    {
+        for (i = 0; p != refal.nexta; i++, p = p->next)
+            if (p->tag != TAGO)
+            {
+                heot = true;
+                break;
+            }
+        if (i > 255)
+            heot = true;
+    }
+    if (heot)
+    {
+        printf("\nChartof: format error");
+        refal.upshot = 2;
+        return;
+    }
     p = refal.preva->next;
     char *u = (char *)malloc(i + 2);
     for (i = 0; p != refal.nexta; i++, p = p->next)
@@ -133,10 +146,6 @@ static void chartof_()
     if (p->next != refal.nexta)
         rfdel(p, refal.nexta);
     rftpl(refal.prevr, p->prev, p->next);
-    return;
-HEOT:
-    printf("\nChartof: format error");
-    refal.upshot = 2;
     return;
 }
 static char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
