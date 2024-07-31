@@ -1,7 +1,7 @@
-//-----------  file  --  RFINTF.C ------------------ 
-//           C-interface functions                   
-//        Last modification : 11.07.2024             
-//-------------------------------------------------- 
+//-----------  file  --  RFINTF.C ------------------
+//           C-interface functions
+//        Last modification : 11.07.2024
+//--------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -47,7 +47,7 @@ bool lincrm()
                 return true;
         }
     }
-    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88  
+    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88
 #ifdef mdebug
     printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
 #endif
@@ -55,12 +55,12 @@ bool lincrm()
         return false;
     new_block->prev = last_block;
     last_block = new_block;
-    curr_size = curr_size + 1000; // kras 06.12.88  
-    rflist(new_block + 1, 1000);  // kras 06.12.88  
+    curr_size = curr_size + 1000; // kras 06.12.88
+    rflist(new_block + 1, 1000);  // kras 06.12.88
     return true;
 }
 
-//  check a number of items in free items list  
+//  check a number of items in free items list
 bool lrqlk(unsigned int l)
 {
     const T_LINKCB *p = refal.flhead;
@@ -135,7 +135,7 @@ char rfcnv(char cm)
     if ((j > 96) && (j < 123))
         return cm - '\40';
     else
-        return cm; // perewod  a..z w A..Z  
+        return cm; // perewod  a..z w A..Z
 }
 
 void rfinit()
@@ -183,7 +183,7 @@ void rfcanc(const T_ST *ast)
     return;
 }
 
-//    delete part of list and add it to free memory list  
+//    delete part of list and add it to free memory list
 void rfdel(T_LINKCB *p, T_LINKCB *q)
 {
     T_LINKCB *p1 = p->next;
@@ -218,81 +218,96 @@ void rfexec(const uint8_t *func)
     T_ST s_st;
     if (rf_init)
         rfinit();
+    bool lack = false;
     if (!lincrm())
-        goto LACK;
-    if (!lcre(&s_st))
-        goto LACK;
-    if (!linskd(&s_st, func))
-        goto LACK;
+        lack = true;
+    else if (!lcre(&s_st))
+        lack = true;
+    else if (!linskd(&s_st, func))
+        lack = true;
+    if (lack)
+    {
+        printf("\nNo ehough memory for initialization");
+        rftermm();
+        return;
+    }
     s_st.stop = 0x7FFFFFFFL;
-AGAIN:
-
-// BLF 17.07.2004  
+    enum
+    {
+        AGAIN,
+        ABEND,
+        EOJ
+    } ex_state = AGAIN;
+    while (true)
+        switch (ex_state)
+        {
+        case AGAIN:
+// BLF 17.07.2004
 #ifdef mdebug
-    /*	step by step execution with full debug trace information
-       see refal-2 user manual (3.14 - example of processing control) */
-    while (s_st.state == 1 && s_st.dot != NULL)
-    {
-        s_st.stop = s_st.step + 1;
-        const T_LINKCB *pk = s_st.dot->info.codep;
-        const T_LINKCB *prevk = pk->prev;
-        const T_LINKCB *nextd = s_st.dot->next;
-        printf("\n step: %d", s_st.stop);
-        rfpexm(" Term: ", prevk, nextd);
+            /*	step by step execution with full debug trace information
+               see refal-2 user manual (3.14 - example of processing control) */
+            while (s_st.state == 1 && s_st.dot != NULL)
+            {
+                s_st.stop = s_st.step + 1;
+                const T_LINKCB *pk = s_st.dot->info.codep;
+                const T_LINKCB *prevk = pk->prev;
+                const T_LINKCB *nextd = s_st.dot->next;
+                printf("\n step: %d", s_st.stop);
+                rfpexm(" Term: ", prevk, nextd);
 
-        rfrun(&s_st);
+                rfrun(&s_st);
 
-        if (s_st.state == 1)
-            rfpexm(" Result: ", prevk, nextd);
-    }
+                if (s_st.state == 1)
+                    rfpexm(" Result: ", prevk, nextd);
+            }
 #else
-    // no debug info  
-    rfrun(&s_st);
-    if (s_st.state == 3)
-        if (lincrm())
-            goto AGAIN;
-    if (s_st.dot != NULL)
-        goto ABEND;
+            // no debug info
+            rfrun(&s_st);
+            if (s_st.state == 3)
+                if (lincrm())
+                    break;
+            if (s_st.dot != NULL)
+            {
+                ex_state = ABEND;
+                break;
+            }
 #endif
-    // BLF -- end correction 17.07.2004  
-
-DONE:
-    printf("\nConcretization is executed");
-    goto EOJ;
-ABEND:
-    switch (s_st.state)
-    {
-    case 1:
-        printf("\nStop on step number");
-        break;
-    case 2:
-        printf("\nRecognition impossible");
-        break;
-    case 3:
-        printf("\nFree memory exhausted");
-    }
-EOJ:
-    printf("\nTotal steps number = %ld", s_st.step);
-    if (s_st.view->next != s_st.view)
-    {
-        printf("\nView field:");
-        rfpexm("            ", s_st.view, s_st.view);
-    }
-    if (s_st.store->next != s_st.store)
-    {
-        printf("\nBurried:");
-        rfpexm("         ", s_st.store, s_st.store);
-    }
-    rfcanc(&s_st);
-    rftermm();
-
-    // BLF  
-    printf("\n");
-
-    return;
-LACK:
-    printf("\nNo ehough memory for initialization");
-    rftermm();
+            // BLF -- end correction 17.07.2004
+            printf("\nConcretization is executed");
+            ex_state = EOJ;
+            break;
+        case ABEND:
+            switch (s_st.state)
+            {
+            case 1:
+                printf("\nStop on step number");
+                break;
+            case 2:
+                printf("\nRecognition impossible");
+                break;
+            case 3:
+                printf("\nFree memory exhausted");
+            }
+            ex_state = EOJ;
+            break;
+        case EOJ:
+            printf("\nTotal steps number = %ld", s_st.step);
+            if (s_st.view->next != s_st.view)
+            {
+                printf("\nView field:");
+                rfpexm("            ", s_st.view, s_st.view);
+            }
+            if (s_st.store->next != s_st.store)
+            {
+                printf("\nBurried:");
+                rfpexm("         ", s_st.store, s_st.store);
+            }
+            rfcanc(&s_st);
+            rftermm();
+            // BLF
+            printf("\n");
+            return;
+        }
 }
 
 void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
@@ -370,7 +385,7 @@ void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q)
     return;
 }
 
-//  copy expression and add it to nessecary place   
+//  copy expression and add it to nessecary place
 bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
 {
     T_LINKCB *f = refal.flhead;
@@ -401,7 +416,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
             break;
         default:
             f->tag = f0->tag;
-            //   pcoden(f,gcoden(f0));  
+            //   pcoden(f,gcoden(f0));
         }
         f0 = f0->next;
     }
@@ -466,31 +481,33 @@ static void mark(T_LINKCB *root)
 {
     T_LINKCB *p = root;
     T_LINKCB *h = p;
-MRK:
-    if (p->next == h)
-        goto UP;
-    p = p->next;
-    if (p->tag != TAGR)
-        goto MRK;
-    T_LINKCB *q = p->info.codep;
-    if (q->tag != 0)
-        goto MRK;
-    q->tag = 0xFFFF;
-    p->info.codep = h;
-    q->prev = p;
-    h = p = q;
-    goto MRK;
-UP:
-    if (h == root)
-        return;
-    q = h->prev;
-    h->prev = p;
-    T_LINKCB *r = h;
-    h = q->info.codep;
-    q->info.codep = r;
-    q->tag = TAGR;
-    p = q;
-    goto MRK;
+    while (true)
+    {
+        T_LINKCB *q;
+        if (p->next != h)
+        {
+            p = p->next;
+            if (p->tag != TAGR)
+                continue;
+            q = p->info.codep;
+            if (q->tag != 0)
+                continue;
+            q->tag = 0xFFFF;
+            p->info.codep = h;
+            q->prev = p;
+            h = p = q;
+            continue;
+        }
+        if (h == root)
+            return;
+        q = h->prev;
+        h->prev = p;
+        T_LINKCB *r = h;
+        h = q->info.codep;
+        q->info.codep = r;
+        q->tag = TAGR;
+        p = q;
+    }
 }
 
 static bool lgcl()
@@ -499,7 +516,7 @@ static bool lgcl()
     T_LINKCB *hd = &hdvar;
     if (refal.dvar == NULL)
         return false;
-    // mark boxes achieved from view field & burriage  
+    // mark boxes achieved from view field & burriage
     bool was_coll = false;
     const T_LINKCB *pzero = NULL;
     const T_ST *p = refal.crnext;
@@ -509,7 +526,7 @@ static bool lgcl()
         mark(p->store);
         p = p->stnext;
     }
-    // mark boxes achieved from static boxes     
+    // mark boxes achieved from static boxes
     if (refal.svar != NULL)
     {
         T_LINKCB *r = refal.svar;
@@ -518,19 +535,19 @@ static bool lgcl()
             mark(r);
             r = r->info.codep;
         } while (r != pzero);
-        //   remove garbage    
+        //   remove garbage
         hd->info.codep = refal.dvar;
         T_LINKCB *p1 = hd;
         T_LINKCB *q = refal.dvar;
         do
         {
             if (q->tag != 0)
-            { // box isn't removed  
+            { // box isn't removed
                 q->tag = 0;
                 p1 = q;
             }
             else
-            { // remove box      
+            { // remove box
                 was_coll = true;
                 p1->info.codep = q->info.codep;
                 p1->tag = q->tag;
@@ -628,4 +645,4 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     }
     return y;
 }
-//----------- end of file  RFINTF.C ------------ 
+//----------- end of file  RFINTF.C ------------
