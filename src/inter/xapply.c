@@ -1,7 +1,7 @@
-//-----------  file  --  XAPPLY.C ------------ 
-//                 MO: apply                   
-//       Last modification : 11.07.2024        
-//-------------------------------------------- 
+//-----------  file  --  XAPPLY.C ------------
+//                 MO: apply
+//       Last modification : 11.07.2024
+//--------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
@@ -15,22 +15,33 @@ static void appl_()
 {
     T_ST *s_st;
     uint32_t l = (uint32_t)&s_st;
+    T_ST *upst;
+    T_LINKCB *px;
+    bool lack = false;
     if ((l & 0xffffL) < 200L)
-    //{ // printf("\nStack overflow!"); 
-        goto LACK;
+        //{ // printf("\nStack overflow!");
+        lack = true;
     //}
-    T_ST *upst = refal.currst;
-    if (!slins(refal.prevr, 1))
-        return;
-    T_LINKCB *px = refal.prevr->next;
-    if ((s_st = malloc(sizeof(T_ST))) == NULL)
-        goto LACK;
-    if (!lcre(s_st))
-        goto LACK;
-    if (!lins(s_st->view, 2))
+    else
     {
-        rfcanc(s_st);
-        goto LACK;
+        upst = refal.currst;
+        if (!slins(refal.prevr, 1))
+            return;
+        px = refal.prevr->next;
+        if ((s_st = malloc(sizeof(T_ST))) == NULL)
+            lack = true;
+        else if (!lcre(s_st))
+            lack = true;
+        else if (!lins(s_st->view, 2))
+        {
+            rfcanc(s_st);
+            lack = true;
+        }
+    }
+    if (lack)
+    {
+        refal.upshot = 3;
+        return;
     }
     T_LINKCB *pk = s_st->view->next;
     T_LINKCB *pd = pk->next;
@@ -42,21 +53,21 @@ static void appl_()
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    //   printf("\nEnter: %ld",upst->step);  
+    //   printf("\nEnter: %ld",upst->step);
     s_st->stop = 0x7FFFFFFFl;
     do
     {
         if (dba == NULL)
-            rfrun(s_st); // net prokrutki  
+            rfrun(s_st); // net prokrutki
         else
-            (*dba)(s_st); // prokrutka vkluchena  
+            (*dba)(s_st); // prokrutka vkluchena
         if (s_st->state == 3)
             if (lincrm())
                 s_st->state = 1;
     } while ((s_st->state == 1) && (s_st->dot != NULL));
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
-    //   printf("\nOut: %ld %lx",upst->step,upst);   
+    //   printf("\nOut: %ld %lx",upst->step,upst);
     switch (s_st->state)
     {
     case 1:
@@ -76,12 +87,9 @@ static void appl_()
     rfcanc(s_st);
     free(s_st);
     return;
-LACK:
-    refal.upshot = 3;
-    return;
 }
 static char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', '\005'};
 G_L_B char apply = '\122';
 static void (*appl_1)() = appl_;
 
-//----------  end of file XAPPLY.C  ----------- 
+//----------  end of file XAPPLY.C  -----------
