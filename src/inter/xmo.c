@@ -413,52 +413,65 @@ static void (*delf_1)() = delf_;
 static void crel_()
 {
     T_LINKCB *p = refal.preva->next;
-    if (p->tag != TAGLB)
-        goto FAIL;
-    const T_LINKCB *p1 = p->info.codep;
-    p = p->next;
-    T_LINKCB *q = p1->next;
-    const T_LINKCB *q1 = refal.nexta;
-    char c = '=';
-    for (; c == '=' && p != p1 && q != q1; p = p->next, q = q->next)
+    do
     {
-        if (p->tag == TAGLB)
+        if (p->tag != TAGLB)
+            break;
+        const T_LINKCB *p1 = p->info.codep;
+        p = p->next;
+        T_LINKCB *q = p1->next;
+        const T_LINKCB *q1 = refal.nexta;
+        char c = '=';
+        bool fail = false;
+        for (; c == '=' && p != p1 && q != q1; p = p->next, q = q->next)
         {
-            if (q->tag != TAGLB)
-                goto FAIL;
-            else
+            if (p->tag == TAGLB)
+            {
+                if (q->tag != TAGLB)
+                    fail = true;
                 break;
-        }
-        if (p->tag == TAGRB)
-        {
-            if (q->tag != TAGRB)
-                goto FAIL;
-            else
+            }
+            if (p->tag == TAGRB)
+            {
+                if (q->tag != TAGRB)
+                    fail = true;
                 break;
+            }
+            if (p->info.coden < q->info.coden)
+                c = '<';
+            if (p->info.coden > q->info.coden)
+                c = '>';
         }
-        if (p->info.coden < q->info.coden)
+        if (fail)
+            break;
+        if (p == p1 && q != q1)
             c = '<';
-        if (p->info.coden > q->info.coden)
+        if (q == q1 && p != p1)
             c = '>';
-    }
-    if (p == p1 && q != q1)
-        c = '<';
-    if (q == q1 && p != p1)
-        c = '>';
-    for (; p != p1; p = p->next)
-        if (p->tag == TAGLB)
-            goto FAIL;
-    for (; q != q1; q = q->next)
-        if (q->tag == TAGLB)
-            goto FAIL;
-    p = refal.preva->next;
-    p->tag = TAGO;
-    p->info.codep = NULL;
-    p->info.infoc = c;
-    q = p->next;
-    rftpl(refal.prevr, refal.preva, q);
-    return;
-FAIL:
+        for (; p != p1; p = p->next)
+            if (p->tag == TAGLB)
+            {
+                fail = true;
+                break;
+            }
+        if (fail)
+            break;
+        for (; q != q1; q = q->next)
+            if (q->tag == TAGLB)
+            {
+                fail = true;
+                break;
+            }
+        if (fail)
+            break;
+        p = refal.preva->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = c;
+        q = p->next;
+        rftpl(refal.prevr, refal.preva, q);
+        return;
+    } while (false);
     refal.upshot = 2;
     return;
 }
