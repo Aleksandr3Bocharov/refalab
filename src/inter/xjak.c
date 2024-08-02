@@ -1,8 +1,8 @@
-//-------------- file -- XJAK.C ------------ 
-//       MO: br, dg, dgall, rp, cp           
-//           gtr, rdr, wtr, swr, new         
-//      Last edition date : 11.07.2024       
-//------------------------------------------ 
+//-------------- file -- XJAK.C ------------
+//       MO: br, dg, dgall, rp, cp
+//           gtr, rdr, wtr, swr, new
+//      Last edition date : 11.07.2024
+//------------------------------------------
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -27,7 +27,7 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
         if (*q != N_SWAP)
             return false;
         q++;
-        p = (T_LINKCB *)q; //eg 
+        p = (T_LINKCB *)q; // eg
         if (p->prev == NULL)
         {
             p->prev = p->next = p;
@@ -54,13 +54,13 @@ static void br_()
         {
             refal.upshot = 2;
             return;
-        }; // FAIL  
+        }; // FAIL
     }
     if (!lins(ast->store, 2))
     {
         refal.upshot = 3;
         return;
-    }; // LACK  
+    }; // LACK
     T_LINKCB *pl = ast->store->next;
     T_LINKCB *pr = pl->next;
     pl->info.codep = pr;
@@ -78,21 +78,24 @@ static void dg_()
 {
     const T_ST *ast = refal.currst;
     T_LINKCB *pr = ast->store;
-DG1:
-    T_LINKCB *pl = pr->next;
-    if (pl == ast->store)
-        return;
-    if (pl->tag != TAGLB)
+    T_LINKCB *q, *pl;
+    while (true)
     {
-        refal.upshot = 2;
-        return;
-    }; // FAIL  
-    pr = pl->info.codep;
-    T_LINKCB *q;
-    if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
-        goto DG1;
-    if ((q->tag != TAGO) || (q->info.infoc != '='))
-        goto DG1;
+        T_LINKCB *pl = pr->next;
+        if (pl == ast->store)
+            return;
+        if (pl->tag != TAGLB)
+        {
+            refal.upshot = 2;
+            return;
+        }; // FAIL
+        pr = pl->info.codep;
+        if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
+            continue;
+        if ((q->tag != TAGO) || (q->info.infoc != '='))
+            continue;
+        break;
+    }
     rftpl(refal.prevr, q, pr);
     pl = pl->prev;
     pr = pr->next;
@@ -107,7 +110,7 @@ static void dgall_()
 {
     const T_ST *ast = refal.currst;
     if (refal.preva->next != refal.nexta)
-        refal.upshot = 2; // FAIL  
+        refal.upshot = 2; // FAIL
     else
         rftpl(refal.prevr, ast->store, ast->store);
     return;
@@ -124,7 +127,7 @@ static void gtr_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     rftpl(refal.prevr, p, p);
     return;
 }
@@ -140,13 +143,13 @@ static void rdr_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     if (!lcopy(refal.prevr, p, p))
     {
         refal.upshot = 3;
         return;
-    }; // LACK 
-    return; 
+    }; // LACK
+    return;
 }
 static char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
 G_L_B char rdr = '\122';
@@ -160,12 +163,12 @@ static void ptr_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     T_LINKCB *q = p->prev;
     rftpl(q, r, refal.nexta);
     return;
 }
-// BLF  
+// BLF
 #ifdef UNIX
 static char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
 G_L_B char pt_ = '\122';
@@ -184,7 +187,7 @@ static void wtr_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     rfdel(p, p);
     rftpl(p, r, refal.nexta);
     return;
@@ -201,7 +204,7 @@ static void swr_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     rftpl(refal.prevr, p, p);
     rftpl(p, r, refal.nexta);
     return;
@@ -214,50 +217,58 @@ static void rp_()
 {
     const T_ST *ast = refal.currst;
     T_LINKCB *p = refal.preva;
+    bool fail = false;
     while ((p->tag != TAGO) || (p->info.infoc != '='))
     {
         p = p->next;
         if (p == refal.nexta)
-            goto FAIL;
-    };
-    T_LINKCB *pr = ast->store;
-RP1:
-    T_LINKCB *pl = pr->next;
-    if (pl == ast->store)
-    {
-        if (!lins(ast->store, 2))
         {
-            refal.upshot = 3;
-            return;
-        }; // LACK  
-        pl = ast->store->next;
-        pr = pl->next;
-        pl->info.codep = pr;
-        pl->tag = TAGLB;
-        pr->info.codep = pl;
-        pr->tag = TAGRB;
-        rftpl(pl, refal.preva, refal.nexta);
-    }
-    else
+            fail = true;
+            break;
+        }
+    };
+    if (!fail)
     {
-        if (pl->tag != TAGLB)
-            goto FAIL;
-        pr = pl->info.codep;
-        T_LINKCB *q;
-        if ((q = lldupl(refal.preva, p, pl)) == 0)
-            goto RP1;
-        if ((q->tag != TAGO) || (q->info.infoc != '='))
-            goto RP1;
-        rfdel(q, pr);
-        rftpl(q, p, refal.nexta);
+        T_LINKCB *pr = ast->store;
+        while (true)
+        {
+            T_LINKCB *pl = pr->next;
+            if (pl == ast->store)
+            {
+                if (!lins(ast->store, 2))
+                {
+                    refal.upshot = 3;
+                    return;
+                }; // LACK
+                pl = ast->store->next;
+                pr = pl->next;
+                pl->info.codep = pr;
+                pl->tag = TAGLB;
+                pr->info.codep = pl;
+                pr->tag = TAGRB;
+                rftpl(pl, refal.preva, refal.nexta);
+            }
+            else
+            {
+                if (pl->tag != TAGLB)
+                    break;
+                pr = pl->info.codep;
+                T_LINKCB *q;
+                if ((q = lldupl(refal.preva, p, pl)) == 0)
+                    continue;
+                if ((q->tag != TAGO) || (q->info.infoc != '='))
+                    continue;
+                rfdel(q, pr);
+                rftpl(q, p, refal.nexta);
+            }
+            return;
+        }
     }
-    return;
-FAIL:
     refal.upshot = 2;
     return;
 }
 
-// BLF  
+// BLF
 #ifdef UNIX
 static char rp_0[] = {Z2 'R', '_', '\002'};
 G_L_B char r_ = '\122';
@@ -272,23 +283,26 @@ static void cp_()
 {
     const T_ST *ast = refal.currst;
     const T_LINKCB *pr = ast->store;
-CP1:
-    const T_LINKCB *pl = pr->next;
-    if (pl == ast->store)
-        return;
-    if (pl->tag != TAGLB)
-    {
-        refal.upshot = 2;
-        return;
-    }; // FAIL  
-    pr = pl->info.codep;
     const T_LINKCB *q;
-    if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
-        goto CP1;
-    if ((q->tag != TAGO) || (q->info.infoc != '='))
-        goto CP1;
+    while (true)
+    {
+        const T_LINKCB *pl = pr->next;
+        if (pl == ast->store)
+            return;
+        if (pl->tag != TAGLB)
+        {
+            refal.upshot = 2;
+            return;
+        }; // FAIL
+        pr = pl->info.codep;
+        if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
+            continue;
+        if ((q->tag != TAGO) || (q->info.infoc != '='))
+            continue;
+        break;
+    }
     if (!lcopy(refal.prevr, q, pr))
-        refal.upshot = 3; // LACK  
+        refal.upshot = 3; // LACK
     return;
 }
 static char cp_0[] = {Z2 'C', 'P', '\002'};
@@ -301,7 +315,7 @@ static void new_()
     {
         refal.upshot = 3;
         return;
-    }; // LACK  
+    }; // LACK
     T_LINKCB *r = refal.prevr->next;
     r->info.codep = refal.preva;
     r->tag = TAGR;
@@ -319,4 +333,4 @@ static char new_0[] = {Z3 'N', 'E', 'W', '\003'};
 G_L_B char new = '\122';
 static void (*new_1)() = new_;
 
-//----------------- end of file  XJAK.C ---------------- 
+//----------------- end of file  XJAK.C ----------------

@@ -1,9 +1,9 @@
-//-------------- file -- XMO.C ------------- 
-//                 General MO:               
-//     p1, m1, numb, symb, first, last,      
-//     lengr, lengw, multe, crel, delf       
-//      Last edition date : 11.07.24         
-//------------------------------------------ 
+//-------------- file -- XMO.C -------------
+//                 General MO:
+//     p1, m1, numb, symb, first, last,
+//     lengr, lengw, multe, crel, delf
+//      Last edition date : 11.07.24
+//------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,15 +13,22 @@
 static void p1_()
 {
     T_LINKCB *p = refal.preva->next;
+    uint32_t l;
+    bool neot = false;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
+        neot = true;
+    else
     {
-    NEOT:
+
+        l = gcoden(p) + 1;
+        if (l > 16777215l)
+            neot = true;
+    }
+    if (neot)
+    {
         refal.upshot = 2;
         return;
     }
-    const uint32_t l = gcoden(p) + 1;
-    if (l > 16777215l)
-        goto NEOT;
     pcoden(p, l);
     rftpl(refal.prevr, p->prev, p->next);
     return;
@@ -33,15 +40,21 @@ static void (*p1_1)() = p1_;
 static void m1_()
 {
     T_LINKCB *p = refal.preva->next;
+    int32_t l;
+    bool neot = false;
     if ((p->next != refal.nexta) || (p->tag != TAGN))
+        neot = true;
+    else
     {
-    NEOT:
+        l = gcoden(p) - 1;
+        if (l < 0)
+            neot = true;
+    }
+    if (neot)
+    {
         refal.upshot = 2;
         return;
     }
-    const int32_t l = gcoden(p) - 1;
-    if (l < 0)
-        goto NEOT;
     pcoden(p, l);
     rftpl(refal.prevr, p->prev, p->next);
     return;
@@ -52,8 +65,8 @@ static void (*m1_1)() = m1_;
 
 static int cmpstr(unsigned int n, const char *s1, const char *s2)
 {
-    // comparison two string . if s1<s2 then return < 0  
-    // if s1 = s2 return 0. if s1>s2 then return > 0     
+    // comparison two string . if s1<s2 then return < 0
+    // if s1 = s2 return 0. if s1>s2 then return > 0
     for (size_t i = 0; i < n; i++, s1++, s2++)
         if (*s1 != *s2)
             return *s1 - *s2;
@@ -75,23 +88,30 @@ static void numb_()
     while ((p->tag == TAGO) && (p->info.infoc == '0'))
         p = p->next;
     char str[12];
-    unsigned int i;
+    size_t i;
+    bool neot = false;
     for (i = 0; p != refal.nexta; i++)
         if ((p->tag != TAGO) || (i == 11))
         {
-        NEOT:
-            refal.upshot = 2;
-            return;
+            neot = true;
+            break;
         }
         else
         {
             str[i] = p->info.infoc;
             if (str[i] < '0' || str[i] > '9')
-                goto NEOT;
-            if ((i == 9) && (cmpstr(i + 1, str, "2147483647") > 0))
-                goto NEOT;
+                neot = true;
+            else if ((i == 9) && (cmpstr(i + 1, str, "2147483647") > 0))
+                neot = true;
+            if (neot)
+                break;
             p = p->next;
         }
+    if (neot)
+    {
+        refal.upshot = 2;
+        return;
+    }
     str[i] = '\0';
     if (strlen(str) == 0)
     {
@@ -131,14 +151,22 @@ static void symb_()
     T_LINKCB *p1 = p;
     while ((p->tag == TAGN) && (gcoden(p) == 0l))
         p = p->next;
-    unsigned int i;
+    size_t i;
+    bool neot = false;
     for (i = 0; p != refal.nexta; i++, p = p->next)
         if ((p->tag != TAGN) || (i == 2))
-            goto NEOT;
-    p = p->prev;
-    if ((i == 2) && (gcoden(p1) >= 128))
+        {
+            neot = true;
+            break;
+        }
+    if (!neot)
     {
-    NEOT:
+        p = p->prev;
+        if ((i == 2) && (gcoden(p1) >= 128))
+            neot = true;
+    }
+    if (neot)
+    {
         refal.upshot = 2;
         return;
     }
@@ -188,8 +216,8 @@ static void first_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
-    const uint32_t n = gcoden(pn); //eg 
+    }; // FAIL
+    const uint32_t n = gcoden(pn); // eg
     T_LINKCB *p = pn;
     for (size_t k = 1; k <= n; k++)
     {
@@ -225,8 +253,8 @@ static void last_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
-    const uint32_t n = gcoden(pn); //eg 
+    }; // FAIL
+    const uint32_t n = gcoden(pn); // eg
     T_LINKCB *p = refal.nexta;
     for (size_t k = 1; k <= n; k++)
     {
@@ -261,7 +289,7 @@ static void (*last_1)() = last_;
 
 static void lengr_()
 {
-    uint32_t n = 0l; // kras  
+    uint32_t n = 0l; // kras
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -279,7 +307,7 @@ static void (*lengr_1)() = lengr_;
 
 static void lengw_()
 {
-    uint32_t n = 0l; // kras  
+    uint32_t n = 0l; // kras
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -304,7 +332,7 @@ static void multe_()
     {
         refal.upshot = 2;
         return;
-    }; // FAIL  
+    }; // FAIL
     uint32_t n = gcoden(pn);
     if (n == 0)
         return;
@@ -320,14 +348,14 @@ static void multe_()
             {
                 refal.upshot = 3;
                 return;
-            }; // LACK  
+            }; // LACK
             n--;
         } while (n >= 1);
     }
     else
     {
         if (!slins(refal.prevr, n))
-            return; //  LACK  
+            return; //  LACK
         T_LINKCB *q = refal.prevr;
         for (uint32_t k = 0; k < n; k++)
         {
@@ -348,17 +376,22 @@ static void delf_()
     {
         refal.upshot = 2;
         return;
-    } //FAIL 
+    } // FAIL
     const T_LINKCB *dot = refal.nexta;
     const T_LINKCB *dot1 = refal.nextr->info.codep;
-REPEAT:
-    const T_LINKCB *sk = dot->info.codep;
-    if (sk == NULL)
-        rfabe("delf: sign '#' missing ");
-    dot = sk->info.codep;
-    T_LINKCB *nd = dot->next;
-    if (nd->info.infoc != '#')
-        goto REPEAT;
+    const T_LINKCB *sk;
+    T_LINKCB *nd;
+    while (true)
+    {
+        sk = dot->info.codep;
+        if (sk == NULL)
+            rfabe("delf: sign '#' missing ");
+        dot = sk->info.codep;
+        nd = dot->next;
+        if (nd->info.infoc != '#')
+            continue;
+        break;
+    }
     while (dot1 != dot)
     {
         sk = dot1->info.codep;
@@ -433,4 +466,4 @@ static char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
 G_L_B char crel = '\122';
 static void (*crel_1)() = crel_;
 
-//-------------------- end of file  XMO.C ---------------- 
+//-------------------- end of file  XMO.C ----------------
