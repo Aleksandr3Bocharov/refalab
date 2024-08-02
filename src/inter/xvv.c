@@ -1,7 +1,7 @@
-//-------------- file -- XVV.C ------------ 
-//           MO: file input/output          
-//      Last edition date : 11.07.24        
-//----------------------------------------- 
+//-------------- file -- XVV.C ------------
+//           MO: file input/output
+//      Last edition date : 11.07.24
+//-----------------------------------------
 #include <stdio.h>
 #include <stdbool.h>
 #include "refal.def"
@@ -17,42 +17,51 @@ static uint32_t jl;
 
 static void opng_()
 {
-    unsigned int i;
+    size_t i;
     char namf[40];
     for (i = 0; i < 40; i++)
         namf[i] = '\0';
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
-        jl = 0; // jung zamenila na jl  
+        jl = 0; // jung zamenila na jl
     else
     {
         jl = p->info.coden;
         p = p->next;
     }
-    if (jl >= fmax)
-        goto HEOT;
-    else
-        jung = jl;
-    for (i = 0; p != refal.nexta; i++)
-        if ((p->tag != TAGO) || (i == 39))
-            goto HEOT;
-        else
-        {
-            namf[i] = p->info.infoc;
-            p = p->next;
-        }
-    inr = fopen(namf, "r");
-    //printf("\n opn, namf=%s flg=%d fd=%d",namf,inr->flags,inr->fd); 
-    if (inr == NULL)
+    bool heot1 = false;
+    do
     {
-        printf("\nopnget: can't open file %s", namf);
-        goto HEOT1;
-    }
-    uniget[jung] = inr;
-    return;
-HEOT:
-    printf("\nopnget: format error");
-HEOT1:
+        if (jl >= fmax)
+            break;
+        jung = jl;
+        bool heot = false;
+        for (i = 0; p != refal.nexta; i++)
+            if ((p->tag != TAGO) || (i == 39))
+            {
+                heot = true;
+                break;
+            }
+            else
+            {
+                namf[i] = p->info.infoc;
+                p = p->next;
+            }
+        if (heot)
+            break;
+        inr = fopen(namf, "r");
+        // printf("\n opn, namf=%s flg=%d fd=%d",namf,inr->flags,inr->fd);
+        if (inr == NULL)
+        {
+            printf("\nopnget: can't open file %s", namf);
+            heot1 = true;
+            break;
+        }
+        uniget[jung] = inr;
+        return;
+    } while (false);
+    if (!heot1)
+        printf("\nopnget: format error");
     refal.upshot = 2;
     return;
 }
@@ -80,29 +89,39 @@ static void opnp_()
         jl = p->info.coden;
         p = p->next;
     }
-    if (jl >= fmax)
-        goto HEOT;
-    junp = jl;
-    for (i = 0; p != refal.nexta; i++)
-        if ((p->tag != TAGO) || (i == 40))
-            goto HEOT;
-        else
-        {
-            namf[i] = p->info.infoc;
-            p = p->next;
-        }
-    inw = fopen(namf, m);
-    //printf("\n opnput, namf=%s mode=%s",namf,m); 
-    if (inw == NULL)
+    bool heot1 = false;
+    do
     {
-        printf("\nopnput: can't open file %s", namf);
-        goto HEOT1;
-    }
-    uniput[junp] = inw;
-    return;
-HEOT:
-    printf("\nopnput: format error");
-HEOT1:
+        if (jl >= fmax)
+            break;
+        junp = jl;
+        bool heot = false;
+        for (i = 0; p != refal.nexta; i++)
+            if ((p->tag != TAGO) || (i == 40))
+            {
+                heot = true;
+                break;
+            }
+            else
+            {
+                namf[i] = p->info.infoc;
+                p = p->next;
+            }
+        if (heot)
+            break;
+        inw = fopen(namf, m);
+        // printf("\n opnput, namf=%s mode=%s",namf,m);
+        if (inw == NULL)
+        {
+            printf("\nopnput: can't open file %s", namf);
+            heot1 = true;
+            break;
+        }
+        uniput[junp] = inw;
+        return;
+    } while (false);
+    if (!heot1)
+        printf("\nopnput: format error");
     refal.upshot = 2;
     return;
 }
@@ -121,16 +140,15 @@ static void clsg_()
         p = p->next;
     }
     if (jl >= fmax)
-        goto HEOT;
-    else
-        jung = jl;
+    {
+        printf("\nclsget: format error");
+        refal.upshot = 2;
+        return;
+    }
+    jung = jl;
     inr = uniget[jung];
-    //printf("\n cls, flg=%d fd=%d",inr->flags,inr->fd); 
+    // printf("\n cls, flg=%d fd=%d",inr->flags,inr->fd);
     fclose(inr);
-    return;
-HEOT:
-    printf("\nclsget: format error");
-    refal.upshot = 2;
     return;
 }
 static char clsg_0[] = {Z6 'C', 'L', 'S', 'G', 'E', 'T', '\006'};
@@ -148,16 +166,15 @@ static void clsp_()
         p = p->next;
     }
     if (jl >= fmax)
-        goto HEOT;
-    else
-        junp = jl;
+    {
+        printf("\nclsput: format error");
+        refal.upshot = 2;
+        return;
+    }
+    junp = jl;
     inw = uniput[junp];
-    //printf("\n cls, flg=%d fd=%d",inw->flags,inw->fd); 
+    // printf("\n cls, flg=%d fd=%d",inw->flags,inw->fd);
     fclose(inw);
-    return;
-HEOT:
-    printf("\nclsput: format error");
-    refal.upshot = 2;
     return;
 }
 static char clsp_0[] = {Z6 'C', 'L', 'S', 'P', 'U', 'T', '\006'};
@@ -179,21 +196,24 @@ static void libg_()
         p = p->next;
     }
     if (jl >= fmax)
-        goto HEOT;
-    else
-        jung = jl;
+    {
+        printf("\nlibget: format error");
+        refal.upshot = 2;
+        return;
+    }
+    jung = jl;
     inr = uniget[jung];
     char s[128];
     s[0] = ' ';
     int c;
-    unsigned int i;
+    size_t i;
     for (i = 0; ((c = getc(inr)) != '\n') && (c != EOF) && (i < 128); i++)
         s[i] = c;
     if (c == EOF)
         return;
-    unsigned int j;
+    size_t j;
     if (new)
-    { // sovmestimost s ES  
+    { // sovmestimost s ES
         p = refal.prevr;
         if (!slins(p, 80))
             return;
@@ -214,34 +234,30 @@ static void libg_()
         return;
     }
     if (i < 128)
-        i = i - 1;
+        i--;
     for (; i > 1; i--)
         if (s[i] != ' ')
-            goto WYW;
-WYW:
-    j = i + 1;
-    if (j > 128)
-        j = 128;
-    p = refal.prevr;
-    for (i = 0; i < j; i++)
-    {
-        if (!slins(p, 1))
-            return;
-        p = p->next;
-        p->info.codep = NULL;
-        if (s[0] == EOF)
         {
-            p->tag = TAGN;
+            j = i + 1;
+            if (j > 128)
+                j = 128;
+            p = refal.prevr;
+            for (i = 0; i < j; i++)
+            {
+                if (!slins(p, 1))
+                    return;
+                p = p->next;
+                p->info.codep = NULL;
+                if (s[0] == EOF)
+                {
+                    p->tag = TAGN;
+                    return;
+                }
+                p->tag = TAGO;
+                p->info.infoc = s[i];
+            }
             return;
         }
-        p->tag = TAGO;
-        p->info.infoc = s[i];
-    }
-    return;
-HEOT:
-    printf("\nlibget: format error");
-    refal.upshot = 2;
-    return;
 }
 static char libg_0[] = {Z6 'L', 'I', 'B', 'G', 'E', 'T', '\006'};
 G_L_B char libget = '\122';
@@ -257,46 +273,52 @@ static void libp_()
         jl = p->info.coden;
         p = p->next;
     }
-    if (jl >= fmax)
-        goto HEOT;
-    else
-        junp = jl;
-    inw = uniput[junp];
-    int c;
-    unsigned int i;
-    for (i = 0; p != refal.nexta; i++)
+    do
     {
-        if ((p->tag != TAGO) && (p->tag != TAGLB) && (p->tag != TAGRB))
+        if (jl >= fmax)
+            break;
+        junp = jl;
+        inw = uniput[junp];
+        int c;
+        size_t i;
+        bool heot = false;
+        for (i = 0; p != refal.nexta; i++)
         {
-        HEOT:
-            refal.upshot = 2;
-            return;
+            if ((p->tag != TAGO) && (p->tag != TAGLB) && (p->tag != TAGRB))
+            {
+                heot = true;
+                break;
+            }
+            if (i == 128)
+            {
+                c = '\n';
+                putc(c, inw);
+                i = 0;
+            }
+            switch (p->tag)
+            {
+            case TAGLB:
+                c = '(';
+                break;
+            case TAGRB:
+                c = ')';
+                break;
+            default:
+                c = p->info.infoc;
+            }
+            p = p->next;
+            putc(c, inw);
         }
-        if (i == 128)
+        if (heot)
+            break;
+        if (i != 0)
         {
             c = '\n';
             putc(c, inw);
-            i = 0;
         }
-        switch (p->tag)
-        {
-        case TAGLB:
-            c = '(';
-            break;
-        case TAGRB:
-            c = ')';
-            break;
-        default:
-            c = p->info.infoc;
-        }
-        p = p->next;
-        putc(c, inw);
-    }
-    if (i != 0)
-    {
-        c = '\n';
-        putc(c, inw);
-    }
+        return;
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 static char libp_0[] = {Z6 'L', 'I', 'B', 'P', 'U', 'T', '\006'};
@@ -305,7 +327,7 @@ static void (*libp_1)() = libp_;
 
 static void card_()
 {
-    if (refal.preva->next != refal.nexta) // refal.upshot = 2;  
+    if (refal.preva->next != refal.nexta) // refal.upshot = 2;
         rfpex("", refal.preva, refal.nexta);
     T_LINKCB *p = refal.prevr;
     char c;
@@ -367,4 +389,4 @@ static char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
 G_L_B char proutm = '\122';
 static void (*pr4_1)() = pr4_;
 
-//------------------ end of file  XVV.C ---------------- 
+//------------------ end of file  XVV.C ----------------

@@ -1,7 +1,7 @@
-//-----------  file  --  XVV5.C ------------ 
-//    REFAL-5 compatible file input/output   
-//       Last modification : 11.07.24        
-//------------------------------------------ 
+//-----------  file  --  XVV5.C ------------
+//    REFAL-5 compatible file input/output
+//       Last modification : 11.07.24
+//------------------------------------------
 #include <stdio.h>
 #include <string.h>
 #include "refal.def"
@@ -19,49 +19,59 @@ static void open_()
    for (size_t i = 0; i < 40; i++)
       namf[i] = '\0';
    const T_LINKCB *p = refal.preva->next;
-   if (p->tag != TAGO)
-      goto NEOT;
-   const char c = p->info.infoc;
-   p = p->next;
-   uint32_t j;
-   if (p->tag != TAGN)
-      goto NEOT;
-   else
+   bool neot1 = true;
+   do
    {
-      j = p->info.coden;
+      if (p->tag != TAGO)
+         break;
+      const char c = p->info.infoc;
       p = p->next;
-   }
-   if (j >= fmax)
-      goto NEOT;
-   char s[2];
-   s[1] = 0;
-   if (c == 'R' || c == 'r')
-      s[0] = 'r';
-   else if (c == 'W' || c == 'w')
-      s[0] = 'w';
-   else
-      goto NEOT;
-   for (size_t i = 0; p != refal.nexta; i++)
-      if ((p->tag != TAGO) || (i == 40))
-         goto NEOT;
+      uint32_t j;
+      if (p->tag != TAGN)
+         break;
       else
       {
-         namf[i] = p->info.infoc;
+         j = p->info.coden;
          p = p->next;
       }
-   if ((f = fopen(namf, s)) == NULL)
-   {
-      printf("\n REFAL(open): can't open file %s", namf);
-      goto NEOT1;
-   }
-   if (s[0] == 'r')
-      uniget[j] = f;
-   else
-      uniput[j] = f;
-   return;
-NEOT:
-   printf("\n REFAL(open): format error");
-NEOT1:
+      if (j >= fmax)
+         break;
+      char s[2];
+      s[1] = 0;
+      if (c == 'R' || c == 'r')
+         s[0] = 'r';
+      else if (c == 'W' || c == 'w')
+         s[0] = 'w';
+      else
+         break;
+      bool neot = false;
+      for (size_t i = 0; p != refal.nexta; i++)
+         if ((p->tag != TAGO) || (i == 40))
+         {
+            neot = true;
+            break;
+         }
+         else
+         {
+            namf[i] = p->info.infoc;
+            p = p->next;
+         }
+      if (neot)
+         break;
+      if ((f = fopen(namf, s)) == NULL)
+      {
+         printf("\n REFAL(open): can't open file %s", namf);
+         neot1 = true;
+         break;
+      }
+      if (s[0] == 'r')
+         uniget[j] = f;
+      else
+         uniput[j] = f;
+      return;
+   } while (false);
+   if (!neot1)
+      printf("\n REFAL(open): format error");
    refal.upshot = 2;
    return;
 }
@@ -72,31 +82,33 @@ static void (*open_1)() = open_;
 static void close_()
 {
    const T_LINKCB *p = refal.preva->next;
-   if (p->tag != TAGO)
-      goto NEOT;
-   const char c = p->info.infoc;
-   p = p->next;
-   if (p->tag != TAGN)
-      goto NEOT;
-   const uint32_t j = p->info.coden;
-   if (j >= fmax)
-      goto NEOT;
-   if (c == 'R' || c == 'r')
+   do
    {
-      f = uniget[j];
-      uniget[j] = NULL;
-   }
-   else if (c == 'W' || c == 'w')
-   {
-      f = uniput[j];
-      uniput[j] = NULL;
-   }
-   else
-      goto NEOT;
-   //printf("\n close, flg=%d fd=%d",f->flags,f->fd); 
-   fclose(f);
-   return;
-NEOT:
+      if (p->tag != TAGO)
+         break;
+      const char c = p->info.infoc;
+      p = p->next;
+      if (p->tag != TAGN)
+         break;
+      const uint32_t j = p->info.coden;
+      if (j >= fmax)
+         break;
+      if (c == 'R' || c == 'r')
+      {
+         f = uniget[j];
+         uniget[j] = NULL;
+      }
+      else if (c == 'W' || c == 'w')
+      {
+         f = uniput[j];
+         uniput[j] = NULL;
+      }
+      else
+         break;
+      // printf("\n close, flg=%d fd=%d",f->flags,f->fd);
+      fclose(f);
+      return;
+   } while (false);
    printf("\nREFAL(close): format error");
    refal.upshot = 2;
    return;
@@ -108,44 +120,48 @@ static void (*close_1)() = close_;
 static void get_()
 {
    T_LINKCB *p = refal.preva->next;
-   if (p->tag != TAGN)
-      goto NEOT;
-   const uint32_t j = p->info.coden;
-   if (j >= fmax)
-      goto NEOT;
-   f = uniget[j];
-   if (f == NULL)
+   bool neot1 = false;
+   do
    {
-      char namf[11];
-      strcpy(namf, "REFAL0.DAT");
-      namf[5] = j + '0';
-      if ((f = fopen(namf, "r")) == NULL)
+      if (p->tag != TAGN)
+         break;
+      const uint32_t j = p->info.coden;
+      if (j >= fmax)
+         break;
+      f = uniget[j];
+      if (f == NULL)
       {
-         printf("\nREFAL(get): can't open file %s", namf);
-         goto NEOT1;
+         char namf[11];
+         strcpy(namf, "REFAL0.DAT");
+         namf[5] = j + '0';
+         if ((f = fopen(namf, "r")) == NULL)
+         {
+            printf("\nREFAL(get): can't open file %s", namf);
+            neot1 = true;
+            break;
+         }
+         uniget[j] = f;
       }
-      uniget[j] = f;
-   }
-   p = refal.prevr;
-   char c;
-   while ((c = getc(f)) != '\n')
-   {
-      if (!slins(p, 1))
-         return;
-      p = p->next;
-      p->info.codep = NULL;
-      if (c == EOF || c == '\032')
+      p = refal.prevr;
+      char c;
+      while ((c = getc(f)) != '\n')
       {
-         p->tag = TAGN;
-         return;
+         if (!slins(p, 1))
+            return;
+         p = p->next;
+         p->info.codep = NULL;
+         if (c == EOF || c == '\032')
+         {
+            p->tag = TAGN;
+            return;
+         }
+         p->tag = TAGO;
+         p->info.infoc = c;
       }
-      p->tag = TAGO;
-      p->info.infoc = c;
-   }
-   return;
-NEOT:
-   printf("\nREFAL(get): format error");
-NEOT1:
+      return;
+   } while (false);
+   if (!neot1)
+      printf("\nREFAL(get): format error");
    refal.upshot = 2;
    return;
 }
@@ -156,57 +172,61 @@ static void (*get_1)() = get_;
 static void put_()
 {
    const T_LINKCB *p = refal.preva->next;
-   if (p->tag != TAGN)
-      goto NEOT;
-   const uint32_t j = p->info.coden;
-   p = p->next;
-   if (j >= fmax)
-      goto NEOT;
-   f = uniput[j];
-   if (f == NULL)
+   bool neot1 = false;
+   do
    {
-      char namf[11];
-      strcpy(namf, "REFAL0.DAT");
-      namf[5] = j + '0';
-      if ((f = fopen(namf, "w")) == NULL)
+      if (p->tag != TAGN)
+         break;
+      const uint32_t j = p->info.coden;
+      p = p->next;
+      if (j >= fmax)
+         break;
+      f = uniput[j];
+      if (f == NULL)
       {
-         printf("\nREFAL(put): can't open file %s", namf);
-         goto NEOT1;
-      }
-      uniput[j] = f;
-   }
-   while (p != refal.nexta)
-   {
-      int cc;
-      if (p->tag != TAGO)
-      {
-         if ((p->tag != TAGLB) && (p->tag != TAGRB))
+         char namf[11];
+         strcpy(namf, "REFAL0.DAT");
+         namf[5] = j + '0';
+         if ((f = fopen(namf, "w")) == NULL)
          {
-            refal.upshot = 2;
-            return;
+            printf("\nREFAL(put): can't open file %s", namf);
+            neot1 = true;
+            break;
+         }
+         uniput[j] = f;
+      }
+      while (p != refal.nexta)
+      {
+         int cc;
+         if (p->tag != TAGO)
+         {
+            if ((p->tag != TAGLB) && (p->tag != TAGRB))
+            {
+               refal.upshot = 2;
+               return;
+            }
+            else
+            {
+               if (p->tag == TAGLB)
+                  cc = '(';
+               else
+                  cc = ')';
+               putc(cc, f);
+               p = p->next;
+            }
          }
          else
          {
-            if (p->tag == TAGLB)
-               cc = '(';
-            else
-               cc = ')';
+            cc = p->info.infoc;
             putc(cc, f);
             p = p->next;
          }
       }
-      else
-      {
-         cc = p->info.infoc;
-         putc(cc, f);
-         p = p->next;
-      }
-   }
-   putc('\n', f);
-   return;
-NEOT:
-   printf("\nREFAL(put): format error");
-NEOT1:
+      putc('\n', f);
+      return;
+   } while (false);
+   if (!neot1)
+      printf("\nREFAL(put): format error");
    refal.upshot = 2;
    return;
 }
@@ -214,4 +234,4 @@ static char put_0[] = {Z3 'P', 'U', 'T', '\003'};
 G_L_B char xput = '\122';
 static void (*put_1)() = put_;
 
-//----------  end of file XVV5.C  ----------- 
+//----------  end of file XVV5.C  -----------
