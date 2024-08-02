@@ -1,8 +1,8 @@
-//-------------- file -- XTIME.C ------------ 
-//        MO: rftime (date and time)          
-//            rftm (current process time)     
-//         Last edition date : 11.07.24       
-//------------------------------------------- 
+//-------------- file -- XTIME.C ------------
+//        MO: rftime (date and time)
+//            rftm (current process time)
+//         Last edition date : 11.07.24
+//-------------------------------------------
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -44,48 +44,45 @@ static void rftm_()
 {
     T_LINKCB *p = refal.preva->next;
     if (p != refal.nexta)
-    {
-        if (p->tag != TAGO)
-            goto NEOT;
-        const char c = p->info.infoc;
-        switch (c)
+        if (p->tag == TAGO)
         {
-        case 's':
-        case 'S':
-            timespec_get(&t0, TIME_UTC);
-            return;
-        case 'g':
-        case 'G':
-            timespec_get(&t1, TIME_UTC);
-            int32_t in = t1.tv_nsec - t0.tv_nsec;
-            uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
-            if (in < 0)
+            const char c = p->info.infoc;
+            switch (c)
             {
-                in += 1000000000;
-                is--;
-            }
-            uint32_t im = is / 60;
-            is %= 60;
-            const uint32_t ih = im / 60;
-            im %= 60;
-            char s[25];
-            sprintf(s, "%02ld:%02ld:%02ld.%09ld", ih, im, is, in);
-            p = refal.prevr;
-            if (!slins(p, strlen(s)))
+            case 's':
+            case 'S':
+                timespec_get(&t0, TIME_UTC);
                 return;
-            for (size_t i = 0; s[i] != 0; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = s[i];
+            case 'g':
+            case 'G':
+                timespec_get(&t1, TIME_UTC);
+                int32_t in = t1.tv_nsec - t0.tv_nsec;
+                uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
+                if (in < 0)
+                {
+                    in += 1000000000;
+                    is--;
+                }
+                uint32_t im = is / 60;
+                is %= 60;
+                const uint32_t ih = im / 60;
+                im %= 60;
+                char s[25];
+                sprintf(s, "%02ld:%02ld:%02ld.%09ld", ih, im, is, in);
+                p = refal.prevr;
+                if (!slins(p, strlen(s)))
+                    return;
+                for (size_t i = 0; s[i] != 0; i++)
+                {
+                    p = p->next;
+                    p->tag = TAGO;
+                    p->info.codep = NULL;
+                    p->info.infoc = s[i];
+                }
+                return;
+            default:
             }
-            return;
-        default:
-            goto NEOT;
         }
-    }
-NEOT:
     refal.upshot = 2;
     return;
 }
@@ -93,4 +90,4 @@ static char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
 G_L_B char rftm = '\122';
 static void (*rftm_1)() = rftm_;
 
-//------------------ end of file  XTIME.C ---------------- 
+//------------------ end of file  XTIME.C ----------------
