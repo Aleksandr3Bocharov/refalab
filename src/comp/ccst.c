@@ -372,12 +372,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE9:
             // left part end
             if (lastb == 0)
-                state = RCG;
-            else
             {
-                pchosh("301 too many '(' in left part");
-                state = OSH300;
+                state = RCG;
+                break;
             }
+            pchosh("301 too many '(' in left part");
+            state = OSH300;
             break;
         case LPE10:
             // sentence end
@@ -387,12 +387,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case NEXT_LPE:
             // end of element processing
             if (nel <= 252)
-                state = GET_LPE;
-            else
             {
-                pchosh("305 very large left part");
-                state = OSH300;
+                state = GET_LPE;
+                break;
             }
+            pchosh("305 very large left part");
+            state = OSH300;
             break;
         case OSH300:
             fndef(lbl, lblleng);
@@ -416,47 +416,50 @@ void cst(bool dir, char *lbl, size_t lblleng)
             fh = 2;
             e_level = 0;
             if (dir)
+            {
                 state = RCGL;
-            else
-                state = RCGR;
+                break;
+            }
+            state = RCGR;
             break;
         //    hard element projection from left part of current hole
         case RCGL:
             n = n1 + 1;
             if (n == n2)
+            {
                 state = NIL;
-            else
-                switch (x[n].t)
-                {
-                case 1:
-                    state = LSW1;
-                    break;
-                case 2:
-                    state = LSW2;
-                    break;
-                case 3:
-                    state = LSW3;
-                    break;
-                case 4:
-                    state = LSW4;
-                    break;
-                case 5:
-                    state = LSW5;
-                    break;
-                case 6:
-                    state = LSW6;
-                    break;
-                };
+                break;
+            }
+            switch (x[n].t)
+            {
+            case 1:
+                state = LSW1;
+                break;
+            case 2:
+                state = LSW2;
+                break;
+            case 3:
+                state = LSW3;
+                break;
+            case 4:
+                state = LSW4;
+                break;
+            case 5:
+                state = LSW5;
+                break;
+            case 6:
+                state = LSW6;
+            };
             break;
         case LSW1:
             //        constant symbol
             if (x[n].code.tag == TAGO)
-                state = LTXT;
-            else
             {
-                gops(n_lsc, &x[n].code);
-                state = L1;
+                state = LTXT;
+                break;
             }
+            gops(n_lsc, &x[n].code);
+            state = L1;
             break;
         case LTXT:
             kol_lit = 1;
@@ -465,19 +468,21 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LTXT1:
             n++;
             if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+            {
                 state = LTXT2;
-            else
-                kol_lit++;
+                break;
+            }
+            kol_lit++;
             break;
         case LTXT2:
             if (kol_lit == 1)
-                state = LSCO;
-            else
             {
-                n = n1;
-                gopn(n_ltxt, (char)kol_lit);
-                state = LTXT3;
+                state = LSCO;
+                break;
             }
+            n = n1;
+            gopn(n_ltxt, (char)kol_lit);
+            state = LTXT3;
             break;
         case LTXT3:
             n++;
@@ -502,23 +507,28 @@ void cst(bool dir, char *lbl, size_t lblleng)
             n1 = n;
             n = x[n1].pair;
             if (n1 + 1 == n)
-                state = LBNIL;
-            else if (n1 + 2 != n)
-                state = GEN_LB;
-            else
             {
-                n = n1 + 1;
-                if (x[n].t != t_e)
-                    state = GEN_LB;
-                else
-                {
-                    ind = x[n].ind;
-                    if (v[ind].last != 0)
-                        state = GEN_LB;
-                    else
-                        state = LBCE;
-                }
+                state = LBNIL;
+                break;
             }
+            if (n1 + 2 != n)
+            {
+                state = GEN_LB;
+                break;
+            }
+            n = n1 + 1;
+            if (x[n].t != t_e)
+            {
+                state = GEN_LB;
+                break;
+            }
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+            {
+                state = GEN_LB;
+                break;
+            }
+            state = LBCE;
             break;
         case LBCE:
             nel += 2;
@@ -617,18 +627,18 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //   w-variable
             ind = x[n].ind;
             if (v[ind].last != 0)
-                state = LED;
-            else
             {
-                jbyte(n_lw);
-                v[ind]._q = nel + 1;
-                x[n].next = v[ind].last;
-                v[ind].last = n;
-                (v[ind].rem)--;
-                if (x[n].spec.info.codef != NULL)
-                    gopl(n_wspc, x[n].spec.info.codef);
-                state = L2;
+                state = LED;
+                break;
             }
+            jbyte(n_lw);
+            v[ind]._q = nel + 1;
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].spec.info.codef != NULL)
+                gopl(n_wspc, x[n].spec.info.codef);
+            state = L2;
             break;
         case LED:
             gopn(n_led, (char)v[ind]._q);
@@ -653,13 +663,21 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //   e-variable
             ind = x[n].ind;
             if (v[ind].last != 0)
+            {
                 state = LED;
-            else if (dir)
+                break;
+            }
+            if (dir)
+            {
                 state = RCGR;
-            else if (n + 1 == n2)
+                break;
+            }
+            if (n + 1 == n2)
+            {
                 state = CE;
-            else
-                state = IMPASSE;
+                break;
+            }
+            state = IMPASSE;
             break;
         //                 hard element projection
         //                 from  right board of
@@ -667,39 +685,40 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RCGR:
             n = n2 - 1;
             if (n == n1)
+            {
                 state = NIL;
-            else
-                switch (x[n].t)
-                {
-                case 1:
-                    state = RSW1;
-                    break;
-                case 2:
-                    state = RSW2;
-                    break;
-                case 3:
-                    state = RSW3;
-                    break;
-                case 4:
-                    state = RSW4;
-                    break;
-                case 5:
-                    state = RSW5;
-                    break;
-                case 6:
-                    state = RSW6;
-                    break;
-                };
+                break;
+            }
+            switch (x[n].t)
+            {
+            case 1:
+                state = RSW1;
+                break;
+            case 2:
+                state = RSW2;
+                break;
+            case 3:
+                state = RSW3;
+                break;
+            case 4:
+                state = RSW4;
+                break;
+            case 5:
+                state = RSW5;
+                break;
+            case 6:
+                state = RSW6;
+            };
             break;
         case RSW1:
             //   constant symbol
             if (x[n].code.tag == TAGO)
-                state = RTXT;
-            else
             {
-                gops(n_rsc, &x[n].code);
-                state = R1;
+                state = RTXT;
+                break;
             }
+            gops(n_rsc, &x[n].code);
+            state = R1;
             break;
         case RTXT:
             kol_lit = 1;
@@ -708,19 +727,21 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RTXT1:
             n--;
             if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+            {
                 state = RTXT2;
-            else
-                kol_lit++;
+                break;
+            }
+            kol_lit++;
             break;
         case RTXT2:
             if (kol_lit == 1)
-                state = RSCO;
-            else
             {
-                n = n2;
-                gopn(n_rtxt, (char)kol_lit);
-                state = RTXT3;
+                state = RSCO;
+                break;
             }
+            n = n2;
+            gopn(n_rtxt, (char)kol_lit);
+            state = RTXT3;
             break;
         case RTXT3:
             n--;
@@ -748,23 +769,28 @@ void cst(bool dir, char *lbl, size_t lblleng)
             n2 = n;
             n = x[n2].pair;
             if (n + 1 == n2)
-                state = RBNIL;
-            else if (n + 2 != n2)
-                state = GEN_RB;
-            else
             {
-                n = n2 - 1;
-                if (x[n].t != t_e)
-                    state = GEN_RB;
-                else
-                {
-                    ind = x[n].ind;
-                    if (v[ind].last != 0)
-                        state = GEN_RB;
-                    else
-                        state = RBCE;
-                }
+                state = RBNIL;
+                break;
             }
+            if (n + 2 != n2)
+            {
+                state = GEN_RB;
+                break;
+            }
+            n = n2 - 1;
+            if (x[n].t != t_e)
+            {
+                state = GEN_RB;
+                break;
+            }
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+            {
+                state = GEN_RB;
+                break;
+            }
+            state = RBCE;
             break;
         case RBCE:
             nel += 2;
@@ -859,18 +885,18 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //    w_variable
             ind = x[n].ind;
             if (v[ind].last != 0)
-                state = RED;
-            else
             {
-                jbyte(n_rw);
-                v[ind]._q = nel + 1;
-                x[n].next = v[ind].last;
-                v[ind].last = n;
-                (v[ind].rem)--;
-                if (x[n].spec.info.codef != NULL)
-                    gopl(n_wspc, x[n].spec.info.codef);
-                state = R2;
+                state = RED;
+                break;
             }
+            jbyte(n_rw);
+            v[ind]._q = nel + 1;
+            x[n].next = v[ind].last;
+            v[ind].last = n;
+            (v[ind].rem)--;
+            if (x[n].spec.info.codef != NULL)
+                gopl(n_wspc, x[n].spec.info.codef);
+            state = R2;
             break;
         case RED:
             gopn(n_red, (char)v[ind]._q);
@@ -895,13 +921,21 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //    e-variable
             ind = x[n].ind;
             if (v[ind].last != 0)
+            {
                 state = RED;
-            else if (!dir)
+                break;
+            }
+            if (!dir)
+            {
                 state = RCGL;
-            else if (n1 + 1 == n)
+                break;
+            }
+            if (n1 + 1 == n)
+            {
                 state = CE;
-            else
-                state = IMPASSE;
+                break;
+            }
+            state = IMPASSE;
             break;
         case NIL:
             //     empty hole
@@ -916,17 +950,24 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case CE:
             //   closed including
             if (x[n].eoemrk)
+            {
                 state = IMPASSE;
-            else
-                state = CE1;
+                break;
+            }
+            state = CE1;
             break;
         case CE1:
             if (x[n].spec.info.codef == NULL)
+            {
                 state = CE2;
-            else if (dir)
+                break;
+            }
+            if (dir)
+            {
                 state = LMAX;
-            else
-                state = RMAX;
+                break;
+            }
+            state = RMAX;
             break;
         case CE2:
             ind = x[n].ind;
