@@ -145,7 +145,7 @@ static struct
     uint16_t p, q, t;
     size_t ind;
     T_LINKTI code;
-    uint16_t next;
+    size_t next;
     size_t pair;
     T_LINKTI spec;
     bool v;
@@ -158,7 +158,7 @@ static struct
 { // ???variable table elements
     uint16_t _t, _q;
     uint16_t rem;
-    uint16_t last;
+    size_t last;
     char ci;
     bool _v;
 } v[50];
@@ -166,7 +166,7 @@ static struct
 // ???variable table elements
 static struct
 {
-    uint16_t _next;
+    size_t _next;
     size_t n1, n2;
 } h[30];
 
