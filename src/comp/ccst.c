@@ -142,13 +142,14 @@ typedef enum states
 
 static struct
 { // left part buffer elements
-    uint16_t p, q, t, ind;
+    uint16_t p, q, t;
+    size_t ind;
     T_LINKTI code;
     uint16_t next;
-    uint16_t pair;
+    size_t pair;
     T_LINKTI spec;
-    uint16_t v;
-    uint16_t eoemrk;
+    bool v;
+    bool eoemrk;
     uint16_t e_level;
 } x[100];
 
@@ -159,38 +160,38 @@ static struct
     uint16_t rem;
     uint16_t last;
     char ci;
-    uint16_t _v;
+    bool _v;
 } v[50];
 
 // ???variable table elements
 static struct
 {
     uint16_t _next;
-    uint16_t n1, n2;
+    size_t n1, n2;
 } h[30];
 
 static T_LINKTI xncode;  // work structure
 static T_LINKTI funcptr; // work pointer
 
-static uint16_t n, n1, n2;     // left part element pointers
-static uint16_t ind, ie;       // element index
-static uint16_t nel;           // current element number
-static uint16_t e_level;       // counter of the longing levels
-static uint16_t not_nil;       // working variables
-static uint16_t nh;            // current whole number
-static uint16_t kol_per;       // subprogram of search in variable table
-                               // table pointer
-static uint16_t nh_x, nh_y;    // hole numbers (under enter in brackets)
-static uint16_t lrbxy;         // stoped bracket flag
-static uint16_t lastb, lastb1; // variables for brackets linkage
-static uint16_t kol_lit;       // counter of the symbol number
+static size_t n, n1, n2;     // left part element pointers
+static size_t ind, ie;       // element index
+static uint16_t nel;         // current element number
+static uint16_t e_level;     // counter of the longing levels
+static bool not_nil;         // working variables
+static size_t nh;            // current whole number
+static size_t kol_per;       // subprogram of search in variable table
+                             // table pointer
+static size_t nh_x, nh_y;    // hole numbers (under enter in brackets)
+static uint16_t lrbxy;       // stoped bracket flag
+static size_t lastb, lastb1; // variables for brackets linkage
+static size_t kol_lit;       // counter of the symbol number
 static uint16_t diff_e_level;
-static unsigned int kol_skob[100]; // stack for counting of the brackets balance
-static unsigned int ur_skob;
+static uint16_t kol_skob[100]; // stack for counting of the brackets balance
+static size_t ur_skob;
 static char buf_lit[80]; // buffer for generating of the "text" statement
-static uint16_t k;
-static uint16_t fh;      // free segment number in the whole  list
-static uint16_t next_nh; // next whole number
+static size_t k;
+static size_t fh;      // free segment number in the whole  list
+static size_t next_nh; // next whole number
 
 static void isk_v();
 static void gen_bsb();
@@ -199,11 +200,11 @@ static void pch406();
 static bool lsg_p();
 static bool rsg_p();
 static void gpev(char op1, char op2);
-static bool ortgn(uint16_t n1, uint16_t n2);
+static bool ortgn(size_t n1, size_t n2);
 
 // read left part
 // and full array X
-void cst(bool dir, char *lbl, unsigned int lblleng)
+void cst(bool dir, char *lbl, size_t lblleng)
 // dir;     matching feature :left to right or otherwise
 // lbl;   sentence label
 // lblleng; sentence label length
@@ -228,7 +229,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             x[n].v = scn_e.v;
             x[n].next = 0;
             x[n].pair = 0;
-            x[n].eoemrk = 0;
+            x[n].eoemrk = false;
             x[n].e_level = 0;
             switch (scn_e.t)
             {
@@ -405,8 +406,10 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             n1 = 0;
             n2 = n;
             nel = 4;
-            x[n1].p = x[n1].q = 3;
-            x[n2].p = x[n2].q = 2;
+            x[n1].q = 3;
+            x[n1].p = x[n1].q;
+            x[n2].q = 2;
+            x[n2].p = x[n2].q;
             h[28]._next = 0;
             nh = 1;
             h[1]._next = 28;
@@ -479,7 +482,8 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
         case LTXT3:
             n++;
             jbyte(x[n].code.info.infoc[0]);
-            x[n].p = x[n].q = nel;
+            x[n].q = nel;
+            x[n].p = x[n].q;
             nel++;
             kol_lit--;
             if (kol_lit == 0)
@@ -523,23 +527,27 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             x[n].next = v[ind].last;
             v[ind].last = n;
             (v[ind].rem)--;
-            if (x[n].v != 0)
+            if (x[n].v)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
             x[n].p = nel;
             x[n].q = nel + 1;
             nel += 2;
-            x[n1].p = x[n1].q = nel - 4;
+            x[n1].q = nel - 4;
+            x[n1].p = x[n1].q;
             n1 += 2;
-            x[n1].p = x[n1].q = nel - 3;
+            x[n1].q = nel - 3;
+            x[n1].p = x[n1].q;
             state = RCGL;
             break;
         case LBNIL:
             jbyte(n_lbnil);
-            x[n1].p = x[n1].q = nel;
+            x[n1].q = nel;
+            x[n1].p = x[n1].q;
             n1 = n;
-            x[n1].p = x[n1].q = nel + 1;
+            x[n1].q = nel + 1;
+            x[n1].p = x[n1].q;
             nel += 2;
             state = RCGL;
             break;
@@ -568,8 +576,10 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             nh = nh_x;
             h[nh_y].n1 = n2;
             h[nh_y].n2 = n;
-            x[n1].p = x[n1].q = nel;
-            x[n2].p = x[n2].q = nel + 1;
+            x[n1].q = nel;
+            x[n1].p = x[n1].q;
+            x[n2].q = nel + 1;
+            x[n2].p = x[n2].q;
             nel += 2;
             state = HSCH;
             break;
@@ -597,7 +607,8 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             state = L1;
             break;
         case L1:
-            x[n].p = x[n].q = nel;
+            x[n].q = nel;
+            x[n].p = x[n].q;
             nel++;
             n1 = n;
             state = RCGL;
@@ -714,7 +725,8 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
         case RTXT3:
             n--;
             jbyte(x[n].code.info.infoc[0]);
-            x[n].p = x[n].q = nel;
+            x[n].q = nel;
+            x[n].p = x[n].q;
             nel++;
             kol_lit--;
             if (kol_lit == 0)
@@ -761,23 +773,27 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             x[n].next = v[ind].last;
             v[ind].last = n;
             (v[ind].rem)--;
-            if (x[n].v != 0)
+            if (x[n].v)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
             x[n].p = nel;
             x[n].q = nel + 1;
             nel += 2;
-            x[n2].p = x[n2].q = nel - 3;
+            x[n2].q = nel - 3;
+            x[n2].p = x[n2].q;
             n2 -= 2;
-            x[n2].p = x[n2].q = nel - 4;
+            x[n2].q = nel - 4;
+            x[n2].p = x[n2].q;
             state = RCGR;
             break;
         case RBNIL:
             jbyte(n_rbnil);
-            x[n2].p = x[n2].q = nel + 1;
+            x[n2].q = nel + 1;
+            x[n2].p = x[n2].q;
             n2 = n;
-            x[n2].p = x[n2].q = nel;
+            x[n2].q = nel;
+            x[n2].p = x[n2].q;
             nel += 2;
             state = RCGR;
             break;
@@ -806,8 +822,10 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             nh = nh_x;
             h[nh_y].n1 = n;
             h[nh_y].n2 = n1;
-            x[n1].p = x[n1].q = nel;
-            x[n2].p = x[n2].q = nel + 1;
+            x[n1].q = nel;
+            x[n1].p = x[n1].q;
+            x[n2].q = nel + 1;
+            x[n2].p = x[n2].q;
             nel += 2;
             state = HSCH;
             break;
@@ -832,7 +850,8 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             state = R1;
             break;
         case R1:
-            x[n].p = x[n].q = nel;
+            x[n].q = nel;
+            x[n].p = x[n].q;
             nel++;
             n2 = n;
             state = RCGR;
@@ -896,7 +915,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             break;
         case CE:
             //   closed including
-            if (x[n].eoemrk != 0)
+            if (x[n].eoemrk)
                 state = IMPASSE;
             else
                 state = CE1;
@@ -916,7 +935,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             x[n].next = v[ind].last;
             v[ind].last = n;
             (v[ind].rem)--;
-            if (x[n].v == 1)
+            if (x[n].v)
                 jbyte(n_nnil);
             x[n].p = nel;
             x[n].q = nel + 1;
@@ -1026,7 +1045,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
                 else
                     gopn(n_eoe, (char)diff_e_level);
                 e_level = x[n].e_level;
-                x[n].eoemrk = 0;
+                x[n].eoemrk = false;
                 x[n].e_level = 0;
             };
             if (n1 + 2 == n2)
@@ -1067,7 +1086,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
                         break;
                     }
                 };
-                if ((x[n].t != t_e) || (x[n].v == 1))
+                if ((x[n].t != t_e) || x[n].v)
                     state = OE1;
                 else
                     state = OE0;
@@ -1080,7 +1099,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             break;
         case RMAX:
             gopl(n_rmax, x[n].spec.info.codef);
-            if (x[n].v == 1)
+            if (x[n].v)
                 jbyte(n_nnil);
             x[n].spec.info.codef = NULL;
             state = REM;
@@ -1096,7 +1115,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             break;
         case LMAX:
             gopl(n_lmax, x[n].spec.info.codef);
-            if (x[n].v == 1)
+            if (x[n].v)
                 jbyte(n_nnil);
             x[n].spec.info.codef = NULL;
             state = LEM;
@@ -1152,9 +1171,9 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             xncode.tag = x[n].code.tag;
             xncode.info.codef = x[n].code.info.codef;
             n++;
-            if ((not_nil == 0) && (x[n].eoemrk == 1))
+            if (!not_nil && x[n].eoemrk)
             {
-                x[n].eoemrk = 0;
+                x[n].eoemrk = false;
                 x[n].e_level = 0;
                 e_level--;
                 gops(n_lsrch, &xncode);
@@ -1240,9 +1259,9 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
             xncode.tag = x[n].code.tag;
             xncode.info.codef = x[n].code.info.codef;
             n--;
-            if ((not_nil == 0) && (x[n].eoemrk == 1))
+            if (!not_nil && x[n].eoemrk)
             {
-                x[n].eoemrk = 0;
+                x[n].eoemrk = false;
                 x[n].e_level = 0;
                 e_level--;
                 gops(n_rsrch, &xncode);
@@ -1461,7 +1480,7 @@ void cst(bool dir, char *lbl, unsigned int lblleng)
                     gopn(n_mule, v[ind]._q);
                 else
                 {
-                    if (v[ind]._v == 1)
+                    if (v[ind]._v)
                         gopn(n_tplv, x[n].q);
                     else
                         gopn(n_tple, x[n].q);
@@ -1622,7 +1641,7 @@ static bool lsg_p()
                 break;
             if (!ortgn(n1, n))
                 break;
-            x[n].eoemrk = 1;
+            x[n].eoemrk = true;
             x[n].e_level = e_level;
             break;
         }
@@ -1667,7 +1686,7 @@ static bool rsg_p()
                 break;
             if (!ortgn(n, n2))
                 break;
-            x[n].eoemrk = 1;
+            x[n].eoemrk = true;
             x[n].e_level = e_level;
             break;
         }
@@ -1693,10 +1712,10 @@ static bool rsg_p()
 }
 
 //    check ortogonality of this sentence against left part
-static bool ortgn(uint16_t n1, uint16_t n2)
+static bool ortgn(size_t n1, size_t n2)
 {
-    uint16_t n = n1;
-    uint16_t i;
+    size_t n = n1;
+    size_t i;
     while (true)
     {
         n++;

@@ -143,7 +143,7 @@ char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 static FILE *sysin;
 static size_t m; // current symbol number
 static char strg_c[78];
-static unsigned int lbl_leng;
+static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
@@ -727,7 +727,7 @@ void scan()
     static size_t scode;
     scn_e.code.tag = 0;
     scn_e.code.info.codef = NULL;
-    scn_e.v = 0;
+    scn_e.v = false;
     scn_e.spec.tag = 0;
     scn_e.spec.info.codef = NULL;
     T_SCN_STATES scn_state = STATE0;
@@ -847,7 +847,7 @@ void scan()
             scn_state = SCNV;
             break;
         case SCNVV:
-            scn_e.v = 1;
+            scn_e.v = true;
             scn_state = SCNE;
             break;
         case SCNE:

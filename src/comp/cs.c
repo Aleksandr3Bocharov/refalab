@@ -77,7 +77,7 @@ T_I_LBL *genlbl()
     return p;
 }
 
-void fndef(const char *idp, unsigned int lid)
+void fndef(const char *idp, size_t lid)
 {
     if (lid != 0)
     { // new function  

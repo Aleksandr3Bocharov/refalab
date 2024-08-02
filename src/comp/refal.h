@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "cgop.h"
 
 typedef struct opt_
@@ -31,7 +32,7 @@ typedef struct scn_e_
 {                         // current statement element  
     uint16_t t; //    element type            
     char ci;              //    variable index          
-    unsigned int v;
+    bool v;
     T_LINKTI code;
     T_LINKTI spec;
 } T_SCN_E;

@@ -86,6 +86,6 @@
 #define n_eossn '\120'
 #define n_setnos '\121'
 
-extern void cst(bool dir, char *lbl, unsigned int lblleng);
+extern void cst(bool dir, char *lbl, size_t lblleng);
 
 #endif

@@ -15,7 +15,7 @@ typedef struct i_lbl
 
 extern T_I_LBL *genlbl();
 
-extern void fndef(const char *idp, unsigned int lid);
+extern void fndef(const char *idp, size_t lid);
 extern void spdef(const char *idp, unsigned int lid);
 extern T_U *fnref(const char *idp, unsigned int lid);
 extern T_U *spref(const char *idp, unsigned int lid, char d);
