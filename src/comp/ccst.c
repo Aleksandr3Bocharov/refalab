@@ -1006,9 +1006,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             h[nh].n2 = n2;
             nh = 1;
             if (h[nh]._next == 0)
+            {
                 state = RCGFIN;
-            else
-                state = NHOLE;
+                break;
+            }
+            state = NHOLE;
             break;
         case NHOLE:
             n1 = h[nh].n1;
@@ -1018,56 +1020,64 @@ void cst(bool dir, char *lbl, size_t lblleng)
             {
                 gen_bsb();
                 state = NIL;
+                break;
             }
-            else if (x[n].t != t_e)
-                state = RIGID;
-            else
+            if (x[n].t != t_e)
             {
-                ind = x[n].ind;
-                if (v[ind].last != 0)
-                    state = RIGID;
-                else if (n + 1 == n2)
-                {
-                    if (v[ind].rem == 1)
-                        state = NHOLE1;
-                    else
-                    {
-                        gen_bsb();
-                        state = CE1;
-                    }
-                }
-                else
-                {
-                    n = n2 - 1;
-                    if (x[n].t != t_e)
-                        state = RIGID;
-                    else
-                    {
-                        ind = x[n].ind;
-                        if (v[ind].last != 0)
-                            state = RIGID;
-                        else
-                            state = NHOLE1;
-                    }
-                }
+                state = RIGID;
+                break;
             }
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+            {
+                state = RIGID;
+                break;
+            }
+            if (n + 1 == n2)
+            {
+                if (v[ind].rem == 1)
+                {
+                    state = NHOLE1;
+                    break;
+                }
+                gen_bsb();
+                state = CE1;
+                break;
+            }
+            n = n2 - 1;
+            if (x[n].t != t_e)
+            {
+                state = RIGID;
+                break;
+            }
+            ind = x[n].ind;
+            if (v[ind].last != 0)
+            {
+                state = RIGID;
+                break;
+            }
+            state = NHOLE1;
             break;
         case NHOLE1:
             nh = h[nh]._next;
             if (h[nh]._next == 0)
+            {
                 state = OE;
-            else
-                state = NHOLE;
+                break;
+            }
+            state = NHOLE;
             break;
         case RIGID:
             //  hard element on the both hole boards
             gen_bsb();
             if (dir)
+            {
                 state = RCGL;
-            else
-                state = RCGR;
+                break;
+            }
+            state = RCGR;
             break;
-            //  opened e_variable processing
+        //  opened e_variable processing
         case OE:
             nh = 1;
             n1 = h[nh].n1;
@@ -1090,48 +1100,52 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 x[n].e_level = 0;
             };
             if (n1 + 2 == n2)
-                state = CE1;
-            else
             {
-                if (dir)
-                    n = n2 - 1;
-                else
-                    n = n1 + 1;
-                if (x[n].spec.info.codef == NULL)
-                    state = OE1;
-                else
-                    state = OE0;
+                state = CE1;
+                break;
             }
+            if (dir)
+                n = n2 - 1;
+            else
+                n = n1 + 1;
+            if (x[n].spec.info.codef == NULL)
+            {
+                state = OE1;
+                break;
+            }
+            state = OE0;
             break;
         case OE0:
             ind = x[n].ind;
             if ((v[ind].last != 0) || (v[ind].rem != 1))
+            {
                 state = OE1;
+                break;
+            }
+            if (dir)
+            {
+                n--;
+                if (n == n1)
+                {
+                    state = OERMAX;
+                    break;
+                }
+            }
             else
             {
-                if (dir)
+                n++;
+                if (n == n2)
                 {
-                    n--;
-                    if (n == n1)
-                    {
-                        state = OERMAX;
-                        break;
-                    }
+                    state = OELMAX;
+                    break;
                 }
-                else
-                {
-                    n++;
-                    if (n == n2)
-                    {
-                        state = OELMAX;
-                        break;
-                    }
-                };
-                if ((x[n].t != t_e) || x[n].v)
-                    state = OE1;
-                else
-                    state = OE0;
+            };
+            if ((x[n].t != t_e) || x[n].v)
+            {
+                state = OE1;
+                break;
             }
+            state = OE0;
             break;
         case OERMAX:
             n = n2 - 1;
@@ -1167,9 +1181,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case OE1:
             if (dir)
+            {
                 state = LOE;
-            else
-                state = ROE;
+                break;
+            }
+            state = ROE;
             break;
         case LOE:
             n = n1 + 1;
@@ -1179,9 +1195,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
         //         attempt to extract left support group
         case LSG:
             if (lsg_p())
+            {
                 state = LE_CASE;
-            else
-                state = RCGL;
+                break;
+            }
+            state = RCGL;
             break;
         case LE_CASE:
             n = n1 + 1;
@@ -1204,7 +1222,6 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             case 6:
                 state = LESW6;
-                break;
             };
             break;
         case LESW1:
@@ -1241,13 +1258,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //  ei sj . . .
             ind = x[n].ind;
             if (v[ind].last == 0)
-                state = LE;
-            else
             {
-                gpev(n_plesc, n_plvsc);
-                gopn(n_lesd, (char)v[ind]._q);
-                state = LSMD;
+                state = LE;
+                break;
             }
+            gpev(n_plesc, n_plvsc);
+            gopn(n_lesd, (char)v[ind]._q);
+            state = LSMD;
             break;
         case LESW5:
         case LESW6:
@@ -1267,9 +1284,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
         //                 attempt to extract right support group
         case RSG:
             if (rsg_p())
+            {
                 state = RE_CASE;
-            else
-                state = RCGR;
+                break;
+            }
+            state = RCGR;
             break;
         case RE_CASE:
             n = n2 - 1;
@@ -1292,7 +1311,6 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             case 6:
                 state = RESW6;
-                break;
             };
             break;
         case RESW1:
@@ -1329,13 +1347,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //  . . . sj ei
             ind = x[n].ind;
             if (v[ind].last == 0)
-                state = RE;
-            else
             {
-                gpev(n_presc, n_prvsc);
-                gopn(n_resd, (char)v[ind]._q);
-                state = RSMD;
+                state = RE;
+                break;
             }
+            gpev(n_presc, n_prvsc);
+            gopn(n_resd, (char)v[ind]._q);
+            state = RSMD;
             break;
         case RESW5:
         case RESW6:
@@ -1409,12 +1427,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RPE1:
             // symbol-constant
             if (scn_e.code.tag == TAGO)
-                state = TEXT;
-            else
             {
-                gops(n_ns, &scn_e.code);
-                state = GET_RPE;
+                state = TEXT;
+                break;
             }
+            gops(n_ns, &scn_e.code);
+            state = GET_RPE;
             break;
         case TEXT:
             kol_lit = 0;
@@ -1444,22 +1462,18 @@ void cst(bool dir, char *lbl, size_t lblleng)
             {
                 jbyte(n_blr);
                 state = GET_RPE;
+                break;
             }
-            else
+            kol_skob[ur_skob]++;
+            if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
             {
-                kol_skob[ur_skob]++;
-                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-                {
-                    funcptr.info.codef = scn_e.code.info.codef;
-                    gopl(n_blf, funcptr.info.codef);
-                    state = GET_RPE;
-                }
-                else
-                {
-                    jbyte(n_bl);
-                    state = SW_RPE;
-                }
+                funcptr.info.codef = scn_e.code.info.codef;
+                gopl(n_blf, funcptr.info.codef);
+                state = GET_RPE;
+                break;
             }
+            jbyte(n_bl);
+            state = SW_RPE;
             break;
         case RPE3:
             // right bracket
@@ -1538,24 +1552,20 @@ void cst(bool dir, char *lbl, size_t lblleng)
             {
                 pchosh("407 including of the signs 'k' > 511");
                 state = RP_OSH300;
+                break;
             }
-            else
+            kol_skob[++ur_skob] = 0;
+            scan();
+            if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
             {
-                kol_skob[++ur_skob] = 0;
-                scan();
-                if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
-                {
-                    funcptr.info.codef = scn_e.code.info.codef;
-                    funcptr.tag = 0;
-                    gopl(n_blf, funcptr.info.codef);
-                    state = GET_RPE;
-                }
-                else
-                {
-                    jbyte(n_bl);
-                    state = SW_RPE;
-                }
+                funcptr.info.codef = scn_e.code.info.codef;
+                funcptr.tag = 0;
+                gopl(n_blf, funcptr.info.codef);
+                state = GET_RPE;
+                break;
             }
+            jbyte(n_bl);
+            state = SW_RPE;
             break;
         case RPE8:
             // sign '.'
