@@ -484,9 +484,11 @@ int main(int argc, char *argv[])
                 cst(dir, stmlbl, lbl_leng);
             }
             if (!_eoj)
+            {
                 mod_state = NEXT_STM;
-            else
-                mod_state = END_IS_MISSING;
+                break;
+            }
+            mod_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
             pchosh("003 end directive missing");
@@ -509,11 +511,16 @@ int main(int argc, char *argv[])
             s_term();
             pchzkl();
             if (_eoj || options.multmod == 0)
+            {
                 mod_state = END_OF_SYSIN;
-            else if (again)
+                break;
+            }
+            if (again)
+            {
                 mod_state = START_OF_MODULE;
-            else
-                mod_state = END_OF_SYSIN;
+                break;
+            }
+            mod_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
             fclose(sysin);
@@ -821,10 +828,12 @@ void scan()
             scn_state = SCNRET;
             break;
         case SCNSC:
-            if (get_csmb(&(scn_e.code), id, &id_leng) == 1)
+            if (get_csmb(&(scn_e.code), id, &id_leng))
+            {
                 scn_state = EGO;
-            else
-                scn_state = SCNERR;
+                break;
+            }
+            scn_state = SCNERR;
             break;
         case EGO:
             scn_e.t = 1;
@@ -896,12 +905,12 @@ void scan()
             break;
         case SCNVI:
             if ((class[m] != 'L') && (class[m] != 'D'))
-                scn_state = OSH102;
-            else
             {
-                scn_e.ci = c[m];
-                scn_state = SCNGCR;
+                scn_state = OSH102;
+                break;
             }
+            scn_e.ci = c[m];
+            scn_state = SCNGCR;
             break;
         case SCNKK: // kras
             scn_e.t = 7;
@@ -942,31 +951,37 @@ void scan()
         case SCNA:
             EH ROMA;
             if (m == 71)
-                scn_state = OSH101;
-            else if (c[m] == '\'')
-                scn_state = SCNCHR;
-            else
             {
-                scn_station = true;
-                scn_state = SCNCHR;
+                scn_state = OSH101;
+                break;
             }
+            if (c[m] == '\'')
+            {
+                scn_state = SCNCHR;
+                break;
+            }
+            scn_station = true;
+            scn_state = SCNCHR;
             break;
         case STATE1: // within letter chain
             if (m == 71)
-                scn_state = OSH101;
-            else if (c[m] != '\'')
-                scn_state = SCNCHR;
-            else
             {
-                EH ROMA;
-                if (c[m] == '\'')
-                    scn_state = SCNCHR;
-                else
-                {
-                    scn_station = false;
-                    scn_state = STATE0;
-                }
+                scn_state = OSH101;
+                break;
             }
+            if (c[m] != '\'')
+            {
+                scn_state = SCNCHR;
+                break;
+            }
+            EH ROMA;
+            if (c[m] == '\'')
+            {
+                scn_state = SCNCHR;
+                break;
+            }
+            scn_station = false;
+            scn_state = STATE0;
             break;
         case SCNCHR:
             scn_e.code.tag = TAGO;
@@ -1188,103 +1203,119 @@ static bool specif(char tail)
             if (neg)
                 pchosh("207 within specifier default ')' ");
             if (tail == ')')
+            {
                 sp_state = OSH206;
-            else
-                return true;
-            break;
+                break;
+            }
+            return true;
         case SPCL:
             if (neg)
-                sp_state = OSH202;
-            else
             {
-                neg = true;
-                gsp(ns_ng);
-                sp_state = SPCGC;
+                sp_state = OSH202;
+                break;
             }
+            neg = true;
+            gsp(ns_ng);
+            sp_state = SPCGC;
             break;
         case SPCR:
             if (!neg)
-                sp_state = SPCR1;
-            else
             {
-                EH ROMA0; // kras
-                blout();
-                if (c[m] == '(')
-                    sp_state = SPCGC;
-                else if (c[m] == ')')
-                    sp_state = SPCR1;
-                else if (c[m] == ' ')
-                    sp_state = SPCR2;
-                else
-                {
-                    neg = false;
-                    gsp(ns_ng);
-                    sp_state = SPCPRC;
-                }
+                sp_state = SPCR1;
+                break;
             }
+            EH ROMA0; // kras
+            blout();
+            if (c[m] == '(')
+            {
+                sp_state = SPCGC;
+                break;
+            }
+            if (c[m] == ')')
+            {
+                sp_state = SPCR1;
+                break;
+            }
+            if (c[m] == ' ')
+            {
+                sp_state = SPCR2;
+                break;
+            }
+            neg = false;
+            gsp(ns_ng);
+            sp_state = SPCPRC;
             break;
         case SPCR1:
             if (tail == ')')
+            {
                 sp_state = SPCR3;
-            else
-                sp_state = OSH208;
+                break;
+            }
+            sp_state = OSH208;
             break;
         case SPCR2:
             if (tail != ')')
+            {
                 sp_state = SPCR3;
-            else
-                sp_state = OSH206;
+                break;
+            }
+            sp_state = OSH206;
             break;
         case SPCR3:
             gsp(ns_ngw);
             return true;
         case SPCESC:
-            if (get_csmb(&code, id, &lid) == 0)
-                sp_state = OSH200;
-            else
+            if (!get_csmb(&code, id, &lid))
             {
-                gsp(ns_sc);
-                if (left_part)
-                    gsymbol(&code);
-                sp_state = SPCGC;
+                sp_state = OSH200;
+                break;
             }
+            gsp(ns_sc);
+            if (left_part)
+                gsymbol(&code);
+            sp_state = SPCGC;
             break;
         case SPCSP:
             EH ROMA0; // kras
             if (!get_id(id, &lid))
-                sp_state = OSH203;
-            else
             {
-                if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
-                    pchosh("209 specifier is defined through itself");
-                T_U *p = spref(id, lid, tail);
-                gsp(ns_cll);
-                if (left_part)
-                    j3addr(p);
-                if (c[m] == ':')
-                    sp_state = SPCGC;
-                else
-                    sp_state = OSH204;
+                sp_state = OSH203;
+                break;
             }
+            if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
+                pchosh("209 specifier is defined through itself");
+            T_U *p = spref(id, lid, tail);
+            gsp(ns_cll);
+            if (left_part)
+                j3addr(p);
+            if (c[m] == ':')
+            {
+                sp_state = SPCGC;
+                break;
+            }
+            sp_state = OSH204;
             break;
         case SPCA:
             EH ROMA0; // kras
             if (m == 71)
-                sp_state = OSH205;
-            else if (c[m] != '\'')
-                sp_state = SPCA1;
-            else
             {
-                gsp(ns_sc);
-                if (left_part)
-                {
-                    code.tag = 0;
-                    code.info.codef = 0L;
-                    code.info.infoc[0] = '\'';
-                    gsymbol(&code);
-                }
-                sp_state = SPCGC;
+                sp_state = OSH205;
+                break;
             }
+            if (c[m] != '\'')
+            {
+                sp_state = SPCA1;
+                break;
+            }
+            gsp(ns_sc);
+            if (left_part)
+            {
+                code.tag = 0;
+                code.info.codef = 0L;
+                code.info.infoc[0] = '\'';
+                gsymbol(&code);
+            }
+            sp_state = SPCGC;
             break;
         case SPCA1:
             gsp(ns_sc);
@@ -1354,17 +1385,22 @@ static bool specif(char tail)
             }
             EH ROMA0; // kras
             if (m == 71)
-                sp_state = OSH205;
-            else if (c[m] != '\'')
-                sp_state = SPCA1;
-            else
             {
-                EH ROMA0; // kras
-                if (c[m] == '\'')
-                    sp_state = SPCA1;
-                else
-                    sp_state = SPCBLO;
+                sp_state = OSH205;
+                break;
             }
+            if (c[m] != '\'')
+            {
+                sp_state = SPCA1;
+                break;
+            }
+            EH ROMA0; // kras
+            if (c[m] == '\'')
+            {
+                sp_state = SPCA1;
+                break;
+            }
+            sp_state = SPCBLO;
             break;
         case SPCES:
             gsp(ns_s);
