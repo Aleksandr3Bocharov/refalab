@@ -148,11 +148,15 @@ static void gcd_()
                     v1 = gcoden(p[0]);
                     v2 = gcoden(p[1]);
                     if (v1 < v2)
+                    {
                         gcd_state = M12;
-                    else if (v1 > v2)
-                        gcd_state = M21;
-                    if (gcd_state != OC)
                         break;
+                    }
+                    if (v1 > v2)
+                    {
+                        gcd_state = M21;
+                        break;
+                    }
                     p[0] = p[0]->next;
                     p[1] = p[1]->next;
                 }
@@ -160,11 +164,14 @@ static void gcd_()
                     break;
                 rez = 0;
                 gcd_state = FIN1;
+                break;
             }
-            else if (l[0] < l[1])
+            if (l[0] < l[1])
+            {
                 gcd_state = M12;
-            else
-                gcd_state = M21;
+                break;
+            }
+            gcd_state = M21;
             break;
         case M12:
             pr = hd[0];

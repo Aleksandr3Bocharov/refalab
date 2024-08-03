@@ -46,32 +46,30 @@ static void renam_()
     do
     {
         for (i = 0; p->tag != TAGO || p->info.infoc != ' '; i++)
+        {
             if ((p->tag != TAGO) || (i >= 40))
             {
                 heot = true;
                 break;
             }
-            else
-            {
-                namf[i] = p->info.infoc;
-                p = p->next;
-            }
+            namf[i] = p->info.infoc;
+            p = p->next;
+        }
         if (heot)
             break;
         namf[i] = '\0';
         p = p->next;
         char namt[40]; // from => to
         for (i = 0; p != refal.nexta; i++)
+        {
             if ((p->tag != TAGO) || (i >= 40))
             {
                 heot = true;
                 break;
             }
-            else
-            {
-                namt[i] = p->info.infoc;
-                p = p->next;
-            }
+            namt[i] = p->info.infoc;
+            p = p->next;
+        }
         if (heot)
             break;
         namt[i] = '\0';

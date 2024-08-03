@@ -90,7 +90,8 @@ static void dg_()
             return;
         }; // FAIL
         pr = pl->info.codep;
-        if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
+        q = lldupl(refal.preva, refal.nexta, pl);
+        if (q == NULL)
             continue;
         if ((q->tag != TAGO) || (q->info.infoc != '='))
             continue;
@@ -253,8 +254,8 @@ static void rp_()
                 if (pl->tag != TAGLB)
                     break;
                 pr = pl->info.codep;
-                T_LINKCB *q;
-                if ((q = lldupl(refal.preva, p, pl)) == 0)
+                T_LINKCB *q = lldupl(refal.preva, p, pl);
+                if (q == NULL)
                     continue;
                 if ((q->tag != TAGO) || (q->info.infoc != '='))
                     continue;
@@ -295,7 +296,8 @@ static void cp_()
             return;
         }; // FAIL
         pr = pl->info.codep;
-        if ((q = lldupl(refal.preva, refal.nexta, pl)) == 0)
+        q = lldupl(refal.preva, refal.nexta, pl);
+        if (q == NULL)
             continue;
         if ((q->tag != TAGO) || (q->info.infoc != '='))
             continue;

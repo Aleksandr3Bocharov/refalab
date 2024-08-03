@@ -37,16 +37,15 @@ static void opng_()
         jung = jl;
         bool heot = false;
         for (i = 0; p != refal.nexta; i++)
+        {
             if ((p->tag != TAGO) || (i == 39))
             {
                 heot = true;
                 break;
             }
-            else
-            {
-                namf[i] = p->info.infoc;
-                p = p->next;
-            }
+            namf[i] = p->info.infoc;
+            p = p->next;
+        }
         if (heot)
             break;
         inr = fopen(namf, "r");
@@ -97,16 +96,15 @@ static void opnp_()
         junp = jl;
         bool heot = false;
         for (i = 0; p != refal.nexta; i++)
+        {
             if ((p->tag != TAGO) || (i == 40))
             {
                 heot = true;
                 break;
             }
-            else
-            {
-                namf[i] = p->info.infoc;
-                p = p->next;
-            }
+            namf[i] = p->info.infoc;
+            p = p->next;
+        }
         if (heot)
             break;
         inw = fopen(namf, m);

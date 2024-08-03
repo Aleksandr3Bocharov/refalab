@@ -91,22 +91,25 @@ static void numb_()
     size_t i;
     bool neot = false;
     for (i = 0; p != refal.nexta; i++)
+    {
         if ((p->tag != TAGO) || (i == 11))
         {
             neot = true;
             break;
         }
-        else
+        str[i] = p->info.infoc;
+        if (str[i] < '0' || str[i] > '9')
         {
-            str[i] = p->info.infoc;
-            if (str[i] < '0' || str[i] > '9')
-                neot = true;
-            else if ((i == 9) && (cmpstr(i + 1, str, "2147483647") > 0))
-                neot = true;
-            if (neot)
-                break;
-            p = p->next;
+            neot = true;
+            break;
         }
+        if ((i == 9) && (cmpstr(i + 1, str, "2147483647") > 0))
+        {
+            neot = true;
+            break;
+        }
+        p = p->next;
+    }
     if (neot)
     {
         refal.upshot = 2;

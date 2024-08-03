@@ -29,11 +29,8 @@ static void open_()
       uint32_t j;
       if (p->tag != TAGN)
          break;
-      else
-      {
-         j = p->info.coden;
-         p = p->next;
-      }
+      j = p->info.coden;
+      p = p->next;
       if (j >= fmax)
          break;
       char s[2];
@@ -46,19 +43,19 @@ static void open_()
          break;
       bool neot = false;
       for (size_t i = 0; p != refal.nexta; i++)
+      {
          if ((p->tag != TAGO) || (i == 40))
          {
             neot = true;
             break;
          }
-         else
-         {
-            namf[i] = p->info.infoc;
-            p = p->next;
-         }
+         namf[i] = p->info.infoc;
+         p = p->next;
+      }
       if (neot)
          break;
-      if ((f = fopen(namf, s)) == NULL)
+      f = fopen(namf, s);
+      if (f == NULL)
       {
          printf("\n REFAL(open): can't open file %s", namf);
          neot1 = true;
@@ -134,7 +131,8 @@ static void get_()
          char namf[11];
          strcpy(namf, "REFAL0.DAT");
          namf[5] = j + '0';
-         if ((f = fopen(namf, "r")) == NULL)
+         f = fopen(namf, "r");
+         if (f  == NULL)
          {
             printf("\nREFAL(get): can't open file %s", namf);
             neot1 = true;
@@ -187,7 +185,8 @@ static void put_()
          char namf[11];
          strcpy(namf, "REFAL0.DAT");
          namf[5] = j + '0';
-         if ((f = fopen(namf, "w")) == NULL)
+         f = fopen(namf, "w");
+         if (f == NULL)
          {
             printf("\nREFAL(put): can't open file %s", namf);
             neot1 = true;
