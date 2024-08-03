@@ -296,15 +296,17 @@ void rfdbg(T_ST *s_st)
             if (!ge_all && !(det_table->ge) && !(det_table->gt))
             {
                 if (det_table->tr)
-                    dbg_state = DBG_TRAP;
-                else
                 {
-                    one_step(s_st);
-                    if (s_st->state != 1)
-                        dbg_state = DBG_ABEND;
-                    else
-                        dbg_state = DBG_NOT_YET;
+                    dbg_state = DBG_TRAP;
+                    break;
                 }
+                one_step(s_st);
+                if (s_st->state != 1)
+                {
+                    dbg_state = DBG_ABEND;
+                    break;
+                }
+                dbg_state = DBG_NOT_YET;
                 break;
             }
             // enter into station "is already"
@@ -418,15 +420,13 @@ void rfdbg(T_ST *s_st)
             {
                 getpf(s_st);
                 dbg_state = DBG_ALREADY;
+                break;
             }
-            else
-            {
-                //  joint
-                s_st->dot = dot1;
-                if (!ge_all && was_ge)
-                    pr_finres(curr_step1, prevk1, nextd1);
-                dbg_state = DBG_NOT_YET;
-            }
+            //  joint
+            s_st->dot = dot1;
+            if (!ge_all && was_ge)
+                pr_finres(curr_step1, prevk1, nextd1);
+            dbg_state = DBG_NOT_YET;
             break;
         case DBG_DONE:
             printf("\nConcretization is executed ");
@@ -504,15 +504,17 @@ static void dbapp(T_ST *ss_st)
             if (!ge_all && !(det_table->ge) && !(det_table->gt))
             {
                 if (det_table->tr)
-                    db_state = DB_TRAP;
-                else
                 {
-                    one_step(ss_st);
-                    if (ss_st->state != 1)
-                        db_state = DB_AB;
-                    else
-                        db_state = DB_NOT_YET;
+                    db_state = DB_TRAP;
+                    break;
                 }
+                one_step(ss_st);
+                if (ss_st->state != 1)
+                {
+                    db_state = DB_AB;
+                    break;
+                }
+                db_state = DB_NOT_YET;
                 break;
             }
             // enter into station "is already"
@@ -626,15 +628,13 @@ static void dbapp(T_ST *ss_st)
             {
                 getpf(ss_st);
                 db_state = DB_ALREADY;
+                break;
             }
-            else
-            {
-                //  joint
-                ss_st->dot = dot1;
-                if (!ge_all && was_ge)
-                    pr_finres(curr_step1, prevk1, nextd1);
-                db_state = DB_NOT_YET;
-            }
+            //  joint
+            ss_st->dot = dot1;
+            if (!ge_all && was_ge)
+                pr_finres(curr_step1, prevk1, nextd1);
+            db_state = DB_NOT_YET;
             break;
         case DB_TRAP:
             printf("\nFunction name trap");
