@@ -1,7 +1,7 @@
-//----------- file RFRUN2.c ----------------- 
-//      Refal-interpretator (part 2)          
-//      Last edition date: 11.07.2024         
-//------------------------------------------- 
+//----------- file RFRUN2.c -----------------
+//      Refal-interpretator (part 2)
+//      Last edition date: 11.07.2024
+//-------------------------------------------
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -10,132 +10,215 @@
 
 #define NMBL sizeof(char)
 
+typedef enum sp_states
+{
+    SPCRET,
+    SPCNXT,
+    SPCCLL,
+    SPCW,
+    SPCNG,
+    SPCNGW,
+    SPCSC,
+    SPCS,
+    SPCB,
+    SPCF,
+    SPCN,
+    SPCR,
+    SPCD,
+    SPCO,
+    SPCL
+} T_SP_STATES;
+
 static bool letter(char s);
 static bool digit(char s);
 
 bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
-// specifier interpreter  
+// specifier interpreter
 {
-    // spcs-pointer  
+    // spcs-pointer
     T_SPCS *spcsp = pspcsp;
-    uint8_t *spcvpc; // virtual specifier counter  
-    move(LBLL, vpc + 1, (uint8_t *)&spcvpc); // spcvpc = L  
-    // positiveness feature of specifier element  
+    uint8_t *spcvpc;                         // virtual specifier counter
+    move(LBLL, vpc + 1, (uint8_t *)&spcvpc); // spcvpc = L
+    // positiveness feature of specifier element
     bool spcpls = true;
-    goto SPCNXT;
-// return from specifier element if "YES"  
-SPCRET:
-    if (spcsp == pspcsp)
-        return spcpls;
-    spcsp--;
-    // work variable  
-    const bool spcwrk = spcpls;
-    spcpls = spcsp->spls; //getss (spcpls,spcvpc); 
-    spcvpc = spcsp->svpc;
-    if (spcwrk)
-        goto SPCRET;
-    spcvpc = spcvpc + LBLL;
-// return from specifier element if "NO"  
-SPCNXT:
-    //specifier code  
-    const uint8_t spcopc = *spcvpc;
-    spcvpc = spcvpc + NMBL;
-    // switch    
-    // SPCOP     
-    switch (spcopc)
-    {
-    case 0000:
-        goto SPCCLL;
-    case 0001:
-        goto SPCW;
-    case 0002:
-        goto SPCNG;
-    case 0003:
-        goto SPCNGW;
-    case 0004:
-        goto SPCSC;
-    case 0005:
-        goto SPCS;
-    case 0006:
-        goto SPCB;
-    case 0007:
-        goto SPCF;
-    case 0010:
-        goto SPCN;
-    case 0011:
-        goto SPCR;
-    case 0012:
-        goto SPCO;
-    case 0013:
-        goto SPCD;
-    case 0014:
-        goto SPCL;
-    }
-    // SPCCLL(L);  
-SPCCLL:
-    spcsp->spls = spcpls;
-    spcsp->svpc = spcvpc;
-    move(LBLL, spcvpc, (uint8_t *)&spcvpc);
-    spcsp++;
-    spcpls = true;
-    goto SPCNXT;
-SPCW:
-    goto SPCRET;
-SPCNG:
-    spcpls = !spcpls;
-    goto SPCNXT;
-SPCNGW:
-    spcpls = !spcpls;
-    goto SPCRET;
-SPCSC:
-    if (cmpr(SMBL, spcvpc, (uint8_t *)&(b->tag)))
-        goto SPCRET;
-    spcvpc = spcvpc + SMBL;
-    goto SPCNXT;
-SPCS:
-    if ((b->tag & 0001) == 0)
-        goto SPCRET;
-    goto SPCNXT;
-SPCB:
-    if ((b->tag & 0001) != 0)
-        goto SPCRET;
-    goto SPCNXT;
-SPCF:
-    if (b->tag == TAGF)
-        goto SPCRET;
-    goto SPCNXT;
-SPCN:
-    if (b->tag == TAGN)
-        goto SPCRET;
-    goto SPCNXT;
-SPCR:
-    if (b->tag == TAGR)
-        goto SPCRET;
-    goto SPCNXT;
-SPCO:
-    if (b->tag == TAGO)
-        goto SPCRET;
-    goto SPCNXT;
-SPCD:
-    if (b->tag != TAGO)
-        goto SPCNXT;
-    if (digit(b->info.infoc) == 1)
-        goto SPCRET;
-    goto SPCNXT;
-SPCL:
-    if (b->tag != TAGO)
-        goto SPCNXT;
-    if (letter(b->info.infoc) == 1)
-        goto SPCRET;
-    goto SPCNXT;
-} //             end      spc           
+    T_SP_STATES sp_state = SPCNXT;
+    while (true)
+        switch (sp_state)
+        {
+        // return from specifier element if "YES"
+        case SPCRET:
+            if (spcsp == pspcsp)
+                return spcpls;
+            spcsp--;
+            // work variable
+            const bool spcwrk = spcpls;
+            spcpls = spcsp->spls; // getss (spcpls,spcvpc);
+            spcvpc = spcsp->svpc;
+            if (spcwrk)
+                break;
+            spcvpc = spcvpc + LBLL;
+            sp_state = SPCNXT;
+            break;
+        // return from specifier element if "NO"
+        case SPCNXT:
+            // specifier code
+            const uint8_t spcopc = *spcvpc;
+            spcvpc = spcvpc + NMBL;
+            // switch
+            // SPCOP
+            switch (spcopc)
+            {
+            case 0000:
+                sp_state = SPCCLL;
+                break;
+            case 0001:
+                sp_state = SPCW;
+                break;
+            case 0002:
+                sp_state = SPCNG;
+                break;
+            case 0003:
+                sp_state = SPCNGW;
+                break;
+            case 0004:
+                sp_state = SPCSC;
+                break;
+            case 0005:
+                sp_state = SPCS;
+                break;
+            case 0006:
+                sp_state = SPCB;
+                break;
+            case 0007:
+                sp_state = SPCF;
+                break;
+            case 0010:
+                sp_state = SPCN;
+                break;
+            case 0011:
+                sp_state = SPCR;
+                break;
+            case 0012:
+                sp_state = SPCO;
+                break;
+            case 0013:
+                sp_state = SPCD;
+                break;
+            case 0014:
+                sp_state = SPCL;
+            }
+            break;
+            // SPCCLL(L);
+        case SPCCLL:
+            spcsp->spls = spcpls;
+            spcsp->svpc = spcvpc;
+            move(LBLL, spcvpc, (uint8_t *)&spcvpc);
+            spcsp++;
+            spcpls = true;
+            sp_state = SPCNXT;
+            break;
+        case SPCW:
+            sp_state = SPCRET;
+            break;
+        case SPCNG:
+            spcpls = !spcpls;
+            sp_state = SPCNXT;
+            break;
+        case SPCNGW:
+            spcpls = !spcpls;
+            sp_state = SPCRET;
+            break;
+        case SPCSC:
+            if (cmpr(SMBL, spcvpc, (uint8_t *)&(b->tag)))
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            spcvpc = spcvpc + SMBL;
+            sp_state = SPCNXT;
+            break;
+        case SPCS:
+            if ((b->tag & 0001) == 0)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCB:
+            if ((b->tag & 0001) != 0)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCF:
+            if (b->tag == TAGF)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCN:
+            if (b->tag == TAGN)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCR:
+            if (b->tag == TAGR)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCO:
+            if (b->tag == TAGO)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCD:
+            if (b->tag != TAGO)
+            {
+                sp_state = SPCNXT;
+                break;
+            }
+            if (digit(b->info.infoc))
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCL:
+            if (b->tag != TAGO)
+            {
+                sp_state = SPCNXT;
+                break;
+            }
+            if (letter(b->info.infoc))
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+        }
+} //             end      spc
 
 static bool letter(char s)
 {
-    if ((s >= 'A' && s <= 'Z') || // A..Z      
-        (s >= 'a' && s <= 'z') || // a..z      
-        (s > 127 && s < 176) ||   // �..��..�  
-        (s > 223 && s < 240))     // �..�      
+    if ((s >= 'A' && s <= 'Z') || // A..Z
+        (s >= 'a' && s <= 'z') || // a..z
+        (s > 127 && s < 176) ||   // �..��..�
+        (s > 223 && s < 240))     // �..�
         return true;
     return false;
 }
@@ -199,7 +282,7 @@ void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
     return;
 }
 
-// BLF 28.07.2004  - in case of macrodigit - shift -> 16  
+// BLF 28.07.2004  - in case of macrodigit - shift -> 16
 /* void move(n,pf,pt) int n; char *pf,*pt; {
 int i;
    if ( *pf == TAGN ) {
@@ -218,7 +301,6 @@ int i;
       }
    }
 }*/
- 
 
 bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2)
 {
@@ -231,4 +313,4 @@ bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2)
     }
     return true;
 }
-//------------ end of file RFRUN2.C ---------- 
+//------------ end of file RFRUN2.C ----------
