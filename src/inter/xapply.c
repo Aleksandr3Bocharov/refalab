@@ -28,7 +28,8 @@ static void appl_()
         if (!slins(refal.prevr, 1))
             return;
         px = refal.prevr->next;
-        if ((s_st = malloc(sizeof(T_ST))) == NULL)
+        s_st = malloc(sizeof(T_ST));
+        if (s_st == NULL)
             lack = true;
         else if (!lcre(s_st))
             lack = true;
