@@ -14,18 +14,139 @@
 // for unlooping:
 
 #define NMBL sizeof(char)
-#define SHB1       \
-    b1 = b1->next; \
-    if (b1 == b2)  \
-        goto FAIL;
-#define SHB2       \
-    b2 = b2->prev; \
-    if (b2 == b1)  \
-        goto FAIL;
-#define SHF          \
-    f = f->next;     \
-    if (f == flhead) \
-        goto LACK;
+#define SHB1            \
+    b1 = b1->next;      \
+    if (b1 == b2)       \
+    {                   \
+        i_state = FAIL; \
+        break;          \
+    }
+#define SHB2            \
+    b2 = b2->prev;      \
+    if (b2 == b1)       \
+    {                   \
+        i_state = FAIL; \
+        break;          \
+    }
+#define SHF             \
+    f = f->next;        \
+    if (f == flhead)    \
+    {                   \
+        i_state = LACK; \
+        break;          \
+    }
+
+typedef enum i_states
+{
+    START,
+    ADVSTEP,
+    REF,
+    DONE,
+    RCGIMP,
+    LACK,
+    EXIT,
+    NEXTOP,
+    ADVANCE,
+    SJUMP,
+    FAIL,
+    SB,
+    LSC,
+    RSC,
+    LSCO,
+    RSCO,
+    LSD,
+    RSD,
+    LTXT,
+    LTXT1,
+    RTXT,
+    RTXT1,
+    LB,
+    LBY,
+    RB,
+    RBY,
+    LS,
+    RS,
+    LW,
+    RW,
+    LBNIL,
+    RBNIL,
+    LBCE,
+    RBCE,
+    NIL,
+    CE,
+    LED,
+    LED1,
+    LED2,
+    RED,
+    RED1,
+    RED2,
+    NNIL,
+    PLE,
+    PLV,
+    LE,
+    PRE,
+    PRV,
+    RE,
+    PLESC,
+    PLVSC,
+    LESC,
+    LESC0,
+    LESC1,
+    PRESC,
+    PRVSC,
+    RESC,
+    RESC0,
+    RESC1,
+    LESD,
+    RESD,
+    PLEB,
+    PLVB,
+    LEB,
+    LEB1,
+    PREB,
+    PRVB,
+    REB,
+    REB1,
+    EOE,
+    EOEI,
+    LSRCH,
+    LSRCH1,
+    RSRCH,
+    RSRCH1,
+    WSPC,
+    ESPC,
+    PLESPC,
+    LESPC,
+    PRESPC,
+    RESPC,
+    LMAX,
+    RMAX,
+    EOR,
+    NS,
+    NSO,
+    TEXT,
+    BL,
+    BR,
+    BLR,
+    BRACT,
+    ACT,
+    MULS,
+    MULE,
+    TPL,
+    TPLM,
+    TPLE,
+    TPLV,
+    TPLS,
+    EOS,
+    SWAP,
+    SWAPREF,
+    BLF,
+    EOSSN,
+    SETNOS,
+    CFUNC,
+    CFDONE,
+    CFLUCK
+} T_I_STATES;
 
 typedef struct sav_
 { // save area for var-part of REFAL-block
@@ -102,251 +223,357 @@ void rfrun(T_ST *ast) // adress of current state table
     T_LINKCB *flhead = refal.flhead;
     if (tmmod == 1)
         tmstart = time(0l);
-    goto START;
-    // start of next step
-START:
-    if (ast->step >= ast->stop)
-        goto DONE;
-    b2 = quasik.info.codep;
-    if (b2 == NULL)
-        goto DONE;
-    b0 = b2->info.codep;
-    b1 = b0->next;
-    vpc = (uint8_t *)b1->info.codef;
-    if (b1->tag != TAGF)
-        goto REF;
-    // here must be check on c-function
-    // if (c) goto CFUNC;
-    jsp = js;
-    et[1] = b0;
-    et[2] = b2;
-    et[3] = b1;
-    nel = 4;
-    goto NEXTOP;
-    // increase step number
-ADVSTEP:
-    (ast->step)++;
-    goto START;
-    // symbol - reference execution
-REF:
-    if (b1->tag != TAGR)
-        goto RCGIMP;
-    et[1] = b0;
-    et[2] = b2;
-    et[3] = b1;
-    f = (T_LINKCB *)vpc;
-    goto SWAPREF;
-    // interpreter exits
-    // store state
-DONE:
-    ast->state = 1; // normal end
-    goto EXIT;
-RCGIMP:
-    ast->state = 2; // recognition impossible
-    goto EXIT;
-LACK:
-    ast->state = 3; // end of free memory
-    quasik.info.codep = et[2];
-    goto EXIT;
-    // state remove from
-EXIT:
-    if (tmmod == 1)
-        tmstop = time(0l);
-    ast->dot = quasik.info.codep;
-    // restore REFAL-block
-    refal.upshot = savecr->upshot_;
-    refal.preva = savecr->preva_;
-    refal.nexta = savecr->nexta_;
-    refal.prevr = savecr->prevr_;
-    refal.nextr = savecr->nextr_;
-    refal.currst = savecr->currst_;
-    refal.tmmode = tmmod;
-    free(savecr);
-    if (tmmod == 1)
-        //{
-        // printf("\nn=%ld k=%ld",tmstart,tmstop);
-        refal.tmintv = (tmstop - tmstart) * 1000000l;
-    //}
-    return;
-NEXTOP:
-    opc = *vpc;
+    T_I_STATES i_state = START;
+    while (true)
+        switch (i_state)
+        {
+            // start of next step
+        case START:
+            if (ast->step >= ast->stop)
+            {
+                i_state = DONE;
+                break;
+            }
+            b2 = quasik.info.codep;
+            if (b2 == NULL)
+            {
+                i_state = DONE;
+                break;
+            }
+            b0 = b2->info.codep;
+            b1 = b0->next;
+            vpc = (uint8_t *)b1->info.codef;
+            if (b1->tag != TAGF)
+            {
+                i_state = REF;
+                break;
+            }
+            // here must be check on c-function
+            // if (c) goto CFUNC;
+            jsp = js;
+            et[1] = b0;
+            et[2] = b2;
+            et[3] = b1;
+            nel = 4;
+            i_state = NEXTOP;
+            break;
+            // increase step number
+        case ADVSTEP:
+            (ast->step)++;
+            i_state = START;
+            break;
+            // symbol - reference execution
+        case REF:
+            if (b1->tag != TAGR)
+            {
+                i_state = RCGIMP;
+                break;
+            }
+            et[1] = b0;
+            et[2] = b2;
+            et[3] = b1;
+            f = (T_LINKCB *)vpc;
+            i_state = SWAPREF;
+            break;
+            // interpreter exits
+            // store state
+        case DONE:
+            ast->state = 1; // normal end
+            i_state = EXIT;
+            break;
+        case RCGIMP:
+            ast->state = 2; // recognition impossible
+            i_state = EXIT;
+            break;
+        case LACK:
+            ast->state = 3; // end of free memory
+            quasik.info.codep = et[2];
+            i_state = EXIT;
+            break;
+            // state remove from
+        case EXIT:
+            if (tmmod == 1)
+                tmstop = time(0l);
+            ast->dot = quasik.info.codep;
+            // restore REFAL-block
+            refal.upshot = savecr->upshot_;
+            refal.preva = savecr->preva_;
+            refal.nexta = savecr->nexta_;
+            refal.prevr = savecr->prevr_;
+            refal.nextr = savecr->nextr_;
+            refal.currst = savecr->currst_;
+            refal.tmmode = tmmod;
+            free(savecr);
+            if (tmmod == 1)
+                //{
+                // printf("\nn=%ld k=%ld",tmstart,tmstop);
+                refal.tmintv = (tmstop - tmstart) * 1000000l;
+            //}
+            return;
+        case NEXTOP:
+            opc = *vpc;
 #ifdef mdebug
-    printf("\n switcher");
-    // BLF 03.07.2004
-    printf(" code8=%o\t(D=%d,H=%x)", opc, opc, opc);
+            printf("\n switcher");
+            // BLF 03.07.2004
+            printf(" code8=%o\t(D=%d,H=%x)", opc, opc, opc);
 #endif
-    // operation switcher
-    //       OPSWITCH
-    //  printf("\n  ego opc=%o NMBL=%o LBLL=%o SMBL=%o",opc,NMBL,LBLL,SMBL);
-    switch (opc)
-    {
-    case 0000:
-        goto ADVANCE;
-    case 0001:
-        goto SJUMP;
-    case 0002:
-        goto FAIL;
-    case 0003:
-        goto SB;
-    case 0004:
-        goto LSC;
-    case 0005:
-        goto RSC;
-    case 0006:
-        goto LSCO;
-    case 0007:
-        goto RSCO;
-    case 0010:
-        goto LSD;
-    case 0011:
-        goto RSD;
-    case 0012:
-        goto LTXT;
-    case 0013:
-        goto RTXT;
-    case 0014:
-        goto LB;
-    case 0015:
-        goto LBY;
-    case 0016:
-        goto RB;
-    case 0017:
-        goto RBY;
-    case 0020:
-        goto LS;
-    case 0021:
-        goto RS;
-    case 0022:
-        goto LW;
-    case 0023:
-        goto RW;
-    case 0024:
-        goto LBNIL;
-    case 0025:
-        goto RBNIL;
-    case 0026:
-        goto LBCE;
-    case 0027:
-        goto RBCE;
-    case 0030:
-        goto NIL;
-    case 0031:
-        goto CE;
-    case 0032:
-        goto LED;
-    case 0033:
-        goto RED;
-    case 0034:
-        goto NNIL;
-    case 0035:
-        goto PLE;
-    case 0036:
-        goto PLV;
-    case 0037:
-        goto LE;
-    case 0040:
-        goto PRE;
-    case 0041:
-        goto PRV;
-    case 0042:
-        goto RE;
-    case 0043:
-        goto PLESC;
-    case 0044:
-        goto PLVSC;
-    case 0045:
-        goto LESC;
-    case 0046:
-        goto PRESC;
-    case 0047:
-        goto PRVSC;
-    case 0050:
-        goto RESC;
-    case 0051:
-        goto LESD;
-    case 0052:
-        goto RESD;
-    case 0053:
-        goto PLEB;
-    case 0054:
-        goto PLVB;
-    case 0055:
-        goto LEB;
-    case 0056:
-        goto PREB;
-    case 0057:
-        goto PRVB;
-    case 0060:
-        goto REB;
-    case 0061:
-        goto EOE;
-    case 0062:
-        goto EOEI;
-    case 0063:
-        goto LSRCH;
-    case 0064:
-        goto RSRCH;
-    case 0065:
-        goto WSPC;
-    case 0066:
-        goto ESPC;
-    case 0067:
-        goto PLESPC;
-    case 0070:
-        goto LESPC;
-    case 0071:
-        goto PRESPC;
-    case 0072:
-        goto RESPC;
-    case 0073:
-        goto LMAX;
-    case 0074:
-        goto RMAX;
-    case 0075:
-        goto EOR;
-    case 0076:
-        goto NS;
-    case 0077:
-        goto NSO;
-    case 0100:
-        goto TEXT;
-    case 0101:
-        goto BL;
-    case 0102:
-        goto BR;
-    case 0103:
-        goto BLR;
-    case 0104:
-        goto BRACT;
-    case 0105:
-        goto ACT;
-    case 0106:
-        goto MULS;
-    case 0107:
-        goto MULE;
-    case 0110:
-        goto TPL;
-    case 0111:
-        goto TPLM;
-    case 0112:
-        goto TPLE;
-    case 0113:
-        goto TPLV;
-    case 0114:
-        goto TPLS;
-    case 0115:
-        goto EOS;
-    case 0116:
-        goto SWAP;
-    case 0117:
-        goto BLF;
-    case 0120:
-        goto EOSSN;
-    case 0121:
-        goto SETNOS;
-    case 0122:
-        goto CFUNC;
-    };
+            // operation switcher
+            //       OPSWITCH
+            //  printf("\n  ego opc=%o NMBL=%o LBLL=%o SMBL=%o",opc,NMBL,LBLL,SMBL);
+            switch (opc)
+            {
+            case 0000:
+                i_state = ADVANCE;
+                break;
+            case 0001:
+                i_state = SJUMP;
+                break;
+            case 0002:
+                i_state = FAIL;
+                break;
+            case 0003:
+                i_state = SB;
+                break;
+            case 0004:
+                i_state = LSC;
+                break;
+            case 0005:
+                i_state = RSC;
+                break;
+            case 0006:
+                i_state = LSCO;
+                break;
+            case 0007:
+                i_state = RSCO;
+                break;
+            case 0010:
+                i_state = LSD;
+                break;
+            case 0011:
+                i_state = RSD;
+                break;
+            case 0012:
+                i_state = LTXT;
+                break;
+            case 0013:
+                i_state = RTXT;
+                break;
+            case 0014:
+                i_state = LB;
+                break;
+            case 0015:
+                i_state = LBY;
+                break;
+            case 0016:
+                i_state = RB;
+                break;
+            case 0017:
+                i_state = RBY;
+                break;
+            case 0020:
+                i_state = LS;
+                break;
+            case 0021:
+                i_state = RS;
+                break;
+            case 0022:
+                i_state = LW;
+                break;
+            case 0023:
+                i_state = RW;
+                break;
+            case 0024:
+                i_state = LBNIL;
+                break;
+            case 0025:
+                i_state = RBNIL;
+                break;
+            case 0026:
+                i_state = LBCE;
+                break;
+            case 0027:
+                i_state = RBCE;
+                break;
+            case 0030:
+                i_state = NIL;
+                break;
+            case 0031:
+                i_state = CE;
+                break;
+            case 0032:
+                i_state = LED;
+                break;
+            case 0033:
+                i_state = RED;
+                break;
+            case 0034:
+                i_state = NNIL;
+                break;
+            case 0035:
+                i_state = PLE;
+                break;
+            case 0036:
+                i_state = PLV;
+                break;
+            case 0037:
+                i_state = LE;
+                break;
+            case 0040:
+                i_state = PRE;
+                break;
+            case 0041:
+                i_state = PRV;
+                break;
+            case 0042:
+                i_state = RE;
+                break;
+            case 0043:
+                i_state = PLESC;
+                break;
+            case 0044:
+                i_state = PLVSC;
+                break;
+            case 0045:
+                i_state = LESC;
+                break;
+            case 0046:
+                i_state = PRESC;
+                break;
+            case 0047:
+                i_state = PRVSC;
+                break;
+            case 0050:
+                i_state = RESC;
+                break;
+            case 0051:
+                i_state = LESD;
+                break;
+            case 0052:
+                i_state = RESD;
+                break;
+            case 0053:
+                i_state = PLEB;
+                break;
+            case 0054:
+                i_state = PLVB;
+                break;
+            case 0055:
+                i_state = LEB;
+                break;
+            case 0056:
+                i_state = PREB;
+                break;
+            case 0057:
+                i_state = PRVB;
+                break;
+            case 0060:
+                i_state = REB;
+                break;
+            case 0061:
+                i_state = EOE;
+                break;
+            case 0062:
+                i_state = EOEI;
+                break;
+            case 0063:
+                i_state = LSRCH;
+                break;
+            case 0064:
+                i_state = RSRCH;
+                break;
+            case 0065:
+                i_state = WSPC;
+                break;
+            case 0066:
+                i_state = ESPC;
+                break;
+            case 0067:
+                i_state = PLESPC;
+                break;
+            case 0070:
+                i_state = LESPC;
+                break;
+            case 0071:
+                i_state = PRESPC;
+                break;
+            case 0072:
+                i_state = RESPC;
+                break;
+            case 0073:
+                i_state = LMAX;
+                break;
+            case 0074:
+                i_state = RMAX;
+                break;
+            case 0075:
+                i_state = EOR;
+                break;
+            case 0076:
+                i_state = NS;
+                break;
+            case 0077:
+                i_state = NSO;
+                break;
+            case 0100:
+                i_state = TEXT;
+                break;
+            case 0101:
+                i_state = BL;
+                break;
+            case 0102:
+                i_state = BR;
+                break;
+            case 0103:
+                i_state = BLR;
+                break;
+            case 0104:
+                i_state = BRACT;
+                break;
+            case 0105:
+                i_state = ACT;
+                break;
+            case 0106:
+                i_state = MULS;
+                break;
+            case 0107:
+                i_state = MULE;
+                break;
+            case 0110:
+                i_state = TPL;
+                break;
+            case 0111:
+                i_state = TPLM;
+                break;
+            case 0112:
+                i_state = TPLE;
+                break;
+            case 0113:
+                i_state = TPLV;
+                break;
+            case 0114:
+                i_state = TPLS;
+                break;
+            case 0115:
+                i_state = EOS;
+                break;
+            case 0116:
+                i_state = SWAP;
+                break;
+            case 0117:
+                i_state = BLF;
+                break;
+            case 0120:
+                i_state = EOSSN;
+                break;
+            case 0121:
+                i_state = SETNOS;
+                break;
+            case 0122:
+                i_state = CFUNC;
+            };
+            break;
+        }
+
     // select next statement assembly language
 ADVANCE:
     vpc = vpc + NMBL;
