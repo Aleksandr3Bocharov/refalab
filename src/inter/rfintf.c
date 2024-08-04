@@ -406,10 +406,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
         case TAGRB:
             f->info.codep = lastb;
             f->tag = TAGRB;
-            if (lastb != NULL)
-                f1 = lastb->info.codep;
-            else
-                return false;
+            f1 = lastb->info.codep;
             lastb->info.codep = f;
             lastb->tag = TAGLB;
             lastb = f1;
