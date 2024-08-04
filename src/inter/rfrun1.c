@@ -572,334 +572,491 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = CFUNC;
             };
             break;
+            // select next statement assembly language
+        case ADVANCE:
+            vpc = vpc + NMBL;
+            i_state = NEXTOP;
+            break;
+            // SJUMP(L);
+        case SJUMP:
+            move(LBLL, vpc + NMBL, (uint8_t *)&(inch.ptr));
+            putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
+            jsp++;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // FAIL;
+        case FAIL:
+            if (jsp == js)
+            {
+                i_state = RCGIMP;
+                break;
+            }
+            jsp--;
+            getjs(jsp, &b1, &b2, &nel, &vpc);
+            i_state = NEXTOP;
+            break;
+            // SB(N,M);
+        case SB:
+            n = (unsigned int)*(vpc + NMBL);
+            m = (unsigned int)*(vpc + NMBL + NMBL);
+            b1 = et[n];
+            b2 = et[m];
+            vpc = vpc + 3 * NMBL;
+            i_state = NEXTOP;
+            break;
+            // LSC(S);
+        case LSC:
+            SHB1 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
+            {
+                i_state = FAIL;
+                break;
+            }
+            vpc = vpc + NMBL + SMBL;
+            et[nel] = b1;
+            nel++;
+            i_state = NEXTOP;
+            break;
+            // RSC(S);
+        case RSC:
+            SHB2 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
+            {
+                i_state = FAIL;
+                break;
+            }
+            vpc = vpc + NMBL + SMBL;
+            et[nel] = b2;
+            nel++;
+            i_state = NEXTOP;
+            break;
+            // LSCO(N);
+        case LSCO:
+            SHB1 if (b1->tag != TAGO)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b1->info.infoc != *(vpc + NMBL))
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b1;
+            nel++;
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // RSCO(N);
+        case RSCO:
+            SHB2 if (b2->tag != TAGO)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b2->info.infoc != *(vpc + NMBL))
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b2;
+            nel++;
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // LSD(N);
+        case LSD:
+            SHB1
+                n = (unsigned int)*(vpc + NMBL);
+            if (b1->tag != et[n]->tag)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b1->info.codef != et[n]->info.codef)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b1;
+            nel++;
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // RSD(N);
+        case RSD:
+            SHB2
+                n = (unsigned int)*(vpc + NMBL);
+            if (b2->tag != et[n]->tag)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b2->info.codef != et[n]->info.codef)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b2;
+            nel++;
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // LTXT(N,S1,...,SN);
+        case LTXT:
+            n = (unsigned int)*(vpc + NMBL);
+            vpc = vpc + NMBL + NMBL;
+            i_state = LTXT1;
+            break;
+        case LTXT1:
+            SHB1 if (b1->tag != TAGO)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b1->info.infoc != *vpc)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b1;
+            nel++;
+            vpc = vpc + NMBL;
+            n--;
+            if (n != 0)
+                break;
+            i_state = NEXTOP;
+            break;
+            // RTXT(N,S1,...,SN);
+        case RTXT:
+            n = (unsigned int)*(vpc + NMBL);
+            vpc = vpc + NMBL + NMBL;
+            i_state = RTXT1;
+            break;
+        case RTXT1:
+            SHB2 if (b2->tag != TAGO)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b2->info.infoc != *vpc)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b2;
+            nel++;
+            vpc = vpc + NMBL;
+            n--;
+            if (n != 0)
+                break;
+            i_state = NEXTOP;
+            break;
+            // LB;
+        case LB:
+            SHB1 if ((b1->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b2 = b1->info.codep;
+            et[nel] = b1;
+            et[nel + 1] = b2;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // LBY;
+        case LBY:
+            SHB1 if ((b1->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b1;
+            b1 = b1->info.codep;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // RB;
+        case RB:
+            SHB2 if ((b2->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b1 = b2->info.codep;
+            et[nel] = b1;
+            et[nel + 1] = b2;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // RBY;
+        case RBY:
+            SHB2 if ((b2->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel + 1] = b2;
+            b2 = b2->info.codep;
+            et[nel] = b2;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // LS;
+        case LS:
+            SHB1 if ((b1->tag & 0001) != 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b1;
+            nel++;
+            i_state = ADVANCE;
+            break;
+            // RS;
+        case RS:
+            SHB2 if ((b2->tag & 0001) != 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b2;
+            nel++;
+            i_state = ADVANCE;
+            break;
+            // LW;
+        case LW:
+            SHB1
+                et[nel] = b1;
+            if ((b1->tag & 0001) != 0)
+                b1 = b1->info.codep;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // RW;
+        case RW:
+            SHB2
+                et[nel + 1] = b2;
+            if ((b2->tag & 0001) != 0)
+                b2 = b2->info.codep;
+            et[nel] = b2;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // LBNIL
+        case LBNIL:
+            SHB1 if ((b1->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b0 = b1;
+            b1 = b1->info.codep;
+            if (b0->next != b1)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b0;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // RBNIL;
+        case RBNIL:
+            SHB2 if ((b2->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b0 = b2;
+            b2 = b2->info.codep;
+            if (b2->next != b0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            et[nel] = b2;
+            et[nel + 1] = b0;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // LBCE;
+        case LBCE:
+            SHB1 if ((b1->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b0 = b1;
+            b1 = b1->info.codep;
+            et[nel] = b0;
+            et[nel + 1] = b1;
+            et[nel + 2] = b0->next;
+            et[nel + 3] = b1->prev;
+            nel = nel + 4;
+            i_state = ADVANCE;
+            break;
+            // RBCE;
+        case RBCE:
+            SHB2 if ((b2->tag & 0001) == 0)
+            {
+                i_state = FAIL;
+                break;
+            }
+            b0 = b2;
+            b2 = b2->info.codep;
+            et[nel] = b2;
+            et[nel + 1] = b0;
+            et[nel + 2] = b2->next;
+            et[nel + 3] = b0->prev;
+            nel = nel + 4;
+            i_state = ADVANCE;
+            break;
+            // NIL;
+        case NIL:
+            if (b1->next != b2)
+            {
+                i_state = FAIL;
+                break;
+            }
+            i_state = ADVANCE;
+            break;
+            // CE;
+        case CE:
+            et[nel] = b1->next;
+            et[nel + 1] = b2->prev;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // LED(N);
+        case LED:
+            n = (unsigned int)*(vpc + NMBL);
+            et[nel] = b1->next;
+            b0 = et[n - 1]->prev;
+            i_state = LED1;
+            break;
+        case LED1:
+            if (b0 == et[n])
+            {
+                i_state = LED2;
+                break;
+            }
+            b0 = b0->next;
+            SHB1 if (b1->tag != b0->tag)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b1->info.codef == b0->info.codef)
+                break;
+            if ((b1->tag & 0001) != 0)
+                break;
+            i_state = FAIL;
+            break;
+        case LED2:
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            vpc = vpc + NMBL * 2;
+            i_state = NEXTOP;
+            break;
+            // RED(N);
+        case RED:
+            n = (unsigned int)*(vpc + NMBL);
+            et[nel + 1] = b2->prev;
+            b0 = et[n]->next;
+            i_state = LED1;
+            break;
+        case RED1:
+            if (b0 == et[n - 1])
+            {
+                i_state = RED2;
+                break;
+            }
+            b0 = b0->prev;
+            SHB2 if (b2->tag != b0->tag)
+            {
+                i_state = FAIL;
+                break;
+            }
+            if (b2->info.codef == b0->info.codef)
+                break;
+            if ((b2->tag & 0001) != 0)
+                break;
+            i_state = FAIL;
+            break;
+        case RED2:
+            et[nel] = b2;
+            nel = nel + 2;
+            vpc = vpc + NMBL * 2;
+            i_state = NEXTOP;
+            break;
+            // NNIL;
+        case NNIL:
+            if (et[nel - 1]->next == et[nel - 2])
+            {
+                i_state = FAIL;
+                break;
+            }
+            i_state = ADVANCE;
+            break;
+            // PLE;
+        case PLE:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            jsp++;
+            et[nel] = b1->next;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // PLV;
+        case PLV:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b1->next;
+            et[nel + 1] = b1;
+            i_state = NEXTOP;
+            break;
+            // LE;
+        case LE:
+            b1 = et[nel + 1];
+            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            jsp++;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // PRE;
+        case PRE:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            jsp++;
+            et[nel] = b2;
+            et[nel + 1] = b2->prev;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
+            // PRV;
+        case PRV:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b2;
+            et[nel + 1] = b2->prev;
+            i_state = NEXTOP;
+            break;
+            // RE;
+        case RE:
+            b2 = et[nel];
+            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            jsp++;
+            et[nel] = b2;
+            nel = nel + 2;
+            i_state = ADVANCE;
+            break;
         }
-
-    // select next statement assembly language
-ADVANCE:
-    vpc = vpc + NMBL;
-    goto NEXTOP;
-    // SJUMP(L);
-SJUMP:
-    move(LBLL, vpc + NMBL, (uint8_t *)&(inch.ptr));
-    putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
-    jsp++;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // FAIL;
-FAIL:
-    if (jsp == js)
-        goto RCGIMP;
-    jsp--;
-    getjs(jsp, &b1, &b2, &nel, &vpc);
-    goto NEXTOP;
-    // SB(N,M);
-SB:
-    n = (unsigned int)*(vpc + NMBL);
-    m = (unsigned int)*(vpc + NMBL + NMBL);
-    b1 = et[n];
-    b2 = et[m];
-    vpc = vpc + 3 * NMBL;
-    goto NEXTOP;
-    // LSC(S);
-LSC:
-    SHB1 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag))) goto FAIL;
-    vpc = vpc + NMBL + SMBL;
-    et[nel] = b1;
-    nel++;
-    goto NEXTOP;
-    // RSC(S);
-RSC:
-    SHB2 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag))) goto FAIL;
-    vpc = vpc + NMBL + SMBL;
-    et[nel] = b2;
-    nel++;
-    goto NEXTOP;
-    // LSCO(N);
-LSCO:
-    SHB1 if (b1->tag != TAGO) goto FAIL;
-    if (b1->info.infoc != *(vpc + NMBL))
-        goto FAIL;
-    et[nel] = b1;
-    nel++;
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // RSCO(N);
-RSCO:
-    SHB2 if (b2->tag != TAGO) goto FAIL;
-    if (b2->info.infoc != *(vpc + NMBL))
-        goto FAIL;
-    et[nel] = b2;
-    nel++;
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // LSD(N);
-LSD:
-    SHB1
-        n = (unsigned int)*(vpc + NMBL);
-    if (b1->tag != et[n]->tag)
-        goto FAIL;
-    if (b1->info.codef != et[n]->info.codef)
-        goto FAIL;
-    et[nel] = b1;
-    nel++;
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // RSD(N);
-RSD:
-    SHB2
-        n = (unsigned int)*(vpc + NMBL);
-    if (b2->tag != et[n]->tag)
-        goto FAIL;
-    if (b2->info.codef != et[n]->info.codef)
-        goto FAIL;
-    et[nel] = b2;
-    nel++;
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // LTXT(N,S1,...,SN);
-LTXT:
-    n = (unsigned int)*(vpc + NMBL);
-    vpc = vpc + NMBL + NMBL;
-    goto LTXT1;
-LTXT1:
-    SHB1 if (b1->tag != TAGO) goto FAIL;
-    if (b1->info.infoc != *vpc)
-        goto FAIL;
-    et[nel] = b1;
-    nel++;
-    vpc = vpc + NMBL;
-    n--;
-    if (n != 0)
-        goto LTXT1;
-    goto NEXTOP;
-    // RTXT(N,S1,...,SN);
-RTXT:
-    n = (unsigned int)*(vpc + NMBL);
-    vpc = vpc + NMBL + NMBL;
-    goto RTXT1;
-RTXT1:
-    SHB2 if (b2->tag != TAGO) goto FAIL;
-    if (b2->info.infoc != *vpc)
-        goto FAIL;
-    et[nel] = b2;
-    nel++;
-    vpc = vpc + NMBL;
-    n--;
-    if (n != 0)
-        goto RTXT1;
-    goto NEXTOP;
-    // LB;
-LB:
-    SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
-    b2 = b1->info.codep;
-    et[nel] = b1;
-    et[nel + 1] = b2;
-    nel = nel + 2;
-    goto ADVANCE;
-    // LBY;
-LBY:
-    SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
-    et[nel] = b1;
-    b1 = b1->info.codep;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    goto ADVANCE;
-    // RB;
-RB:
-    SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
-    b1 = b2->info.codep;
-    et[nel] = b1;
-    et[nel + 1] = b2;
-    nel = nel + 2;
-    goto ADVANCE;
-    // RBY;
-RBY:
-    SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
-    et[nel + 1] = b2;
-    b2 = b2->info.codep;
-    et[nel] = b2;
-    nel = nel + 2;
-    goto ADVANCE;
-    // LS;
-LS:
-    SHB1 if ((b1->tag & 0001) != 0) goto FAIL;
-    et[nel] = b1;
-    nel++;
-    goto ADVANCE;
-    // RS;
-RS:
-    SHB2 if ((b2->tag & 0001) != 0) goto FAIL;
-    et[nel] = b2;
-    nel++;
-    goto ADVANCE;
-    // LW;
-LW:
-    SHB1
-        et[nel] = b1;
-    if ((b1->tag & 0001) != 0)
-        b1 = b1->info.codep;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    goto ADVANCE;
-    // RW;
-RW:
-    SHB2
-        et[nel + 1] = b2;
-    if ((b2->tag & 0001) != 0)
-        b2 = b2->info.codep;
-    et[nel] = b2;
-    nel = nel + 2;
-    goto ADVANCE;
-    // LBNIL
-LBNIL:
-    SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
-    b0 = b1;
-    b1 = b1->info.codep;
-    if (b0->next != b1)
-        goto FAIL;
-    et[nel] = b0;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    goto ADVANCE;
-    // RBNIL;
-RBNIL:
-    SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
-    b0 = b2;
-    b2 = b2->info.codep;
-    if (b2->next != b0)
-        goto FAIL;
-    et[nel] = b2;
-    et[nel + 1] = b0;
-    nel = nel + 2;
-    goto ADVANCE;
-    // LBCE;
-LBCE:
-    SHB1 if ((b1->tag & 0001) == 0) goto FAIL;
-    b0 = b1;
-    b1 = b1->info.codep;
-    et[nel] = b0;
-    et[nel + 1] = b1;
-    et[nel + 2] = b0->next;
-    et[nel + 3] = b1->prev;
-    nel = nel + 4;
-    goto ADVANCE;
-    // RBCE;
-RBCE:
-    SHB2 if ((b2->tag & 0001) == 0) goto FAIL;
-    b0 = b2;
-    b2 = b2->info.codep;
-    et[nel] = b2;
-    et[nel + 1] = b0;
-    et[nel + 2] = b2->next;
-    et[nel + 3] = b0->prev;
-    nel = nel + 4;
-    goto ADVANCE;
-    // NIL;
-NIL:
-    if (b1->next != b2)
-        goto FAIL;
-    goto ADVANCE;
-    // CE;
-CE:
-    et[nel] = b1->next;
-    et[nel + 1] = b2->prev;
-    nel = nel + 2;
-    goto ADVANCE;
-    // LED(N);
-LED:
-    n = (unsigned int)*(vpc + NMBL);
-    et[nel] = b1->next;
-    b0 = et[n - 1]->prev;
-    goto LED1;
-LED1:
-    if (b0 == et[n])
-        goto LED2;
-    b0 = b0->next;
-    SHB1 if (b1->tag != b0->tag) goto FAIL;
-    if (b1->info.codef == b0->info.codef)
-        goto LED1;
-    if ((b1->tag & 0001) != 0)
-        goto LED1;
-    goto FAIL;
-LED2:
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    vpc = vpc + NMBL * 2;
-    goto NEXTOP;
-    // RED(N);
-RED:
-    n = (unsigned int)*(vpc + NMBL);
-    et[nel + 1] = b2->prev;
-    b0 = et[n]->next;
-    goto RED1;
-RED1:
-    if (b0 == et[n - 1])
-        goto RED2;
-    b0 = b0->prev;
-    SHB2 if (b2->tag != b0->tag) goto FAIL;
-    if (b2->info.codef == b0->info.codef)
-        goto RED1;
-    if ((b2->tag & 0001) != 0)
-        goto RED1;
-    goto FAIL;
-RED2:
-    et[nel] = b2;
-    nel = nel + 2;
-    vpc = vpc + NMBL * 2;
-    goto NEXTOP;
-    // NNIL;
-NNIL:
-    if (et[nel - 1]->next == et[nel - 2])
-        goto FAIL;
-    goto ADVANCE;
-    // PLE;
-PLE:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    jsp++;
-    et[nel] = b1->next;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    goto ADVANCE;
-    // PLV;
-PLV:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b1->next;
-    et[nel + 1] = b1;
-    goto NEXTOP;
-    // LE;
-LE:
-    b1 = et[nel + 1];
-    SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    jsp++;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    goto ADVANCE;
-    // PRE;
-PRE:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    jsp++;
-    et[nel] = b2;
-    et[nel + 1] = b2->prev;
-    nel = nel + 2;
-    goto ADVANCE;
-    // PRV;
-PRV:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b2;
-    et[nel + 1] = b2->prev;
-    goto NEXTOP;
-    // RE;
-RE:
-    b2 = et[nel];
-    SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    jsp++;
-    et[nel] = b2;
-    nel = nel + 2;
-    goto ADVANCE;
     // PLESC;
 PLESC:
     vpc = vpc + NMBL;
