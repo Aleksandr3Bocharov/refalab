@@ -145,7 +145,7 @@ typedef enum i_states
     SETNOS,
     CFUNC,
     CFDONE,
-    CFLUCK
+    CFLACK
 } T_I_STATES;
 
 typedef struct sav_
@@ -1056,557 +1056,650 @@ void rfrun(T_ST *ast) // adress of current state table
             nel = nel + 2;
             i_state = ADVANCE;
             break;
-        }
-    // PLESC;
-PLESC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b1->next;
-    et[nel + 2] = b1;
-    goto NEXTOP;
-    // PLVSC;
-PLVSC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b1->next;
-    SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    et[nel + 2] = b1;
-    goto NEXTOP;
-    // LESC(S);
-LESC:
-    vpc = vpc + NMBL + SMBL;
-    vpca = vpc - SMBL;
-    goto LESC0;
-LESC0:
-    b1 = et[nel + 2];
-    goto LESC1;
-LESC1:
-    SHB1 if ((b1->tag & 0001) != 0)
-    { // if(BRA(B1))
-        b1 = b1->info.codep;
-        goto LESC1;
-    }
-    if (!cmpr(SMBL, vpca, (uint8_t *)&(b1->tag)))
-        goto LESC1;
-    jsp++;
-    et[nel + 1] = b1->prev;
-    et[nel + 2] = b1;
-    nel = nel + 3;
-    goto NEXTOP;
-    // PRESC;
-PRESC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel + 1] = b2->prev;
-    et[nel + 2] = b2;
-    goto NEXTOP;
-    // PRVSC;
-PRVSC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel + 1] = b2->prev;
-    SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    et[nel + 2] = b2;
-    goto NEXTOP;
-    // RESC(S);
-RESC:
-    vpc = vpc + NMBL + SMBL;
-    vpca = vpc - SMBL;
-    goto RESC0;
-RESC0:
-    b2 = et[nel + 2];
-    goto RESC1;
-RESC1:
-    SHB2 if ((b2->tag & 0001) != 0)
-    { // if(BRA(B2))
-        b2 = b2->info.codep;
-        goto RESC1;
-    }
-    if (!cmpr(SMBL, vpca, (uint8_t *)&(b2->tag)))
-        goto RESC1;
-    jsp++;
-    et[nel + 2] = b2;
-    et[nel] = b2->next;
-    nel = nel + 3;
-    goto NEXTOP;
-    // LESD(N);
-LESD:
-    n = (unsigned int)*(vpc + NMBL);
-    vpca = (uint8_t *)&(et[n]->tag);
-    vpc = vpc + NMBL * 2;
-    goto LESC0;
-    // RESD(N);
-RESD:
-    n = (unsigned int)*(vpc + NMBL);
-    vpca = (uint8_t *)&(et[n]->tag);
-    vpc = vpc + NMBL * 2;
-    goto RESC0;
-    // PLEB;
-PLEB:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b1->next;
-    et[nel + 3] = b1;
-    goto NEXTOP;
-    // PLVB;
-PLVB:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel] = b1->next;
-    SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    et[nel + 3] = b1;
-    goto NEXTOP;
-    // LEB;
-LEB:
-    b1 = et[nel + 3];
-    goto LEB1;
-LEB1:
-    SHB1 if ((b1->tag & 0001) == 0) goto LEB1;
-    jsp++;
-    et[nel + 1] = b1->prev;
-    et[nel + 2] = b1;
-    b2 = b1->info.codep;
-    et[nel + 3] = b2;
-    nel = nel + 4;
-    goto ADVANCE;
-    // PREB;
-PREB:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel + 1] = b2->prev;
-    et[nel + 2] = b2;
-    goto NEXTOP;
-    // PRVB;
-PRVB:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    et[nel + 1] = b2->prev;
-    SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    et[nel + 2] = b2;
-    goto NEXTOP;
-    //  REB;
-REB:
-    b2 = et[nel + 2];
-    goto REB1;
-REB1:
-    SHB2 if ((b2->tag & 0001) == 0) goto REB1;
-    jsp++;
-    et[nel] = b2->next;
-    et[nel + 3] = b2;
-    b1 = b2->info.codep;
-    et[nel + 2] = b1;
-    nel = nel + 4;
-    goto ADVANCE;
-    // EOE(N);
-EOE:
-    n = (unsigned int)*(vpc + NMBL);
-    jsp = jsp - n;
-    vpc = vpc + 2 * NMBL;
-    goto NEXTOP;
-    // EOEI;
-EOEI:
-    jsp--;
-    goto ADVANCE;
-    // LSRCH(S);
-LSRCH:
-    et[nel] = b1->next;
-    goto LSRCH1;
-LSRCH1:
-    SHB1 if ((b1->tag & 0001) != 0)
-    {
-        b1 = b1->info.codep;
-        goto LSRCH1;
-    };
-    if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
-        goto LSRCH1;
-    et[nel + 1] = b1->prev;
-    et[nel + 2] = b1;
-    nel = nel + 3;
-    vpc = vpc + NMBL + SMBL;
-    goto NEXTOP;
-    // RSRCH(S);
-RSRCH:
-    et[nel + 1] = b2->prev;
-    goto RSRCH;
-RSRCH1:
-    SHB2 if ((b2->tag & 0001) != 0)
-    {
-        b2 = b2->info.codep;
-        goto RSRCH1;
-    };
-    if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
-        goto RSRCH1;
-    et[nel] = b2->next;
-    et[nel + 2] = b2;
-    nel = nel + 3;
-    vpc = vpc + NMBL + SMBL;
-    goto NEXTOP;
-    // WSPC(L);
-WSPC:
-    if (!spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]))
-        goto FAIL;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // ESPC(L);
-ESPC:
-    b0 = et[nel - 2]->prev;
-    while (b0 != et[nel - 1])
-    {
-        b0 = b0->next;
-        if ((b0->tag & 0001) != 0)
-            b0 = b0->info.codep;
-        if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
-            goto FAIL;
-    };
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // PLESPC;
-PLESPC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    jsp++;
-    et[nel] = b1->next;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // LESPC(L);
-LESPC:
-    b1 = et[nel + 1];
-    SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
-    if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
-        goto FAIL;
-    jsp++;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // PRESPC;
-PRESPC:
-    vpc = vpc + NMBL;
-    putjs(jsp, &b1, &b2, &nel, &vpc);
-    jsp++;
-    et[nel + 1] = b2->prev;
-    et[nel] = b2;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // RESPC(L);
-RESPC:
-    b2 = et[nel];
-    SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
-    if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
-        goto FAIL;
-    jsp++;
-    et[nel] = b2;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // LMAX(L);
-LMAX:
-    et[nel] = b1->next;
-    while ((b1 = b1->next) != b2)
-    {
-        if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
+            // PLESC;
+        case PLESC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b1->next;
+            et[nel + 2] = b1;
+            i_state = NEXTOP;
             break;
-        if ((b1->tag & 0001) != 0)
-            b1 = b1->info.codep;
-    };
-    b1 = b1->prev;
-    et[nel + 1] = b1;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // RMAX(L);
-RMAX:
-    et[nel + 1] = b2->prev;
-    while ((b2 = b2->prev) != b1)
-    {
-        if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
+            // PLVSC;
+        case PLVSC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b1->next;
+            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            et[nel + 2] = b1;
+            i_state = NEXTOP;
             break;
-        if ((b2->tag & 0001) != 0)
-            b2 = b2->info.codep;
-    };
-    b2 = b2->next;
-    et[nel] = b2;
-    nel = nel + 2;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // EOR;
-EOR:
-    f = flhead;
-    lastk = &quasik;
-    lastb = NULL;
-    tsp = (T_TS *)js;
-    goto ADVANCE;
-    // NS(S);
-NS:
-    SHF
-        move(SMBL, vpc + NMBL, (uint8_t *)&(f->tag));
-    vpc = vpc + NMBL + SMBL;
-    goto NEXTOP;
-    // NSO(N);
-NSO:
-    SHF
-        f->tag = TAGO;
-    f->info.codep = NULL;
-    f->info.infoc = *(vpc + 1);
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // TEXT(N,S1,S2,...,SN);
-TEXT:
-    n = (unsigned int)*(vpc + NMBL);
-    // printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);
-    vpc = vpc + NMBL + NMBL;
-    for (i = 1; i <= n; i++)
-    {
-        SHF
-            f->tag = TAGO;
-        f->info.codep = NULL;
-        f->info.infoc = *vpc;
-        vpc = vpc + NMBL;
-    };
-    goto NEXTOP;
-    // BL;
-BL:
-    SHF
-        f->info.codep = lastb;
-    lastb = f;
-    goto ADVANCE;
-    // BR;
-BR:
-    SHF
-        f->info.codep = lastb;
-    f1 = lastb->info.codep;
-    lastb->tag = TAGLB;
-    lastb->info.codep = f;
-    f->tag = TAGRB;
-    lastb = f1;
-    goto ADVANCE;
-    // BLR;
-BLR:
-    SHF
-        f1 = f;
-    SHF
-        f1->info.codep = f;
-    f->info.codep = f1;
-    f1->tag = TAGLB;
-    f->tag = TAGRB;
-    goto ADVANCE;
-    // BRACT;
-BRACT:
-    SHF
-        f->info.codep = lastb;
-    f->tag = TAGD;
-    lastk->info.codep = f;
-    lastk->tag = TAGK;
-    lastk = lastb;
-    lastb = lastb->info.codep;
-    goto ADVANCE;
-    // ACT(N);
-ACT:
-    n = (unsigned int)*(vpc + NMBL);
-    lastk->info.codep = et[n];
-    lastk->tag = TAGK;
-    lastk = et[n]->info.codep;
-    et[n]->tag = TAGD;
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // MULS;
-MULS:
-    n = (unsigned int)*(vpc + NMBL);
-    SHF
-        move(SMBL, (uint8_t *)&(et[n]->tag), (uint8_t *)&(f->tag));
-    vpc = vpc + NMBL + NMBL;
-    goto NEXTOP;
-    // MULE(N);
-MULE:
-    //                    if(ferr == 1){
-    //                        lastb = lastb1;
-    //                        ferr = 0;}
-    //                    else
-    //                        lastb1 = lastb;
-    n = (unsigned int)*(vpc + NMBL);
-    vpc = vpc + NMBL + NMBL;
-    f0 = et[n - 1]->prev;
-    while (f0 != et[n])
-    {
-        f0 = f0->next;
-        SHF //              f = f->next;       instead of SHF
-            //             if (f == flhead){
-            //               ferr = 1;
-            //               goto LACK;}
-            if ((f0->tag & 0001) != 0)
-        {
-            if (f0->tag != TAGRB)
-            {
-                f->info.codep = lastb;
-                lastb = f;
+            // LESC(S);
+        case LESC:
+            vpc = vpc + NMBL + SMBL;
+            vpca = vpc - SMBL;
+            i_state = LESC0;
+            break;
+        case LESC0:
+            b1 = et[nel + 2];
+            i_state = LESC1;
+            break;
+        case LESC1:
+            SHB1 if ((b1->tag & 0001) != 0)
+            { // if(BRA(B1))
+                b1 = b1->info.codep;
+                break;
             }
+            if (!cmpr(SMBL, vpca, (uint8_t *)&(b1->tag)))
+                break;
+            jsp++;
+            et[nel + 1] = b1->prev;
+            et[nel + 2] = b1;
+            nel = nel + 3;
+            i_state = NEXTOP;
+            break;
+            // PRESC;
+        case PRESC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel + 1] = b2->prev;
+            et[nel + 2] = b2;
+            i_state = NEXTOP;
+            break;
+            // PRVSC;
+        case PRVSC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel + 1] = b2->prev;
+            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            et[nel + 2] = b2;
+            i_state = NEXTOP;
+            break;
+            // RESC(S);
+        case RESC:
+            vpc = vpc + NMBL + SMBL;
+            vpca = vpc - SMBL;
+            i_state = RESC0;
+            break;
+        case RESC0:
+            b2 = et[nel + 2];
+            i_state = RESC1;
+            break;
+        case RESC1:
+            SHB2 if ((b2->tag & 0001) != 0)
+            { // if(BRA(B2))
+                b2 = b2->info.codep;
+                break;
+            }
+            if (!cmpr(SMBL, vpca, (uint8_t *)&(b2->tag)))
+                break;
+            jsp++;
+            et[nel + 2] = b2;
+            et[nel] = b2->next;
+            nel = nel + 3;
+            i_state = NEXTOP;
+            break;
+            // LESD(N);
+        case LESD:
+            n = (unsigned int)*(vpc + NMBL);
+            vpca = (uint8_t *)&(et[n]->tag);
+            vpc = vpc + NMBL * 2;
+            i_state = LESC0;
+            break;
+            // RESD(N);
+        case RESD:
+            n = (unsigned int)*(vpc + NMBL);
+            vpca = (uint8_t *)&(et[n]->tag);
+            vpc = vpc + NMBL * 2;
+            i_state = RESC0;
+            break;
+            // PLEB;
+        case PLEB:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b1->next;
+            et[nel + 3] = b1;
+            i_state = NEXTOP;
+            break;
+            // PLVB;
+        case PLVB:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel] = b1->next;
+            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            et[nel + 3] = b1;
+            i_state = NEXTOP;
+            break;
+            // LEB;
+        case LEB:
+            b1 = et[nel + 3];
+            i_state = LEB1;
+            break;
+        case LEB1:
+            SHB1 if ((b1->tag & 0001) == 0) break;
+            jsp++;
+            et[nel + 1] = b1->prev;
+            et[nel + 2] = b1;
+            b2 = b1->info.codep;
+            et[nel + 3] = b2;
+            nel = nel + 4;
+            i_state = ADVANCE;
+            break;
+            // PREB;
+        case PREB:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel + 1] = b2->prev;
+            et[nel + 2] = b2;
+            i_state = NEXTOP;
+            break;
+            // PRVB;
+        case PRVB:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            et[nel + 1] = b2->prev;
+            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            et[nel + 2] = b2;
+            i_state = NEXTOP;
+            break;
+            //  REB;
+        case REB:
+            b2 = et[nel + 2];
+            i_state = REB1;
+            break;
+        case REB1:
+            SHB2 if ((b2->tag & 0001) == 0) break;
+            jsp++;
+            et[nel] = b2->next;
+            et[nel + 3] = b2;
+            b1 = b2->info.codep;
+            et[nel + 2] = b1;
+            nel = nel + 4;
+            i_state = ADVANCE;
+            break;
+            // EOE(N);
+        case EOE:
+            n = (unsigned int)*(vpc + NMBL);
+            jsp = jsp - n;
+            vpc = vpc + 2 * NMBL;
+            i_state = NEXTOP;
+            break;
+            // EOEI;
+        case EOEI:
+            jsp--;
+            i_state = ADVANCE;
+            break;
+            // LSRCH(S);
+        case LSRCH:
+            et[nel] = b1->next;
+            i_state = LSRCH1;
+            break;
+        case LSRCH1:
+            SHB1 if ((b1->tag & 0001) != 0)
+            {
+                b1 = b1->info.codep;
+                break;
+            };
+            if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
+                break;
+            et[nel + 1] = b1->prev;
+            et[nel + 2] = b1;
+            nel = nel + 3;
+            vpc = vpc + NMBL + SMBL;
+            i_state = NEXTOP;
+            break;
+            // RSRCH(S);
+        case RSRCH:
+            et[nel + 1] = b2->prev;
+            i_state = RSRCH1;
+            break;
+        case RSRCH1:
+            SHB2 if ((b2->tag & 0001) != 0)
+            {
+                b2 = b2->info.codep;
+                break;
+            };
+            if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
+                break;
+            et[nel] = b2->next;
+            et[nel + 2] = b2;
+            nel = nel + 3;
+            vpc = vpc + NMBL + SMBL;
+            i_state = NEXTOP;
+            break;
+            // WSPC(L);
+        case WSPC:
+            if (!spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]))
+            {
+                i_state = FAIL;
+                break;
+            }
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // ESPC(L);
+        case ESPC:
+            b0 = et[nel - 2]->prev;
+            bool fail = false;
+            while (b0 != et[nel - 1])
+            {
+                b0 = b0->next;
+                if ((b0->tag & 0001) != 0)
+                    b0 = b0->info.codep;
+                if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
+                {
+                    i_state = FAIL;
+                    fail = true;
+                    break;
+                }
+            };
+            if (fail)
+                break;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // PLESPC;
+        case PLESPC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            jsp++;
+            et[nel] = b1->next;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // LESPC(L);
+        case LESPC:
+            b1 = et[nel + 1];
+            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
+            {
+                i_state = FAIL;
+                break;
+            }
+            jsp++;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // PRESPC;
+        case PRESPC:
+            vpc = vpc + NMBL;
+            putjs(jsp, &b1, &b2, &nel, &vpc);
+            jsp++;
+            et[nel + 1] = b2->prev;
+            et[nel] = b2;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // RESPC(L);
+        case RESPC:
+            b2 = et[nel];
+            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
+            {
+                i_state = FAIL;
+                break;
+            }
+            jsp++;
+            et[nel] = b2;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // LMAX(L);
+        case LMAX:
+            et[nel] = b1->next;
+            while ((b1 = b1->next) != b2)
+            {
+                if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
+                    break;
+                if ((b1->tag & 0001) != 0)
+                    b1 = b1->info.codep;
+            };
+            b1 = b1->prev;
+            et[nel + 1] = b1;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // RMAX(L);
+        case RMAX:
+            et[nel + 1] = b2->prev;
+            while ((b2 = b2->prev) != b1)
+            {
+                if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
+                    break;
+                if ((b2->tag & 0001) != 0)
+                    b2 = b2->info.codep;
+            };
+            b2 = b2->next;
+            et[nel] = b2;
+            nel = nel + 2;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // EOR;
+        case EOR:
+            f = flhead;
+            lastk = &quasik;
+            lastb = NULL;
+            tsp = (T_TS *)js;
+            i_state = ADVANCE;
+            break;
+            // NS(S);
+        case NS:
+            SHF
+                move(SMBL, vpc + NMBL, (uint8_t *)&(f->tag));
+            vpc = vpc + NMBL + SMBL;
+            i_state = NEXTOP;
+            break;
+            // NSO(N);
+        case NSO:
+            SHF
+                f->tag = TAGO;
+            f->info.codep = NULL;
+            f->info.infoc = *(vpc + 1);
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // TEXT(N,S1,S2,...,SN);
+        case TEXT:
+            n = (unsigned int)*(vpc + NMBL);
+            // printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);
+            vpc = vpc + NMBL + NMBL;
+            bool lack = false;
+            for (i = 1; i <= n; i++)
+            {
+                f = f->next;
+                if (f == flhead)
+                {
+                    i_state = LACK;
+                    lack = true;
+                    break;
+                }
+                f->tag = TAGO;
+                f->info.codep = NULL;
+                f->info.infoc = *vpc;
+                vpc = vpc + NMBL;
+            };
+            if (lack)
+                break;
+            i_state = NEXTOP;
+            break;
+            // BL;
+        case BL:
+            SHF
+                f->info.codep = lastb;
+            lastb = f;
+            i_state = ADVANCE;
+            break;
+            // BR;
+        case BR:
+            SHF
+                f->info.codep = lastb;
+            f1 = lastb->info.codep;
+            lastb->tag = TAGLB;
+            lastb->info.codep = f;
+            f->tag = TAGRB;
+            lastb = f1;
+            i_state = ADVANCE;
+            break;
+            // BLR;
+        case BLR:
+            SHF
+                f1 = f;
+            SHF
+                f1->info.codep = f;
+            f->info.codep = f1;
+            f1->tag = TAGLB;
+            f->tag = TAGRB;
+            i_state = ADVANCE;
+            break;
+            // BRACT;
+        case BRACT:
+            SHF
+                f->info.codep = lastb;
+            f->tag = TAGD;
+            lastk->info.codep = f;
+            lastk->tag = TAGK;
+            lastk = lastb;
+            lastb = lastb->info.codep;
+            i_state = ADVANCE;
+            break;
+            // ACT(N);
+        case ACT:
+            n = (unsigned int)*(vpc + NMBL);
+            lastk->info.codep = et[n];
+            lastk->tag = TAGK;
+            lastk = et[n]->info.codep;
+            et[n]->tag = TAGD;
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // MULS;
+        case MULS:
+            n = (unsigned int)*(vpc + NMBL);
+            SHF
+                move(SMBL, (uint8_t *)&(et[n]->tag), (uint8_t *)&(f->tag));
+            vpc = vpc + NMBL + NMBL;
+            i_state = NEXTOP;
+            break;
+            // MULE(N);
+        case MULE:
+            //                    if(ferr == 1){
+            //                        lastb = lastb1;
+            //                        ferr = 0;}
+            //                    else
+            //                        lastb1 = lastb;
+            n = (unsigned int)*(vpc + NMBL);
+            vpc = vpc + NMBL + NMBL;
+            f0 = et[n - 1]->prev;
+            while (f0 != et[n])
+            {
+                f0 = f0->next;
+                SHF //              f = f->next;       instead of SHF
+                    //             if (f == flhead){
+                    //               ferr = 1;
+                    //               goto LACK;}
+                    if ((f0->tag & 0001) != 0)
+                {
+                    if (f0->tag != TAGRB)
+                    {
+                        f->info.codep = lastb;
+                        lastb = f;
+                    }
+                    else
+                    {
+                        f->info.codep = lastb;
+                        f->tag = TAGRB;
+                        f1 = lastb->info.codep;
+                        lastb->info.codep = f;
+                        lastb->tag = TAGLB;
+                        lastb = f1;
+                    };
+                }
+                else move(SMBL, (uint8_t *)&(f0->tag), (uint8_t *)&(f->tag));
+            };
+            i_state = NEXTOP;
+            break;
+            // TPL(N,M);
+            // TPLM(N,M);
+        case TPL:
+        case TPLM:
+            n = (unsigned int)*(vpc + NMBL);
+            m = (unsigned int)*(vpc + NMBL + NMBL);
+            vpc = vpc + NMBL * 3;
+            if (et[m]->next == et[n])
+            {
+                i_state = NEXTOP;
+                break;
+            }
+            putts(tsp, &f, &et[n], &et[m]);
+            tsp++;
+            i_state = NEXTOP;
+            break;
+            // TPLE(N); (= TPL(N-1,N);)
+            // TPLV(N);
+        case TPLE:
+        case TPLV:
+            n = (unsigned int)*(vpc + NMBL);
+            vpc = vpc + NMBL + NMBL;
+            if (et[n]->next == et[n - 1])
+            {
+                i_state = NEXTOP;
+                break;
+            }
+            putts(tsp, &f, &et[n - 1], &et[n]);
+            tsp++;
+            i_state = NEXTOP;
+            break;
+            // TPLS(N); (= TPLM(N,N);)
+        case TPLS:
+            n = (unsigned int)*(vpc + NMBL);
+            vpc = vpc + NMBL + NMBL;
+            putts(tsp, &f, &et[n], &et[n]);
+            tsp++;
+            i_state = NEXTOP;
+            break;
+            // EOS;
+        case EOS:
+            lastk->info.codep = et[1]->info.codep;
+            lastk->tag = TAGK;
+            // item adress followed by result
+            T_LINKCB *nextr = f->next;
+            // execute planned transplantation
+            // EOS1:
+            while (tsp != (T_TS *)js)
+            {
+                tsp = tsp - 1;
+                getts(tsp, &f, &f0, &f1);
+                link(f0->prev, f1->next);
+                link(f1, f->next);
+                link(f, f0);
+            }
+            // include replace result
+            // INSRES:
+            if (flhead->next == nextr)
+                link(et[1]->prev, et[2]->next);
             else
             {
-                f->info.codep = lastb;
-                f->tag = TAGRB;
-                f1 = lastb->info.codep;
-                lastb->info.codep = f;
-                lastb->tag = TAGLB;
-                lastb = f1;
+                link(nextr->prev, et[2]->next);
+                link(et[1]->prev, flhead->next);
             };
+            //  delete k and  .
+            // DELKD
+            link(et[2], nextr);
+            link(flhead, et[1]);
+            i_state = ADVSTEP;
+            break;
+            // SWAP;
+            //  static box head is after operator code
+        case SWAP:
+            vpc = vpc + NMBL;
+            f = (T_LINKCB *)vpc;
+            if (f->prev != NULL)
+            {
+                i_state = SWAPREF;
+                break;
+            }
+            link(f, f);
+            f->info.codep = refal.svar;
+            f->tag = 0;
+            refal.svar = f;
+            i_state = SWAPREF;
+            break;
+        case SWAPREF:
+            quasik.info.codep = et[1]->info.codep;
+            if (f->next != f)
+            {
+                link(f->prev, et[2]->next);
+                link(et[1]->prev, f->next);
+            }
+            else
+                link(et[1]->prev, et[2]->next);
+            if (et[3]->next != et[2])
+            {
+                link(et[2]->prev, f);
+                link(f, et[3]->next);
+                link(et[3], et[2]);
+            }
+            else
+                link(f, f);
+            link(et[2], flhead->next);
+            link(flhead, et[1]);
+            i_state = ADVSTEP;
+            break;
+            // BLF(L);
+        case BLF:
+            SHF
+                f->info.codep = lastb;
+            lastb = f;
+            SHF
+                move(LBLL, vpc + NMBL, (uint8_t *)&(f->info.codef));
+            f->tag = TAGF;
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // EOSSN (NN);
+        case EOSSN:
+            move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
+            i_state = EOS;
+            break;
+            // SETNOS(L);
+        case SETNOS:
+            move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
+            refal.nostm = (int)*(inch.inr);
+            vpc = vpc + NMBL + LBLL;
+            i_state = NEXTOP;
+            break;
+            // C-refal-function execution
+        case CFUNC:
+            move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);
+            refal.upshot = 1;
+            refal.prevr = b0->prev;
+            refal.nextr = b0;
+            refal.preva = b1;
+            refal.nexta = b2;
+            //        call  C - function
+            (*fptr)(&refal);
+            switch (refal.upshot)
+            {
+            case 1:
+                i_state = CFDONE;
+                break;
+            case 2:
+                i_state = RCGIMP;
+                break;
+            case 3:
+                i_state = CFLACK;
+                break;
+            default:
+                i_state = CFDONE;
+            }
+            break;
+            //        return from C - function
+            //          step is done
+        case CFDONE:
+            quasik.info.codep = refal.nextr->info.codep;
+            link(refal.nextr->prev, refal.nexta->next);
+            link(refal.nexta, flhead->next);
+            link(flhead, refal.nextr);
+            i_state = ADVSTEP;
+            break;
+            //        return from C - function
+            //     free memory exhausted
+        case CFLACK:
+            if (refal.prevr->next != refal.nextr)
+            {
+                link(refal.nextr->prev, flhead->next);
+                link(flhead, refal.prevr->next);
+                link(refal.prevr, refal.nextr);
+            }
+            ast->state = 3;
+            i_state = EXIT;
         }
-        else move(SMBL, (uint8_t *)&(f0->tag), (uint8_t *)&(f->tag));
-    };
-    goto NEXTOP;
-    // TPL(N,M);
-    // TPLM(N,M);
-TPL:
-TPLM:
-    n = (unsigned int)*(vpc + NMBL);
-    m = (unsigned int)*(vpc + NMBL + NMBL);
-    vpc = vpc + NMBL * 3;
-    if (et[m]->next == et[n])
-        goto NEXTOP;
-    putts(tsp, &f, &et[n], &et[m]);
-    tsp++;
-    goto NEXTOP;
-    // TPLE(N); (= TPL(N-1,N);)
-    // TPLV(N);
-TPLE:
-TPLV:
-    n = (unsigned int)*(vpc + NMBL);
-    vpc = vpc + NMBL + NMBL;
-    if (et[n]->next == et[n - 1])
-        goto NEXTOP;
-    putts(tsp, &f, &et[n - 1], &et[n]);
-    tsp++;
-    goto NEXTOP;
-    // TPLS(N); (= TPLM(N,N);)
-TPLS:
-    n = (unsigned int)*(vpc + NMBL);
-    vpc = vpc + NMBL + NMBL;
-    putts(tsp, &f, &et[n], &et[n]);
-    tsp++;
-    goto NEXTOP;
-    // EOS;
-EOS:
-    lastk->info.codep = et[1]->info.codep;
-    lastk->tag = TAGK;
-    // item adress followed by result
-    T_LINKCB *nextr = f->next;
-    // execute planned transplantation
-    // EOS1:
-    while (tsp != (T_TS *)js)
-    {
-        tsp = tsp - 1;
-        getts(tsp, &f, &f0, &f1);
-        link(f0->prev, f1->next);
-        link(f1, f->next);
-        link(f, f0);
-    }
-    // include replace result
-    // INSRES:
-    if (flhead->next == nextr)
-        link(et[1]->prev, et[2]->next);
-    else
-    {
-        link(nextr->prev, et[2]->next);
-        link(et[1]->prev, flhead->next);
-    };
-    //  delete k and  .
-    // DELKD
-    link(et[2], nextr);
-    link(flhead, et[1]);
-    goto ADVSTEP;
-    // SWAP;
-    //  static box head is after operator code
-SWAP:
-    vpc = vpc + NMBL;
-    f = (T_LINKCB *)vpc;
-    if (f->prev != NULL)
-        goto SWAPREF;
-    link(f, f);
-    f->info.codep = refal.svar;
-    f->tag = 0;
-    refal.svar = f;
-    goto SWAPREF;
-SWAPREF:
-    quasik.info.codep = et[1]->info.codep;
-    if (f->next != f)
-    {
-        link(f->prev, et[2]->next);
-        link(et[1]->prev, f->next);
-    }
-    else
-        link(et[1]->prev, et[2]->next);
-    if (et[3]->next != et[2])
-    {
-        link(et[2]->prev, f);
-        link(f, et[3]->next);
-        link(et[3], et[2]);
-    }
-    else
-        link(f, f);
-    link(et[2], flhead->next);
-    link(flhead, et[1]);
-    goto ADVSTEP;
-    // BLF(L);
-BLF:
-    SHF
-        f->info.codep = lastb;
-    lastb = f;
-    SHF
-        move(LBLL, vpc + NMBL, (uint8_t *)&(f->info.codef));
-    f->tag = TAGF;
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // EOSSN (NN);
-EOSSN:
-    move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
-    goto EOS;
-    // SETNOS(L);
-SETNOS:
-    move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
-    refal.nostm = (int)*(inch.inr);
-    vpc = vpc + NMBL + LBLL;
-    goto NEXTOP;
-    // C-refal-function execution
-CFUNC:
-    move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);
-    refal.upshot = 1;
-    refal.prevr = b0->prev;
-    refal.nextr = b0;
-    refal.preva = b1;
-    refal.nexta = b2;
-    //        call  C - function
-    (*fptr)(&refal);
-    switch (refal.upshot)
-    {
-    case 1:
-        goto CFDONE;
-    case 2:
-        goto RCGIMP;
-    case 3:
-        goto CFLACK;
-    default:
-        goto CFDONE;
-    }
-    //        return from C - function
-    //          step is done
-CFDONE:
-    quasik.info.codep = refal.nextr->info.codep;
-    link(refal.nextr->prev, refal.nexta->next);
-    link(refal.nexta, flhead->next);
-    link(flhead, refal.nextr);
-    goto ADVSTEP;
-    //        return from C - function
-    //     free memory exhausted
-CFLACK:
-    if (refal.prevr->next != refal.nextr)
-    {
-        link(refal.nextr->prev, flhead->next);
-        link(flhead, refal.prevr->next);
-        link(refal.prevr, refal.nextr);
-    }
-    ast->state = 3;
-    goto EXIT;
 }
 //------------ end of file RFRUN1.C ----------
