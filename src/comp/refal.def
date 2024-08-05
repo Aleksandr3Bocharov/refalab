@@ -6,9 +6,6 @@
 
 #include <stdint.h>
 
-// BLF - UNIX for operation system Linux, FreeBSD
-// #define UNIX
-
 #define TAGO 0
 #define TAGF 2
 #define TAGN 4
