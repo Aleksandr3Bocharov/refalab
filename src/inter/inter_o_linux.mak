@@ -1,11 +1,11 @@
 #############################################################################
-#inter_o_win.mak
-#Makefile for mainrf.o rfdbg.o creation,
-#Version for Windows(Win95 / 98 / ME / NT / 2000 / XP)
+# inter_o_linux.mak
+#	Makefile for mainrf.o rfdbg.o creation,
+#	Version for UNIX ( FreeBSD, Linux )
 #
-#Copyright(C) Aleksandr Bocharov
-#Author : Aleksandr Bocharov
-#Date : 11.07.2024
+# Copyright(C) Aleksandr Bocharov
+# Author : Aleksandr Bocharov
+# Date : 05.08.2024
 #############################################################################
 
 ####### Compiler, tools and options
@@ -13,17 +13,17 @@
 .SUFFIXES: .c
 
 CC	=	gcc
-CFLAGS	=	-pipe -Wall -O2 
-S	=      	src\inter
+CFLAGS	=	-pipe -Wall -O2 -DUNIX
+S	=      	src/inter
 ####### Files
 
 SOURCES =		\
-	$(S)\mainrf.c 	\
-	$(S)\rfdbg.c 	
+	$(S)/mainrf.c 	\
+	$(S)/rfdbg.c 	
 
 OBJECTS =		\
-	$(S)\mainrf.o 	\
-	$(S)\rfdbg.o 
+	$(S)/mainrf.o 	\
+	$(S)/rfdbg.o 
 
 ####### Implicit rules
 
@@ -36,8 +36,8 @@ all: $(OBJECTS)
 
 ####### Dependences
 
-$(S)\mainrf.o: 	$(S)\mainrf.c
+$(S)/mainrf.o: 	$(S)/mainrf.c
 
-$(S)\rfdbg.o:	$(S)\rfdbg.c $(S)\refal.def
+$(S)/rfdbg.o:	$(S)/rfdbg.c $(S)/refal.def
 
 ####### End of Makefile

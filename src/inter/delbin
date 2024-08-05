@@ -1,0 +1,18 @@
+#!/bin/sh
+#*******************************************************************
+# delbin
+# 	delete temporary working files
+#
+# Copyright (C) Aleksandr Bocharov
+# Author: Aleksandr Bocharov
+# Date: 05.08.2024
+#*******************************************************************
+
+
+cd src/inter/
+rm -f  *.asm 
+rm -f  *.o 
+rm -f  *.log
+rm -f  *.lst
+
+

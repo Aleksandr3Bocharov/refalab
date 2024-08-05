@@ -1,0 +1,14 @@
+#!/bin/sh
+# *******************************************************************
+# copy_obj
+# 	copy mainrf.o and rfdbg.o
+#
+# Copyright (C) Aleksandr Bocharov
+# Author: Aleksandr Bocharov
+# Date: 05.08.2024
+# *******************************************************************
+
+cp ./src/inter/mainrf.o ./lib
+cp ./src/inter/rfdbg.o ./lib
+
+

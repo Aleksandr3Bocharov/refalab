@@ -1,0 +1,15 @@
+#!/bin/sh 
+#*******************************************************************
+# refxcv
+# 	special script for comp.mak
+#	compile xcv.ref from refal to GNU-assembler + assembling. 
+#	result: xcv.o  
+#
+# Copyright (C) Refal-2 Team
+# Author: Leonid Belous (aka BLF)
+# E-mail: belous@ilt.kharkov.ua
+# Date: 05.08.2024
+#*******************************************************************
+
+bin/refal2 src/inter/xcv > src/inter/xcv.log
+as -o src/inter/xcv.o src/inter/xcv.asm >> src/inter/xcv.log 
