@@ -29,9 +29,9 @@
     return;  \
     }        \
     }
-#define ROMA0 \
-    return 0; \
-    }         \
+#define ROMA0     \
+    return false; \
+    }             \
     }
 
 typedef enum mod_states
@@ -1608,44 +1608,56 @@ static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid) // procedur
     code->tag = 0;
     code->info.codef = NULL;
     EH ROMA0; // kras
-    if (class[m] == 'D')
-        goto CSMBN;
-    if (!get_id(id, lid))
-        goto OSH112;
-    code->info.codef = (uint8_t *)fnref(id, *lid);
-    code->tag = TAGF;
-    goto CSMBEND;
-CSMBN:
-    code->tag = TAGN;
-    code->info.coden = 0;
-    uint32_t k = c[m] - '0';
-CSMBN1:
-    EH ROMA0; // kras
-    if (class[m] != 'D')
-        goto CSMBN3;
-    const uint32_t l = c[m] - '0';
-    k = k * 10L + l;
-    if (k <= 16777215L)
-        goto CSMBN1;
-CSMBN2:
-    EH ROMA0; // kras
-    if (class[m] == 'D')
-        goto CSMBN2;
-    pchosh("111 symbol-number > 16777215");
-    goto CSMBEND;
-CSMBN3:
-    code->tag = TAGN;
-    code->info.coden = k;
-CSMBEND:
+    do
+    {
+        if (class[m] == 'D')
+        {
+            code->tag = TAGN;
+            code->info.coden = 0;
+            uint32_t k = c[m] - '0';
+            bool csmbend = false;
+            while (true)
+            {
+                EH ROMA0; // kras
+                if (class[m] != 'D')
+                {
+                    code->tag = TAGN;
+                    code->info.coden = k;
+                    csmbend = true;
+                    break;
+                }
+                const uint32_t l = c[m] - '0';
+                k = k * 10L + l;
+                if (k <= 16777215L)
+                    continue;
+                break;
+            }
+            if (csmbend)
+                break;
+            while (true)
+            {
+                EH ROMA0; // kras
+                if (class[m] == 'D')
+                    continue;
+                break;
+            }
+            pchosh("111 symbol-number > 16777215");
+            break;
+        }
+        if (!get_id(id, lid))
+        {
+            pchosh("112 unknown type of the multiple symbol ");
+            return false;
+        }
+        code->info.codef = (uint8_t *)fnref(id, *lid);
+        code->tag = TAGF;
+    } while (false);
     if (c[m] != '/')
-        goto OSH113;
+    {
+        pchosh("113 default '/' under multiple symbol ");
+        return false;
+    }
     return true;
-OSH112:
-    pchosh("112 unknown type of the multiple symbol ");
-    return false;
-OSH113:
-    pchosh("113 default '/' under multiple symbol ");
-    return false;
 }
 
 static char convert(char cm)
