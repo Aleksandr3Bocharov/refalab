@@ -1,0 +1,41 @@
+#############################################################################
+# Makefile
+#       Makefile for building refal2 system
+#       for UNIX ( FreeBSD, Linux )
+#
+# Copyright (C) Refal-2 Team
+# Author: Leonid Belous (aka BLF)
+# E-mail: belous@ilt.kharkov.ua
+# Date: 05.08.2024
+#############################################################################
+
+MAKE	=	make
+
+all:
+
+# PHASE I:
+# Make the compiler from refal-2 language, 
+# result bin/refal2 executable module
+# result bin/refal2_dbg executable module (debug mode).
+	
+	$(MAKE) -f src/comp/comp_linux.mak
+	src/comp/delbin
+	$(MAKE) -f src/comp/comp_dbg_linux.mak
+	src/comp/delbin
+	
+
+# PHASE II:
+# Make the interpreter from "jazyk sborki",  
+# result lib/libr2.a - set of object modules.
+# result lib/libr2_dbg.a - set of object modules (debug mode).
+	
+	$(MAKE) -f src/inter/inter_lib_linux.mak
+	src/inter/delbin
+	$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
+	src/inter/delbin
+	$(MAKE) -f src/inter/inter_o_linux.mak
+	src/inter/copy_obj
+	src/inter/delbin
+
+
+#### end of Makefile

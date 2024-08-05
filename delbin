@@ -1,0 +1,29 @@
+#!/bin/sh
+#*******************************************************************
+# delbin
+# 	Delete temporary working files before refal2-distributive save
+#
+# Copyright (C) Refal-2 Team
+# Author: Leonid Belous (aka BLF)
+# E-mail: belous@ilt.kharkov.ua
+# Date: 28.05.2005
+#*******************************************************************
+
+cd  src/comp/
+rm -f  *.asm 
+rm -f  *.o 
+rm -f  *.log
+
+cd ../inter/
+rm -f  *.asm 
+rm -f  *.o 
+rm -f  *.log
+rm -f  *.lst
+
+cd ../../tests
+rm -f  *.exe
+rm -f  *.log
+rm -f  *.lst
+rm -f  *.asm
+rm -f  *.o
+
