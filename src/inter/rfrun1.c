@@ -141,8 +141,8 @@ typedef enum i_states
     SWAP,
     SWAPREF,
     BLF,
-    EOSSN,
-    SETNOS,
+//    EOSSN,
+//    SETNOS,
     CFUNC,
     CFDONE,
     CFLACK
@@ -167,8 +167,8 @@ static union
 static union
 { // structure for pointer and integer aligning
     uint8_t *ptr;
-    uint32_t *inr;
-    char chr[2];
+//    uint16_t *inr;
+//    char chr[2];
 } inch;
 
 static T_LINKCB *et[256]; // element table
@@ -562,12 +562,12 @@ void rfrun(T_ST *ast) // adress of current state table
             case 0117:
                 i_state = BLF;
                 break;
-            case 0120:
-                i_state = EOSSN;
-                break;
-            case 0121:
-                i_state = SETNOS;
-                break;
+            //case 0120:
+            //    i_state = EOSSN;
+            //    break;
+            //case 0121:
+            //    i_state = SETNOS;
+            //    break;
             case 0122:
                 i_state = CFUNC;
             };
@@ -1644,17 +1644,17 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = NEXTOP;
             break;
             // EOSSN (NN);
-        case EOSSN:
+        /*case EOSSN:
             move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
             i_state = EOS;
-            break;
+            break; */
             // SETNOS(L);
-        case SETNOS:
+        /*case SETNOS:
             move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
-            refal.nostm = (int)*(inch.inr);
+            refal.nostm = *(inch.inr);
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
-            break;
+            break; */
             // C-refal-function execution
         case CFUNC:
             move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);

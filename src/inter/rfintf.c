@@ -154,8 +154,8 @@ void rfinit()
     phd->next = phd;
     phd->tag = 0;
     phd->info.codep = NULL;
-    p->nostm = 0;
-    p->stmnmb = 0;
+    //p->nostm = 0;
+    //p->stmnmb = 0;
     p->tmmode = 0;
     p->tmintv = 0;
     return;

@@ -62,8 +62,8 @@ typedef struct refal_
     T_LINKCB *flhead;
     T_LINKCB *svar;
     T_LINKCB *dvar;
-    unsigned int stmnmb;
-    unsigned int nostm;
+    //uint16_t stmnmb;
+    //uint16_t nostm;
     unsigned int tmmode;
     uint32_t tmintv;
 } T_REFAL;
