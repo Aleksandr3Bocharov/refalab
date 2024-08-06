@@ -1,7 +1,7 @@
-//-------------  file  --  CS.C  --------------- 
-//         Work with identifier table            
-//        Last edition date : 11.07.24           
-//---------------------------------------------- 
+//-------------  file  --  CS.C  ---------------
+//         Work with identifier table
+//        Last edition date : 11.07.24
+//----------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -22,29 +22,29 @@ typedef struct arr_lbl
 
 static T_ARR_LBL *first_arr_lbl = NULL;
 static size_t n_lbl = 15;
-static T_I_LBL *pfail = NULL;    // statememt FAIL label  
-static T_I_LBL *next_stm = NULL; // next statement label  
-static T_I_LBL *next_nos = NULL; // next halfword label with   
-                                      // a number of statements     
+static T_I_LBL *pfail = NULL;    // statememt FAIL label
+static T_I_LBL *next_stm = NULL; // next statement label
+// static T_I_LBL *next_nos = NULL; // next halfword label with
+//  a number of statements
 static void func_end();
 static void fnhead(const char *idp, size_t lid);
 
 static void p504(const char *idp, size_t lid)
 {
     pchosj("504 label", idp, lid, " is already defined");
-    return; // eg  
+    return; // eg
 }
 
 static void p505(const char *idp, size_t lid)
 {
     pchosj("505 label", idp, lid, " is yet not defined");
-    return; // eg  
+    return; // eg
 }
 
 static void p500()
 {
     pchosh("500 no statement label");
-    return; // eg  
+    return; // eg
 }
 
 static T_I_LBL *alloc_lbl()
@@ -80,10 +80,10 @@ T_I_LBL *genlbl()
 void fndef(const char *idp, size_t lid)
 {
     if (lid != 0)
-    { // new function  
+    { // new function
         func_end();
         T_U *p = lookup(idp, lid);
-        scn_.curr_stmnmb = 0;
+        // scn_.curr_stmnmb = 0;
         next_stm = alloc_lbl();
         p->type = (p->type) | '\100';
         if ((p->mode) & '\020')
@@ -102,7 +102,7 @@ void fndef(const char *idp, size_t lid)
         }
     }
     else
-    { //  next statement in function    
+    { //  next statement in function
         if (next_stm != NULL)
             jlabel((T_U *)next_stm);
         else
@@ -110,7 +110,7 @@ void fndef(const char *idp, size_t lid)
         next_stm = alloc_lbl();
         gopl(n_sjump, (uint8_t *)next_stm);
     };
-    return; //  eg  
+    return; //  eg
 }
 
 static void func_end()
@@ -158,7 +158,7 @@ void sswap(const char *idp, size_t lid)
     if (p->mode & '\020')
         p504(idp, lid);
     else
-    { //  align box head on the word board  
+    { //  align box head on the word board
         size_t j0 = jwhere();
         size_t l0;
         if (options.extname)
@@ -174,7 +174,7 @@ void sswap(const char *idp, size_t lid)
         p->def = scn_.nomkar;
         jlabel(p);
         jbyte(n_swap);
-        //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;   
+        //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;
         const size_t kk = SMBL + LBLL * 2;
         for (size_t k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
@@ -186,14 +186,14 @@ void sentry(const char *idp, size_t lidp, const char *ide, size_t lide)
 {
     T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
-    return; // eg  
+    return; // eg
 }
 
 void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
-// idp internal name  
-// ide external name  
+// idp internal name
+// ide external name
 {
-    //  int ind;   // eg  
+    //  int ind;   // eg
     T_U *p = lookup(idp, lidp);
     if ((p->mode) & '\020')
         p504(idp, lidp);
@@ -202,7 +202,7 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
         p->def = scn_.nomkar;
         jextrn(p, ide, lide);
     }
-    return; //  eg  
+    return; //  eg
 }
 
 T_U *fnref(const char *idp, size_t lid)
@@ -226,7 +226,7 @@ void spdef(const char *idp, size_t lid)
     if (lid == 0)
         p500();
     else
-    { // label exist  
+    { // label exist
         T_U *p = lookup(idp, lid);
         p->type = (p->type) | '\200';
         if ((p->mode) & '\020')
@@ -237,7 +237,7 @@ void spdef(const char *idp, size_t lid)
             jlabel(p);
         }
     }
-    return; //  eg  
+    return; //  eg
 }
 
 void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
@@ -265,7 +265,7 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     }
     else
         pchosh("501 both labels already defined ");
-    return; // eg  
+    return; // eg
 }
 
 static void fnhead(const char *idp, size_t lid)
@@ -275,7 +275,7 @@ static void fnhead(const char *idp, size_t lid)
         size_t k0, l0, ll;
         if (options.extname)
         {
-            const char *idpm = scn_.modname_var; // eg  
+            const char *idpm = scn_.modname_var; // eg
             l0 = scn_.modnmlen;
             for (k0 = 0; k0 < l0 && k0 < 8; k0++)
                 jbyte(*(idpm + k0));
@@ -291,13 +291,13 @@ static void fnhead(const char *idp, size_t lid)
     }
     else
         jbyte('\0');
-    return; // eg  
+    return; // eg
 }
 
-static void check_id(const T_U *pp) // check identifier attributes on confirmness  
+static void check_id(const T_U *pp) // check identifier attributes on confirmness
 {
     const T_U *q = pp;
-    // printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode);  
+    // printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode);
     while (((q->mode) & '\300') == '\300')
         q = q->info.infop;
     if (((pp->mode) & '\300') == '\000')
@@ -318,16 +318,16 @@ void s_end()
 }
 
 void s_init()
-{ // module initiation   
+{ // module initiation
     first_arr_lbl = NULL;
     n_lbl = 15;
     pfail = NULL;
     next_stm = NULL;
-    return; // eg  
+    return; // eg
 }
 
 void s_term()
-{ // module termination  
+{ // module termination
     T_ARR_LBL *p = first_arr_lbl;
     while (p != NULL)
     {
@@ -339,5 +339,5 @@ void s_term()
         p = p1;
     }
     luterm();
-    return; // eg  
+    return; // eg
 }

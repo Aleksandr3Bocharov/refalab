@@ -14,7 +14,7 @@ typedef struct linkti
     } info;
 } T_LINKTI;
 
-extern void ghw(uint16_t h);
+//extern void ghw(uint16_t h);
 extern void gopl(char k, const uint8_t *l);
 extern void gopn(char k, char n);
 extern void gopnm(char k, char n, char m);

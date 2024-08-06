@@ -1587,7 +1587,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE10:
             // sentence end
-            scn_.curr_stmnmb++;
+            //scn_.curr_stmnmb++;
             /*if (options.stmnmb)
             {
                 jbyte(n_eossn);

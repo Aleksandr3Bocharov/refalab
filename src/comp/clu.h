@@ -3,8 +3,8 @@
 
 typedef struct refw
 {
-    struct refw *next;    // on the next usage list
-    unsigned int numb[6]; // usage list element
+    struct refw *next; // on the next usage list
+    uint32_t numb[6];  // usage list element
 } T_REFW;
 
 typedef struct u
@@ -33,7 +33,7 @@ typedef struct u
     struct u *j;      // right reference
     T_REFW *last_ref; // on the end of using list
     T_REFW ref;       // where used
-    unsigned int def; // where defined
+    uint32_t def;     // where defined
     char k;           // kren feature:      '00'B - kren no
                       //                    '01'B - left kren
                       //                    '10'B - right kren

@@ -123,18 +123,18 @@ T_SCN_E scn_e;
 
 static struct
 {
-    unsigned int was_72 : 1;
-    unsigned int uzhe_krt : 1;
-    unsigned int was_err : 1;
-    unsigned int uzhe_zgl : 1;
-    unsigned int uzhekrt_t : 1;
+    bool was_72;
+    bool uzhe_krt;
+    bool was_err;
+    // bool uzhe_zgl;
+    bool uzhekrt_t;
 } flags;
 
 FILE *sysprint, *systerm;
 FILE *syslin; // for assem
 FILE *systxt; // for module names
 
-uint16_t nommod;
+uint32_t nommod;
 char parm_i[40]; // sourse file name
 // Aleksandr Bocharov   // compiler version
 const char vers_i[] = "refal2_new  version 0.0.1-20240615 (c) Aleksandr Bocharov (c) Refal-2 Team";
@@ -147,9 +147,9 @@ static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
-static unsigned int cdnumb; // card number   // kras
-static bool dir;            // L,R - flag
-static unsigned int kolosh;
+static uint32_t cdnumb; // card number   // kras
+static bool dir;        // L,R - flag
+static uint32_t kolosh;
 static const char ns_b = '\6';
 static const char ns_cll = '\0';
 static const char ns_d = '\13';
@@ -182,15 +182,15 @@ static void lblkey(unsigned int pr);
 static void pch130();
 static void blout();
 static void trprev();
-static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int));
-static void il(void (*prog)(const char *, unsigned int));
+static void ilm(void (*prog)(const char *, size_t, const char *, size_t));
+static void il(void (*prog)(const char *, size_t));
 static void equ();
 static void pchzkl();
 static void pchk();
 static void gsp(char n);
 static bool specif(char tail);
-static bool get_id(char id[40], unsigned int *lid);
-static bool get_idm(char id[8], unsigned int *lid);
+static bool get_id(char id[40], size_t *lid);
+static bool get_idm(char id[8], size_t *lid);
 static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid);
 
 typedef struct timespec timespec;
@@ -373,8 +373,8 @@ int main(int argc, char *argv[])
         }
     }
     //  print of page title missing here
-    flags.was_err = 0;
-    flags.uzhe_zgl = 0;
+    flags.was_err = false;
+    // flags.uzhe_zgl = false;
     cdnumb = 0;
     scn_.nomkar = 0;
     T_MOD_STATES mod_state = START_OF_MODULE;
@@ -385,8 +385,8 @@ int main(int argc, char *argv[])
             //  time processing missing here
             kolosh = 0;
             nommod++;
-            flags.was_72 = 0;
-            scn_.curr_stmnmb = 0;
+            flags.was_72 = false;
+            // scn_.curr_stmnmb = 0;
             _eoj = false;
             card[80] = '\n';
             prevlb[0] = '\0';
@@ -500,7 +500,7 @@ int main(int argc, char *argv[])
             s_end();
             if (kolosh != 0)
             {
-                flags.was_err = 1;
+                flags.was_err = true;
                 mod_length = 0;
             }
             else
@@ -530,10 +530,10 @@ int main(int argc, char *argv[])
             {
                 mod_length = jwhere();
                 fclose(syslin);
-                if ((mod_length == 0) || (flags.was_err != 0))
+                if ((mod_length == 0) || flags.was_err)
                     unlink(parm);
             }
-            if (flags.was_err != 0)
+            if (flags.was_err)
             {
                 if (options.multmod)
                     unlink(parm);
@@ -645,11 +645,11 @@ static void rdcard()
         ++scn_.nomkar;
         ++cdnumb;
         //  printf("\ncard %d",cdnumb);
-        flags.uzhe_krt = 0;
-        flags.uzhekrt_t = 0;
+        flags.uzhe_krt = false;
+        flags.uzhekrt_t = false;
         if (options.source)
             pchk();
-        if ((flags.was_72 == 0) && komm())
+        if (!flags.was_72 && komm())
             continue;
         if (empcard)
         {
@@ -660,9 +660,9 @@ static void rdcard()
         break;
     }
     if (*(c + 71) != ' ')
-        flags.was_72 = 1;
+        flags.was_72 = true;
     else
-        flags.was_72 = 0;
+        flags.was_72 = false;
     if (*(c + 71) != ' ')
         *(c + 71) = '+'; //!!!
     m = 0;
@@ -693,13 +693,13 @@ static void lblkey(unsigned int pr)
         if (c[m] == ' ')
             break;
         fixm = m;
-        uint16_t l = 0;
+        size_t l = 0;
         while (c[m] != ' ')
         {
             if (m == 71)
             {
-                const uint16_t delta = 71 - fixm;
-                const int16_t fixm1 = 0 - delta;
+                const size_t delta = 71 - fixm;
+                const int32_t fixm1 = 0 - delta;
                 for (m = 0; m != delta; m++)
                 {
                     c[fixm1 + m] = c[fixm + m];
@@ -1473,15 +1473,15 @@ static bool specif(char tail)
 
 static void pchk()
 { // writing of card into sysprint
-    if (flags.uzhe_krt == 0 && sysprint != NULL)
+    if (!flags.uzhe_krt && sysprint != NULL)
     {
-        flags.uzhe_krt = 1;
+        flags.uzhe_krt = true;
         card[72] = '\0';
         if (!_eoj)
         {
             char tmpstr[80];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
-            unsigned int i;
+            size_t i;
             for (i = 76; i > 4; i--)
                 if (tmpstr[i] != ' ')
                     break;
@@ -1497,9 +1497,9 @@ static void pchk()
 
 static void pchk_t()
 { // card writing into systerm
-    if (flags.uzhekrt_t == 0)
+    if (!flags.uzhekrt_t)
     {
-        flags.uzhekrt_t = 1;
+        flags.uzhekrt_t = true;
         card[72] = '\0';
         if (!_eoj)
         {
@@ -1511,13 +1511,13 @@ static void pchk_t()
     return;
 }
 
-static void il(void (*prog)(const char *, unsigned int)) // treatment of directives having 'EMPTY' type
+static void il(void (*prog)(const char *, size_t)) // treatment of directives having 'EMPTY' type
 {
     blout();
     while (true)
     {
         char id[40];
-        unsigned int lid;
+        size_t lid;
         if (!get_id(id, &lid))
             break;
         (*prog)(id, lid);
@@ -1537,17 +1537,17 @@ static void il(void (*prog)(const char *, unsigned int)) // treatment of directi
     return;
 }
 
-static void ilm(void (*prog)(const char *, unsigned int, const char *, unsigned int)) // treatment of directives having 'ENTRY' type
+static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // treatment of directives having 'ENTRY' type
 {
     blout();
     while (true)
     {
         char id[40];
-        unsigned int lid;
+        size_t lid;
         if (!get_id(id, &lid))
             break;
         char ide[8];
-        unsigned int lide;
+        size_t lide;
         if (c[m] == '(')
         {
             EH ROMA;
@@ -1626,7 +1626,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                     csmbend = true;
                     break;
                 }
-                const uint32_t l = c[m] - '0';
+                const int l = c[m] - '0';
                 k = k * 10L + l;
                 if (k <= 16777215L)
                     continue;
@@ -1672,7 +1672,7 @@ static char convert(char cm)
     return cm;
 }
 
-static bool get_id(char id[40], unsigned int *lid)
+static bool get_id(char id[40], size_t *lid)
 { // read identifier
     for (size_t i = 0; i < 40; id[i++] = ' ')
         ;
@@ -1695,7 +1695,7 @@ static bool get_id(char id[40], unsigned int *lid)
 }
 
 // read external identifier
-static bool get_idm(char id[8], unsigned int *lid)
+static bool get_idm(char id[8], size_t *lid)
 {
     if (class[m] != 'L')
         return false;

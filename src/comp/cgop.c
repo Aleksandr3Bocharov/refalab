@@ -67,6 +67,7 @@ void gops(char k, const T_LINKTI *code)
     return;
 }
 
+/*
 void ghw(uint16_t h)
 {
     const T_TAG *po = (T_TAG *)&h; //  eg
@@ -74,3 +75,4 @@ void ghw(uint16_t h)
     jbyte(po->b2);
     return;
 }
+*/

@@ -7,7 +7,7 @@
 #include "cgop.h"
 
 typedef struct opt_
-{ // compiling   options  
+{ // compiling   options
     bool source;
     bool mincomp;
     bool stmnmb;
@@ -19,19 +19,19 @@ typedef struct opt_
 extern T_OPT options;
 
 typedef struct scn_
-{ // the table for corresponding with scanner  
-    unsigned int nomkar;
-    char modname_var[40];  // module name  
-    unsigned int modnmlen; // module name length  
-    unsigned int curr_stmnmb;
+{ // the table for corresponding with scanner
+    uint32_t nomkar;
+    char modname_var[40]; // module name
+    size_t modnmlen;      // module name length
+    //    uint16_t curr_stmnmb;
 } T_SCN;
 
 extern T_SCN scn_;
 
 typedef struct scn_e_
-{                         // current statement element  
-    uint16_t t; //    element type            
-    char ci;              //    variable index          
+{               // current statement element
+    uint32_t t; //    element type
+    char ci;    //    variable index
     bool v;
     T_LINKTI code;
     T_LINKTI spec;
@@ -40,13 +40,13 @@ typedef struct scn_e_
 extern T_SCN_E scn_e;
 
 extern FILE *sysprint, *systerm;
-extern FILE *syslin; // for assem  
-extern FILE *systxt; // for module names  
+extern FILE *syslin; // for assem
+extern FILE *systxt; // for module names
 
-extern uint16_t nommod;
-extern char parm_i[];       // sourse file name  
-extern const char vers_i[]; // compiler version  
-extern char mod_i[];        // module name       
+extern uint32_t nommod;
+extern char parm_i[];       // sourse file name
+extern const char vers_i[]; // compiler version
+extern char mod_i[];        // module name
 
 extern void oshibka();
 extern void scan();

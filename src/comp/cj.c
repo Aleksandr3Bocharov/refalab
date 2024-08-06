@@ -29,7 +29,7 @@ typedef struct ext
     T_U *p;
     char e[8];
     size_t le;
-    unsigned int noms;
+    //unsigned int noms;
 } T_EXT;
 
 typedef struct rl
@@ -88,7 +88,7 @@ static size_t lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
 static size_t curr_addr; // module generation files
-static uint32_t n_ext;
+static size_t n_ext;
 static T_RL rl;
 static size_t k;
 static uint16_t delta;
@@ -109,7 +109,8 @@ static void sfop_w(const char *s, BU *b)
         printf("\nfree(cj) b->nam=%lx", b->nam);
 #endif
     }
-    if ((b->nam = (char *)malloc(strlen(s) + 1)) == NULL)
+    b->nam = (char *)malloc(strlen(s) + 1);
+    if (b->nam == NULL)
         oshex();
 #ifdef mdebug
     printf("\nmalloc(cj): b->nam=%lx", b->nam);
@@ -134,7 +135,9 @@ static void sfop_w(const char *s, BU *b)
         }
         size_t lon;
         while (true)
-            if ((b->buf = (char *)malloc(un)) != NULL)
+        {
+            b->buf = (char *)malloc(un);
+            if (b->buf != NULL)
             {
 #ifdef mdebug
                 printf("\nmalloc(cj): b->buf=%lx un=%u", b->buf, un);
@@ -152,7 +155,7 @@ static void sfop_w(const char *s, BU *b)
                 if (un < 16)
                     oshex();
             }
-        // while
+        } // while
     }
     b->tek = 0;
     b->len = un;
@@ -164,7 +167,8 @@ static void sfop_r(BU *b)
 {
     if (b->fil != NULL)
     {
-        if ((b->fil = fopen(b->nam, Rbin)) == NULL)
+        b->fil = fopen(b->nam, Rbin);
+        if (b->fil == NULL)
         {
             printf("Can't open for read %s\n", b->nam);
             exit(8);
@@ -220,11 +224,14 @@ static void sfwr2()
             return;
         }
         if (sysut2.fil == NULL)
-            if ((sysut2.fil = fopen(sysut2.nam, Wbin)) == NULL)
+        {
+            sysut2.fil = fopen(sysut2.nam, Wbin);
+            if (sysut2.fil == NULL)
             {
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
+        }
         if (fwrite(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
         {
             printf("Write i/o error in sysut2\n");
@@ -248,11 +255,14 @@ static void sfwr(const char *c, size_t n, BU *b)
         }
         memcpy(b->buf + b->tek, c, ost);
         if (b->fil == NULL)
-            if ((b->fil = fopen(b->nam, Wbin)) == NULL)
+        {
+            b->fil = fopen(b->nam, Wbin)
+            if ((b->fil == NULL)
             {
                 printf("Can't open for write %s\n", b->nam);
                 exit(8);
             }
+        }
         if (fwrite(b->buf, b->len, 1, b->fil) == 0)
         {
             printf("Write i/o error in %s\n", b->nam);
@@ -314,14 +324,16 @@ void jstart(const char *ee, size_t ll)
     lnmmod = ll;
     sfop_w("sysut1.rf", &sysut1);
     sfop_w("sysut2.rf", &sysut2);
-    if ((first_ent = (T_ENT *)malloc(sizeof(T_ENT))) == NULL)
+    first_ent = (T_ENT *)malloc(sizeof(T_ENT));
+    if (first_ent == NULL)
         oshex();
 #ifdef mdebug
     printf("\nmalloc(cj): first_ent=%lx", first_ent);
 #endif
     last_ent = first_ent;
     first_ent->next = NULL;
-    if ((first_ext = (T_EXT *)malloc(sizeof(T_EXT))) == NULL)
+    first_ext = (T_EXT *)malloc(sizeof(T_EXT));
+    if (first_ext == NULL)
         oshex();
 #ifdef mdebug
     printf("\nmalloc(cj): first_ext=%lx", first_ext);
@@ -354,11 +366,14 @@ void jbyte(char bb)
     else
     {
         if (sysut1.fil == NULL)
-            if ((sysut1.fil = fopen(sysut1.nam, Wbin)) == NULL)
+        {
+            sysut1.fil = fopen(sysut1.nam, Wbin);
+            if (sysut1.fil == NULL)
             {
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
+        }
         if (fwrite(sysut1.buf, sysut1.len, 1, sysut1.fil) == 0)
         {
             printf("Write i/o error in sysut1\n");
@@ -417,7 +432,8 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
     //  label length
-    if ((rx = (T_EXT *)malloc(sizeof(T_EXT))) == NULL)
+    rx = (T_EXT *)malloc(sizeof(T_EXT));
+    if (rx == NULL)
         oshex();
 #ifdef mdebug
     printf("\nmalloc(cj): rx(ext)=%lx", rx);
@@ -462,8 +478,8 @@ static void zakon()
     sfcl(&sysut1);
     sfcl(&sysut2);
     mod_length = curr_addr;
-    //if (mod_length < 0)
-    //    mod_length = 65536L + mod_length;
+    // if (mod_length < 0)
+    //     mod_length = 65536L + mod_length;
     return;
 } // zakon
 
