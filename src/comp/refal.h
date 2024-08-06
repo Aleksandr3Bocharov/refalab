@@ -8,12 +8,12 @@
 
 typedef struct opt_
 { // compiling   options  
-    unsigned int source : 1;
-    unsigned int mincomp : 1;
-    unsigned int stmnmb : 1;
-    unsigned int extname : 1;
-    unsigned int multmod : 1;
-    unsigned int names : 1;
+    bool source;
+    bool mincomp;
+    bool stmnmb;
+    bool extname;
+    bool multmod;
+    bool names;
 } T_OPT;
 
 extern T_OPT options;

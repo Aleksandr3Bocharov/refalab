@@ -93,11 +93,11 @@ void fndef(const char *idp, size_t lid)
             fnhead(idp, lid);
             p->def = scn_.nomkar;
             jlabel(p);
-            if (options.stmnmb == 1)
+            /*if (options.stmnmb)
             {
                 next_nos = alloc_lbl();
                 gopl(n_setnos, (uint8_t *)next_nos);
-            };
+            };*/
             gopl(n_sjump, (uint8_t *)next_stm);
         }
     }
@@ -126,11 +126,11 @@ static void func_end()
             jbyte(n_fail);
         }
         next_stm = NULL;
-        if (options.stmnmb == 1)
+        /*if (options.stmnmb)
         {
             jlabel((T_U *)next_nos);
             ghw(scn_.curr_stmnmb);
-        }
+        }*/
     }
     return;
 }
@@ -161,7 +161,7 @@ void sswap(const char *idp, size_t lid)
     { //  align box head on the word board  
         size_t j0 = jwhere();
         size_t l0;
-        if (options.extname == 1)
+        if (options.extname)
             l0 = 255 > (scn_.modnmlen + lid + 1) ? (scn_.modnmlen + lid + 1) : 255;
         else
             l0 = lid;
@@ -270,10 +270,10 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
 
 static void fnhead(const char *idp, size_t lid)
 {
-    if (options.names == 1)
+    if (options.names)
     {
         size_t k0, l0, ll;
-        if (options.extname == 1)
+        if (options.extname)
         {
             const char *idpm = scn_.modname_var; // eg  
             l0 = scn_.modnmlen;

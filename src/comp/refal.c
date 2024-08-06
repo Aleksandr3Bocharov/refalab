@@ -277,12 +277,12 @@ int main(int argc, char *argv[])
 
     SET_time();
 
-    options.source = 1;
-    options.stmnmb = 0;
-    options.extname = 0;
-    options.multmod = 0;
-    options.names = 1;
-    options.mincomp = 0;
+    options.source = true;
+    options.stmnmb = false;
+    options.extname = false;
+    options.multmod = false;
+    options.names = true;
+    options.mincomp = false;
     for (size_t j = 2; j < argc; ++j)
     {
         for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
@@ -293,15 +293,15 @@ int main(int argc, char *argv[])
             {
                 int32_t temp;
                 if (strncmp((parm + i), "nn", 2) == 0) //  kras
-                    options.names = 0;
+                    options.names = false;
                 else if (strncmp((parm + i), "ns", 2) == 0)
-                    options.source = 0;
+                    options.source = false;
                 else if (strncmp((parm + i), "fn", 2) == 0)
-                    options.extname = 1;
+                    options.extname = true;
                 else if (strncmp((parm + i), "cm", 2) == 0)
-                    options.mincomp = 1;
+                    options.mincomp = true;
                 else if (*(parm + i) == 'm')
-                    options.multmod = 1;
+                    options.multmod = true;
                 else
                 {
                     for (temp = 0; *(parm + temp) != '\0'; temp++)
@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
     for (i = 0; ((parm[i] = *(argv[1] + i)) != '\0') && (parm[i] != '.'); ++i)
         ;
     parm[i] = '\0';
-    if (options.source == 1)
+    if (options.source)
     {
         strcat(parm, ".lst");
         if ((sysprint = fopen(parm, "w")) == NULL)
@@ -352,7 +352,7 @@ int main(int argc, char *argv[])
     for (i = 0; ((parm[i] = *(argv[1] + i)) != '\0') && (parm[i] != '.'); ++i)
         ;
     parm[i] = '\0';
-    if (options.multmod == 1)
+    if (options.multmod)
     {
         strcat(parm, ".txt");
         systxt = fopen(parm, "w");
@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
             }
             s_term();
             pchzkl();
-            if (_eoj || options.multmod == 0)
+            if (_eoj || !options.multmod)
             {
                 mod_state = END_OF_SYSIN;
                 break;
@@ -524,9 +524,9 @@ int main(int argc, char *argv[])
             break;
         case END_OF_SYSIN:
             fclose(sysin);
-            if (options.source == 1)
+            if (options.source)
                 fclose(sysprint);
-            if (options.multmod == 0)
+            if (!options.multmod)
             {
                 mod_length = jwhere();
                 fclose(syslin);
@@ -535,13 +535,13 @@ int main(int argc, char *argv[])
             }
             if (flags.was_err != 0)
             {
-                if (options.multmod == 1)
+                if (options.multmod)
                     unlink(parm);
                 exit(1);
             }
             else
             {
-                if (nommod <= 1 && options.multmod == 1)
+                if (nommod <= 1 && options.multmod)
                     unlink(parm); // for multimod.
                 exit(0);
             }
@@ -647,7 +647,7 @@ static void rdcard()
         //  printf("\ncard %d",cdnumb);
         flags.uzhe_krt = 0;
         flags.uzhekrt_t = 0;
-        if (options.source == 1)
+        if (options.source)
             pchk();
         if ((flags.was_72 == 0) && komm())
             continue;
@@ -1743,7 +1743,7 @@ static void pchzkl()
     char pr_line[180];
     sprintf(pr_line,
             "mod_name = %-8s    mod_length(lines) = %d\n", mod_name, cdnumb);
-    if (options.source == 1)
+    if (options.source)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
     cdnumb = 0;
@@ -1753,7 +1753,7 @@ static void pchzkl()
     else
         sprintf(pr_line,
                 "                       obj_length(bytes) = %ld\n", mod_length);
-    if (options.source == 1)
+    if (options.source)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
     GET_time();

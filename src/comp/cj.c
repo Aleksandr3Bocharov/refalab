@@ -118,7 +118,7 @@ static void sfop_w(const char *s, BU *b)
     size_t un = 0;
     if (b->buf == NULL)
     {
-        if (options.mincomp == 1)
+        if (options.mincomp)
         {
             if (b == &sysut2)
                 un = 2040; // 2040=340*6
@@ -234,6 +234,7 @@ static void sfwr2()
     } // while
 } // sfwr2
 
+/*
 static void sfwr(const char *c, size_t n, BU *b)
 {
     while (true)
@@ -262,6 +263,7 @@ static void sfwr(const char *c, size_t n, BU *b)
         c += ost;
     } // while
 } // sfwr
+*/
 
 static void sfrd1(char *c, size_t n)
 {
@@ -468,7 +470,7 @@ static void zakon()
 void jend()
 {
     zakon();
-    if (options.multmod == 1)
+    if (options.multmod)
     {
         strcat(mod_i, ".asm");
         syslin = fopen(mod_i, "w");
@@ -645,7 +647,7 @@ void jend()
     // termination
     sfclr(&sysut1);
     sfclr(&sysut2);
-    if (options.multmod == 1)
+    if (options.multmod)
     {
         fclose(syslin);
         if (mod_length != 0)

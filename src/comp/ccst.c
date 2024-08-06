@@ -1588,13 +1588,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RPE10:
             // sentence end
             scn_.curr_stmnmb++;
-            if (options.stmnmb == 1)
+            /*if (options.stmnmb)
             {
                 jbyte(n_eossn);
                 ghw(scn_.curr_stmnmb);
             }
-            else
-                jbyte(n_eos);
+            else*/
+            jbyte(n_eos);
             if (ur_skob != 1)
                 pchosh("403 too many signs 'k' in right part");
             if (kol_skob[ur_skob] != 0)
