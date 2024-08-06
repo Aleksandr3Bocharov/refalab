@@ -12,6 +12,6 @@ extern void jequ(T_U *pp, T_U *qq);
 extern void jextrn(T_U *pp, const char *ee, unsigned int ll);
 extern void jlabel(T_U *pp);
 extern void jstart(const char *ee, unsigned int ll);
-extern unsigned int jwhere();
+extern size_t jwhere();
 
 #endif

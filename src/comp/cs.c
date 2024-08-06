@@ -159,7 +159,7 @@ void sswap(const char *idp, size_t lid)
         p504(idp, lid);
     else
     { //  align box head on the word board  
-        unsigned int j0 = jwhere();
+        size_t j0 = jwhere();
         unsigned int l0;
         if (options.extname == 1)
             l0 = 255 > (scn_.modnmlen + lid + 1) ? (scn_.modnmlen + lid + 1) : 255;
