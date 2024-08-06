@@ -551,7 +551,7 @@ int main(int argc, char *argv[])
 
 static void trprev()
 { // perenos poslednej pustoj metki w tekuschuju
-    unsigned int n = strlen(prevlb);
+    size_t n = strlen(prevlb);
     if ((n != 0) && (lbl_leng == 0))
     {
         strcpy(stmlbl, prevlb);

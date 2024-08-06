@@ -29,13 +29,13 @@ static T_I_LBL *next_nos = NULL; // next halfword label with
 static void func_end();
 static void fnhead(const char *idp, unsigned int lid);
 
-static void p504(const char *idp, unsigned int lid)
+static void p504(const char *idp, size_t lid)
 {
     pchosj("504 label", idp, lid, " is already defined");
     return; // eg  
 }
 
-static void p505(const char *idp, unsigned int lid)
+static void p505(const char *idp, size_t lid)
 {
     pchosj("505 label", idp, lid, " is yet not defined");
     return; // eg  
@@ -135,7 +135,7 @@ static void func_end()
     return;
 }
 
-void sempty(const char *idp, unsigned int lid)
+void sempty(const char *idp, size_t lid)
 {
     T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
@@ -151,7 +151,7 @@ void sempty(const char *idp, unsigned int lid)
     return;
 }
 
-void sswap(const char *idp, unsigned int lid)
+void sswap(const char *idp, size_t lid)
 {
     T_U *p = lookup(idp, lid);
     p->type = p->type | '\100';
@@ -189,7 +189,7 @@ void sentry(const char *idp, unsigned int lidp, const char *ide, unsigned int li
     return; // eg  
 }
 
-void sextrn(const char *idp, unsigned int lidp, const char *ide, unsigned int lide)
+void sextrn(const char *idp, size_t lidp, const char *ide, unsigned int lide)
 // idp internal name  
 // ide external name  
 {
@@ -212,7 +212,7 @@ T_U *fnref(const char *idp, unsigned int lid)
     return p;
 }
 
-T_U *spref(const char *idp, unsigned int lid, char d)
+T_U *spref(const char *idp, size_t lid, char d)
 {
     T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\200';
@@ -221,7 +221,7 @@ T_U *spref(const char *idp, unsigned int lid, char d)
     return p;
 }
 
-void spdef(const char *idp, unsigned int lid)
+void spdef(const char *idp, size_t lid)
 {
     if (lid == 0)
         p500();

@@ -29,7 +29,7 @@ static void pchosi(const char *s, const char *t)
     return;
 }
 
-void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
+void pchosj(const char *s, const char *sid, size_t lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
@@ -44,7 +44,7 @@ void pchosj(const char *s, const char *sid, unsigned int lsid, const char *s1)
     return;
 }
 
-void pchosx(const char *s, const char *sid, unsigned int lsid, const char *s1)
+void pchosx(const char *s, const char *sid, size_t lsid, const char *s1)
 {
     oshibka();
     char tmp1[255];
@@ -70,7 +70,7 @@ void pchosa(const char *s, const char c)
     return;
 }
 
-static void pchose(const char *s, const char *t, unsigned int lt)
+static void pchose(const char *s, const char *t, size_t lt)
 {
     oshibka();
     char tmp1[255];

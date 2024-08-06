@@ -142,7 +142,7 @@ typedef enum states
 
 static struct
 { // left part buffer elements
-    uint16_t p, q, t;
+    uint32_t p, q, t;
     size_t ind;
     T_LINKTI code;
     size_t next;
@@ -150,14 +150,14 @@ static struct
     T_LINKTI spec;
     bool v;
     bool eoemrk;
-    uint16_t e_level;
+    uint32_t e_level;
 } x[100];
 
 // ???whole list
 static struct
 { // ???variable table elements
-    uint16_t _t, _q;
-    uint16_t rem;
+    uint32_t _t, _q;
+    uint32_t rem;
     size_t last;
     char ci;
     bool _v;
@@ -175,18 +175,18 @@ static T_LINKTI funcptr; // work pointer
 
 static size_t n, n1, n2;     // left part element pointers
 static size_t ind, ie;       // element index
-static uint16_t nel;         // current element number
-static uint16_t e_level;     // counter of the longing levels
+static uint32_t nel;         // current element number
+static uint32_t e_level;     // counter of the longing levels
 static bool not_nil;         // working variables
 static size_t nh;            // current whole number
 static size_t kol_per;       // subprogram of search in variable table
                              // table pointer
 static size_t nh_x, nh_y;    // hole numbers (under enter in brackets)
-static uint16_t lrbxy;       // stoped bracket flag
+static uint32_t lrbxy;       // stoped bracket flag
 static size_t lastb, lastb1; // variables for brackets linkage
 static size_t kol_lit;       // counter of the symbol number
-static uint16_t diff_e_level;
-static uint16_t kol_skob[100]; // stack for counting of the brackets balance
+static uint32_t diff_e_level;
+static uint32_t kol_skob[100]; // stack for counting of the brackets balance
 static size_t ur_skob;
 static char buf_lit[80]; // buffer for generating of the "text" statement
 static size_t k;

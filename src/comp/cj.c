@@ -20,7 +20,7 @@ typedef struct ent
     struct ent *next;
     T_U *p;
     char e[8];
-    unsigned int le;
+    size_t le;
 } T_ENT;
 
 typedef struct ext
@@ -28,20 +28,20 @@ typedef struct ext
     struct ext *next;
     T_U *p;
     char e[8];
-    unsigned int le;
+    size_t le;
     unsigned int noms;
 } T_EXT;
 
 typedef struct rl
 {
     T_U *point;
-    unsigned int delta;
+    uint16_t delta;
 } T_RL;
 
 typedef struct BU_
 {
-    unsigned int len;
-    unsigned int tek;
+    size_t len;
+    size_t tek;
     char *nam;
     char *buf;
     FILE *fil;
@@ -82,16 +82,16 @@ static T_EXT *qx, *rx;
 
 static T_ENT *first_ent;
 static T_ENT *last_ent;
-static int32_t mod_length;
+static size_t mod_length;
 static char mod_name[9];
 static unsigned int lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
-static int32_t curr_addr; // module generation files
-static unsigned int n_ext;
+static size_t curr_addr; // module generation files
+static uint32_t n_ext;
 static T_RL rl;
-static unsigned int k;
-static unsigned int delta;
+static size_t k;
+static uint16_t delta;
 
 static void oshex()
 {
@@ -212,7 +212,7 @@ static void sfwr2()
 {
     while (true)
     {
-        const unsigned int ost = sysut2.len - sysut2.tek;
+        const size_t ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
         {
             memcpy(sysut2.buf + sysut2.tek, &rl, 6);
@@ -289,7 +289,7 @@ static void sfrd2()
 {
     while (true)
     {
-        const unsigned int ost = sysut2.len - sysut2.tek;
+        const size_t ost = sysut2.len - sysut2.tek;
         if (ost >= 6)
         {
             memcpy(&rl, sysut2.buf + sysut2.tek, 6);
@@ -331,7 +331,7 @@ void jstart(const char *ee, unsigned int ll)
     return;
 } // jstart
 
-unsigned int jwhere()
+size_t jwhere()
 {
     if (curr_addr > 65535)
     {
@@ -460,8 +460,8 @@ static void zakon()
     sfcl(&sysut1);
     sfcl(&sysut2);
     mod_length = curr_addr;
-    if (mod_length < 0)
-        mod_length = 65536L + mod_length;
+    //if (mod_length < 0)
+    //    mod_length = 65536L + mod_length;
     return;
 } // zakon
 
