@@ -21,13 +21,13 @@ typedef struct arr_lbl
 } T_ARR_LBL;
 
 static T_ARR_LBL *first_arr_lbl = NULL;
-static int n_lbl = 15;
+static size_t n_lbl = 15;
 static T_I_LBL *pfail = NULL;    // statememt FAIL label  
 static T_I_LBL *next_stm = NULL; // next statement label  
 static T_I_LBL *next_nos = NULL; // next halfword label with   
                                       // a number of statements     
 static void func_end();
-static void fnhead(const char *idp, unsigned int lid);
+static void fnhead(const char *idp, size_t lid);
 
 static void p504(const char *idp, size_t lid)
 {
@@ -160,7 +160,7 @@ void sswap(const char *idp, size_t lid)
     else
     { //  align box head on the word board  
         size_t j0 = jwhere();
-        unsigned int l0;
+        size_t l0;
         if (options.extname == 1)
             l0 = 255 > (scn_.modnmlen + lid + 1) ? (scn_.modnmlen + lid + 1) : 255;
         else
@@ -175,7 +175,7 @@ void sswap(const char *idp, size_t lid)
         jlabel(p);
         jbyte(n_swap);
         //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;   
-        const unsigned int kk = SMBL + LBLL * 2;
+        const size_t kk = SMBL + LBLL * 2;
         for (size_t k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
     }
@@ -268,11 +268,11 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     return; // eg  
 }
 
-static void fnhead(const char *idp, unsigned int lid)
+static void fnhead(const char *idp, size_t lid)
 {
     if (options.names == 1)
     {
-        unsigned int k0, l0, ll;
+        size_t k0, l0, ll;
         if (options.extname == 1)
         {
             const char *idpm = scn_.modname_var; // eg  
