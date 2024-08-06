@@ -4,14 +4,15 @@
 //---------------------------------------------------------- 
 
 #include <stdlib.h>
+#include <stdint.h>
 #include "plc.h"
 
-int index_x(const char *s, const char *t)
+int32_t index_x(const char *s, const char *t)
 // first left insertion t into  s  
 // if not: -1                      
 {
-    const unsigned int imax = 40;
-    unsigned int l = 0;
+    const size_t imax = 40;
+    size_t l = 0;
     for (size_t i = 0; i < imax; i++)
         if (*(s + i) == '\0')
             break;
@@ -19,7 +20,7 @@ int index_x(const char *s, const char *t)
             l = i + 1;
     // l - length of s  
 
-    unsigned int m;
+    size_t m;
     for (size_t i = 0; i < imax; i++)
         if (*(t + i) == '\0')
             break;
@@ -55,7 +56,7 @@ int index_x(const char *s, const char *t)
 }
 */
 
-int cmpstr(unsigned int n, const char *s1, const char *s2)
+int32_t cmpstr(size_t n, const char *s1, const char *s2)
 // comparison two string . if s1<s2 then return < 0  
 // if s1 = s2 return 0. if s1>s2 then return > 0     
 {
