@@ -20,7 +20,7 @@ void uns_sto()
     return;
 }
 
-static T_U *nov_uzel(const char *idp, unsigned int lid)
+static T_U *nov_uzel(const char *idp, size_t lid)
 {
     T_U *p = (T_U *)calloc(1, sizeof(T_U));
 #ifdef mdebug
@@ -50,7 +50,7 @@ static T_U *nov_uzel(const char *idp, unsigned int lid)
     return p;
 }
 
-T_U *lookup(const char *idp, unsigned int lid)
+T_U *lookup(const char *idp, size_t lid)
 // lid identifier length
 {
     T_U *isk_uz;
@@ -62,7 +62,7 @@ T_U *lookup(const char *idp, unsigned int lid)
     }
     // tree is't empty,begin push.
     // remember path in stack
-    unsigned int tgld = 0; // current  tree depth
+    size_t tgld = 0; // current  tree depth
     T_U *p = korenj;
     T_U *q;
     char kren;
@@ -77,7 +77,7 @@ T_U *lookup(const char *idp, unsigned int lid)
                 if (lid == p->l)
                 { // include usage number to list
                     T_REFW *q1 = (*p).last_ref;
-                    unsigned int k = 5;
+                    size_t k = 5;
                     while ((*q1).numb[k] == 0)
                         k--;
                     if ((*q1).numb[k] != scn_.nomkar)

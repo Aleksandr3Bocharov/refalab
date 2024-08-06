@@ -182,7 +182,7 @@ void sswap(const char *idp, size_t lid)
     return;
 }
 
-void sentry(const char *idp, unsigned int lidp, const char *ide, size_t lide)
+void sentry(const char *idp, size_t lidp, const char *ide, size_t lide)
 {
     T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
@@ -205,7 +205,7 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
     return; //  eg  
 }
 
-T_U *fnref(const char *idp, unsigned int lid)
+T_U *fnref(const char *idp, size_t lid)
 {
     T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
@@ -240,7 +240,7 @@ void spdef(const char *idp, size_t lid)
     return; //  eg  
 }
 
-void sequ(const char *id1, unsigned int lid1, const char *id0, unsigned int lid0)
+void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
 {
     T_U *p0 = lookup(id0, lid0);
     if (lid1 == 0)

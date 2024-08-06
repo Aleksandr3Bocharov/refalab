@@ -40,7 +40,7 @@ typedef struct u
     char *id;         // identifier
 } T_U;
 
-extern T_U *lookup(const char *idp, unsigned int lid);
+extern T_U *lookup(const char *idp, size_t lid);
 extern void luterm();
 extern void through(void (*prog)(const T_U *));
 extern void uns_sto();

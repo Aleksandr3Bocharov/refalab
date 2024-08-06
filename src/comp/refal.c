@@ -191,7 +191,7 @@ static void gsp(char n);
 static bool specif(char tail);
 static bool get_id(char id[40], unsigned int *lid);
 static bool get_idm(char id[8], unsigned int *lid);
-static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid);
+static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid);
 
 typedef struct timespec timespec;
 static timespec t0;
@@ -729,7 +729,7 @@ static void lblkey(unsigned int pr)
 void scan()
 {
     static char id[40];
-    static unsigned int id_leng;
+    static size_t id_leng;
     static const uint8_t *p;
     static size_t scode;
     scn_e.code.tag = 0;
@@ -1126,7 +1126,7 @@ static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
     char id[255];
-    unsigned int lid;
+    size_t lid;
     T_LINKTI code;
     T_SP_STATES sp_state = SPCBLO;
     while (true)
@@ -1584,7 +1584,7 @@ static void equ()
 { // treatement of directives having 'EQU' type
     blout();
     char id[40];
-    unsigned int lid;
+    size_t lid;
     do
     {
         if (!get_id(id, &lid))
@@ -1603,7 +1603,7 @@ static void pch130()
     return;
 }
 
-static bool get_csmb(T_LINKTI *code, char id[40], unsigned int *lid) // procedure read multiple symbol
+static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read multiple symbol
 {
     code->tag = 0;
     code->info.codef = NULL;
