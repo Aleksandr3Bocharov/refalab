@@ -84,7 +84,7 @@ static T_ENT *first_ent;
 static T_ENT *last_ent;
 static size_t mod_length;
 static char mod_name[9];
-static unsigned int lnmmod;
+static size_t lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
 static size_t curr_addr; // module generation files
@@ -115,7 +115,7 @@ static void sfop_w(const char *s, BU *b)
     printf("\nmalloc(cj): b->nam=%lx", b->nam);
 #endif
     strcpy(b->nam, s);
-    unsigned int un = 0;
+    size_t un = 0;
     if (b->buf == NULL)
     {
         if (options.mincomp == 1)
@@ -132,7 +132,7 @@ static void sfop_w(const char *s, BU *b)
             else
                 un = 65528; // 65536-8 (for bc mojno - 4)
         }
-        uint32_t lon;
+        size_t lon;
         while (true)
             if ((b->buf = (char *)malloc(un)) != NULL)
             {
@@ -234,11 +234,11 @@ static void sfwr2()
     } // while
 } // sfwr2
 
-static void sfwr(const char *c, unsigned int n, BU *b)
+static void sfwr(const char *c, size_t n, BU *b)
 {
     while (true)
     {
-        const unsigned int ost = b->len - b->tek;
+        const size_t ost = b->len - b->tek;
         if (ost >= n)
         {
             memcpy(b->buf + b->tek, c, n);
@@ -263,11 +263,11 @@ static void sfwr(const char *c, unsigned int n, BU *b)
     } // while
 } // sfwr
 
-static void sfrd1(char *c, unsigned int n)
+static void sfrd1(char *c, size_t n)
 {
     while (true)
     {
-        const unsigned int ost = sysut1.len - sysut1.tek;
+        const size_t ost = sysut1.len - sysut1.tek;
         if (ost >= n)
         {
             memcpy(c, sysut1.buf + sysut1.tek, n);
@@ -305,7 +305,7 @@ static void sfrd2()
     } // while
 } // sfrd2
 
-void jstart(const char *ee, unsigned int ll)
+void jstart(const char *ee, size_t ll)
 {
     delta = 0; // kras
     strncpy(mod_name, ee, ll);
@@ -380,7 +380,7 @@ void j3addr(T_U *pp)
     return;
 }
 
-void jentry(T_U *pp, const char *ee, unsigned int ll)
+void jentry(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
     // label length
@@ -411,7 +411,7 @@ void jentry(T_U *pp, const char *ee, unsigned int ll)
     return;
 } // jentry
 
-void jextrn(T_U *pp, const char *ee, unsigned int ll)
+void jextrn(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
     //  label length

@@ -182,14 +182,14 @@ void sswap(const char *idp, size_t lid)
     return;
 }
 
-void sentry(const char *idp, unsigned int lidp, const char *ide, unsigned int lide)
+void sentry(const char *idp, unsigned int lidp, const char *ide, size_t lide)
 {
     T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
     return; // eg  
 }
 
-void sextrn(const char *idp, size_t lidp, const char *ide, unsigned int lide)
+void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
 // idp internal name  
 // ide external name  
 {
