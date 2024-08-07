@@ -22,10 +22,10 @@ extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
 extern bool lcre(T_ST *ast);
 extern bool lexist(const T_ST *ast);
 extern bool lincrm();
-extern bool lins(T_LINKCB *p, unsigned int l);
-extern bool slins(T_LINKCB *p, unsigned int k);
+extern bool lins(T_LINKCB *p, size_t l);
+extern bool slins(T_LINKCB *p, size_t k);
 extern bool linskd(T_ST *ast, const uint8_t *f);
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
-extern bool lrqlk(unsigned int l);
+extern bool lrqlk(size_t l);
 
 #endif

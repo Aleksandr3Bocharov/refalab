@@ -141,8 +141,8 @@ typedef enum i_states
     SWAP,
     SWAPREF,
     BLF,
-//    EOSSN,
-//    SETNOS,
+    //    EOSSN,
+    //    SETNOS,
     CFUNC,
     CFDONE,
     CFLACK
@@ -150,7 +150,7 @@ typedef enum i_states
 
 typedef struct sav_
 { // save area for var-part of REFAL-block
-    unsigned int upshot_;
+    uint32_t upshot_;
     T_LINKCB *preva_;
     T_LINKCB *nexta_;
     T_LINKCB *prevr_;
@@ -158,30 +158,30 @@ typedef struct sav_
     T_ST *currst_;
 } T_SAV;
 
-static union
+/*static union
 {
-    uint8_t c[2];
-    unsigned int ii;
-} u;
+    char c[2];
+    uint16_t ii;
+} u; */
 
 static union
 { // structure for pointer and integer aligning
     uint8_t *ptr;
-//    uint16_t *inr;
-//    char chr[2];
+    //    uint16_t *inr;
+    //    char chr[2];
 } inch;
 
 static T_LINKCB *et[256]; // element table
-static unsigned int nel;  // adress of first free string in element table
+static size_t nel;        // adress of first free string in element table
 
 static T_WJS js[64]; // jump stack and planning translation stack
 static T_WJS *jsp;   // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
 
-static unsigned int tmmod; // timer state
-static uint32_t tmstart;   // time at the start
-static uint32_t tmstop;    // time at the end
+static bool tmmod;     // timer state
+static time_t tmstart; // time at the start
+static time_t tmstop;  // time at the end
 
 // definition of work variables and pointers
 static uint8_t opc;     // current statement code
@@ -191,7 +191,7 @@ static T_LINKCB *lastb; // last generated left bracket
 static T_LINKCB *b0, *b1, *b2;
 static T_LINKCB *f0, *f1, *f;
 static const uint8_t *vpca; // additional vpc
-static unsigned int i, n, m;
+static size_t i, n, m;
 
 static char (*fptr)(T_REFAL *);
 
@@ -199,7 +199,7 @@ void rfrun(T_ST *ast) // adress of current state table
 {
     // dynamic area DSA
     T_SAV *savecr = malloc(sizeof(T_SAV));
-    u.ii = 0;
+    // u.ii = 0;
     if (!lexist(ast))
         rfabe("rfrun: attempt to run unexisting process");
     if (ast->state == 4)
@@ -221,7 +221,7 @@ void rfrun(T_ST *ast) // adress of current state table
     quasik.info.codep = ast->dot;
     // adress of free memory list head
     T_LINKCB *flhead = refal.flhead;
-    if (tmmod == 1)
+    if (tmmod)
         tmstart = time(0l);
     T_I_STATES i_state = START;
     while (true)
@@ -292,7 +292,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // state remove from
         case EXIT:
-            if (tmmod == 1)
+            if (tmmod)
                 tmstop = time(0l);
             ast->dot = quasik.info.codep;
             // restore REFAL-block
@@ -304,7 +304,7 @@ void rfrun(T_ST *ast) // adress of current state table
             refal.currst = savecr->currst_;
             refal.tmmode = tmmod;
             free(savecr);
-            if (tmmod == 1)
+            if (tmmod)
                 //{
                 // printf("\nn=%ld k=%ld",tmstart,tmstop);
                 refal.tmintv = (tmstop - tmstart) * 1000000l;
@@ -562,12 +562,12 @@ void rfrun(T_ST *ast) // adress of current state table
             case 0117:
                 i_state = BLF;
                 break;
-            //case 0120:
-            //    i_state = EOSSN;
-            //    break;
-            //case 0121:
-            //    i_state = SETNOS;
-            //    break;
+            // case 0120:
+            //     i_state = EOSSN;
+            //     break;
+            // case 0121:
+            //     i_state = SETNOS;
+            //     break;
             case 0122:
                 i_state = CFUNC;
             };
@@ -598,8 +598,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // SB(N,M);
         case SB:
-            n = (unsigned int)*(vpc + NMBL);
-            m = (unsigned int)*(vpc + NMBL + NMBL);
+            n = *(vpc + NMBL);
+            m = *(vpc + NMBL + NMBL);
             b1 = et[n];
             b2 = et[m];
             vpc = vpc + 3 * NMBL;
@@ -666,7 +666,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LSD(N);
         case LSD:
             SHB1
-                n = (unsigned int)*(vpc + NMBL);
+                n = *(vpc + NMBL);
             if (b1->tag != et[n]->tag)
             {
                 i_state = FAIL;
@@ -685,7 +685,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RSD(N);
         case RSD:
             SHB2
-                n = (unsigned int)*(vpc + NMBL);
+                n = *(vpc + NMBL);
             if (b2->tag != et[n]->tag)
             {
                 i_state = FAIL;
@@ -703,7 +703,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LTXT(N,S1,...,SN);
         case LTXT:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             i_state = LTXT1;
             break;
@@ -728,7 +728,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RTXT(N,S1,...,SN);
         case RTXT:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             i_state = RTXT1;
             break;
@@ -933,7 +933,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LED(N);
         case LED:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             et[nel] = b1->next;
             b0 = et[n - 1]->prev;
             i_state = LED1;
@@ -964,7 +964,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RED(N);
         case RED:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             et[nel + 1] = b2->prev;
             b0 = et[n]->next;
             i_state = LED1;
@@ -1140,14 +1140,14 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LESD(N);
         case LESD:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpca = (uint8_t *)&(et[n]->tag);
             vpc = vpc + NMBL * 2;
             i_state = LESC0;
             break;
             // RESD(N);
         case RESD:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpca = (uint8_t *)&(et[n]->tag);
             vpc = vpc + NMBL * 2;
             i_state = RESC0;
@@ -1218,7 +1218,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // EOE(N);
         case EOE:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             jsp = jsp - n;
             vpc = vpc + 2 * NMBL;
             i_state = NEXTOP;
@@ -1407,7 +1407,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // TEXT(N,S1,S2,...,SN);
         case TEXT:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             // printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);
             vpc = vpc + NMBL + NMBL;
             bool lack = false;
@@ -1471,7 +1471,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // ACT(N);
         case ACT:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             lastk->info.codep = et[n];
             lastk->tag = TAGK;
             lastk = et[n]->info.codep;
@@ -1481,7 +1481,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // MULS;
         case MULS:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             SHF
                 move(SMBL, (uint8_t *)&(et[n]->tag), (uint8_t *)&(f->tag));
             vpc = vpc + NMBL + NMBL;
@@ -1494,7 +1494,7 @@ void rfrun(T_ST *ast) // adress of current state table
             //                        ferr = 0;}
             //                    else
             //                        lastb1 = lastb;
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             f0 = et[n - 1]->prev;
             while (f0 != et[n])
@@ -1529,8 +1529,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // TPLM(N,M);
         case TPL:
         case TPLM:
-            n = (unsigned int)*(vpc + NMBL);
-            m = (unsigned int)*(vpc + NMBL + NMBL);
+            n = *(vpc + NMBL);
+            m = *(vpc + NMBL + NMBL);
             vpc = vpc + NMBL * 3;
             if (et[m]->next == et[n])
             {
@@ -1545,7 +1545,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // TPLV(N);
         case TPLE:
         case TPLV:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             if (et[n]->next == et[n - 1])
             {
@@ -1558,7 +1558,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // TPLS(N); (= TPLM(N,N);)
         case TPLS:
-            n = (unsigned int)*(vpc + NMBL);
+            n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             putts(tsp, &f, &et[n], &et[n]);
             tsp++;
@@ -1644,17 +1644,17 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = NEXTOP;
             break;
             // EOSSN (NN);
-        /*case EOSSN:
-            move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
-            i_state = EOS;
-            break; */
+            /*case EOSSN:
+                move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
+                i_state = EOS;
+                break; */
             // SETNOS(L);
-        /*case SETNOS:
-            move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
-            refal.nostm = *(inch.inr);
-            vpc = vpc + NMBL + LBLL;
-            i_state = NEXTOP;
-            break; */
+            /*case SETNOS:
+                move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
+                refal.nostm = *(inch.inr);
+                vpc = vpc + NMBL + LBLL;
+                i_state = NEXTOP;
+                break; */
             // C-refal-function execution
         case CFUNC:
             move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);

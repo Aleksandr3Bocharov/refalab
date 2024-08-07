@@ -14,11 +14,11 @@ T_REFAL refal;
 
 static T_LINKCB *last_block = NULL;
 static bool rf_init = true;
-static unsigned int curr_size = 0;
+//static uint32_t curr_size = 0;
 static T_LINKCB hd;
 
 static bool lgcl();
-static void rflist(T_LINKCB *par, unsigned int n);
+static void rflist(T_LINKCB *par, size_t n);
 
 void rfabe(const char *amsg)
 {
@@ -29,7 +29,7 @@ void rfabe(const char *amsg)
 
 bool lincrm()
 {
-    unsigned int n;
+    uint32_t n;
     if (last_block != NULL)
     {
         const T_LINKCB *first_free = refal.flhead->next;
@@ -55,13 +55,13 @@ bool lincrm()
         return false;
     new_block->prev = last_block;
     last_block = new_block;
-    curr_size = curr_size + 1000; // kras 06.12.88
+    //curr_size = curr_size + 1000; // kras 06.12.88
     rflist(new_block + 1, 1000);  // kras 06.12.88
     return true;
 }
 
 //  check a number of items in free items list
-bool lrqlk(unsigned int l)
+bool lrqlk(size_t l)
 {
     const T_LINKCB *p = refal.flhead;
     for (size_t n = 0; n < l; n++)
@@ -73,7 +73,7 @@ bool lrqlk(unsigned int l)
     return true;
 }
 
-bool lins(T_LINKCB *p, unsigned int l)
+bool lins(T_LINKCB *p, size_t l)
 {
     if (l < 1)
         return true;
@@ -98,7 +98,7 @@ bool lins(T_LINKCB *p, unsigned int l)
     return true;
 }
 
-bool slins(T_LINKCB *p, unsigned int k)
+bool slins(T_LINKCB *p, size_t k)
 {
     while (!lrqlk(k))
         if (!lincrm())
@@ -565,7 +565,7 @@ static bool lgcl()
     return was_coll;
 }
 
-static void rflist(T_LINKCB *par, unsigned int n)
+static void rflist(T_LINKCB *par, size_t n)
 {
     if (rf_init)
         rfinit();
@@ -633,10 +633,10 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     while (x != q)
     {
         if (x->tag != y->tag)
-            return 0;
+            return NULL;
         if (x->info.codef != y->info.codef)
             if ((x->tag != TAGLB) && (x->tag != TAGRB))
-                return 0;
+                return NULL;
         x = x->next;
         y = y->next;
     }

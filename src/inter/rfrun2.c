@@ -237,7 +237,7 @@ void link(T_LINKCB *x, T_LINKCB *y)
     return;
 }
 
-void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel, uint8_t **avpc)
+void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc)
 {
     jsp->jsb1 = *ab1;
     jsp->jsb2 = *ab2;
@@ -246,7 +246,7 @@ void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const unsigned int *anel,
     return;
 }
 
-void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, unsigned int *anel, uint8_t **avpc)
+void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc)
 {
     *ab1 = jsp->jsb1;
     *ab2 = jsp->jsb2;
@@ -271,7 +271,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     return;
 }
 
-void move(unsigned int n, const uint8_t *pf, uint8_t *pt)
+void move(size_t n, const uint8_t *pf, uint8_t *pt)
 {
     for (size_t i = 0; i < n; i++)
     {
@@ -302,7 +302,7 @@ int i;
    }
 }*/
 
-bool cmpr(unsigned int n, const uint8_t *p1, const uint8_t *p2)
+bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2)
 {
     for (size_t i = 1; i <= n; i++)
     {

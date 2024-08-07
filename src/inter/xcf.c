@@ -11,7 +11,7 @@
 
 typedef char *adr;
 
-static uint16_t func_n = 0;
+static size_t func_n = 0;
 static adr *func_f = NULL;
 
 static void ftochar_()

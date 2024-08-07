@@ -18,7 +18,7 @@
 #define MAX 16777216L
 #define SMAX 24
 
-static void oper(unsigned int o, unsigned int prn);
+static void oper(uint32_t o, uint32_t prn);
 
 static void add_() { oper(Oadd, 0); }
 
@@ -103,7 +103,7 @@ G_L_B char divn = '\122';
 static void (*divn_1)() = divn_;
 
 static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
-static unsigned int dl, Xdl, Ydl;
+static size_t dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
 static bool dajch()
@@ -175,7 +175,7 @@ static void obmen()
     p = Xk;
     Xk = Yk;
     Yk = p;
-    const unsigned int i = Xdl;
+    const size_t i = Xdl;
     Xdl = Ydl;
     Ydl = i;
     const char c = Xzn;
@@ -184,7 +184,7 @@ static void obmen()
     return;
 }
 
-static unsigned int xmy()
+static uint32_t xmy()
 { //  if X < Y then true  ( po modulju)
     if (Xdl < Ydl)
         return 1;
@@ -234,10 +234,10 @@ static void ymn(uint32_t *a, uint32_t *b)
     return;
 }
 
-static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr
-{                                                              //  X - ukaz. na konec
+static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
+{                                                  //  X - ukaz. na konec
     uint32_t peren = 0l;
-    const unsigned int ip = 24 - j;
+    const size_t ip = 24 - j;
     const uint32_t m = 0xFFFFFFl >> j; // maska
     for (size_t i = 0; i < dl; i++)
     {
@@ -250,7 +250,7 @@ static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. pos
     return;
 }
 
-static void oper(unsigned int o, unsigned int prn)
+static void oper(uint32_t o, uint32_t prn)
 {
     if (!dajarg())
     {
@@ -317,7 +317,7 @@ static void oper(unsigned int o, unsigned int prn)
                     rez0 = true;
                     break;
                 }
-                if (xmy())
+                if (xmy() == 1)
                     obmen();   //  menjaem x i y
                 Xn = Xn->prev; //  pripisywaem 0
                 Xn->tag = TAGN;
@@ -380,8 +380,8 @@ static void oper(unsigned int o, unsigned int prn)
             if (d != 0l)
             { // umn. na 1 cifru
                 peren = 0L;
-                const unsigned int b11 = d >> 12;
-                const unsigned int b22 = d & 0xFFF;
+                const uint32_t b11 = d >> 12;
+                const uint32_t b22 = d & 0xFFF;
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
                 {
                     a = gcoden(x);
@@ -389,21 +389,21 @@ static void oper(unsigned int o, unsigned int prn)
                         b = 0l;
                     else
                     {
-                        const unsigned int a11 = a >> 12;
-                        const unsigned int a22 = a & 0xFFF;
-                        c = a22 * (uint32_t)b22;
+                        const uint32_t a11 = a >> 12;
+                        const uint32_t a22 = a & 0xFFF;
+                        c = a22 * b22;
                         b = c & 0xFFF;
-                        unsigned int r3 = c >> 12;
-                        c = a11 * (uint32_t)b22;
+                        uint32_t r3 = c >> 12;
+                        c = a11 * b22;
                         r3 += c & 0xFFF;
-                        unsigned int r2 = c >> 12;
-                        c = a22 * (uint32_t)b11;
+                        uint32_t r2 = c >> 12;
+                        c = a22 * b11;
                         r3 += c & 0xFFF;
                         r2 += c >> 12;
-                        c = a11 * (uint32_t)b11;
+                        c = a11 * b11;
                         r2 += c & 0xFFF;
-                        const unsigned int r1 = c >> 12;
-                        const unsigned int r4 = r3 >> 12;
+                        const uint32_t r1 = c >> 12;
+                        const uint32_t r4 = r3 >> 12;
                         a = r1 * HMAX + r2 + r4;
                         b += (r3 & 0xFFF) * HMAX;
                         // ymn (&a,&b);   // rez:a-T_ST, b-ml
@@ -449,7 +449,7 @@ static void oper(unsigned int o, unsigned int prn)
             odnc = true;
             break;
         }
-        if (xmy())
+        if (xmy() == 1)
         { //  delimoe < delitelja
             if ((prn & 2) == 2)
             { // DIV, DIVN
@@ -506,13 +506,13 @@ static void oper(unsigned int o, unsigned int prn)
         Xn->tag = TAGN;
         pcoden(Xn, 0l);
         Xdl++;
-        unsigned int i;
+        size_t i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
             ;
         y = Yn->prev;
         y->tag = TAGN;
         pcoden(y, 0l);
-        unsigned int n = 0;
+        size_t n = 0;
         if (Ydl != 0)
         { // wozmovna normalizacija
             b = gcoden(Yn);
