@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     SET_time();
 
     options.source = true;
-    options.stmnmb = false;
+    //options.stmnmb = false;
     options.extname = false;
     options.multmod = false;
     options.names = true;

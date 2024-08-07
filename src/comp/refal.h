@@ -10,7 +10,7 @@ typedef struct opt_
 { // compiling   options
     bool source;
     bool mincomp;
-    bool stmnmb;
+    //bool stmnmb;
     bool extname;
     bool multmod;
     bool names;
