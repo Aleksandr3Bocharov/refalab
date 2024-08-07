@@ -156,7 +156,7 @@ void rfinit()
     phd->info.codep = NULL;
     //p->nostm = 0;
     //p->stmnmb = 0;
-    p->tmmode = 0;
+    p->tmmode = false;
     p->tmintv = 0;
     return;
 }

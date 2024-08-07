@@ -214,7 +214,7 @@ void rfrun(T_ST *ast) // adress of current state table
     savecr->nextr_ = refal.nextr;
     savecr->currst_ = refal.currst;
     tmmod = refal.tmmode;
-    refal.tmmode = 0;
+    refal.tmmode = false;
     refal.currst = ast;
     ast->state = 4;
     T_LINKCB quasik; // quasi-sign k

@@ -5,6 +5,7 @@
 #define REFAL_DEF
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define TAGO 0
 #define TAGF 2
@@ -41,7 +42,7 @@ typedef struct st_
 {
     struct st_ *stprev;
     struct st_ *stnext;
-    unsigned int state;
+    uint32_t state;
     T_LINKCB *dot;
     uint32_t step;
     uint32_t stop;
@@ -53,7 +54,7 @@ typedef struct refal_
 {
     T_ST *crprev;
     T_ST *crnext;
-    unsigned int upshot;
+    uint32_t upshot;
     T_LINKCB *preva;
     T_LINKCB *nexta;
     T_LINKCB *prevr;
@@ -64,7 +65,7 @@ typedef struct refal_
     T_LINKCB *dvar;
     //uint16_t stmnmb;
     //uint16_t nostm;
-    unsigned int tmmode;
+    bool tmmode;
     uint32_t tmintv;
 } T_REFAL;
 
