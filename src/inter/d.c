@@ -61,9 +61,9 @@ static bool was_eq;
 static uint32_t s_from = 0L;
 static uint32_t s_upto = 0L;
 static uint32_t s_stop = 2147483647L;
-static unsigned int nogcl = 0; // garbage collection counter
-static unsigned int s_arg;
-static unsigned int l_arg;
+static uint32_t nogcl = 0; // garbage collection counter
+static size_t s_arg;
+static size_t l_arg;
 static char buff_id[100];
 static char buff[100];
 static char *arg = buff;
@@ -829,8 +829,11 @@ static void getpf(const T_ST *ss_st)
 static void get_arg()
 {
     for (l_arg = 0;; l_arg++)
-        if ((*(arg + l_arg) = rfcnv(*(arg + l_arg))) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
+    {
+        *(arg + l_arg) = rfcnv(*(arg + l_arg));
+        if (*(arg + l_arg) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
             break;
+    }
     for (s_arg = 0; (*(arg + s_arg) == ' ') || (*(arg + s_arg) == ','); s_arg++)
         ;
     return;
@@ -847,10 +850,15 @@ static bool get_det()
         det_table = det_table->det_next;
     }
     bool ab = false;
-    if ((det_table = (DET_TAB *)malloc(sizeof(DET_TAB))) == NULL)
+    det_table = (DET_TAB *)malloc(sizeof(DET_TAB));
+    if (det_table == NULL)
         ab = true;
-    else if ((det_table->det_id = malloc(l_arg + 1)) == NULL)
-        ab = true;
+    else
+    {
+        (det_table->det_id = malloc(l_arg + 1));
+        if (det_table->det_id == NULL)
+            ab = true;
+    }
     if (ab)
     {
         printf("\nREFAL debugger: no storage");
