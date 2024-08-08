@@ -1658,7 +1658,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break; */
             // C-refal-function execution
         case CFUNC:
-            move(LBLL, vpc + NMBL + Z_0, (uint8_t *)&fptr);
+            memcpy(&fptr, vpc + NMBL + Z_0, LBLL);
             refal.upshot = 1;
             refal.prevr = b0->prev;
             refal.nextr = b0;
