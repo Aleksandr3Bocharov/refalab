@@ -56,13 +56,14 @@ int32_t index_x(const char *s, const char *t)
 }
 */
 
+/*
 int32_t cmpstr(size_t n, const char *s1, const char *s2)
 // comparison two string . if s1<s2 then return < 0  
 // if s1 = s2 return 0. if s1>s2 then return > 0     
 {
     for (size_t i = 0; i < n; i++)
         if (*(s1 + i) != *(s2 + i))
-            return (*(s1 + i) - *(s2 + i));
+            return *(s1 + i) - *(s2 + i);
     return 0;
-}
+} */
 //----------  end of file PLC.C  ----------- 

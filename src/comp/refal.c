@@ -178,7 +178,7 @@ static size_t mod_length; // module length   // kras
 static bool again;        // next module processing feature
 static bool _eoj;         // "sysin" end flag           // kras
 
-static void lblkey(unsigned int pr);
+static void lblkey(bool pr);
 static void pch130();
 static void blout();
 static void trprev();
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
                     options.extname = true;
                 else if (strncmp((parm + i), "cm", 2) == 0)
                     options.mincomp = true;
-                else if (*(parm + i) == 'm')
+                else if (strncmp((parm + i), "mm", 2) == 0)
                     options.multmod = true;
                 else
                 {
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
                     printf("Unknown option: %s\n", (parm + i));
-                    printf("Options may be: ns,nn,mm,fn,cm\n");
+                    printf("Options may be: mm,nn,ns,fn,cm\n");
                     exit(1);
                 }
                 temp = i;
@@ -396,14 +396,14 @@ int main(int argc, char *argv[])
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
-            lblkey(0);
+            lblkey(false);
             if (_eoj)
             {
                 mod_state = END_OF_SYSIN;
                 break;
             }
             s_init();
-            if ((strncmp(stmkey, "start", 5) != 0) && (strncmp(stmkey, "START", 5) != 0) && (strncmp(stmkey, "CTAPT", 5) != 0))
+            if (strncasecmp(stmkey, "start", 5) != 0)
             {
                 pchosh("001 START-directive missing");
                 scn_.modnmlen = 0;
@@ -422,25 +422,25 @@ int main(int argc, char *argv[])
             break;
         case NEXT_STM:
             // read of next sentence
-            lblkey(0);
+            lblkey(false);
             mod_state = KEYS;
             break;
         case KEYS:
-            if ((strncmp(stmkey, "l ", 2) == 0) || (strncmp(stmkey, "L ", 2) == 0))
+            if (strncasecmp(stmkey, "l ", 2) == 0)
             {
                 dir = true;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if ((strncmp(stmkey, "r ", 2) == 0) || (strncmp(stmkey, "R ", 2) == 0))
+            else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
                 dir = false;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if ((strncmp(stmkey, "start", 5) == 0) || (strncmp(stmkey, "START", 5) == 0) || (strncmp(stmkey, "CTAPT", 5) == 0))
+            else if (strncasecmp(stmkey, "start", 5) == 0)
                 pchosh("002 too many start-directive");
-            else if ((strncmp(stmkey, "end", 3) == 0) || (strncmp(stmkey, "END", 3) == 0) || (strncmp(stmkey, "��H��", 5) == 0))
+            else if (strncasecmp(stmkey, "end", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
@@ -448,23 +448,21 @@ int main(int argc, char *argv[])
                 mod_state = END_STATEMENT;
                 break;
             }
-            else if ((strncmp(stmkey, "entry", 5) == 0) || (strncmp(stmkey, "ENTRY", 5) == 0) || (strncmp(stmkey, "BXO�H", 5) == 0))
+            else if (strncasecmp(stmkey, "entry", 5) == 0)
                 ilm(sentry);
-            else if ((strncmp(stmkey, "extrn", 5) == 0) || (strncmp(stmkey, "EXTRN", 5) == 0) || (strncmp(stmkey, "BHE�H", 5) == 0))
+            else if (strncasecmp(stmkey, "extrn", 5) == 0)
                 ilm(sextrn);
-            else if ((strncmp(stmkey, "empty", 5) == 0) || (strncmp(stmkey, "EMPTY", 5) == 0) || (strncmp(stmkey, "��CTO", 5) == 0))
+            else if (strncasecmp(stmkey, "empty", 5) == 0)
                 il(sempty);
-            else if ((strncmp(stmkey, "swap", 4) == 0) || (strncmp(stmkey, "SWAP", 4) == 0) || (strncmp(stmkey, "OBMEH", 5) == 0))
+            else if ((strncasecmp(stmkey, "swap", 4) == 0))
                 il(sswap);
-            else if ((strncmp(stmkey, "swop", 4) == 0) || (strncmp(stmkey, "SWOP", 4) == 0))
-                il(sswap);
-            else if ((strncmp(stmkey, "s ", 2) == 0) || (strncmp(stmkey, "S ", 2) == 0))
+            else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
                 trprev();
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
-            else if ((strncmp(stmkey, "equ", 3) == 0) || (strncmp(stmkey, "EQU", 3) == 0) || (strncmp(stmkey, "�KB", 3) == 0))
+            else if ((strncasecmp(stmkey, "equ", 3) == 0))
                 equ();
             else if (stmkey[0] == ' ')
             {
@@ -670,9 +668,9 @@ static void rdcard()
 }
 
 //    directive label and keyword extraction
-static void lblkey(unsigned int pr)
+static void lblkey(bool pr)
 {
-    if (pr == 0)
+    if (!pr)
         while (true)
         {
             rdcard();

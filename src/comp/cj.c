@@ -407,7 +407,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     while (r != last_ent)
     {
         r = r->next;
-        if ((r->le == ll) && (strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
+        if ((r->le == ll) && (strncasecmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
             //{
             // pchose("521 two entry points has single name ", ee, ll);
             return;
@@ -443,7 +443,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx->p = pp;
     rx->next = NULL;
     rx->le = 8 < ll ? 8 : ll;
-    if (strncmp(ee, "DIV", 3) == 0 && (rx->le == 3))
+    if (strncasecmp(ee, "DIV", 3) == 0 && (rx->le == 3))
     {
         strcpy(rx->e, "DIV_");
         rx->le = 4;
@@ -574,22 +574,22 @@ void jend()
                     const char oper_rp[] = "r_";
                     const char oper_ptr[] = "pt_";
                     // BLF - debug printf ("%s\n",qx->e) ;
-                    if (cmpstr(qx->le, qx->e, "ADD") == 0)
+                    if (strncasecmp(qx->e, "ADD", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_add[i];
-                    else if (cmpstr(qx->le, qx->e, "SUB") == 0)
+                    else if (strncasecmp(qx->e, "SUB", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_sub[i];
-                    else if (cmpstr(qx->le, qx->e, "MUL") == 0)
+                    else if (strncasecmp(qx->e, "MUL", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_mul[i];
-                    else if (cmpstr(qx->le, qx->e, "DIV") == 0)
+                    else if (strncasecmp(qx->e, "DIV", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_div[i];
-                    else if (cmpstr(qx->le, qx->e, "RP") == 0)
+                    else if (strncasecmp(qx->e, "RP", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_rp[i];
-                    else if (cmpstr(qx->le, qx->e, "PTR") == 0)
+                    else if (strncasecmp(qx->e, "PTR", qx->le) == 0)
                         for (size_t i = 0; i < (qx->le); i++)
                             *((qx->e) + i) = oper_ptr[i];
 #endif

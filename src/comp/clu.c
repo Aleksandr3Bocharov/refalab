@@ -114,7 +114,7 @@ T_U *lookup(const char *idp, size_t lid)
                     break;
                 }
             }
-            if (cmpstr(lid < p->l ? lid : p->l, idp, p->id) > 0)
+            if (strncmp(idp, p->id, lid < p->l ? lid : p->l) > 0)
                 kren = '\100';
             else
                 kren = '\200';
