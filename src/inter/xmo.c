@@ -63,7 +63,7 @@ static char m1_0[] = {Z2 'M', '1', '\002'};
 G_L_B char m1 = '\122';
 static void (*m1_1)() = m1_;
 
-static int32_t cmpstr(size_t n, const char *s1, const char *s2)
+/*static int32_t cmpstr(size_t n, const char *s1, const char *s2)
 {
     // comparison two string . if s1<s2 then return < 0
     // if s1 = s2 return 0. if s1>s2 then return > 0
@@ -71,7 +71,7 @@ static int32_t cmpstr(size_t n, const char *s1, const char *s2)
         if (*s1 != *s2)
             return *s1 - *s2;
     return 0;
-}
+}*/
 
 static void numb_()
 {
@@ -103,7 +103,7 @@ static void numb_()
             neot = true;
             break;
         }
-        if ((i == 9) && (cmpstr(i + 1, str, "2147483647") > 0))
+        if ((i == 9) && (strncmp(str, "2147483647", i+1) > 0))
         {
             neot = true;
             break;
