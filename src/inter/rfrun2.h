@@ -26,7 +26,7 @@ typedef struct spcs
     uint8_t *svpc;
 } T_SPCS;
 
-extern bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2);
+//extern bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2);
 extern void link(T_LINKCB *x, T_LINKCB *y);
 extern void move(size_t n, const uint8_t *pf, uint8_t *pt);
 extern bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);

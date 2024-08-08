@@ -4,6 +4,7 @@
 //---------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 #include <time.h>
 #include "refal.def"
@@ -607,7 +608,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LSC(S);
         case LSC:
-            SHB1 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
+            SHB1 if (memcmp(vpc + NMBL, &(b1->tag), SMBL) != 0)
             {
                 i_state = FAIL;
                 break;
@@ -619,7 +620,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RSC(S);
         case RSC:
-            SHB2 if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
+            SHB2 if (memcmp(vpc + NMBL, &(b2->tag), SMBL) != 0)
             {
                 i_state = FAIL;
                 break;
@@ -1089,7 +1090,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b1 = b1->info.codep;
                 break;
             }
-            if (!cmpr(SMBL, vpca, (uint8_t *)&(b1->tag)))
+            if (memcmp(vpca, &(b1->tag), SMBL) != 0)
                 break;
             jsp++;
             et[nel + 1] = b1->prev;
@@ -1130,7 +1131,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b2 = b2->info.codep;
                 break;
             }
-            if (!cmpr(SMBL, vpca, (uint8_t *)&(b2->tag)))
+            if (memcmp(vpca, &(b2->tag), SMBL) != 0)
                 break;
             jsp++;
             et[nel + 2] = b2;
@@ -1239,7 +1240,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b1 = b1->info.codep;
                 break;
             };
-            if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b1->tag)))
+            if (memcmp(vpc + NMBL, &(b1->tag), SMBL) != 0)
                 break;
             et[nel + 1] = b1->prev;
             et[nel + 2] = b1;
@@ -1258,7 +1259,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b2 = b2->info.codep;
                 break;
             };
-            if (!cmpr(SMBL, vpc + NMBL, (uint8_t *)&(b2->tag)))
+            if (memcmp(vpc + NMBL, &(b2->tag), SMBL) != 0)
                 break;
             et[nel] = b2->next;
             et[nel + 2] = b2;

@@ -3,6 +3,7 @@
 //      Last edition date: 11.07.2024
 //-------------------------------------------
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include "refal.def"
@@ -129,7 +130,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
             sp_state = SPCRET;
             break;
         case SPCSC:
-            if (cmpr(SMBL, spcvpc, (uint8_t *)&(b->tag)))
+            if (memcmp(spcvpc, &(b->tag), SMBL) == 0)
             {
                 sp_state = SPCRET;
                 break;
@@ -302,7 +303,7 @@ int i;
    }
 }*/
 
-bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2)
+/*bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2)
 {
     for (size_t i = 1; i <= n; i++)
     {
@@ -312,5 +313,5 @@ bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2)
         p2++;
     }
     return true;
-}
+}*/
 //------------ end of file RFRUN2.C ----------
