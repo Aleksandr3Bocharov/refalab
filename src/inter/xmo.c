@@ -63,7 +63,7 @@ static char m1_0[] = {Z2 'M', '1', '\002'};
 G_L_B char m1 = '\122';
 static void (*m1_1)() = m1_;
 
-static int cmpstr(unsigned int n, const char *s1, const char *s2)
+static int32_t cmpstr(size_t n, const char *s1, const char *s2)
 {
     // comparison two string . if s1<s2 then return < 0
     // if s1 = s2 return 0. if s1>s2 then return > 0
@@ -183,7 +183,7 @@ static void symb_()
     }
     char str[12];
     sprintf(str, "%ld", l);
-    const unsigned int j = strlen(str);
+    const size_t j = strlen(str);
     if (!lrqlk(j))
         if (!lincrm())
         {

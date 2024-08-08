@@ -11,8 +11,8 @@
 
 static FILE *inr, *inw;
 static FILE *uniput[fmax], *uniget[fmax];
-static unsigned int junp = 1;
-static unsigned int jung = 1;
+static size_t junp = 1;
+static size_t jung = 1;
 static uint32_t jl;
 
 static void opng_()
@@ -70,7 +70,7 @@ static void (*opng_1)() = opng_;
 
 static void opnp_()
 {
-    unsigned int i;
+    size_t i;
     char namf[40];
     for (i = 0; i < 40; i++)
         namf[i] = '\0';

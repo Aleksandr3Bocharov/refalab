@@ -10,10 +10,10 @@
 #define HMAX 4096L
 #define MASKA 0xffffffL
 
-static void norm(T_LINKCB *X, unsigned int dl, unsigned int j) //  normaliz. posledov. makrocifr
+static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
 {                                                              //  X - ukaz. na konec
     uint32_t peren = 0l;
-    const unsigned int ip = 24 - j;
+    const size_t ip = 24 - j;
     const uint32_t m = MASKA >> j; // maska
     for (size_t i = 0; i < dl; i++)
     {
@@ -38,23 +38,23 @@ static void ymn(int32_t *a, int32_t *b)
         *a = 0l;
         return;
     }
-    const unsigned int a1 = (*a) >> 12;
-    const unsigned int b1 = (*b) >> 12;
-    const unsigned int a2 = (*a) & 0xFFF;
-    const unsigned int b2 = (*b) & 0xFFF;
-    uint32_t rr = a2 * (uint32_t)b2;
+    const uint32_t a1 = (*a) >> 12;
+    const uint32_t b1 = (*b) >> 12;
+    const uint32_t a2 = (*a) & 0xFFF;
+    const uint32_t b2 = (*b) & 0xFFF;
+    uint32_t rr = a2 * b2;
     *b = rr & 0xFFF;
-    unsigned int rr3 = rr >> 12;
-    rr = a1 * (uint32_t)b2;
+    uint32_t rr3 = rr >> 12;
+    rr = a1 * b2;
     rr3 += rr & 0xFFF;
-    unsigned int rr2 = rr >> 12;
-    rr = a2 * (uint32_t)b1;
+    uint32_t rr2 = rr >> 12;
+    rr = a2 * b1;
     rr3 += rr & 0xFFF;
     rr2 += rr >> 12;
-    rr = a1 * (uint32_t)b1;
+    rr = a1 * b1;
     rr2 += rr & 0xFFF;
-    const unsigned int rr1 = rr >> 12;
-    const unsigned int rr4 = rr3 >> 12;
+    const uint32_t rr1 = rr >> 12;
+    const uint32_t rr4 = rr3 >> 12;
     *a = rr1 * HMAX + rr2 + rr4;
     *b += (rr3 & 0xFFF) * HMAX;
     return;
@@ -65,7 +65,7 @@ static void gcd_()
     //   sint. control
     T_LINKCB *pr = refal.preva->next;
     T_LINKCB *tl[2], *p[2], *hd[2];
-    unsigned int l[2];
+    size_t l[2];
     size_t i;
     enum
     {
@@ -124,7 +124,7 @@ static void gcd_()
                     hd[1] = hd[1]->next;
                     l[1]--;
                 }
-            unsigned int rez;
+            size_t rez;
             if (l[0] == 0)
             {
                 rez = 1;
@@ -189,7 +189,7 @@ static void gcd_()
             //   wybor metoda
             uint32_t A = 0l;
             pr = hd[0];
-            unsigned int k;
+            size_t k;
             for (k = 0; k < l[0]; k++)
             {
                 if (A >= 128L)
@@ -236,8 +236,8 @@ static void gcd_()
             }
             //    A - pribligenie
             //    k={ 1/2 }
-            const unsigned int la = k;
-            const int lb = l[1] - (l[0] - la);
+            const size_t la = k;
+            const int32_t lb = l[1] - (l[0] - la);
             int32_t x[2];
             uint32_t y[2];
             if (lb <= 0)
@@ -375,7 +375,7 @@ static void gcd_()
             T_LINKCB *py = hd[1]->prev;
             py->tag = TAGN;
             pcoden(py, 0l);
-            unsigned int n;
+            size_t n;
             int32_t b;
             if (l[1] != 0)
             { // wozmovna normalizacija
@@ -418,7 +418,8 @@ static void gcd_()
                         a = ((a % b) * 8) + (a1 & 7);
                         c = c + a / b;
                     }
-                    if ((l[1] > 1) && ((b1 = gcoden(hd[1]->next)) != 0l))
+                    b1 = gcoden(hd[1]->next);
+                    if ((l[1] > 1) && (b1 != 0l))
                     {
                         x[0] = b1;
                         x[1] = c;
