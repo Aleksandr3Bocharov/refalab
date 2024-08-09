@@ -272,7 +272,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     return;
 }
 
-void move(size_t n, const uint8_t *pf, uint8_t *pt)
+/*void move(size_t n, const uint8_t *pf, uint8_t *pt)
 {
     for (size_t i = 0; i < n; i++)
     {
@@ -281,7 +281,7 @@ void move(size_t n, const uint8_t *pf, uint8_t *pt)
         pf++;
     }
     return;
-}
+}*/
 
 // BLF 28.07.2004  - in case of macrodigit - shift -> 16
 /* void move(n,pf,pt) int n; char *pf,*pt; {

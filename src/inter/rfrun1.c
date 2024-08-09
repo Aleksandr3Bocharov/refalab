@@ -580,7 +580,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // SJUMP(L);
         case SJUMP:
-            move(LBLL, vpc + NMBL, (uint8_t *)&(inch.ptr));
+            memcpy(&(inch.ptr), vpc + NMBL, LBLL);
             putjs(jsp, &b1, &b2, &nel, &(inch.ptr));
             jsp++;
             vpc = vpc + NMBL + LBLL;
@@ -1393,7 +1393,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // NS(S);
         case NS:
             SHF
-                move(SMBL, vpc + NMBL, (uint8_t *)&(f->tag));
+                memcpy(&(f->tag), vpc + NMBL, SMBL);
             vpc = vpc + NMBL + SMBL;
             i_state = NEXTOP;
             break;
@@ -1484,7 +1484,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case MULS:
             n = *(vpc + NMBL);
             SHF
-                move(SMBL, (uint8_t *)&(et[n]->tag), (uint8_t *)&(f->tag));
+                memcpy(&(f->tag), &(et[n]->tag), SMBL);
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1522,7 +1522,7 @@ void rfrun(T_ST *ast) // adress of current state table
                         lastb = f1;
                     };
                 }
-                else move(SMBL, (uint8_t *)&(f0->tag), (uint8_t *)&(f->tag));
+                else memcpy(&(f->tag), &(f0->tag), SMBL);
             };
             i_state = NEXTOP;
             break;
@@ -1639,19 +1639,19 @@ void rfrun(T_ST *ast) // adress of current state table
                 f->info.codep = lastb;
             lastb = f;
             SHF
-                move(LBLL, vpc + NMBL, (uint8_t *)&(f->info.codef));
+                memcpy(&(f->info.codef), vpc + NMBL, LBLL);
             f->tag = TAGF;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // EOSSN (NN);
             /*case EOSSN:
-                move(NMBL + NMBL, vpc + NMBL, (uint8_t *)&(refal.stmnmb));
+                memcpy(&(refal.stmnmb), vpc + NMBL, NMBL + NMBL);
                 i_state = EOS;
                 break; */
             // SETNOS(L);
             /*case SETNOS:
-                move(LBLL, vpc + NMBL, (uint8_t *)&(inch.inr));
+                memcpy(&(inch.inr), vpc + NMBL, LBLL);
                 refal.nostm = *(inch.inr);
                 vpc = vpc + NMBL + LBLL;
                 i_state = NEXTOP;
