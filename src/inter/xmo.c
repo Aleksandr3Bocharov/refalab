@@ -182,7 +182,7 @@ static void symb_()
         l = 0l;
     }
     char str[12];
-    sprintf(str, "%ld", l);
+    sprintf(str, "%u", l);
     const size_t j = strlen(str);
     if (!lrqlk(j))
         if (!lincrm())

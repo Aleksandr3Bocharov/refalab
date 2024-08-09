@@ -68,7 +68,7 @@ static void rftm_()
                 const uint32_t ih = im / 60;
                 im %= 60;
                 char s[25];
-                sprintf(s, "%02ld:%02ld:%02ld.%09ld", ih, im, is, in);
+                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
                 p = refal.prevr;
                 if (!slins(p, strlen(s)))
                     return;
@@ -80,7 +80,7 @@ static void rftm_()
                     p->info.infoc = s[i];
                 }
                 return;
-            default:
+            default:;
             }
         }
     refal.upshot = 2;

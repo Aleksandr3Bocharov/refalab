@@ -457,7 +457,7 @@ void rfdbg(T_ST *s_st)
             dbg_state = DBG_EOJ;
             break;
         case DBG_EOJ:
-            printf("\nCompleted steps number = %ld", s_st->step);
+            printf("\nCompleted steps number = %u", s_st->step);
             printf("\nView field: ");
             rfpexm("     ", s_st->view, s_st->view);
             if ((s_st->store)->next != s_st->store)
@@ -646,7 +646,7 @@ static void dbapp(T_ST *ss_st)
             db_state = DB_EOJ;
             break;
         case DB_EOJ:
-            printf("\nCompleted steps number = %ld", ss_st->step);
+            printf("\nCompleted steps number = %u", ss_st->step);
             printf("\nView field: ");
             rfpexm("     ", ss_st->view, ss_st->view);
             if (ss_st->store->next != ss_st->store)
@@ -721,7 +721,7 @@ static void pr_step()
     // printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step);
     if (curr_step != printed_step)
     {
-        printf("\n***** step %ld", curr_step);
+        printf("\n***** step %u", curr_step);
         printed_step = curr_step;
     }
     return;
@@ -766,7 +766,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     {
         if (xstep == curr_step)
             return;
-        printf("\n----- this is result of call on step %ld", xstep);
+        printf("\n----- this is result of call on step %u", xstep);
     }
     else
     {
@@ -775,7 +775,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
             pr_imres();
             return;
         }
-        printf("\n----- result of call on step %ld : ", xstep);
+        printf("\n----- result of call on step %u : ", xstep);
         rfpexm("     ", xprevk, xnextd);
         res_step = curr_step;
         res_prevk = xprevk;
@@ -881,8 +881,9 @@ static bool get_det()
 }
 
 static bool get_numb(int32_t *numb)
+// ??? uint32_t better?
 {
-    if (sscanf(buff, "%ld", numb) == 0 || *numb < 1L)
+    if (sscanf(buff, "%d", numb) == 0 || *numb < 1L)
     {
         printf("\n                        Invalid number; repeat please.");
         return false;

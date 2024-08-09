@@ -291,7 +291,7 @@ void rfexec(const uint8_t *func)
             ex_state = EOJ;
             break;
         case EOJ:
-            printf("\nTotal steps number = %ld", s_st.step);
+            printf("\nTotal steps number = %u", s_st.step);
             if (s_st.view->next != s_st.view)
             {
                 printf("\nView field:");
@@ -345,7 +345,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             else if (pr->tag == TAGRB)
                 putchar(')');
             else if (pr->tag == TAGN)
-                printf("/%ld/", gcoden(pr));
+                printf("/%u/", gcoden(pr));
             else if (pr->tag == TAGF)
             {
                 putchar('/');
@@ -357,11 +357,11 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
                 putchar('/');
             }
             else if (pr->tag == TAGR)
-                printf("/%%%lx/", pr->info.codep);
+                printf("/%%%p/", pr->info.codep);
             else if ((pr->tag & 0001) != 0)
                 rfabe("rfpexm: unknown bracket type ");
             else
-                printf("/<%x>,%lx/", pr->tag, pr->info.codep);
+                printf("/<%x>,%p/", pr->tag, pr->info.codep);
         }
     }
     if (fr)
@@ -605,23 +605,23 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         else if (pr->tag == TAGRB)
             putchar(')');
         else if (pr->tag == TAGN)
-            printf("'%ld'", gcoden(pr));
+            printf("'%u'", gcoden(pr));
         else if (pr->tag == TAGF)
         {
             putchar('\'');
             const char *f = (char *)(pr->info.codef - 1);
             const uint8_t l = *f;
             f -= l;
-            for (uint8_t k = 1; k <= l; k++, f++)
+            for (size_t k = 1; k <= l; k++, f++)
                 putchar(rfcnv(*f));
             putchar('\'');
         }
         else if (pr->tag == TAGR)
-            printf("'%%%lx'", pr->info.codep);
+            printf("'%%%p'", pr->info.codep);
         else if ((pr->tag & 0001) != 0)
             rfabe("rfpex: unknown bracket type ");
         else
-            printf("'%x,%lx'", pr->tag, pr->info.codep);
+            printf("'%x,%p'", pr->tag, pr->info.codep);
     }
     return;
 }

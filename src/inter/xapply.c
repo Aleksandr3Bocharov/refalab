@@ -14,7 +14,7 @@ void (*dba)(T_ST *) = NULL;
 static void appl_()
 {
     T_ST *s_st;
-    uint32_t l = (uint32_t)&s_st;
+    size_t l = (size_t)&s_st;
     T_ST *upst;
     T_LINKCB *px;
     bool lack = false;

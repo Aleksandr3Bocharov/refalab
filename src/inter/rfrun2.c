@@ -216,10 +216,10 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
 
 static bool letter(char s)
 {
-    if ((s >= 'A' && s <= 'Z') || // A..Z
-        (s >= 'a' && s <= 'z') || // a..z
-        (s > 127 && s < 176) ||   // �..��..�
-        (s > 223 && s < 240))     // �..�
+    if ((s >= 'A' && s <= 'Z') ||                 // A..Z
+        (s >= 'a' && s <= 'z') ||                 // a..z
+        ((uint8_t)s > 127 && (uint8_t)s < 176) || // �..��..�
+        ((uint8_t)s > 223 && (uint8_t)s < 240))   // �..�
         return true;
     return false;
 }
