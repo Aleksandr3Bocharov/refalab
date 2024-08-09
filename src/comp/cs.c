@@ -301,12 +301,12 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
     while (((q->mode) & '\300') == '\300')
         q = q->info.infop;
     if (((pp->mode) & '\300') == '\000')
-        pchosx("512 label", pp->id, pp->l, " not defined");
+        pchosj("512 label", pp->id, pp->l, " not defined");
     if ((((pp->mode) & '\040') == '\040') &&
         (((pp->mode) & '\300') == '\200'))
-        pchosx("511 label", pp->id, pp->l, " both extern and entry");
+        pchosj("511 label", pp->id, pp->l, " both extern and entry");
     if (((q->mode) & '\300') == '\300')
-        pchosx("502 label", pp->id, pp->l, " boht specifier and function");
+        pchosj("502 label", pp->id, pp->l, " boht specifier and function");
     return;
 }
 

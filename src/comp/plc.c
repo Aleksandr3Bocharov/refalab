@@ -20,7 +20,7 @@ int32_t index_x(const char *s, const char *t)
             l = i + 1;
     // l - length of s
 
-    size_t m;
+    size_t m = 0;
     for (size_t i = 0; i < imax; i++)
         if (*(t + i) == '\0')
             break;
