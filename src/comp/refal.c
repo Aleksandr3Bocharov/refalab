@@ -146,7 +146,7 @@ static char strg_c[78];
 static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
-static const char *card72 = card;
+// static const char *card72 = card;
 static uint32_t cdnumb; // card number   // kras
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -411,13 +411,19 @@ int main(int argc, char *argv[])
                 mod_state = KEYS;
                 break;
             }
-            strncpy(mod_name, stmlbl, 8 > lbl_leng ? lbl_leng : 8);
-            for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
+            const size_t lbl_leng8 = 8 > lbl_leng ? lbl_leng : 8;
+            for (i = 0; i < lbl_leng8; i++)
+            {
+                mod_name[i] = stmlbl[i];
                 mod_i[i] = mod_name[i];
-            mod_i[i] = 0;
+            }
+            // strncpy(mod_name, stmlbl, 8 > lbl_leng ? lbl_leng : 8);
+            // for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
+            //    mod_i[i] = mod_name[i];
+            mod_i[i] = '\0';
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
-            jstart(mod_name, 8 < lbl_leng ? 8 : lbl_leng);
+            jstart(mod_name, lbl_leng8);
             mod_state = NEXT_STM;
             break;
         case NEXT_STM:
@@ -565,8 +571,8 @@ static void rdline(char *s)
 { // read 80 symbols from sysin
     empcard = true;
     size_t i;
-    int c;
-    for (i = 0; ((c = getc(sysin)) != '\n') && (c != EOF) && (i < 80); i++)
+    int c = getc(sysin);
+    for (i = 0; (c != '\n') && (c != EOF) && (i < 80); i++)
     {
         if (c == '\t')
         {
@@ -581,7 +587,8 @@ static void rdline(char *s)
         {
             *(s + i) = c;
             empcard = false;
-        }
+        };
+        c = getc(sysin);
     }
     if ((c == EOF) && (i == 0))
         _eoj = true;
@@ -638,8 +645,11 @@ static void rdcard()
     while (true)
     {
         rdline(card);
-        strncpy(c, card72, 72);
-        translate(card72, class);
+        for (size_t i = 0; i < 72; i++)
+            *(c + i) = *(card + i);
+        // strncpy(c, card72, 72);
+        translate(card, class);
+        // translate(card72, class);
         ++scn_.nomkar;
         ++cdnumb;
         //  printf("\ncard %d",cdnumb);
@@ -1477,7 +1487,7 @@ static void pchk()
         card[72] = '\0';
         if (!_eoj)
         {
-            char tmpstr[80];
+            char tmpstr[100];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
             size_t i;
             for (i = 76; i > 4; i--)
@@ -1501,7 +1511,7 @@ static void pchk_t()
         card[72] = '\0';
         if (!_eoj)
         {
-            char tmpstr[80];
+            char tmpstr[100];
             sprintf(tmpstr, "%4d %s\n", cdnumb, card);
             fputs(tmpstr, systerm);
         }
@@ -1558,8 +1568,10 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         }
         else
         {
-            lide = (lid > 8) ? 8 : lid;
-            strncpy(ide, id, lide);
+            lide = lid > 8 ? 8 : lid;
+            for (size_t i = 0; i < lide; i++)
+                ide[i] = id[i];
+            // strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
         blout();
