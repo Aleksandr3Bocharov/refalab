@@ -539,7 +539,7 @@ void jend()
                 if (((p->mode) & '\300') != '\200')
                 {
                     //    nonexternal label
-                    sprintf(bufs, "\t.long\t_d%d$+%u\n", nommod, p->info.infon);
+                    sprintf(bufs, "\t.long\t_d%d$+%zu\n", nommod, p->info.infon);
                     fputs(bufs, syslin);
                 }
                 else
@@ -648,9 +648,9 @@ void jend()
 #ifdef UNIX
             // begin name without underlining _
 
-            sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t", nommod, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t", nommod, pp->info.infon);
 #else // Windows
-            sprintf(bufs, "\t=_d%d$+%d\n\t.globl\t_", nommod, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_", nommod, pp->info.infon);
 #endif
             fputs(bufs, syslin);
             for (size_t i = 0; i < q->le; i++)

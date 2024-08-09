@@ -216,7 +216,7 @@ static void GET_time()
     const uint32_t im = is / 60;
     is %= 60;
     char s[25];
-    sprintf(s, "%02ld:%02ld.%09ld", im, is, in);
+    sprintf(s, "%02u:%02u.%09d", im, is, in);
     printf("                       elapsed time      = %s\n", s);
     return;
 }
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     SET_time();
 
     options.source = true;
-    //options.stmnmb = false;
+    // options.stmnmb = false;
     options.extname = false;
     options.multmod = false;
     options.names = true;
@@ -1747,10 +1747,10 @@ static void pchzkl()
     cdnumb = 0;
     if (kolosh != 0)
         sprintf(pr_line,
-                "errors   = %-3d         obj_length(bytes) = %ld\n", kolosh, mod_length);
+                "errors   = %-3d         obj_length(bytes) = %zu\n", kolosh, mod_length);
     else
         sprintf(pr_line,
-                "                       obj_length(bytes) = %ld\n", mod_length);
+                "                       obj_length(bytes) = %zu\n", mod_length);
     if (options.source)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
