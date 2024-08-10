@@ -130,7 +130,7 @@ static void numb_()
         pcoden(p1, l >> 24);
         p1 = p1->next;
         p1->tag = TAGN;
-        l = l & 0xffffffL;
+        l = l & 0xffffff;
     }
     pcoden(p1, l);
     rftpl(refal.prevr, pz->prev, p1->next);

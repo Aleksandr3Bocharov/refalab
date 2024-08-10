@@ -231,7 +231,7 @@ void rfexec(const uint8_t *func)
         rftermm();
         return;
     }
-    s_st.stop = 0x7FFFFFFFL;
+    s_st.stop = 0x7FFFFFFF;
     enum
     {
         AGAIN,
@@ -469,8 +469,8 @@ bool lcre(T_ST *ast)
     ast->stprev = q;
     ast->state = 1;
     ast->dot = NULL;
-    ast->step = 0L;
-    ast->stop = -1L;
+    ast->step = 0;
+    ast->stop = -1;
     return true;
 }
 

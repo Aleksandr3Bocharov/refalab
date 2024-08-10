@@ -14,8 +14,8 @@
 #define Omul 3
 #define Odr 5
 
-#define HMAX 4096L
-#define MAX 16777216L
+#define HMAX 4096
+#define MAX 16777216
 #define SMAX 24
 
 static void oper(uint32_t o, uint32_t prn);
@@ -290,8 +290,8 @@ static void oper(uint32_t o, uint32_t prn)
                 //  X  dlinnee  Y  (ili =)
                 Xn = Xn->prev; //  pripisywaem  0
                 Xn->tag = TAGN;
-                pcoden(Xn, 0l);
-                peren = 0L;
+                pcoden(Xn, 0);
+                peren = 0;
                 for (x = Xk, y = Yk; (x != Xn->prev); x = x->prev)
                 {
                     if (y != Yn->prev)
@@ -304,10 +304,10 @@ static void oper(uint32_t o, uint32_t prn)
                     if (gcoden(x) >= MAX)
                     {
                         pcoden(x, gcoden(x) - MAX);
-                        peren = 1L;
+                        peren = 1;
                     }
                     else
-                        peren = 0L;
+                        peren = 0;
                 } // for
             }
             else
@@ -321,8 +321,8 @@ static void oper(uint32_t o, uint32_t prn)
                     obmen();   //  menjaem x i y
                 Xn = Xn->prev; //  pripisywaem 0
                 Xn->tag = TAGN;
-                pcoden(Xn, 0l);
-                peren = 0L;
+                pcoden(Xn, 0);
+                peren = 0;
                 for (x = Xk, y = Yk; (x != Xn->prev); x = x->prev)
                 {
                     j = gcoden(x);
@@ -333,13 +333,13 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     else
                         j -= peren;
-                    if (j < 0L)
+                    if (j < 0)
                     {
                         j += MAX;
                         peren = 1;
                     }
                     else
-                        peren = 0L;
+                        peren = 0;
                     pcoden(x, j);
                 } // for
             } // if
@@ -379,7 +379,7 @@ static void oper(uint32_t o, uint32_t prn)
             const uint32_t d = gcoden(y);
             if (d != 0l)
             { // umn. na 1 cifru
-                peren = 0L;
+                peren = 0;
                 const uint32_t b11 = d >> 12;
                 const uint32_t b22 = d & 0xFFF;
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
@@ -409,7 +409,7 @@ static void oper(uint32_t o, uint32_t prn)
                         // ymn (&a,&b);   // rez:a-T_ST, b-ml
                     }
                     j = gcoden(p) + b + peren;
-                    peren = 0L;
+                    peren = 0;
                     if (j >= MAX)
                     {
                         j -= MAX;
@@ -435,8 +435,8 @@ static void oper(uint32_t o, uint32_t prn)
         }
         if (Xdl == 0)
         {
-            a = 0L;
-            b = 0L;
+            a = 0;
+            b = 0;
             Xzn = '+';
             Yzn = '+';
             odnc = true;
@@ -444,8 +444,8 @@ static void oper(uint32_t o, uint32_t prn)
         }
         if (xmy() == 2)
         { //  rawny
-            a = 0L;
-            b = 1L;
+            a = 0;
+            b = 1;
             odnc = true;
             break;
         }
@@ -453,8 +453,8 @@ static void oper(uint32_t o, uint32_t prn)
         { //  delimoe < delitelja
             if ((prn & 2) == 2)
             { // DIV, DIVN
-                a = 0L;
-                b = 0L;
+                a = 0;
+                b = 0;
                 Xzn = '+';
                 Yzn = '+';
                 odnc = true;
@@ -583,11 +583,11 @@ static void oper(uint32_t o, uint32_t prn)
                 }
             }
             // umnovenie  delitelja  na 'c' i wychit. iz X
-            if (c != 0L)
+            if (c != 0)
             {
                 const T_LINKCB *Yt = Yk;
                 T_LINKCB *Xt = x;
-                peren = 0L;
+                peren = 0;
                 for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                 {
                     b = gcoden(Yt);
@@ -600,34 +600,34 @@ static void oper(uint32_t o, uint32_t prn)
                     if (j < b)
                     {
                         j += MAX;
-                        peren += 1L;
+                        peren += 1;
                     }
                     pcoden(Xt, j - b);
                     peren += a;
                 }
-                if (peren != 0L)
+                if (peren != 0)
                     //{                                // cifra welika
                     // uint32_t jj=0l;  // !!! wremenno !!!
                     do
                     {
                         // jj++;
-                        c -= 1L;
+                        c -= 1;
                         Xt = x;
                         Yt = Yk;
-                        j = 0L;
+                        j = 0;
                         for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                         {
                             a = gcoden(Xt) + gcoden(Yt) + j;
-                            j = 0L;
+                            j = 0;
                             if (a >= MAX)
                             {
                                 a -= MAX;
-                                j = 1L;
+                                j = 1;
                             }
                             pcoden(Xt, a);
                         }
                         peren -= j;
-                    } while (peren != 0L);
+                    } while (peren != 0);
                 // printf("\nc veliko jj=%ld",jj);
                 //}
             }
@@ -641,7 +641,7 @@ static void oper(uint32_t o, uint32_t prn)
         r = r->prev;
         if (n != 0)
         { // denormalizacija ostatka
-            peren = 0L;
+            peren = 0;
             i = 24 - n;
             c = 0xFFFFFFl >> i;
             for (x = Xn; x != Xk->next; x = x->next)
@@ -748,7 +748,7 @@ static void oper(uint32_t o, uint32_t prn)
         x = x->next;
     }
     y = x->next;
-    if (a != 0L)
+    if (a != 0)
         if (Xzn != '+')
         {
             y->tag = TAGO;

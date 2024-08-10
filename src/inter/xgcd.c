@@ -192,7 +192,7 @@ static void gcd_()
             size_t k;
             for (k = 0; k < l[0]; k++)
             {
-                if (A >= 128L)
+                if (A >= 128)
                     break;
                 A = A << 24;
                 A += gcoden(pr);
@@ -445,7 +445,7 @@ static void gcd_()
                 {
                     const T_LINKCB *Yt = tl[1];
                     T_LINKCB *Xt = px;
-                    peren = 0L;
+                    peren = 0;
                     uint32_t J;
                     for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                     {
@@ -459,32 +459,32 @@ static void gcd_()
                         if (J < b)
                         {
                             J += d24;
-                            peren += 1L;
+                            peren += 1;
                         }
                         pcoden(Xt, J - b);
                         peren += a;
                     }
-                    if (peren != 0L)
+                    if (peren != 0)
                     { // cifra welika
                         do
                         {
-                            c -= 1L;
+                            c -= 1;
                             Xt = px;
                             Yt = tl[1];
-                            J = 0L;
+                            J = 0;
                             for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                             {
                                 a = gcoden(Xt) + gcoden(Yt) + J;
-                                J = 0L;
+                                J = 0;
                                 if (a >= d24)
                                 {
                                     a -= d24;
-                                    J = 1L;
+                                    J = 1;
                                 }
                                 pcoden(Xt, a);
                             }
                             peren -= J;
-                        } while (peren != 0L);
+                        } while (peren != 0);
                     }
                 }
                 px = px->next;
@@ -495,7 +495,7 @@ static void gcd_()
             l[0]++;
             if (n != 0)
             {
-                peren = 0L;
+                peren = 0;
                 i = 24 - n;
                 c = MASKA >> i;
                 // denormalizacija ostatka
@@ -507,7 +507,7 @@ static void gcd_()
                     pcoden(px, b);
                 }
                 // denormalizacija delitelja
-                peren = 0L;
+                peren = 0;
                 for (px = hd[1]; px != tl[1]->next; px = px->next)
                 {
                     a = gcoden(px);

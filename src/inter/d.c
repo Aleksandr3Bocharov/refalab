@@ -58,9 +58,9 @@ static bool e1empty = false;
 static bool was_ge;
 static bool was_le;
 static bool was_eq;
-static uint32_t s_from = 0L;
-static uint32_t s_upto = 0L;
-static uint32_t s_stop = 2147483647L;
+static uint32_t s_from = 0;
+static uint32_t s_upto = 0;
+static uint32_t s_stop = 2147483647;
 static uint32_t nogcl = 0; // garbage collection counter
 static size_t s_arg;
 static size_t l_arg;
@@ -268,7 +268,7 @@ void rfdbg(T_ST *s_st)
     if (!s_from && (s_upto || trace_cond))
         s_from = 1;
     if (!s_upto && s_from)
-        s_upto = 0x7FFFFFFFL;
+        s_upto = 0x7FFFFFFF;
     //==================================
     //  initialization
     dba = dbapp;
@@ -890,7 +890,7 @@ static bool get_det()
 static bool get_numb(int32_t *numb)
 // ??? uint32_t better?
 {
-    if (sscanf(buff, "%d", numb) == 0 || *numb < 1L)
+    if (sscanf(buff, "%d", numb) == 0 || *numb < 1)
     {
         printf("\n                        Invalid number; repeat please.");
         return false;
