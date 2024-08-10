@@ -72,7 +72,7 @@ T_U *lookup(const char *idp, size_t lid)
     { // search step
         do
         {
-            if (strncmp(idp, p->id, (lid < p->l) ? lid : p->l) == 0)
+            if (strncmp(idp, p->id, lid < p->l ? lid : p->l) == 0)
             {
                 if (lid == p->l)
                 { // include usage number to list

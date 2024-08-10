@@ -1319,7 +1319,7 @@ static bool specif(char tail)
             if (left_part)
             {
                 code.tag = 0;
-                code.info.codef = 0L;
+                code.info.codef = NULL;
                 code.info.infoc[0] = '\'';
                 gsymbol(&code);
             }
@@ -1387,7 +1387,7 @@ static bool specif(char tail)
                             m--;
                     }
                 code.tag = 0;
-                code.info.codef = 0L;
+                code.info.codef = NULL;
                 code.info.infoc[0] = c[m];
                 gsymbol(&code);
             }
@@ -1635,8 +1635,8 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                     break;
                 }
                 const int l = c[m] - '0';
-                k = k * 10L + l;
-                if (k <= 16777215L)
+                k = k * 10 + l;
+                if (k <= 16777215)
                     continue;
                 break;
             }

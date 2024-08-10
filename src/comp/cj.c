@@ -479,7 +479,7 @@ static void zakon()
     sfcl(&sysut2);
     mod_length = curr_addr;
     // if (mod_length < 0)
-    //     mod_length = 65536L + mod_length;
+    //     mod_length = 65536 + mod_length;
     return;
 } // zakon
 
