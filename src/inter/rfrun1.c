@@ -243,7 +243,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             b0 = b2->info.codep;
             b1 = b0->next;
-            vpc = (uint8_t *)b1->info.codef;
+            vpc = b1->info.codef;
             if (b1->tag != TAGF)
             {
                 i_state = REF;
