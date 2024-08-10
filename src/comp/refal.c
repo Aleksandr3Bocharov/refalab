@@ -146,7 +146,7 @@ static char strg_c[78];
 static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
-// static const char *card72 = card;
+static const char *card72 = card;
 static uint32_t cdnumb; // card number   // kras
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -256,8 +256,10 @@ int main(int argc, char *argv[])
 
     char parm[40];
     size_t i;
-    for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; i++)
-        ;
+    strcpy(parm, argv[1]);
+    //parm[0] = *(argv[1]);
+    //for (i = 0; parm[i] != '\0'; i++)
+    //    parm[i] = *(argv[1] + i);
 
     // BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
     if (index_x(parm, ".") < 0)
@@ -285,8 +287,9 @@ int main(int argc, char *argv[])
     options.mincomp = false;
     for (size_t j = 2; j < argc; ++j)
     {
-        for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
-            ;
+        strcpy(parm, argv[j]);
+        //for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
+        //    ;
         if (parm[0] == '(')
         {
             for (int32_t i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
@@ -328,8 +331,9 @@ int main(int argc, char *argv[])
                 }
                 i += temp;
             } // end for
-            for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
-                ;
+            strcpy(parm, argv[1]);
+            //for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
+            //    ;
         } // end if
         else
         {
@@ -337,20 +341,23 @@ int main(int argc, char *argv[])
             exit(1);
         }
     } // end for
-    for (i = 0; ((parm[i] = *(argv[1] + i)) != '\0') && (parm[i] != '.'); ++i)
-        ;
+    parm[0] = *(argv[1]);
+    for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
+        parm[i] = *(argv[1] + i);
     parm[i] = '\0';
     if (options.source)
     {
         strcat(parm, ".lst");
-        if ((sysprint = fopen(parm, "w")) == NULL)
+        sysprint = fopen(parm, "w");
+        if (sysprint == NULL)
         {
             printf("Can't open %s\n", parm);
             exit(8);
         }
     }
-    for (i = 0; ((parm[i] = *(argv[1] + i)) != '\0') && (parm[i] != '.'); ++i)
-        ;
+    parm[0] = *(argv[1]);
+    for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
+        parm[i] = *(argv[1] + i);
     parm[i] = '\0';
     if (options.multmod)
     {
@@ -412,15 +419,11 @@ int main(int argc, char *argv[])
                 break;
             }
             const size_t lbl_leng8 = 8 > lbl_leng ? lbl_leng : 8;
-            for (i = 0; i < lbl_leng8; i++)
-            {
-                mod_name[i] = stmlbl[i];
-                mod_i[i] = mod_name[i];
-            }
-            // strncpy(mod_name, stmlbl, 8 > lbl_leng ? lbl_leng : 8);
+            strncpy(mod_name, stmlbl, lbl_leng8);
+            strncpy(mod_i, mod_name, lbl_leng8);
             // for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
             //    mod_i[i] = mod_name[i];
-            mod_i[i] = '\0';
+            mod_i[lbl_leng8] = '\0';
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
             jstart(mod_name, lbl_leng8);
@@ -602,7 +605,7 @@ static void translate(const char *str, char *class1)
     for (size_t i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
-        const int j = (int)(*(str + i));
+        const int j = *(str + i);
         if (j > 47)
             if (j < 58)
             {
@@ -645,11 +648,8 @@ static void rdcard()
     while (true)
     {
         rdline(card);
-        for (size_t i = 0; i < 72; i++)
-            *(c + i) = *(card + i);
-        // strncpy(c, card72, 72);
-        translate(card, class);
-        // translate(card72, class);
+        strncpy(c, card72, 72);
+        translate(card72, class);
         ++scn_.nomkar;
         ++cdnumb;
         //  printf("\ncard %d",cdnumb);
@@ -1569,9 +1569,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         else
         {
             lide = lid > 8 ? 8 : lid;
-            for (size_t i = 0; i < lide; i++)
-                ide[i] = id[i];
-            // strncpy(ide, id, lide);
+            strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
         blout();
@@ -1672,7 +1670,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 
 static char convert(char cm)
 {
-    const int j = (int)cm;
+    const int j = cm;
     if ((j > 96) && (j < 123))
         cm = cm - '\40';
     if ((j > -97) && (j < -80))
