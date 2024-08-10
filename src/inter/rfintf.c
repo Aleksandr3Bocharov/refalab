@@ -29,7 +29,7 @@ void rfabe(const char *amsg)
 
 bool lincrm()
 {
-    uint32_t n;
+    uint32_t n = 0;
     if (last_block != NULL)
     {
         const T_LINKCB *first_free = refal.flhead->next;
@@ -49,7 +49,7 @@ bool lincrm()
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88
 #ifdef mdebug
-    printf("\nLincrm: n=%d after new_block=%lx", n, new_block);
+    printf("\nLincrm: n=%d after new_block=%p", n, new_block);
 #endif
     if (new_block == NULL)
         return false;
@@ -208,7 +208,7 @@ void rftermm()
         last_block = new_block->prev;
         free(new_block);
 #ifdef mdebug
-        printf("\nLincrm: free new_block=%lx", new_block);
+        printf("\nLincrm: free new_block=%p", new_block);
 #endif
     }
 }
