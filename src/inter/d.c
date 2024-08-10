@@ -674,10 +674,17 @@ static void dbapp(T_ST *ss_st)
 //    procedures
 static void init_det_flags()
 {
-    for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
+    /*for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
     {
         free(det->det_id);
         DET_TAB *det1 = det;
+        free(det1);
+    }*/
+    for (DET_TAB *det = last_det; det != NULL;)
+    {
+        free(det->det_id);
+        DET_TAB *det1 = det;
+        det = det->det_next;
         free(det1);
     }
     last_det = NULL;
