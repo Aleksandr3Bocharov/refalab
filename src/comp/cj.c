@@ -217,10 +217,10 @@ static void sfwr2()
     while (true)
     {
         const size_t ost = sysut2.len - sysut2.tek;
-        if (ost >= 6)
+        if (ost >= SMBL)
         {
-            memcpy(sysut2.buf + sysut2.tek, &rl, 6);
-            sysut2.tek += 6;
+            memcpy(sysut2.buf + sysut2.tek, &rl, SMBL);
+            sysut2.tek += SMBL;
             return;
         }
         if (sysut2.fil == NULL)
@@ -302,10 +302,10 @@ static void sfrd2()
     while (true)
     {
         const size_t ost = sysut2.len - sysut2.tek;
-        if (ost >= 6)
+        if (ost >= SMBL)
         {
-            memcpy(&rl, sysut2.buf + sysut2.tek, 6);
-            sysut2.tek += 6;
+            memcpy(&rl, sysut2.buf + sysut2.tek, SMBL);
+            sysut2.tek += SMBL;
             return;
         }
         /*if (fread(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
@@ -393,7 +393,7 @@ void j3addr(T_U *pp)
     rl.delta = delta;
     delta = 0;
     sfwr2();
-    curr_addr += 4;
+    curr_addr += LBLL;
     return;
 }
 
