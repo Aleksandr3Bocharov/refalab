@@ -1613,7 +1613,7 @@ static void pch130()
 
 static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read multiple symbol
 {
-    code->tag = 0;
+    code->tag = TAGO;
     code->info.codef = NULL;
     EH ROMA0; // kras
     do
@@ -1634,7 +1634,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                     csmbend = true;
                     break;
                 }
-                const int l = c[m] - '0';
+                const uint32_t l = c[m] - '0';
                 k = k * 10 + l;
                 if (k <= 16777215)
                     continue;

@@ -881,6 +881,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             nel++;
             n2 = n;
             state = RCGR;
+            break;
         case RSW5:
             //    w_variable
             ind = x[n].ind;
