@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     strcpy(parm, argv[1]);
     //parm[0] = *(argv[1]);
     //for (i = 0; parm[i] != '\0'; i++)
-    //    parm[i] = *(argv[1] + i);
+    //    parm[i + 1] = *(argv[1] + i + 1);
 
     // BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
     if (index_x(parm, ".") < 0)
@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
     } // end for
     parm[0] = *(argv[1]);
     for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
-        parm[i] = *(argv[1] + i);
+        parm[i + 1] = *(argv[1] + i + 1);
     parm[i] = '\0';
     if (options.source)
     {
@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
     }
     parm[0] = *(argv[1]);
     for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
-        parm[i] = *(argv[1] + i);
+        parm[i + 1] = *(argv[1] + i + 1);
     parm[i] = '\0';
     if (options.multmod)
     {
