@@ -584,7 +584,7 @@ static void rdline(char *s)
                 *(s + i + j) = ' ';
             i += (k - 1);
         }
-        else if ((c < ' ') && (c > 0))
+        else if ((c < ' ') && (c > '\0'))
             *(s + i) = ' ';
         else
         {
