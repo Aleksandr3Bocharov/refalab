@@ -194,7 +194,7 @@ static T_LINKCB *f0, *f1, *f;
 static const uint8_t *vpca; // additional vpc
 static size_t i, n, m;
 
-static char (*fptr)(T_REFAL *);
+static void (*fptr)();
 
 void rfrun(T_ST *ast) // adress of current state table
 {
@@ -1665,7 +1665,7 @@ void rfrun(T_ST *ast) // adress of current state table
             refal.preva = b1;
             refal.nexta = b2;
             //        call  C - function
-            (*fptr)(&refal);
+            (*fptr)();
             switch (refal.upshot)
             {
             case 1:
