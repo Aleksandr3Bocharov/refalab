@@ -33,9 +33,9 @@ static void p1_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-static char p1_0[] = {Z2 'P', '1', '\002'};
+void (*p1_1)() = p1_;
 G_L_B char p1 = '\122';
-static void (*p1_1)() = p1_;
+char p1_0[] = {Z2 'P', '1', '\002'};
 
 static void m1_()
 {
@@ -59,9 +59,9 @@ static void m1_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-static char m1_0[] = {Z2 'M', '1', '\002'};
+void (*m1_1)() = m1_;
 G_L_B char m1 = '\122';
-static void (*m1_1)() = m1_;
+char m1_0[] = {Z2 'M', '1', '\002'};
 
 /*static int32_t cmpstr(size_t n, const char *s1, const char *s2)
 {
@@ -103,7 +103,7 @@ static void numb_()
             neot = true;
             break;
         }
-        if ((i == 9) && (strncmp(str, "2147483647", i+1) > 0))
+        if ((i == 9) && (strncmp(str, "2147483647", i + 1) > 0))
         {
             neot = true;
             break;
@@ -136,9 +136,9 @@ static void numb_()
     rftpl(refal.prevr, pz->prev, p1->next);
     return;
 }
-static char numb_0[] = {Z4 'N', 'U', 'M', 'B', '\004'};
+void (*numb_1)() = numb_;
 G_L_B char numb = '\122';
-static void (*numb_1)() = numb_;
+char numb_0[] = {Z4 'N', 'U', 'M', 'B', '\004'};
 
 static void symb_()
 {
@@ -152,7 +152,7 @@ static void symb_()
             pz = p;
     }
     T_LINKCB *p1 = p;
-    while ((p->tag == TAGN) && (gcoden(p) == 0l))
+    while ((p->tag == TAGN) && (gcoden(p) == 0))
         p = p->next;
     size_t i;
     bool neot = false;
@@ -176,10 +176,10 @@ static void symb_()
     uint32_t l = gcoden(p);
     if (i == 2)
         l = l + 16777216l * gcoden(p1);
-    if ((i == 0) || (l == 0l))
+    if ((i == 0) || (l == 0))
     {
         pz = p1;
-        l = 0l;
+        l = 0;
     }
     char str[12];
     sprintf(str, "%u", l);
@@ -208,9 +208,9 @@ static void symb_()
     rftpl(refal.prevr, pz->prev, p);
     return;
 }
-static char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
+void (*symb_1)() = symb_;
 G_L_B char symb = '\122';
-static void (*symb_1)() = symb_;
+char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
 
 static void first_()
 {
@@ -245,9 +245,9 @@ static void first_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-static char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
+void (*first_1)() = first_;
 G_L_B char first = '\122';
-static void (*first_1)() = first_;
+char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
 
 static void last_()
 {
@@ -286,13 +286,13 @@ static void last_()
     rftpl(p, refal.nextr, refal.nexta);
     return;
 }
-static char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
+void (*last_1)() = last_;
 G_L_B char last = '\122';
-static void (*last_1)() = last_;
+char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
 
 static void lengr_()
 {
-    uint32_t n = 0l; // kras
+    uint32_t n = 0; // kras
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -304,13 +304,13 @@ static void lengr_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-static char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
+void (*lengr_1)() = lengr_;
 G_L_B char lengr = '\122';
-static void (*lengr_1)() = lengr_;
+char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
 
 static void lengw_()
 {
-    uint32_t n = 0l; // kras
+    uint32_t n = 0; // kras
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -324,9 +324,9 @@ static void lengw_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-static char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
+void (*lengw_1)() = lengw_;
 G_L_B char lengw = '\122';
-static void (*lengw_1)() = lengw_;
+char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
 
 static void multe_()
 {
@@ -369,9 +369,9 @@ static void multe_()
     }
     return;
 }
-static char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', '\005'};
+void (*multe_1)() = multe_;
 G_L_B char multe = '\122';
-static void (*multe_1)() = multe_;
+char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', '\005'};
 
 static void delf_()
 {
@@ -409,9 +409,9 @@ static void delf_()
     refal.nextr->info.codep = nd;
     return;
 }
-static char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
+void (*delf_1)() = delf_;
 G_L_B char delf = '\122';
-static void (*delf_1)() = delf_;
+char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
 
 static void crel_()
 {
@@ -478,8 +478,8 @@ static void crel_()
     refal.upshot = 2;
     return;
 }
-static char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
+void (*crel_1)() = crel_;
 G_L_B char crel = '\122';
-static void (*crel_1)() = crel_;
+char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
 
 //-------------------- end of file  XMO.C ----------------

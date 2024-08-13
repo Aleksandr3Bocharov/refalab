@@ -109,7 +109,7 @@ bool slins(T_LINKCB *p, size_t k)
     return lins(p, k);
 }
 
-bool linskd(T_ST *ast, const uint8_t *f)
+bool linskd(T_ST *ast, const void (*f)())
 {
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
@@ -213,7 +213,7 @@ void rftermm()
     }
 }
 
-void rfexec(const uint8_t *func)
+void rfexec(const void (*func)())
 {
     T_ST s_st;
     if (rf_init)

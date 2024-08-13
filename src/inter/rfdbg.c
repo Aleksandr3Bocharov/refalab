@@ -11,7 +11,7 @@
 #include "rfintf.h"
 
 static T_ST s_st;
-extern char go();
+extern void go();
 
 int main()
 {
@@ -22,7 +22,7 @@ int main()
             break;
         if (!lcre(&s_st))
             break;
-        if (!linskd(&s_st, (uint8_t *)go))
+        if (!linskd(&s_st, go))
             break;
         rfdbg(&s_st); // there is exit
     } while (false);

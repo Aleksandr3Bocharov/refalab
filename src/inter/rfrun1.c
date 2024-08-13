@@ -223,7 +223,7 @@ void rfrun(T_ST *ast) // adress of current state table
     // adress of free memory list head
     T_LINKCB *flhead = refal.flhead;
     if (tmmod)
-        tmstart = time(0l);
+        tmstart = time(NULL);
     T_I_STATES i_state = START;
     while (true)
         switch (i_state)
@@ -294,7 +294,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // state remove from
         case EXIT:
             if (tmmod)
-                tmstop = time(0l);
+                tmstop = time(0);
             ast->dot = quasik.info.codep;
             // restore REFAL-block
             refal.upshot = savecr->upshot_;

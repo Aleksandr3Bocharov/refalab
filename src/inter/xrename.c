@@ -33,9 +33,9 @@ static void unlnk_()
     }
     return;
 }
-static char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
+void (*unlnk_1)() = unlnk_;
 G_L_B char unlnk = '\122';
-static void (*unlnk_1)() = unlnk_;
+char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
 
 static void renam_()
 {
@@ -85,8 +85,8 @@ static void renam_()
     refal.upshot = 2;
     return;
 }
-static char renam_0[] = {Z5 'R', 'E', 'N', 'A', 'M', '\005'};
+void (*renam_1)() = renam_;
 G_L_B char renam = '\122';
-static void (*renam_1)() = renam_;
+char renam_0[] = {Z5 'R', 'E', 'N', 'A', 'M', '\005'};
 
 //-------- end of file  XRENAME.C -------

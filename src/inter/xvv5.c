@@ -72,9 +72,9 @@ static void open_()
    refal.upshot = 2;
    return;
 }
-static char open_0[] = {Z4 'O', 'P', 'E', 'N', '\004'};
+void (*open_1)() = open_;
 G_L_B char xopen = '\122';
-static void (*open_1)() = open_;
+char open_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
 
 static void close_()
 {
@@ -110,9 +110,9 @@ static void close_()
    refal.upshot = 2;
    return;
 }
-static char close_0[] = {Z5 'C', 'L', 'O', 'S', 'E', '\005'};
+void (*close_1)() = close_;
 G_L_B char xclose = '\122';
-static void (*close_1)() = close_;
+char close_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
 
 static void get_()
 {
@@ -132,7 +132,7 @@ static void get_()
          strcpy(namf, "REFAL0.DAT");
          namf[5] = j + '0';
          f = fopen(namf, "r");
-         if (f  == NULL)
+         if (f == NULL)
          {
             printf("\nREFAL(get): can't open file %s", namf);
             neot1 = true;
@@ -163,9 +163,9 @@ static void get_()
    refal.upshot = 2;
    return;
 }
-static char get_0[] = {Z3 'G', 'E', 'T', '\003'};
+void (*get_1)() = get_;
 G_L_B char xget = '\122';
-static void (*get_1)() = get_;
+char get_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
 
 static void put_()
 {
@@ -229,8 +229,8 @@ static void put_()
    refal.upshot = 2;
    return;
 }
-static char put_0[] = {Z3 'P', 'U', 'T', '\003'};
+void (*put_1)() = put_;
 G_L_B char xput = '\122';
-static void (*put_1)() = put_;
+char put_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
 
 //----------  end of file XVV5.C  -----------

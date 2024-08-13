@@ -12,7 +12,7 @@
 
 static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
 {                                                              //  X - ukaz. na konec
-    uint32_t peren = 0l;
+    uint32_t peren = 0;
     const size_t ip = 24 - j;
     const uint32_t m = MASKA >> j; // maska
     for (size_t i = 0; i < dl; i++)
@@ -28,14 +28,14 @@ static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makro
 
 static void ymn(int32_t *a, int32_t *b)
 { // rez.: a - star., b - mlad.
-    if (*a == 0l)
+    if (*a == 0)
     {
-        *b = 0l;
+        *b = 0;
         return;
     }
-    if (*b == 0l)
+    if (*b == 0)
     {
-        *a = 0l;
+        *a = 0;
         return;
     }
     const uint32_t a1 = (*a) >> 12;
@@ -113,13 +113,13 @@ static void gcd_()
             //*******   ob. cikl  ***********
             //   unicht. lewyh nulej
             if (l[0] != 0)
-                while (gcoden(hd[0]) == 0l && l[0] > 0)
+                while (gcoden(hd[0]) == 0 && l[0] > 0)
                 {
                     hd[0] = hd[0]->next;
                     l[0]--;
                 }
             if (l[1] != 0)
-                while (gcoden(hd[1]) == 0l && l[1] > 0)
+                while (gcoden(hd[1]) == 0 && l[1] > 0)
                 {
                     hd[1] = hd[1]->next;
                     l[1]--;
@@ -187,7 +187,7 @@ static void gcd_()
             break;
         case M21:
             //   wybor metoda
-            uint32_t A = 0l;
+            uint32_t A = 0;
             pr = hd[0];
             size_t k;
             for (k = 0; k < l[0]; k++)
@@ -203,7 +203,7 @@ static void gcd_()
             {
                 // Evklid nad korotkimi
                 // UTV: l[0] >= l[1]
-                B = 0l;
+                B = 0;
                 pr = hd[1];
                 for (k = 0; k < l[1]; k++)
                 {
@@ -211,7 +211,7 @@ static void gcd_()
                     B += gcoden(pr);
                     pr = pr->next;
                 }
-                while (B != 0l)
+                while (B != 0)
                 {
                     v1 = A / B;
                     v2 = A - v1 * B;
@@ -221,7 +221,7 @@ static void gcd_()
                 // UTV: rez v A
                 pr = refal.preva->next;
                 v1 = A >> 24;
-                if (v1 != 0l)
+                if (v1 != 0)
                 {
                     pr->tag = TAGN;
                     pcoden(pr, v1);
@@ -247,7 +247,7 @@ static void gcd_()
             }
             // UTV:  l[1] > hvosta,
             // UTV:  l[0] = {1/2}
-            B = 0l;
+            B = 0;
             pr = hd[1];
             for (k = 0; k < lb; k++)
             {
@@ -298,7 +298,7 @@ static void gcd_()
             {
                 hd[1] = hd[1]->prev;
                 hd[1]->tag = TAGN;
-                pcoden(hd[1], 0l);
+                pcoden(hd[1], 0);
                 l[1]++;
             }
             p[0] = tl[0];
@@ -367,15 +367,15 @@ static void gcd_()
             //  delenie mnogih  cifr
             hd[0] = hd[0]->prev;
             hd[0]->tag = TAGN;
-            pcoden(hd[0], 0l);
+            pcoden(hd[0], 0);
             l[0]++;
             T_LINKCB *px;
             for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
                 ;
             T_LINKCB *py = hd[1]->prev;
             py->tag = TAGN;
-            pcoden(py, 0l);
-            size_t n;
+            pcoden(py, 0);
+            size_t n = 0;
             int32_t b;
             if (l[1] != 0)
             { // wozmovna normalizacija
@@ -388,19 +388,19 @@ static void gcd_()
                     norm(tl[1], l[1], n);
                 }
             }
-            uint32_t peren = 0l;
+            uint32_t peren = 0;
             int32_t a, c;
             do
             {
                 a = gcoden(hd[0]);
                 const uint32_t a1 = gcoden(hd[0]->next);
                 b = gcoden(hd[1]);
-                if ((a == 0l) && (a1 < b))
-                    c = 0l;
+                if ((a == 0) && (a1 < b))
+                    c = 0;
                 else
                 {
                     uint32_t b1;
-                    if ((a == 0l) && (a1 >= b))
+                    if ((a == 0) && (a1 >= b))
                     {
                         c = 1l; //  t.k. b - normalizowano
                         a = a1;
@@ -419,7 +419,7 @@ static void gcd_()
                         c = c + a / b;
                     }
                     b1 = gcoden(hd[1]->next);
-                    if ((l[1] > 1) && (b1 != 0l))
+                    if ((l[1] > 1) && (b1 != 0))
                     {
                         x[0] = b1;
                         x[1] = c;
@@ -441,7 +441,7 @@ static void gcd_()
                     }
                 }
                 // umnovenie  delitelja  na 'c' i wychit. iz X
-                if (c != 0L)
+                if (c != 0)
                 {
                     const T_LINKCB *Yt = tl[1];
                     T_LINKCB *Xt = px;
@@ -537,8 +537,8 @@ static void gcd_()
             return;
         }
 }
-static char add_0[] = {Z3 'G', 'C', 'D', '\003'};
+void (*gcd_1)() = gcd_;
 G_L_B char gcd = '\122';
-static void (*gcd_1)() = gcd_;
+char add_0[] = {Z3 'G', 'C', 'D', '\003'};
 
 //------------------ end of file  XGCD.C ----------------

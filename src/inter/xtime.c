@@ -36,9 +36,9 @@ static void rftime_()
     }
     return;
 }
-static char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
+void (*rftime_1)() = rftime_;
 G_L_B char rftime = '\122';
-static void (*rftime_1)() = rftime_;
+char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
 
 static void rftm_()
 {
@@ -67,7 +67,7 @@ static void rftm_()
                 is %= 60;
                 const uint32_t ih = im / 60;
                 im %= 60;
-                char s[25];
+                char s[30];
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
                 p = refal.prevr;
                 if (!slins(p, strlen(s)))
@@ -86,8 +86,8 @@ static void rftm_()
     refal.upshot = 2;
     return;
 }
-static char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
+void (*rftm_1)() = rftm_;
 G_L_B char rftm = '\122';
-static void (*rftm_1)() = rftm_;
+char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
 
 //------------------ end of file  XTIME.C ----------------

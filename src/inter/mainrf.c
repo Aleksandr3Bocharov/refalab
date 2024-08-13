@@ -6,11 +6,11 @@
 #include "rfintf.h"
 
 // BLF GO -> go  
-extern char go();
+extern void go();
 
 int main()
 {
-    rfexec((uint8_t *)go);
+    rfexec(go);
 }
 
 //---------  end of file MAINRF.C  --------- 

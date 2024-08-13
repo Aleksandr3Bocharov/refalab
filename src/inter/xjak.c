@@ -70,9 +70,9 @@ static void br_()
     rftpl(pl, refal.preva, refal.nexta);
     return;
 }
-static char br_0[] = {Z2 'B', 'R', '\002'};
+void (*br_1)() = br_;
 G_L_B char br = '\122';
-static void (*br_1)() = br_;
+char br_0[] = {Z2 'B', 'R', '\002'};
 
 static void dg_()
 {
@@ -81,7 +81,7 @@ static void dg_()
     T_LINKCB *q, *pl;
     while (true)
     {
-        T_LINKCB *pl = pr->next;
+        pl = pr->next;
         if (pl == ast->store)
             return;
         if (pl->tag != TAGLB)
@@ -103,9 +103,9 @@ static void dg_()
     rfdel(pl, pr);
     return;
 }
-static char dg_0[] = {Z2 'D', 'G', '\002'};
+void (*dg_1)() = dg_;
 G_L_B char dg = '\122';
-static void (*dg_1)() = dg_;
+char dg_0[] = {Z2 'D', 'G', '\002'};
 
 static void dgall_()
 {
@@ -116,14 +116,14 @@ static void dgall_()
         rftpl(refal.prevr, ast->store, ast->store);
     return;
 }
-static char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
+void (*dgal_1)() = dgall_;
 G_L_B char dgall = '\122';
-static void (*dgal_1)() = dgall_;
+char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
 
 static void gtr_()
 {
     const bool emp = true;
-    T_LINKCB *p, *r;
+    T_LINKCB *p = NULL, *r;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -132,14 +132,14 @@ static void gtr_()
     rftpl(refal.prevr, p, p);
     return;
 }
-static char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
+void (*gtr_1)() = gtr_;
 G_L_B char gtr = '\122';
-static void (*gtr_1)() = gtr_;
+char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
 
 static void rdr_()
 {
     const bool emp = true;
-    T_LINKCB *p, *r;
+    T_LINKCB *p = NULL, *r;
     if (!enter(emp, &p, &r))
     {
         refal.upshot = 2;
@@ -152,9 +152,9 @@ static void rdr_()
     }; // LACK
     return;
 }
-static char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
+void (*rdr_1)() = rdr_;
 G_L_B char rdr = '\122';
-static void (*rdr_1)() = rdr_;
+char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
 
 static void ptr_()
 {
@@ -171,13 +171,13 @@ static void ptr_()
 }
 // BLF
 #ifdef UNIX
-static char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
+void (*ptr_1)() = ptr_;
 G_L_B char pt_ = '\122';
-static void (*ptr_1)() = ptr_;
+char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
 #else
-static char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
+void (*ptr_1)() = ptr_;
 G_L_B char ptr = '\122';
-static void (*ptr_1)() = ptr_;
+char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
 #endif
 
 static void wtr_()
@@ -193,9 +193,9 @@ static void wtr_()
     rftpl(p, r, refal.nexta);
     return;
 }
-static char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
+void (*wtr_1)() = wtr_;
 G_L_B char wtr = '\122';
-static void (*wtr_1)() = wtr_;
+char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
 
 static void swr_()
 {
@@ -210,9 +210,9 @@ static void swr_()
     rftpl(p, r, refal.nexta);
     return;
 }
-static char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
+void (*swr_1)() = swr_;
 G_L_B char swr = '\122';
-static void (*swr_1)() = swr_;
+char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
 
 static void rp_()
 {
@@ -271,13 +271,13 @@ static void rp_()
 
 // BLF
 #ifdef UNIX
-static char rp_0[] = {Z2 'R', '_', '\002'};
+void (*rp_1)() = rp_;
 G_L_B char r_ = '\122';
-static void (*rp_1)() = rp_;
+char rp_0[] = {Z2 'R', '_', '\002'};
 #else
-static char rp_0[] = {Z2 'R', 'P', '\002'};
+void (*rp_1)() = rp_;
 G_L_B char rp = '\122';
-static void (*rp_1)() = rp_;
+char rp_0[] = {Z2 'R', 'P', '\002'};
 #endif
 
 static void cp_()
@@ -307,9 +307,9 @@ static void cp_()
         refal.upshot = 3; // LACK
     return;
 }
-static char cp_0[] = {Z2 'C', 'P', '\002'};
+void (*cp_1)() = cp_;
 G_L_B char cp = '\122';
-static void (*cp_1)() = cp_;
+char cp_0[] = {Z2 'C', 'P', '\002'};
 
 static void new_()
 {
@@ -331,8 +331,8 @@ static void new_()
     refal.dvar = refal.preva;
     return;
 }
-static char new_0[] = {Z3 'N', 'E', 'W', '\003'};
+void (*new_1)() = new_;
 G_L_B char new = '\122';
-static void (*new_1)() = new_;
+char new_0[] = {Z3 'N', 'E', 'W', '\003'};
 
 //----------------- end of file  XJAK.C ----------------

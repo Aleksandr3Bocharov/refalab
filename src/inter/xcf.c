@@ -50,9 +50,9 @@ static void ftochar_()
     }
     return;
 }
-static char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', '\007'};
+void (*ftochar_1)() = ftochar_;
 G_L_B char ftochar = '\122';
-static void (*ftochar_1)() = ftochar_;
+char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', '\007'};
 
 static void functab_()
 {
@@ -75,9 +75,9 @@ static void functab_()
     func_n++;
     return;
 }
-static char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', '\007'};
+void (*functab_1)() = functab_;
 G_L_B char functab = '\122';
-static void (*functab_1)() = functab_;
+char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', '\007'};
 
 static void chartof_()
 {
@@ -148,8 +148,8 @@ static void chartof_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-static char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
+void (*chartof_1)() = chartof_;
 G_L_B char chartof = '\122';
-static void (*chartof_1)() = chartof_;
+char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
 
 //------------------ end of file  XCF.C ----------------

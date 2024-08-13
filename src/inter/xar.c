@@ -24,83 +24,83 @@ static void add_() { oper(Oadd, 0); }
 
 // BLF
 #ifdef UNIX
-static char add_0[] = {Z3 'A', 'D', '_', '\003'};
+void (*add_1)() = add_;
 G_L_B char ad_ = '\122';
-static void (*add_1)() = add_;
+char add_0[] = {Z3 'A', 'D', '_', '\003'};
 #else
-static char add_0[] = {Z3 'A', 'D', 'D', '\003'};
+void (*add_1)() = add_;
 G_L_B char add = '\122';
-static void (*add_1)() = add_;
+char add_0[] = {Z3 'A', 'D', 'D', '\003'};
 #endif
 
 static void sub_() { oper(Osub, 0); }
 
 // BLF
 #ifdef UNIX
-static char sub_0[] = {Z3 'S', 'U', '_', '\003'};
+void (*sub_1)() = sub_;
 G_L_B char su_ = '\122';
-static void (*sub_1)() = sub_;
+char sub_0[] = {Z3 'S', 'U', '_', '\003'};
 #else
-static char sub_0[] = {Z3 'S', 'U', 'B', '\003'};
+void (*sub_1)() = sub_;
 G_L_B char sub = '\122';
-static void (*sub_1)() = sub_;
+char sub_0[] = {Z3 'S', 'U', 'B', '\003'};
 #endif
 
 static void mul_() { oper(Omul, 0); }
 
 // BLF
 #ifdef UNIX
-static char mul_0[] = {Z3 'M', 'U', '_', '\003'};
+void (*mul_1)() = mul_;
 G_L_B char mu_ = '\122';
-static void (*mul_1)() = mul_;
+char mul_0[] = {Z3 'M', 'U', '_', '\003'};
 #else
-static char mul_0[] = {Z3 'M', 'U', 'L', '\003'};
+void (*mul_1)() = mul_;
 G_L_B char mul = '\122';
-static void (*mul_1)() = mul_;
+char mul_0[] = {Z3 'M', 'U', 'L', '\003'};
 #endif
 
 static void dr_() { oper(Odr, 0); }
-static char dr_0[] = {Z2 'D', 'R', '\002'};
+void (*dr_1)() = dr_;
 G_L_B char dr = '\122';
-static void (*dr_1)() = dr_;
+char dr_0[] = {Z2 'D', 'R', '\002'};
 
 static void divv_() { oper(Odr, 2); }
 
 // BLF
 #ifdef UNIX
-static char div_0[] = {Z3 'D', 'I', '_', '\003'};
+void (*div_1)() = divv_;
 G_L_B char div_ = '\122';
-static void (*div_1)() = divv_;
+char div_0[] = {Z3 'D', 'I', '_', '\003'};
 #else
-static char div_0[] = {Z3 'D', 'I', 'V', '\003'};
+void (*div_1)() = divv_;
 G_L_B char div_ = '\122';
-static void (*div_1)() = divv_;
+char div_0[] = {Z3 'D', 'I', 'V', '\003'};
 #endif
 
 static void addn_() { oper(Oadd, 1); }
-static char addn_0[] = {Z4 'A', 'D', 'D', 'N', '\004'};
+void (*addn_1)() = addn_;
 G_L_B char addn = '\122';
-static void (*addn_1)() = addn_;
+char addn_0[] = {Z4 'A', 'D', 'D', 'N', '\004'};
 
 static void subn_() { oper(Osub, 1); }
-static char subn_0[] = {Z4 'S', 'U', 'B', 'N', '\004'};
+void (*subn_1)() = subn_;
 G_L_B char subn = '\122';
-static void (*subn_1)() = subn_;
+char subn_0[] = {Z4 'S', 'U', 'B', 'N', '\004'};
 
 static void muln_() { oper(Omul, 1); }
-static char muln_0[] = {Z4 'M', 'U', 'L', 'N', '\004'};
+void (*muln_1)() = muln_;
 G_L_B char muln = '\122';
-static void (*muln_1)() = muln_;
+char muln_0[] = {Z4 'M', 'U', 'L', 'N', '\004'};
 
 static void drn_() { oper(Odr, 1); }
-static char drn_0[] = {Z3 'D', 'R', 'N', '\003'};
+void (*drn_1)() = drn_;
 G_L_B char drn = '\122';
-static void (*drn_1)() = drn_;
+char drn_0[] = {Z3 'D', 'R', 'N', '\003'};
 
 static void divn_() { oper(Odr, 3); }
-static char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
+void (*divn_1)() = divn_;
 G_L_B char divn = '\122';
-static void (*divn_1)() = divn_;
+char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
 
 static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static size_t dl, Xdl, Ydl;
@@ -124,7 +124,7 @@ static bool dajch()
         if (x == y)
             return false; //  w chisle - lish znak
     }
-    for (; (x->tag == TAGN) && (gcoden(x) == 0l); x = x->next)
+    for (; (x->tag == TAGN) && (gcoden(x) == 0); x = x->next)
         ;
     if (x == y)
         dl = 0; //  wse cifry - nuli
@@ -202,14 +202,14 @@ static uint32_t xmy()
 
 static void ymn(uint32_t *a, uint32_t *b)
 { // rez.: a - T_ST., b - ml
-    if (*a == 0l)
+    if (*a == 0)
     {
-        *b = 0l;
+        *b = 0;
         return;
     }
-    if (*b == 0l)
+    if (*b == 0)
     {
-        *a = 0l;
+        *a = 0;
         return;
     }
     const uint32_t a1 = (*a) >> 12;
@@ -236,7 +236,7 @@ static void ymn(uint32_t *a, uint32_t *b)
 
 static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
 {                                                  //  X - ukaz. na konec
-    uint32_t peren = 0l;
+    uint32_t peren = 0;
     const size_t ip = 24 - j;
     const uint32_t m = 0xFFFFFFl >> j; // maska
     for (size_t i = 0; i < dl; i++)
@@ -364,20 +364,20 @@ static void oper(uint32_t o, uint32_t prn)
         for (x = p; x != r->next; x = x->next)
         {
             x->tag = TAGN;
-            pcoden(x, 0l);
+            pcoden(x, 0);
         } //  zanulen rezultat
         if (Xdl < Ydl)
             obmen();
         //  dobawim 0 k X dlja summir. s perenosom
         Xn = Xn->prev;
         Xn->tag = TAGN;
-        pcoden(Xn, 0l);
+        pcoden(Xn, 0);
         T_LINKCB *f;
         uint32_t c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
         {
             const uint32_t d = gcoden(y);
-            if (d != 0l)
+            if (d != 0)
             { // umn. na 1 cifru
                 peren = 0;
                 const uint32_t b11 = d >> 12;
@@ -385,8 +385,8 @@ static void oper(uint32_t o, uint32_t prn)
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
                 {
                     a = gcoden(x);
-                    if (a == 0l)
-                        b = 0l;
+                    if (a == 0)
+                        b = 0;
                     else
                     {
                         const uint32_t a11 = a >> 12;
@@ -477,7 +477,7 @@ static void oper(uint32_t o, uint32_t prn)
             {
                 Xn = Xn->prev;
                 Xn->tag = TAGN;
-                pcoden(Xn, 0l);
+                pcoden(Xn, 0);
             }
             rftpl(refal.prevr, Xn->prev, Xk->next);
             return;
@@ -504,14 +504,14 @@ static void oper(uint32_t o, uint32_t prn)
         nach = r;
         Xn = Xn->prev;
         Xn->tag = TAGN;
-        pcoden(Xn, 0l);
+        pcoden(Xn, 0);
         Xdl++;
         size_t i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
             ;
         y = Yn->prev;
         y->tag = TAGN;
-        pcoden(y, 0l);
+        pcoden(y, 0);
         size_t n = 0;
         if (Ydl != 0)
         { // wozmovna normalizacija
@@ -531,14 +531,14 @@ static void oper(uint32_t o, uint32_t prn)
             b = gcoden(Yn);
             /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
                                 b,(uint32_t)gcoden(Yn->next));*/
-            if ((a == 0l) && (a1 < b))
-                c = 0l;
+            if ((a == 0) && (a1 < b))
+                c = 0;
             else
             {
                 uint32_t b1;
-                if ((a == 0l) && (a1 >= b))
+                if ((a == 0) && (a1 >= b))
                 {
-                    c = 1l; //  t.k. b - normalizowano
+                    c = 1; //  t.k. b - normalizowano
                     a = a1;
                 }
                 else
@@ -555,7 +555,7 @@ static void oper(uint32_t o, uint32_t prn)
                     c = c + a / b;
                 }
                 // printf("\nc=%ld oct=%ld",c,(uint32_t)(a%b));
-                if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0l))
+                if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0))
                 {
                     uint32_t x1 = b1;
                     uint32_t x2 = c;
@@ -607,7 +607,7 @@ static void oper(uint32_t o, uint32_t prn)
                 }
                 if (peren != 0)
                     //{                                // cifra welika
-                    // uint32_t jj=0l;  // !!! wremenno !!!
+                    // uint32_t jj=0;  // !!! wremenno !!!
                     do
                     {
                         // jj++;
@@ -657,7 +657,7 @@ static void oper(uint32_t o, uint32_t prn)
         for(i=0,x=nach; x != r->next; x=x->next,i++)
            printf("\n chast(%d)=%ld",i,gcoden(x));
         */
-        for (x = Xn; (x != Xk->next) && (gcoden(x) == 0l); x = x->next)
+        for (x = Xn; (x != Xk->next) && (gcoden(x) == 0); x = x->next)
             ;
         x = x->prev;
         if (x != Xk)
@@ -672,7 +672,7 @@ static void oper(uint32_t o, uint32_t prn)
                 x = x->next;
         }
         Xn = x;
-        for (x = nach; gcoden(x) == 0l; x = x->next)
+        for (x = nach; gcoden(x) == 0; x = x->next)
             ;
         if (Xzn == '-')
         {
@@ -681,7 +681,7 @@ static void oper(uint32_t o, uint32_t prn)
             x->info.codep = NULL;
             x->info.infoc = '-';
         }
-        if ((prn & 1) == 0 || Xn != Xk || gcoden(Xn) != 0l)
+        if ((prn & 1) == 0 || Xn != Xk || gcoden(Xn) != 0)
             Xn = Xn->prev;
         Xn->tag = TAGLB;
         Xn->info.codep = Xk->next;
@@ -702,7 +702,7 @@ static void oper(uint32_t o, uint32_t prn)
             return; // dlja n-operacij
         x = refal.preva->next;
         x->tag = TAGN;
-        pcoden(x, 0l);
+        pcoden(x, 0);
         rftpl(refal.prevr, x->prev, x->next);
         return;
     }
@@ -710,9 +710,9 @@ static void oper(uint32_t o, uint32_t prn)
     {
         //  wozwratim X
         // podawim wed. nuli
-        for (x = Xn; gcoden(x) == 0l; x = x->next)
+        for (x = Xn; gcoden(x) == 0; x = x->next)
             ;
-        if (prn == 1 && x == Xk && gcoden(x) == 0l)
+        if (prn == 1 && x == Xk && gcoden(x) == 0)
             return;
         if (Xzn == '-')
         {
@@ -741,7 +741,7 @@ static void oper(uint32_t o, uint32_t prn)
         x->info.infoc = '-';
         x = x->next;
     }
-    if (b != 0l || ((prn & 1) == 0))
+    if (b != 0 || ((prn & 1) == 0))
     { // div/dr
         x->tag = TAGN;
         pcoden(x, b);
@@ -756,7 +756,7 @@ static void oper(uint32_t o, uint32_t prn)
             y->info.infoc = '-';
             y = y->next;
         }
-    if (a != 0l || ((prn & 1) == 0))
+    if (a != 0 || ((prn & 1) == 0))
     { // div/dr
         y->tag = TAGN;
         pcoden(y, a);
@@ -805,8 +805,8 @@ static void nrel_()
     rftpl(refal.prevr, refal.preva->prev, refal.nexta);
     return;
 }
-static char nrel_0[] = {Z4 'N', 'R', 'E', 'L', '\004'};
+void (*nrel_1)() = nrel_;
 G_L_B char nrel = '\122';
-static void (*nrel_1)() = nrel_;
+char nrel_0[] = {Z4 'N', 'R', 'E', 'L', '\004'};
 
 //-------------------- end of file  XAR.C ----------------

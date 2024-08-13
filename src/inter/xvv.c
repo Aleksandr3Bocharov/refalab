@@ -64,9 +64,9 @@ static void opng_()
     refal.upshot = 2;
     return;
 }
-static char opng_0[] = {Z6 'O', 'P', 'N', 'G', 'E', 'T', '\006'};
+void (*opng_1)() = opng_;
 G_L_B char opnget = '\122';
-static void (*opng_1)() = opng_;
+char opng_0[] = {Z6 'O', 'P', 'N', 'G', 'E', 'T', '\006'};
 
 static void opnp_()
 {
@@ -123,9 +123,9 @@ static void opnp_()
     refal.upshot = 2;
     return;
 }
-static char opnp_0[] = {Z6 'O', 'P', 'N', 'P', 'U', 'T', '\006'};
+void (*opnp_1)() = opnp_;
 G_L_B char opnput = '\122';
-static void (*opnp_1)() = opnp_;
+char opnp_0[] = {Z6 'O', 'P', 'N', 'P', 'U', 'T', '\006'};
 
 static void clsg_()
 {
@@ -149,9 +149,9 @@ static void clsg_()
     fclose(inr);
     return;
 }
-static char clsg_0[] = {Z6 'C', 'L', 'S', 'G', 'E', 'T', '\006'};
+void (*clsg_1)() = clsg_;
 G_L_B char clsget = '\122';
-static void (*clsg_1)() = clsg_;
+char clsg_0[] = {Z6 'C', 'L', 'S', 'G', 'E', 'T', '\006'};
 
 static void clsp_()
 {
@@ -175,9 +175,9 @@ static void clsp_()
     fclose(inw);
     return;
 }
-static char clsp_0[] = {Z6 'C', 'L', 'S', 'P', 'U', 'T', '\006'};
+void (*clsp_1)() = clsp_;
 G_L_B char clsput = '\122';
-static void (*clsp_1)() = clsp_;
+char clsp_0[] = {Z6 'C', 'L', 'S', 'P', 'U', 'T', '\006'};
 
 static void libg_()
 {
@@ -257,9 +257,9 @@ static void libg_()
             return;
         }
 }
-static char libg_0[] = {Z6 'L', 'I', 'B', 'G', 'E', 'T', '\006'};
+void (*libg_1)() = libg_;
 G_L_B char libget = '\122';
-static void (*libg_1)() = libg_;
+char libg_0[] = {Z6 'L', 'I', 'B', 'G', 'E', 'T', '\006'};
 
 static void libp_()
 {
@@ -319,9 +319,9 @@ static void libp_()
     refal.upshot = 2;
     return;
 }
-static char libp_0[] = {Z6 'L', 'I', 'B', 'P', 'U', 'T', '\006'};
+void (*libp_1)() = libp_;
 G_L_B char libput = '\122';
-static void (*libp_1)() = libp_;
+char libp_0[] = {Z6 'L', 'I', 'B', 'P', 'U', 'T', '\006'};
 
 static void card_()
 {
@@ -345,9 +345,9 @@ static void card_()
     }
     return;
 }
-static char card_0[] = {Z4 'C', 'A', 'R', 'D', '\004'};
+void (*card_1)() = card_;
 G_L_B char card = '\122';
-static void (*card_1)() = card_;
+char card_0[] = {Z4 'C', 'A', 'R', 'D', '\004'};
 
 static void pr1_()
 {
@@ -355,9 +355,9 @@ static void pr1_()
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-static char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', '\005'};
+void (*pr1_1)() = pr1_;
 G_L_B char print = '\122';
-static void (*pr1_1)() = pr1_;
+char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', '\005'};
 
 static void pr2_()
 {
@@ -365,26 +365,26 @@ static void pr2_()
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-static char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', '\006'};
+void (*pr2_1)() = pr2_;
 G_L_B char printm = '\122';
-static void (*pr2_1)() = pr2_;
+char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', '\006'};
 
 static void pr3_()
 {
     rfpex("", refal.preva, refal.nexta);
     return;
 }
-static char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', '\005'};
+void (*pr3_1)() = pr3_;
 G_L_B char prout = '\122';
-static void (*pr3_1)() = pr3_;
+char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', '\005'};
 
 static void pr4_()
 {
     rfpexm("", refal.preva, refal.nexta);
     return;
 }
-static char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
+void (*pr4_1)() = pr4_;
 G_L_B char proutm = '\122';
-static void (*pr4_1)() = pr4_;
+char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
 
 //------------------ end of file  XVV.C ----------------
