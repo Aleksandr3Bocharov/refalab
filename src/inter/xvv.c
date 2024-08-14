@@ -203,10 +203,13 @@ static void libg_()
     inr = uniget[jung];
     char s[128];
     s[0] = ' ';
-    const int c = getc(inr);
+    int c = getc(inr);
     size_t i;
     for (i = 0; (c != '\n') && (c != EOF) && (i < 128); i++)
+    {
         s[i] = c;
+        c = getc(inr);
+    }
     if (c == EOF)
         return;
     size_t j;
