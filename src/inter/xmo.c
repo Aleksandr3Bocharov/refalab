@@ -21,7 +21,7 @@ static void p1_()
     {
 
         l = gcoden(p) + 1;
-        if (l > 16777215l)
+        if (l > 16777215)
             neot = true;
     }
     if (neot)
