@@ -203,9 +203,9 @@ static void libg_()
     inr = uniget[jung];
     char s[128];
     s[0] = ' ';
-    int c;
+    const int c = getc(inr);
     size_t i;
-    for (i = 0; ((c = getc(inr)) != '\n') && (c != EOF) && (i < 128); i++)
+    for (i = 0; (c != '\n') && (c != EOF) && (i < 128); i++)
         s[i] = c;
     if (c == EOF)
         return;
@@ -328,10 +328,10 @@ static void card_()
     if (refal.preva->next != refal.nexta) // refal.upshot = 2;
         rfpex("", refal.preva, refal.nexta);
     T_LINKCB *p = refal.prevr;
-    char c;
-    while ((c = getchar()) != '\n')
+    char c = getchar();
+    while (c != '\n')
     {
-        if (!slins(p, 1))
+        if  (!slins(p, 1))
             return;
         p = p->next;
         p->info.codep = NULL;
@@ -342,6 +342,7 @@ static void card_()
         }
         p->tag = TAGO;
         p->info.infoc = c;
+        c = getchar();
     }
     return;
 }
