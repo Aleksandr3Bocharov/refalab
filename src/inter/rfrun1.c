@@ -1464,12 +1464,8 @@ void rfrun(T_ST *ast) // adress of current state table
             SHF
                 f->info.codep = lastb;
             f->tag = TAGD;
-        rfpexm(" Result BRACT 0104 tag = TAGD: ", quasik.info.codep->info.codep->prev, quasik.info.codep->next);
-        printf("\nflhead=%p, *lastb=%p, *f=%p, f->info.codep=%p\n", flhead, *lastb, *f, f->info.codep);
             lastk->info.codep = f;
             lastk->tag = TAGK;
-        rfpexm(" Result BRACT 0104 tag = TAGK: ", quasik.info.codep->info.codep->prev, quasik.info.codep->next);
-        printf("\n&quasik=%p, *lastk=%p, lastk->info.codep=%p\n", &quasik, *lastk, lastk->info.codep);
             lastk = lastb;
             lastb = lastb->info.codep;
             i_state = ADVANCE;

@@ -29,7 +29,7 @@ void rfabe(const char *amsg)
 
 bool lincrm()
 {
-    uint32_t n = 0;
+    size_t n = 0;
     if (last_block != NULL)
     {
         const T_LINKCB *first_free = refal.flhead->next;
@@ -538,9 +538,9 @@ static bool lgcl()
         T_LINKCB *q = refal.dvar;
         do
         {
-            if (q->tag != 0)
+            if (q->tag != TAGO)
             { // box isn't removed
-                q->tag = 0;
+                q->tag = TAGO;
                 p1 = q;
             }
             else
@@ -575,7 +575,7 @@ static void rflist(T_LINKCB *par, size_t n)
     {
         p->next = q;
         q->prev = p;
-        q->tag = 0;
+        q->tag = TAGO;
         q->info.codep = NULL;
         p = q;
         q++;
