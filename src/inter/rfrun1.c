@@ -754,7 +754,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LB;
         case LB:
-            SHB1 if ((b1->tag & 0001) == 0)
+            SHB1 if ((b1->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -767,7 +767,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBY;
         case LBY:
-            SHB1 if ((b1->tag & 0001) == 0)
+            SHB1 if ((b1->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -780,7 +780,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RB;
         case RB:
-            SHB2 if ((b2->tag & 0001) == 0)
+            SHB2 if ((b2->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -793,7 +793,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBY;
         case RBY:
-            SHB2 if ((b2->tag & 0001) == 0)
+            SHB2 if ((b2->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -806,7 +806,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LS;
         case LS:
-            SHB1 if ((b1->tag & 0001) != 0)
+            SHB1 if ((b1->tag & 0001) != TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -817,7 +817,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RS;
         case RS:
-            SHB2 if ((b2->tag & 0001) != 0)
+            SHB2 if ((b2->tag & 0001) != TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -830,7 +830,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case LW:
             SHB1
                 et[nel] = b1;
-            if ((b1->tag & 0001) != 0)
+            if ((b1->tag & 0001) != TAGO)
                 b1 = b1->info.codep;
             et[nel + 1] = b1;
             nel = nel + 2;
@@ -840,7 +840,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case RW:
             SHB2
                 et[nel + 1] = b2;
-            if ((b2->tag & 0001) != 0)
+            if ((b2->tag & 0001) != TAGO)
                 b2 = b2->info.codep;
             et[nel] = b2;
             nel = nel + 2;
@@ -848,7 +848,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBNIL
         case LBNIL:
-            SHB1 if ((b1->tag & 0001) == 0)
+            SHB1 if ((b1->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -867,7 +867,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBNIL;
         case RBNIL:
-            SHB2 if ((b2->tag & 0001) == 0)
+            SHB2 if ((b2->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -886,7 +886,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBCE;
         case LBCE:
-            SHB1 if ((b1->tag & 0001) == 0)
+            SHB1 if ((b1->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -902,7 +902,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBCE;
         case RBCE:
-            SHB2 if ((b2->tag & 0001) == 0)
+            SHB2 if ((b2->tag & 0001) == TAGO)
             {
                 i_state = FAIL;
                 break;
@@ -953,7 +953,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (b1->info.codef == b0->info.codef)
                 break;
-            if ((b1->tag & 0001) != 0)
+            if ((b1->tag & 0001) != TAGO)
                 break;
             i_state = FAIL;
             break;
@@ -984,7 +984,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (b2->info.codef == b0->info.codef)
                 break;
-            if ((b2->tag & 0001) != 0)
+            if ((b2->tag & 0001) != TAGO)
                 break;
             i_state = FAIL;
             break;
@@ -1024,7 +1024,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LE;
         case LE:
             b1 = et[nel + 1];
-            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            SHB1 if ((b1->tag & 0001) != TAGO) b1 = b1->info.codep;
             jsp++;
             et[nel + 1] = b1;
             nel = nel + 2;
@@ -1051,7 +1051,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RE;
         case RE:
             b2 = et[nel];
-            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            SHB2 if ((b2->tag & 0001) != TAGO) b2 = b2->info.codep;
             jsp++;
             et[nel] = b2;
             nel = nel + 2;
@@ -1070,7 +1070,7 @@ void rfrun(T_ST *ast) // adress of current state table
             vpc = vpc + NMBL;
             putjs(jsp, &b1, &b2, &nel, &vpc);
             et[nel] = b1->next;
-            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            SHB1 if ((b1->tag & 0001) != TAGO) b1 = b1->info.codep;
             et[nel + 2] = b1;
             i_state = NEXTOP;
             break;
@@ -1085,7 +1085,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LESC1;
             break;
         case LESC1:
-            SHB1 if ((b1->tag & 0001) != 0)
+            SHB1 if ((b1->tag & 0001) != TAGO)
             { // if(BRA(B1))
                 b1 = b1->info.codep;
                 break;
@@ -1111,7 +1111,7 @@ void rfrun(T_ST *ast) // adress of current state table
             vpc = vpc + NMBL;
             putjs(jsp, &b1, &b2, &nel, &vpc);
             et[nel + 1] = b2->prev;
-            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            SHB2 if ((b2->tag & 0001) != TAGO) b2 = b2->info.codep;
             et[nel + 2] = b2;
             i_state = NEXTOP;
             break;
@@ -1126,7 +1126,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RESC1;
             break;
         case RESC1:
-            SHB2 if ((b2->tag & 0001) != 0)
+            SHB2 if ((b2->tag & 0001) != TAGO)
             { // if(BRA(B2))
                 b2 = b2->info.codep;
                 break;
@@ -1166,7 +1166,7 @@ void rfrun(T_ST *ast) // adress of current state table
             vpc = vpc + NMBL;
             putjs(jsp, &b1, &b2, &nel, &vpc);
             et[nel] = b1->next;
-            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            SHB1 if ((b1->tag & 0001) != TAGO) b1 = b1->info.codep;
             et[nel + 3] = b1;
             i_state = NEXTOP;
             break;
@@ -1176,7 +1176,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LEB1;
             break;
         case LEB1:
-            SHB1 if ((b1->tag & 0001) == 0) break;
+            SHB1 if ((b1->tag & 0001) == TAGO) break;
             jsp++;
             et[nel + 1] = b1->prev;
             et[nel + 2] = b1;
@@ -1198,7 +1198,7 @@ void rfrun(T_ST *ast) // adress of current state table
             vpc = vpc + NMBL;
             putjs(jsp, &b1, &b2, &nel, &vpc);
             et[nel + 1] = b2->prev;
-            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            SHB2 if ((b2->tag & 0001) != TAGO) b2 = b2->info.codep;
             et[nel + 2] = b2;
             i_state = NEXTOP;
             break;
@@ -1208,7 +1208,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = REB1;
             break;
         case REB1:
-            SHB2 if ((b2->tag & 0001) == 0) break;
+            SHB2 if ((b2->tag & 0001) == TAGO) break;
             jsp++;
             et[nel] = b2->next;
             et[nel + 3] = b2;
@@ -1235,7 +1235,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LSRCH1;
             break;
         case LSRCH1:
-            SHB1 if ((b1->tag & 0001) != 0)
+            SHB1 if ((b1->tag & 0001) != TAGO)
             {
                 b1 = b1->info.codep;
                 break;
@@ -1254,7 +1254,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RSRCH1;
             break;
         case RSRCH1:
-            SHB2 if ((b2->tag & 0001) != 0)
+            SHB2 if ((b2->tag & 0001) != TAGO)
             {
                 b2 = b2->info.codep;
                 break;
@@ -1284,7 +1284,7 @@ void rfrun(T_ST *ast) // adress of current state table
             while (b0 != et[nel - 1])
             {
                 b0 = b0->next;
-                if ((b0->tag & 0001) != 0)
+                if ((b0->tag & 0001) != TAGO)
                     b0 = b0->info.codep;
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
                 {
@@ -1312,7 +1312,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LESPC(L);
         case LESPC:
             b1 = et[nel + 1];
-            SHB1 if ((b1->tag & 0001) != 0) b1 = b1->info.codep;
+            SHB1 if ((b1->tag & 0001) != TAGO) b1 = b1->info.codep;
             if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
             {
                 i_state = FAIL;
@@ -1338,7 +1338,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RESPC(L);
         case RESPC:
             b2 = et[nel];
-            SHB2 if ((b2->tag & 0001) != 0) b2 = b2->info.codep;
+            SHB2 if ((b2->tag & 0001) != TAGO) b2 = b2->info.codep;
             if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
             {
                 i_state = FAIL;
@@ -1357,7 +1357,7 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
                     break;
-                if ((b1->tag & 0001) != 0)
+                if ((b1->tag & 0001) != TAGO)
                     b1 = b1->info.codep;
             };
             b1 = b1->prev;
@@ -1373,7 +1373,7 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
                     break;
-                if ((b2->tag & 0001) != 0)
+                if ((b2->tag & 0001) != TAGO)
                     b2 = b2->info.codep;
             };
             b2 = b2->next;
@@ -1505,7 +1505,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     //             if (f == flhead){
                     //               ferr = 1;
                     //               goto LACK;}
-                    if ((f0->tag & 0001) != 0)
+                    if ((f0->tag & 0001) != TAGO)
                 {
                     if (f0->tag != TAGRB)
                     {
@@ -1608,7 +1608,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             link(f, f);
             f->info.codep = refal.svar;
-            f->tag = 0;
+            f->tag = TAGO;
             refal.svar = f;
             i_state = SWAPREF;
             break;

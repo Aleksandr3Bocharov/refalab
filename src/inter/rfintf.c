@@ -152,7 +152,7 @@ void rfinit()
     T_LINKCB *phd = &hd;
     phd->prev = phd;
     phd->next = phd;
-    phd->tag = 0;
+    phd->tag = TAGO;
     phd->info.codep = NULL;
     //p->nostm = 0;
     //p->stmnmb = 0;
@@ -358,7 +358,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             }
             else if (pr->tag == TAGR)
                 printf("/%%%p/", pr->info.codep);
-            else if ((pr->tag & 0001) != 0)
+            else if ((pr->tag & 0001) != TAGO)
                 rfabe("rfpexm: unknown bracket type ");
             else
                 printf("/<%x>,%p/", pr->tag, pr->info.codep);
@@ -487,7 +487,7 @@ static void mark(T_LINKCB *root)
             if (p->tag != TAGR)
                 continue;
             q = p->info.codep;
-            if (q->tag != 0)
+            if (q->tag != TAGO)
                 continue;
             q->tag = 0xFFFF;
             p->info.codep = h;
@@ -618,7 +618,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         }
         else if (pr->tag == TAGR)
             printf("'%%%p'", pr->info.codep);
-        else if ((pr->tag & 0001) != 0)
+        else if ((pr->tag & 0001) != TAGO)
             rfabe("rfpex: unknown bracket type ");
         else
             printf("'%x,%p'", pr->tag, pr->info.codep);

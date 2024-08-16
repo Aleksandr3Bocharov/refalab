@@ -327,7 +327,7 @@ static void new_()
     refal.nextr->next = refal.nexta;
     refal.nexta->prev = refal.nextr;
     refal.preva->info.codep = refal.dvar;
-    refal.preva->tag = 0;
+    refal.preva->tag = TAGO;
     refal.dvar = refal.preva;
     return;
 }

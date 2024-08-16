@@ -139,7 +139,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
             sp_state = SPCNXT;
             break;
         case SPCS:
-            if ((b->tag & 0001) == 0)
+            if ((b->tag & 0001) == TAGO)
             {
                 sp_state = SPCRET;
                 break;
@@ -147,7 +147,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
             sp_state = SPCNXT;
             break;
         case SPCB:
-            if ((b->tag & 0001) != 0)
+            if ((b->tag & 0001) != TAGO)
             {
                 sp_state = SPCRET;
                 break;
