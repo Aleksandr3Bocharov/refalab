@@ -18,12 +18,8 @@
 #define Wbin "wb"
 #define Rbin "rb"
 
-typedef struct __ptr__
-{
-    char *_ptr_;
-} POINT;
-
-#define LBLL sizeof(POINT)
+#define ZBLL sizeof(size_t)
+#define LBLL sizeof(void *)
 #define SMBL (sizeof(uint16_t) + LBLL)
 
 #endif
