@@ -14,7 +14,6 @@
 
 // for unlooping:
 
-#define NMBL sizeof(char)
 #define SHB1            \
     b1 = b1->next;      \
     if (b1 == b2)       \

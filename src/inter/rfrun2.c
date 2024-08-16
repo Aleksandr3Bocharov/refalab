@@ -9,8 +9,6 @@
 #include "refal.def"
 #include "rfrun2.h"
 
-#define NMBL sizeof(char)
-
 typedef enum sp_states
 {
     SPCRET,

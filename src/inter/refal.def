@@ -109,12 +109,8 @@ typedef struct refal_
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W;
 
-typedef struct __ptr__
-{
-    char *_ptr_;
-} POINT;
-
-#define LBLL sizeof(POINT)
+#define NMBL sizeof(char)
+#define LBLL sizeof(void *)
 #define SMBL (sizeof(uint16_t) + LBLL)
 
 #endif
