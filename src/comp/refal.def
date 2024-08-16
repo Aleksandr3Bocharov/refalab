@@ -1,10 +1,11 @@
 //--------------- file -- REFAL.DEF -----------------
-//          Last modification : 10.07.24
+//          Last modification : 11.07.24
 //---------------------------------------------------
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define TAGO 0
 #define TAGF 2
@@ -15,12 +16,103 @@
 #define TAGK 5
 #define TAGD 7
 
-#define Wbin "wb"
-#define Rbin "rb"
+// BLF pragma for 1 byte aligniment structure ------------
+#pragma pack(1)
 
-#define ZBLL sizeof(size_t)
+typedef struct linkcb_
+{
+    struct linkcb_ *prev;
+    struct linkcb_ *next;
+    uint16_t tag;
+    union
+    {
+        char infoc;
+        uint32_t coden;
+        struct linkcb_ *codep;
+        uint8_t *codef;
+    } info;
+} T_LINKCB;
+
+// #pragma pack(pop)
+#pragma pack()
+
+// BLF ------------ end of pragma ------------------------------------
+
+typedef struct st_
+{
+    struct st_ *stprev;
+    struct st_ *stnext;
+    uint32_t state;
+    T_LINKCB *dot;
+    uint32_t step;
+    uint32_t stop;
+    T_LINKCB *view;
+    T_LINKCB *store;
+} T_ST;
+
+typedef struct refal_
+{
+    T_ST *crprev;
+    T_ST *crnext;
+    uint32_t upshot;
+    T_LINKCB *preva;
+    T_LINKCB *nexta;
+    T_LINKCB *prevr;
+    T_LINKCB *nextr;
+    T_ST *currst;
+    T_LINKCB *flhead;
+    T_LINKCB *svar;
+    T_LINKCB *dvar;
+    //uint16_t stmnmb;
+    //uint16_t nostm;
+    bool tmmode;
+    uint32_t tmintv;
+} T_REFAL;
+
+#define QC // BLF
+
+#ifdef QC
+
+// BLF 09.07.2004 (VAX version for IBM PC)
+
+#define Z_0 0
+#define Z2
+#define Z3 '0', '0', '0',
+#define Z4 '0', '0',
+#define Z5 '0',
+#define Z6
+#define Z7 '0', '0', '0',
+
+/* BLF - initial version for IBM PC,
+    give error in alignment C-function entry */
+/*
+#define Z_0 1
+#define Z2 '0',
+#define Z3
+#define Z4 '0',
+#define Z5
+#define Z6 '0',
+#define Z7
+*/
+
+#else
+#define Z_0 0
+#define Z2
+#define Z3
+#define Z4
+#define Z5
+#define Z6
+#define Z7
+#endif
+
+#define G_L_B
+#define gcoden(p) p->info.coden
+#define pcoden(p, W) p->info.coden = W;
+
+#define NMBL sizeof(char)
+#define ZBLL sizeof(uint16_t)
 #define LBLL sizeof(void *)
-#define SMBL (sizeof(uint16_t) + LBLL)
+#define SMBL (ZBLL + LBLL)
 
 #endif
 //-------  end of file REFAL.DEF ---------
