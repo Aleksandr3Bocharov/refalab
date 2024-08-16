@@ -46,13 +46,15 @@ void gsymbol(const T_LINKTI *code)
         return;
         //      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC
     };
-    const char *r = (char *)&code->info.codef;
+    const char *r = (char *)&(code->info.codef);
     if (code->tag == TAGO)
     {
         jbyte(*r);
         jbyte(*(r + 1));
-        jbyte('\0');
-        jbyte('\0');
+        for (size_t i = 2; i < LBLL; i++)
+            jbyte('\0');
+        //jbyte('\0');
+        //jbyte('\0');
     }
     else
         for (size_t i = 0; i < LBLL; i++)
