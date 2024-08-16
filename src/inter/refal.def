@@ -110,8 +110,9 @@ typedef struct refal_
 #define pcoden(p, W) p->info.coden = W;
 
 #define NMBL sizeof(char)
+#define ZBLL sizeof(uint16_t)
 #define LBLL sizeof(void *)
-#define SMBL (sizeof(uint16_t) + LBLL)
+#define SMBL (ZBLL + LBLL)
 
 #endif
 //-------  end of file REFAL.DEF ---------
