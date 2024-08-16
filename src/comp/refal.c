@@ -740,10 +740,10 @@ void scan()
     static size_t id_leng;
     static const uint8_t *p;
     static size_t scode;
-    scn_e.code.tag = 0;
+    scn_e.code.tag = TAGO;
     scn_e.code.info.codef = NULL;
     scn_e.v = false;
-    scn_e.spec.tag = 0;
+    scn_e.spec.tag = TAGO;
     scn_e.spec.info.codef = NULL;
     T_SCN_STATES scn_state = STATE0;
     if (scn_station)
@@ -1318,7 +1318,7 @@ static bool specif(char tail)
             gsp(ns_sc);
             if (left_part)
             {
-                code.tag = 0;
+                code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc[0] = '\'';
                 gsymbol(&code);
@@ -1386,7 +1386,7 @@ static bool specif(char tail)
                         else
                             m--;
                     }
-                code.tag = 0;
+                code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc[0] = c[m];
                 gsymbol(&code);

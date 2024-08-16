@@ -40,14 +40,14 @@ void gsymbol(const T_LINKTI *code)
     const T_TAG *q = (T_TAG *)&(code->tag);
     jbyte(q->b1);
     jbyte(q->b2);
-    if (code->tag == 2)
+    if (code->tag == TAGF)
     {
         j3addr((T_U *)code->info.codef);
         return;
         //      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC
     };
     const char *r = (char *)&code->info.codef;
-    if (code->tag == 0)
+    if (code->tag == TAGO)
     {
         jbyte(*r);
         jbyte(*(r + 1));

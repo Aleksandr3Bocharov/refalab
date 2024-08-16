@@ -1560,7 +1560,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
             {
                 funcptr.info.codef = scn_e.code.info.codef;
-                funcptr.tag = 0;
+                funcptr.tag = TAGO;
                 gopl(n_blf, funcptr.info.codef);
                 state = GET_RPE;
                 break;
