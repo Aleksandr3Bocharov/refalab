@@ -29,7 +29,7 @@ typedef struct ext
     T_U *p;
     char e[8];
     size_t le;
-    //unsigned int noms;
+    // unsigned int noms;
 } T_EXT;
 
 typedef struct rl
@@ -413,7 +413,8 @@ void jentry(T_U *pp, const char *ee, size_t ll)
             return;
         //}
     }
-    if ((r = (T_ENT *)malloc(sizeof(T_ENT))) == NULL)
+    r = (T_ENT *)malloc(sizeof(T_ENT));
+    if (r == NULL)
         oshex();
 #ifdef mdebug
     printf("\nmalloc(cj): r(ent)=%p", r);
@@ -539,7 +540,10 @@ void jend()
                 if (((p->mode) & '\300') != '\200')
                 {
                     //    nonexternal label
-                    sprintf(bufs, "\t.long\t_d%d$+%zu\n", nommod, p->info.infon);
+                    if (LBLL == 4)
+                        sprintf(bufs, "\t.long\t_d%d$+%zu\n", nommod, p->info.infon);
+                    else
+                        sprintf(bufs, "\t.quad\t_d%d$+%zu\n", nommod, p->info.infon);
                     fputs(bufs, syslin);
                 }
                 else
@@ -548,9 +552,15 @@ void jend()
 // BLF
 #ifdef UNIX
                     // begin name without underlining _
-                    fputs("\t.long\t", syslin);
+                    if (LBLL == 4)
+                        fputs("\t.long\t", syslin);
+                    else
+                        fputs("\t.quad\t", syslin);
 #else // Windows - with underlining _
-                    fputs("\t.long\t_", syslin);
+                    if (LBLL == 4)
+                        fputs("\t.long\t_", syslin);
+                    else
+                        fputs("\t.quad\t_", syslin);
 #endif
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)

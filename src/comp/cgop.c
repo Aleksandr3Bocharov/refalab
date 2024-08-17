@@ -53,12 +53,17 @@ void gsymbol(const T_LINKTI *code)
         jbyte(*(r + 1));
         for (size_t i = 2; i < LBLL; i++)
             jbyte('\0');
-        //jbyte('\0');
-        //jbyte('\0');
+        // jbyte('\0');
+        // jbyte('\0');
     }
     else
-        for (size_t i = 0; i < LBLL; i++)
+    {
+        size_t i = 0;
+        for (; i < sizeof(uint32_t); i++)
             jbyte(*(r + i));
+        for (; i < LBLL; i++)
+            jbyte('\0');
+    }
     return;
 }
 
