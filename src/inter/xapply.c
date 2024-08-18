@@ -18,7 +18,7 @@ static void appl_()
     T_ST *upst;
     T_LINKCB *px;
     bool lack = false;
-    if ((l & 0xffffL) < 200)
+    if ((l & 0xffff) < 200)
         //{ // printf("\nStack overflow!");
         lack = true;
     //}
