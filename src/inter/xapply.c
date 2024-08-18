@@ -55,7 +55,7 @@ static void appl_()
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
     //   printf("\nEnter: %ld",upst->step);
-    s_st->stop = 0x7FFFFFFFl;
+    s_st->stop = 0x7FFFFFFF;
     do
     {
         if (dba == NULL)
