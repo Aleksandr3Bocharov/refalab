@@ -38,6 +38,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
     T_SPCS *spcsp = pspcsp;
     uint8_t *spcvpc;                   // virtual specifier counter
     memcpy(&spcvpc, vpc + NMBL, LBLL); // spcvpc = L
+    uint8_t spcopc;
     // positiveness feature of specifier element
     bool spcpls = true;
     T_SP_STATES sp_state = SPCNXT;
@@ -61,7 +62,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
         // return from specifier element if "NO"
         case SPCNXT:
             // specifier code
-            const uint8_t spcopc = *spcvpc;
+            spcopc = *spcvpc;
             spcvpc = spcvpc + NMBL;
             // switch
             // SPCOP

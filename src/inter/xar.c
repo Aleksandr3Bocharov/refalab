@@ -258,6 +258,8 @@ static void oper(uint32_t o, uint32_t prn)
         return;
     }
     uint32_t a, b;
+    int32_t j;
+    uint32_t peren;
     bool rez0 = false;
     bool odnc = false;
     switch (o)
@@ -268,8 +270,6 @@ static void oper(uint32_t o, uint32_t prn)
         else
             Yzn = '-';
     case Oadd:
-        int32_t j;
-        uint32_t peren;
         if ((Xdl == 0) && (Ydl == 0))
         {
             rez0 = true;

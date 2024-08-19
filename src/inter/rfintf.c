@@ -390,7 +390,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
 {
     T_LINKCB *f = refal.flhead;
     T_LINKCB *f0 = p->next;
-    T_LINKCB *f1;
+    T_LINKCB *f1, *lastb = NULL;
     while (f0 != q)
     {
         f = f->next;
@@ -399,7 +399,6 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
         switch (f0->tag)
         {
         case TAGLB:
-            T_LINKCB *lastb = NULL;
             f->info.codep = lastb;
             lastb = f;
             break;

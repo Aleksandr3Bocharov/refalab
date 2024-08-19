@@ -106,6 +106,7 @@ static void gcd_()
             tl[i] = pr->prev;
         }
     }
+    uint32_t A;
     while (true)
         switch (gcd_state)
         {
@@ -187,7 +188,7 @@ static void gcd_()
             break;
         case M21:
             //   wybor metoda
-            uint32_t A = 0;
+            A = 0;
             pr = hd[0];
             size_t k;
             for (k = 0; k < l[0]; k++)
