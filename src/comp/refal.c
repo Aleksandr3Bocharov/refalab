@@ -1089,7 +1089,7 @@ void scan()
                 if (*(sarr + scode) == NULL)
                 {
                     *(sarr + scode) = (char *)genlbl();
-                    jlabel((T_U *)(sarr + scode));
+                    jlabel((T_U *)*(sarr + scode));
                     gsp((char)(scode + 7));
                     gsp(ns_ngw);
                 };
