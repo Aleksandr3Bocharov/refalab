@@ -28,7 +28,8 @@ static T_U *nov_uzel(const char *idp, size_t lid)
 #endif
     if (p == NULL)
         uns_sto();
-    p->i = p->j = NULL;
+    p->i = NULL;
+    p->j = NULL;
     p->k = '\000';
     p->mode = '\000';
     p->type = '\000';
@@ -184,7 +185,8 @@ T_U *lookup(const char *idp, size_t lid)
             p->i = q->j;
             q->j = p;
         };
-        p->k = q->k = '\000';
+        q->k = '\000';
+        p->k = q->k;
         verquz = q;
     }
     else
