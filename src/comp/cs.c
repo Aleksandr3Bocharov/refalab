@@ -66,7 +66,7 @@ static T_I_LBL *alloc_lbl()
         }
     }
     n_lbl = n_lbl + 1;
-    T_I_LBL *p = &(first_arr_lbl->lbl[n_lbl]);
+    T_I_LBL *p = &first_arr_lbl->lbl[n_lbl];
     p->model = '\000';
     return p;
 }
@@ -162,7 +162,7 @@ void sswap(const char *idp, size_t lid)
         size_t j0 = jwhere();
         size_t l0;
         if (options.extname)
-            l0 = 255 > (scn_.modnmlen + lid + 1) ? (scn_.modnmlen + lid + 1) : 255;
+            l0 = 255 > scn_.modnmlen + lid + 1 ? scn_.modnmlen + lid + 1 : 255;
         else
             l0 = lid;
         j0 = (j0 + l0 + 2) % 4;
@@ -195,7 +195,7 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
 {
     //  int ind;   // eg
     T_U *p = lookup(idp, lidp);
-    if ((p->mode) & '\020')
+    if (p->mode & '\020')
         p504(idp, lidp);
     else
     {
@@ -208,15 +208,15 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
 T_U *fnref(const char *idp, size_t lid)
 {
     T_U *p = lookup(idp, lid);
-    p->type = (p->type) | '\100';
+    p->type |= '\100';
     return p;
 }
 
 T_U *spref(const char *idp, size_t lid, char d)
 {
     T_U *p = lookup(idp, lid);
-    p->type = (p->type) | '\200';
-    if ((d != ')') && (((p->mode) & '\020') != '\020'))
+    p->type |= '\200';
+    if (d != ')' && (p->mode & '\020') != '\020')
         p505(idp, lid);
     return p;
 }
@@ -228,8 +228,8 @@ void spdef(const char *idp, size_t lid)
     else
     { // label exist
         T_U *p = lookup(idp, lid);
-        p->type = (p->type) | '\200';
-        if ((p->mode) & '\020')
+        p->type |= '\200';
+        if (p->mode & '\020')
             p504(idp, lid);
         else
         {
@@ -251,15 +251,15 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     T_U *p1 = lookup(id1, lid1);
     if (p0 == p1)
         return;
-    if (((p1->mode) & '\300') == '\000')
+    if ((p1->mode & '\300') == '\000')
     {
-        p0->type = (p0->type) | (p1->type);
+        p0->type |= p1->type;
         p1->def = scn_.nomkar;
         jequ(p1, p0);
     }
-    else if (((p0->mode) & '\300') == '\000')
+    else if ((p0->mode & '\300') == '\000')
     {
-        p1->type = (p1->type) | (p0->type);
+        p1->type |= p0->type;
         p0->def = scn_.nomkar;
         jequ(p0, p1);
     }
@@ -298,14 +298,13 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
 {
     const T_U *q = pp;
     // printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode);
-    while (((q->mode) & '\300') == '\300')
+    while ((q->mode & '\300') == '\300')
         q = q->info.infop;
-    if (((pp->mode) & '\300') == '\000')
+    if ((pp->mode & '\300') == '\000')
         pchosj("512 label", pp->id, pp->l, " not defined");
-    if ((((pp->mode) & '\040') == '\040') &&
-        (((pp->mode) & '\300') == '\200'))
+    if ((pp->mode & '\040') == '\040' && (pp->mode & '\300') == '\200')
         pchosj("511 label", pp->id, pp->l, " both extern and entry");
-    if (((q->mode) & '\300') == '\300')
+    if ((q->mode & '\300') == '\300')
         pchosj("502 label", pp->id, pp->l, " boht specifier and function");
     return;
 }

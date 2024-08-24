@@ -379,7 +379,7 @@ void jbyte(char bb)
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *(sysut1.buf) = bb;
+        *sysut1.buf = bb;
         sysut1.tek = 1;
     }
     delta++;
@@ -407,7 +407,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     while (r != last_ent)
     {
         r = r->next;
-        if ((r->le == ll) && (strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0))
+        if (r->le == ll && strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0)
             //{
             // pchose("521 two entry points has single name ", ee, ll);
             return;
@@ -444,7 +444,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx->p = pp;
     rx->next = NULL;
     rx->le = 8 < ll ? 8 : ll;
-    if (strncmp(ee, "DIV", 3) == 0 && (rx->le == 3))
+    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
     {
         strcpy(rx->e, "DIV_");
         rx->le = 4;
@@ -520,7 +520,7 @@ void jend()
             for (k = 0; k < delta; k++)
             {
                 sfrd1(&d.b[0], 1);
-                if ((k % 60) == 0)
+                if (k % 60 == 0)
                 {
                     if (k != 0)
                         fputc('\n', syslin);
@@ -528,16 +528,16 @@ void jend()
                 }
                 sprintf(bufs, "%d", d.w);
                 fputs(bufs, syslin);
-                if (((k % 60) != 59) && (k != (delta - 1)))
+                if (k % 60 != 59 && k != delta - 1)
                     fputc(',', syslin);
             }
             fputc('\n', syslin);
             const T_U *p = rl.point;
             if (p != NULL)
             {
-                while (((p->mode) & '\300') == '\300')
+                while ((p->mode & '\300') == '\300')
                     p = p->info.infop;
-                if (((p->mode) & '\300') != '\200')
+                if ((p->mode & '\300') != '\200')
                 {
                     //    nonexternal label
                     if (LBLL == 4)
@@ -585,28 +585,28 @@ void jend()
                     const char oper_ptr[] = "pt_";
                     // BLF - debug printf ("%s\n",qx->e) ;
                     if (strncmp(qx->e, "ADD", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_add[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_add[i];
                     else if (strncmp(qx->e, "SUB", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_sub[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_sub[i];
                     else if (strncmp(qx->e, "MUL", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_mul[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_mul[i];
                     else if (strncmp(qx->e, "DIV", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_div[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_div[i];
                     else if (strncmp(qx->e, "RP", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_rp[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_rp[i];
                     else if (strncmp(qx->e, "PTR", qx->le) == 0)
-                        for (size_t i = 0; i < (qx->le); i++)
-                            *((qx->e) + i) = oper_ptr[i];
+                        for (size_t i = 0; i < qx->le; i++)
+                            *(qx->e + i) = oper_ptr[i];
 #endif
                     // BLF ------- end renaming ---------------
                     for (size_t i = 0; i < qx->le; i++)
-                        // BLF    fputc (*((qx->e) + i),syslin);
-                        fputc(tolower(*((qx->e) + i)), syslin); // BLF
+                        // BLF    fputc (*(qx->e + i),syslin);
+                        fputc(tolower(*(qx->e + i)), syslin); // BLF
                     fputs("\n", syslin);
                 }
                 continue;
@@ -632,7 +632,7 @@ void jend()
 #endif
             for (size_t i = 0; i < qx->le; i++)
                 // BLF fputc (*((qx->e) + i),syslin);
-                fputc(tolower(*((qx->e) + i)), syslin); // BLF
+                fputc(tolower(*(qx->e + i)), syslin); // BLF
             fputs(":byte\n", syslin);
             qx = qx->next;
         } // while
@@ -650,9 +650,9 @@ void jend()
 #endif
             for (size_t i = 0; i < q->le; i++)
                 // BLF translate name to lower case
-                fputc(tolower(*((q->e) + i)), syslin);
+                fputc(tolower(*(q->e + i)), syslin);
             const T_U *pp = q->p;
-            while (((pp->mode) & '\300') == '\300')
+            while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
 // BLF
 #ifdef UNIX
@@ -665,7 +665,7 @@ void jend()
             fputs(bufs, syslin);
             for (size_t i = 0; i < q->le; i++)
                 // BLF translate name to lower case
-                fputc(tolower(*((q->e) + i)), syslin);
+                fputc(tolower(*(q->e + i)), syslin);
             fputc('\n', syslin);
             q = q->next;
         };

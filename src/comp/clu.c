@@ -32,7 +32,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     p->k = '\000';
     p->mode = '\000';
     p->type = '\000';
-    p->last_ref = &(p->ref);
+    p->last_ref = &p->ref;
     p->ref.next = NULL;
     for (size_t m = 1; m <= 5; m++)
         p->ref.numb[m] = 0;
@@ -94,14 +94,15 @@ T_U *lookup(const char *idp, size_t lid)
 #endif
                             if (r1 == NULL)
                                 uns_sto();
-                            (*p).last_ref = (*q1).next = r1;
+                            (*q1).next = r1;
+                            (*p).last_ref = (*q1).next;
                             (*r1).next = NULL;
                             for (k = 0; k <= 5; k++)
                                 (*r1).numb[k] = 0;
                             (*r1).numb[0] = scn_.nomkar;
                         };
                     }
-                    while ((((*p).mode) & '\300') == '\300')
+                    while (((*p).mode & '\300') == '\300')
                         p = (*p).info.infop;
                     return p;
                 }
@@ -165,7 +166,7 @@ T_U *lookup(const char *idp, size_t lid)
     };
     // tree turn
     // if kren = '\100' -- left turn
-    // if ( kren = '\200' -- right turn
+    // if kren = '\200' -- right turn
     if (kren == '\100')
         q = (*p).j;
     else
@@ -183,7 +184,8 @@ T_U *lookup(const char *idp, size_t lid)
             (*p).i = (*q).j;
             (*q).j = p;
         };
-        (*p).k = (*q).k = '\000';
+        (*q).k = '\000';
+        (*p).k = (*q).k;
         verquz = q;
     }
     else
@@ -205,9 +207,12 @@ T_U *lookup(const char *idp, size_t lid)
             (*r).j = p;
             (*r).i = q;
         };
-        const char nruk = (!((*r).k)) & '\300';
+        const char nruk = (*r).k == '\0' & '\300';
         if ((*r).k == '\000')
-            (*q).k = (*p).k = '\000';
+        {
+            (*p).k = '\000';
+            (*q).k = (*p).k;
+        }
         else if (nruk == kren)
         {
             (*p).k = '\000';

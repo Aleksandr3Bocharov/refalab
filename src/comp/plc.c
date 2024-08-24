@@ -28,8 +28,8 @@ int32_t index_x(const char *s, const char *t)
             m = i + 1;
     // m - length of t
 
-    for (size_t i = 0; (i < l) && (*(s + i) != '\0'); i++)
-        for (size_t j = i, k = 0; (j < l) && (*(s + j) != '\0'); j++)
+    for (size_t i = 0; i < l && *(s + i) != '\0'; i++)
+        for (size_t j = i, k = 0; j < l && *(s + j) != '\0'; j++)
         {
             if (*(s + j) != *(t + k))
                 break;

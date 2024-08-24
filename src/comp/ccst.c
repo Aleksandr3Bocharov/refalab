@@ -313,7 +313,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 v[ind]._t = 1; // yet isn't faced
                 break;
             case 1:
-                ++(v[ind].rem); // next position
+                ++v[ind].rem; // next position
                 break;
             default: // invalid type pointer
                 pch303();
@@ -332,7 +332,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 v[ind]._t = 2; // yet isn't faced
                 break;
             case 2:
-                ++(v[ind].rem); // next position
+                ++v[ind].rem; // next position
                 break;
             default: // invalid type pointer
                 pch303();
@@ -347,8 +347,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n].ind = ind;
             if (v[ind]._t == 0) // yet is't faced
                 v[ind]._t = 3;
-            else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
-                ++(v[ind].rem);
+            else if (v[ind]._t == 3 && v[ind]._v == scn_e.v)
+                ++v[ind].rem;
             else // invalid type pointer
             {
                 pch303();
@@ -467,7 +467,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LTXT1:
             n++;
-            if ((n == n2) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+            if (n == n2 || x[n].t != t_sc || x[n].code.tag != TAGO)
             {
                 state = LTXT2;
                 break;
@@ -536,7 +536,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             v[ind]._q = nel + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].v)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
@@ -635,7 +635,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             v[ind]._q = nel + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].spec.info.codef != NULL)
                 gopl(n_wspc, x[n].spec.info.codef);
             state = L2;
@@ -647,7 +647,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LEMD:
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
             state = L2;
@@ -726,7 +726,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RTXT1:
             n--;
-            if ((n == n1) || (x[n].t != t_sc) || (x[n].code.tag != TAGO))
+            if (n == n1 || x[n].t != t_sc || x[n].code.tag != TAGO)
             {
                 state = RTXT2;
                 break;
@@ -798,7 +798,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             v[ind]._q = nel + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].v)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
@@ -870,7 +870,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RSMD:
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].spec.info.codef != NULL)
                 gopl(n_wspc, x[n].spec.info.codef);
             state = R1;
@@ -894,7 +894,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             v[ind]._q = nel + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].spec.info.codef != NULL)
                 gopl(n_wspc, x[n].spec.info.codef);
             state = R2;
@@ -906,7 +906,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case REMD:
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
             state = R2;
@@ -976,7 +976,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             jbyte(n_ce);
             x[n].next = v[ind].last;
             v[ind].last = n;
-            (v[ind].rem)--;
+            v[ind].rem--;
             if (x[n].v)
                 jbyte(n_nnil);
             x[n].p = nel;
@@ -1118,7 +1118,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case OE0:
             ind = x[n].ind;
-            if ((v[ind].last != 0) || (v[ind].rem != 1))
+            if (v[ind].last != 0 || v[ind].rem != 1)
             {
                 state = OE1;
                 break;
@@ -1141,7 +1141,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                     break;
                 }
             };
-            if ((x[n].t != t_e) || x[n].v)
+            if (x[n].t != t_e || x[n].v)
             {
                 state = OE1;
                 break;
@@ -1443,18 +1443,17 @@ void cst(bool dir, char *lbl, size_t lblleng)
             kol_lit++;
             buf_lit[kol_lit] = scn_e.code.info.infoc[0];
             scan();
-            if (!((kol_lit < 80) && (scn_e.t == t_sc) && (scn_e.code.tag == TAGO)))
+            if (kol_lit < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
+                break;
+            if (kol_lit == 1)
+                gopn(n_nso, buf_lit[1]);
+            else
             {
-                if (kol_lit == 1)
-                    gopn(n_nso, buf_lit[1]);
-                else
-                {
-                    gopn(n_text, kol_lit);
-                    for (k = 1; k <= kol_lit; k++)
-                        jbyte(buf_lit[k]);
-                };
-                state = SW_RPE;
-            }
+                gopn(n_text, (char)kol_lit);
+                for (k = 1; k <= kol_lit; k++)
+                    jbyte(buf_lit[k]);
+            };
+            state = SW_RPE;
             break;
         case RPE2:
             // left bracket
@@ -1466,7 +1465,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             kol_skob[ur_skob]++;
-            if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+            if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
             {
                 funcptr.info.codef = scn_e.code.info.codef;
                 gopl(n_blf, funcptr.info.codef);
@@ -1494,7 +1493,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 pch406();
                 break;
             case 1:
-                gopn(n_muls, v[ind]._q);
+                gopn(n_muls, (char)v[ind]._q);
                 break;
             default:
                 pch303();
@@ -1512,10 +1511,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             case 2:
                 n = v[ind].last;
                 if (n == 0)
-                    gopn(n_mule, v[ind]._q);
+                    gopn(n_mule, (char)v[ind]._q);
                 else
                 {
-                    gopn(n_tplv, x[n].q);
+                    gopn(n_tplv, (char)x[n].q);
                     v[ind].last = x[n].next;
                 };
                 break;
@@ -1529,17 +1528,17 @@ void cst(bool dir, char *lbl, size_t lblleng)
             isk_v();
             if (v[ind]._t == 0)
                 pch406();
-            else if ((v[ind]._t == 3) && (v[ind]._v == scn_e.v))
+            else if (v[ind]._t == 3 && v[ind]._v == scn_e.v)
             {
                 n = v[ind].last;
                 if (n == 0)
-                    gopn(n_mule, v[ind]._q);
+                    gopn(n_mule, (char)v[ind]._q);
                 else
                 {
                     if (v[ind]._v)
-                        gopn(n_tplv, x[n].q);
+                        gopn(n_tplv, (char)x[n].q);
                     else
-                        gopn(n_tple, x[n].q);
+                        gopn(n_tple, (char)x[n].q);
                     v[ind].last = x[n].next;
                 };
             }
@@ -1557,7 +1556,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             }
             kol_skob[++ur_skob] = 0;
             scan();
-            if ((scn_e.t == t_sc) && (scn_e.code.tag == TAGF))
+            if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
             {
                 funcptr.info.codef = scn_e.code.info.codef;
                 funcptr.tag = TAGO;
@@ -1588,7 +1587,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE10:
             // sentence end
-            //scn_.curr_stmnmb++;
+            // scn_.curr_stmnmb++;
             /*if (options.stmnmb)
             {
                 jbyte(n_eossn);
@@ -1687,9 +1686,9 @@ static bool lsg_p()
             if (x[n].t != t_e)
                 continue;
             ind = x[n].ind;
-            if ((ind == ie) || (v[ind].last != 0))
+            if (ind == ie || v[ind].last != 0)
                 continue;
-            if ((x[n].spec.info.codef != NULL) || (v[ind].rem != 1))
+            if (x[n].spec.info.codef != NULL || v[ind].rem != 1)
                 break;
             if (!ortgn(n1, n))
                 break;
@@ -1705,7 +1704,7 @@ static bool lsg_p()
     v[ind]._q = nel + 1;
     x[n].next = v[ind].last;
     v[ind].last = n;
-    (v[ind].rem)--;
+    v[ind].rem--;
     x[n].p = nel;
     x[n].q = nel + 1;
     nel += 2;
@@ -1731,10 +1730,9 @@ static bool rsg_p()
             if (x[n].t != t_e)
                 continue;
             ind = x[n].ind;
-            if ((ind == ie) || (v[ind].last != 0))
+            if (ind == ie || v[ind].last != 0)
                 continue;
-            if ((x[n].spec.info.codef != NULL) ||
-                (v[ind].rem != 1))
+            if (x[n].spec.info.codef != NULL || v[ind].rem != 1)
                 break;
             if (!ortgn(n, n2))
                 break;
@@ -1750,7 +1748,7 @@ static bool rsg_p()
     v[ind]._q = nel + 1;
     x[n].next = v[ind].last;
     v[ind].last = n;
-    (v[ind].rem)--;
+    v[ind].rem--;
     x[n].p = nel;
     x[n].q = nel + 1;
     nel += 2;
@@ -1764,32 +1762,32 @@ static bool rsg_p()
 }
 
 //    check ortogonality of this sentence against left part
-static bool ortgn(size_t n1, size_t n2)
+static bool ortgn(size_t on1, size_t on2)
 {
-    size_t n = n1;
+    size_t on = on1;
     size_t i;
     while (true)
     {
-        n++;
-        if (n == n2)
+        on++;
+        if (on == on2)
             break;
-        if (x[n].t <= 3)
+        if (x[on].t <= 3)
             continue;
-        i = x[n].ind;
+        i = x[on].ind;
         if (v[i].last != 0)
             continue;
-        (v[i].rem)--;
+        v[i].rem--;
     }
     bool res = true;
-    n = n1;
+    on = on1;
     while (true)
     {
-        n++;
-        if (n == n2)
+        on++;
+        if (on == on2)
             break;
-        if (x[n].t <= 3)
+        if (x[on].t <= 3)
             continue;
-        i = x[n].ind;
+        i = x[on].ind;
         if (v[i].last != 0)
             continue;
         if (v[i].rem == 0)
@@ -1797,18 +1795,18 @@ static bool ortgn(size_t n1, size_t n2)
         res = false;
         break;
     };
-    n = n1;
+    on = on1;
     while (true)
     {
-        n++;
-        if (n == n2)
+        on++;
+        if (on == on2)
             break;
-        if (x[n].t <= 3)
+        if (x[on].t <= 3)
             continue;
-        i = x[n].ind;
+        i = x[on].ind;
         if (v[i].last != 0)
             continue;
-        (v[i].rem)++;
+        v[i].rem++;
     }
     return res;
 }
