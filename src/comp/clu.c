@@ -76,16 +76,16 @@ T_U *lookup(const char *idp, size_t lid)
             {
                 if (lid == p->l)
                 { // include usage number to list
-                    T_REFW *q1 = (*p).last_ref;
+                    T_REFW *q1 = p->last_ref;
                     size_t k = 5;
-                    while ((*q1).numb[k] == 0)
+                    while (q1->numb[k] == 0)
                         k--;
-                    if ((*q1).numb[k] != scn_.nomkar)
+                    if (q1->numb[k] != scn_.nomkar)
                     {
                         // include number to list
-                        if ((*q1).numb[5] == 0)
+                        if (q1->numb[5] == 0)
                             // it's free field in current item
-                            (*q1).numb[k + 1] = scn_.nomkar;
+                            q1->numb[k + 1] = scn_.nomkar;
                         else
                         { // create new item
                             T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
@@ -94,16 +94,16 @@ T_U *lookup(const char *idp, size_t lid)
 #endif
                             if (r1 == NULL)
                                 uns_sto();
-                            (*q1).next = r1;
-                            (*p).last_ref = (*q1).next;
-                            (*r1).next = NULL;
+                            q1->next = r1;
+                            p->last_ref = q1->next;
+                            r1->next = NULL;
                             for (k = 0; k <= 5; k++)
-                                (*r1).numb[k] = 0;
-                            (*r1).numb[0] = scn_.nomkar;
+                                r1->numb[k] = 0;
+                            r1->numb[0] = scn_.nomkar;
                         };
                     }
-                    while (((*p).mode & '\300') == '\300')
-                        p = (*p).info.infop;
+                    while ((p->mode & '\300') == '\300')
+                        p = p->info.infop;
                     return p;
                 }
                 else
@@ -125,9 +125,9 @@ T_U *lookup(const char *idp, size_t lid)
         tgld++;
         // step down in tree
         if (kren == '\100')
-            q = (*p).j;
+            q = p->j;
         else
-            q = (*p).i;
+            q = p->i;
         if (q != NULL)
         {
             p = q;
@@ -139,19 +139,19 @@ T_U *lookup(const char *idp, size_t lid)
     isk_uz = nov_uzel(idp, lid);
     q = isk_uz;
     if (kren == '\100')
-        (*p).j = q;
+        p->j = q;
     else
-        (*p).i = q;
+        p->i = q;
     // necessary node is new
     while (true)
     { // move up and correct
         // balance  features
         tgld--;
         p = adruz[tgld];
-        kren = (*p).k;
+        kren = p->k;
         if (kren == '\000')
         {
-            (*p).k = otnuz[tgld];
+            p->k = otnuz[tgld];
             if (tgld != 0)
                 continue;
             return isk_uz;
@@ -161,31 +161,30 @@ T_U *lookup(const char *idp, size_t lid)
     // in this point kren != '\000'
     if (kren != otnuz[tgld])
     {
-        (*p).k = '\000';
+        p->k = '\000';
         return isk_uz;
     };
     // tree turn
     // if kren = '\100' -- left turn
     // if kren = '\200' -- right turn
     if (kren == '\100')
-        q = (*p).j;
+        q = p->j;
     else
-        q = (*p).i;
+        q = p->i;
     T_U *verquz;
-    if (kren == (*q).k)
+    if (kren == q->k)
     {
         if (kren == '\100')
         { // once turn
-            (*p).j = (*q).i;
-            (*q).i = p;
+            p->j = q->i;
+            q->i = p;
         }
         else
         {
-            (*p).i = (*q).j;
-            (*q).j = p;
+            p->i = q->j;
+            q->j = p;
         };
-        (*q).k = '\000';
-        (*p).k = (*q).k;
+        p->k = q->k = '\000';
         verquz = q;
     }
     else
@@ -193,37 +192,37 @@ T_U *lookup(const char *idp, size_t lid)
         T_U *r;
         if (kren == '\100')
         {
-            r = (*q).i;
-            (*p).j = (*r).i;
-            (*q).i = (*r).j;
-            (*r).i = p;
-            (*r).j = q;
+            r = q->i;
+            p->j = r->i;
+            q->i = r->j;
+            r->i = p;
+            r->j = q;
         }
         else
         {
-            r = (*q).j;
-            (*p).i = (*r).j;
-            (*q).j = (*r).i;
-            (*r).j = p;
-            (*r).i = q;
+            r = q->j;
+            p->i = r->j;
+            q->j = r->i;
+            r->j = p;
+            r->i = q;
         };
-        const char nruk = (*r).k == '\0' & '\300';
-        if ((*r).k == '\000')
+        const char nruk = (r->k == '\0') & '\300';
+        if (r->k == '\000')
         {
-            (*p).k = '\000';
-            (*q).k = (*p).k;
+            p->k = '\000';
+            q->k = p->k;
         }
         else if (nruk == kren)
         {
-            (*p).k = '\000';
-            (*q).k = nruk;
+            p->k = '\000';
+            q->k = nruk;
         }
         else
         {
-            (*q).k = '\000';
-            (*p).k = nruk;
+            q->k = '\000';
+            p->k = nruk;
         };
-        (*r).k = '\000';
+        r->k = '\000';
         verquz = r;
     }; // end of twos turn
     // correct upper reference
@@ -233,9 +232,9 @@ T_U *lookup(const char *idp, size_t lid)
     {
         tgld--;
         if (otnuz[tgld] == '\100')
-            (*adruz[tgld]).j = verquz;
+            adruz[tgld]->j = verquz;
         else
-            (*adruz[tgld]).i = verquz;
+            adruz[tgld]->i = verquz;
     };
     return isk_uz;
 }
@@ -245,11 +244,11 @@ static void traverse(const T_U *ptr, void (*prog)(const T_U *))
     const T_U *q = ptr;
     do
     {
-        const T_U *r = (*q).i;
+        const T_U *r = q->i;
         if (r != NULL)
             traverse(r, prog);
         (*prog)(q);
-        q = (*q).j;
+        q = q->j;
     } while (q != NULL);
     return;
 }
@@ -266,20 +265,20 @@ static void kil_tree(T_U *p)
     T_U *q = p;
     do
     {
-        T_U *r = (*q).i;
+        T_U *r = q->i;
         if (r != NULL)
             kil_tree(r);
-        T_REFW *r2 = (*q).ref.next;
+        T_REFW *r2 = q->ref.next;
         while (r2 != NULL)
         {
-            T_REFW *r1 = (*r2).next;
+            T_REFW *r1 = r2->next;
 #ifdef mdebug
             printf("\nfree(clu): r2=%p", r2);
 #endif
             free(r2);
             r2 = r1;
         }
-        r = (*q).j;
+        r = q->j;
         free(q->id);
         free(q);
 #ifdef mdebug
