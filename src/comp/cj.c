@@ -528,7 +528,7 @@ void jend()
                 }
                 sprintf(bufs, "%d", d.w);
                 fputs(bufs, syslin);
-                if (k % 60 != 59 && k != delta - 1)
+                if (k % 60 != 59 && k != (size_t)(delta - 1))
                     fputc(',', syslin);
             }
             fputc('\n', syslin);

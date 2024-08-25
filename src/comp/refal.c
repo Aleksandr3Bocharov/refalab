@@ -2,6 +2,7 @@
 //      The main file of refal compiler
 //       Last modification : 11.07.24
 //--------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,13 +18,13 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define EH                               \
-    if (m != 71)                         \
-    {                                    \
-        m++;                             \
-        if ((m == 71) && (c[71] != ' ')) \
-        {                                \
-            rdcard();                    \
+#define EH                           \
+    if (m != 71)                     \
+    {                                \
+        m++;                         \
+        if (m == 71 && c[71] != ' ') \
+        {                            \
+            rdcard();                \
             if (_eoj)
 #define ROMA \
     return;  \
@@ -207,7 +208,7 @@ static void GET_time()
     timespec t1;
     timespec_get(&t1, TIME_UTC);
     int32_t in = t1.tv_nsec - t0.tv_nsec;
-    uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
+    uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
     if (in < 0)
     {
         in += 1000000000;
@@ -257,9 +258,9 @@ int main(int argc, char *argv[])
     char parm[40];
     size_t i;
     strcpy(parm, argv[1]);
-    //parm[0] = *(argv[1]);
-    //for (i = 0; parm[i] != '\0'; i++)
-    //    parm[i + 1] = *(argv[1] + i + 1);
+    // parm[0] = *(argv[1]);
+    // for (i = 0; parm[i] != '\0'; i++)
+    //     parm[i + 1] = *(argv[1] + i + 1);
 
     // BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
     if (index_x(parm, ".") < 0)
@@ -285,25 +286,25 @@ int main(int argc, char *argv[])
     options.multmod = false;
     options.names = true;
     options.mincomp = false;
-    for (size_t j = 2; j < argc; ++j)
+    for (size_t j = 2; j < (size_t)argc; ++j)
     {
         strcpy(parm, argv[j]);
-        //for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
-        //    ;
+        // for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
+        //     ;
         if (parm[0] == '(')
         {
-            for (int32_t i = 1; i < 40 && parm[i] != ')' && parm[i] != '\0';)
+            for (int32_t ii = 1; ii < 40 && parm[ii] != ')' && parm[ii] != '\0';)
             {
                 int32_t temp;
-                if (strncmp(parm + i, "nn", 2) == 0) //  kras
+                if (strncmp(parm + ii, "nn", 2) == 0) //  kras
                     options.names = false;
-                else if (strncmp(parm + i, "ns", 2) == 0)
+                else if (strncmp(parm + ii, "ns", 2) == 0)
                     options.source = false;
-                else if (strncmp(parm + i, "fn", 2) == 0)
+                else if (strncmp(parm + ii, "fn", 2) == 0)
                     options.extname = true;
-                else if (strncmp(parm + i, "cm", 2) == 0)
+                else if (strncmp(parm + ii, "cm", 2) == 0)
                     options.mincomp = true;
-                else if (strncmp(parm + i, "mm", 2) == 0)
+                else if (strncmp(parm + ii, "mm", 2) == 0)
                     options.multmod = true;
                 else
                 {
@@ -312,28 +313,28 @@ int main(int argc, char *argv[])
                     temp--;
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
-                    printf("Unknown option: %s\n", parm + i);
+                    printf("Unknown option: %s\n", parm + ii);
                     printf("Options may be: mm,nn,ns,fn,cm\n");
                     exit(1);
                 }
-                temp = i;
-                // BLF  i = index((parm + i),40-i,",",1) + 1 ;
-                i = index_x(parm + i, ",") + 1;
-                if (i == 0)
+                temp = ii;
+                // BLF  ii = index((parm + ii),40-ii,",",1) + 1 ;
+                ii = index_x(parm + ii, ",") + 1;
+                if (ii == 0)
                 {
-                    // BLF     i = index((parm + temp),40-temp,")",1) ;
-                    i = index_x(parm + temp, ")");
-                    if (i == -1)
+                    // BLF     ii = index((parm + temp),40-temp,")",1) ;
+                    ii = index_x(parm + temp, ")");
+                    if (ii == -1)
                     {
                         printf("Missing ')' in option definition\n");
                         exit(1);
                     }
                 }
-                i += temp;
+                ii += temp;
             } // end for
             strcpy(parm, argv[1]);
-            //for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
-            //    ;
+            // for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
+            //     ;
         } // end if
         else
         {
@@ -574,26 +575,26 @@ static void rdline(char *s)
 { // read 80 symbols from sysin
     empcard = true;
     size_t i;
-    int c = getc(sysin);
-    for (i = 0; c != '\n' && c != EOF && i < 80; i++)
+    int cs = getc(sysin);
+    for (i = 0; cs != '\n' && cs != EOF && i < 80; i++)
     {
-        if (c == '\t')
+        if (cs == '\t')
         {
             const size_t k = 8 - (i & 7);
             for (size_t j = 0; j < k; j++)
                 *(s + i + j) = ' ';
             i += k - 1;
         }
-        else if (c < ' ' && c > '\0')
+        else if (cs < ' ' && cs > '\0')
             *(s + i) = ' ';
         else
         {
-            *(s + i) = c;
+            *(s + i) = (char)cs;
             empcard = false;
         };
-        c = getc(sysin);
+        cs = getc(sysin);
     }
-    if (c == EOF && i == 0)
+    if (cs == EOF && i == 0)
         _eoj = true;
     for (; i < 80; i++)
         *(s + i) = ' ';
@@ -707,14 +708,14 @@ static void lblkey(bool pr)
             if (m == 71)
             {
                 const size_t delta = 71 - fixm;
-                const int32_t fixm1 = 0 - delta;
+                const int32_t fixm1 = (int32_t)(0 - delta);
                 for (m = 0; m != delta; m++)
                 {
-                    c[fixm1 + m] = c[fixm + m];
-                    class[fixm1 + m] = class[fixm + m];
+                    c[fixm1 + (int32_t)m] = c[fixm + m];
+                    class[fixm1 + (int32_t)m] = class[fixm + m];
                 }
                 rdcard();
-                fixm = fixm1;
+                fixm = (size_t)fixm1;
                 if (c[0] == ' ')
                     break;
             }
@@ -1021,14 +1022,14 @@ void scan()
                         uint32_t j = 0;
                         for (size_t i = 1; i < 3; i++)
                             if (c[m + i] >= '0' && c[m + i] <= '7')
-                                j = j * 8 + c[m + i] - '0';
+                                j = j * 8 + (uint32_t)(c[m + i] - '0');
                             else
                             {
                                 m--;
                                 break;
                             }
                         m += 2;
-                        c[m] = j & 255;
+                        c[m] = (char)(j & 255);
                     }
                     else
                         c[m] = 0;
@@ -1039,14 +1040,14 @@ void scan()
                         uint32_t j = 0;
                         for (size_t i = 0; i < 3; i++)
                             if (c[m + i] >= '0' && c[m + i] <= '7')
-                                j = j * 8 + c[m + i] - '0';
+                                j = j * 8 + (uint32_t)(c[m + i] - '0');
                             else
                             {
                                 m--;
                                 break;
                             }
                         m += 2;
-                        c[m] = j & 255;
+                        c[m] = (char)(j & 255);
                     }
                     else
                         m--;
@@ -1356,14 +1357,14 @@ static bool specif(char tail)
                             uint32_t j = 0;
                             for (size_t i = 1; i < 3; i++)
                                 if (c[m + i] >= '0' && c[m + i] <= '7')
-                                    j = j * 8 + c[m + i] - '0';
+                                    j = j * 8 + (uint32_t)(c[m + i] - '0');
                                 else
                                 {
                                     m--;
                                     break;
                                 }
                             m += 2;
-                            c[m] = j & 255;
+                            c[m] = (char)(j & 255);
                         }
                         else
                             c[m] = 0;
@@ -1374,14 +1375,14 @@ static bool specif(char tail)
                             uint32_t j = 0;
                             for (size_t i = 0; i < 3; i++)
                                 if (c[m + i] >= '0' && c[m + i] <= '7')
-                                    j = j * 8 + c[m + i] - '0';
+                                    j = j * 8 + (uint32_t)(c[m + i] - '0');
                                 else
                                 {
                                     m--;
                                     break;
                                 }
                             m += 2;
-                            c[m] = j & 255;
+                            c[m] = (char)(j & 255);
                         }
                         else
                             m--;
@@ -1622,7 +1623,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
         {
             code->tag = TAGN;
             code->info.coden = 0;
-            uint32_t k = c[m] - '0';
+            uint32_t k = (uint32_t)(c[m] - '0');
             bool csmbend = false;
             while (true)
             {
@@ -1634,7 +1635,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                     csmbend = true;
                     break;
                 }
-                const uint32_t l = c[m] - '0';
+                const uint32_t l = (uint32_t)(c[m] - '0');
                 k = k * 10 + l;
                 if (k <= 16777215)
                     continue;

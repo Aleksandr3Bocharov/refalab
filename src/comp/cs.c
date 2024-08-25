@@ -62,10 +62,10 @@ static T_I_LBL *alloc_lbl()
         {
             q->nextl = first_arr_lbl;
             first_arr_lbl = q;
-            n_lbl = -1;
+            n_lbl = (size_t)-1;
         }
     }
-    n_lbl = n_lbl + 1;
+    ++n_lbl;
     T_I_LBL *p = &first_arr_lbl->lbl[n_lbl];
     p->model = '\000';
     return p;

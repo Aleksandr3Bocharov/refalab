@@ -35,7 +35,7 @@ int32_t index_x(const char *s, const char *t)
                 break;
             k++;
             if (k >= m)
-                return i;
+                return (int32_t)i;
         }
     return -1;
 }
