@@ -293,7 +293,7 @@ void rfdbg(T_ST *s_st)
                 break;
             }
             getpf(s_st);
-            if (!ge_all && !(det_table->ge) && !(det_table->gt))
+            if (!ge_all && !det_table->ge && !det_table->gt)
             {
                 if (det_table->tr)
                 {
@@ -310,7 +310,7 @@ void rfdbg(T_ST *s_st)
                 break;
             }
             // enter into station "is already"
-            if ((!ge_all && !(det_table->ge)) || det_table->gt)
+            if ((!ge_all && !det_table->ge) || det_table->gt)
                 was_ge = false;
             else
             {
@@ -333,7 +333,7 @@ void rfdbg(T_ST *s_st)
             break;
         // "is already" station
         case DBG_ALREADY:
-            if ((det_table->le) || (det_table->lt))
+            if (det_table->le || det_table->lt)
             {
                 //  "isn't already"
                 if (det_table->lt)
@@ -460,7 +460,7 @@ void rfdbg(T_ST *s_st)
             printf("\nCompleted steps number = %u", s_st->step);
             printf("\nView field: ");
             rfpexm("     ", s_st->view, s_st->view);
-            if ((s_st->store)->next != s_st->store)
+            if (s_st->store->next != s_st->store)
             {
                 printf("\nBurried: ");
                 rfpexm("     ", s_st->store, s_st->store);
@@ -501,7 +501,7 @@ static void dbapp(T_ST *ss_st)
                 break;
             }
             getpf(ss_st);
-            if (!ge_all && !(det_table->ge) && !(det_table->gt))
+            if (!ge_all && !det_table->ge && !det_table->gt)
             {
                 if (det_table->tr)
                 {
@@ -518,7 +518,7 @@ static void dbapp(T_ST *ss_st)
                 break;
             }
             // enter into station "is already"
-            if ((!ge_all && !(det_table->ge)) || det_table->gt)
+            if ((!ge_all && !det_table->ge) || det_table->gt)
                 was_ge = false;
             else
             {
@@ -541,7 +541,7 @@ static void dbapp(T_ST *ss_st)
             break;
         // "is already" station
         case DB_ALREADY:
-            if ((det_table->le) || (det_table->lt))
+            if (det_table->le || det_table->lt)
             {
                 //  "isn't already"
                 if (det_table->lt)
@@ -705,7 +705,7 @@ static void one_step(T_ST *ss_st)
             continue;
         break;
     }
-    if (e1empty && (ss_st->state == 2))
+    if (e1empty && ss_st->state == 2)
     {
         pr_step();
         if (euc_step != curr_step)
@@ -736,13 +736,13 @@ static void pr_step()
 
 static void pr_euc()
 {
-    if ((curr_step > s_upto) || (curr_step < s_from))
+    if (curr_step > s_upto || curr_step < s_from)
         return;
     if (euc_step != curr_step)
     {
         euc_step = curr_step;
-        if ((res_step != curr_step - 1) || (res_prevk != prevk) ||
-            (res_nextd != nextd))
+        if (res_step != curr_step - 1 || res_prevk != prevk ||
+            res_nextd != nextd)
         {
             pr_step();
             rfpexm("      leading term : ", prevk, nextd);
@@ -753,7 +753,7 @@ static void pr_euc()
 
 static void pr_imres()
 {
-    if ((curr_step > s_upto) || (curr_step < s_from))
+    if (curr_step > s_upto || curr_step < s_from)
         return;
     pr_step();
     rfpexm("      result : ", prevk, nextd);
@@ -765,11 +765,11 @@ static void pr_imres()
 
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
 {
-    if ((curr_step > s_upto) || (curr_step < s_from))
+    if (curr_step > s_upto || curr_step < s_from)
         return;
     pr_step();
-    if ((curr_step == res_step) && (res_prevk == xprevk) &&
-        (res_nextd == xnextd))
+    if (curr_step == res_step && res_prevk == xprevk &&
+        res_nextd == xnextd)
     {
         if (xstep == curr_step)
             return;
@@ -841,7 +841,7 @@ static void get_arg()
         if (*(arg + l_arg) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
             break;
     }
-    for (s_arg = 0; (*(arg + s_arg) == ' ') || (*(arg + s_arg) == ','); s_arg++)
+    for (s_arg = 0; *(arg + s_arg) == ' ' || *(arg + s_arg) == ','; s_arg++)
         ;
     return;
 }
@@ -862,7 +862,7 @@ static bool get_det()
         ab = true;
     else
     {
-        (det_table->det_id = malloc(l_arg + 1));
+        det_table->det_id = malloc(l_arg + 1);
         if (det_table->det_id == NULL)
             ab = true;
     }
@@ -888,7 +888,6 @@ static bool get_det()
 }
 
 static bool get_numb(int32_t *numb)
-// ??? uint32_t better?
 {
     if (sscanf(buff, "%d", numb) == 0 || *numb < 1)
     {
