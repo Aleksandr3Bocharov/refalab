@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
         strcat(parm, ".ref");
 
     printf("\n%s:\n", parm);
-    for (i = 0; i <= (strlen(parm) + 1); i++)
+    for (i = 0; i <= strlen(parm) + 1; i++)
         parm_i[i] = parm[i];
     sysin = fopen(parm, "r");
     if (sysin == NULL)
@@ -292,18 +292,18 @@ int main(int argc, char *argv[])
         //    ;
         if (parm[0] == '(')
         {
-            for (int32_t i = 1; (i < 40) && (parm[i] != ')') && (parm[i] != '\0');)
+            for (int32_t i = 1; i < 40 && parm[i] != ')' && parm[i] != '\0';)
             {
                 int32_t temp;
-                if (strncmp((parm + i), "nn", 2) == 0) //  kras
+                if (strncmp(parm + i, "nn", 2) == 0) //  kras
                     options.names = false;
-                else if (strncmp((parm + i), "ns", 2) == 0)
+                else if (strncmp(parm + i, "ns", 2) == 0)
                     options.source = false;
-                else if (strncmp((parm + i), "fn", 2) == 0)
+                else if (strncmp(parm + i, "fn", 2) == 0)
                     options.extname = true;
-                else if (strncmp((parm + i), "cm", 2) == 0)
+                else if (strncmp(parm + i, "cm", 2) == 0)
                     options.mincomp = true;
-                else if (strncmp((parm + i), "mm", 2) == 0)
+                else if (strncmp(parm + i, "mm", 2) == 0)
                     options.multmod = true;
                 else
                 {
@@ -312,17 +312,17 @@ int main(int argc, char *argv[])
                     temp--;
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
-                    printf("Unknown option: %s\n", (parm + i));
+                    printf("Unknown option: %s\n", parm + i);
                     printf("Options may be: mm,nn,ns,fn,cm\n");
                     exit(1);
                 }
                 temp = i;
                 // BLF  i = index((parm + i),40-i,",",1) + 1 ;
-                i = index_x((parm + i), ",") + 1;
+                i = index_x(parm + i, ",") + 1;
                 if (i == 0)
                 {
                     // BLF     i = index((parm + temp),40-temp,")",1) ;
-                    i = index_x((parm + temp), ")");
+                    i = index_x(parm + temp, ")");
                     if (i == -1)
                     {
                         printf("Missing ')' in option definition\n");
@@ -341,8 +341,8 @@ int main(int argc, char *argv[])
             exit(1);
         }
     } // end for
-    parm[0] = *(argv[1]);
-    for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
+    parm[0] = *argv[1];
+    for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
         parm[i + 1] = *(argv[1] + i + 1);
     parm[i] = '\0';
     if (options.source)
@@ -355,8 +355,8 @@ int main(int argc, char *argv[])
             exit(8);
         }
     }
-    parm[0] = *(argv[1]);
-    for (i = 0; (parm[i] != '\0') && (parm[i] != '.'); ++i)
+    parm[0] = *argv[1];
+    for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
         parm[i + 1] = *(argv[1] + i + 1);
     parm[i] = '\0';
     if (options.multmod)
@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
                 break;
             }
             s_init();
-            if ((strncmp(stmkey, "start", 5) != 0) && (strncmp(stmkey, "START", 5) != 0))
+            if (strncmp(stmkey, "start", 5) != 0 && strncmp(stmkey, "START", 5) != 0)
             {
                 pchosh("001 START-directive missing");
                 scn_.modnmlen = 0;
@@ -435,21 +435,21 @@ int main(int argc, char *argv[])
             mod_state = KEYS;
             break;
         case KEYS:
-            if ((strncmp(stmkey, "l ", 2) == 0) || (strncmp(stmkey, "L ", 2) == 0))
+            if (strncmp(stmkey, "l ", 2) == 0 || strncmp(stmkey, "L ", 2) == 0)
             {
                 dir = true;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if ((strncmp(stmkey, "r ", 2) == 0) || (strncmp(stmkey, "R ", 2) == 0))
+            else if (strncmp(stmkey, "r ", 2) == 0 || strncmp(stmkey, "R ", 2) == 0)
             {
                 dir = false;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if ((strncmp(stmkey, "start", 5) == 0) || (strncmp(stmkey, "START", 5) == 0))
+            else if (strncmp(stmkey, "start", 5) == 0 || strncmp(stmkey, "START", 5) == 0)
                 pchosh("002 too many start-directive");
-            else if ((strncmp(stmkey, "end", 3) == 0) || (strncmp(stmkey, "END", 3) == 0))
+            else if (strncmp(stmkey, "end", 3) == 0 || strncmp(stmkey, "END", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
@@ -457,21 +457,21 @@ int main(int argc, char *argv[])
                 mod_state = END_STATEMENT;
                 break;
             }
-            else if ((strncmp(stmkey, "entry", 5) == 0) || (strncmp(stmkey, "ENTRY", 5) == 0))
+            else if (strncmp(stmkey, "entry", 5) == 0 || strncmp(stmkey, "ENTRY", 5) == 0)
                 ilm(sentry);
-            else if ((strncmp(stmkey, "extrn", 5) == 0) || (strncmp(stmkey, "EXTRN", 5) == 0))
+            else if (strncmp(stmkey, "extrn", 5) == 0 || strncmp(stmkey, "EXTRN", 5) == 0)
                 ilm(sextrn);
-            else if ((strncmp(stmkey, "empty", 5) == 0) || (strncmp(stmkey, "EMPTY", 5) == 0))
+            else if (strncmp(stmkey, "empty", 5) == 0 || strncmp(stmkey, "EMPTY", 5) == 0)
                 il(sempty);
-            else if ((strncmp(stmkey, "swap", 4) == 0) || (strncmp(stmkey, "SWAP", 4) == 0))
+            else if (strncmp(stmkey, "swap", 4) == 0 || strncmp(stmkey, "SWAP", 4) == 0)
                 il(sswap);
-            else if ((strncmp(stmkey, "s ", 2) == 0) || (strncmp(stmkey, "S ", 2) == 0))
+            else if (strncmp(stmkey, "s ", 2) == 0 || strncmp(stmkey, "S ", 2) == 0)
             {
                 trprev();
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
-            else if ((strncmp(stmkey, "equ", 3) == 0) || (strncmp(stmkey, "EQU", 3) == 0))
+            else if (strncmp(stmkey, "equ", 3) == 0 || strncmp(stmkey, "EQU", 3) == 0)
                 equ();
             else if (stmkey[0] == ' ')
             {
@@ -537,7 +537,7 @@ int main(int argc, char *argv[])
             {
                 mod_length = jwhere();
                 fclose(syslin);
-                if ((mod_length == 0) || flags.was_err)
+                if (mod_length == 0 || flags.was_err)
                     unlink(parm);
             }
             if (flags.was_err)
@@ -559,7 +559,7 @@ int main(int argc, char *argv[])
 static void trprev()
 { // perenos poslednej pustoj metki w tekuschuju
     size_t n = strlen(prevlb);
-    if ((n != 0) && (lbl_leng == 0))
+    if (n != 0 && lbl_leng == 0)
     {
         strcpy(stmlbl, prevlb);
         lbl_leng = n;
@@ -575,16 +575,16 @@ static void rdline(char *s)
     empcard = true;
     size_t i;
     int c = getc(sysin);
-    for (i = 0; (c != '\n') && (c != EOF) && (i < 80); i++)
+    for (i = 0; c != '\n' && c != EOF && i < 80; i++)
     {
         if (c == '\t')
         {
             const size_t k = 8 - (i & 7);
             for (size_t j = 0; j < k; j++)
                 *(s + i + j) = ' ';
-            i += (k - 1);
+            i += k - 1;
         }
-        else if ((c < ' ') && (c > '\0'))
+        else if (c < ' ' && c > '\0')
             *(s + i) = ' ';
         else
         {
@@ -593,7 +593,7 @@ static void rdline(char *s)
         };
         c = getc(sysin);
     }
-    if ((c == EOF) && (i == 0))
+    if (c == EOF && i == 0)
         _eoj = true;
     for (; i < 80; i++)
         *(s + i) = ' ';
@@ -624,9 +624,9 @@ static void translate(const char *str, char *class1)
                 *(class1 + i) = 'L';
                 continue;
             };
-        if (((j > -129) && (j < -80)) || ((j > -33) && (j < -16)))
+        if ((j > -129 && j < -80) || (j > -33 && j < -16))
             *(class1 + i) = 'L';
-        if ((j == 35) || (j == 95))
+        if (j == 35 || j == 95)
             *(class1 + i) = 'L';
     }
     return;
@@ -635,7 +635,7 @@ static void translate(const char *str, char *class1)
 static bool komm()
 {
     const char *k;
-    for (k = c; (*k == ' ') || (*k == '\t'); k++)
+    for (k = c; *k == ' ' || *k == '\t'; k++)
         ;
     if (*k == '*')
         return true;
@@ -836,7 +836,7 @@ void scan()
             scn_state = SCNRET;
             break;
         case SCNSC:
-            if (get_csmb(&(scn_e.code), id, &id_leng))
+            if (get_csmb(&scn_e.code, id, &id_leng))
             {
                 scn_state = EGO;
                 break;
@@ -912,7 +912,7 @@ void scan()
             scn_state = SCNVI;
             break;
         case SCNVI:
-            if ((class[m] != 'L') && (class[m] != 'D'))
+            if (class[m] != 'L' && class[m] != 'D')
             {
                 scn_state = OSH102;
                 break;
@@ -927,7 +927,7 @@ void scan()
                 c[m - 1] = '/';
                 size_t i;
                 for (i = 1;
-                     (class[m + i] == 'L') || (class[m + i] == 'D') || (c[m + i] == '_') || (c[m + i] == '-');
+                     class[m + i] == 'L' || class[m + i] == 'D' || c[m + i] == '_' || c[m + i] == '-';
                      i++)
                 {
                     c[m + i - 1] = c[m + i];
@@ -1016,11 +1016,11 @@ void scan()
                     c[m] = '\014';
                     break;
                 case '0':
-                    if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
+                    if (c[m + 1] >= '0' && c[m + 1] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 1; i < 3; i++)
-                            if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                            if (c[m + i] >= '0' && c[m + i] <= '7')
                                 j = j * 8 + c[m + i] - '0';
                             else
                             {
@@ -1034,11 +1034,11 @@ void scan()
                         c[m] = 0;
                     break;
                 default:
-                    if ((c[m] >= '0') && (c[m] <= '7'))
+                    if (c[m] >= '0' && c[m] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 0; i < 3; i++)
-                            if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                            if (c[m + i] >= '0' && c[m + i] <= '7')
                                 j = j * 8 + c[m + i] - '0';
                             else
                             {
@@ -1351,11 +1351,11 @@ static bool specif(char tail)
                         c[m] = '\014';
                         break;
                     case '0':
-                        if ((c[m + 1] >= '0') && (c[m + 1] <= '7'))
+                        if (c[m + 1] >= '0' && c[m + 1] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 1; i < 3; i++)
-                                if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                if (c[m + i] >= '0' && c[m + i] <= '7')
                                     j = j * 8 + c[m + i] - '0';
                                 else
                                 {
@@ -1369,11 +1369,11 @@ static bool specif(char tail)
                             c[m] = 0;
                         break;
                     default:
-                        if ((c[m] >= '0') && (c[m] <= '7'))
+                        if (c[m] >= '0' && c[m] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 0; i < 3; i++)
-                                if ((c[m + i] >= '0') && (c[m + i] <= '7'))
+                                if (c[m + i] >= '0' && c[m + i] <= '7')
                                     j = j * 8 + c[m + i] - '0';
                                 else
                                 {
@@ -1671,11 +1671,11 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 static char convert(char cm)
 {
     const int j = cm;
-    if ((j > 96) && (j < 123))
+    if (j > 96 && j < 123)
         cm = cm - '\40';
-    if ((j > -97) && (j < -80))
+    if (j > -97 && j < -80)
         cm = cm - '\40';
-    if ((j > -33) && (j < -16))
+    if (j > -33 && j < -16)
         cm = cm - 80;
     return cm;
 }
@@ -1690,12 +1690,12 @@ static bool get_id(char id[40], size_t *lid)
     for (*lid = 1; *lid < 40; (*lid)++)
     {
         EH ROMA0; // kras
-        if ((class[m] != 'L') && (class[m] != 'D') && (c[m] != '_') && (c[m] != '-'))
+        if (class[m] != 'L' && class[m] != 'D' && c[m] != '_' && c[m] != '-')
             return true;
         id[*lid] = convert(c[m]);
     }
     // if identifier length > 40 then delete tail
-    while ((class[m] == 'L') || (class[m] == 'D') || (c[m] == '_') || (c[m] == '-'))
+    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_' || c[m] == '-')
     {
         EH ROMA0;
     } // kras
@@ -1711,12 +1711,12 @@ static bool get_idm(char id[8], size_t *lid)
     for (*lid = 1; *lid < 8; (*lid)++)
     {
         EH ROMA0; // kras
-        if ((class[m] != 'L') && (class[m] != 'D'))
+        if (class[m] != 'L' && class[m] != 'D')
             return true;
         id[*lid] = convert(c[m]);
     }
     // if identifier length > 8 then delete tail
-    while ((class[m] == 'L') || (class[m] == 'D'))
+    while (class[m] == 'L' || class[m] == 'D')
     {
         EH ROMA0;
     } // kras
@@ -1733,7 +1733,7 @@ static void blout()
 {
     while (true)
     {
-        while ((m != 71) && (c[m] == ' '))
+        while (m != 71 && c[m] == ' ')
             m++;
         if (c[m] == '+')
         {
