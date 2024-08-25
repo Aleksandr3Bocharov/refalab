@@ -2,7 +2,6 @@
 //             generator of assembler text
 //           Last edition date :  17.07.24
 //------------------------------------------------------
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -2,7 +2,6 @@
 //      The main file of refal compiler
 //       Last modification : 11.07.24
 //--------------------------------------------
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

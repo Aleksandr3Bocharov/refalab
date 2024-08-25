@@ -2,7 +2,6 @@
 //     standard PL/I-functions implemented on C-language
 //                Last edition date : 11.07.24
 //----------------------------------------------------------
-
 #include <stdlib.h>
 #include <stdint.h>
 #include "plc.h"
