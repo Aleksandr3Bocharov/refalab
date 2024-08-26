@@ -65,7 +65,7 @@ static void appl_()
         if (s_st->state == 3)
             if (lincrm())
                 s_st->state = 1;
-    } while ((s_st->state == 1) && (s_st->dot != NULL));
+    } while (s_st->state == 1 && s_st->dot != NULL);
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
     //   printf("\nOut: %ld %lx",upst->step,upst);

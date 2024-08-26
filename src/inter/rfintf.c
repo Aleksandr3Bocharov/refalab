@@ -38,7 +38,7 @@ bool lincrm()
         {
             const T_LINKCB *p = refal.flhead->next;
             n = 0;
-            while ((p != first_free) && (n != 1000))
+            while (p != first_free && n != 1000)
             {
                 n++;
                 p = p->next;
@@ -132,7 +132,7 @@ bool linskd(T_ST *ast, void (*f)())
 char rfcnv(char cm)
 {
     const int j = cm;
-    if ((j > 96) && (j < 123))
+    if (j > 96 && j < 123)
         return cm - '\40';
     else
         return cm; // perewod  a..z w A..Z
@@ -457,10 +457,10 @@ bool lcre(T_ST *ast)
     T_LINKCB *flhead1 = ast->store->next;
     refal.flhead->next = flhead1;
     flhead1->prev = refal.flhead;
-    (ast->view->next) = (ast->view);
-    (ast->view->prev) = (ast->view);
-    (ast->store->next) = (ast->store);
-    (ast->store->prev) = (ast->store);
+    ast->view->next = ast->view;
+    ast->view->prev = ast->view;
+    ast->store->next = ast->store;
+    ast->store->prev = ast->store;
     T_ST *q = refal.crprev;
     ast->stnext = (T_ST *)&refal;
     refal.crprev = ast;
@@ -634,7 +634,7 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
         if (x->tag != y->tag)
             return NULL;
         if (x->info.codef != y->info.codef)
-            if ((x->tag != TAGLB) && (x->tag != TAGRB))
+            if (x->tag != TAGLB && x->tag != TAGRB)
                 return NULL;
         x = x->next;
         y = y->next;

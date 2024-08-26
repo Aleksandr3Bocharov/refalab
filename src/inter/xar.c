@@ -116,15 +116,15 @@ static bool dajch()
         return true;
     }
     x = x->next;
-    if ((x->tag == TAGO) &&
-        ((x->info.infoc == '+') || (x->info.infoc == '-')))
+    if (x->tag == TAGO &&
+        (x->info.infoc == '+' || x->info.infoc == '-'))
     {
         zn = x->info.infoc;
         x = x->next;
         if (x == y)
             return false; //  w chisle - lish znak
     }
-    for (; (x->tag == TAGN) && (gcoden(x) == 0); x = x->next)
+    for (; x->tag == TAGN && gcoden(x) == 0; x = x->next)
         ;
     if (x == y)
         dl = 0; //  wse cifry - nuli
@@ -190,7 +190,7 @@ static uint32_t xmy()
         return 1;
     if (Xdl > Ydl)
         return 0;
-    for (x = Xn, y = Yn; (x != Xk->next); x = x->next, y = y->next)
+    for (x = Xn, y = Yn; x != Xk->next; x = x->next, y = y->next)
     {
         if (gcoden(x) < gcoden(y))
             return 1;
@@ -270,7 +270,7 @@ static void oper(uint32_t o, uint32_t prn)
         else
             Yzn = '-';
     case Oadd:
-        if ((Xdl == 0) && (Ydl == 0))
+        if (Xdl == 0 && Ydl == 0)
         {
             rez0 = true;
             break;
@@ -292,7 +292,7 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn->tag = TAGN;
                 pcoden(Xn, 0);
                 peren = 0;
-                for (x = Xk, y = Yk; (x != Xn->prev); x = x->prev)
+                for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
                     if (y != Yn->prev)
                     {
@@ -323,7 +323,7 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn->tag = TAGN;
                 pcoden(Xn, 0);
                 peren = 0;
-                for (x = Xk, y = Yk; (x != Xn->prev); x = x->prev)
+                for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
                     j = gcoden(x);
                     if (y != Yn->prev)
@@ -346,7 +346,7 @@ static void oper(uint32_t o, uint32_t prn)
         }
         break;
     case Omul:
-        if ((Xdl == 0) || (Ydl == 0))
+        if (Xdl == 0 || Ydl == 0)
         {
             rez0 = true;
             break;
@@ -485,20 +485,20 @@ static void oper(uint32_t o, uint32_t prn)
         //   delimoe > delitelja
         if (Xdl == 1)
         { //  oba po odnoj cifre
-            a = (gcoden(Xn)) % (gcoden(Yn));
-            b = (gcoden(Xn)) / (gcoden(Yn));
+            a = gcoden(Xn) % gcoden(Yn);
+            b = gcoden(Xn) / gcoden(Yn);
             odnc = true;
             break;
         }
         //  delenie mnogih  cifr
-        if (!lrqlk((Xdl - Ydl) + 2))
+        if (!lrqlk(Xdl - Ydl + 2))
         {
             refal.upshot = 3;
             return;
         }
         // t.k. k chastnomu dob. 0 i zweno na znak
         p = refal.preva;
-        lins(p, (Xdl - Ydl) + 2);
+        lins(p, Xdl - Ydl + 2);
         p = p->next; //  dlja znaka
         r = p->next; //  dlja  perwoj  cifry
         nach = r;
@@ -531,31 +531,32 @@ static void oper(uint32_t o, uint32_t prn)
             b = gcoden(Yn);
             /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
                                 b,(uint32_t)gcoden(Yn->next));*/
-            if ((a == 0) && (a1 < b))
+            if (a == 0 && a1 < b)
                 c = 0;
             else
             {
                 uint32_t b1;
-                if ((a == 0) && (a1 >= b))
+                if (a == 0 && a1 >= b)
                 {
                     c = 1; //  t.k. b - normalizowano
                     a = a1;
                 }
                 else
                 { // delim a,a1 na b
-                    a = (a * 128) + (a1 >> 17);
-                    c = (a / b) << 17;
+                    a = a * 128 + (a1 >> 17);
+                    c = a / b << 17;
                     b1 = a1 >> 10;
-                    a = ((a % b) * 128) + (/*(a1/1024)*/ b1 & 0x7F);
-                    c = c + ((a / b) * 1024);
+                    a = (a % b * 128) + (/*(a1/1024)*/ b1 & 0x7F);
+                    c = c + a / b * 1024;
                     b1 = a1 >> 3;
-                    a = ((a % b) * 128) + (/*(a1/8)*/ b1 & 0x7F);
-                    c = c + ((a / b) * 8);
-                    a = ((a % b) * 8) + (a1 & 7);
+                    a = a % b * 128 + (/*(a1/8)*/ b1 & 0x7F);
+                    c = c + a / b * 8;
+                    a = a % b * 8 + (a1 & 7);
                     c = c + a / b;
                 }
                 // printf("\nc=%ld oct=%ld",c,(uint32_t)(a%b));
-                if ((Ydl > 1) && ((b1 = gcoden(Yn->next)) != 0))
+                b1 = gcoden(Yn->next);
+                if (Ydl > 1 && b1 != 0)
                 {
                     uint32_t x1 = b1;
                     uint32_t x2 = c;
@@ -566,7 +567,7 @@ static void oper(uint32_t o, uint32_t prn)
                     printf(" x=%lx_%lx (b1*c)",x1,x2);
                     printf(" y=%lx_%lx (o..a2)",y1,y2);*/
                     i = 0;
-                    while ((x1 > y1) || (x1 == y1 && x2 > y2))
+                    while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
                         c--;
                         i = 1;
@@ -594,8 +595,8 @@ static void oper(uint32_t o, uint32_t prn)
                     a = c;
                     ymn(&a, &b);
                     b += peren;
-                    peren = (b >> SMAX);
-                    b = b & (MAX - 1);
+                    peren = b >> SMAX;
+                    b &= MAX - 1;
                     j = gcoden(Xt);
                     if (j < b)
                     {
@@ -647,7 +648,7 @@ static void oper(uint32_t o, uint32_t prn)
             for (x = Xn; x != Xk->next; x = x->next)
             {
                 a = gcoden(x);
-                b = (a >> n) | (peren << i);
+                b = a >> n | peren << i;
                 peren = a & c;
                 pcoden(x, b);
             }
@@ -657,7 +658,7 @@ static void oper(uint32_t o, uint32_t prn)
         for(i=0,x=nach; x != r->next; x=x->next,i++)
            printf("\n chast(%d)=%ld",i,gcoden(x));
         */
-        for (x = Xn; (x != Xk->next) && (gcoden(x) == 0); x = x->next)
+        for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
             ;
         x = x->prev;
         if (x != Xk)
@@ -741,7 +742,7 @@ static void oper(uint32_t o, uint32_t prn)
         x->info.infoc = '-';
         x = x->next;
     }
-    if (b != 0 || ((prn & 1) == 0))
+    if (b != 0 || (prn & 1) == 0)
     { // div/dr
         x->tag = TAGN;
         pcoden(x, b);
@@ -756,7 +757,7 @@ static void oper(uint32_t o, uint32_t prn)
             y->info.infoc = '-';
             y = y->next;
         }
-    if (a != 0 || ((prn & 1) == 0))
+    if (a != 0 || (prn & 1) == 0)
     { // div/dr
         y->tag = TAGN;
         pcoden(y, a);
@@ -783,17 +784,17 @@ static void nrel_()
         return;
     }
     char c;
-    if ((Xdl == 0) && (Ydl == 0))
+    if (Xdl == 0 && Ydl == 0)
         c = '=';
     else
     {
-        if ((Xzn == Yzn) && (xmy() == 2))
+        if (Xzn == Yzn && xmy() == 2)
             c = '=';
         else
         {
-            if (((Xzn == '-') && (Yzn == '+')) ||
-                ((Xzn == '-') && (Yzn == '-') && !xmy()) ||
-                ((Xzn == '+') && (Yzn == '+') && xmy()))
+            if ((Xzn == '-' && Yzn == '+') ||
+                (Xzn == '-' && Yzn == '-' && !xmy()) ||
+                (Xzn == '+' && Yzn == '+' && xmy()))
                 c = '<';
             else
                 c = '>';

@@ -129,7 +129,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
             sp_state = SPCRET;
             break;
         case SPCSC:
-            if (memcmp(spcvpc, &(b->tag), SMBL) == 0)
+            if (memcmp(spcvpc, &b->tag, SMBL) == 0)
             {
                 sp_state = SPCRET;
                 break;
