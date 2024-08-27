@@ -17,21 +17,28 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define EH                           \
+#define EH_ROMA                      \
     if (m != 71)                     \
     {                                \
         m++;                         \
         if (m == 71 && c[71] != ' ') \
         {                            \
             rdcard();                \
-            if (_eoj)
-#define ROMA \
-    return;  \
-    }        \
+            if (_eoj)                \
+                return;              \
+        }                            \
     }
-#define ROMA0     \
-    return false; \
-    }             \
+
+#define EH_ROMA0                     \
+    if (m != 71)                     \
+    {                                \
+        m++;                         \
+        if (m == 71 && c[71] != ' ') \
+        {                            \
+            rdcard();                \
+            if (_eoj)                \
+                return false;        \
+        }                            \
     }
 
 typedef enum mod_states
@@ -872,10 +879,10 @@ void scan()
             scn_state = SCNV;
             break;
         case SCNV:
-            EH ROMA;
+            EH_ROMA;
             if (c[m] == '(')
             {
-                EH ROMA;
+                EH_ROMA;
                 if (left_part)
                 {
                     p = scn_e.spec.info.codef = (uint8_t *)genlbl();
@@ -883,7 +890,7 @@ void scan()
                 }
                 if (specif(')'))
                 {
-                    EH ROMA else
+                    EH_ROMA else
                     {
                         scn_state = SCNERR;
                         break;
@@ -892,7 +899,7 @@ void scan()
             }
             else if (c[m] == ':')
             {
-                EH ROMA;
+                EH_ROMA;
                 if (!get_id(id, &id_leng))
                 {
                     scn_state = SOSH203;
@@ -902,7 +909,7 @@ void scan()
                     scn_e.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
                 if (c[m] == ':')
                 {
-                    EH ROMA else
+                    EH_ROMA else
                     {
                         scn_state = SOSH204;
                         break;
@@ -957,7 +964,7 @@ void scan()
             scn_state = SCNRET;
             break;
         case SCNA:
-            EH ROMA;
+            EH_ROMA;
             if (m == 71)
             {
                 scn_state = OSH101;
@@ -982,7 +989,7 @@ void scan()
                 scn_state = SCNCHR;
                 break;
             }
-            EH ROMA;
+            EH_ROMA;
             if (c[m] == '\'')
             {
                 scn_state = SCNCHR;
@@ -1095,7 +1102,7 @@ void scan()
                 };
                 scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
             };
-            EH ROMA;
+            EH_ROMA;
             scn_state = SCNVI;
             break;
         case OSH101:
@@ -1115,7 +1122,7 @@ void scan()
             scn_state = SCNERR;
             break;
         case SCNGCR:
-            EH ROMA;
+            EH_ROMA;
             scn_state = SCNRET;
             break;
         case SCNRET:
@@ -1232,7 +1239,7 @@ static bool specif(char tail)
                 sp_state = SPCR1;
                 break;
             }
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             blout();
             if (c[m] == '(')
             {
@@ -1284,7 +1291,7 @@ static bool specif(char tail)
             sp_state = SPCGC;
             break;
         case SPCSP:
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             if (!get_id(id, &lid))
             {
                 sp_state = OSH203;
@@ -1304,7 +1311,7 @@ static bool specif(char tail)
             sp_state = OSH204;
             break;
         case SPCA:
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             if (m == 71)
             {
                 sp_state = OSH205;
@@ -1391,7 +1398,7 @@ static bool specif(char tail)
                 code.info.infoc[0] = c[m];
                 gsymbol(&code);
             }
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             if (m == 71)
             {
                 sp_state = OSH205;
@@ -1402,7 +1409,7 @@ static bool specif(char tail)
                 sp_state = SPCA1;
                 break;
             }
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             if (c[m] == '\'')
             {
                 sp_state = SPCA1;
@@ -1447,7 +1454,7 @@ static bool specif(char tail)
             sp_state = SPCGC;
             break;
         case SPCGC:
-            EH ROMA0; // kras
+            EH_ROMA0; // kras
             sp_state = SPCBLO;
             break;
         case OSH200:
@@ -1534,7 +1541,7 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
             return;
         if (c[m] == ',')
         {
-            EH ROMA;
+            EH_ROMA;
             if (c[m] == ' ')
                 blout();
             continue;
@@ -1558,13 +1565,13 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         size_t lide;
         if (c[m] == '(')
         {
-            EH ROMA;
+            EH_ROMA;
             if (!get_idm(ide, &lide))
                 break;
             (*prog)(id, lid, ide, lide);
             if (c[m] != ')')
                 break;
-            EH ROMA;
+            EH_ROMA;
         }
         else
         {
@@ -1577,7 +1584,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             return;
         if (c[m] == ',')
         {
-            EH ROMA;
+            EH_ROMA;
             if (c[m] == ' ')
                 blout();
             continue;
@@ -1615,7 +1622,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    EH ROMA0; // kras
+    EH_ROMA0; // kras
     do
     {
         if (class[m] == 'D')
@@ -1626,7 +1633,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
             bool csmbend = false;
             while (true)
             {
-                EH ROMA0; // kras
+                EH_ROMA0; // kras
                 if (class[m] != 'D')
                 {
                     code->tag = TAGN;
@@ -1644,7 +1651,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                 break;
             while (true)
             {
-                EH ROMA0; // kras
+                EH_ROMA0; // kras
                 if (class[m] == 'D')
                     continue;
                 break;
@@ -1689,7 +1696,7 @@ static bool get_id(char id[40], size_t *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
-        EH ROMA0; // kras
+        EH_ROMA0; // kras
         if (class[m] != 'L' && class[m] != 'D' && c[m] != '_' && c[m] != '-')
             return true;
         id[*lid] = convert(c[m]);
@@ -1697,7 +1704,7 @@ static bool get_id(char id[40], size_t *lid)
     // if identifier length > 40 then delete tail
     while (class[m] == 'L' || class[m] == 'D' || c[m] == '_' || c[m] == '-')
     {
-        EH ROMA0;
+        EH_ROMA0;
     } // kras
     return true;
 }
@@ -1710,7 +1717,7 @@ static bool get_idm(char id[8], size_t *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
-        EH ROMA0; // kras
+        EH_ROMA0; // kras
         if (class[m] != 'L' && class[m] != 'D')
             return true;
         id[*lid] = convert(c[m]);
@@ -1718,7 +1725,7 @@ static bool get_idm(char id[8], size_t *lid)
     // if identifier length > 8 then delete tail
     while (class[m] == 'L' || class[m] == 'D')
     {
-        EH ROMA0;
+        EH_ROMA0;
     } // kras
     (*lid)++;
     return true;
