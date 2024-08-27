@@ -44,7 +44,7 @@ static void open_()
       bool neot = false;
       for (size_t i = 0; p != refal.nexta; i++)
       {
-         if ((p->tag != TAGO) || (i == 40))
+         if (p->tag != TAGO || i == 40)
          {
             neot = true;
             break;
@@ -141,8 +141,8 @@ static void get_()
          uniget[j] = f;
       }
       p = refal.prevr;
-      char c;
-      while ((c = getc(f)) != '\n')
+      char c = getc(f);
+      while (c != '\n')
       {
          if (!slins(p, 1))
             return;
@@ -155,6 +155,7 @@ static void get_()
          }
          p->tag = TAGO;
          p->info.infoc = c;
+         c = getc(f);
       }
       return;
    } while (false);
@@ -199,7 +200,7 @@ static void put_()
          int cc;
          if (p->tag != TAGO)
          {
-            if ((p->tag != TAGLB) && (p->tag != TAGRB))
+            if (p->tag != TAGLB && p->tag != TAGRB)
             {
                refal.upshot = 2;
                return;

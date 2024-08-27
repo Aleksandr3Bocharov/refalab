@@ -38,7 +38,7 @@ static void opng_()
         bool heot = false;
         for (i = 0; p != refal.nexta; i++)
         {
-            if ((p->tag != TAGO) || (i == 39))
+            if (p->tag != TAGO || i == 39)
             {
                 heot = true;
                 break;
@@ -97,7 +97,7 @@ static void opnp_()
         bool heot = false;
         for (i = 0; p != refal.nexta; i++)
         {
-            if ((p->tag != TAGO) || (i == 40))
+            if (p->tag != TAGO || i == 40)
             {
                 heot = true;
                 break;
@@ -205,7 +205,7 @@ static void libg_()
     s[0] = ' ';
     int c = getc(inr);
     size_t i;
-    for (i = 0; (c != '\n') && (c != EOF) && (i < 128); i++)
+    for (i = 0; c != '\n' && c != EOF && i < 128; i++)
     {
         s[i] = c;
         c = getc(inr);
@@ -285,7 +285,7 @@ static void libp_()
         bool heot = false;
         for (i = 0; p != refal.nexta; i++)
         {
-            if ((p->tag != TAGO) && (p->tag != TAGLB) && (p->tag != TAGRB))
+            if (p->tag != TAGO && p->tag != TAGLB && p->tag != TAGRB)
             {
                 heot = true;
                 break;

@@ -16,7 +16,7 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
     T_LINKCB *r = refal.preva->next;
     if (r == refal.nexta)
         return false;
-    if (emp && (r->next != refal.nexta))
+    if (emp && r->next != refal.nexta)
         return true;
     T_LINKCB *p;
     if (r->tag == TAGR)
@@ -47,7 +47,7 @@ static void br_()
 {
     const T_ST *ast = refal.currst;
     const T_LINKCB *p = refal.preva;
-    while ((p->tag != TAGO) || (p->info.infoc != '='))
+    while (p->tag != TAGO || p->info.infoc != '=')
     {
         p = p->next;
         if (p == refal.nexta)
@@ -93,7 +93,7 @@ static void dg_()
         q = lldupl(refal.preva, refal.nexta, pl);
         if (q == NULL)
             continue;
-        if ((q->tag != TAGO) || (q->info.infoc != '='))
+        if (q->tag != TAGO || q->info.infoc != '=')
             continue;
         break;
     }
@@ -219,7 +219,7 @@ static void rp_()
     const T_ST *ast = refal.currst;
     T_LINKCB *p = refal.preva;
     bool fail = false;
-    while ((p->tag != TAGO) || (p->info.infoc != '='))
+    while (p->tag != TAGO || p->info.infoc != '=')
     {
         p = p->next;
         if (p == refal.nexta)
@@ -257,7 +257,7 @@ static void rp_()
                 T_LINKCB *q = lldupl(refal.preva, p, pl);
                 if (q == NULL)
                     continue;
-                if ((q->tag != TAGO) || (q->info.infoc != '='))
+                if (q->tag != TAGO || q->info.infoc != '=')
                     continue;
                 rfdel(q, pr);
                 rftpl(q, p, refal.nexta);
@@ -299,7 +299,7 @@ static void cp_()
         q = lldupl(refal.preva, refal.nexta, pl);
         if (q == NULL)
             continue;
-        if ((q->tag != TAGO) || (q->info.infoc != '='))
+        if (q->tag != TAGO || q->info.infoc != '=')
             continue;
         break;
     }

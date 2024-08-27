@@ -13,7 +13,7 @@ static void unlnk_()
     size_t i;
     char namf[40];
     for (i = 0; p != refal.nexta; i++)
-        if ((p->tag != TAGO) || (i >= 40))
+        if (p->tag != TAGO || i >= 40)
         {
             printf("\nUnlnk: format error");
             refal.upshot = 2;
@@ -47,7 +47,7 @@ static void renam_()
     {
         for (i = 0; p->tag != TAGO || p->info.infoc != ' '; i++)
         {
-            if ((p->tag != TAGO) || (i >= 40))
+            if (p->tag != TAGO || i >= 40)
             {
                 heot = true;
                 break;
@@ -62,7 +62,7 @@ static void renam_()
         char namt[40]; // from => to
         for (i = 0; p != refal.nexta; i++)
         {
-            if ((p->tag != TAGO) || (i >= 40))
+            if (p->tag != TAGO || i >= 40)
             {
                 heot = true;
                 break;

@@ -15,7 +15,7 @@ static void p1_()
     T_LINKCB *p = refal.preva->next;
     uint32_t l;
     bool neot = false;
-    if ((p->next != refal.nexta) || (p->tag != TAGN))
+    if (p->next != refal.nexta || p->tag != TAGN)
         neot = true;
     else
     {
@@ -42,7 +42,7 @@ static void m1_()
     T_LINKCB *p = refal.preva->next;
     int32_t l;
     bool neot = false;
-    if ((p->next != refal.nexta) || (p->tag != TAGN))
+    if (p->next != refal.nexta || p->tag != TAGN)
         neot = true;
     else
     {
@@ -78,21 +78,21 @@ static void numb_()
     T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
     const T_LINKCB *pz = p;
-    if ((p->tag == TAGO) && ((zn == '-') || (zn == '+')))
+    if (p->tag == TAGO && (zn == '-' || zn == '+'))
     {
         p = p->next;
         if (zn == '+')
             pz = p;
     }
     T_LINKCB *p1 = p;
-    while ((p->tag == TAGO) && (p->info.infoc == '0'))
+    while (p->tag == TAGO && p->info.infoc == '0')
         p = p->next;
     char str[12];
     size_t i;
     bool neot = false;
     for (i = 0; p != refal.nexta; i++)
     {
-        if ((p->tag != TAGO) || (i == 11))
+        if (p->tag != TAGO || i == 11)
         {
             neot = true;
             break;
@@ -103,7 +103,7 @@ static void numb_()
             neot = true;
             break;
         }
-        if ((i == 9) && (strncmp(str, "2147483647", i + 1) > 0))
+        if (i == 9 && strncmp(str, "2147483647", i + 1) > 0)
         {
             neot = true;
             break;
@@ -125,12 +125,12 @@ static void numb_()
     }
     uint32_t l = atol(str);
     p1->tag = TAGN;
-    if (l > 16777215l)
+    if (l > 16777215)
     {
         pcoden(p1, l >> 24);
         p1 = p1->next;
         p1->tag = TAGN;
-        l = l & 0xffffff;
+        l &= 0xffffff;
     }
     pcoden(p1, l);
     rftpl(refal.prevr, pz->prev, p1->next);
@@ -145,19 +145,19 @@ static void symb_()
     T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
     T_LINKCB *pz = p;
-    if ((p->tag == TAGO) && ((zn == '-') || (zn == '+')))
+    if (p->tag == TAGO && (zn == '-' || zn == '+'))
     {
         p = p->next;
         if (zn == '+')
             pz = p;
     }
     T_LINKCB *p1 = p;
-    while ((p->tag == TAGN) && (gcoden(p) == 0))
+    while (p->tag == TAGN && gcoden(p) == 0)
         p = p->next;
     size_t i;
     bool neot = false;
     for (i = 0; p != refal.nexta; i++, p = p->next)
-        if ((p->tag != TAGN) || (i == 2))
+        if (p->tag != TAGN || i == 2)
         {
             neot = true;
             break;
@@ -165,7 +165,7 @@ static void symb_()
     if (!neot)
     {
         p = p->prev;
-        if ((i == 2) && (gcoden(p1) >= 128))
+        if (i == 2 && gcoden(p1) >= 128)
             neot = true;
     }
     if (neot)
@@ -175,8 +175,8 @@ static void symb_()
     }
     uint32_t l = gcoden(p);
     if (i == 2)
-        l = l + 16777216l * gcoden(p1);
-    if ((i == 0) || (l == 0))
+        l += 16777216 * gcoden(p1);
+    if (i == 0 || l == 0)
     {
         pz = p1;
         l = 0;
@@ -215,7 +215,7 @@ char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
 static void first_()
 {
     T_LINKCB *pn = refal.preva->next;
-    if ((pn == refal.nexta) || (pn->tag != TAGN))
+    if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
         return;
@@ -252,7 +252,7 @@ char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
 static void last_()
 {
     T_LINKCB *pn = refal.preva->next;
-    if ((pn == refal.nexta) || (pn->tag != TAGN))
+    if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
         return;
@@ -331,7 +331,7 @@ char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
 static void multe_()
 {
     const T_LINKCB *pn = refal.preva->next;
-    if ((pn == refal.nexta) || (pn->tag != TAGN))
+    if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
         return;

@@ -547,12 +547,12 @@ static void oper(uint32_t o, uint32_t prn)
                     c = a / b << 17;
                     b1 = a1 >> 10;
                     a = (a % b * 128) + (/*(a1/1024)*/ b1 & 0x7F);
-                    c = c + a / b * 1024;
+                    c += a / b * 1024;
                     b1 = a1 >> 3;
                     a = a % b * 128 + (/*(a1/8)*/ b1 & 0x7F);
-                    c = c + a / b * 8;
+                    c += a / b * 8;
                     a = a % b * 8 + (a1 & 7);
-                    c = c + a / b;
+                    c += a / b;
                 }
                 // printf("\nc=%ld oct=%ld",c,(uint32_t)(a%b));
                 b1 = gcoden(Yn->next);

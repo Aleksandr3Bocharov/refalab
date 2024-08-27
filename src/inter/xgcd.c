@@ -87,7 +87,7 @@ static void gcd_()
         for (i = 0; i < 2; i++)
         {
             pr = p[i]->next;
-            if ((pr->tag == TAGO) && (pr->info.infoc == '+' || pr->info.infoc == '-'))
+            if (pr->tag == TAGO && (pr->info.infoc == '+' || pr->info.infoc == '-'))
                 pr = pr->next;
             hd[i] = pr;
             l[i] = 0;
@@ -200,7 +200,7 @@ static void gcd_()
                 pr = pr->next;
             }
             uint32_t B;
-            if ((l[0] == 1) || (l[0] == 2 && k == 2))
+            if (l[0] == 1 || (l[0] == 2 && k == 2))
             {
                 // Evklid nad korotkimi
                 // UTV: l[0] >= l[1]
@@ -256,7 +256,7 @@ static void gcd_()
                 B += gcoden(pr);
                 pr = pr->next;
             }
-            if ((A / (B + 1) != (A + 1) / B))
+            if (A / (B + 1) != (A + 1) / B)
             {
                 gcd_state = SHD;
                 break;
@@ -396,31 +396,31 @@ static void gcd_()
                 a = gcoden(hd[0]);
                 const uint32_t a1 = gcoden(hd[0]->next);
                 b = gcoden(hd[1]);
-                if ((a == 0) && (a1 < b))
+                if (a == 0 && a1 < b)
                     c = 0;
                 else
                 {
                     uint32_t b1;
-                    if ((a == 0) && (a1 >= b))
+                    if (a == 0 && a1 >= b)
                     {
                         c = 1l; //  t.k. b - normalizowano
                         a = a1;
                     }
                     else
                     { // delim a,a1 na b
-                        a = (a * 128) + (a1 >> 17);
-                        c = (a / b) << 17;
+                        a = a * 128 + (a1 >> 17);
+                        c = a / b << 17;
                         b1 = a1 >> 10;
-                        a = ((a % b) * 128) + (b1 & 0x7F);
-                        c = c + ((a / b) * 1024);
+                        a = a % b * 128 + (b1 & 0x7F);
+                        c += a / b * 1024;
                         b1 = a1 >> 3;
-                        a = ((a % b) * 128) + (b1 & 0x7F);
-                        c = c + ((a / b) * 8);
-                        a = ((a % b) * 8) + (a1 & 7);
-                        c = c + a / b;
+                        a = a % b * 128 + (b1 & 0x7F);
+                        c += a / b * 8;
+                        a = a % b * 8 + (a1 & 7);
+                        c += a / b;
                     }
                     b1 = gcoden(hd[1]->next);
-                    if ((l[1] > 1) && (b1 != 0))
+                    if (l[1] > 1 && b1 != 0)
                     {
                         x[0] = b1;
                         x[1] = c;
@@ -428,7 +428,7 @@ static void gcd_()
                         y[0] = a % b;
                         y[1] = gcoden(hd[0]->next->next);
                         i = 0;
-                        while ((x[0] > y[0]) || (x[0] == y[0] && x[1] > y[1]))
+                        while (x[0] > y[0] || (x[0] == y[0] && x[1] > y[1]))
                         {
                             c--;
                             i = 1;
@@ -454,8 +454,8 @@ static void gcd_()
                         a = c;
                         ymn(&a, &b);
                         b += peren;
-                        peren = (b >> 24);
-                        b = b & MASKA;
+                        peren = b >> 24;
+                        b &= MASKA;
                         J = gcoden(Xt);
                         if (J < b)
                         {
@@ -503,7 +503,7 @@ static void gcd_()
                 for (px = hd[0]; px != tl[0]->next; px = px->next)
                 {
                     a = gcoden(px);
-                    b = (a >> n) | (peren << i);
+                    b = a >> n | peren << i;
                     peren = a & c;
                     pcoden(px, b);
                 }
@@ -512,7 +512,7 @@ static void gcd_()
                 for (px = hd[1]; px != tl[1]->next; px = px->next)
                 {
                     a = gcoden(px);
-                    b = (a >> n) | (peren << i);
+                    b = a >> n | peren << i;
                     peren = a & c;
                     pcoden(px, b);
                 }
