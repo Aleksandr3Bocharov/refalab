@@ -54,7 +54,7 @@ static T_I_LBL *alloc_lbl()
     {
         q = calloc(1, sizeof(T_ARR_LBL));
 #ifdef mdebug
-        printf("\ncalloc(cs)_lbl: q=%p", q);
+        printf("\ncalloc(cs)_lbl: q=%p", (void *)q);
 #endif
         if (q == NULL)
             uns_sto();
@@ -332,7 +332,7 @@ void s_term()
     {
         T_ARR_LBL *p1 = p->nextl;
 #ifdef mdebug
-        printf("\nfree(cs): p=%p", p);
+        printf("\nfree(cs): p=%p", (void *)p);
 #endif
         free(p);
         p = p1;

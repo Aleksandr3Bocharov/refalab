@@ -24,7 +24,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
 {
     T_U *p = (T_U *)calloc(1, sizeof(T_U));
 #ifdef mdebug
-    printf("\ncalloc(clu-nov_uzel): p=%p l=%zu t=%o", p, p->l, p->type);
+    printf("\ncalloc(clu-nov_uzel): p=%p l=%zu t=%o", (void *)p, p->l, p->type);
 #endif
     if (p == NULL)
         uns_sto();
@@ -91,7 +91,7 @@ T_U *lookup(const char *idp, size_t lid)
                         { // create new item
                             T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
 #ifdef mdebug
-                            printf("\ncalloc(clu-lookup): r1=%p", r1);
+                            printf("\ncalloc(clu-lookup): r1=%p", (void *)r1);
 #endif
                             if (r1 == NULL)
                                 uns_sto();
@@ -275,18 +275,18 @@ static void kil_tree(T_U *p)
         {
             T_REFW *r1 = r2->next;
 #ifdef mdebug
-            printf("\nfree(clu): r2=%p", r2);
+            printf("\nfree(clu): r2=%p", (void *)r2);
 #endif
             free(r2);
             r2 = r1;
         }
         r = q->j;
-        free(q->id);
-        free(q);
 #ifdef mdebug
         printf("\nfree(clu):id=%p", q->id);
-        printf("\n           q=%p", q);
+        printf("\n           q=%p", (void *)q);
 #endif
+        free(q->id);
+        free(q);
         q = r;
     } while (q != NULL);
     return;

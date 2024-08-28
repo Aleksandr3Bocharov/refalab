@@ -327,7 +327,7 @@ void jstart(const char *ee, size_t ll)
     if (first_ent == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): first_ent=%p", first_ent);
+    printf("\nmalloc(cj): first_ent=%p", (void *)first_ent);
 #endif
     last_ent = first_ent;
     first_ent->next = NULL;
@@ -335,7 +335,7 @@ void jstart(const char *ee, size_t ll)
     if (first_ext == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): first_ext=%p", first_ext);
+    printf("\nmalloc(cj): first_ext=%p", (void *)first_ext);
 #endif
     last_ext = first_ext;
     first_ext->next = NULL;
@@ -416,7 +416,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     if (r == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): r(ent)=%p", r);
+    printf("\nmalloc(cj): r(ent)=%p", (void *)r);
 #endif
     last_ent->next = r;
     last_ent = r;
@@ -436,7 +436,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     if (rx == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): rx(ext)=%p", rx);
+    printf("\nmalloc(cj): rx(ext)=%p", (void *)rx);
 #endif
     last_ext->next = rx;
     last_ext = rx;
@@ -690,20 +690,20 @@ void jend()
     while (q != NULL)
     {
         r = q->next;
-        free(q);
 #ifdef mdebug
-        printf("\nfree(cj) q=%p", q);
+        printf("\nfree(cj) q=%p", (void *)q);
 #endif
+        free(q);
         q = r;
     }
     qx = first_ext;
     while (qx != NULL)
     {
         rx = qx->next;
-        free(qx);
 #ifdef mdebug
-        printf("\nfree(cj) qx=%p", qx);
+        printf("\nfree(cj) qx=%p", (void *)qx);
 #endif
+        free(qx);
         qx = rx;
     }
     return;

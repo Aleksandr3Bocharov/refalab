@@ -42,7 +42,7 @@ void gsymbol(const T_LINKTI *code)
     jbyte(q->b2);
     if (code->tag == TAGF)
     {
-        j3addr((T_U *)code->info.codef);
+        j3addr((T_U *)(void *)code->info.codef);
         return;
         //      jbyte( '\0' ); jbyte( '\0' );  return; - for no LARGE IBM_PC
     };

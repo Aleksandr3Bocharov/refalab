@@ -193,14 +193,14 @@ static size_t k;
 static size_t fh;      // free segment number in the whole  list
 static size_t next_nh; // next whole number
 
-static void isk_v();
-static void gen_bsb();
-static void pch303();
-static void pch406();
-static bool lsg_p();
-static bool rsg_p();
+static void isk_v(void);
+static void gen_bsb(void);
+static void pch303(void);
+static void pch406(void);
+static bool lsg_p(void);
+static bool rsg_p(void);
 static void gpev(char op1, char op2);
-static bool ortgn(size_t n1, size_t n2);
+static bool ortgn(size_t on1, size_t on2);
 
 // read left part
 // and full array X
@@ -1611,7 +1611,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         }
 }
 
-static void isk_v()
+static void isk_v(void)
 {
     for (ind = 1; ind <= kol_per; ind++)
         if (v[ind].ci == scn_e.ci)
@@ -1626,7 +1626,7 @@ static void isk_v()
 }
 
 //   generation of stoped brackets and setting boards
-static void gen_bsb()
+static void gen_bsb(void)
 {
     switch (lrbxy)
     {
@@ -1661,20 +1661,20 @@ static void gen_bsb()
     return;
 }
 
-static void pch303()
+static void pch303(void)
 {
     pchosa("303 differents for variable ", v[ind].ci);
     return;
 }
 
-static void pch406()
+static void pch406(void)
 {
     pchosa("406 in left part missing variable ", v[ind].ci);
     return;
 }
 
 //    attempt to extract left support group
-static bool lsg_p()
+static bool lsg_p(void)
 {
     while (true)
     {
@@ -1718,7 +1718,7 @@ static bool lsg_p()
 }
 
 //        attempt to extract right support group
-static bool rsg_p()
+static bool rsg_p(void)
 {
     while (true)
     {
