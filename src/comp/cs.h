@@ -13,7 +13,7 @@ typedef struct i_lbl
     char model;
 } T_I_LBL;
 
-extern T_I_LBL *genlbl();
+extern T_I_LBL *genlbl(void);
 
 extern void fndef(const char *idp, size_t lid);
 extern void spdef(const char *idp, size_t lid);
@@ -26,8 +26,8 @@ extern void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0);
 extern void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide);
 extern void sswap(const char *idp, size_t lid);
 
-extern void s_init();
-extern void s_term();
-extern void s_end();
+extern void s_init(void);
+extern void s_term(void);
+extern void s_end(void);
 
 #endif

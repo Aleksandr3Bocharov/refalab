@@ -6,12 +6,12 @@
 
 extern void j3addr(T_U *pp);
 extern void jbyte(char bb);
-extern void jend();
+extern void jend(void);
 extern void jentry(T_U *pp, const char *ee, size_t ll);
 extern void jequ(T_U *pp, T_U *qq);
 extern void jextrn(T_U *pp, const char *ee, size_t ll);
 extern void jlabel(T_U *pp);
 extern void jstart(const char *ee, size_t ll);
-extern size_t jwhere();
+extern size_t jwhere(void);
 
 #endif

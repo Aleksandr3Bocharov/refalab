@@ -41,8 +41,8 @@ typedef struct u
 } T_U;
 
 extern T_U *lookup(const char *idp, size_t lid);
-extern void luterm();
+extern void luterm(void);
 extern void through(void (*prog)(const T_U *));
-extern void uns_sto();
+extern void uns_sto(void);
 
 #endif

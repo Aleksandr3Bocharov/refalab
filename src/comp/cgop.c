@@ -31,7 +31,7 @@ void gopnm(char k, char n, char m)
 void gopl(char k, const uint8_t *l)
 {
     jbyte(k);
-    j3addr((T_U *)l);
+    j3addr((T_U *)(void *)l);
     return;
 }
 

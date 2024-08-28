@@ -26,7 +26,7 @@ static T_I_LBL *pfail = NULL;    // statememt FAIL label
 static T_I_LBL *next_stm = NULL; // next statement label
 // static T_I_LBL *next_nos = NULL; // next halfword label with
 //  a number of statements
-static void func_end();
+static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
 
 static void p504(const char *idp, size_t lid)
@@ -41,13 +41,13 @@ static void p505(const char *idp, size_t lid)
     return; // eg
 }
 
-static void p500()
+static void p500(void)
 {
     pchosh("500 no statement label");
     return; // eg
 }
 
-static T_I_LBL *alloc_lbl()
+static T_I_LBL *alloc_lbl(void)
 {
     T_ARR_LBL *q;
     if (n_lbl == 15)
@@ -71,7 +71,7 @@ static T_I_LBL *alloc_lbl()
     return p;
 }
 
-T_I_LBL *genlbl()
+T_I_LBL *genlbl(void)
 {
     T_I_LBL *p = alloc_lbl();
     return p;
@@ -113,7 +113,7 @@ void fndef(const char *idp, size_t lid)
     return; //  eg
 }
 
-static void func_end()
+static void func_end(void)
 {
     if (next_stm != NULL)
     {
@@ -309,14 +309,14 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
     return;
 }
 
-void s_end()
+void s_end(void)
 {
     func_end();
     through(check_id);
     return;
 }
 
-void s_init()
+void s_init(void)
 { // module initiation
     first_arr_lbl = NULL;
     n_lbl = 15;
@@ -325,7 +325,7 @@ void s_init()
     return; // eg
 }
 
-void s_term()
+void s_term(void)
 { // module termination
     T_ARR_LBL *p = first_arr_lbl;
     while (p != NULL)

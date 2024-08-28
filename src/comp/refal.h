@@ -48,7 +48,7 @@ extern char parm_i[];       // sourse file name
 extern const char vers_i[]; // compiler version
 extern char mod_i[];        // module name
 
-extern void oshibka();
-extern void scan();
+extern void oshibka(void);
+extern void scan(void);
 
 #endif

@@ -92,7 +92,7 @@ static T_RL rl;
 static size_t k;
 static uint16_t delta;
 
-static void oshex()
+static void oshex(void)
 {
     fputs("\nOSHEX: no memory!!!", stdout);
     exit(1);
@@ -105,14 +105,14 @@ static void sfop_w(const char *s, BU *b)
     {
         free(b->nam);
 #ifdef mdebug
-        printf("\nfree(cj) b->nam=%p", b->nam);
+        printf("\nfree(cj) b->nam=%p", (void *)b->nam);
 #endif
     }
     b->nam = (char *)malloc(strlen(s) + 1);
     if (b->nam == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): b->nam=%p", b->nam);
+    printf("\nmalloc(cj): b->nam=%p", (void *)b->nam);
 #endif
     strcpy(b->nam, s);
     size_t un = 0;
@@ -139,7 +139,7 @@ static void sfop_w(const char *s, BU *b)
             if (b->buf != NULL)
             {
 #ifdef mdebug
-                printf("\nmalloc(cj): b->buf=%p un=%zu", b->buf, un);
+                printf("\nmalloc(cj): b->buf=%p un=%zu", (void *)b->buf, un);
 #endif
                 break;
             }
@@ -203,15 +203,15 @@ static void sfclr(BU *b)
     free(b->nam);
     free(b->buf);
 #ifdef mdebug
-    printf("\nfree(sfclr) b->nam(c 0)=%p", b->nam);
-    printf("\n            b->buf(c 0)=%p", b->buf);
+    printf("\nfree(sfclr) b->nam(c 0)=%p", (void *)b->nam);
+    printf("\n            b->buf(c 0)=%p", (void *)b->buf);
 #endif
     b->nam = NULL;
     b->buf = NULL;
     return;
 }
 
-static void sfwr2()
+static void sfwr2(void)
 {
     while (true)
     {
@@ -296,7 +296,7 @@ static void sfrd1(char *c, size_t n)
     } // while
 } // sfrd1
 
-static void sfrd2()
+static void sfrd2(void)
 {
     while (true)
     {
@@ -344,7 +344,7 @@ void jstart(const char *ee, size_t ll)
     return;
 } // jstart
 
-size_t jwhere()
+size_t jwhere(void)
 {
     if (curr_addr > 65535)
     {
@@ -470,7 +470,7 @@ void jequ(T_U *pp, T_U *qq)
     return;
 }
 
-static void zakon()
+static void zakon(void)
 {
     rl.delta = delta;
     rl.point = NULL;
@@ -483,7 +483,7 @@ static void zakon()
     return;
 } // zakon
 
-void jend()
+void jend(void)
 {
     zakon();
     if (options.multmod)

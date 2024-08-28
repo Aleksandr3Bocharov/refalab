@@ -13,7 +13,7 @@
 
 static T_U *korenj = NULL; // tree koren
 
-void uns_sto()
+void uns_sto(void)
 {
     printf("\nNo memory for identifier table");
     exit(1);
@@ -41,7 +41,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     p->def = 0;
     char *q = calloc(1, lid);
 #ifdef mdebug
-    printf("\ncalloc(clu-id): q=%p l=%zu", q, lid);
+    printf("\ncalloc(clu-id): q=%p l=%zu", (void *)q, lid);
 #endif
     if (q == NULL)
         uns_sto();
@@ -282,7 +282,7 @@ static void kil_tree(T_U *p)
         }
         r = q->j;
 #ifdef mdebug
-        printf("\nfree(clu):id=%p", q->id);
+        printf("\nfree(clu):id=%p", (void *)q->id);
         printf("\n           q=%p", (void *)q);
 #endif
         free(q->id);
@@ -292,7 +292,7 @@ static void kil_tree(T_U *p)
     return;
 }
 
-void luterm()
+void luterm(void)
 {
     if (korenj != NULL)
     {

@@ -186,14 +186,14 @@ static bool again;        // next module processing feature
 static bool _eoj;         // "sysin" end flag           // kras
 
 static void lblkey(bool pr);
-static void pch130();
-static void blout();
-static void trprev();
+static void pch130(void);
+static void blout(void);
+static void trprev(void);
 static void ilm(void (*prog)(const char *, size_t, const char *, size_t));
 static void il(void (*prog)(const char *, size_t));
-static void equ();
-static void pchzkl();
-static void pchk();
+static void equ(void);
+static void pchzkl(void);
+static void pchk(void);
 static void gsp(char n);
 static bool specif(char tail);
 static bool get_id(char id[40], size_t *lid);
@@ -203,13 +203,13 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid);
 typedef struct timespec timespec;
 static timespec t0;
 
-static void SET_time()
+static void SET_time(void)
 {
     timespec_get(&t0, TIME_UTC);
     return;
 }
 
-static void GET_time()
+static void GET_time(void)
 {
     timespec t1;
     timespec_get(&t1, TIME_UTC);
@@ -563,7 +563,7 @@ int main(int argc, char *argv[])
         }
 } // main program  end
 
-static void trprev()
+static void trprev(void)
 { // perenos poslednej pustoj metki w tekuschuju
     size_t n = strlen(prevlb);
     if (n != 0 && lbl_leng == 0)
@@ -639,7 +639,7 @@ static void translate(const char *str, char *class1)
     return;
 }
 
-static bool komm()
+static bool komm(void)
 {
     const char *k;
     for (k = c; *k == ' ' || *k == '\t'; k++)
@@ -650,7 +650,7 @@ static bool komm()
         return false;
 }
 
-static void rdcard()
+static void rdcard(void)
 { // read card procedure
     while (true)
     {
@@ -741,7 +741,7 @@ static void lblkey(bool pr)
     return;
 }
 
-void scan()
+void scan(void)
 {
     static char id[40];
     static size_t id_leng;
@@ -885,8 +885,9 @@ void scan()
                 EH_ROMA;
                 if (left_part)
                 {
-                    p = scn_e.spec.info.codef = (uint8_t *)genlbl();
-                    jlabel((T_U *)p);
+                    scn_e.spec.info.codef = (uint8_t *)genlbl();
+                    p = scn_e.spec.info.codef;
+                    jlabel((T_U *)(void *)p);
                 }
                 if (specif(')'))
                 {
@@ -1095,8 +1096,8 @@ void scan()
             {
                 if (*(sarr + scode) == NULL)
                 {
-                    *(sarr + scode) = (char *)genlbl();
-                    jlabel((T_U *)*(sarr + scode));
+                    *(sarr + scode) = (char *)(void *)genlbl();
+                    jlabel((T_U *)(void *)*(sarr + scode));
                     gsp((char)(scode + 7));
                     gsp(ns_ngw);
                 };
@@ -1486,7 +1487,7 @@ static bool specif(char tail)
         }
 }
 
-static void pchk()
+static void pchk(void)
 { // writing of card into sysprint
     if (!flags.uzhe_krt && sysprint != NULL)
     {
@@ -1510,7 +1511,7 @@ static void pchk()
     return;
 }
 
-static void pchk_t()
+static void pchk_t(void)
 { // card writing into systerm
     if (!flags.uzhekrt_t)
     {
@@ -1595,7 +1596,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
     return;
 }
 
-static void equ()
+static void equ(void)
 { // treatement of directives having 'EQU' type
     blout();
     char id[40];
@@ -1612,7 +1613,7 @@ static void equ()
     return;
 }
 
-static void pch130()
+static void pch130(void)
 {
     pchosh("130 invalid record format");
     return;
@@ -1736,7 +1737,7 @@ static bool get_idm(char id[8], size_t *lid)
 //       before call: (m = 71) !! (m != 71)
 //  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' '))
 //**********************************************************
-static void blout()
+static void blout(void)
 {
     while (true)
     {
@@ -1753,7 +1754,7 @@ static void blout()
     }
 }
 
-static void pchzkl()
+static void pchzkl(void)
 { // print conclusion
     char pr_line[180];
     sprintf(pr_line,
@@ -1775,7 +1776,7 @@ static void pchzkl()
     return;
 }
 
-void oshibka()
+void oshibka(void)
 {
     pchk();
     pchk_t();
