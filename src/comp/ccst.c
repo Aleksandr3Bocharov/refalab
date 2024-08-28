@@ -156,9 +156,9 @@ static struct
 // ???whole list
 static struct
 { // ???variable table elements
+    size_t last;
     uint32_t _t, _q;
     uint32_t rem;
-    size_t last;
     char ci;
     bool _v;
 } v[50];
