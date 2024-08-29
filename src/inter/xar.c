@@ -234,12 +234,12 @@ static void ymn(uint32_t *a, uint32_t *b)
     return;
 }
 
-static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
+static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
 {                                                  //  X - ukaz. na konec
     uint32_t peren = 0;
     const size_t ip = 24 - j;
-    const uint32_t m = 0xFFFFFFl >> j; // maska
-    for (size_t i = 0; i < dl; i++)
+    const uint32_t m = 0xFFFFFF >> j; // maska
+    for (size_t i = 0; i < dls; i++)
     {
         const uint32_t g = gcoden(X);
         const uint32_t a = (g & m) << j;
@@ -325,14 +325,14 @@ static void oper(uint32_t o, uint32_t prn)
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
-                    j = gcoden(x);
+                    j = (int32_t)gcoden(x);
                     if (y != Yn->prev)
                     {
-                        j -= (gcoden(y) + peren);
+                        j -= (int32_t)(gcoden(y) + peren);
                         y = y->prev;
                     }
                     else
-                        j -= peren;
+                        j -= (int32_t)peren;
                     if (j < 0)
                     {
                         j += MAX;
@@ -340,7 +340,7 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     else
                         peren = 0;
-                    pcoden(x, j);
+                    pcoden(x, (uint32_t)j);
                 } // for
             } // if
         }
@@ -408,7 +408,7 @@ static void oper(uint32_t o, uint32_t prn)
                         b += (r3 & 0xFFF) * HMAX;
                         // ymn (&a,&b);   // rez:a-T_ST, b-ml
                     }
-                    j = gcoden(p) + b + peren;
+                    j = (int32_t)(gcoden(p) + b + peren);
                     peren = 0;
                     if (j >= MAX)
                     {
@@ -416,7 +416,7 @@ static void oper(uint32_t o, uint32_t prn)
                         peren++;
                     }
                     peren += a;
-                    pcoden(p, j);
+                    pcoden(p, (uint32_t)j);
                 } // for
             }
         }
@@ -597,13 +597,13 @@ static void oper(uint32_t o, uint32_t prn)
                     b += peren;
                     peren = b >> SMAX;
                     b &= MAX - 1;
-                    j = gcoden(Xt);
-                    if (j < b)
+                    j = (int32_t)gcoden(Xt);
+                    if (j < (int32_t)b)
                     {
                         j += MAX;
                         peren += 1;
                     }
-                    pcoden(Xt, j - b);
+                    pcoden(Xt, (uint32_t)j - b);
                     peren += a;
                 }
                 if (peren != 0)
@@ -618,7 +618,7 @@ static void oper(uint32_t o, uint32_t prn)
                         j = 0;
                         for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                         {
-                            a = gcoden(Xt) + gcoden(Yt) + j;
+                            a = gcoden(Xt) + gcoden(Yt) + (uint32_t)j;
                             j = 0;
                             if (a >= MAX)
                             {
@@ -627,7 +627,7 @@ static void oper(uint32_t o, uint32_t prn)
                             }
                             pcoden(Xt, a);
                         }
-                        peren -= j;
+                        peren -= (uint32_t)j;
                     } while (peren != 0);
                 // printf("\nc veliko jj=%ld",jj);
                 //}
@@ -644,7 +644,7 @@ static void oper(uint32_t o, uint32_t prn)
         { // denormalizacija ostatka
             peren = 0;
             i = 24 - n;
-            c = 0xFFFFFFl >> i;
+            c = 0xFFFFFF >> i;
             for (x = Xn; x != Xk->next; x = x->next)
             {
                 a = gcoden(x);

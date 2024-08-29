@@ -46,7 +46,7 @@ static void m1_()
         neot = true;
     else
     {
-        l = gcoden(p) - 1;
+        l = (int32_t)gcoden(p) - 1;
         if (l < 0)
             neot = true;
     }
@@ -55,7 +55,7 @@ static void m1_()
         refal.upshot = 2;
         return;
     }
-    pcoden(p, l);
+    pcoden(p, (uint32_t)l);
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
@@ -84,7 +84,7 @@ static void numb_()
         if (zn == '+')
             pz = p;
     }
-    T_LINKCB *p1 = p;
+    T_LINKCB *pp = p;
     while (p->tag == TAGO && p->info.infoc == '0')
         p = p->next;
     char str[12];
@@ -120,20 +120,20 @@ static void numb_()
     {
         if (!slins(refal.nexta->prev, 1))
             return;
-        p1 = refal.nexta->prev;
-        pz = p1;
+        pp = refal.nexta->prev;
+        pz = pp;
     }
-    uint32_t l = atol(str);
-    p1->tag = TAGN;
+    uint32_t l = (uint32_t)atol(str);
+    pp->tag = TAGN;
     if (l > 16777215)
     {
-        pcoden(p1, l >> 24);
-        p1 = p1->next;
-        p1->tag = TAGN;
+        pcoden(pp, l >> 24);
+        pp = pp->next;
+        pp->tag = TAGN;
         l &= 0xffffff;
     }
-    pcoden(p1, l);
-    rftpl(refal.prevr, pz->prev, p1->next);
+    pcoden(pp, l);
+    rftpl(refal.prevr, pz->prev, pp->next);
     return;
 }
 void (*numb_1)() = numb_;
@@ -151,7 +151,7 @@ static void symb_()
         if (zn == '+')
             pz = p;
     }
-    T_LINKCB *p1 = p;
+    T_LINKCB *pp = p;
     while (p->tag == TAGN && gcoden(p) == 0)
         p = p->next;
     size_t i;
@@ -165,7 +165,7 @@ static void symb_()
     if (!neot)
     {
         p = p->prev;
-        if (i == 2 && gcoden(p1) >= 128)
+        if (i == 2 && gcoden(pp) >= 128)
             neot = true;
     }
     if (neot)
@@ -175,10 +175,10 @@ static void symb_()
     }
     uint32_t l = gcoden(p);
     if (i == 2)
-        l += 16777216 * gcoden(p1);
+        l += 16777216 * gcoden(pp);
     if (i == 0 || l == 0)
     {
-        pz = p1;
+        pz = pp;
         l = 0;
     }
     char str[12];
@@ -191,15 +191,15 @@ static void symb_()
             return;
         }
     if (pz != refal.nexta)
-        lins(p1, j);
+        lins(pp, j);
     else
     {
         pz = pz->prev;
         lins(pz, j);
         pz = pz->next;
-        p1 = pz;
+        pp = pz;
     }
-    for (i = 0, p = p1; i < j; i++, p = p->next)
+    for (i = 0, p = pp; i < j; i++, p = p->next)
     {
         p->tag = TAGO;
         p->info.codep = NULL;
@@ -420,13 +420,13 @@ static void crel_()
     {
         if (p->tag != TAGLB)
             break;
-        const T_LINKCB *p1 = p->info.codep;
+        const T_LINKCB *pp = p->info.codep;
         p = p->next;
-        T_LINKCB *q = p1->next;
+        T_LINKCB *q = pp->next;
         const T_LINKCB *q1 = refal.nexta;
         char c = '=';
         bool fail = false;
-        for (; c == '=' && p != p1 && q != q1; p = p->next, q = q->next)
+        for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
         {
             if (p->tag == TAGLB)
             {
@@ -447,11 +447,11 @@ static void crel_()
         }
         if (fail)
             break;
-        if (p == p1 && q != q1)
+        if (p == pp && q != q1)
             c = '<';
-        if (q == q1 && p != p1)
+        if (q == q1 && p != pp)
             c = '>';
-        for (; p != p1; p = p->next)
+        for (; p != pp; p = p->next)
             if (p->tag == TAGLB)
             {
                 fail = true;

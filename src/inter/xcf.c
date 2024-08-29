@@ -107,7 +107,7 @@ static void chartof_()
     char *u = (char *)malloc(i + 2);
     for (i = 0; p != refal.nexta; i++, p = p->next)
         u[i] = rfcnv(p->info.infoc);
-    u[i] = i;
+    u[i] = (char)i;
     ++i;
     u[i] = 2; // HEOT
     char *j = u + i;
@@ -120,7 +120,7 @@ static void chartof_()
     for (size_t k = 0; k < func_n; k++)
     {
         d.b[0] = *(func_f[k] - 1);
-        if (i == d.w + 1 && strncmp(u, func_f[k] - (d.w + 1), d.w) == 0)
+        if (i == (size_t)d.w + 1 && strncmp(u, func_f[k] - (d.w + 1), d.w) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
