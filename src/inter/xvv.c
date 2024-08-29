@@ -15,7 +15,7 @@ static size_t junp = 1;
 static size_t jung = 1;
 static uint32_t jl;
 
-static void opng_()
+static void opng_(void)
 {
     size_t i;
     char namf[40];
@@ -64,11 +64,11 @@ static void opng_()
     refal.upshot = 2;
     return;
 }
-void (*opng_1)() = opng_;
+void (*opng_1)(void) = opng_;
 G_L_B char opnget = '\122';
 char opng_0[] = {Z6 'O', 'P', 'N', 'G', 'E', 'T', '\006'};
 
-static void opnp_()
+static void opnp_(void)
 {
     size_t i;
     char namf[40];
@@ -123,11 +123,11 @@ static void opnp_()
     refal.upshot = 2;
     return;
 }
-void (*opnp_1)() = opnp_;
+void (*opnp_1)(void) = opnp_;
 G_L_B char opnput = '\122';
 char opnp_0[] = {Z6 'O', 'P', 'N', 'P', 'U', 'T', '\006'};
 
-static void clsg_()
+static void clsg_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
@@ -149,11 +149,11 @@ static void clsg_()
     fclose(inr);
     return;
 }
-void (*clsg_1)() = clsg_;
+void (*clsg_1)(void) = clsg_;
 G_L_B char clsget = '\122';
 char clsg_0[] = {Z6 'C', 'L', 'S', 'G', 'E', 'T', '\006'};
 
-static void clsp_()
+static void clsp_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
@@ -175,11 +175,11 @@ static void clsp_()
     fclose(inw);
     return;
 }
-void (*clsp_1)() = clsp_;
+void (*clsp_1)(void) = clsp_;
 G_L_B char clsput = '\122';
 char clsp_0[] = {Z6 'C', 'L', 'S', 'P', 'U', 'T', '\006'};
 
-static void libg_()
+static void libg_(void)
 {
     T_LINKCB *p = refal.preva->next;
     bool new = false;
@@ -260,11 +260,11 @@ static void libg_()
             return;
         }
 }
-void (*libg_1)() = libg_;
+void (*libg_1)(void) = libg_;
 G_L_B char libget = '\122';
 char libg_0[] = {Z6 'L', 'I', 'B', 'G', 'E', 'T', '\006'};
 
-static void libp_()
+static void libp_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGN)
@@ -322,11 +322,11 @@ static void libp_()
     refal.upshot = 2;
     return;
 }
-void (*libp_1)() = libp_;
+void (*libp_1)(void) = libp_;
 G_L_B char libput = '\122';
 char libp_0[] = {Z6 'L', 'I', 'B', 'P', 'U', 'T', '\006'};
 
-static void card_()
+static void card_(void)
 {
     if (refal.preva->next != refal.nexta) // refal.upshot = 2;
         rfpex("", refal.preva, refal.nexta);
@@ -349,45 +349,45 @@ static void card_()
     }
     return;
 }
-void (*card_1)() = card_;
+void (*card_1)(void) = card_;
 G_L_B char card = '\122';
 char card_0[] = {Z4 'C', 'A', 'R', 'D', '\004'};
 
-static void pr1_()
+static void pr1_(void)
 {
     rfpex("", refal.preva, refal.nexta);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-void (*pr1_1)() = pr1_;
+void (*pr1_1)(void) = pr1_;
 G_L_B char print = '\122';
 char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', '\005'};
 
-static void pr2_()
+static void pr2_(void)
 {
     rfpexm("", refal.preva, refal.nexta);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-void (*pr2_1)() = pr2_;
+void (*pr2_1)(void) = pr2_;
 G_L_B char printm = '\122';
 char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', '\006'};
 
-static void pr3_()
+static void pr3_(void)
 {
     rfpex("", refal.preva, refal.nexta);
     return;
 }
-void (*pr3_1)() = pr3_;
+void (*pr3_1)(void) = pr3_;
 G_L_B char prout = '\122';
 char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', '\005'};
 
-static void pr4_()
+static void pr4_(void)
 {
     rfpexm("", refal.preva, refal.nexta);
     return;
 }
-void (*pr4_1)() = pr4_;
+void (*pr4_1)(void) = pr4_;
 G_L_B char proutm = '\122';
 char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
 

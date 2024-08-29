@@ -10,7 +10,7 @@
 #include "refal.def"
 #include "rfintf.h"
 
-static void p1_()
+static void p1_(void)
 {
     T_LINKCB *p = refal.preva->next;
     uint32_t l;
@@ -33,11 +33,11 @@ static void p1_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-void (*p1_1)() = p1_;
+void (*p1_1)(void) = p1_;
 G_L_B char p1 = '\122';
 char p1_0[] = {Z2 'P', '1', '\002'};
 
-static void m1_()
+static void m1_(void)
 {
     T_LINKCB *p = refal.preva->next;
     int32_t l;
@@ -59,7 +59,7 @@ static void m1_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-void (*m1_1)() = m1_;
+void (*m1_1)(void) = m1_;
 G_L_B char m1 = '\122';
 char m1_0[] = {Z2 'M', '1', '\002'};
 
@@ -73,7 +73,7 @@ char m1_0[] = {Z2 'M', '1', '\002'};
     return 0;
 }*/
 
-static void numb_()
+static void numb_(void)
 {
     T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
@@ -136,11 +136,11 @@ static void numb_()
     rftpl(refal.prevr, pz->prev, pp->next);
     return;
 }
-void (*numb_1)() = numb_;
+void (*numb_1)(void) = numb_;
 G_L_B char numb = '\122';
 char numb_0[] = {Z4 'N', 'U', 'M', 'B', '\004'};
 
-static void symb_()
+static void symb_(void)
 {
     T_LINKCB *p = refal.preva->next;
     const char zn = p->info.infoc;
@@ -208,11 +208,11 @@ static void symb_()
     rftpl(refal.prevr, pz->prev, p);
     return;
 }
-void (*symb_1)() = symb_;
+void (*symb_1)(void) = symb_;
 G_L_B char symb = '\122';
 char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
 
-static void first_()
+static void first_(void)
 {
     T_LINKCB *pn = refal.preva->next;
     if (pn == refal.nexta || pn->tag != TAGN)
@@ -245,11 +245,11 @@ static void first_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-void (*first_1)() = first_;
+void (*first_1)(void) = first_;
 G_L_B char first = '\122';
 char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
 
-static void last_()
+static void last_(void)
 {
     T_LINKCB *pn = refal.preva->next;
     if (pn == refal.nexta || pn->tag != TAGN)
@@ -286,11 +286,11 @@ static void last_()
     rftpl(p, refal.nextr, refal.nexta);
     return;
 }
-void (*last_1)() = last_;
+void (*last_1)(void) = last_;
 G_L_B char last = '\122';
 char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
 
-static void lengr_()
+static void lengr_(void)
 {
     uint32_t n = 0; // kras
     const T_LINKCB *p = refal.preva->next;
@@ -304,11 +304,11 @@ static void lengr_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-void (*lengr_1)() = lengr_;
+void (*lengr_1)(void) = lengr_;
 G_L_B char lengr = '\122';
 char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
 
-static void lengw_()
+static void lengw_(void)
 {
     uint32_t n = 0; // kras
     const T_LINKCB *p = refal.preva->next;
@@ -324,11 +324,11 @@ static void lengw_()
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-void (*lengw_1)() = lengw_;
+void (*lengw_1)(void) = lengw_;
 G_L_B char lengw = '\122';
 char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
 
-static void multe_()
+static void multe_(void)
 {
     const T_LINKCB *pn = refal.preva->next;
     if (pn == refal.nexta || pn->tag != TAGN)
@@ -369,11 +369,11 @@ static void multe_()
     }
     return;
 }
-void (*multe_1)() = multe_;
+void (*multe_1)(void) = multe_;
 G_L_B char multe = '\122';
 char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', '\005'};
 
-static void delf_()
+static void delf_(void)
 {
     if (refal.preva->next != refal.nexta)
     {
@@ -409,11 +409,11 @@ static void delf_()
     refal.nextr->info.codep = nd;
     return;
 }
-void (*delf_1)() = delf_;
+void (*delf_1)(void) = delf_;
 G_L_B char delf = '\122';
 char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
 
-static void crel_()
+static void crel_(void)
 {
     T_LINKCB *p = refal.preva->next;
     do
@@ -478,7 +478,7 @@ static void crel_()
     refal.upshot = 2;
     return;
 }
-void (*crel_1)() = crel_;
+void (*crel_1)(void) = crel_;
 G_L_B char crel = '\122';
 char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
 

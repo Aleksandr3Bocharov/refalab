@@ -11,20 +11,20 @@ extern void rfabe(const char *amsg);
 extern void rfcanc(const T_ST *ast);
 extern char rfcnv(char cm);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
-extern void rfexec(void (*func)());
-extern void rfinit();
+extern void rfexec(void (*func)(void));
+extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
-extern void rftermm();
+extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
 extern bool lcre(T_ST *ast);
 extern bool lexist(const T_ST *ast);
-extern bool lincrm();
+extern bool lincrm(void);
 extern bool lins(T_LINKCB *p, size_t l);
 extern bool slins(T_LINKCB *p, size_t k);
-extern bool linskd(T_ST *ast, void (*f)());
+extern bool linskd(T_ST *ast, void (*f)(void));
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool lrqlk(size_t l);
 

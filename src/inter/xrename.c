@@ -7,7 +7,7 @@
 #include "refal.def"
 #include "rfintf.h"
 
-static void unlnk_()
+static void unlnk_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     size_t i;
@@ -33,11 +33,11 @@ static void unlnk_()
     }
     return;
 }
-void (*unlnk_1)() = unlnk_;
+void (*unlnk_1)(void) = unlnk_;
 G_L_B char unlnk = '\122';
 char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
 
-static void renam_()
+static void renam_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     size_t i;
@@ -85,7 +85,7 @@ static void renam_()
     refal.upshot = 2;
     return;
 }
-void (*renam_1)() = renam_;
+void (*renam_1)(void) = renam_;
 G_L_B char renam = '\122';
 char renam_0[] = {Z5 'R', 'E', 'N', 'A', 'M', '\005'};
 

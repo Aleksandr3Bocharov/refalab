@@ -14,7 +14,7 @@ typedef char *adr;
 static size_t func_n = 0;
 static adr *func_f = NULL;
 
-static void ftochar_()
+static void ftochar_(void)
 {
     T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
@@ -50,11 +50,11 @@ static void ftochar_()
     }
     return;
 }
-void (*ftochar_1)() = ftochar_;
+void (*ftochar_1)(void) = ftochar_;
 G_L_B char ftochar = '\122';
 char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', '\007'};
 
-static void functab_()
+static void functab_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     if (p->tag != TAGF)
@@ -75,11 +75,11 @@ static void functab_()
     func_n++;
     return;
 }
-void (*functab_1)() = functab_;
+void (*functab_1)(void) = functab_;
 G_L_B char functab = '\122';
 char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', '\007'};
 
-static void chartof_()
+static void chartof_(void)
 {
     T_LINKCB *p = refal.preva->next;
     size_t i;
@@ -148,7 +148,7 @@ static void chartof_()
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-void (*chartof_1)() = chartof_;
+void (*chartof_1)(void) = chartof_;
 G_L_B char chartof = '\122';
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
 

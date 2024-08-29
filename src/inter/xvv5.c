@@ -13,7 +13,7 @@ static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
-static void open_()
+static void open_(void)
 {
    char namf[41];
    for (size_t i = 0; i < 40; i++)
@@ -72,11 +72,11 @@ static void open_()
    refal.upshot = 2;
    return;
 }
-void (*open_1)() = open_;
+void (*open_1)(void) = open_;
 G_L_B char xopen = '\122';
 char open_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
 
-static void close_()
+static void close_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    do
@@ -110,11 +110,11 @@ static void close_()
    refal.upshot = 2;
    return;
 }
-void (*close_1)() = close_;
+void (*close_1)(void) = close_;
 G_L_B char xclose = '\122';
 char close_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
 
-static void get_()
+static void get_(void)
 {
    T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -164,11 +164,11 @@ static void get_()
    refal.upshot = 2;
    return;
 }
-void (*get_1)() = get_;
+void (*get_1)(void) = get_;
 G_L_B char xget = '\122';
 char get_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
 
-static void put_()
+static void put_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -230,7 +230,7 @@ static void put_()
    refal.upshot = 2;
    return;
 }
-void (*put_1)() = put_;
+void (*put_1)(void) = put_;
 G_L_B char xput = '\122';
 char put_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
 

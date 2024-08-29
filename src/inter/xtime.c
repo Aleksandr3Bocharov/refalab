@@ -13,7 +13,7 @@
 typedef struct timespec timespec;
 static timespec t0, t1;
 
-static void rftime_()
+static void rftime_(void)
 {
     setlocale(LC_TIME, setlocale(LC_TIME, ""));
     const time_t tim = time(NULL);
@@ -36,11 +36,11 @@ static void rftime_()
     }
     return;
 }
-void (*rftime_1)() = rftime_;
+void (*rftime_1)(void) = rftime_;
 G_L_B char rftime = '\122';
 char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
 
-static void rftm_()
+static void rftm_(void)
 {
     T_LINKCB *p = refal.preva->next;
     if (p != refal.nexta)
@@ -86,7 +86,7 @@ static void rftm_()
     refal.upshot = 2;
     return;
 }
-void (*rftm_1)() = rftm_;
+void (*rftm_1)(void) = rftm_;
 G_L_B char rftm = '\122';
 char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
 

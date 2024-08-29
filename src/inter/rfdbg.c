@@ -11,9 +11,9 @@
 #include "rfintf.h"
 
 static T_ST s_st;
-extern void go();
+extern void go(void);
 
-int main()
+int main(void)
 {
     rfinit();
     do

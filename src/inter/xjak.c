@@ -43,7 +43,7 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
     return true;
 }
 
-static void br_()
+static void br_(void)
 {
     const T_ST *ast = refal.currst;
     const T_LINKCB *p = refal.preva;
@@ -70,11 +70,11 @@ static void br_()
     rftpl(pl, refal.preva, refal.nexta);
     return;
 }
-void (*br_1)() = br_;
+void (*br_1)(void) = br_;
 G_L_B char br = '\122';
 char br_0[] = {Z2 'B', 'R', '\002'};
 
-static void dg_()
+static void dg_(void)
 {
     const T_ST *ast = refal.currst;
     T_LINKCB *pr = ast->store;
@@ -103,11 +103,11 @@ static void dg_()
     rfdel(pl, pr);
     return;
 }
-void (*dg_1)() = dg_;
+void (*dg_1)(void) = dg_;
 G_L_B char dg = '\122';
 char dg_0[] = {Z2 'D', 'G', '\002'};
 
-static void dgall_()
+static void dgall_(void)
 {
     const T_ST *ast = refal.currst;
     if (refal.preva->next != refal.nexta)
@@ -116,11 +116,11 @@ static void dgall_()
         rftpl(refal.prevr, ast->store, ast->store);
     return;
 }
-void (*dgal_1)() = dgall_;
+void (*dgal_1)(void) = dgall_;
 G_L_B char dgall = '\122';
 char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
 
-static void gtr_()
+static void gtr_(void)
 {
     const bool emp = true;
     T_LINKCB *p = NULL, *r;
@@ -132,11 +132,11 @@ static void gtr_()
     rftpl(refal.prevr, p, p);
     return;
 }
-void (*gtr_1)() = gtr_;
+void (*gtr_1)(void) = gtr_;
 G_L_B char gtr = '\122';
 char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
 
-static void rdr_()
+static void rdr_(void)
 {
     const bool emp = true;
     T_LINKCB *p = NULL, *r;
@@ -152,11 +152,11 @@ static void rdr_()
     }; // LACK
     return;
 }
-void (*rdr_1)() = rdr_;
+void (*rdr_1)(void) = rdr_;
 G_L_B char rdr = '\122';
 char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
 
-static void ptr_()
+static void ptr_(void)
 {
     const bool emp = false;
     T_LINKCB *p, *r;
@@ -171,16 +171,16 @@ static void ptr_()
 }
 // BLF
 #ifdef UNIX
-void (*ptr_1)() = ptr_;
+void (*ptr_1)(void) = ptr_;
 G_L_B char pt_ = '\122';
 char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
 #else
-void (*ptr_1)() = ptr_;
+void (*ptr_1)(void) = ptr_;
 G_L_B char ptr = '\122';
 char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
 #endif
 
-static void wtr_()
+static void wtr_(void)
 {
     const bool emp = false;
     T_LINKCB *p, *r;
@@ -193,11 +193,11 @@ static void wtr_()
     rftpl(p, r, refal.nexta);
     return;
 }
-void (*wtr_1)() = wtr_;
+void (*wtr_1)(void) = wtr_;
 G_L_B char wtr = '\122';
 char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
 
-static void swr_()
+static void swr_(void)
 {
     const bool emp = false;
     T_LINKCB *p, *r;
@@ -210,11 +210,11 @@ static void swr_()
     rftpl(p, r, refal.nexta);
     return;
 }
-void (*swr_1)() = swr_;
+void (*swr_1)(void) = swr_;
 G_L_B char swr = '\122';
 char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
 
-static void rp_()
+static void rp_(void)
 {
     const T_ST *ast = refal.currst;
     T_LINKCB *p = refal.preva;
@@ -271,16 +271,16 @@ static void rp_()
 
 // BLF
 #ifdef UNIX
-void (*rp_1)() = rp_;
+void (*rp_1)(void) = rp_;
 G_L_B char r_ = '\122';
 char rp_0[] = {Z2 'R', '_', '\002'};
 #else
-void (*rp_1)() = rp_;
+void (*rp_1)(void) = rp_;
 G_L_B char rp = '\122';
 char rp_0[] = {Z2 'R', 'P', '\002'};
 #endif
 
-static void cp_()
+static void cp_(void)
 {
     const T_ST *ast = refal.currst;
     const T_LINKCB *pr = ast->store;
@@ -307,11 +307,11 @@ static void cp_()
         refal.upshot = 3; // LACK
     return;
 }
-void (*cp_1)() = cp_;
+void (*cp_1)(void) = cp_;
 G_L_B char cp = '\122';
 char cp_0[] = {Z2 'C', 'P', '\002'};
 
-static void new_()
+static void new_(void)
 {
     if (!lins(refal.prevr, 1))
     {
@@ -331,7 +331,7 @@ static void new_()
     refal.dvar = refal.preva;
     return;
 }
-void (*new_1)() = new_;
+void (*new_1)(void) = new_;
 G_L_B char new = '\122';
 char new_0[] = {Z3 'N', 'E', 'W', '\003'};
 

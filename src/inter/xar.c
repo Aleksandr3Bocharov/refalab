@@ -20,85 +20,85 @@
 
 static void oper(uint32_t o, uint32_t prn);
 
-static void add_() { oper(Oadd, 0); }
+static void add_(void) { oper(Oadd, 0); }
 
 // BLF
 #ifdef UNIX
-void (*add_1)() = add_;
+void (*add_1)(void) = add_;
 G_L_B char ad_ = '\122';
 char add_0[] = {Z3 'A', 'D', '_', '\003'};
 #else
-void (*add_1)() = add_;
+void (*add_1)(void) = add_;
 G_L_B char add = '\122';
 char add_0[] = {Z3 'A', 'D', 'D', '\003'};
 #endif
 
-static void sub_() { oper(Osub, 0); }
+static void sub_(void) { oper(Osub, 0); }
 
 // BLF
 #ifdef UNIX
-void (*sub_1)() = sub_;
+void (*sub_1)(void) = sub_;
 G_L_B char su_ = '\122';
 char sub_0[] = {Z3 'S', 'U', '_', '\003'};
 #else
-void (*sub_1)() = sub_;
+void (*sub_1)(void) = sub_;
 G_L_B char sub = '\122';
 char sub_0[] = {Z3 'S', 'U', 'B', '\003'};
 #endif
 
-static void mul_() { oper(Omul, 0); }
+static void mul_(void) { oper(Omul, 0); }
 
 // BLF
 #ifdef UNIX
-void (*mul_1)() = mul_;
+void (*mul_1)(void) = mul_;
 G_L_B char mu_ = '\122';
 char mul_0[] = {Z3 'M', 'U', '_', '\003'};
 #else
-void (*mul_1)() = mul_;
+void (*mul_1)(void) = mul_;
 G_L_B char mul = '\122';
 char mul_0[] = {Z3 'M', 'U', 'L', '\003'};
 #endif
 
-static void dr_() { oper(Odr, 0); }
-void (*dr_1)() = dr_;
+static void dr_(void) { oper(Odr, 0); }
+void (*dr_1)(void) = dr_;
 G_L_B char dr = '\122';
 char dr_0[] = {Z2 'D', 'R', '\002'};
 
-static void divv_() { oper(Odr, 2); }
+static void divv_(void) { oper(Odr, 2); }
 
 // BLF
 #ifdef UNIX
-void (*div_1)() = divv_;
+void (*div_1)(void) = divv_;
 G_L_B char div_ = '\122';
 char div_0[] = {Z3 'D', 'I', '_', '\003'};
 #else
-void (*div_1)() = divv_;
+void (*div_1)(void) = divv_;
 G_L_B char div_ = '\122';
 char div_0[] = {Z3 'D', 'I', 'V', '\003'};
 #endif
 
-static void addn_() { oper(Oadd, 1); }
-void (*addn_1)() = addn_;
+static void addn_(void) { oper(Oadd, 1); }
+void (*addn_1)(void) = addn_;
 G_L_B char addn = '\122';
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', '\004'};
 
-static void subn_() { oper(Osub, 1); }
-void (*subn_1)() = subn_;
+static void subn_(void) { oper(Osub, 1); }
+void (*subn_1)(void) = subn_;
 G_L_B char subn = '\122';
 char subn_0[] = {Z4 'S', 'U', 'B', 'N', '\004'};
 
-static void muln_() { oper(Omul, 1); }
-void (*muln_1)() = muln_;
+static void muln_(void) { oper(Omul, 1); }
+void (*muln_1)(void) = muln_;
 G_L_B char muln = '\122';
 char muln_0[] = {Z4 'M', 'U', 'L', 'N', '\004'};
 
-static void drn_() { oper(Odr, 1); }
-void (*drn_1)() = drn_;
+static void drn_(void) { oper(Odr, 1); }
+void (*drn_1)(void) = drn_;
 G_L_B char drn = '\122';
 char drn_0[] = {Z3 'D', 'R', 'N', '\003'};
 
-static void divn_() { oper(Odr, 3); }
-void (*divn_1)() = divn_;
+static void divn_(void) { oper(Odr, 3); }
+void (*divn_1)(void) = divn_;
 G_L_B char divn = '\122';
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
 
@@ -106,7 +106,7 @@ static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static size_t dl, Xdl, Ydl;
 static char zn, Xzn, Yzn;
 
-static bool dajch()
+static bool dajch(void)
 {
     zn = '+';
     kon = y->prev;
@@ -138,7 +138,7 @@ static bool dajch()
     return true;
 }
 
-static bool dajarg()
+static bool dajarg(void)
 {
     x = refal.preva->next;
     if (x->tag != TAGLB)
@@ -167,7 +167,7 @@ static bool dajarg()
         return false;
 }
 
-static void obmen()
+static void obmen(void)
 {
     T_LINKCB *p = Xn;
     Xn = Yn;
@@ -184,7 +184,7 @@ static void obmen()
     return;
 }
 
-static uint32_t xmy()
+static uint32_t xmy(void)
 { //  if X < Y then true  ( po modulju)
     if (Xdl < Ydl)
         return 1;
@@ -776,7 +776,7 @@ static void oper(uint32_t o, uint32_t prn)
     return;
 }
 
-static void nrel_()
+static void nrel_(void)
 {
     if (!dajarg())
     {
@@ -806,7 +806,7 @@ static void nrel_()
     rftpl(refal.prevr, refal.preva->prev, refal.nexta);
     return;
 }
-void (*nrel_1)() = nrel_;
+void (*nrel_1)(void) = nrel_;
 G_L_B char nrel = '\122';
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', '\004'};
 

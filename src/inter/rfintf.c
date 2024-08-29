@@ -14,10 +14,10 @@ T_REFAL refal;
 
 static T_LINKCB *last_block = NULL;
 static bool rf_init = true;
-//static uint32_t curr_size = 0;
+// static uint32_t curr_size = 0;
 static T_LINKCB hd;
 
-static bool lgcl();
+static bool lgcl(void);
 static void rflist(T_LINKCB *par, size_t n);
 
 void rfabe(const char *amsg)
@@ -27,7 +27,7 @@ void rfabe(const char *amsg)
     return;
 }
 
-bool lincrm()
+bool lincrm(void)
 {
     size_t n = 0;
     if (last_block != NULL)
@@ -49,14 +49,14 @@ bool lincrm()
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88
 #ifdef mdebug
-    printf("\nLincrm: n=%d after new_block=%p", n, new_block);
+    printf("\nLincrm: n=%d after new_block=%p", n, (void *)new_block);
 #endif
     if (new_block == NULL)
         return false;
     new_block->prev = last_block;
     last_block = new_block;
-    //curr_size = curr_size + 1000; // kras 06.12.88
-    rflist(new_block + 1, 1000);  // kras 06.12.88
+    // curr_size = curr_size + 1000; // kras 06.12.88
+    rflist(new_block + 1, 1000); // kras 06.12.88
     return true;
 }
 
@@ -109,7 +109,7 @@ bool slins(T_LINKCB *p, size_t k)
     return lins(p, k);
 }
 
-bool linskd(T_ST *ast, void (*f)())
+bool linskd(T_ST *ast, void (*f)(void))
 {
     if (!lexist(ast))
         rfabe("Linskd: process doesn't exist still");
@@ -138,7 +138,7 @@ char rfcnv(char cm)
         return cm; // perewod  a..z w A..Z
 }
 
-void rfinit()
+void rfinit(void)
 {
     rf_init = false;
     T_REFAL *p = &refal;
@@ -154,8 +154,8 @@ void rfinit()
     phd->next = phd;
     phd->tag = TAGO;
     phd->info.codep = NULL;
-    //p->nostm = 0;
-    //p->stmnmb = 0;
+    // p->nostm = 0;
+    // p->stmnmb = 0;
     p->tmmode = false;
     p->tmintv = 0;
     return;
@@ -200,20 +200,20 @@ void rfdel(T_LINKCB *p, T_LINKCB *q)
     return;
 }
 
-void rftermm()
+void rftermm(void)
 {
     while (last_block != NULL)
     {
         T_LINKCB *new_block = last_block;
         last_block = new_block->prev;
-        free(new_block);
 #ifdef mdebug
-        printf("\nLincrm: free new_block=%p", new_block);
+        printf("\nLincrm: free new_block=%p", (void *)new_block);
 #endif
+        free(new_block);
     }
 }
 
-void rfexec(void (*func)())
+void rfexec(void (*func)(void))
 {
     T_ST s_st;
     if (rf_init)
@@ -506,7 +506,7 @@ static void mark(T_LINKCB *root)
     }
 }
 
-static bool lgcl()
+static bool lgcl(void)
 {
     T_LINKCB hdvar;
     T_LINKCB *hdp = &hdvar;

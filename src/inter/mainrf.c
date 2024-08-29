@@ -6,9 +6,9 @@
 #include "rfintf.h"
 
 // BLF GO -> go
-extern void go();
+extern void go(void);
 
-int main()
+int main(void)
 {
     rfexec(go);
 }

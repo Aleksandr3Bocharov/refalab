@@ -193,7 +193,7 @@ static T_LINKCB *f0, *f1, *f;
 static const uint8_t *vpca; // additional vpc
 static size_t i, n, m;
 
-static void (*fptr)();
+static void (*fptr)(void);
 
 void rfrun(T_ST *ast) // adress of current state table
 {

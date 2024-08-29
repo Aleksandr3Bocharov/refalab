@@ -60,7 +60,7 @@ static void ymn(int32_t *a, int32_t *b)
     return;
 }
 
-static void gcd_()
+static void gcd_(void)
 {
     //   sint. control
     T_LINKCB *pr = refal.preva->next;
@@ -422,20 +422,20 @@ static void gcd_()
                     b1 = gcoden(hd[1]->next);
                     if (l[1] > 1 && b1 != 0)
                     {
-                        x[0] = b1;
+                        x[0] = (int32_t)b1;
                         x[1] = c;
                         ymn(&x[0], &x[1]);
-                        y[0] = a % b;
+                        y[0] = (uint32_t)(a % b);
                         y[1] = gcoden(hd[0]->next->next);
                         i = 0;
-                        while (x[0] > y[0] || (x[0] == y[0] && x[1] > y[1]))
+                        while (x[0] > (int32_t)y[0] || (x[0] == (int32_t)y[0] && x[1] > (int32_t)y[1]))
                         {
                             c--;
                             i = 1;
-                            x[0] = b1;
+                            x[0] = (int32_t)b1;
                             x[1] = c;
                             ymn(&x[0], &x[1]);
-                            y[0] += b;
+                            y[0] += (uint32_t)b;
                         }
                         if (i == 1)
                             c++; // na wcjakij sluchaj
@@ -450,20 +450,20 @@ static void gcd_()
                     uint32_t J;
                     for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                     {
-                        b = gcoden(Yt);
+                        b = (int32_t)gcoden(Yt);
                         a = c;
                         ymn(&a, &b);
-                        b += peren;
-                        peren = b >> 24;
+                        b += (int32_t)peren;
+                        peren = (uint32_t)b >> 24;
                         b &= MASKA;
                         J = gcoden(Xt);
-                        if (J < b)
+                        if (J < (uint32_t)b)
                         {
                             J += d24;
                             peren += 1;
                         }
-                        pcoden(Xt, J - b);
-                        peren += a;
+                        pcoden(Xt, J - (uint32_t)b);
+                        peren += (uint32_t)a;
                     }
                     if (peren != 0)
                     { // cifra welika
@@ -475,14 +475,14 @@ static void gcd_()
                             J = 0;
                             for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                             {
-                                a = gcoden(Xt) + gcoden(Yt) + J;
+                                a = (int32_t)(gcoden(Xt) + gcoden(Yt) + J);
                                 J = 0;
                                 if (a >= d24)
                                 {
                                     a -= d24;
                                     J = 1;
                                 }
-                                pcoden(Xt, a);
+                                pcoden(Xt, (uint32_t)a);
                             }
                             peren -= J;
                         } while (peren != 0);
@@ -502,19 +502,19 @@ static void gcd_()
                 // denormalizacija ostatka
                 for (px = hd[0]; px != tl[0]->next; px = px->next)
                 {
-                    a = gcoden(px);
-                    b = a >> n | peren << i;
-                    peren = a & c;
-                    pcoden(px, b);
+                    a = (int32_t)gcoden(px);
+                    b = a >> n | (int32_t)peren << i;
+                    peren = (uint32_t)(a & c);
+                    pcoden(px, (uint32_t)b);
                 }
                 // denormalizacija delitelja
                 peren = 0;
                 for (px = hd[1]; px != tl[1]->next; px = px->next)
                 {
-                    a = gcoden(px);
-                    b = a >> n | peren << i;
-                    peren = a & c;
-                    pcoden(px, b);
+                    a = (int32_t)gcoden(px);
+                    b = a >> n | (int32_t)peren << i;
+                    peren = (uint32_t)(a & c);
+                    pcoden(px, (uint32_t)b);
                 }
             }
             /*   printf("\n l[0]=%d l[1]=%d",l[0],l[1]);
@@ -538,8 +538,8 @@ static void gcd_()
             return;
         }
 }
-void (*gcd_1)() = gcd_;
+void (*gcd_1)(void) = gcd_;
 G_L_B char gcd = '\122';
-char add_0[] = {Z3 'G', 'C', 'D', '\003'};
+char gcd_0[] = {Z3 'G', 'C', 'D', '\003'};
 
 //------------------ end of file  XGCD.C ----------------

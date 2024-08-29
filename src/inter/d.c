@@ -84,18 +84,18 @@ static const T_LINKCB *prevk1, *nextd1;
 static T_LINKCB *dot2;
 static const T_LINKCB *prevk2, *nextd2;
 
-static void init_det_flags();
-static void get_arg();
-static bool get_det();
+static void init_det_flags(void);
+static void get_arg(void);
+static bool get_det(void);
 static bool get_numb(int32_t *numb);
 static bool get_yn(const char *b);
 static void dbapp(T_ST *ss_st);
 static void getpf(const T_ST *ss_st);
 static void one_step(T_ST *ss_st);
-static void pr_euc();
+static void pr_euc(void);
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
-static void pr_imres();
-static void pr_step();
+static void pr_imres(void);
+static void pr_step(void);
 
 void rfdbg(T_ST *s_st)
 {
@@ -672,7 +672,7 @@ static void dbapp(T_ST *ss_st)
 }
 
 //    procedures
-static void init_det_flags()
+static void init_det_flags(void)
 {
     /*for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
     {
@@ -723,7 +723,7 @@ static void one_step(T_ST *ss_st)
     return;
 }
 
-static void pr_step()
+static void pr_step(void)
 {
     // printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step);
     if (curr_step != printed_step)
@@ -734,7 +734,7 @@ static void pr_step()
     return;
 }
 
-static void pr_euc()
+static void pr_euc(void)
 {
     if (curr_step > s_upto || curr_step < s_from)
         return;
@@ -751,7 +751,7 @@ static void pr_euc()
     return;
 }
 
-static void pr_imres()
+static void pr_imres(void)
 {
     if (curr_step > s_upto || curr_step < s_from)
         return;
@@ -833,7 +833,7 @@ static void getpf(const T_ST *ss_st)
     return;
 }
 
-static void get_arg()
+static void get_arg(void)
 {
     for (l_arg = 0;; l_arg++)
     {
@@ -846,7 +846,7 @@ static void get_arg()
     return;
 }
 
-static bool get_det()
+static bool get_det(void)
 {
     det_table = last_det;
     while (det_table != NULL)

@@ -11,7 +11,7 @@
 
 void (*dba)(T_ST *) = NULL;
 
-static void appl_()
+static void appl_(void)
 {
     T_ST *s_st;
     size_t l = (size_t)&s_st;
@@ -89,7 +89,7 @@ static void appl_()
     free(s_st);
     return;
 }
-void (*appl_1)() = appl_;
+void (*appl_1)(void) = appl_;
 G_L_B char apply = '\122';
 char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', '\005'};
 
