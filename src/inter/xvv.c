@@ -133,10 +133,10 @@ static void clsg_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-    {
+    //{
         jl = p->info.coden;
-        p = p->next;
-    }
+    //    p = p->next;
+    //}
     if (jl >= fmax)
     {
         printf("\nclsget: format error");
@@ -159,10 +159,10 @@ static void clsp_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-    {
+    //{
         jl = p->info.coden;
-        p = p->next;
-    }
+    //    p = p->next;
+    //}
     if (jl >= fmax)
     {
         printf("\nclsput: format error");
@@ -189,10 +189,10 @@ static void libg_(void)
         new = true;
     }
     else
-    {
+    //{
         jl = p->info.coden;
-        p = p->next;
-    }
+    //    p = p->next;
+    //}
     if (jl >= fmax)
     {
         printf("\nlibget: format error");
