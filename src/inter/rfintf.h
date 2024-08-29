@@ -24,7 +24,7 @@ extern bool lexist(const T_ST *ast);
 extern bool lincrm();
 extern bool lins(T_LINKCB *p, size_t l);
 extern bool slins(T_LINKCB *p, size_t k);
-extern bool linskd(T_ST *ast, void (*func)());
+extern bool linskd(T_ST *ast, void (*f)());
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool lrqlk(size_t l);
 

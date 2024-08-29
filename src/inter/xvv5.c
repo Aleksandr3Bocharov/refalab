@@ -130,7 +130,7 @@ static void get_()
       {
          char namf[11];
          strcpy(namf, "REFAL0.DAT");
-         namf[5] = j + '0';
+         namf[5] = (char)j + '0';
          f = fopen(namf, "r");
          if (f == NULL)
          {
@@ -141,7 +141,7 @@ static void get_()
          uniget[j] = f;
       }
       p = refal.prevr;
-      char c = getc(f);
+      int c = getc(f);
       while (c != '\n')
       {
          if (!slins(p, 1))
@@ -154,7 +154,7 @@ static void get_()
             return;
          }
          p->tag = TAGO;
-         p->info.infoc = c;
+         p->info.infoc = (char)c;
          c = getc(f);
       }
       return;
@@ -185,7 +185,7 @@ static void put_()
       {
          char namf[11];
          strcpy(namf, "REFAL0.DAT");
-         namf[5] = j + '0';
+         namf[5] = (char)j + '0';
          f = fopen(namf, "w");
          if (f == NULL)
          {

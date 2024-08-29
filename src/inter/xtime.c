@@ -57,7 +57,7 @@ static void rftm_()
             case 'G':
                 timespec_get(&t1, TIME_UTC);
                 int32_t in = t1.tv_nsec - t0.tv_nsec;
-                uint32_t is = difftime(t1.tv_sec, t0.tv_sec);
+                uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;

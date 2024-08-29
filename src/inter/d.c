@@ -812,7 +812,7 @@ static void getpf(const T_ST *ss_st)
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
-            buff_id[i] = rfcnv(*(p_id + i)); // kras
+            buff_id[i] = rfcnv((char)*(p_id + i)); // kras
         buff_id[id_l] = '\0';
     }
     det_table = last_det;

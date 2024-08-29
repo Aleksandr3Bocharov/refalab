@@ -207,7 +207,7 @@ static void libg_()
     size_t i;
     for (i = 0; c != '\n' && c != EOF && i < 128; i++)
     {
-        s[i] = c;
+        s[i] = (char)c;
         c = getc(inr);
     }
     if (c == EOF)
@@ -331,7 +331,7 @@ static void card_()
     if (refal.preva->next != refal.nexta) // refal.upshot = 2;
         rfpex("", refal.preva, refal.nexta);
     T_LINKCB *p = refal.prevr;
-    char c = getchar();
+    int c = getchar();
     while (c != '\n')
     {
         if  (!slins(p, 1))
@@ -344,7 +344,7 @@ static void card_()
             return;
         }
         p->tag = TAGO;
-        p->info.infoc = c;
+        p->info.infoc = (char)c;
         c = getchar();
     }
     return;

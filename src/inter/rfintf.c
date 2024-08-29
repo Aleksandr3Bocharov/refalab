@@ -350,18 +350,18 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             {
                 putchar('/');
                 const char *f = (char *)(pr->info.codef - 1);
-                const uint8_t l = *f;
+                const uint8_t l = (uint8_t)*f;
                 f -= l;
                 for (size_t k = 1; k <= l; k++, f++)
                     putchar(rfcnv(*f));
                 putchar('/');
             }
             else if (pr->tag == TAGR)
-                printf("/%%%p/", pr->info.codep);
+                printf("/%%%p/", (void *)pr->info.codep);
             else if ((pr->tag & 0001) != TAGO)
                 rfabe("rfpexm: unknown bracket type ");
             else
-                printf("/<%x>,%p/", pr->tag, pr->info.codep);
+                printf("/<%x>,%p/", pr->tag, (void *)pr->info.codep);
         }
     }
     if (fr)
@@ -469,7 +469,7 @@ bool lcre(T_ST *ast)
     ast->state = 1;
     ast->dot = NULL;
     ast->step = 0;
-    ast->stop = -1;
+    ast->stop = (uint32_t)-1;
     return true;
 }
 
@@ -509,7 +509,7 @@ static void mark(T_LINKCB *root)
 static bool lgcl()
 {
     T_LINKCB hdvar;
-    T_LINKCB *hd = &hdvar;
+    T_LINKCB *hdp = &hdvar;
     if (refal.dvar == NULL)
         return false;
     // mark boxes achieved from view field & burriage
@@ -532,8 +532,8 @@ static bool lgcl()
             r = r->info.codep;
         } while (r != pzero);
         //   remove garbage
-        hd->info.codep = refal.dvar;
-        T_LINKCB *p1 = hd;
+        hdp->info.codep = refal.dvar;
+        T_LINKCB *p1 = hdp;
         T_LINKCB *q = refal.dvar;
         do
         {
@@ -556,10 +556,10 @@ static bool lgcl()
             }
             q = p1->info.codep;
         } while (q != pzero);
-        if (hd->info.codep == pzero)
+        if (hdp->info.codep == pzero)
             refal.dvar = NULL;
         else
-            refal.dvar = hd->info.codep;
+            refal.dvar = hdp->info.codep;
     }
     return was_coll;
 }
@@ -609,18 +609,18 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         {
             putchar('\'');
             const char *f = (char *)(pr->info.codef - 1);
-            const uint8_t l = *f;
+            const uint8_t l = (uint8_t)*f;
             f -= l;
             for (size_t k = 1; k <= l; k++, f++)
                 putchar(rfcnv(*f));
             putchar('\'');
         }
         else if (pr->tag == TAGR)
-            printf("'%%%p'", pr->info.codep);
+            printf("'%%%p'", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
             rfabe("rfpex: unknown bracket type ");
         else
-            printf("'%x,%p'", pr->tag, pr->info.codep);
+            printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
     }
     return;
 }

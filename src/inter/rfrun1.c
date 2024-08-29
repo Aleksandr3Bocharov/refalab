@@ -307,7 +307,7 @@ void rfrun(T_ST *ast) // adress of current state table
             if (tmmod)
                 //{
                 // printf("\nn=%ld k=%ld",tmstart,tmstop);
-                refal.tmintv = (tmstop - tmstart) * 1000000l;
+                refal.tmintv = 0;
             //}
             return;
         case NEXTOP:
@@ -1401,7 +1401,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHF
                 f->tag = TAGO;
             f->info.codep = NULL;
-            f->info.infoc = *(vpc + 1);
+            f->info.infoc = (char)*(vpc + 1);
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1422,7 +1422,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 }
                 f->tag = TAGO;
                 f->info.codep = NULL;
-                f->info.infoc = *vpc;
+                f->info.infoc = (char)*vpc;
                 vpc = vpc + NMBL;
             };
             if (lack)

@@ -1,11 +1,11 @@
-//----------- file -- MAINRF.C ------------------- 
-//          Standard REFAL-initiator               
-//       Last modification : 11.07.2024            
-//------------------------------------------------ 
+//----------- file -- MAINRF.C -------------------
+//          Standard REFAL-initiator
+//       Last modification : 11.07.2024
+//------------------------------------------------
 #include <stdint.h>
 #include "rfintf.h"
 
-// BLF GO -> go  
+// BLF GO -> go
 extern void go();
 
 int main()
@@ -13,4 +13,4 @@ int main()
     rfexec(go);
 }
 
-//---------  end of file MAINRF.C  --------- 
+//---------  end of file MAINRF.C  ---------
