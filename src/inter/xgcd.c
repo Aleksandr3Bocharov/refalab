@@ -6,9 +6,9 @@
 #include "refal.def"
 #include "rfintf.h"
 
-#define d24 16777216l
-#define HMAX 4096L
-#define MASKA 0xffffffL
+#define d24 16777216
+#define HMAX 4096
+#define MASKA 0xFFFFFF
 
 static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
 {                                                              //  X - ukaz. na konec
@@ -38,10 +38,10 @@ static void ymn(int32_t *a, int32_t *b)
         *a = 0;
         return;
     }
-    const uint32_t a1 = (*a) >> 12;
-    const uint32_t b1 = (*b) >> 12;
-    const uint32_t a2 = (*a) & 0xFFF;
-    const uint32_t b2 = (*b) & 0xFFF;
+    const uint32_t a1 = (uint32_t)*a >> 12;
+    const uint32_t b1 = (uint32_t)*b >> 12;
+    const uint32_t a2 = *a & 0xFFF;
+    const uint32_t b2 = *b & 0xFFF;
     uint32_t rr = a2 * b2;
     *b = rr & 0xFFF;
     uint32_t rr3 = rr >> 12;
@@ -55,8 +55,8 @@ static void ymn(int32_t *a, int32_t *b)
     rr2 += rr & 0xFFF;
     const uint32_t rr1 = rr >> 12;
     const uint32_t rr4 = rr3 >> 12;
-    *a = rr1 * HMAX + rr2 + rr4;
-    *b += (rr3 & 0xFFF) * HMAX;
+    *a = (int32_t)(rr1 * HMAX + rr2 + rr4);
+    *b += ((int32_t)rr3 & 0xFFF) * HMAX;
     return;
 }
 
@@ -238,7 +238,7 @@ static void gcd_()
             //    A - pribligenie
             //    k={ 1/2 }
             const size_t la = k;
-            const int32_t lb = l[1] - (l[0] - la);
+            const int32_t lb = (int32_t)(l[1] - (l[0] - la));
             int32_t x[2];
             uint32_t y[2];
             if (lb <= 0)
@@ -250,7 +250,7 @@ static void gcd_()
             // UTV:  l[0] = {1/2}
             B = 0;
             pr = hd[1];
-            for (k = 0; k < lb; k++)
+            for (k = 0; k < (uint32_t)lb; k++)
             {
                 B = B << 24;
                 B += gcoden(pr);
@@ -287,12 +287,12 @@ static void gcd_()
                 AH = BH;
                 BL = RL;
                 BH = RH;
-                const int32_t xn = x[0] - Q * x[1];
-                const int32_t yn = y[0] - Q * y[1];
+                const int32_t xn = x[0] - (int32_t)Q * x[1];
+                const int32_t yn = (int32_t)(y[0] - Q * y[1]);
                 x[0] = x[1];
                 y[0] = y[1];
                 x[1] = xn;
-                y[1] = yn;
+                y[1] = (uint32_t)yn;
             }
             //   vyravnivanie dlin
             if (l[0] != l[1])
@@ -311,17 +311,17 @@ static void gcd_()
                 int32_t vs3, vs4;
                 for (i = 0; i < 2; i++)
                 {
-                    int32_t vs1 = s[0];
-                    int32_t vs2 = s[1];
+                    int32_t vs1 = (int32_t)s[0];
+                    int32_t vs2 = (int32_t)s[1];
                     if (x[i] < 0)
                     {
                         vs3 = 0 - x[i];
-                        vs4 = y[i];
+                        vs4 = (int32_t)y[i];
                     }
                     else
                     {
                         vs3 = x[i];
-                        vs4 = 0 - y[i];
+                        vs4 = 0 - (int32_t)y[i];
                     }
                     ymn(&vs1, &vs3);
                     ymn(&vs2, &vs4);
@@ -339,12 +339,12 @@ static void gcd_()
                     if (r0 < 0)
                     {
                         vs3 = r0 / d24;
-                        r0 = r0 % d24;
+                        r0 %= d24;
                     }
                     else
                     {
                         vs3 = r0 >> 24;
-                        r0 = r0 & MASKA;
+                        r0 &= MASKA;
                     }
                     r[i] = vs1 + vs2 + vs3;
                     if (r0 < 0)
@@ -352,7 +352,7 @@ static void gcd_()
                         r[i]--;
                         r0 += d24;
                     }
-                    pcoden(p[i], r0);
+                    pcoden(p[i], (uint32_t)r0);
                     p[i] = p[i]->prev;
                 }
             }
@@ -380,8 +380,8 @@ static void gcd_()
             int32_t b;
             if (l[1] != 0)
             { // wozmovna normalizacija
-                b = gcoden(hd[1]);
-                for (n = 0; b < 8388608l; n++, b += b)
+                b = (int32_t)gcoden(hd[1]);
+                for (n = 0; b < 8388608; n++, b += b)
                     ;
                 if (n != 0)
                 {
@@ -393,30 +393,30 @@ static void gcd_()
             int32_t a, c;
             do
             {
-                a = gcoden(hd[0]);
+                a = (int32_t)gcoden(hd[0]);
                 const uint32_t a1 = gcoden(hd[0]->next);
-                b = gcoden(hd[1]);
-                if (a == 0 && a1 < b)
+                b = (int32_t)gcoden(hd[1]);
+                if (a == 0 && a1 < (uint32_t)b)
                     c = 0;
                 else
                 {
                     uint32_t b1;
-                    if (a == 0 && a1 >= b)
+                    if (a == 0 && a1 >= (uint32_t)b)
                     {
-                        c = 1l; //  t.k. b - normalizowano
-                        a = a1;
+                        c = 1; //  t.k. b - normalizowano
+                        a = (int32_t)a1;
                     }
                     else
                     { // delim a,a1 na b
-                        a = a * 128 + (a1 >> 17);
+                        a = a * 128 + (int32_t)(a1 >> 17);
                         c = a / b << 17;
                         b1 = a1 >> 10;
-                        a = a % b * 128 + (b1 & 0x7F);
+                        a = a % b * 128 + (int32_t)(b1 & 0x7F);
                         c += a / b * 1024;
                         b1 = a1 >> 3;
-                        a = a % b * 128 + (b1 & 0x7F);
+                        a = a % b * 128 + (int32_t)(b1 & 0x7F);
                         c += a / b * 8;
-                        a = a % b * 8 + (a1 & 7);
+                        a = a % b * 8 + (int32_t)(a1 & 7);
                         c += a / b;
                     }
                     b1 = gcoden(hd[1]->next);

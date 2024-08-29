@@ -212,10 +212,10 @@ static void ymn(uint32_t *a, uint32_t *b)
         *a = 0;
         return;
     }
-    const uint32_t a1 = (*a) >> 12;
-    const uint32_t b1 = (*b) >> 12;
-    const uint32_t a2 = (*a) & 0xFFF;
-    const uint32_t b2 = (*b) & 0xFFF;
+    const uint32_t a1 = *a >> 12;
+    const uint32_t b1 = *b >> 12;
+    const uint32_t a2 = *a & 0xFFF;
+    const uint32_t b2 = *b & 0xFFF;
     uint32_t r = a2 * b2;
     *b = r & 0xFFF;
     uint32_t r3 = r >> 12;
