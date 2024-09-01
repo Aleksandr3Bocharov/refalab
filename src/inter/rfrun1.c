@@ -1352,12 +1352,14 @@ void rfrun(T_ST *ast) // adress of current state table
             // LMAX(L);
         case LMAX:
             et[nel] = b1->next;
-            while ((b1 = b1->next) != b2)
+            b1 = b1->next;
+            while (b1 != b2)
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b1))
                     break;
                 if ((b1->tag & 0001) != TAGO)
                     b1 = b1->info.codep;
+                b1 = b1->next;
             };
             b1 = b1->prev;
             et[nel + 1] = b1;
@@ -1368,12 +1370,14 @@ void rfrun(T_ST *ast) // adress of current state table
             // RMAX(L);
         case RMAX:
             et[nel + 1] = b2->prev;
-            while ((b2 = b2->prev) != b1)
+            b2 = b2->prev;
+            while (b2 != b1)
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b2))
                     break;
                 if ((b2->tag & 0001) != TAGO)
                     b2 = b2->info.codep;
+                b2 = b2->prev;
             };
             b2 = b2->next;
             et[nel] = b2;
@@ -1401,7 +1405,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHF
                 f->tag = TAGO;
             f->info.codep = NULL;
-            f->info.infoc = (char)*(vpc + 1);
+            f->info.infoc = *(vpc + 1);
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1422,7 +1426,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 }
                 f->tag = TAGO;
                 f->info.codep = NULL;
-                f->info.infoc = (char)*vpc;
+                f->info.infoc = *vpc;
                 vpc = vpc + NMBL;
             };
             if (lack)
