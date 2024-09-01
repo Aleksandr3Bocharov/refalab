@@ -491,7 +491,8 @@ static void mark(T_LINKCB *root)
             q->tag = 0xFFFF;
             p->info.codep = h;
             q->prev = p;
-            h = p = q;
+            p = q;
+            h = p;
             continue;
         }
         if (h == root)
