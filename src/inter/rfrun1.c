@@ -636,7 +636,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (b1->info.infoc != *(vpc + NMBL))
+            if (b1->info.infoc != (char)*(vpc + NMBL))
             {
                 i_state = FAIL;
                 break;
@@ -653,7 +653,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (b2->info.infoc != *(vpc + NMBL))
+            if (b2->info.infoc != (char)*(vpc + NMBL))
             {
                 i_state = FAIL;
                 break;
@@ -713,7 +713,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (b1->info.infoc != *vpc)
+            if (b1->info.infoc != (char)*vpc)
             {
                 i_state = FAIL;
                 break;
@@ -738,7 +738,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (b2->info.infoc != *vpc)
+            if (b2->info.infoc != (char)*vpc)
             {
                 i_state = FAIL;
                 break;
@@ -1405,7 +1405,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHF
                 f->tag = TAGO;
             f->info.codep = NULL;
-            f->info.infoc = *(vpc + 1);
+            f->info.infoc = (char)*(vpc + 1);
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1426,7 +1426,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 }
                 f->tag = TAGO;
                 f->info.codep = NULL;
-                f->info.infoc = *vpc;
+                f->info.infoc = (char)*vpc;
                 vpc = vpc + NMBL;
             };
             if (lack)
