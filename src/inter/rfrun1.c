@@ -1466,13 +1466,28 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // BR;
         case BR:
+        printf("\ncase BR\n");
+        printf("\nf=%p prev=%p next=%p tag=%u info codep=%p", f, f->prev, f->next, f->tag, f->info.codep);
             SHF
+        printf("\nf = f->next;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep); 
                 f->info.codep = lastb;
+        printf("\nf->info.codep = lastb;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
+        printf("\nlastb=%p prev=%p next=%p tag=%u info codep=%p", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);
             f1 = lastb->info.codep;
+        printf("\nf1 = lastb->info.codep;\n");
+        printf("f1=%p prev=%p next=%p tag=%u info codep=%p\n", f1, f1->prev, f1->next, f1->tag, f1->info.codep);    
             lastb->tag = TAGLB;
             lastb->info.codep = f;
+        printf("\nlastb->tag = TAGLB;\nlastb->info.codep = f;\n");
+        printf("lastb=%p prev=%p next=%p tag=%u info codep=%p\n", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);    
             f->tag = TAGRB;
+        printf("\nf->tag = TAGRB;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);
             lastb = f1;
+        printf("\nlastb = f1;\n");
+        printf("lastb=%p prev=%p next=%p tag=%u info codep=%p\n", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);    
             i_state = ADVANCE;
             break;
             // BLR;
@@ -1488,13 +1503,28 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // BRACT;
         case BRACT:
+        printf("\ncase BRACT\n");
+        printf("\nf=%p prev=%p next=%p tag=%u info codep=%p", f, f->prev, f->next, f->tag, f->info.codep);
             SHF
+        printf("\nf = f->next;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep); 
                 f->info.codep = lastb;
             f->tag = TAGD;
+        printf("\nf->info.codep = lastb;\nf->tag = TAGD;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);
+        printf("\nlastk=%p prev=%p next=%p tag=%u info codep=%p", lastk, lastk->prev, lastk->next, lastk->tag, lastk->info.codep);
             lastk->info.codep = f;
             lastk->tag = TAGK;
+        printf("\nlastk->info.codep = f;\nlastk->tag = TAGK;\n");
+        printf("lastk=%p prev=%p next=%p tag=%u info codep=%p", lastk, lastk->prev, lastk->next, lastk->tag, lastk->info.codep);
             lastk = lastb;
+        printf("\nlastk = lastb;\n");
+        printf("lastk=%p prev=%p next=%p tag=%u info codep=%p\n", lastk, lastk->prev, lastk->next, lastk->tag, lastk->info.codep);
             lastb = lastb->info.codep;
+        printf("\nlastb = lastb->info.codep;\n");
+        if (lastb != NULL)
+        printf("lastb=%p prev=%p next=%p tag=%u info codep=%p\n", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);
+        else printf("lastb=%p\n", lastb);
             i_state = ADVANCE;
             break;
             // ACT(N);

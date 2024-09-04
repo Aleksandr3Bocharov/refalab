@@ -56,6 +56,7 @@ static void m1_(void)
         return;
     }
     pcoden(p, (uint32_t)l);
+printf("\nl=%d\n", l);
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
