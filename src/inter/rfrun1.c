@@ -1387,9 +1387,25 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // EOR;
         case EOR:
+        printf("\ncase EOR\n");
+        if (f != NULL)
+        printf("\nf=%p prev=%p next=%p tag=%u info codep=%p", f, f->prev, f->next, f->tag, f->info.codep);
+        else printf("\nf=%p", f);
             f = flhead;
+        printf("\nf = flhead;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);    
+        if (lastk != NULL)
+        printf("\nlastk=%p prev=%p next=%p tag=%u info codep=%p", lastk, lastk->prev, lastk->next, lastk->tag, lastk->info.codep);
+        else printf("\nlastk=%p", lastk);
             lastk = &quasik;
+        printf("\nlastk = &quasik;\n");
+        printf("lastk=%p prev=%p next=%p tag=%u info codep=%p\n", lastk, lastk->prev, lastk->next, lastk->tag, lastk->info.codep);
+        if (lastb != NULL)
+        printf("\nlastb=%p prev=%p next=%p tag=%u info codep=%p", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);
+        else printf("\nlastb=%p", lastb);
             lastb = NULL;
+        printf("\nlastb = NULL;\n");
+        printf("lastb=%p\n", lastb);
             tsp = (T_TS *)js;
             i_state = ADVANCE;
             break;
@@ -1435,9 +1451,17 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // BL;
         case BL:
+        printf("\ncase BL\n");
+        printf("\nf=%p prev=%p next=%p tag=%u info codep=%p", f, f->prev, f->next, f->tag, f->info.codep);
             SHF
+        printf("\nf = f->next;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep); 
                 f->info.codep = lastb;
+        printf("\nf->info.codep = lastb;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
             lastb = f;
+        printf("\nlastb = f;\n");
+        printf("lastb=%p prev=%p next=%p tag=%u info codep=%p\n", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);
             i_state = ADVANCE;
             break;
             // BR;
@@ -1638,13 +1662,28 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // BLF(L);
         case BLF:
+        printf("\ncase BLF\n");
+        printf("\nf=%p prev=%p next=%p tag=%u info codep=%p", f, f->prev, f->next, f->tag, f->info.codep);
             SHF
+        printf("\nf = f->next;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
                 f->info.codep = lastb;
+        printf("\nf->info.codep = lastb;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
             lastb = f;
+        printf("\nlastb = f;\n");
+        printf("lastb=%p prev=%p next=%p tag=%u info codep=%p\n", lastb, lastb->prev, lastb->next, lastb->tag, lastb->info.codep);
             SHF
+        printf("\nf = f->next;\n");
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
                 memcpy(&f->info.codef, vpc + NMBL, LBLL);
             f->tag = TAGF;
+        printf("\nmemcpy(&f->info.codef, vpc + NMBL, LBLL);\nf->tag = TAGF;\n");
+        printf("vpc + NMBL=%p\n", vpc + NMBL);
+        printf("f=%p prev=%p next=%p tag=%u info codep=%p\n", f, f->prev, f->next, f->tag, f->info.codep);  
             vpc = vpc + NMBL + LBLL;
+        printf("\nvpc = vpc + NMBL + LBLL;\n");
+        printf("vpc=%p\n", vpc);
             i_state = NEXTOP;
             break;
             // EOSSN (NN);
