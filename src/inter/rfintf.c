@@ -49,7 +49,7 @@ bool lincrm(void)
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88
 #ifdef mdebug
-    printf("\nLincrm: n=%d after new_block=%p", n, (void *)new_block);
+    printf("\nLincrm: n=%zu after new_block=%p", n, (void *)new_block);
 #endif
     if (new_block == NULL)
         return false;
