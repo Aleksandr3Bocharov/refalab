@@ -1,12 +1,11 @@
 #############################################################################
 # Makefile
-#       Makefile for building refal2 system
-#       for Windows (Win95/98/ME/NT/2000/XP)
+#       Makefile for building RefalAB system
+#       for Windows
 #
-# Copyright (C) Refal-2 Team
-# Author: Leonid Belous (aka BLF)
-# E-mail: belous@ilt.kharkov.ua
-# Date: 12.07.2024
+# Copyright(C) Aleksandr Bocharov
+# Author : Aleksandr Bocharov
+# Date: 24.09.2024
 #############################################################################
 
 MAKE	=	mingw32-make
@@ -14,9 +13,9 @@ MAKE	=	mingw32-make
 all:
 
 # PHASE I:
-# Make the compiler from refal-2 language, 
-# result bin\refal2 executable module.
-# result bin\refal2_dbg executable module (debug mode).
+# Make the compiler from RefalAB language, 
+# result bin\RefalAB executable module.
+# result bin\RefalAB_dbg executable module (debug mode).
 	
 	$(MAKE) -f src\comp\comp_win.mak
 	src\comp\delbin.bat
@@ -25,8 +24,8 @@ all:
 
 # PHASE II:
 # Make the interpreter from "jazyk sborki",  
-# result lib/libr2.a - set of object modules.
-# result lib/libr2_dbg.a - set of object modules (debug mode).
+# result lib\libRefalAB.a - set of object modules.
+# result lib\libRefalAB_dbg.a - set of object modules (debug mode).
 	
 	$(MAKE) -f src\inter\inter_lib_win.mak
 	src\inter\delbin.bat
