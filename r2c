@@ -1,14 +1,13 @@
 #!/bin/sh 
 #*******************************************************************
-# r2c
+# 2c
 #	compile from refal to GNU-assembler 
 # 	arg: $1 - name of refal programm (without extension ref)
 #	result: $1.asm in GNU assembler language 
 #
-# Copyright (C) Refal-2 Team
-# Author: Leonid Belous (aka BLF)
-# E-mail: belous@ilt.kharkov.ua
-# Date: 28.05.2005
+# Copyright(C) Aleksandr Bocharov
+# Author : Aleksandr Bocharov
+# Date: 24.09.2024
 #*******************************************************************
 
 bin/refal2 $1 > $1.log
