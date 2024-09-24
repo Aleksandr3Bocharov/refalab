@@ -1,6 +1,6 @@
 #!/bin/sh 
 #*******************************************************************
-# 2c
+# RefalABc
 #	compile from refal to GNU-assembler 
 # 	arg: $1 - name of refal programm (without extension ref)
 #	result: $1.asm in GNU assembler language 
@@ -10,4 +10,4 @@
 # Date: 24.09.2024
 #*******************************************************************
 
-bin/refal2 $1 > $1.log
+bin/RefalAB $1 > $1.log
