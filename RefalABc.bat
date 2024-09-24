@@ -1,14 +1,13 @@
 @echo off
 rem *******************************************************************
-rem r2c.bat
+rem RefalABc.bat
 rem	compile from refal to GNU-assembler 
 rem 	arg: %1 - name of refal programm (without extension ref)
 rem	result: %1.asm in GNU assembler language 
 rem
-rem Copyright (C) Refal-2 Team
-rem Author: Leonid Belous (aka BLF)
-rem E-mail: belous@ilt.kharkov.ua
-rem Date: 28.05.2005
+rem Copyright(C) Aleksandr Bocharov
+rem Author : Aleksandr Bocharov
+rem Date: 24.09.2024
 rem *******************************************************************
 
-bin\refal2 %1 > %1.log
+bin\RefalAB %1 > %1.log
