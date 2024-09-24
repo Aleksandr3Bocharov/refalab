@@ -5,7 +5,7 @@ rem 	delete temporary working files
 rem
 rem Copyright (C) Aleksandr Bocharov
 rem Author: Aleksandr Bocharov
-rem Date: 12.07.2024
+rem Date: 24.09.2024
 rem *******************************************************************
 
 cd  src\comp\
