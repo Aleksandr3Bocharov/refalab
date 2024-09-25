@@ -1,12 +1,14 @@
+# Copyright 2024 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2024-09-25
+# https://github.com/Aleksandr3Bocharov/RefalAB
+
 #############################################################################
 # comp_dbg_linux.mak
-# 	makefile for building of the compiler from refal-2 language (debug mode), 
-# 	result - bin/refal2_dbg executable module.
+# 	makefile for building of the compiler from RefalAB language (debug mode), 
+# 	result - bin/RefalAB_dbg executable module.
 #       Version for UNIX ( FreeBSD, Linux )
-#
-# Copyright (C) Aleksandr Bocharov
-# Author: Aleksandr Bocharov
-# Date: 05.08.2024
 #############################################################################
 
 ####### Compiler, tools and options
@@ -42,7 +44,7 @@ OBJECTS =			\
 		$(S)/plc.o 	\
 		$(S)/refal.o
 
-TARGET =	refal2_dbg
+TARGET =	RefalAB_dbg
 
 
 ####### Implicit rules
