@@ -1,15 +1,17 @@
 @echo off
+
+rem Copyright 2024 Aleksandr Bocharov
+rem Distributed under the Boost Software License, Version 1.0.
+rem See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+rem 2024-09-25
+rem https://github.com/Aleksandr3Bocharov/RefalAB
+
 rem *******************************************************************
 rem refxcv.bat
-rem 	special part for comp.mak
+rem 	special script
 rem	compile xcv.ref from refal to GNU-assembler + assembling. 
 rem	result: xcv.o  
-rem
-rem Copyright (C) Refal-2 Team
-rem Author: Leonid Belous (aka BLF)
-rem E-mail: belous@ilt.kharkov.ua
-rem Date: 11.07.2024
 rem *******************************************************************
 
-bin\refal2 src\inter\xcv > src\inter\xcv.log
+bin\RefalAB src\inter\xcv > src\inter\xcv.log
 as -o src\inter\xcv.o src\inter\xcv.asm >> src\inter\xcv.log 
