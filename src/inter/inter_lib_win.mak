@@ -6,7 +6,7 @@
 
 #############################################################################
 # inter_lib_win.mak
-# 	Makefile for interpreter library(libRefalAB.a) creation,
+# 	Makefile for interpreter library (libRefalAB.a) creation,
 # 	result - lib\libRefalAB.a library
 # 	Version for Windows
 #############################################################################
