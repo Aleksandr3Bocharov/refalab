@@ -5,9 +5,9 @@
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
-#inter_o_win.mak
-#Makefile for mainrf.o rfdbg.o creation,
-#Version for Windows(Win95 / 98 / ME / NT / 2000 / XP)
+# inter_o_win.mak
+# 	Makefile for mainrf.o rfdbg.o creation,
+# 	Version for Windows
 #############################################################################
 
 ####### Compiler, tools and options
