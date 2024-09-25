@@ -1,13 +1,14 @@
+# Copyright 2024 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2024-09-25
+# https://github.com/Aleksandr3Bocharov/RefalAB
+
 #############################################################################
 # inter_lib_linux.mak
-#	Makefile for interpreter library (libr2.a) creation,
-# 	result - lib/libr2.a library
+#	Makefile for interpreter library (libRefalAB.a) creation,
+# 	result - lib/libRefalAB.a library
 #       Version for UNIX ( FreeBSD, Linux )
-#
-# Copyright (C) Refal-2 Team
-# Author: Leonid Belous (aka BLF)
-# E-mail: belous@ilt.kharkov.ua
-# Date: 05.08.2024
 #############################################################################
 
 ####### Compiler, tools and options
@@ -18,7 +19,7 @@ CC	=	gcc
 CFLAGS	=	-pipe -Wall -O2 -DUNIX
 AR	=	ar
 REFXCV	=	src/inter/refxcv	# refal2 + assembler for xcv
-REFLIB	=	lib/libr2.a
+REFLIB	=	lib/libRefalAB.a
 S	=      	src/inter
 ####### Files
 
@@ -70,7 +71,6 @@ all: $(REFLIB)
 $(REFLIB): $(OBJECTS)
 	$(AR) rs $(REFLIB) $(OBJECTS) 
 
-
 ####### Dependences
 
 $(S)/d.o:	$(S)/d.c $(S)/refal.def
@@ -102,6 +102,5 @@ $(S)/xtime.o: 	$(S)/xtime.c $(S)/refal.def
 $(S)/xvv.o: 	$(S)/xvv.c $(S)/refal.def
 
 $(S)/xvv5.o: 	$(S)/xvv5.c $(S)/refal.def
-
 
 ####### End of Makefile
