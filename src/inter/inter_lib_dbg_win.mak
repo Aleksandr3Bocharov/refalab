@@ -6,8 +6,8 @@
 
 #############################################################################
 # inter_lib_dbg_win.mak
-# 	Makefile for interpreter library(libRefgalAB_dbg.a) (debug mode) creation,
-# 	result lib\libRefalAB_dbg.a library
+# 	Makefile for interpreter library(libRefalAB_dbg.a) (debug mode) creation,
+# 	result - lib\libRefalAB_dbg.a library
 # 	Version for Windows
 #############################################################################
 
