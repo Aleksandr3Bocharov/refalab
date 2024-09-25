@@ -1,5 +1,5 @@
 #!/bin/sh 
-#*******************************************************************
+# *******************************************************************
 # RefalABc
 #	compile from refal to GNU-assembler 
 # 	arg: $1 - name of refal programm (without extension ref)
@@ -9,6 +9,6 @@
 # Author : Aleksandr Bocharov
 # Date: 24.09.2024
 # https://github.com/Aleksandr3Bocharov/RefalAB
-#*******************************************************************
+# *******************************************************************
 
 bin/RefalAB $1 > $1.log
