@@ -1,5 +1,5 @@
 #!/bin/sh 
-#*******************************************************************
+# *******************************************************************
 # RefalABclg
 #	compile from refal to GNU-assembler + link + go
 # 	arg: $1 - name of refal programm (without ext ref)
