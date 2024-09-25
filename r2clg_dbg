@@ -1,5 +1,5 @@
 #!/bin/sh 
-#*******************************************************************
+# *******************************************************************
 # r2clg_dbg
 #	compile from refal to GNU-assembler + link + go
 # 	arg: $1 - name of refal programm (without ext ref)
