@@ -1,12 +1,14 @@
+# Copyright 2024 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2024-09-25
+# https://github.com/Aleksandr3Bocharov/RefalAB
+
 #############################################################################
 # comp_dbg_win.mak
-# 	makefile for building of the compiler from refal-2 language (debug mode), 
-# 	result bin\refal2_dbg executable module.
-#       Version for Windows (Win95/98/ME/NT/2000/XP)
-#
-# Copyright (C) Aleksandr Bocharov
-# Author: Aleksandr Bocharov
-# Last edition date : 12.07.24
+# 	makefile for building of the compiler from RefalAB language (debug mode), 
+# 	result bin\RefalAB_dbg executable module.
+#       Version for Windows
 #############################################################################
 
 ####### Compiler, tools and options
@@ -42,7 +44,7 @@ OBJECTS =			\
 		$(S)\plc.o 	\
 		$(S)\refal.o
 
-TARGET =	refal2_dbg
+TARGET =	RefalAB_dbg
 
 
 ####### Implicit rules
