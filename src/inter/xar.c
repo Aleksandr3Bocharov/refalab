@@ -1,9 +1,10 @@
-//-------------- file -- xar_blf.c ---------
+
+//---------------- file -- xar.c -----------
 //              Multi-digits MO:
 //       add, sub, mul, div, dr, nrel
 //       addn, subn, muln, divn, drn,
-//      Last edition date : 11.07.2024
 //------------------------------------------
+
 #include <stdio.h>
 #include <stdbool.h>
 #include "refal.def"
