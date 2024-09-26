@@ -1,3 +1,8 @@
+
+//------------------file----CGOP.H--------------------
+//    generation of the assembly language operators
+//----------------------------------------------------
+
 #ifndef CGOP_H
 #define CGOP_H
 
