@@ -1,3 +1,8 @@
+
+//--------------------  file  --  PLC.H --------------------
+//     standard PL/I-functions implemented on C-language
+//----------------------------------------------------------
+
 #ifndef PLC_H
 #define PLC_H
 
