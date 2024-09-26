@@ -1,7 +1,8 @@
+
 //-----------  file  --  XVV5.C ------------
 //    REFAL-5 compatible file input/output
-//       Last modification : 11.07.24
 //------------------------------------------
+
 #include <stdio.h>
 #include <string.h>
 #include "refal.def"
