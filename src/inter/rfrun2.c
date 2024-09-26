@@ -1,7 +1,8 @@
-//----------- file RFRUN2.c -----------------
+
+//----------- file RFRUN2.C -----------------
 //      Refal-interpretator (part 2)
-//      Last edition date: 11.07.2024
 //-------------------------------------------
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -313,4 +314,5 @@ int i;
     }
     return true;
 }*/
+
 //------------ end of file RFRUN2.C ----------
