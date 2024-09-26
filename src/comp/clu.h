@@ -1,3 +1,8 @@
+
+//----------------  file  --  CLU.H  -------------------
+//    AVL-tree construction for identifier table
+//------------------------------------------------------
+
 #ifndef CLU_H
 #define CLU_H
 
