@@ -1,7 +1,8 @@
+
 //---------- file -- XRENAME.C ------------
 //           MO: file delete/rename
-//      Last edition date : 11.07.24
 //-----------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
