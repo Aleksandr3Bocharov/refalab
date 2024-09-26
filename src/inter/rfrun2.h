@@ -1,3 +1,8 @@
+
+//----------- file RFRUN2.H -----------------
+//      Refal-interpretator (part 2)
+//-------------------------------------------
+
 #ifndef RFRUN2_H
 #define RFRUN2_H
 
