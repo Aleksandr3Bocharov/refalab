@@ -1,3 +1,8 @@
+
+//-----------  file  --  RFINTF.H ------------------
+//           C-interface functions
+//--------------------------------------------------
+
 #ifndef RFINTF_H
 #define RFINTF_H
 
