@@ -1,7 +1,8 @@
+
 //------------ file -- RFDBG.C -------------
 //          Standard REFAL-Debugger
-//        Last modification : 11.07.24
 //------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -31,4 +32,5 @@ int main(void)
     rftermm();
     exit(1);
 }
+
 //---------  end of file RFDBG.C -----------
