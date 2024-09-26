@@ -1,7 +1,8 @@
-//--------- file -- DEBUG.C ----------------
+
+//----------- file -- D.C ------------------
 //       REFAL-Debugger functions
-//     Last edition date : 11.07.2024
 //------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -908,4 +909,5 @@ static bool get_yn(const char *b)
         e1empty = true;
     return true;
 }
-//---------  end of file DEBUG.C -----------
+
+//-----------  end of file D.C -------------
