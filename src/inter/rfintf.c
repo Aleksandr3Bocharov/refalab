@@ -1,7 +1,8 @@
+
 //-----------  file  --  RFINTF.C ------------------
 //           C-interface functions
-//        Last modification : 11.07.2024
 //--------------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -642,4 +643,5 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     }
     return y;
 }
+
 //----------- end of file  RFINTF.C ------------
