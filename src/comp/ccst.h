@@ -1,3 +1,8 @@
+
+//----------   file  CCST1.H  --------------
+//      Compiler file
+//------------------------------------------
+
 #ifndef CCST_H
 #define CCST_H
 
