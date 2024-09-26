@@ -1,7 +1,8 @@
+
 //-----------  file  --  XAPPLY.C ------------
 //                 MO: apply
-//       Last modification : 11.07.2024
 //--------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "refal.def"
