@@ -1,3 +1,8 @@
+
+//-------------  file  --  CS.H  ---------------
+//         Work with identifier table
+//----------------------------------------------
+
 #ifndef CH_H
 #define CH_H
 
