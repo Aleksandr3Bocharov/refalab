@@ -1,7 +1,8 @@
+
 //----------------  file  --  CLU.C  -------------------
 //    AVL-tree construction for identifier table
-//           Last edition date : 11.07.24
 //------------------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
