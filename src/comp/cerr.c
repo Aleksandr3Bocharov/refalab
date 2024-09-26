@@ -85,4 +85,5 @@ void pchosa(const char *s, const char c)
     fputs(tmp, systerm);
     return;
 }*/
+
 //--------  end  of  file  CERR.C  --------- 
