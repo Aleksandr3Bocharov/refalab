@@ -1,3 +1,8 @@
+
+//-----------  file  --  REFAL.H -------------
+//      The main file of refal compiler
+//--------------------------------------------
+
 #ifndef REFAL_H
 #define REFAL_H
 
