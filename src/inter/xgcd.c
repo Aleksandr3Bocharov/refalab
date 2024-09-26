@@ -1,7 +1,8 @@
+
 //-------------- file -- XGCD.C ------------
 //      MO: gcd - great common divider
-//      Last edition date : 11.07.24
 //------------------------------------------
+
 #include <stdio.h>
 #include "refal.def"
 #include "rfintf.h"
