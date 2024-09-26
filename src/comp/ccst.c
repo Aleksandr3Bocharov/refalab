@@ -1,5 +1,5 @@
 
-//----------   file  CCST1.C  --------------
+//----------   file  CCST.C  ---------------
 //      Compiler file
 //------------------------------------------
 
@@ -1819,3 +1819,5 @@ static void gpev(char op1, char op2)
     else
         jbyte(op1);
 }
+
+//----------  end of file CCST.C  -------------------
