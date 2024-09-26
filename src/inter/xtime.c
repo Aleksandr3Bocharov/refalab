@@ -1,8 +1,9 @@
+
 //-------------- file -- XTIME.C ------------
 //        MO: rftime (date and time)
 //            rftm (current process time)
-//         Last edition date : 11.07.24
 //-------------------------------------------
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
