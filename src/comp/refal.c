@@ -1784,4 +1784,5 @@ void oshibka(void)
     kolosh++;
     return;
 }
+
 //----------  end of file REFAL.C  -------------------
