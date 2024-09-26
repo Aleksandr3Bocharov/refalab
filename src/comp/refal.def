@@ -1,6 +1,8 @@
+
 //--------------- file -- REFAL.DEF -----------------
-//          Last modification : 10.07.24
+//          Compilier version
 //---------------------------------------------------
+
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
