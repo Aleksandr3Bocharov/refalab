@@ -1,5 +1,5 @@
 
-//---------------- file -- xar.c -----------
+//---------------- file -- XAR.C -----------
 //              Multi-digits MO:
 //       add, sub, mul, div, dr, nrel
 //       addn, subn, muln, divn, drn,
