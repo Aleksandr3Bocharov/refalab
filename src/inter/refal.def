@@ -1,6 +1,8 @@
+
 //--------------- file -- REFAL.DEF -----------------
-//          Last modification : 11.07.24
+//          Interpretator version
 //---------------------------------------------------
+
 #ifndef REFAL_DEF
 #define REFAL_DEF
 
@@ -16,7 +18,7 @@
 #define TAGK 5
 #define TAGD 7
 
-// BLF pragma for 1 byte aligniment structure ------------
+// pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
 typedef struct linkcb_
@@ -36,7 +38,7 @@ typedef struct linkcb_
 // #pragma pack(pop)
 #pragma pack()
 
-// BLF ------------ end of pragma ------------------------------------
+// ------------ end of pragma ------------------------------------
 
 typedef struct st_
 {
@@ -69,7 +71,7 @@ typedef struct refal_
     uint32_t tmintv;
 } T_REFAL;
 
-// BLF 09.07.2004 (VAX version for IBM PC)
+// VAX version for IBM PC
 #define Z_0 0
 #define Z2
 #define Z3 '0', '0', '0',
@@ -88,4 +90,5 @@ typedef struct refal_
 #define SMBL (ZBLL + LBLL)
 
 #endif
+
 //-------  end of file REFAL.DEF ---------
