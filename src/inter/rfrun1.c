@@ -1,7 +1,8 @@
-//----------- file RFRUN1.c -------------------
+
+//----------- file RFRUN1.C -------------------
 //      Refal-interpretator (part 1)
-//      Last edition date: 11.07.2024
 //---------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1716,4 +1717,5 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = EXIT;
         }
 }
+
 //------------ end of file RFRUN1.C ----------
