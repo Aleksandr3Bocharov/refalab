@@ -175,7 +175,7 @@ static void ptr_(void)
     rftpl(q, r, refal.nexta);
     return;
 }
-// BLF
+
 #ifdef UNIX
 void (*ptr_1)(void) = ptr_;
 G_L_B char pt_ = '\122';
@@ -275,7 +275,6 @@ static void rp_(void)
     return;
 }
 
-// BLF
 #ifdef UNIX
 void (*rp_1)(void) = rp_;
 G_L_B char r_ = '\122';

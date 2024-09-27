@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "rfintf.h"
 
-// BLF GO -> go
+// GO -> go
 extern void go(void);
 
 int main(void)

@@ -28,7 +28,6 @@ static void oper(uint32_t o, uint32_t prn);
 
 static void add_(void) { oper(Oadd, 0); }
 
-// BLF
 #ifdef UNIX
 void (*add_1)(void) = add_;
 G_L_B char ad_ = '\122';
@@ -41,7 +40,6 @@ char add_0[] = {Z3 'A', 'D', 'D', '\003'};
 
 static void sub_(void) { oper(Osub, 0); }
 
-// BLF
 #ifdef UNIX
 void (*sub_1)(void) = sub_;
 G_L_B char su_ = '\122';
@@ -54,7 +52,6 @@ char sub_0[] = {Z3 'S', 'U', 'B', '\003'};
 
 static void mul_(void) { oper(Omul, 0); }
 
-// BLF
 #ifdef UNIX
 void (*mul_1)(void) = mul_;
 G_L_B char mu_ = '\122';
@@ -72,7 +69,6 @@ char dr_0[] = {Z2 'D', 'R', '\002'};
 
 static void divv_(void) { oper(Odr, 2); }
 
-// BLF
 #ifdef UNIX
 void (*div_1)(void) = divv_;
 G_L_B char div_ = '\122';

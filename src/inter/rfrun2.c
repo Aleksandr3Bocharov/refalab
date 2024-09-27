@@ -288,7 +288,7 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     return;
 }*/
 
-// BLF 28.07.2004  - in case of macrodigit - shift -> 16
+// in case of macrodigit - shift -> 16
 /* void move(n,pf,pt) int n; char *pf,*pt; {
 int i;
    if ( *pf == TAGN ) {

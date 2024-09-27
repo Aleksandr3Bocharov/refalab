@@ -475,7 +475,6 @@ void rfdbg(T_ST *s_st)
                 printf("\nGarbage collection number = %d", nogcl);
             rfcanc(s_st);
             rftermm();
-            // BLF
             printf("\n");
             exit(0);
             return;

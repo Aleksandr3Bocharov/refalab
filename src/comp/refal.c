@@ -246,24 +246,24 @@ int main(int argc, char *argv[])
     */
 
     nommod = 0;
-    printf("\n"); // BLF
+    printf("\n");
     printf("%s", vers_i);
     if (argc < 2)
     {
-        // BLF      printf("\nSer. No %s",regnom);
-        printf("\n"); // BLF
+        // printf("\nSer. No %s",regnom);
+        printf("\n"); 
         printf("\nSyntax: refal source_file [(option,...,option)]");
         printf("\nOptions:");
         printf("\n   mm  multi_module");
         printf("\n   nn  no_function_names");
         printf("\n   ns  no_source_listing");
 
-        /* BLF,   printf("\n   as  assembler_module");
+        /* printf("\n   as  assembler_module");
            assembler generated always
         */
         printf("\n   fn  full_names");
         printf("\n   cm  minimal_memory_for_compiler");
-        printf("\n\n"); // BLF
+        printf("\n\n");
         exit(1);
     };
 
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
     // for (i = 0; parm[i] != '\0'; i++)
     //     parm[i + 1] = *(argv[1] + i + 1);
 
-    // BLF  if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
+    // if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
     if (index_x(parm, ".") < 0)
         strcat(parm, ".ref");
 
@@ -330,11 +330,11 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 temp = ii;
-                // BLF  ii = index((parm + ii),40-ii,",",1) + 1 ;
+                // ii = index((parm + ii),40-ii,",",1) + 1 ;
                 ii = index_x(parm + ii, ",") + 1;
                 if (ii == 0)
                 {
-                    // BLF     ii = index((parm + temp),40-temp,")",1) ;
+                    // ii = index((parm + temp),40-temp,")",1) ;
                     ii = index_x(parm + temp, ")");
                     if (ii == -1)
                     {

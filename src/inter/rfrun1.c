@@ -320,7 +320,6 @@ void rfrun(T_ST *ast) // adress of current state table
             opc = *vpc;
 #ifdef mdebug
             printf("\n switcher");
-            // BLF 03.07.2004
             printf(" code8=%o\t(D=%d,H=%x)", opc, opc, opc);
 #endif
             // operation switcher

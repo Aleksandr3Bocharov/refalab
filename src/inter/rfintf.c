@@ -248,7 +248,6 @@ void rfexec(void (*func)(void))
         switch (ex_state)
         {
         case AGAIN:
-// BLF 17.07.2004
 #ifdef mdebug
             /*	step by step execution with full debug trace information
                see refal-2 user manual (3.14 - example of processing control) */
@@ -278,7 +277,6 @@ void rfexec(void (*func)(void))
                 break;
             }
 #endif
-            // BLF -- end correction 17.07.2004
             printf("\nConcretization is executed");
             ex_state = EOJ;
             break;
@@ -310,7 +308,6 @@ void rfexec(void (*func)(void))
             }
             rfcanc(&s_st);
             rftermm();
-            // BLF
             printf("\n");
             return;
         }

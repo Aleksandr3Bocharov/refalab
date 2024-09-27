@@ -504,13 +504,13 @@ void jend(void)
     }
     d.w = 0;
     // heading generating
-    fputs(".data\n", syslin); // BLF
-    // BLF fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    // BLF fputs ("\tsegment\tbyte public 'CODE'\n",syslin);
-    // BLF sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);
-    // BLF
+    fputs(".data\n", syslin);
+    // fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+    // fputs ("\tsegment\tbyte public 'CODE'\n",syslin);
+    // sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);
+    // 
     char bufs[81];
-    sprintf(bufs, "_d%d$:\n", nommod); // BLF
+    sprintf(bufs, "_d%d$:\n", nommod);
     fputs(bufs, syslin);
     //  empty module test
     if (mod_length != 0)
@@ -554,7 +554,6 @@ void jend(void)
                 else
                 {
 //     external   label
-// BLF
 #ifdef UNIX
                     // begin name without underlining _
                     if (LBLL == 4)
@@ -571,7 +570,7 @@ void jend(void)
                     for (size_t i = 1; i < p->info.infon; i++)
                         qx = qx->next;
 #ifdef UNIX
-                    // BLF ------- renaming add, sub, mul ... ---------------
+                    // ------- renaming add, sub, mul ... ---------------
                     /* For GCC under UNIX we have the
                     following problem. Variable names have not
                     underscore (_) in begin (as it is in Windows).
@@ -588,7 +587,7 @@ void jend(void)
                     const char oper_div[] = "di_";
                     const char oper_rp[] = "r_";
                     const char oper_ptr[] = "pt_";
-                    // BLF - debug printf ("%s\n",qx->e) ;
+                    // debug printf ("%s\n",qx->e) ;
                     if (strncmp(qx->e, "ADD", qx->le) == 0)
                         for (size_t i = 0; i < qx->le; i++)
                             *(qx->e + i) = oper_add[i];
@@ -608,10 +607,10 @@ void jend(void)
                         for (size_t i = 0; i < qx->le; i++)
                             *(qx->e + i) = oper_ptr[i];
 #endif
-                    // BLF ------- end renaming ---------------
+                    // ------- end renaming ---------------
                     for (size_t i = 0; i < qx->le; i++)
-                        // BLF    fputc (*(qx->e + i),syslin);
-                        fputc(tolower(*(qx->e + i)), syslin); // BLF
+                        // fputc (*(qx->e + i),syslin);
+                        fputc(tolower(*(qx->e + i)), syslin);
                     fputs("\n", syslin);
                 }
                 continue;
@@ -619,7 +618,7 @@ void jend(void)
             break;
         }
         // end text generating
-        /* BLF
+        /* 
         fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
         fputs ("\tends\n",syslin);
         */
@@ -627,39 +626,37 @@ void jend(void)
         qx = first_ext->next;
         while (qx != NULL)
         {
-// BLF     fputs ("\textrn\t_",syslin);
-// BLF
+// fputs ("\textrn\t_",syslin);
+//
 #ifdef UNIX
             // begin name without underlining _
-            fputs("\t.extern\t", syslin); // BLF
+            fputs("\t.extern\t", syslin); 
 #else                                     // Windows
-            fputs("\t.extern\t_", syslin); // BLF
+            fputs("\t.extern\t_", syslin); 
 #endif
             for (size_t i = 0; i < qx->le; i++)
-                // BLF fputc (*((qx->e) + i),syslin);
-                fputc(tolower(*(qx->e + i)), syslin); // BLF
+                // fputc (*((qx->e) + i),syslin);
+                fputc(tolower(*(qx->e + i)), syslin);
             fputs(":byte\n", syslin);
             qx = qx->next;
         } // while
-        // BLF  fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-        // BLF  fputs ("\tsegment byte public 'CODE'\n",syslin);
-        fputs(".data\n", syslin); // BLF
+        // fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
+        // fputs ("\tsegment byte public 'CODE'\n",syslin);
+        fputs(".data\n", syslin); 
         // entry label generating
         q = first_ent->next;
         while (q != NULL)
         {
-// BLF
 #ifndef UNIX
             // begin name with underlining _
             fputc('_', syslin);
 #endif
             for (size_t i = 0; i < q->le; i++)
-                // BLF translate name to lower case
+                // translate name to lower case
                 fputc(tolower(*(q->e + i)), syslin);
             const T_U *pp = q->p;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
-// BLF
 #ifdef UNIX
             // begin name without underlining _
 
@@ -669,7 +666,7 @@ void jend(void)
 #endif
             fputs(bufs, syslin);
             for (size_t i = 0; i < q->le; i++)
-                // BLF translate name to lower case
+                // translate name to lower case
                 fputc(tolower(*(q->e + i)), syslin);
             fputc('\n', syslin);
             q = q->next;
