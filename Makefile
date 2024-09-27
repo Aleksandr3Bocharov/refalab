@@ -1,7 +1,7 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-09-24
+# 2024-09-27
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -18,7 +18,8 @@ all:
 # Make the compiler from RefalAB language, 
 # result bin\RefalAB executable module.
 # result bin\RefalAB_dbg executable module (debug mode).
-	
+
+	if not exist bin mkdir bin
 	$(MAKE) -f src\comp\comp_win.mak
 	src\comp\delbin.bat
 	$(MAKE) -f src\comp\comp_dbg_win.mak
@@ -28,7 +29,8 @@ all:
 # Make the interpreter from "jazyk sborki",  
 # result lib\libRefalAB.a - set of object modules.
 # result lib\libRefalAB_dbg.a - set of object modules (debug mode).
-	
+
+	if not exist lib mkdir lib
 	$(MAKE) -f src\inter\inter_lib_win.mak
 	src\inter\delbin.bat
 	$(MAKE) -f src\inter\inter_lib_dbg_win.mak
