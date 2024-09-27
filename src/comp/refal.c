@@ -160,7 +160,7 @@ static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
-static uint32_t cdnumb; // card number   // kras
+static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
 static const char ns_b = '\6';
@@ -186,10 +186,10 @@ static char stmlbl[40];
 static char prevlb[40];
 static char stmkey[6];
 static size_t fixm;       // start sentence position
-static char mod_name[9];  // module name                 // kras
-static size_t mod_length; // module length   // kras
+static char mod_name[9];  // module name
+static size_t mod_length; // module length
 static bool again;        // next module processing feature
-static bool _eoj;         // "sysin" end flag           // kras
+static bool _eoj;         // "sysin" end flag
 
 static void lblkey(bool pr);
 static void pch130(void);
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
             for (int32_t ii = 1; ii < 40 && parm[ii] != ')' && parm[ii] != '\0';)
             {
                 int32_t temp;
-                if (strncmp(parm + ii, "nn", 2) == 0) //  kras
+                if (strncmp(parm + ii, "nn", 2) == 0)
                     options.names = false;
                 else if (strncmp(parm + ii, "ns", 2) == 0)
                     options.source = false;
@@ -410,9 +410,9 @@ int main(int argc, char *argv[])
             _eoj = false;
             card[80] = '\n';
             prevlb[0] = '\0';
-            mod_length = 0; // kras
+            mod_length = 0;
             for (i = 0; i < 9; i++)
-                mod_name[i] = '\0'; // kras
+                mod_name[i] = '\0';
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
@@ -795,7 +795,7 @@ void scan(void)
                 scn_state = SCNE;
                 break;
             case '<':
-                scn_state = SCNKK; // kras
+                scn_state = SCNKK;
                 break;
             case 'k':
             case 'K':
@@ -803,7 +803,7 @@ void scan(void)
                 break;
             case '.':
             case '>':
-                scn_state = SCNP; // kras
+                scn_state = SCNP;
                 break;
             case '=':
                 scn_state = SCNEOL;
@@ -934,7 +934,7 @@ void scan(void)
             scn_e.ci = c[m];
             scn_state = SCNGCR;
             break;
-        case SCNKK: // kras
+        case SCNKK:
             scn_e.t = 7;
             if (c[m + 1] != ' ')
             {
@@ -1246,7 +1246,7 @@ static bool specif(char tail)
                 sp_state = SPCR1;
                 break;
             }
-            EH_ROMA0; // kras
+            EH_ROMA0;
             blout();
             if (c[m] == '(')
             {
@@ -1298,7 +1298,7 @@ static bool specif(char tail)
             sp_state = SPCGC;
             break;
         case SPCSP:
-            EH_ROMA0; // kras
+            EH_ROMA0;
             if (!get_id(id, &lid))
             {
                 sp_state = OSH203;
@@ -1318,7 +1318,7 @@ static bool specif(char tail)
             sp_state = OSH204;
             break;
         case SPCA:
-            EH_ROMA0; // kras
+            EH_ROMA0;
             if (m == 71)
             {
                 sp_state = OSH205;
@@ -1405,7 +1405,7 @@ static bool specif(char tail)
                 code.info.infoc[0] = c[m];
                 gsymbol(&code);
             }
-            EH_ROMA0; // kras
+            EH_ROMA0;
             if (m == 71)
             {
                 sp_state = OSH205;
@@ -1416,7 +1416,7 @@ static bool specif(char tail)
                 sp_state = SPCA1;
                 break;
             }
-            EH_ROMA0; // kras
+            EH_ROMA0;
             if (c[m] == '\'')
             {
                 sp_state = SPCA1;
@@ -1461,7 +1461,7 @@ static bool specif(char tail)
             sp_state = SPCGC;
             break;
         case SPCGC:
-            EH_ROMA0; // kras
+            EH_ROMA0;
             sp_state = SPCBLO;
             break;
         case OSH200:
@@ -1629,7 +1629,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    EH_ROMA0; // kras
+    EH_ROMA0;
     do
     {
         if (class[m] == 'D')
@@ -1640,7 +1640,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
             bool csmbend = false;
             while (true)
             {
-                EH_ROMA0; // kras
+                EH_ROMA0;
                 if (class[m] != 'D')
                 {
                     code->tag = TAGN;
@@ -1658,7 +1658,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                 break;
             while (true)
             {
-                EH_ROMA0; // kras
+                EH_ROMA0;
                 if (class[m] == 'D')
                     continue;
                 break;
@@ -1703,7 +1703,7 @@ static bool get_id(char id[40], size_t *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
-        EH_ROMA0; // kras
+        EH_ROMA0;
         if (class[m] != 'L' && class[m] != 'D' && c[m] != '_' && c[m] != '-')
             return true;
         id[*lid] = convert(c[m]);
@@ -1712,7 +1712,7 @@ static bool get_id(char id[40], size_t *lid)
     while (class[m] == 'L' || class[m] == 'D' || c[m] == '_' || c[m] == '-')
     {
         EH_ROMA0;
-    } // kras
+    }
     return true;
 }
 
@@ -1724,7 +1724,7 @@ static bool get_idm(char id[8], size_t *lid)
     id[0] = convert(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
-        EH_ROMA0; // kras
+        EH_ROMA0;
         if (class[m] != 'L' && class[m] != 'D')
             return true;
         id[*lid] = convert(c[m]);
@@ -1733,7 +1733,7 @@ static bool get_idm(char id[8], size_t *lid)
     while (class[m] == 'L' || class[m] == 'D')
     {
         EH_ROMA0;
-    } // kras
+    }
     (*lid)++;
     return true;
 }

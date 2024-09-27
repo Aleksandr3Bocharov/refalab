@@ -53,7 +53,7 @@ bool lincrm(void)
                 return true;
         }
     }
-    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB)); // kras 06.12.88
+    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
 #ifdef mdebug
     printf("\nLincrm: n=%zu after new_block=%p", n, (void *)new_block);
 #endif
@@ -61,8 +61,8 @@ bool lincrm(void)
         return false;
     new_block->prev = last_block;
     last_block = new_block;
-    // curr_size = curr_size + 1000; // kras 06.12.88
-    rflist(new_block + 1, 1000); // kras 06.12.88
+    // curr_size = curr_size + 1000;
+    rflist(new_block + 1, 1000);
     return true;
 }
 

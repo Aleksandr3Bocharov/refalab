@@ -298,7 +298,7 @@ char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
 
 static void lengr_(void)
 {
-    uint32_t n = 0; // kras
+    uint32_t n = 0;
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {
@@ -316,7 +316,7 @@ char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
 
 static void lengw_(void)
 {
-    uint32_t n = 0; // kras
+    uint32_t n = 0;
     const T_LINKCB *p = refal.preva->next;
     while (p != refal.nexta)
     {

@@ -324,7 +324,7 @@ static void sfrd2(void)
 
 void jstart(const char *ee, size_t ll)
 {
-    delta = 0; // kras
+    delta = 0;
     strncpy(mod_name, ee, ll);
     lnmmod = ll;
     sfop_w("sysut1.rf", &sysut1);
