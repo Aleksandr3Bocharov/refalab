@@ -2,6 +2,7 @@ README для сборки RefalAB
 ---------------------------
 
 Mingw-W64 (Win32 UCRT Runtime gcc 14.2.0 или позже (with POSIX threads)) требуется.
+Скачать https://winlibs.com/
 
 Распакуйте дистрибутив в любую директорию X.
 
