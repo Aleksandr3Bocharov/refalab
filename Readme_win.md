@@ -25,7 +25,7 @@ allocated as set of objects modules in the lib\librefal2.a library.
 
 где {name} := hello | fact | test0..test5 .
  
-Для запуска примера "fact" (факториал n) вы должны ввести целое число n.
+Для работы примера "fact" (факториал n) вы должны ввести целое число n.
 
 Введите 0 или пустую строку для выхода. 
 
