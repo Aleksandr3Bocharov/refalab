@@ -1,5 +1,5 @@
 README для сборки РефалАБ в Windows 
--------------------------------------
+--------------------------------------
 
 [Mingw-W64](https://winlibs.com/) (UCRT Runtime gcc 14.2.0 или позже (with POSIX threads) Win32) требуется.
 
