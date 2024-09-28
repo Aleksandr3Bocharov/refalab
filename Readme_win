@@ -1,13 +1,14 @@
-README for building Refal-2 
+README для сборки RefalAB 
 ---------------------------
 
-Mingw32 3.1 or later is required, but it is possible use other development 
-systems  (Visual Studio .NET 2003, VC++ 6, Borland C++, ...) with apropriate 
-adjusting of makefiles.
+Mingw-W64 (Win32 UCRT Runtime gcc 14.2.0 или позже (with POSIX threads)) требуется.
 
-Unzip the distributive in any directory X.
+Распакуйте дистрибутив в любую директорию X.
 
-	cd X\refal2
+	cd X\RefalAB
+
+Переименуйте сборочный файл для Windows Makefile_win в Makefile.
+
 	mingw32-make
 
 The result is the refal-compiler bin\refal2 
