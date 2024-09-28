@@ -30,7 +30,3 @@ For start of "fact" example (factorial n) you must enter the integer value n
 (for example in 1..10000 range). Enter 0 for exit. 
 
 Use r2dclg instead r2clg for start of debugger.
-
---Leonid Belous 
-E-mail: belous@ilt.kharkov.ua
-URL: http://www.refal.net/~belous
