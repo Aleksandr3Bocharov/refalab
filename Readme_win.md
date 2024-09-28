@@ -19,11 +19,11 @@ allocated as set of objects modules in the lib\librefal2.a library.
 *** Начало работы ***
 ------------------------
 
-Для запуска тестовых примеров войдите в X\RefalAB и используйте скрипт RefalABclg.bat. 
+Для запуска тестовых примеров войдите в X\RefalAB и используйте скрипт RefalABclg.bat,
 
 	RefalABclg tests\{name}
 
-где {name} := hello | fact | test0..test5
+где {name} := hello | fact | test0..test5 .
  
 Для запуска примера "fact" (факториал n) вы должны ввести целое число n.
 Введите 0 или пустую строку для выхода. 
