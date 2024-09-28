@@ -19,13 +19,13 @@ allocated as set of objects modules in the lib\librefal2.a library.
 *** Начало работы ***
 ------------------------
 
-To start test examples pass to X\refal2 und use script r2clg 
+Для запуска тестовых примеров войдите в X\RefalAB и используйте скрипт RefalABclg.bat. 
 
-	r2clg tests\<name>
+	RefalABclg tests\<name>
 
-where <name>:= hello | fact | test0..test5
+где <name>:= hello | fact | test0..test5
  
-For start of "fact" example (factorial n) you must enter the integer value n 
-(for example in 1..10000 range). Enter 0 for exit. 
+Для запуска примера "fact" (факториал n) вы должны ввести целое число n.
+Введите 0 или пустую строку для выхода. 
 
-Use r2dclg instead r2clg for start of debugger.
+Используйте RefalABdclg для запуска отладчика.
