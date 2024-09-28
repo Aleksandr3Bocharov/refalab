@@ -1,5 +1,5 @@
-README для сборки RefalAB 
----------------------------
+README для сборки RefalAB в Windows 
+-------------------------------------
 
 Mingw-W64 (UCRT Runtime gcc 14.2.0 или позже (with POSIX threads) Win32) требуется.
 Скачать https://winlibs.com/
@@ -17,7 +17,7 @@ and the refal-interpreter from intermidiate language - 'yazyk sborki'
 allocated as set of objects modules in the lib\librefal2.a library.
 
 
-*** Getting starting ***
+*** Начало работы ***
 ------------------------
 
 To start test examples pass to X\refal2 und use script r2clg 
