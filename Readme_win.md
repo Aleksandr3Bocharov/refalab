@@ -11,8 +11,10 @@ README для сборки РефалАБ в Windows
 
 	mingw32-make
 
-The result is the refal-compiler bin\refal2 
-and the refal-interpreter from intermidiate language - 'yazyk sborki' 
+Результатом сборки будут:
+1. компилятор bin\RefalAB.exe
+2. компилятор в режиме отладки bin\RefalAB_dbg.exe
+3. the refal-interpreter from intermidiate language - 'yazyk sborki' 
 allocated as set of objects modules in the lib\librefal2.a library.
 
 
