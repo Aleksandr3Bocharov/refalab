@@ -12,11 +12,10 @@ README для сборки РефалАБ в Windows
 	mingw32-make
 
 Результатом сборки будут:
-1. компилятор bin\RefalAB.exe
-2. компилятор в режиме отладки bin\RefalAB_dbg.exe
-3. the refal-interpreter from intermidiate language - 'yazyk sborki' 
-allocated as set of objects modules in the lib\librefal2.a library.
-
+1. компиляторы bin\RefalAB.exe и bin\RefalAB_dbg.exe (режим отладки).
+2. интерпретаторы из промежуточных языков - 'языки сборки',
+   выделенные как множества объектных модулей в библиотеках lib\libRefalAB.a и lib\libRefalAB_dbg.a (режим отладки).
+3. объектные файлы - mainrf.o (для запуска программ РефалАБ) и rfdbg.o (отладчик).
 
 *** Начало работы ***
 ------------------------
