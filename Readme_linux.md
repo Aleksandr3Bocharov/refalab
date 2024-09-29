@@ -1,30 +1,33 @@
-README for building Refal-2 
----------------------------
+README для сборки РефалАБ в Linux 
+--------------------------------------
 
-Unzip the distributive in any directory X.
+gcc 14.2.0 x86 требуется.
 
-	cd X/refal2
+Распакуйте дистрибутив в любую директорию X.
+
+	cd X/RefalAB
+
+Переименуйте сборочный файл для Linux Makefile_linux в Makefile.
+
 	make
 
-The result is the refal-compiler bin/refal2 
-and the refal-interpreter from intermediate language - 'yazyk sborki' 
-allocated as set of objects modules in the lib/librefal2.a library.
+Результатом сборки будут:
+1. компиляторы bin/RefalAB и bin/RefalAB_dbg (режим отладки).
+2. интерпретаторы из промежуточных языков - 'языков сборки',
+   выделенные как множества объектных модулей в библиотеках lib/libRefalAB.a и lib/libRefalAB_dbg.a (режим отладки).
+3. объектные файлы - lib/mainrf.o (для запуска программ РефалАБ) и lib/rfdbg.o (отладчик).
 
-
-*** Getting starting ***
+Начало работы
 ------------------------
 
-To start test examples pass to X/refal2 und use script r2clg 
+Для запуска тестовых примеров войдите в X\RefalAB и используйте скрипт RefalABclg,
 
-	./r2clg tests/<name>
+	./RefalABclg tests/{name}
 
-where <name>:= hello | fact | test0..test5
+где {name} := hello | fact | test0..test5 .
  
-For start of "fact" example (factorial n) you must enter the integer value n 
-(for example in 1..10000 range). Enter 0 for exit. 
+Для работы примера "fact" (факториал n) вы должны ввести целое число n.
 
-Use r2dclg instead r2clg for start of debugger.
+Введите 0 или пустую строку для выхода. 
 
---Leonid Belous 
-E-mail: belous@ilt.kharkov.ua
-URL: http://www.refal.net/~belous
+Используйте RefalABdclg для запуска отладчика.
