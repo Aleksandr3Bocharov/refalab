@@ -46,7 +46,6 @@ OBJECTS =			\
 
 TARGET =	RefalAB_dbg
 
-
 ####### Implicit rules
 
 .c.o:
