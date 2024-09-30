@@ -150,7 +150,7 @@ FILE *systxt; // for module names
 uint32_t nommod;
 char parm_i[40]; // sourse file name
 // Aleksandr Bocharov   // compiler version
-const char vers_i[] = "RefalAB Version 0.0.2-alpha 20240930 (c) Aleksandr Bocharov";
+const char vers_i[] = "RefalAB Version 0.1.0-alpha 20240930 (c) Aleksandr Bocharov";
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 
 static FILE *sysin;
