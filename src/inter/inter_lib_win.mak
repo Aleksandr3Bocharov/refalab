@@ -19,8 +19,8 @@ CC	=	gcc
 CFLAGS	=	-pipe -Wall -O2 
 AR	=	ar
 REFXCV	=	src\inter\refxcv.bat 	# refal + assembler for xcv
-REFEXT	=	src\inter\refext.bat 	# refal + assembler for ext
-REFPLATFORM	=	src\inter\refplatform.bat 	# refal + assembler for platform
+REFEXT	=	src\inter\refext.bat 	# refal + assembler for xext
+REFPLATFORM	=	src\inter\refplatform.bat 	# refal + assembler for xplatform
 REFLIB	=	lib\libRefalAB.a
 S	=      	src\inter
 ####### Files
@@ -39,10 +39,7 @@ SOURCES =		\
 	$(S)\xrename.c 	\
 	$(S)\xtime.c 	\
 	$(S)\xvv.c 	\
-	$(S)\xvv5.c 	\
-	$(S)\xcv.ref 	\
-	$(S)\xext.ref 	\
-	$(S)\xplatformwin.ref
+	$(S)\xvv5.c 	
 
 OBJECTS =		\
 	$(S)\d.o 	\

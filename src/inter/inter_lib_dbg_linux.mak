@@ -37,8 +37,7 @@ SOURCES =		\
 	$(S)/xrename.c 	\
 	$(S)/xtime.c 	\
 	$(S)/xvv.c 	\
-	$(S)/xvv5.c 	\
-	$(S)/xcv.ref
+	$(S)/xvv5.c 	
 
 OBJECTS =		\
 	$(S)/d.o 	\
