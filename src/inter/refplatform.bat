@@ -9,9 +9,9 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 rem *******************************************************************
 rem refplatform.bat
 rem 	special script
-rem	compile platformwin.ref from refal to GNU-assembler + assembling. 
-rem	result: platform.o  
+rem	compile xplatformwin.ref from refal to GNU-assembler + assembling. 
+rem	result: xplatform.o  
 rem *******************************************************************
 
-bin\RefalAB src\inter\platformwin > src\inter\platform.log
-as -o src\inter\platform.o src\inter\platformwin.asm >> src\inter\platform.log 
+bin\RefalAB src\inter\xplatformwin > src\inter\xplatform.log
+as -o src\inter\xplatform.o src\inter\xplatformwin.asm >> src\inter\xplatform.log 

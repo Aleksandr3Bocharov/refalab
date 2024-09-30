@@ -9,9 +9,9 @@
 # *******************************************************************
 # refext
 # 	special script
-#	compile ext.ref from refal to GNU-assembler + assembling. 
-#	result: ext.o  
+#	compile xext.ref from refal to GNU-assembler + assembling. 
+#	result: xext.o  
 # *******************************************************************
 
-bin/RefalAB src/inter/ext > src/inter/ext.log
-as -o src/inter/ext.o src/inter/ext.asm >> src/inter/ext.log 
+bin/RefalAB src/inter/xext > src/inter/xext.log
+as -o src/inter/xext.o src/inter/xext.asm >> src/inter/xext.log 

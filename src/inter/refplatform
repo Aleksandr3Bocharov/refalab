@@ -9,9 +9,9 @@
 # *******************************************************************
 # refplatform
 # 	special script
-#	compile platformposix.ref from refal to GNU-assembler + assembling. 
-#	result: platform.o  
+#	compile xplatformposix.ref from refal to GNU-assembler + assembling. 
+#	result: xplatform.o  
 # *******************************************************************
 
-bin/RefalAB src/inter/platformposix > src/inter/platform.log
-as -o src/inter/platform.o src/inter/platformposix.asm >> src/inter/platform.log 
+bin/RefalAB src/inter/xplatformposix > src/inter/xplatform.log
+as -o src/inter/xplatform.o src/inter/xplatformposix.asm >> src/inter/xplatform.log 
