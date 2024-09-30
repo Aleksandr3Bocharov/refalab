@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-09-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
     
 //----------   file  CCST.C  ---------------
@@ -194,7 +194,7 @@ static size_t kol_lit;       // counter of the symbol number
 static uint32_t diff_e_level;
 static uint32_t kol_skob[100]; // stack for counting of the brackets balance
 static size_t ur_skob;
-static char buf_lit[80]; // buffer for generating of the "text" statement
+static char buf_lit[81]; // buffer for generating of the "text" statement
 static size_t k;
 static size_t fh;      // free segment number in the whole  list
 static size_t next_nh; // next whole number
