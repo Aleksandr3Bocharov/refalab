@@ -18,7 +18,7 @@
 CC	=	gcc
 CFLAGS	=	-pipe -Wall -O2 -DUNIX
 AR	=	ar
-REFXCV	=	src/inter/refxcv	# refal2 + assembler for xcv
+REFXCV	=	src/inter/refxcv	# refal + assembler for xcv
 REFLIB	=	lib/libRefalAB.a
 S	=      	src/inter
 ####### Files

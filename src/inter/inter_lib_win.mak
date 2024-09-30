@@ -1,7 +1,7 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-09-25
+# 2024-09-30
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -18,7 +18,8 @@
 CC	=	gcc
 CFLAGS	=	-pipe -Wall -O2 
 AR	=	ar
-REFXCV	=	src\inter\refxcv.bat 	# refal2 + assembler for xcv
+REFXCV	=	src\inter\refxcv.bat 	# refal + assembler for xcv
+REFXCV	=	src\inter\refxcv.bat 	# refal + assembler for xcv
 REFLIB	=	lib\libRefalAB.a
 S	=      	src\inter
 ####### Files
