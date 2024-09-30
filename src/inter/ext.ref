@@ -1,0 +1,122 @@
+* Copyright 2024 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2024-09-30
+* https://github.com/Aleksandr3Bocharov/RefalAB
+
+*====================================================================
+* Расширение библиотеки РефалАБ
+* Функции РефалАБ
+*====================================================================
+
+EXT         START
+            EXTRN XOpen, XClose, XGet, XPut
+            ENTRY Call, Map, FoldL, FoldR
+            ENTRY MapAccum, DelAccum
+            ENTRY LoadFile, SaveFile
+            ENTRY Trim, TrimL, TrimR, WhiteSpaces(WSpaces) 
+            ENTRY Exist, Set
+            EMPTY True, False
+
+* <Call WC EA> == ER
+Call +
+    SF EA   = < SF EA>
+    (WC EB) EA +
+            = <Call WC EB EA>
+
+* <Map WC WI*> == ER
+Map +
+    WC WN ET +
+            = <Call WC WN> <Map WC ET>
+    WC      =
+
+* <FoldL WC WA WI*> == WA'
+FoldL +
+    WC WA WN ET +
+            = <FoldL WC <Call WC WA WN> ET>
+    WC WA = WA
+
+* <FoldR WC WI* WA> == WA'
+FoldR +
+    WC EH WP WA +
+            = <FoldR WC EH <Call WC WP WA>>
+    WC WA = WA
+
+* <MapAccum WC WA WI*> == WA′ ER
+MapAccum +
+    WC WA ET +
+            = <DoMapAccum WC WA () ET>
+  
+DoMapAccum +
+    WC WA (ER) WN ET +
+            = <DoMapAccum WC +
+                <MapAccumAddScanned +
+                    <Call WC WA WN> +
+                (ER)> +
+            ET>
+    WC WA (ER) +
+            = WA ER
+  
+MapAccumAddScanned + 
+    WA ES (ER) +
+            = WA (ER ES)
+
+* <DelAccum W E> == E
+DelAccum +
+    WA ER   = ER
+
+* <LoadFile S(/0/../4/)N V(O)F> == (E(O)L)*
+LoadFile +
+    SN EF   = <XOpen 'r' SN EF> +
+            <DoLoadFile SN <XGet SN>> +
+            <XClose 'r' SN>
+  
+DoLoadFile +
+    SN /0/  =
+    SN EL /0/ +
+            = (EL)
+    SN EL   = (EL) <DoLoadFile SN <XGet SN>>
+
+
+* <SaveFile S(/0/../4/)N (V(O)F) (E(O)L)*> == 
+SaveFile +
+    SN (EF) EL +
+            = <XOpen 'w' SN EF> +
+            <Map (/SaveFileWriteBracketLine/ SN) EL> +
+            <XClose 'w' SN>
+  
+SaveFileWriteBracketLine +
+    SN (EL) = <XPut SN EL>
+
+* <Trim E> == E'
+Trim +
+    EL      = <TrimL <TrimR EL>>
+
+WhiteSpaces S   ' \n\t\v\f\r'
+
+* <TrimL E> == E'
+TrimL +
+    S(:WhiteSpaces:)W EL +
+            = <TrimL EL>
+    EL      = EL
+  
+* <TrimR E> == E'
+TrimR +
+    EL S(:WhiteSpaces:)W +
+            = <TrimR EL>
+    EL      = EL
+  
+* <Exist W E> == /True/ | /False/
+Exist +
+    WS EB WS EE +
+            = /True/
+    WS EI   = /False/
+  
+* <Set WE*> == WS*
+Set +
+    EU WR EB WR EE +
+            = EU <Set EB WR EE>
+    EU      = EU
+
+            END

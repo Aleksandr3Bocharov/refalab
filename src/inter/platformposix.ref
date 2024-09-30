@@ -1,0 +1,35 @@
+* Copyright 2024 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2024-09-30
+* https://github.com/Aleksandr3Bocharov/RefalAB
+
+*====================================================================
+* Расширение библиотеки РефалАБ.
+* Функции РефалАБ.
+* Модуль "platform" с реализацией
+* специфичных функций в среде POSIX.
+* Для среды Windows используется
+* аналогичный модуль.
+*====================================================================
+
+PLATFORM    START
+            ENTRY Platform, DirectorySeparator(DirSep)
+            ENTRY IsDirectorySeparator(IsDirSep)
+            ENTRY PathSeparator(PathSep)
+            EMPTY POSIX, True, False
+
+Platform    = /POSIX/
+
+DirectorySeparator +
+            = '/'
+
+IsDirectorySeparator +
+    '/'     = /True/
+    SO      = /False/
+
+PathSeparator +
+            = ':'
+
+            END
