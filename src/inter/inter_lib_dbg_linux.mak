@@ -1,7 +1,7 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-09-25
+# 2024-09-30
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -19,6 +19,8 @@ CC	=	gcc
 CFLAGS	=	-pipe -Wall -O2 -Dmdebug -DUNIX
 AR	=	ar
 REFXCV	=	src/inter/refxcv	# refal + assembler for xcv
+REFEXT	=	src/inter/refext 	# refal + assembler for xext
+REFPLATFORM	=	src/inter/refplatform 	# refal + assembler for xplatform
 REFLIB	=	lib/libRefalAB_dbg.a
 S	=      	src/inter
 ####### Files
@@ -48,9 +50,11 @@ OBJECTS =		\
 	$(S)/xar.o 	\
 	$(S)/xcf.o 	\
 	$(S)/xcv.o 	\
+	$(S)/xext.o 	\
 	$(S)/xgcd.o 	\
 	$(S)/xjak.o 	\
 	$(S)/xmo.o 	\
+	$(S)/xplatform.o 	\
 	$(S)/xrename.o 	\
 	$(S)/xtime.o 	\
 	$(S)/xvv.o 	\
@@ -60,6 +64,8 @@ OBJECTS =		\
 
 .ref.o: 
 	$(REFXCV)  
+	$(REFEXT) 
+	$(REFPLATFORM)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ 
 

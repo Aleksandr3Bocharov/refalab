@@ -50,9 +50,11 @@ OBJECTS =		\
 	$(S)\xar.o 	\
 	$(S)\xcf.o 	\
 	$(S)\xcv.o 	\
+	$(S)\xext.o 	\
 	$(S)\xgcd.o 	\
 	$(S)\xjak.o 	\
 	$(S)\xmo.o 	\
+	$(S)\xplatform.o 	\
 	$(S)\xrename.o 	\
 	$(S)\xtime.o 	\
 	$(S)\xvv.o 	\
@@ -62,6 +64,8 @@ OBJECTS =		\
 
 .ref.o: 
 	$(REFXCV)  
+	$(REFEXT) 
+	$(REFPLATFORM)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
