@@ -192,7 +192,7 @@ static uint32_t lrbxy;       // stoped bracket flag
 static size_t lastb, lastb1; // variables for brackets linkage
 static size_t kol_lit;       // counter of the symbol number
 static uint32_t diff_e_level;
-static uint32_t kol_skob[100]; // stack for counting of the brackets balance
+static uint32_t kol_skob[513]; // stack for counting of the brackets balance
 static size_t ur_skob;
 static char buf_lit[81]; // buffer for generating of the "text" statement
 static size_t k;
