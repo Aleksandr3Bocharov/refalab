@@ -1,26 +1,35 @@
-fact	start
-	entry go
-	extrn NUMB,SYMB,CVD,FIRST 
-	extrn MUL
-	extrn PROUT,CARD,M1
+* Copyright 2024 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2024-10-04
+* https://github.com/Aleksandr3Bocharov/RefalAB
 
-go	= <fact <numb <prout ' give a number: '> <card>>> 
+FACT        START
+	        ENTRY Go
+	        EXTRN Numb, Symb, Cvd, First 
+	        EXTRN Mul
+	        EXTRN Prout, Card, M1
 
-fact /0/ = 
-     e1  = +
-           <pr <symb e1> '!=' +
-            <cvd  +
-             <f e1> +
-            >  +
-           > <go>
+Fact +
+    /0/     = 
+    E1      = <Pr <Symb E1> '!=' +
+            <Cvd <F E1>>> + 
+            <Go>
 
-f    /1/ = /1/
-     e1  = <mul (e1) <f <m1 e1>>>
+F +
+    /1/ = /1/
+    E1  = <Mul (E1) <F <M1 E1>>>
 
-pr       =
-     e1  = <pr1 <first /80/ e1>>
+Pr      =
+    E1  = <Pr1 <First /80/ E1>>
 
-pr1 (e1)e2 = <prout e1> <pr e2>
-    '*' e1 = <prout e1>
+Pr1 +
+    (E1) E2 +
+        = <Prout E1> <Pr E2>
+    '*' E1 +
+        = <Prout E1>
 
-	end
+Go          = <Fact <Numb <Card ' Give a number: '>>>
+
+            END
