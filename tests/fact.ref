@@ -6,10 +6,10 @@
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 FACT        START
-	        ENTRY Go
-	        EXTRN Numb, Symb, Cvd, First 
-	        EXTRN Mul
-	        EXTRN Prout, Card, M1
+            ENTRY Go
+            EXTRN Numb, Symb, Cvd, First 
+            EXTRN Mul
+            EXTRN Prout, Card, M1
 
 Fact +
     /0/     = 
