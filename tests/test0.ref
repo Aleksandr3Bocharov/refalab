@@ -1,4 +1,11 @@
-bbb START
+* Copyright 2024 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2024-10-04
+* https://github.com/Aleksandr3Bocharov/RefalAB
+
+tes0 START
     ENTRY go
     EXTRN add,m1,prout,numb,symb,first,last,lengr,lengw
     extrn new,WTR,rdr,ptr,gtr,swr,mul,p1,proutm
@@ -72,4 +79,3 @@ sw2 Rx  = k/ptr/Rx/3/.k/rdr/Rx.k/gtr/Rx.k/swr/Rx'0'/16777215/'0'.+
 prln e1 = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
                                          '  wyh-w='k/lengw/e1..
     END
-
