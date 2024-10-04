@@ -9,6 +9,6 @@ HELLO       START
             ENTRY Go
             EXTRN Print
 
-Go       	= <Print 'Hello World!'>
+Go          = <Print 'Hello World!'>
 	
             END
