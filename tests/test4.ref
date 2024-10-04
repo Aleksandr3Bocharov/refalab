@@ -5,7 +5,7 @@
 * 2024-10-04
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-tes4 START
+test4 START
     ENTRY go
     EXTRN first,last,lengr,lengw,prout,proutm
     empty pus,em1,em2,em3

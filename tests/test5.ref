@@ -5,7 +5,7 @@
 * 2024-10-04
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-tes5 start
+test5 start
   entry go
   extrn prout,numb,symb
 go = +

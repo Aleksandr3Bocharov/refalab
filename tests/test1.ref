@@ -5,7 +5,7 @@
 * 2024-10-04
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-tes1 START
+test1 START
     ENTRY go
     EXTRN add,sub,mul,dr,div
     EXTRN addn,subn,muln,drn,divn
