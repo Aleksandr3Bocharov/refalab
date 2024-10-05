@@ -10,7 +10,7 @@ TEST4       START
             EXTRN First, Last, Lengr, Lengw, Prout, Proutm
             EMPTY Pus, Em1, Em2, Em3
 
-Bspe  S  '2134' /Pus/
+Bspe S      '2134' /Pus/
 
 *      prowerka  specifikacii
 Prspe +
