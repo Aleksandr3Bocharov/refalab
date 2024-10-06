@@ -7,7 +7,7 @@
 
 Добавлены новые пустые функции в библиотеку РефалАБ:
 1. True, False.
-2. Специфичные для сред Windows и POSIX - Windows, POSIX.
+2. Windows, POSIX.
 
 
 
