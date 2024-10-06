@@ -23,23 +23,27 @@ Prspe +
     Ss Ek   = <Prout '  symbol =' Ss> <Prspe Ek>
             =
 
-Dal         =  k/prln//0//1/'345678'.k/prln/(/0//1/)'345678'.+
-            k/prfe//3/'1234567'.k/prla//3/'123456'.k/prfe//1//2/.+
-            k/prla//3//1//2//3/'567'.+
+Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
+            <Prfe /3/ '1234567'> <Prla /3/ '123456'> <Prfe /1/ /2/> +
+            <Prla /3/ /1/ /2/ /3/ '567'> +
 *  neot
-            k/prfe/'123'.k/prla/'123'.
+            <Prfe '123'> <Prla '123'>
 
-prfe e1 = k/prow//first/e1.
+Prfe +
+    E1      = <Prow /First/ E1>
 
-prla e1 = k/prow//last/e1.
+Prla +
+    E1      = <Prow /Last/ E1>
 
-prow s1 e2 = k/proutm/s1', whod='e2'  wyh='k s1 e2..
+Prow +
+    S1 E2   = <Proutm S1 ', whod=' E2 '  wyh=' < S1 E2>>
 *
 *
-prln e1 = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
-                                         '  wyh-w='k/lengw/e1..
+Prln +
+    E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <Lengr E1> +
+            '  wyh-w=' <Lengw E1>>
 
-Go          = <Prspe /Pus/ 'as01a432l7l' /em3/> +
+Go          = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
             <Dal>
                                  
             END
