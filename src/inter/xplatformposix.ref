@@ -19,8 +19,8 @@ PLATFORM    START
             ENTRY Platform, DirectorySeparator(DirSep)
             ENTRY IsDirectorySeparator(IsDirSep)
             ENTRY PathSeparator(PathSep)
-            ENTRY POSIX
-            EMPTY POSIX
+            ENTRY POSIX, Windows
+            EMPTY POSIX, Windows
 
 Platform    = /POSIX/
 
