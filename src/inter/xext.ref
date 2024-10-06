@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-09-30
+* 2024-10-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -17,6 +17,7 @@ EXT         START
             ENTRY LoadFile, SaveFile
             ENTRY Trim, TrimL, TrimR, WhiteSpaces(WSpaces) 
             ENTRY Exist, Set
+            ENTRY True, False
             EMPTY True, False
 
 * <Call WC EA> == ER
