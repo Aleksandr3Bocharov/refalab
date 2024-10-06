@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-01
+// 2024-10-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -150,7 +150,7 @@ FILE *systxt; // for module names
 uint32_t nommod;
 char parm_i[40]; // sourse file name
 // Aleksandr Bocharov   // compiler version
-const char vers_i[] = "RefalAB Version 0.1.1-beta 20241001 (c) Aleksandr Bocharov";
+const char vers_i[] = "RefalAB Version 0.1.2-beta 20241007 (c) Aleksandr Bocharov";
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 
 static FILE *sysin;
