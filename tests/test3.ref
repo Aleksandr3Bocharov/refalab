@@ -2,15 +2,25 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-04
+* 2024-10-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-test3 START
-    ENTRY go
-    extrn new,WTR,rdr,ptr,gtr,swr,proutm,prout
-    extrn br,rp,dg,dgall,cp,print
-    EMPTY tra,pus
-    SWAP sw
+TEST3       START
+            ENTRY Go
+            EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Proutm, Prout
+            EXTRN Br, Rp, Dg, DgAll, Cp, Print
+            EMPTY Tra, Pus
+            SWAP Sw
+
+Sw1 Rx  = k/proutm/' d.b. /123456/: 'k/swr/ Rx/2/.. +
+            k/proutm/' d.b. /2/: ' k/rdr/ rx.. +
+            k/wtr/ rx/12/.k/sw2/rx.
+
+sw2 Rx  = k/ptr/Rx/3/.k/proutm/' d.b. 2*(/12/ /3/): ' k/rdr/Rx.+
+            k/gtr/Rx..+
+            k/prout/' d.b. pusto: ' k/swr/Rx'0'/16777215/'0'..+
+                                   k/prout/ k/rdr/Rx..
+  
 go   = +
       k/br/'cc='/123/.k/br/'mmm=345'.k/br/'mmm=879'. +
       k/proutm/' d.b. 879:  ' k/dg/'mmm'..+
@@ -21,11 +31,5 @@ go   = +
 *
       k/sw1/k/new//123456/..k/wtr//sw//123456/.k/wtr//sw/'0'.+
       k/proutm/' d.b. 0 i 0: ' k/rdr//sw/.k/gtr//sw/.k/rdr//sw/..
-sw1 Rx  = k/proutm/' d.b. /123456/: 'k/swr/ Rx/2/.. +
-          k/proutm/' d.b. /2/: ' k/rdr/ rx.. +
-          k/wtr/ rx/12/.k/sw2/rx.
-sw2 Rx  = k/ptr/Rx/3/.k/proutm/' d.b. 2*(/12/ /3/): ' k/rdr/Rx.+
-          k/gtr/Rx..+
-          k/prout/' d.b. pusto: ' k/swr/Rx'0'/16777215/'0'..+
-                                 k/prout/ k/rdr/Rx..
-    END
+
+            END
