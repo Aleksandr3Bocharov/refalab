@@ -11,13 +11,13 @@
 *====================================================================
 
 EXT         START
-            EXTRN XOpen, XClose, XGet, XPut
             ENTRY Call, Map, FoldL, FoldR
             ENTRY MapAccum, DelAccum
             ENTRY LoadFile, SaveFile
             ENTRY Trim, TrimL, TrimR, WhiteSpaces(WSpaces) 
             ENTRY Exist, Set
             ENTRY True, False
+            EXTRN XOpen, XClose, XGet, XPut
             EMPTY True, False
 
 * <Call WC EA> == ER

@@ -15,11 +15,11 @@
 *====================================================================
 
 PLATFORM    START
-            EXTRN True, False
             ENTRY Platform, DirectorySeparator(DirSep)
             ENTRY IsDirectorySeparator(IsDirSep)
             ENTRY PathSeparator(PathSep)
             ENTRY POSIX, Windows
+            EXTRN True, False
             EMPTY POSIX, Windows
 
 Platform    = /POSIX/
