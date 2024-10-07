@@ -10,6 +10,9 @@ TEST4       START
             EXTRN First, Last, Lengr, Lengw, Prout, Proutm
             EMPTY Pus, Em1, Em2, Em3
 
+Go          = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
+            <Dal>
+
 Bspe S      '2134' /Pus/
 
 *      prowerka  specifikacii
@@ -42,8 +45,5 @@ Prow +
 Prln +
     E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <Lengr E1> +
             '  wyh-w=' <Lengw E1>>
-
-Go          = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
-            <Dal>
                                  
             END

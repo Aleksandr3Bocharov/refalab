@@ -2,15 +2,12 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-05
+* 2024-10-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST5       START
             ENTRY Go
             EXTRN Prout, Numb, Symb
-
-P +
-    E1      = <Prout E1 ' : ' <Symb E1>>
 
 Go          = <P <Numb '-1000'>> +
             <P <Numb '-16777216'>> +
@@ -38,5 +35,8 @@ Go          = <P <Numb '-1000'>> +
             <Numb '-2147483648'> +
             <Symb /128/ /0/> +
             <Symb '-' /128/ /0/> 
+
+P +
+    E1      = <Prout E1 ' : ' <Symb E1>>
 
             END

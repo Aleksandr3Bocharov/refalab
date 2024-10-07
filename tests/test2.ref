@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-05
+* 2024-10-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST2       START
@@ -10,9 +10,6 @@ TEST2       START
             EXTRN OpnPut, OpnGet, ClsPut, ClsGet, LibGet, LibPut
             EXTRN Print, Prout, FtoChar, ChartoF, FuncTab, Renam, Unlnk
             EMPTY ffff
-
-tttt +
-    E1      = <Prout E1>
 
 Go          = <FuncTab /Prout/> +
             < <ChartoF 'prout'> ' eto prout'> +
@@ -30,5 +27,8 @@ Go          = <FuncTab /Prout/> +
             <FuncTab /tttt/> +
             < <ChartoF 'tttt'> 'werno'> +
             <Unlnk 'lala.tos'>
+
+tttt +
+    E1      = <Prout E1>
 
             END
