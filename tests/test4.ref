@@ -2,12 +2,12 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-07
+* 2024-10-08
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST4       START
             ENTRY Go
-            EXTRN First, Last, Lengr, Lengw, Prout, Proutm
+            EXTRN First, Last, LengR, LengW, Prout, Proutm
             EMPTY Pus, Em1, Em2, Em3
 
 Go          = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
@@ -43,7 +43,7 @@ Prow +
 *
 *
 Prln +
-    E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <Lengr E1> +
-            '  wyh-w=' <Lengw E1>>
+    E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
+            '  wyh-w=' <LengW E1>>
                                  
             END
