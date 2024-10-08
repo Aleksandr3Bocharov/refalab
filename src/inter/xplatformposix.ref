@@ -2,12 +2,12 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-07
+* 2024-10-08
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
 * Расширение библиотеки РефалАБ.
-* Функции Рефал.
+* Рефал-функции.
 * Модуль "PLATFORM" с реализацией
 * специфичных функций в среде POSIX.
 * Для среды Windows используется
