@@ -30,7 +30,8 @@ Go          = <Prsw> +
             <Prspe /Pus/ 'as01a432l7l' /Em3/>
 
 *      prowerka  specifikacii
-Prspe E2 S(/Em1/ /Em2/ /Em3/)1 +
+Prspe +
+    E2 S(/Em1/ /Em2/ /Em3/)1 +
             = <Prout ' symbol-/em/' S1> <Prspe E2>
     S(:Bspe:)1 Ek +
             = <Prout ' symbol-b=' S1> <Prspe Ek>
