@@ -37,7 +37,7 @@ Prspe +
             = <Prout ' symbol-b=' S1> <Prspe Ek>
     R Eh S('l7')1 +
             = <Prout ' symbol-l=' S1> <Prspe Eh>
-    Ss Ek = <Prout '  symbol=' Ss> <Pprspe Ek>
+    Ss Ek   = <Prout '  symbol=' Ss> <Prspe Ek>
             =
 
 *      prowerka mul, p1,lengr,lengw,first,last,numb,symb,add,m1,sub
