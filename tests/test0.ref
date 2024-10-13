@@ -7,7 +7,8 @@
 
 TEST0       START
             ENTRY Go
-            EXTRN Add, M1, Prout, Numb, Symb, First, Last, LengR, LengW
+            EXTRN Add, Sub, M1, Prout, Numb, Symb
+            EXTRN First, Last, LengR, LengW
             EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Mul, P1, Proutm
             EXTRN Dr
             EXTRN OpnPut, OpnGet, ClsPut, ClsGet, LibGet, LibPut
@@ -40,10 +41,10 @@ Prspe +
     Ss Ek   = <Prout '  symbol=' Ss> <Prspe Ek>
             =
 
-*      prowerka mul, p1,lengr,lengw,first,last,numb,symb,add,m1,sub
+*      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
 Dal1        = <Prmu (/126/) /2/> <Prmu (/65536/) /64/> +
             <Prmu (/16777215/) /1/> +
-*           <Prmu (/65536/) /512/> +    neot
+            <Prmu (/65536/) /512/> +  
             <Prdl (/65536/) /4/> <Prdl (/65536/) /666/> +
 *           <Prdl (/1/) /0/> +      neot
             <Prp1 /4/> <Prp1 /65536/> <Prp1 /128/> +
@@ -55,11 +56,11 @@ Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
             <Prla /3/ /1/ /2/ /3/ '567'> +
 *           <Prfe '123'> <Prla '123'> +          neot
             <Prnu '125'> <Prnu '76666'> <Prnu '16777215'> +
-*           <Prnu '17777215'> <Prnu '-45'> +      neot
+            <Prnu '17777215'> <Prnu '-45'> +
             <Prsy /5678/> <Prsy /16777215/> +
-*           <Prad (/128/) /456/> <Prad (/16777215/) /2/> +     neot
-            <Prm1 /3/> <Prm1 /128/> <Prm1 /16777215/>
-*           <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
+            <Prad (/128/) /456/> <Prad (/16777215/) /2/> +
+            <Prm1 /3/> <Prm1 /128/> <Prm1 /16777215/> +
+            <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
 
 Prmu +
     E1      = <Prow /Mul/ E1>
@@ -72,6 +73,9 @@ Prsy +
 
 Prad +
     E1      = <Prow /Add/ E1>
+
+Prsu +
+    E1      = <Prow /Sub/ E1>
 
 Prm1 +
     E1      = <Prow /M1/ E1>
