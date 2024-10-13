@@ -60,51 +60,66 @@ Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
             <Prm1 /3/> <Prm1/ /128/> <Prm1 /16777215/>
 *           <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
 
-prmu e1 = k/prow//mul/e1.
+Prmu +
+    E1      = <Prow /Mul/ E1>
 
-prnu e1 = k/prow//numb/e1.
+Prnu +
+    E1      = <Prow /Numb/ E1>
 
-prsy e1 = k/prow//symb/e1.
+Prsy +
+    E1      = <Prow /Symb/ E1>
 
-prad e1 = k/prow//add/e1.
+Prad +
+    E1      = <Prow /Add/ E1>
 
-prm1 e1 = k/prow//m1/e1.
+Prm1 +
+    E1      = <Prow /M1/ E1>
 
-prdl e1 = k/prow//div/e1.
+Prdl +
+    E1      = <Prow /Div/ E1>
 
-prp1 e1 = k/prow//p1/e1.
+Prp1 +
+    E1      = <Prow /P1/ E1>
 
-prfe e1 = k/prow//first/e1.
+Prfe +
+    E1      = <Prow /First/ E1>
 
-prla e1 = k/prow//last/e1.
+Prla +
+    E1      = <Prow /Last/ E1>
 
-prow s1 e2 = k/proutm/s1', whod='e2'  wyh='k s1 e2..
-
-*
-*
-prkop   = k/br/'cc='/123/.k/br/'mmm=345'.k/rp/'mmm=879'.k/dg/'mmm'.+
-          k/cp/'cc'.k/dgall/.+
-          k/br//tra/'=765'.k/rp//tra/'='/16777215/.k/dg//tra/.
-
-*
-prvv  = k/opnput/'lala.put'.+
-       k/libput/' str 1'.k/libput/' str 2'.k/clsput/.+
-       <opnput '*lala.put'> <libput ' str 3'> <clsput> +
-       <renam 'lala.put lala.get'> +
-       k/opnget//4/'lala.get'.+
-       k/print/k/libget//4/..k/print/k/libget//4/..+
-       k/print/k/libget//4/..k/clsget//4/. <unlnk 'lala.get'>
+Prow +
+    S1 E2   = <Proutm S1 ', whod=' e2 '  wyh=' < S1 E2>>
 
 *
-prsw    = k/sw1/k/new//123456/..k/wtr//sw//123456/.k/ptr//sw/'0'.+
-                                k/rdr//sw/.k/gtr//sw/.
+*
+Prkop       = <Br 'cc' '=' /123/> <Br 'mmm' '=' '345'> +
+            <Rp 'mmm' '=' '879'> <Dg 'mmm'> +
+            <Cp 'cc'> <DgAll> +
+            <Br /Tra/ '=' '765'> <Rp /Tra/ '=' /16777215/> <Dg /Tra/>
 
-sw1 Rx  = k/ptr/ Rx/2/.k/rdr/ rx.k/wtr/ rx/12/.k/sw2/rx.
+*
+Prvv        = <OpnPut 'lala.put'> +
+            <LibPut ' str 1'> <LibPut ' str 2'> <ClsPut> +
+            <OpnPut '*' 'lala.put'> <LibPut ' str 3'> <ClsPut> +
+            <Renam 'lala.put lala.get'> +
+            <OpnGet /4/ 'lala.get'> +
+            <Print <LibGet /4/>> <Print <LibGet /4/>> +
+            <Print <LibGet /4/>> <ClsGet /4/> <Unlnk 'lala.get'>
 
-sw2 Rx  = k/ptr/Rx/3/.k/rdr/Rx.k/gtr/Rx.k/swr/Rx'0'/16777215/'0'.+
-                                 k/prout/ k/rdr/Rx..
+*
+Prsw        = <Sw1 <New /123456/>> <Wtr /Sw/ /123456/> <Ptr /Sw/ '0'> +
+            <Rdr /Sw/> <Gtr /Sw/>
 
-prln e1 = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
+Sw1 +
+    Rx      = <Ptr Rx /2/> <Rdr Rx> <Wtr Rx /12/> <Sw2 Rx>
+
+Sw2 +
+    Rx      = <Ptr Rx /3/> <Rdr Rx> <Gtr Rx> +
+            <Swr Rx '0' /16777215/ '0'> +
+            <Prout <Rdr Rx>>
+
+Prln +
+    E1      = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
                                          '  wyh-w='k/lengw/e1..
 
             END
