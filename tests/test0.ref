@@ -10,7 +10,7 @@ TEST0       START
             EXTRN Add, M1, Prout, Numb, Symb, First, Last, LengR, LengW
             EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Mul, P1, Proutm
             EXTRN Dr
-            EXTRN PpnPut, PpnGet, ClsPut, ClsGet, LibGet, LibPut
+            EXTRN OpnPut, OpnGet, ClsPut, ClsGet, LibGet, LibPut
             EXTRN Br, Rp, Dg, DgAll, Cp, Print, Renam, Unlnk
             EMPTY Tra, Em1, Em2, Em3, Pus
             SWAP Sw
@@ -41,13 +41,14 @@ Prspe +
             =
 
 *      prowerka mul, p1,lengr,lengw,first,last,numb,symb,add,m1,sub
-Dal1        = <Prmu (/126/) /2/> <Prmu (/65536/) /64/> <Prmu/ (/16777215/) /1/> +
+Dal1        = <Prmu (/126/) /2/> <Prmu (/65536/) /64/> +
+            <Prmu (/16777215/) /1/> +
 *           <Prmu (/65536/) /512/> +    neot
             <Prdl (/65536/) /4/> <Prdl (/65536/) /666/> +
 *           <Prdl (/1/) /0/> +      neot
             <Prp1 /4/> <Prp1 /65536/> <Prp1 /128/> +
 *           <Prp1 /16777215/> +     neot
-            <Dal/>
+            <Dal>
 
 Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
             <Prfe /3/ '1234567'> <Prla /3/ '123456'> <Prfe /1/ /2/> +
@@ -57,7 +58,7 @@ Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
 *           <Prnu '17777215'> <Prnu '-45'> +      neot
             <Prsy /5678/> <Prsy /16777215/> +
 *           <Prad (/128/) /456/> <Prad (/16777215/) /2/> +     neot
-            <Prm1 /3/> <Prm1/ /128/> <Prm1 /16777215/>
+            <Prm1 /3/> <Prm1 /128/> <Prm1 /16777215/>
 *           <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
 
 Prmu +
@@ -119,7 +120,7 @@ Sw2 +
             <Prout <Rdr Rx>>
 
 Prln +
-    E1      = k/prout/' lengr,lengw: whod='e1'  wyh-r='k/lengr/e1.+
-                                         '  wyh-w='k/lengw/e1..
+    E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
+            '  wyh-w=' <LengW E1>>
 
             END
