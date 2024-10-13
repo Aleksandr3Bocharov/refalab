@@ -7,9 +7,9 @@
 
 TEST0       START
             ENTRY Go
-            EXTRN Add, Sub, M1, Prout, Numb, Symb
+            EXTRN Add, Sub, Mul, M1, P1, Numb, Symb
             EXTRN First, Last, LengR, LengW
-            EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Mul, P1, Proutm
+            EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Prout, Proutm
             EXTRN Dr
             EXTRN OpnPut, OpnGet, ClsPut, ClsGet, LibGet, LibPut
             EXTRN Br, Rp, Dg, DgAll, Cp, Print, Renam, Unlnk
