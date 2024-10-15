@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-07
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -139,7 +139,6 @@ static struct
     bool was_72;
     bool uzhe_krt;
     bool was_err;
-    // bool uzhe_zgl;
     bool uzhekrt_t;
 } flags;
 
@@ -237,30 +236,17 @@ static void GET_time(void)
 int main(int argc, char *argv[])
 {
     systerm = NULL;
-
-    /*   qindex = index_x ("abcd","xbc");
-
-       printf ("qindex =%d\n", qindex);
-
-       cmpstr(3,"abcd","xbc");
-    */
-
     nommod = 0;
     printf("\n");
     printf("%s", vers_i);
     if (argc < 2)
     {
-        // printf("\nSer. No %s",regnom);
         printf("\n"); 
         printf("\nSyntax: refal source_file [(option,...,option)]");
         printf("\nOptions:");
         printf("\n   mm  multi_module");
         printf("\n   nn  no_function_names");
         printf("\n   ns  no_source_listing");
-
-        /* printf("\n   as  assembler_module");
-           assembler generated always
-        */
         printf("\n   fn  full_names");
         printf("\n   cm  minimal_memory_for_compiler");
         printf("\n\n");
@@ -270,11 +256,6 @@ int main(int argc, char *argv[])
     char parm[40];
     size_t i;
     strcpy(parm, argv[1]);
-    // parm[0] = *(argv[1]);
-    // for (i = 0; parm[i] != '\0'; i++)
-    //     parm[i + 1] = *(argv[1] + i + 1);
-
-    // if ( index(parm,strlen(parm),".",1) < 0 ) strcat(parm,".ref");
     if (index_x(parm, ".") < 0)
         strcat(parm, ".ref");
 
@@ -301,8 +282,6 @@ int main(int argc, char *argv[])
     for (size_t j = 2; j < (size_t)argc; ++j)
     {
         strcpy(parm, argv[j]);
-        // for (i = 0; (parm[i] = *(argv[j] + i)) != '\0'; i++)
-        //     ;
         if (parm[0] == '(')
         {
             for (int32_t ii = 1; ii < 40 && parm[ii] != ')' && parm[ii] != '\0';)
@@ -330,11 +309,9 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 temp = ii;
-                // ii = index((parm + ii),40-ii,",",1) + 1 ;
                 ii = index_x(parm + ii, ",") + 1;
                 if (ii == 0)
                 {
-                    // ii = index((parm + temp),40-temp,")",1) ;
                     ii = index_x(parm + temp, ")");
                     if (ii == -1)
                     {
@@ -345,8 +322,6 @@ int main(int argc, char *argv[])
                 ii += temp;
             } // end for
             strcpy(parm, argv[1]);
-            // for (i = 0; (parm[i] = *(argv[1] + i)) != '\0'; ++i)
-            //     ;
         } // end if
         else
         {
@@ -394,7 +369,6 @@ int main(int argc, char *argv[])
     }
     //  print of page title missing here
     flags.was_err = false;
-    // flags.uzhe_zgl = false;
     cdnumb = 0;
     scn_.nomkar = 0;
     T_MOD_STATES mod_state = START_OF_MODULE;
@@ -427,19 +401,17 @@ int main(int argc, char *argv[])
             {
                 pchosh("001 START-directive missing");
                 scn_.modnmlen = 0;
-                jstart(mod_name, 0);
+                jstart();
                 mod_state = KEYS;
                 break;
             }
             const size_t lbl_leng8 = 8 > lbl_leng ? lbl_leng : 8;
             strncpy(mod_name, stmlbl, lbl_leng8);
             strncpy(mod_i, mod_name, lbl_leng8);
-            // for (i = 0; i < (8 > lbl_leng ? lbl_leng : 8); i++)
-            //    mod_i[i] = mod_name[i];
             mod_i[lbl_leng8] = '\0';
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
-            jstart(mod_name, lbl_leng8);
+            jstart();
             mod_state = NEXT_STM;
             break;
         case NEXT_STM:
@@ -665,7 +637,6 @@ static void rdcard(void)
         translate(card72, class);
         ++scn_.nomkar;
         ++cdnumb;
-        //  printf("\ncard %d",cdnumb);
         flags.uzhe_krt = false;
         flags.uzhekrt_t = false;
         if (options.source)

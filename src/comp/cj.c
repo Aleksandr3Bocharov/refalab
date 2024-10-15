@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -34,7 +34,6 @@ typedef struct ext
     T_U *p;
     char e[8];
     size_t le;
-    // unsigned int noms;
 } T_EXT;
 
 typedef struct rl
@@ -61,14 +60,6 @@ static union
     uint16_t w;
 } d;
 
-/*
-static int curr_r;
-static int new_r;
-static int equal_r; // feature that new_r = curr_r
-static char new_f[4];
-static const char *ccc;
-*/
-
 static T_ENT *q, *r;
 static T_EXT *qx, *rx;
 
@@ -88,8 +79,6 @@ static T_EXT *qx, *rx;
 static T_ENT *first_ent;
 static T_ENT *last_ent;
 static size_t mod_length;
-static char mod_name[9];
-static size_t lnmmod;
 static T_EXT *first_ext;
 static T_EXT *last_ext;
 static size_t curr_addr; // module generation files
@@ -246,40 +235,6 @@ static void sfwr2(void)
     } // while
 } // sfwr2
 
-/*
-static void sfwr(const char *c, size_t n, BU *b)
-{
-    while (true)
-    {
-        const size_t ost = b->len - b->tek;
-        if (ost >= n)
-        {
-            memcpy(b->buf + b->tek, c, n);
-            b->tek += n;
-            return;
-        }
-        memcpy(b->buf + b->tek, c, ost);
-        if (b->fil == NULL)
-        {
-            b->fil = fopen(b->nam, Wbin)
-            if ((b->fil == NULL)
-            {
-                printf("Can't open for write %s\n", b->nam);
-                exit(8);
-            }
-        }
-        if (fwrite(b->buf, b->len, 1, b->fil) == 0)
-        {
-            printf("Write i/o error in %s\n", b->nam);
-            exit(8);
-        }
-        b->tek = 0;
-        n -= ost;
-        c += ost;
-    } // while
-} // sfwr
-*/
-
 static void sfrd1(char *c, size_t n)
 {
     while (true)
@@ -292,10 +247,6 @@ static void sfrd1(char *c, size_t n)
             return;
         }
         memcpy(c, sysut1.buf + sysut1.tek, ost);
-        /*if (fread(sysut1.buf, sysut1.len, 1, sysut1.fil) == 0)
-        {
-            // printf("Read i/o error in sysut1\n"); exit(8);
-        } */
         sysut1.tek = 0;
         n -= ost;
         c += ost;
@@ -313,20 +264,13 @@ static void sfrd2(void)
             sysut2.tek += SMBL;
             return;
         }
-        /*if (fread(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
-        {
-            //printf("Read i/o error in sysut2\n");
-            //exit(8);
-        }*/
         sysut2.tek = 0;
     } // while
 } // sfrd2
 
-void jstart(const char *ee, size_t ll)
+void jstart()
 {
     delta = 0;
-    strncpy(mod_name, ee, ll);
-    lnmmod = ll;
     sfop_w("sysut1.rf", &sysut1);
     sfop_w("sysut2.rf", &sysut2);
     first_ent = (T_ENT *)malloc(sizeof(T_ENT));
@@ -362,7 +306,6 @@ size_t jwhere(void)
 
 void jbyte(char bb)
 {
-    // sfwr(&bb,1,&sysut1);
     if (sysut1.tek != sysut1.len)
     {
         *(sysut1.buf + sysut1.tek) = bb;
@@ -405,18 +348,12 @@ void j3addr(T_U *pp)
 void jentry(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
-    // label length
-    /*if( (lnmmod==ll) && (strncmp(mod_name, ee, ll < lnmmod ? ll : lnmmod)==0) )
-    pchosh("520 entry point name is equal module name");*/
     r = first_ent;
     while (r != last_ent)
     {
         r = r->next;
         if (r->le == ll && strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0)
-            //{
-            // pchose("521 two entry points has single name ", ee, ll);
             return;
-        //}
     }
     r = (T_ENT *)malloc(sizeof(T_ENT));
     if (r == NULL)
@@ -484,8 +421,6 @@ static void zakon(void)
     sfcl(&sysut1);
     sfcl(&sysut2);
     mod_length = curr_addr;
-    // if (mod_length < 0)
-    //     mod_length = 65536 + mod_length;
     return;
 } // zakon
 
@@ -505,10 +440,6 @@ void jend(void)
     d.w = 0;
     // heading generating
     fputs(".data\n", syslin);
-    // fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-    // fputs ("\tsegment\tbyte public 'CODE'\n",syslin);
-    // sprintf(bufs,"_d%d@\tlabel\tbyte\n",nommod); fputs (bufs,syslin);
-    // 
     char bufs[81];
     sprintf(bufs, "_d%d$:\n", nommod);
     fputs(bufs, syslin);
@@ -609,7 +540,6 @@ void jend(void)
 #endif
                     // ------- end renaming ---------------
                     for (size_t i = 0; i < qx->le; i++)
-                        // fputc (*(qx->e + i),syslin);
                         fputc(tolower(*(qx->e + i)), syslin);
                     fputs("\n", syslin);
                 }
@@ -617,16 +547,10 @@ void jend(void)
             } // if
             break;
         }
-        // end text generating
-        /* 
-        fputs("_",syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-        fputs ("\tends\n",syslin);
-        */
         //   external label generating
         qx = first_ext->next;
         while (qx != NULL)
         {
-// fputs ("\textrn\t_",syslin);
 //
 #ifdef UNIX
             // begin name without underlining _
@@ -635,13 +559,10 @@ void jend(void)
             fputs("\t.extern\t_", syslin); 
 #endif
             for (size_t i = 0; i < qx->le; i++)
-                // fputc (*((qx->e) + i),syslin);
                 fputc(tolower(*(qx->e + i)), syslin);
             fputs(":byte\n", syslin);
             qx = qx->next;
         } // while
-        // fputc('_',syslin); for(i=0;i<lnmmod;i++) fputc(mod_name[i],syslin);
-        // fputs ("\tsegment byte public 'CODE'\n",syslin);
         fputs(".data\n", syslin); 
         // entry label generating
         q = first_ent->next;

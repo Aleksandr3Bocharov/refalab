@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -180,7 +180,6 @@ void sswap(const char *idp, size_t lid)
         p->def = scn_.nomkar;
         jlabel(p);
         jbyte(n_swap);
-        //   kk = sizeof(int)+sizeof(uint32_t)+sizeof(POINTER) * 2;
         const size_t kk = SMBL + LBLL * 2;
         for (size_t k0 = 1; k0 <= kk; k0++)
             jbyte('\000');
@@ -199,7 +198,6 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
 // idp internal name
 // ide external name
 {
-    //  int ind;   // eg
     T_U *p = lookup(idp, lidp);
     if (p->mode & '\020')
         p504(idp, lidp);
@@ -303,7 +301,6 @@ static void fnhead(const char *idp, size_t lid)
 static void check_id(const T_U *pp) // check identifier attributes on confirmness
 {
     const T_U *q = pp;
-    // printf("\nCHECK: pp=%lx q=%lx mode=%o$$$",pp,q,q->mode);
     while ((q->mode & '\300') == '\300')
         q = q->info.infop;
     if ((pp->mode & '\300') == '\000')
