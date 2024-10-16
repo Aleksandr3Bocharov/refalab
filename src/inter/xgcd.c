@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -269,7 +269,6 @@ static void gcd_(void)
             }
             //  metod Lemera
             //  A i B s nedostatkom
-            // printf("\nP.chast: A=%ld B=%ld l[0]=%d l[1]=%d la=%d lb=%d",A,B,l[0],l[1],la,lb);
             uint32_t AL = A;
             uint32_t AH = A + 1;
             uint32_t BL = B;
@@ -362,7 +361,6 @@ static void gcd_(void)
                     p[i] = p[i]->prev;
                 }
             }
-            // printf("\nFIN Posl chast: r[0]=%ld r[1]=%ld",r[0],r[1]);
             //   UTV: r[0] i r[1] ===0
             gcd_state = OC;
             break;
@@ -523,11 +521,6 @@ static void gcd_(void)
                     pcoden(px, (uint32_t)b);
                 }
             }
-            /*   printf("\n l[0]=%d l[1]=%d",l[0],l[1]);
-            for(i=0,px=hd[0]; px != tl[0]->next; px=px->next,i++)
-               printf("\n A(%d)=%lx",i,gcoden(px));
-            for(i=0,px=hd[1]; px != tl[1]->next; px=px->next,i++)
-               printf("\n B(%d)=%lx",i,gcoden(px));  */
             gcd_state = OC;
             break;
         case FIN1:

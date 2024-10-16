@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN1.C -------------------
@@ -164,17 +164,10 @@ typedef struct sav_
     T_ST *currst_;
 } T_SAV;
 
-/*static union
-{
-    char c[2];
-    uint16_t ii;
-} u; */
-
 static union
 { // structure for pointer and integer aligning
     uint8_t *ptr;
     //    uint16_t *inr;
-    //    char chr[2];
 } inch;
 
 static T_LINKCB *et[256]; // element table
@@ -323,8 +316,6 @@ void rfrun(T_ST *ast) // adress of current state table
             printf(" code8=%o\t(D=%d,H=%x)", opc, opc, opc);
 #endif
             // operation switcher
-            //       OPSWITCH
-            //  printf("\n  ego opc=%o NMBL=%o LBLL=%o SMBL=%o",opc,NMBL,LBLL,SMBL);
             switch (opc)
             {
             case 0000:
@@ -1417,7 +1408,6 @@ void rfrun(T_ST *ast) // adress of current state table
             // TEXT(N,S1,S2,...,SN);
         case TEXT:
             n = *(vpc + NMBL);
-            // printf("\n TEXT uc0=%x uii=%x  %d",u.c[0],u.ii,u.ii);
             vpc = vpc + NMBL + NMBL;
             bool lack = false;
             for (i = 1; i <= n; i++)
@@ -1498,11 +1488,6 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // MULE(N);
         case MULE:
-            //                    if(ferr == 1){
-            //                        lastb = lastb1;
-            //                        ferr = 0;}
-            //                    else
-            //                        lastb1 = lastb;
             n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
             f0 = et[n - 1]->prev;
@@ -1516,10 +1501,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     i_state = LACK;
                     lack = true;
                     break;
-                } //              f = f->next;       instead of SHF
-                //             if (f == flhead){
-                //               ferr = 1;
-                //               goto LACK;}
+                } 
                 if ((f0->tag & 0001) != TAGO)
                 {
                     if (f0->tag != TAGRB)

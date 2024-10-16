@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN2.C -----------------
@@ -43,7 +43,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
     // spcs-pointer
     T_SPCS *spcsp = pspcsp;
     uint8_t *spcvpc;                   // virtual specifier counter
-    memcpy(&spcvpc, vpc + NMBL, LBLL); // spcvpc = L
+    memcpy(&spcvpc, vpc + NMBL, LBLL);
     uint8_t spcopc;
     // positiveness feature of specifier element
     bool spcpls = true;
@@ -58,7 +58,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
             spcsp--;
             // work variable
             const bool spcwrk = spcpls;
-            spcpls = spcsp->spls; // getss (spcpls,spcvpc);
+            spcpls = spcsp->spls;
             spcvpc = spcsp->svpc;
             if (spcwrk)
                 break;
@@ -276,48 +276,5 @@ void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
     *az = tsp->ts2;
     return;
 }
-
-/*void move(size_t n, const uint8_t *pf, uint8_t *pt)
-{
-    for (size_t i = 0; i < n; i++)
-    {
-        *pt = *pf;
-        pt++;
-        pf++;
-    }
-    return;
-}*/
-
-// in case of macrodigit - shift -> 16
-/* void move(n,pf,pt) int n; char *pf,*pt; {
-int i;
-   if ( *pf == TAGN ) {
-      / two bytes without changes /
-      for ( i=0;i<2;i++ ){
-         *pt = *pf; pt++; pf++;
-      }
-      / body of macrodigit shift -> 16 /
-      for ( i=2;i<n;i++ ){
-         *(pt+2) = *pf; pt++; pf++;
-      }
-   }
-   else {
-      for ( i=0;i<n;i++ ){
-         *pt = *pf; pt++; pf++;
-      }
-   }
-}*/
-
-/*bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2)
-{
-    for (size_t i = 1; i <= n; i++)
-    {
-        if (*p1 != *p2)
-            return false;
-        p1++;
-        p2++;
-    }
-    return true;
-}*/
 
 //------------ end of file RFRUN2.C ----------

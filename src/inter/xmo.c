@@ -1,13 +1,13 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
 //                 General MO:
 //     p1, m1, numb, symb, first, last,
-//     lengr, lengw, multe, crel, delf
+//     lengr, lengw, multe, delf, crel
 //------------------------------------------
 
 #include <stdio.h>
@@ -68,16 +68,6 @@ static void m1_(void)
 void (*m1_1)(void) = m1_;
 G_L_B char m1 = '\122';
 char m1_0[] = {Z2 'M', '1', '\002'};
-
-/*static int32_t cmpstr(size_t n, const char *s1, const char *s2)
-{
-    // comparison two string . if s1<s2 then return < 0
-    // if s1 = s2 return 0. if s1>s2 then return > 0
-    for (size_t i = 0; i < n; i++, s1++, s2++)
-        if (*s1 != *s2)
-            return *s1 - *s2;
-    return 0;
-}*/
 
 static void numb_(void)
 {

@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XAPPLY.C ------------
@@ -25,9 +25,7 @@ static void appl_(void)
     T_LINKCB *px;
     bool lack = false;
     if ((l & 0xffff) < 200)
-        //{ // printf("\nStack overflow!");
         lack = true;
-    //}
     else
     {
         upst = refal.currst;
@@ -60,7 +58,6 @@ static void appl_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    //   printf("\nEnter: %ld",upst->step);
     s_st->stop = 0x7FFFFFFF;
     do
     {
@@ -74,7 +71,6 @@ static void appl_(void)
     } while (s_st->state == 1 && s_st->dot != NULL);
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
-    //   printf("\nOut: %ld %lx",upst->step,upst);
     switch (s_st->state)
     {
     case 1:

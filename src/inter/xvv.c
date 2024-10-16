@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XVV.C ------------
@@ -55,7 +55,6 @@ static void opng_(void)
         if (heot)
             break;
         inr = fopen(namf, "r");
-        // printf("\n opn, namf=%s flg=%d fd=%d",namf,inr->flags,inr->fd);
         if (inr == NULL)
         {
             printf("\nopnget: can't open file %s", namf);
@@ -114,7 +113,6 @@ static void opnp_(void)
         if (heot)
             break;
         inw = fopen(namf, m);
-        // printf("\n opnput, namf=%s mode=%s",namf,m);
         if (inw == NULL)
         {
             printf("\nopnput: can't open file %s", namf);
@@ -139,10 +137,7 @@ static void clsg_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-    //{
         jl = p->info.coden;
-    //    p = p->next;
-    //}
     if (jl >= fmax)
     {
         printf("\nclsget: format error");
@@ -151,7 +146,6 @@ static void clsg_(void)
     }
     jung = jl;
     inr = uniget[jung];
-    // printf("\n cls, flg=%d fd=%d",inr->flags,inr->fd);
     fclose(inr);
     return;
 }
@@ -165,10 +159,7 @@ static void clsp_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-    //{
         jl = p->info.coden;
-    //    p = p->next;
-    //}
     if (jl >= fmax)
     {
         printf("\nclsput: format error");
@@ -177,7 +168,6 @@ static void clsp_(void)
     }
     junp = jl;
     inw = uniput[junp];
-    // printf("\n cls, flg=%d fd=%d",inw->flags,inw->fd);
     fclose(inw);
     return;
 }
@@ -195,10 +185,7 @@ static void libg_(void)
         new = true;
     }
     else
-    //{
         jl = p->info.coden;
-    //    p = p->next;
-    //}
     if (jl >= fmax)
     {
         printf("\nlibget: format error");
@@ -334,7 +321,7 @@ char libp_0[] = {Z6 'L', 'I', 'B', 'P', 'U', 'T', '\006'};
 
 static void card_(void)
 {
-    if (refal.preva->next != refal.nexta) // refal.upshot = 2;
+    if (refal.preva->next != refal.nexta)
         rfpex("", refal.preva, refal.nexta);
     T_LINKCB *p = refal.prevr;
     int c = getchar();

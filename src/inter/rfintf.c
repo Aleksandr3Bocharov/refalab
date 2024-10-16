@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -20,7 +20,6 @@ T_REFAL refal;
 
 static T_LINKCB *last_block = NULL;
 static bool rf_init = true;
-// static uint32_t curr_size = 0;
 static T_LINKCB hd;
 
 static bool lgcl(void);
@@ -61,7 +60,6 @@ bool lincrm(void)
         return false;
     new_block->prev = last_block;
     last_block = new_block;
-    // curr_size = curr_size + 1000;
     rflist(new_block + 1, 1000);
     return true;
 }
@@ -415,7 +413,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
             break;
         default:
             f->tag = f0->tag;
-            //   pcoden(f,gcoden(f0));
+            //?????   pcoden(f,gcoden(f0));
         }
         f0 = f0->next;
     }

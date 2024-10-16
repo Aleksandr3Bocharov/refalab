@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -679,12 +679,6 @@ static void dbapp(T_ST *ss_st)
 //    procedures
 static void init_det_flags(void)
 {
-    /*for (DET_TAB *det = last_det; det != NULL; det = det->det_next)
-    {
-        free(det->det_id);
-        DET_TAB *det1 = det;
-        free(det1);
-    }*/
     for (DET_TAB *det = last_det; det != NULL;)
     {
         free(det->det_id);
@@ -730,7 +724,6 @@ static void one_step(T_ST *ss_st)
 
 static void pr_step(void)
 {
-    // printf("\nprstep: curr=%ld printed=%ld",curr_step,printed_step);
     if (curr_step != printed_step)
     {
         printf("\n***** step %u", curr_step);

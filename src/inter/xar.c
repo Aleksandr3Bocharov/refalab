@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-10-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -408,7 +408,6 @@ static void oper(uint32_t o, uint32_t prn)
                         const uint32_t r4 = r3 >> 12;
                         a = r1 * HMAX + r2 + r4;
                         b += (r3 & 0xFFF) * HMAX;
-                        // ymn (&a,&b);   // rez:a-T_ST, b-ml
                     }
                     j = (int32_t)(gcoden(p) + b + peren);
                     peren = 0;
@@ -531,8 +530,6 @@ static void oper(uint32_t o, uint32_t prn)
             a = gcoden(Xn);
             const uint32_t a1 = gcoden(Xn->next);
             b = gcoden(Yn);
-            /*printf("\na=%ld_%ld b=%ld b1=%ld",a,a1,
-                                b,(uint32_t)gcoden(Yn->next));*/
             if (a == 0 && a1 < b)
                 c = 0;
             else
@@ -548,15 +545,14 @@ static void oper(uint32_t o, uint32_t prn)
                     a = a * 128 + (a1 >> 17);
                     c = a / b << 17;
                     b1 = a1 >> 10;
-                    a = (a % b * 128) + (/*(a1/1024)*/ b1 & 0x7F);
+                    a = (a % b * 128) + (b1 & 0x7F);
                     c += a / b * 1024;
                     b1 = a1 >> 3;
-                    a = a % b * 128 + (/*(a1/8)*/ b1 & 0x7F);
+                    a = a % b * 128 + (b1 & 0x7F);
                     c += a / b * 8;
                     a = a % b * 8 + (a1 & 7);
                     c += a / b;
                 }
-                // printf("\nc=%ld oct=%ld",c,(uint32_t)(a%b));
                 b1 = gcoden(Yn->next);
                 if (Ydl > 1 && b1 != 0)
                 {
@@ -565,9 +561,6 @@ static void oper(uint32_t o, uint32_t prn)
                     ymn(&x1, &x2);
                     uint32_t y1 = a % b;
                     const uint32_t y2 = gcoden(Xn->next->next);
-                    /*printf("\nBegin: c=%ld ",c);
-                    printf(" x=%lx_%lx (b1*c)",x1,x2);
-                    printf(" y=%lx_%lx (o..a2)",y1,y2);*/
                     i = 0;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
@@ -577,9 +570,6 @@ static void oper(uint32_t o, uint32_t prn)
                         x2 = c;
                         ymn(&x1, &x2);
                         y1 += b;
-                        /*printf("\nc=%lx ",c);
-                        printf(" x=%lx_%lx (b1*c)",x1,x2);
-                        printf(" y=%lx_%lx (o..a2)",y1,y2);*/
                     }
                     if (i == 1)
                         c++; // na wcjakij sluchaj
@@ -609,11 +599,8 @@ static void oper(uint32_t o, uint32_t prn)
                     peren += a;
                 }
                 if (peren != 0)
-                    //{                                // cifra welika
-                    // uint32_t jj=0;  // !!! wremenno !!!
                     do
                     {
-                        // jj++;
                         c -= 1;
                         Xt = x;
                         Yt = Yk;
@@ -631,8 +618,6 @@ static void oper(uint32_t o, uint32_t prn)
                         }
                         peren -= (uint32_t)j;
                     } while (peren != 0);
-                // printf("\nc veliko jj=%ld",jj);
-                //}
             }
             r->tag = TAGN;
             pcoden(r, c);
@@ -655,11 +640,6 @@ static void oper(uint32_t o, uint32_t prn)
                 pcoden(x, b);
             }
         }
-        /*for(i=0,x=Xn; x != Xk->next; x=x->next,i++)
-           printf("\n ostat(%d)=%ld",i,gcoden(x));
-        for(i=0,x=nach; x != r->next; x=x->next,i++)
-           printf("\n chast(%d)=%ld",i,gcoden(x));
-        */
         for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
             ;
         x = x->prev;
