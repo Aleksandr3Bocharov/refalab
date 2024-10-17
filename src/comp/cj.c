@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-15
+// 2024-10-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -386,12 +386,12 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx->p = pp;
     rx->next = NULL;
     rx->le = 8 < ll ? 8 : ll;
-    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
-    {
-        strcpy(rx->e, "DIV_");
-        rx->le = 4;
-    }
-    else
+//    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
+//    {
+//        strcpy(rx->e, "DIV_");
+//        rx->le = 4;
+//    }
+//    else
         strncpy(rx->e, ee, rx->le);
     pp->mode |= '\220';
     n_ext++;
@@ -518,7 +518,6 @@ void jend(void)
                     const char oper_div[] = "di_";
                     const char oper_rp[] = "r_";
                     const char oper_ptr[] = "pt_";
-                    // debug printf ("%s\n",qx->e) ;
                     if (strncmp(qx->e, "ADD", qx->le) == 0)
                         for (size_t i = 0; i < qx->le; i++)
                             *(qx->e + i) = oper_add[i];
