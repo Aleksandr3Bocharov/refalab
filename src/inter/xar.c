@@ -1,13 +1,13 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-15
+// 2024-10-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
 //              Multi-digits MO:
-//       add, sub, mul, div, dr, nrel
-//       addn, subn, muln, divn, drn,
+//       add, sub, mul, dr, div
+//       addn, subn, muln, drn, divn, nrel
 //------------------------------------------
 
 #include <stdio.h>
@@ -67,15 +67,15 @@ void (*dr_1)(void) = dr_;
 G_L_B char dr = '\122';
 char dr_0[] = {Z2 'D', 'R', '\002'};
 
-static void divv_(void) { oper(Odr, 2); }
+static void div_(void) { oper(Odr, 2); }
 
 #ifdef UNIX
-void (*div_1)(void) = divv_;
-G_L_B char div_ = '\122';
+void (*div_1)(void) = div_;
+G_L_B char di_ = '\122';
 char div_0[] = {Z3 'D', 'I', '_', '\003'};
 #else
-void (*div_1)(void) = divv_;
-G_L_B char div_ = '\122';
+void (*div_1)(void) = div_;
+G_L_B char div = '\122';
 char div_0[] = {Z3 'D', 'I', 'V', '\003'};
 #endif
 
