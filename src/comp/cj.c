@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-17
+// 2024-10-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -386,13 +386,13 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx->p = pp;
     rx->next = NULL;
     rx->le = 8 < ll ? 8 : ll;
-//    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
-//    {
-//        strcpy(rx->e, "DIV_");
-//        rx->le = 4;
-//    }
-//    else
-        strncpy(rx->e, ee, rx->le);
+    //    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
+    //    {
+    //        strcpy(rx->e, "DIV_");
+    //        rx->le = 4;
+    //    }
+    //    else
+    strncpy(rx->e, ee, rx->le);
     pp->mode |= '\220';
     n_ext++;
     pp->info.infon = n_ext;
@@ -491,11 +491,11 @@ void jend(void)
                         fputs("\t.long\t", syslin);
                     else
                         fputs("\t.quad\t", syslin);
-#else // Windows - with underlining _
+#else // Windows - with underlining _ in x86
                     if (LBLL == 4)
                         fputs("\t.long\t_", syslin);
                     else
-                        fputs("\t.quad\t_", syslin);
+                        fputs("\t.quad\t", syslin);
 #endif
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)
@@ -553,23 +553,27 @@ void jend(void)
 //
 #ifdef UNIX
             // begin name without underlining _
-            fputs("\t.extern\t", syslin); 
-#else                                     // Windows
-            fputs("\t.extern\t_", syslin); 
+            fputs("\t.extern\t", syslin);
+#else // Windows
+            if (LBLL == 4)
+                fputs("\t.extern\t_", syslin);
+            else
+                fputs("\t.extern\t", syslin);
 #endif
             for (size_t i = 0; i < qx->le; i++)
                 fputc(tolower(*(qx->e + i)), syslin);
             fputs(":byte\n", syslin);
             qx = qx->next;
         } // while
-        fputs(".data\n", syslin); 
+        fputs(".data\n", syslin);
         // entry label generating
         q = first_ent->next;
         while (q != NULL)
         {
 #ifndef UNIX
-            // begin name with underlining _
-            fputc('_', syslin);
+            // begin name with underlining _ in x86
+            if (LBLL == 4)
+                fputc('_', syslin);
 #endif
             for (size_t i = 0; i < q->le; i++)
                 // translate name to lower case
@@ -579,10 +583,12 @@ void jend(void)
                 pp = pp->info.infop;
 #ifdef UNIX
             // begin name without underlining _
-
             sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t", nommod, pp->info.infon);
 #else // Windows
-            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_", nommod, pp->info.infon);
+            if (LBLL == 4)
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_", nommod, pp->info.infon);
+            else
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t", nommod, pp->info.infon);
 #endif
             fputs(bufs, syslin);
             for (size_t i = 0; i < q->le; i++)
