@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "refal.def"
 #include "cj.h"
 #include "cerr.h"
