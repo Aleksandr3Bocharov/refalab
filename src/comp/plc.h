@@ -11,6 +11,8 @@
 #ifndef PLC_H
 #define PLC_H
 
+#include <stdint.h>
+
 extern int32_t index_x(const char *s, const char *t);
 
 #endif
