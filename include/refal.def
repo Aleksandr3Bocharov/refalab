@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-18
+// 2024-10-19
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFAL.DEF -----------------
@@ -140,9 +140,7 @@ typedef struct spcs
     uint8_t *svpc;
 } T_SPCS;
 
-//extern bool cmpr(size_t n, const uint8_t *p1, const uint8_t *p2);
 extern void link(T_LINKCB *x, T_LINKCB *y);
-//extern void move(size_t n, const uint8_t *pf, uint8_t *pt);
 extern bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);
 
 extern void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
