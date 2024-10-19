@@ -219,7 +219,7 @@ static void GET_time(void)
 {
     timespec t1;
     timespec_get(&t1, TIME_UTC);
-    int32_t in = t1.tv_nsec - t0.tv_nsec;
+    int32_t in = (int32_t)(t1.tv_nsec - t0.tv_nsec);
     uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
     if (in < 0)
     {
