@@ -269,7 +269,7 @@ static void sfrd2(void)
     } // while
 } // sfrd2
 
-void jstart()
+void jstart(void)
 {
     delta = 0;
     sfop_w("sysut1.rf", &sysut1);
