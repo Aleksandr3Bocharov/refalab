@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <time.h>
 #include <unistd.h>
 #include "refal.def"
 #include "refal.h"
