@@ -1,7 +1,7 @@
 Сборка РефалАБ в Windows 
 --------------------------------------
 
-[Mingw-W64](https://winlibs.com/) (UCRT Runtime gcc 14.2.0 или позже (with POSIX threads) Win32) требуется.
+[Mingw-W64](https://winlibs.com/) (UCRT Runtime Clang 18.1.8 или позже (with POSIX threads)) требуется.
 
 Распакуйте дистрибутив в любую директорию X.
 
