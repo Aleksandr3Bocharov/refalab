@@ -30,80 +30,80 @@ static void oper(uint32_t o, uint32_t prn);
 static void add_(void) { oper(Oadd, 0); }
 
 #ifdef UNIX
-void (*add_1)(void) = add_;
-G_L_B char ad_ = '\122';
 char add_0[] = {Z3 'A', 'D', '_', '\003'};
-#else
+G_L_B char ad_ = '\122';
 void (*add_1)(void) = add_;
-G_L_B char add = '\122';
+#else
 char add_0[] = {Z3 'A', 'D', 'D', '\003'};
+G_L_B char add = '\122';
+void (*add_1)(void) = add_;
 #endif
 
 static void sub_(void) { oper(Osub, 0); }
 
 #ifdef UNIX
-void (*sub_1)(void) = sub_;
-G_L_B char su_ = '\122';
 char sub_0[] = {Z3 'S', 'U', '_', '\003'};
-#else
+G_L_B char su_ = '\122';
 void (*sub_1)(void) = sub_;
-G_L_B char sub = '\122';
+#else
 char sub_0[] = {Z3 'S', 'U', 'B', '\003'};
+G_L_B char sub = '\122';
+void (*sub_1)(void) = sub_;
 #endif
 
 static void mul_(void) { oper(Omul, 0); }
 
 #ifdef UNIX
-void (*mul_1)(void) = mul_;
-G_L_B char mu_ = '\122';
 char mul_0[] = {Z3 'M', 'U', '_', '\003'};
-#else
+G_L_B char mu_ = '\122';
 void (*mul_1)(void) = mul_;
-G_L_B char mul = '\122';
+#else
 char mul_0[] = {Z3 'M', 'U', 'L', '\003'};
+G_L_B char mul = '\122';
+void (*mul_1)(void) = mul_;
 #endif
 
 static void dr_(void) { oper(Odr, 0); }
-void (*dr_1)(void) = dr_;
-G_L_B char dr = '\122';
 char dr_0[] = {Z2 'D', 'R', '\002'};
+G_L_B char dr = '\122';
+void (*dr_1)(void) = dr_;
 
 static void div_(void) { oper(Odr, 2); }
 
 #ifdef UNIX
-void (*div_1)(void) = div_;
-G_L_B char di_ = '\122';
 char div_0[] = {Z3 'D', 'I', '_', '\003'};
-#else
+G_L_B char di_ = '\122';
 void (*div_1)(void) = div_;
-G_L_B char div = '\122';
+#else
 char div_0[] = {Z3 'D', 'I', 'V', '\003'};
+G_L_B char div = '\122';
+void (*div_1)(void) = div_;
 #endif
 
 static void addn_(void) { oper(Oadd, 1); }
-void (*addn_1)(void) = addn_;
-G_L_B char addn = '\122';
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', '\004'};
+G_L_B char addn = '\122';
+void (*addn_1)(void) = addn_;
 
 static void subn_(void) { oper(Osub, 1); }
-void (*subn_1)(void) = subn_;
-G_L_B char subn = '\122';
 char subn_0[] = {Z4 'S', 'U', 'B', 'N', '\004'};
+G_L_B char subn = '\122';
+void (*subn_1)(void) = subn_;
 
 static void muln_(void) { oper(Omul, 1); }
-void (*muln_1)(void) = muln_;
-G_L_B char muln = '\122';
 char muln_0[] = {Z4 'M', 'U', 'L', 'N', '\004'};
+G_L_B char muln = '\122';
+void (*muln_1)(void) = muln_;
 
 static void drn_(void) { oper(Odr, 1); }
-void (*drn_1)(void) = drn_;
-G_L_B char drn = '\122';
 char drn_0[] = {Z3 'D', 'R', 'N', '\003'};
+G_L_B char drn = '\122';
+void (*drn_1)(void) = drn_;
 
 static void divn_(void) { oper(Odr, 3); }
-void (*divn_1)(void) = divn_;
-G_L_B char divn = '\122';
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', '\004'};
+G_L_B char divn = '\122';
+void (*divn_1)(void) = divn_;
 
 static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static size_t dl, Xdl, Ydl;
@@ -789,8 +789,8 @@ static void nrel_(void)
     rftpl(refal.prevr, refal.preva->prev, refal.nexta);
     return;
 }
-void (*nrel_1)(void) = nrel_;
-G_L_B char nrel = '\122';
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', '\004'};
+G_L_B char nrel = '\122';
+void (*nrel_1)(void) = nrel_;
 
 //-------------------- end of file  XAR.C ----------------

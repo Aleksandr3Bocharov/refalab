@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-05
+// 2024-10-19
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- XCF.C ---------------
@@ -56,9 +56,9 @@ static void ftochar_(void)
     }
     return;
 }
-void (*ftochar_1)(void) = ftochar_;
-G_L_B char ftochar = '\122';
 char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', '\007'};
+G_L_B char ftochar = '\122';
+void (*ftochar_1)(void) = ftochar_;
 
 static void functab_(void)
 {
@@ -81,9 +81,9 @@ static void functab_(void)
     func_n++;
     return;
 }
-void (*functab_1)(void) = functab_;
-G_L_B char functab = '\122';
 char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', '\007'};
+G_L_B char functab = '\122';
+void (*functab_1)(void) = functab_;
 
 static void chartof_(void)
 {
@@ -154,8 +154,8 @@ static void chartof_(void)
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-void (*chartof_1)(void) = chartof_;
-G_L_B char chartof = '\122';
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', '\007'};
+G_L_B char chartof = '\122';
+void (*chartof_1)(void) = chartof_;
 
 //------------------ end of file  XCF.C ----------------

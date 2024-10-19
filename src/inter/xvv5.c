@@ -79,9 +79,9 @@ static void open_(void)
    refal.upshot = 2;
    return;
 }
-void (*open_1)(void) = open_;
-G_L_B char xopen = '\122';
 char open_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
+G_L_B char xopen = '\122';
+void (*open_1)(void) = open_;
 
 static void close_(void)
 {
@@ -116,9 +116,9 @@ static void close_(void)
    refal.upshot = 2;
    return;
 }
-void (*close_1)(void) = close_;
-G_L_B char xclose = '\122';
 char close_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
+G_L_B char xclose = '\122';
+void (*close_1)(void) = close_;
 
 static void get_(void)
 {
@@ -170,9 +170,9 @@ static void get_(void)
    refal.upshot = 2;
    return;
 }
-void (*get_1)(void) = get_;
-G_L_B char xget = '\122';
 char get_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
+G_L_B char xget = '\122';
+void (*get_1)(void) = get_;
 
 static void put_(void)
 {
@@ -236,8 +236,8 @@ static void put_(void)
    refal.upshot = 2;
    return;
 }
-void (*put_1)(void) = put_;
-G_L_B char xput = '\122';
 char put_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
+G_L_B char xput = '\122';
+void (*put_1)(void) = put_;
 
 //----------  end of file XVV5.C  -----------

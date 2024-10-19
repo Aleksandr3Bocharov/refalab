@@ -538,8 +538,8 @@ static void gcd_(void)
             return;
         }
 }
-void (*gcd_1)(void) = gcd_;
-G_L_B char gcd = '\122';
 char gcd_0[] = {Z3 'G', 'C', 'D', '\003'};
+G_L_B char gcd = '\122';
+void (*gcd_1)(void) = gcd_;
 
 //------------------ end of file  XGCD.C ----------------

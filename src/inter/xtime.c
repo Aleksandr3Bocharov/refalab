@@ -43,9 +43,9 @@ static void rftime_(void)
     }
     return;
 }
-void (*rftime_1)(void) = rftime_;
-G_L_B char rftime = '\122';
 char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
+G_L_B char rftime = '\122';
+void (*rftime_1)(void) = rftime_;
 
 static void rftm_(void)
 {
@@ -93,8 +93,8 @@ static void rftm_(void)
     refal.upshot = 2;
     return;
 }
-void (*rftm_1)(void) = rftm_;
-G_L_B char rftm = '\122';
 char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
+G_L_B char rftm = '\122';
+void (*rftm_1)(void) = rftm_;
 
 //------------------ end of file  XTIME.C ----------------

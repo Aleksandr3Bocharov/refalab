@@ -90,8 +90,8 @@ static void appl_(void)
     free(s_st);
     return;
 }
-void (*appl_1)(void) = appl_;
-G_L_B char apply = '\122';
 char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', '\005'};
+G_L_B char apply = '\122';
+void (*appl_1)(void) = appl_;
 
 //----------  end of file XAPPLY.C  -----------
