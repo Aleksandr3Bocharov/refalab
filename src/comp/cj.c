@@ -387,12 +387,6 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx->p = pp;
     rx->next = NULL;
     rx->le = 8 < ll ? 8 : ll;
-    //    if (strncmp(ee, "DIV", 3) == 0 && rx->le == 3)
-    //    {
-    //        strcpy(rx->e, "DIV_");
-    //        rx->le = 4;
-    //    }
-    //    else
     strncpy(rx->e, ee, rx->le);
     pp->mode |= '\220';
     n_ext++;
@@ -501,44 +495,6 @@ void jend(void)
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)
                         qx = qx->next;
-#ifdef UNIX
-                    // ------- renaming add, sub, mul ... ---------------
-                    /* For GCC under UNIX we have the
-                    following problem. Variable names have not
-                    underscore (_) in begin (as it is in Windows).
-                    That is cause for collision names
-                        add, sub, mul  ...
-                    with corresponding assembler operation.
-                    The solution which we propuse is to rename
-                    on the fly that refal operation to
-                        ad_, su_, mu_ ... accordingly.
-                    */
-                    const char oper_add[] = "ad_";
-                    const char oper_sub[] = "su_";
-                    const char oper_mul[] = "mu_";
-                    const char oper_div[] = "di_";
-                    const char oper_rp[] = "r_";
-                    const char oper_ptr[] = "pt_";
-                    if (strncmp(qx->e, "ADD", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_add[i];
-                    else if (strncmp(qx->e, "SUB", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_sub[i];
-                    else if (strncmp(qx->e, "MUL", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_mul[i];
-                    else if (strncmp(qx->e, "DIV", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_div[i];
-                    else if (strncmp(qx->e, "RP", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_rp[i];
-                    else if (strncmp(qx->e, "PTR", qx->le) == 0)
-                        for (size_t i = 0; i < qx->le; i++)
-                            *(qx->e + i) = oper_ptr[i];
-#endif
-                    // ------- end renaming ---------------
                     for (size_t i = 0; i < qx->le; i++)
                         fputc(tolower(*(qx->e + i)), syslin);
                     fputs("\n", syslin);
