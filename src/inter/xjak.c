@@ -175,16 +175,9 @@ static void ptr_(void)
     rftpl(q, r, refal.nexta);
     return;
 }
-
-#ifdef UNIX
-char ptr_0[] = {Z3 'P', 'T', '_', '\003'};
-G_L_B char pt_ = '\122';
-void (*ptr_1)(void) = ptr_;
-#else
 char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
 G_L_B char ptr = '\122';
 void (*ptr_1)(void) = ptr_;
-#endif
 
 static void wtr_(void)
 {
@@ -274,16 +267,9 @@ static void rp_(void)
     refal.upshot = 2;
     return;
 }
-
-#ifdef UNIX
-char rp_0[] = {Z2 'R', '_', '\002'};
-G_L_B char r_ = '\122';
-void (*rp_1)(void) = rp_;
-#else
 char rp_0[] = {Z2 'R', 'P', '\002'};
 G_L_B char rp = '\122';
 void (*rp_1)(void) = rp_;
-#endif
 
 static void cp_(void)
 {
