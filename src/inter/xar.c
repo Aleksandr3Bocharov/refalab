@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -265,6 +265,7 @@ static void oper(uint32_t o, uint32_t prn)
                 //  X  dlinnee  Y  (ili =)
                 Xn = Xn->prev; //  pripisywaem  0
                 Xn->tag = TAGN;
+                Xn->info.codep = NULL;
                 pcoden(Xn, 0);
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
@@ -296,6 +297,7 @@ static void oper(uint32_t o, uint32_t prn)
                     obmen();   //  menjaem x i y
                 Xn = Xn->prev; //  pripisywaem 0
                 Xn->tag = TAGN;
+                Xn->info.codep = NULL;
                 pcoden(Xn, 0);
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
@@ -339,6 +341,7 @@ static void oper(uint32_t o, uint32_t prn)
         for (x = p; x != r->next; x = x->next)
         {
             x->tag = TAGN;
+            x->info.codep = NULL;
             pcoden(x, 0);
         } //  zanulen rezultat
         if (Xdl < Ydl)
@@ -346,6 +349,7 @@ static void oper(uint32_t o, uint32_t prn)
         //  dobawim 0 k X dlja summir. s perenosom
         Xn = Xn->prev;
         Xn->tag = TAGN;
+        Xn->info.codep = NULL;
         pcoden(Xn, 0);
         T_LINKCB *f;
         uint32_t c;
@@ -451,6 +455,7 @@ static void oper(uint32_t o, uint32_t prn)
             {
                 Xn = Xn->prev;
                 Xn->tag = TAGN;
+                Xn->info.codep = NULL;
                 pcoden(Xn, 0);
             }
             rftpl(refal.prevr, Xn->prev, Xk->next);
@@ -478,6 +483,7 @@ static void oper(uint32_t o, uint32_t prn)
         nach = r;
         Xn = Xn->prev;
         Xn->tag = TAGN;
+        Xn->info.codep = NULL;
         pcoden(Xn, 0);
         Xdl++;
         size_t i;
@@ -485,6 +491,7 @@ static void oper(uint32_t o, uint32_t prn)
             ;
         y = Yn->prev;
         y->tag = TAGN;
+        y->info.codep = NULL;
         pcoden(y, 0);
         size_t n = 0;
         if (Ydl != 0)
@@ -593,6 +600,7 @@ static void oper(uint32_t o, uint32_t prn)
                     } while (peren != 0);
             }
             r->tag = TAGN;
+            r->info.codep = NULL;
             pcoden(r, c);
             r = r->next;
             x = x->next;
@@ -658,6 +666,7 @@ static void oper(uint32_t o, uint32_t prn)
             return; // dlja n-operacij
         x = refal.preva->next;
         x->tag = TAGN;
+        x->info.codep = NULL;
         pcoden(x, 0);
         rftpl(refal.prevr, x->prev, x->next);
         return;
@@ -700,6 +709,7 @@ static void oper(uint32_t o, uint32_t prn)
     if (b != 0 || (prn & 1) == 0)
     { // div/dr
         x->tag = TAGN;
+        x->info.codep = NULL;
         pcoden(x, b);
         x = x->next;
     }
@@ -715,6 +725,7 @@ static void oper(uint32_t o, uint32_t prn)
     if (a != 0 || (prn & 1) == 0)
     { // div/dr
         y->tag = TAGN;
+        y->info.codep = NULL;
         pcoden(y, a);
         y = y->next;
     }

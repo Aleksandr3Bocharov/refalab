@@ -123,11 +123,13 @@ static void numb_(void)
     }
     uint32_t l = (uint32_t)atol(str);
     pp->tag = TAGN;
+    pp->info.codep = NULL;
     if (l > 16777215)
     {
         pcoden(pp, l >> 24);
         pp = pp->next;
         pp->tag = TAGN;
+        pp->info.codep = NULL;
         l &= 0xffffff;
     }
     pcoden(pp, l);
@@ -298,6 +300,7 @@ static void lengr_(void)
         p = p->next;
     }
     refal.preva->tag = TAGN;
+    refal.preva->info.codep = NULL;
     pcoden(refal.preva, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
@@ -318,6 +321,7 @@ static void lengw_(void)
         p = p->next;
     }
     refal.preva->tag = TAGN;
+    refal.preva->info.codep = NULL;
     pcoden(refal.preva, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;

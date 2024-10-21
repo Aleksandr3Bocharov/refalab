@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -232,11 +232,13 @@ static void gcd_(void)
                 if (v1 != 0)
                 {
                     pr->tag = TAGN;
+                    pr->info.codep = NULL;
                     pcoden(pr, v1);
                     pr = pr->next;
                     A = A & MASKA;
                 }
                 pr->tag = TAGN;
+                pr->info.codep = NULL;
                 pcoden(pr, A);
                 pr = pr->next;
                 rftpl(refal.prevr, refal.preva, pr);
@@ -305,6 +307,7 @@ static void gcd_(void)
             {
                 hd[1] = hd[1]->prev;
                 hd[1]->tag = TAGN;
+                hd[1]->info.codep = NULL;
                 pcoden(hd[1], 0);
                 l[1]++;
             }
@@ -373,6 +376,7 @@ static void gcd_(void)
             //  delenie mnogih  cifr
             hd[0] = hd[0]->prev;
             hd[0]->tag = TAGN;
+            hd[0]->info.codep = NULL;
             pcoden(hd[0], 0);
             l[0]++;
             T_LINKCB *px;
@@ -380,6 +384,7 @@ static void gcd_(void)
                 ;
             T_LINKCB *py = hd[1]->prev;
             py->tag = TAGN;
+            py->info.codep = NULL;
             pcoden(py, 0);
             size_t n = 0;
             int32_t b;
