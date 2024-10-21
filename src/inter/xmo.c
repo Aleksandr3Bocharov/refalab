@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -438,9 +438,9 @@ static void crel_(void)
                     fail = true;
                 break;
             }
-            if (p->info.coden < q->info.coden)
+            if (gcoden(p) < gcoden(q))
                 c = '<';
-            if (p->info.coden > q->info.coden)
+            if (gcoden(p) > gcoden(q))
                 c = '>';
         }
         if (fail)

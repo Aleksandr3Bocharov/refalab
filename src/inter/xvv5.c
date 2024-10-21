@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -36,7 +36,7 @@ static void open_(void)
       uint32_t j;
       if (p->tag != TAGN)
          break;
-      j = p->info.coden;
+      j = gcoden(p);
       p = p->next;
       if (j >= fmax)
          break;
@@ -94,7 +94,7 @@ static void close_(void)
       p = p->next;
       if (p->tag != TAGN)
          break;
-      const uint32_t j = p->info.coden;
+      const uint32_t j = gcoden(p);
       if (j >= fmax)
          break;
       if (c == 'R' || c == 'r')
@@ -128,7 +128,7 @@ static void get_(void)
    {
       if (p->tag != TAGN)
          break;
-      const uint32_t j = p->info.coden;
+      const uint32_t j = gcoden(p);
       if (j >= fmax)
          break;
       f = uniget[j];
@@ -182,7 +182,7 @@ static void put_(void)
    {
       if (p->tag != TAGN)
          break;
-      const uint32_t j = p->info.coden;
+      const uint32_t j = gcoden(p);
       p = p->next;
       if (j >= fmax)
          break;

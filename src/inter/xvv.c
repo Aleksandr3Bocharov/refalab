@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XVV.C ------------
@@ -33,7 +33,7 @@ static void opng_(void)
         jl = 0; // jung zamenila na jl
     else
     {
-        jl = p->info.coden;
+        jl = gcoden(p);
         p = p->next;
     }
     bool heot1 = false;
@@ -91,7 +91,7 @@ static void opnp_(void)
         jl = 0;
     else
     {
-        jl = p->info.coden;
+        jl = gcoden(p);
         p = p->next;
     }
     bool heot1 = false;
@@ -138,7 +138,7 @@ static void clsg_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-        jl = p->info.coden;
+        jl = gcoden(p);
     if (jl >= fmax)
     {
         printf("\nclsget: format error");
@@ -160,7 +160,7 @@ static void clsp_(void)
     if (p->tag != TAGN)
         jl = 0;
     else
-        jl = p->info.coden;
+        jl = gcoden(p);
     if (jl >= fmax)
     {
         printf("\nclsput: format error");
@@ -186,7 +186,7 @@ static void libg_(void)
         new = true;
     }
     else
-        jl = p->info.coden;
+        jl = gcoden(p);
     if (jl >= fmax)
     {
         printf("\nlibget: format error");
@@ -265,7 +265,7 @@ static void libp_(void)
         jl = 0;
     else
     {
-        jl = p->info.coden;
+        jl = gcoden(p);
         p = p->next;
     }
     do
