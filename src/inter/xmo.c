@@ -220,7 +220,7 @@ static void first_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    const uint32_t n = gcoden(pn); // eg
+    const uint32_t n = gcoden(pn);
     T_LINKCB *p = pn;
     for (size_t k = 1; k <= n; k++)
     {
@@ -257,7 +257,7 @@ static void last_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    const uint32_t n = gcoden(pn); // eg
+    const uint32_t n = gcoden(pn);
     T_LINKCB *p = refal.nexta;
     for (size_t k = 1; k <= n; k++)
     {
