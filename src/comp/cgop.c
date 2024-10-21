@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------------file----CGOP.C--------------------
@@ -81,7 +81,7 @@ void gops(char k, const T_LINKTI *code)
 /*
 void ghw(uint16_t h)
 {
-    const T_TAG *po = (T_TAG *)&h; //  eg
+    const T_TAG *po = (T_TAG *)&h;
     jbyte(po->b1);
     jbyte(po->b2);
     return;

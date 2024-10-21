@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-15
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -38,19 +38,19 @@ static void fnhead(const char *idp, size_t lid);
 static void p504(const char *idp, size_t lid)
 {
     pchosj("504 label", idp, lid, " is already defined");
-    return; // eg
+    return;
 }
 
 static void p505(const char *idp, size_t lid)
 {
     pchosj("505 label", idp, lid, " is yet not defined");
-    return; // eg
+    return;
 }
 
 static void p500(void)
 {
     pchosh("500 no statement label");
-    return; // eg
+    return;
 }
 
 static T_I_LBL *alloc_lbl(void)
@@ -116,7 +116,7 @@ void fndef(const char *idp, size_t lid)
         next_stm = alloc_lbl();
         gopl(n_sjump, (uint8_t *)next_stm);
     };
-    return; //  eg
+    return;
 }
 
 static void func_end(void)
@@ -191,7 +191,7 @@ void sentry(const char *idp, size_t lidp, const char *ide, size_t lide)
 {
     T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
-    return; // eg
+    return;
 }
 
 void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
@@ -206,7 +206,7 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
         p->def = scn_.nomkar;
         jextrn(p, ide, lide);
     }
-    return; //  eg
+    return;
 }
 
 T_U *fnref(const char *idp, size_t lid)
@@ -241,7 +241,7 @@ void spdef(const char *idp, size_t lid)
             jlabel(p);
         }
     }
-    return; //  eg
+    return;
 }
 
 void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
@@ -269,7 +269,7 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     }
     else
         pchosh("501 both labels already defined ");
-    return; // eg
+    return;
 }
 
 static void fnhead(const char *idp, size_t lid)
@@ -279,7 +279,7 @@ static void fnhead(const char *idp, size_t lid)
         size_t k0, l0, ll;
         if (options.extname)
         {
-            const char *idpm = scn_.modname_var; // eg
+            const char *idpm = scn_.modname_var;
             l0 = scn_.modnmlen;
             for (k0 = 0; k0 < l0 && k0 < 8; k0++)
                 jbyte(*(idpm + k0));
@@ -295,7 +295,7 @@ static void fnhead(const char *idp, size_t lid)
     }
     else
         jbyte('\0');
-    return; // eg
+    return;
 }
 
 static void check_id(const T_U *pp) // check identifier attributes on confirmness
@@ -325,7 +325,7 @@ void s_init(void)
     n_lbl = 15;
     pfail = NULL;
     next_stm = NULL;
-    return; // eg
+    return;
 }
 
 void s_term(void)
@@ -341,7 +341,7 @@ void s_term(void)
         p = p1;
     }
     luterm();
-    return; // eg
+    return;
 }
 
 //----------  end of file CS.C  -------------------
