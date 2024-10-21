@@ -366,7 +366,7 @@ static void multe_(void)
         {
             q = q->next;
             q->tag = p->tag;
-            pcoden(q, gcoden(p));
+            q->info.codep = p->info.codep;
         }
     }
     return;
@@ -442,9 +442,9 @@ static void crel_(void)
                     fail = true;
                 break;
             }
-            if (gcoden(p) < gcoden(q))
+            if ((size_t)p->info.codep < (size_t)q->info.codep)
                 c = '<';
-            if (gcoden(p) > gcoden(q))
+            if ((size_t)p->info.codep > (size_t)q->info.codep)
                 c = '>';
         }
         if (fail)
