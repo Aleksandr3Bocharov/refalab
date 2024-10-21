@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -1607,6 +1607,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
         if (class[m] == 'D')
         {
             code->tag = TAGN;
+            code->info.codef = NULL;
             code->info.coden = 0;
             uint32_t k = (uint32_t)(c[m] - '0');
             bool csmbend = false;
@@ -1616,6 +1617,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
                 if (class[m] != 'D')
                 {
                     code->tag = TAGN;
+                    code->info.codef = NULL;
                     code->info.coden = k;
                     csmbend = true;
                     break;
