@@ -11,7 +11,7 @@ rem set_env.bat
 rem	Set Environments Variables for RefalAB
 rem *******************************************************************
 
-setx REFALABBIN %~dp0\bin
-setx REFALABLIB %~dp0\lib
-setx REFALABINCLUDE %~dp0\include
+setx REFALABBIN %~dp0bin
+setx REFALABLIB %~dp0lib
+setx REFALABINCLUDE %~dp0include
 setx REFALABCFLAGS "-pipe -Wall -O2"
