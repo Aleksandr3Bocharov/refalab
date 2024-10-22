@@ -14,3 +14,4 @@ rem *******************************************************************
 setx REFALABBIN %~dp0\bin
 setx REFALABLIB %~dp0\lib
 setx REFALABINCLUDE %~dp0\include
+setx REFALABCFLAGS "-pipe -Wall -O2"
