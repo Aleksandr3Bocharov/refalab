@@ -3,7 +3,7 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-10-19
+# 2024-10-22
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 # *******************************************************************
@@ -15,5 +15,5 @@
 
 bin/RefalAB $1 > $1.log
 as -o $1.o $1.asm >> $1.log
-clang -o $1 lib/rfdbg.o -Wl,-L./lib $1.o -Wl,-lRefalAB_dbg >> $1.log
+clang -o $1 lib/rfdbg.o -Llib $1.o -lRefalAB_dbg >> $1.log
 $1
