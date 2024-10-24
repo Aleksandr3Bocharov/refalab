@@ -36,8 +36,11 @@ Clang 18.1.8 или позже требуется.
 
 Чтобы сделать их постоянными, необходимо добавить в файл .bashrc директории $HOME строки:
 	export REFALABBIN={RefalAB}/bin
+ 
 	export REFALABLIB={RefalAB}/lib
+ 
 	export REFALABINCLUDE={RefalAB}/include
+ 
 	export REFALABCFLAGS="-pipe -Wall -O2"
 
 Начало работы
