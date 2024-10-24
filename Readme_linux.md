@@ -22,15 +22,23 @@ Clang 18.1.8 или позже требуется.
 
 Можно установить переменные окружения РефалАБ для облегчения компиляции программ на языке РефалАБ.
 
-Для этого войдите в X\RefalAB и используйте скрипт set_env.
+Для этого войдите в X/RefalAB и используйте скрипт set_env.
 
 	source ./set_env
 
- После этого будут созданны следующие переменные окружения ({RefalAB} - путь к папке RefalAB):
-1. $REFALABBIN={RefalAB}\bin.
-2. $REFALABLIB={RefalAB}\lib.
-3. $REFALABINCLUDE={RefalAB}\include.
+После этого будут созданны следующие переменные окружения ({RefalAB} - путь к папке RefalAB):
+1. $REFALABBIN={RefalAB}/bin.
+2. $REFALABLIB={RefalAB}/lib.
+3. $REFALABINCLUDE={RefalAB}/include.
 4. $REFALABCFLAGS="-pipe -Wall -O2".
+
+Эти переменные можно использовать в текущей оболочке и во всех процессах, запускаемых из текущей оболочки.
+
+Чтобы сделать их постоянными, необходимо добавить в файл .bashrc директории $HOME строки:
+	export REFALABBIN={RefalAB}/bin
+	export REFALABLIB={RefalAB}/lib
+	export REFALABINCLUDE={RefalAB}/include
+	export REFALABCFLAGS="-pipe -Wall -O2"
 
 Начало работы
 ------------------------
