@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-24
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XTIME.C ------------
@@ -79,7 +79,7 @@ static void rftm_(void)
                 p = refal.prevr;
                 if (!slins(p, strlen(s)))
                     return;
-                for (size_t i = 0; s[i] != 0; i++)
+                for (size_t i = 0; s[i] != '\0'; i++)
                 {
                     p = p->next;
                     p->tag = TAGO;
