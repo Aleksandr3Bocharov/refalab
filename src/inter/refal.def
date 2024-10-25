@@ -73,7 +73,11 @@ typedef struct refal_
     // uint16_t stmnmb;
     // uint16_t nostm;
     bool tmmode;
-    uint32_t tmintv;
+    struct
+    {
+        uint32_t nsec;
+        uint32_t sec;
+    } tmintv;
 } T_REFAL;
 
 #define Z_0 0

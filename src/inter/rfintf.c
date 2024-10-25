@@ -161,7 +161,8 @@ void rfinit(void)
     // p->nostm = 0;
     // p->stmnmb = 0;
     p->tmmode = true;
-    p->tmintv = 0;
+    p->tmintv.nsec = 0;
+    p->tmintv.sec = 0;
     return;
 }
 
@@ -303,6 +304,14 @@ void rfexec(void (*func)(void))
             {
                 printf("\nBurried:");
                 rfpexm("         ", s_st.store, s_st.store);
+            }
+            if (refal.tmmode)
+            {
+                const uint32_t im = refal.tmintv / 60;
+                const uint32_t is = refal.tmintv % 60;
+                char s[25];
+                sprintf(s, "%02u:%02u.%09d", im, is, 0);
+                printf("\nElapsed time = %s", s);
             }
             rfcanc(&s_st);
             rftermm();
