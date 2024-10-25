@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-15
+// 2024-10-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN1.C -------------------
@@ -292,7 +292,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // state remove from
         case EXIT:
             if (tmmod)
-                tmstop = time(0);
+                tmstop = time(NULL);
             ast->dot = quasik.info.codep;
             // restore REFAL-block
             refal.upshot = savecr->upshot_;
@@ -304,10 +304,7 @@ void rfrun(T_ST *ast) // adress of current state table
             refal.tmmode = tmmod;
             free(savecr);
             if (tmmod)
-                //{
-                // printf("\nn=%ld k=%ld",tmstart,tmstop);
                 refal.tmintv = 0;
-            //}
             return;
         case NEXTOP:
             opc = *vpc;
