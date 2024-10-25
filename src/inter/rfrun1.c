@@ -292,7 +292,10 @@ void rfrun(T_ST *ast) // adress of current state table
             // state remove from
         case EXIT:
             if (tmmod)
+            {
                 tmstop = time(NULL);
+                refal.tmintv += (uint32_t)difftime(tmstop, tmstart);
+            }
             ast->dot = quasik.info.codep;
             // restore REFAL-block
             refal.upshot = savecr->upshot_;
@@ -303,8 +306,6 @@ void rfrun(T_ST *ast) // adress of current state table
             refal.currst = savecr->currst_;
             refal.tmmode = tmmod;
             free(savecr);
-            if (tmmod)
-                refal.tmintv = 0;
             return;
         case NEXTOP:
             opc = *vpc;
@@ -1498,7 +1499,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     i_state = LACK;
                     lack = true;
                     break;
-                } 
+                }
                 if ((f0->tag & 0001) != TAGO)
                 {
                     if (f0->tag != TAGRB)
