@@ -160,7 +160,7 @@ void rfinit(void)
     phd->info.codep = NULL;
     // p->nostm = 0;
     // p->stmnmb = 0;
-    p->tmmode = false;
+    p->tmmode = true;
     p->tmintv = 0;
     return;
 }
