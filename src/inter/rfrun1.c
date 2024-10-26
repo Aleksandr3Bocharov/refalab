@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-25
+// 2024-10-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN1.C -------------------
@@ -178,9 +178,9 @@ static T_WJS *jsp;   // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
 
-static bool tmmod;     // timer state
-static time_t tmstart; // time at the start
-static time_t tmstop;  // time at the end
+static bool tmmod;         // timer state
+static T_TIMESPEC tmstart; // time at the start
+static T_TIMESPEC tmstop;  // time at the end
 
 // definition of work variables and pointers
 static uint8_t opc;     // current statement code
@@ -221,7 +221,7 @@ void rfrun(T_ST *ast) // adress of current state table
     // adress of free memory list head
     T_LINKCB *flhead = refal.flhead;
     if (tmmod)
-        tmstart = time(NULL);
+        timespec_get(&tmstart, TIME_UTC);
     T_I_STATES i_state = START;
     while (true)
         switch (i_state)
@@ -293,8 +293,21 @@ void rfrun(T_ST *ast) // adress of current state table
         case EXIT:
             if (tmmod)
             {
-                tmstop = time(NULL);
-                refal.tmintv += (uint32_t)difftime(tmstop, tmstart);
+                timespec_get(&tmstop, TIME_UTC);
+                int32_t in = (int32_t)(tmstop.tv_nsec - tmstart.tv_nsec);
+                uint32_t is = (uint32_t)difftime(tmstop.tv_sec, tmstart.tv_sec);
+                if (in < 0)
+                {
+                    in += 1000000000;
+                    is--;
+                }
+                refal.tmintv.nsec += (uint32_t)in;
+                refal.tmintv.sec += is;
+                if (refal.tmintv.nsec >= 1000000000)
+                {
+                    refal.tmintv.nsec -= 1000000000;
+                    refal.tmintv.sec++;
+                }
             }
             ast->dot = quasik.info.codep;
             // restore REFAL-block
