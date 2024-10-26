@@ -475,6 +475,24 @@ void rfdbg(T_ST *s_st)
             }
             if (nogcl != 0)
                 printf("\nGarbage collection number = %d", nogcl);
+            if (refal.tm.mode)
+            {
+                timespec_get(&refal.tm.stop, TIME_UTC);
+                int32_t in = (int32_t)(refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec);
+                uint32_t is = (uint32_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                if (in < 0)
+                {
+                    in += 1000000000;
+                    is--;
+                }
+                uint32_t im = is / 60;
+                is %= 60;
+                const uint32_t ih = im / 60;
+                im %= 60;
+                char s[30];
+                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
+                printf("\nElapsed time = %s", s);
+            }
             rfcanc(s_st);
             rftermm();
             printf("\n");
@@ -663,6 +681,24 @@ static void dbapp(T_ST *ss_st)
             }
             if (nogcl != 0)
                 printf("\nGarbage collection number = %d", nogcl);
+            if (refal.tm.mode)
+            {
+                timespec_get(&refal.tm.stop, TIME_UTC);
+                int32_t in = (int32_t)(refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec);
+                uint32_t is = (uint32_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                if (in < 0)
+                {
+                    in += 1000000000;
+                    is--;
+                }
+                uint32_t im = is / 60;
+                is %= 60;
+                const uint32_t ih = im / 60;
+                im %= 60;
+                char s[30];
+                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
+                printf("\nElapsed time = %s", s);
+            }
             exit(0);
             return;
         case DB_DO:
