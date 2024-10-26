@@ -307,10 +307,12 @@ void rfexec(void (*func)(void))
             }
             if (refal.tmmode)
             {
-                const uint32_t im = refal.tmintv.sec / 60;
                 const uint32_t is = refal.tmintv.sec % 60;
-                char s[25];
-                sprintf(s, "%02u:%02u.%09d", im, is, refal.tmintv.nsec);
+                uint32_t im = refal.tmintv.sec / 60;
+                const uint32_t ih = im / 60;
+                im %= 60;
+                char s[30];
+                sprintf(s, "%02u:%02u:%02u.%09u", ih, im, is, refal.tmintv.nsec);
                 printf("\nElapsed time = %s", s);
             }
             rfcanc(&s_st);
