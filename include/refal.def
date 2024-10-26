@@ -118,6 +118,8 @@ typedef struct spcs
     uint8_t *svpc;
 } T_SPCS;
 
+extern T_REFAL refal;
+
 extern void rfabe(const char *amsg);
 extern void rfcanc(const T_ST *ast);
 extern char rfcnv(char cm);
@@ -151,8 +153,6 @@ extern void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 extern void (*dba)(T_ST *);
 extern void rfdbg(T_ST *s_st);
-
-extern T_REFAL refal;
 
 #endif
 
