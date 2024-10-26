@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <time.h>
 #include "refal.def"
 #include "rfintf.h"
 #include "rfrun1.h"
@@ -160,9 +161,9 @@ void rfinit(void)
     phd->info.codep = NULL;
     // p->nostm = 0;
     // p->stmnmb = 0;
-    p->tmmode = true;
-    p->tmintv.nsec = 0;
-    p->tmintv.sec = 0;
+    p->tm.mode = true;
+    if (p->tm.mode)
+        timespec_get(&p->tm.start, TIME_UTC);
     return;
 }
 
@@ -305,14 +306,22 @@ void rfexec(void (*func)(void))
                 printf("\nBurried:");
                 rfpexm("         ", s_st.store, s_st.store);
             }
-            if (refal.tmmode)
+            if (refal.tm.mode)
             {
-                const uint32_t is = refal.tmintv.sec % 60;
-                uint32_t im = refal.tmintv.sec / 60;
+                timespec_get(&refal.tm.stop, TIME_UTC);
+                int32_t in = (int32_t)(refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec);
+                uint32_t is = (uint32_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                if (in < 0)
+                {
+                    in += 1000000000;
+                    is--;
+                }
+                uint32_t im = is / 60;
+                is %= 60;
                 const uint32_t ih = im / 60;
                 im %= 60;
                 char s[30];
-                sprintf(s, "%02u:%02u:%02u.%09u", ih, im, is, refal.tmintv.nsec);
+                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
                 printf("\nElapsed time = %s", s);
             }
             rfcanc(&s_st);

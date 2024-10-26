@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <time.h>
 #include "refal.def"
 #include "rfrun1.h"
 #include "rfintf.h"
@@ -178,10 +177,6 @@ static T_WJS *jsp;   // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
 
-static bool tmmod;         // timer state
-static T_TIMESPEC tmstart; // time at the start
-static T_TIMESPEC tmstop;  // time at the end
-
 // definition of work variables and pointers
 static uint8_t opc;     // current statement code
 static uint8_t *vpc;    // virtual program counter
@@ -212,16 +207,12 @@ void rfrun(T_ST *ast) // adress of current state table
     savecr->prevr_ = refal.prevr;
     savecr->nextr_ = refal.nextr;
     savecr->currst_ = refal.currst;
-    tmmod = refal.tmmode;
-    refal.tmmode = false;
     refal.currst = ast;
     ast->state = 4;
     T_LINKCB quasik; // quasi-sign k
     quasik.info.codep = ast->dot;
     // adress of free memory list head
     T_LINKCB *flhead = refal.flhead;
-    if (tmmod)
-        timespec_get(&tmstart, TIME_UTC);
     T_I_STATES i_state = START;
     while (true)
         switch (i_state)
@@ -291,24 +282,6 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // state remove from
         case EXIT:
-            if (tmmod)
-            {
-                timespec_get(&tmstop, TIME_UTC);
-                int32_t in = (int32_t)(tmstop.tv_nsec - tmstart.tv_nsec);
-                uint32_t is = (uint32_t)difftime(tmstop.tv_sec, tmstart.tv_sec);
-                if (in < 0)
-                {
-                    in += 1000000000;
-                    is--;
-                }
-                refal.tmintv.nsec += (uint32_t)in;
-                refal.tmintv.sec += is;
-                if (refal.tmintv.nsec >= 1000000000)
-                {
-                    refal.tmintv.nsec -= 1000000000;
-                    refal.tmintv.sec++;
-                }
-            }
             ast->dot = quasik.info.codep;
             // restore REFAL-block
             refal.upshot = savecr->upshot_;
@@ -317,7 +290,6 @@ void rfrun(T_ST *ast) // adress of current state table
             refal.prevr = savecr->prevr_;
             refal.nextr = savecr->nextr_;
             refal.currst = savecr->currst_;
-            refal.tmmode = tmmod;
             free(savecr);
             return;
         case NEXTOP:
