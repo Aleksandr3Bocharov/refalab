@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-25
+// 2024-10-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -206,8 +206,8 @@ static bool get_id(char id[40], size_t *lid);
 static bool get_idm(char id[8], size_t *lid);
 static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid);
 
-typedef struct timespec timespec;
-static timespec t0;
+typedef struct timespec T_TIMESPEC;
+static T_TIMESPEC t0;
 
 static void SET_time(void)
 {
@@ -217,7 +217,7 @@ static void SET_time(void)
 
 static void GET_time(void)
 {
-    timespec t1;
+    T_TIMESPEC t1;
     timespec_get(&t1, TIME_UTC);
     int32_t in = (int32_t)(t1.tv_nsec - t0.tv_nsec);
     uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
