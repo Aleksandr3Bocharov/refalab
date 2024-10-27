@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -34,7 +34,7 @@ static void unlnk_(void)
     namf[i] = '\0';
     if (unlink(namf) == -1)
     {
-        printf("\nUnlnk: error");
+        printf("\nUnlnk: error\n");
         exit(1);
     }
     return;
@@ -81,7 +81,7 @@ static void renam_(void)
         namt[i] = '\0';
         if (rename(namf, namt) == -1)
         {
-            printf("\nRenam: error");
+            printf("\nRenam: error\n");
             exit(1);
         }
         return;

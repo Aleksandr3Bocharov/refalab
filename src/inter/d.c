@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-25
+// 2024-10-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -699,6 +699,7 @@ static void dbapp(T_ST *ss_st)
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
                 printf("\nElapsed time = %s", s);
             }
+            printf("\n");
             exit(0);
             return;
         case DB_DO:
@@ -904,7 +905,7 @@ static bool get_det(void)
     }
     if (ab)
     {
-        printf("\nREFAL debugger: no storage");
+        printf("\nREFAL debugger: no storage\n");
         exit(1);
         return false;
     }

@@ -28,7 +28,7 @@ static void rflist(T_LINKCB *par, size_t n);
 
 void rfabe(const char *amsg)
 {
-    printf("\n *** refal-abend *** %s", amsg);
+    printf("\n *** refal-abend *** %s\n", amsg);
     exit(1);
     return;
 }
@@ -326,7 +326,6 @@ void rfexec(void (*func)(void))
             }
             rfcanc(&s_st);
             rftermm();
-            printf("\n");
             return;
         }
 }
