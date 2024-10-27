@@ -21,6 +21,11 @@ static T_TIMESPEC t0, t1;
 
 static void rftime_(void)
 {
+    if (refal.preva->next != refal.nexta)
+    {
+        refal.upshot = 2;
+        return;
+    }
     setlocale(LC_TIME, setlocale(LC_TIME, ""));
     const time_t tim = time(NULL);
     char s[70];
@@ -30,10 +35,7 @@ static void rftime_(void)
     while (*c >= ' ')
     {
         if (!slins(p, 1))
-        {
-            refal.upshot = 2;
             return;
-        }
         p = p->next;
         p->tag = TAGO;
         p->info.codep = NULL;
@@ -50,7 +52,7 @@ static void rftm_(void)
 {
     T_LINKCB *p = refal.preva->next;
     if (p != refal.nexta)
-        if (p->tag == TAGO)
+        if (p->tag == TAGO && p->next == refal.nexta)
         {
             const char c = p->info.infoc;
             switch (c)
