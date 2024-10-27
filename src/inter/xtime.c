@@ -26,7 +26,7 @@ static void rftime_(void)
         refal.upshot = 2;
         return;
     }
-    setlocale(LC_TIME, setlocale(LC_TIME, ""));
+    setlocale(LC_TIME, "");
     const time_t tim = time(NULL);
     char s[70];
     strftime(s, sizeof(s), "%c", localtime(&tim));
