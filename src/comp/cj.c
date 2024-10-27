@@ -101,14 +101,14 @@ static void sfop_w(const char *s, BU *b)
     {
         free(b->nam);
 #ifdef mdebug
-        printf("\nfree(cj) b->nam=%p", (void *)b->nam);
+        printf("free(cj) b->nam=%p\n", (void *)b->nam);
 #endif
     }
     b->nam = (char *)malloc(strlen(s) + 1);
     if (b->nam == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): b->nam=%p", (void *)b->nam);
+    printf("malloc(cj): b->nam=%p\n", (void *)b->nam);
 #endif
     strcpy(b->nam, s);
     size_t un = 0;
@@ -135,7 +135,7 @@ static void sfop_w(const char *s, BU *b)
             if (b->buf != NULL)
             {
 #ifdef mdebug
-                printf("\nmalloc(cj): b->buf=%p un=%zu", (void *)b->buf, un);
+                printf("malloc(cj): b->buf=%p un=%zu\n", (void *)b->buf, un);
 #endif
                 break;
             }
@@ -199,8 +199,8 @@ static void sfclr(BU *b)
     free(b->nam);
     free(b->buf);
 #ifdef mdebug
-    printf("\nfree(sfclr) b->nam(c 0)=%p", (void *)b->nam);
-    printf("\n            b->buf(c 0)=%p", (void *)b->buf);
+    printf("free(sfclr) b->nam(c 0)=%p\n", (void *)b->nam);
+    printf("            b->buf(c 0)=%p\n", (void *)b->buf);
 #endif
     b->nam = NULL;
     b->buf = NULL;
@@ -278,7 +278,7 @@ void jstart(void)
     if (first_ent == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): first_ent=%p", (void *)first_ent);
+    printf("malloc(cj): first_ent=%p\n", (void *)first_ent);
 #endif
     last_ent = first_ent;
     first_ent->next = NULL;
@@ -286,7 +286,7 @@ void jstart(void)
     if (first_ext == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): first_ext=%p", (void *)first_ext);
+    printf("malloc(cj): first_ext=%p\n", (void *)first_ext);
 #endif
     last_ext = first_ext;
     first_ext->next = NULL;
@@ -360,7 +360,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     if (r == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): r(ent)=%p", (void *)r);
+    printf("malloc(cj): r(ent)=%p\n", (void *)r);
 #endif
     last_ent->next = r;
     last_ent = r;
@@ -380,7 +380,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     if (rx == NULL)
         oshex();
 #ifdef mdebug
-    printf("\nmalloc(cj): rx(ext)=%p", (void *)rx);
+    printf("malloc(cj): rx(ext)=%p\n", (void *)rx);
 #endif
     last_ext->next = rx;
     last_ext = rx;
@@ -577,7 +577,7 @@ void jend(void)
     {
         r = q->next;
 #ifdef mdebug
-        printf("\nfree(cj) q=%p", (void *)q);
+        printf("free(cj) q=%p\n", (void *)q);
 #endif
         free(q);
         q = r;
@@ -587,7 +587,7 @@ void jend(void)
     {
         rx = qx->next;
 #ifdef mdebug
-        printf("\nfree(cj) qx=%p", (void *)qx);
+        printf("free(cj) qx=%p\n", (void *)qx);
 #endif
         free(qx);
         qx = rx;
