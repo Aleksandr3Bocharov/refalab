@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- XCF.C ---------------
@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdint.h>
 #include "refal.def"
 #include "rfintf.h"
@@ -112,7 +113,8 @@ static void chartof_(void)
     p = refal.preva->next;
     char *u = (char *)malloc(i + 2);
     for (i = 0; p != refal.nexta; i++, p = p->next)
-        u[i] = rfcnv(p->info.infoc);
+        //u[i] = rfcnv(p->info.infoc);
+        u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
     ++i;
     u[i] = 2; // HEOT
