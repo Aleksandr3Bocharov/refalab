@@ -135,15 +135,6 @@ bool linskd(T_ST *ast, void (*f)(void))
     return true;
 }
 
-/*char rfcnv(char cm)
-{
-    const int j = cm;
-    if (j > 96 && j < 123)
-        return cm - '\40';
-    else
-        return cm; // perewod  a..z w A..Z
-}*/
-
 void rfinit(void)
 {
     rf_init = false;
@@ -359,7 +350,6 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             const uint8_t l = (uint8_t)*f;
             f -= l;
             for (size_t k = 1; k <= l; k++, f++)
-                // putchar(rfcnv(*f));
                 putchar(toupper(*f));
             putchar('\'');
         }
@@ -416,7 +406,6 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
                 const uint8_t l = (uint8_t)*f;
                 f -= l;
                 for (size_t k = 1; k <= l; k++, f++)
-                    // putchar(rfcnv(*f));
                     putchar(toupper(*f));
                 putchar('/');
             }

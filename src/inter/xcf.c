@@ -113,7 +113,6 @@ static void chartof_(void)
     p = refal.preva->next;
     char *u = (char *)malloc(i + 2);
     for (i = 0; p != refal.nexta; i++, p = p->next)
-        //u[i] = rfcnv(p->info.infoc);
         u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
     ++i;

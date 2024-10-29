@@ -850,7 +850,6 @@ static void getpf(const T_ST *ss_st)
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
-            //buff_id[i] = rfcnv((char)*(p_id + i));
             buff_id[i] = (char)toupper(*(p_id + i));
         buff_id[id_l] = '\0';
     }
@@ -876,7 +875,6 @@ static void get_arg(void)
 {
     for (l_arg = 0;; l_arg++)
     {
-        //*(arg + l_arg) = rfcnv(*(arg + l_arg));
         *(arg + l_arg) = (char)toupper(*(arg + l_arg));
         if (*(arg + l_arg) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
             break;
