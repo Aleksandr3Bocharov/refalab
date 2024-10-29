@@ -126,7 +126,6 @@ extern T_REFAL refal;
 
 extern void rfabe(const char *amsg);
 extern void rfcanc(const T_ST *ast);
-//extern char rfcnv(char cm);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(void (*func)(void));
 extern void rfinit(void);
