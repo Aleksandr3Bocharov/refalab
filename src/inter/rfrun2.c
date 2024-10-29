@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-10-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN2.C -----------------
@@ -42,7 +42,7 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
 {
     // spcs-pointer
     T_SPCS *spcsp = pspcsp;
-    uint8_t *spcvpc;                   // virtual specifier counter
+    uint8_t *spcvpc; // virtual specifier counter
     memcpy(&spcvpc, vpc + NMBL, LBLL);
     uint8_t spcopc;
     // positiveness feature of specifier element
@@ -221,10 +221,8 @@ bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
 
 static bool letter(char s)
 {
-    if ((s >= 'A' && s <= 'Z') ||                 // A..Z
-        (s >= 'a' && s <= 'z') ||                 // a..z
-        ((uint8_t)s > 127 && (uint8_t)s < 176) || // �..��..�
-        ((uint8_t)s > 223 && (uint8_t)s < 240))   // �..�
+    if ((s >= 'A' && s <= 'Z') || // A..Z
+        (s >= 'a' && s <= 'z'))   // a..z
         return true;
     return false;
 }
