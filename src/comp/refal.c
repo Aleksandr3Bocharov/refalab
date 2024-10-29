@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
@@ -610,8 +611,6 @@ static void translate(const char *str, char *class1)
                 *(class1 + i) = 'L';
                 continue;
             };
-        if ((j > -129 && j < -80) || (j > -33 && j < -16))
-            *(class1 + i) = 'L';
         if (j == 35 || j == 95)
             *(class1 + i) = 'L';
     }
@@ -1656,31 +1655,19 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
     return true;
 }
 
-static char convert(char cm)
-{
-    const int j = cm;
-    if (j > 96 && j < 123)
-        cm = cm - '\40';
-    if (j > -97 && j < -80)
-        cm = cm - '\40';
-    if (j > -33 && j < -16)
-        cm = cm - 80;
-    return cm;
-}
-
 static bool get_id(char id[40], size_t *lid)
 { // read identifier
     for (size_t i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
         return false;
-    id[0] = convert(c[m]);
+    id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && class[m] != 'D' && c[m] != '_' && c[m] != '-')
             return true;
-        id[*lid] = convert(c[m]);
+        id[*lid] = (char)toupper(c[m]);
     }
     // if identifier length > 40 then delete tail
     while (class[m] == 'L' || class[m] == 'D' || c[m] == '_' || c[m] == '-')
@@ -1695,13 +1682,13 @@ static bool get_idm(char id[8], size_t *lid)
 {
     if (class[m] != 'L')
         return false;
-    id[0] = convert(c[m]);
+    id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && class[m] != 'D')
             return true;
-        id[*lid] = convert(c[m]);
+        id[*lid] = (char)toupper(c[m]);
     }
     // if identifier length > 8 then delete tail
     while (class[m] == 'L' || class[m] == 'D')
