@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-29
+// 2024-10-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -611,8 +611,6 @@ static void translate(const char *str, char *class1)
                 *(class1 + i) = 'L';
                 continue;
             };
-        if (j == 35 || j == 95)
-            *(class1 + i) = 'L';
     }
     return;
 }
@@ -912,7 +910,7 @@ void scan(void)
                 c[m - 1] = '/';
                 size_t i;
                 for (i = 1;
-                     class[m + i] == 'L' || class[m + i] == 'D' || c[m + i] == '_' || c[m + i] == '-';
+                     class[m + i] == 'L' || class[m + i] == 'D';
                      i++)
                 {
                     c[m + i - 1] = c[m + i];
@@ -1016,7 +1014,7 @@ void scan(void)
                         c[m] = (char)(j & 255);
                     }
                     else
-                        c[m] = 0;
+                        c[m] = '\0';
                     break;
                 default:
                     if (c[m] >= '0' && c[m] <= '7')
@@ -1351,7 +1349,7 @@ static bool specif(char tail)
                             c[m] = (char)(j & 255);
                         }
                         else
-                            c[m] = 0;
+                            c[m] = '\0';
                         break;
                     default:
                         if (c[m] >= '0' && c[m] <= '7')
@@ -1665,12 +1663,12 @@ static bool get_id(char id[40], size_t *lid)
     for (*lid = 1; *lid < 40; (*lid)++)
     {
         EH_ROMA0;
-        if (class[m] != 'L' && class[m] != 'D' && c[m] != '_' && c[m] != '-')
+        if (class[m] != 'L' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
     // if identifier length > 40 then delete tail
-    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_' || c[m] == '-')
+    while (class[m] == 'L' || class[m] == 'D')
     {
         EH_ROMA0;
     }
