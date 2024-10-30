@@ -451,10 +451,13 @@ static void crel_(void)
         }
         if (fail)
             break;
-        if (p == pp && q != q1)
-            c = '<';
-        if (q == q1 && p != pp)
-            c = '>';
+        if (c == '=')
+        {
+            if (p == pp && q != q1)
+                c = '<';
+            if (q == q1 && p != pp)
+                c = '>';
+        }
         for (; p != pp; p = p->next)
             if (p->tag == TAGLB)
             {

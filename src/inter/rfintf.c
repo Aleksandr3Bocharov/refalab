@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-28
+// 2024-10-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -465,7 +465,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
             break;
         default:
             f->tag = f0->tag;
-            //?????   pcoden(f,gcoden(f0));
+            f->info.codep = f0->info.codep;
         }
         f0 = f0->next;
     }
