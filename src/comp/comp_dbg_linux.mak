@@ -8,7 +8,7 @@
 # comp_dbg_linux.mak
 # 	makefile for building of the compiler from RefalAB language (debug mode), 
 # 	result - bin/RefalAB_dbg executable module.
-#       Version for UNIX ( FreeBSD, Linux )
+#       Version for Linux ( UNIX, FreeBSD )
 #############################################################################
 
 ####### Compiler, tools and options
