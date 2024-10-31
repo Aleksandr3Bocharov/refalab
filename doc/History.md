@@ -46,7 +46,7 @@ UNIX (FreeBSD, Linux).
 являющийся диалектом языка Рефал-2.
 
 --Александр Бочаров
-https://github.com/Aleksandr3Bocharov/RefalAB
+https://github.com/Aleksandr3Bocharov
 
 
 ЛИТЕРАТУРА:
