@@ -1,14 +1,14 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-10-19
+# 2024-10-31
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
 # inter_lib_dbg_linux.mak
 #	Makefile for interpreter library (libRefalAB_dbg.a) (debug mode) creation,
 # 	result - lib/libRefalAB_dbg.a library
-#       Version for UNIX ( FreeBSD, Linux )
+#       Version for Linux ( UNIX, FreeBSD )
 #############################################################################
 
 ####### Compiler, tools and options
