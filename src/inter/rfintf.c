@@ -254,8 +254,15 @@ void rfexec(void (*func)(void))
             }
             if (s_st.state != 1 || s_st.step >= s_stop)
             {
-                ex_state = ABEND;
-                break;
+                bool go = false;
+                if (s_st.state == 3)
+                    if (lincrm())
+                        go = true;
+                if (!go)
+                {
+                    ex_state = ABEND;
+                    break;
+                }
             }
             s_st.stop = s_st.step + 1;
             const T_LINKCB *pk = s_st.dot->info.codep;
