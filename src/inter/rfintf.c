@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-30
+// 2024-11-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -230,33 +230,43 @@ void rfexec(void (*func)(void))
         return;
     }
     s_st.stop = 0x7FFFFFFF;
+#ifdef mdebug
+    const uint32_t s_stop = s_st.stop;
+#endif
     enum
     {
         AGAIN,
+        DONE,
         ABEND,
-        EOJ
+        EOJ,
+        RET
     } ex_state = AGAIN;
     while (true)
         switch (ex_state)
         {
         case AGAIN:
 #ifdef mdebug
-            /*	step by step execution with full debug trace information
-               see refal-2 user manual (3.14 - example of processing control) */
-            while (s_st.state == 1 && s_st.dot != NULL)
+            //	step by step execution with full debug trace information
+            if (s_st.dot == NULL)
             {
-                s_st.stop = s_st.step + 1;
-                const T_LINKCB *pk = s_st.dot->info.codep;
-                const T_LINKCB *prevk = pk->prev;
-                const T_LINKCB *nextd = s_st.dot->next;
-                printf("\n step: %d", s_st.stop);
-                rfpexm(" Term: ", prevk, nextd);
-
-                rfrun(&s_st);
-
-                if (s_st.state == 1)
-                    rfpexm(" Result: ", prevk, nextd);
+                ex_state = DONE;
+                break;
             }
+            if (s_st.state != 1 || s_st.step >= s_stop)
+            {
+                ex_state = ABEND;
+                break;
+            }
+            s_st.stop = s_st.step + 1;
+            const T_LINKCB *pk = s_st.dot->info.codep;
+            const T_LINKCB *prevk = pk->prev;
+            const T_LINKCB *nextd = s_st.dot->next;
+            printf("\n step: %d", s_st.stop);
+            rfpexm(" Term: ", prevk, nextd);
+            rfrun(&s_st);
+            if (s_st.state == 1)
+                rfpexm(" Result: ", prevk, nextd);
+            break;
 #else
             // no debug info
             rfrun(&s_st);
@@ -268,9 +278,16 @@ void rfexec(void (*func)(void))
                 ex_state = ABEND;
                 break;
             }
+            ex_state = DONE;
+            break;
 #endif
+        case DONE:
+#ifdef mdebug
             printf("\nConcretization is executed");
             ex_state = EOJ;
+#else
+            ex_state = RET;
+#endif
             break;
         case ABEND:
             switch (s_st.state)
@@ -316,6 +333,9 @@ void rfexec(void (*func)(void))
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
                 printf("\nElapsed time = %s", s);
             }
+            ex_state = RET;
+            break;
+        case RET:
             rfcanc(&s_st);
             rftermm();
             return;
