@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-29
+// 2024-11-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -750,10 +750,10 @@ static void one_step(T_ST *ss_st)
         if (euc_step != curr_step)
         {
             euc_step = curr_step;
-            rfpexm("       leading term : ", prevk, nextd);
+            rfpexm("       Leading term : ", prevk, nextd);
         }
-        printf("\n*** recognition impossible ");
-        printf("\n*** change leading term by empty term and continue ***");
+        printf("\n*** Recognition impossible ");
+        printf("\n*** Change leading term by empty term and continue ***");
         ss_st->dot = pk->info.codep;
         rfdel(prevk, nextd);
         ss_st->state = 1;
@@ -766,7 +766,7 @@ static void pr_step(void)
 {
     if (curr_step != printed_step)
     {
-        printf("\n***** step %u", curr_step);
+        printf("\n***** Step %u", curr_step);
         printed_step = curr_step;
     }
     return;
@@ -783,7 +783,7 @@ static void pr_euc(void)
             res_nextd != nextd)
         {
             pr_step();
-            rfpexm("      leading term : ", prevk, nextd);
+            rfpexm("      Leading term : ", prevk, nextd);
         }
     }
     return;
@@ -794,7 +794,7 @@ static void pr_imres(void)
     if (curr_step > s_upto || curr_step < s_from)
         return;
     pr_step();
-    rfpexm("      result : ", prevk, nextd);
+    rfpexm("      Result : ", prevk, nextd);
     res_step = curr_step;
     res_prevk = prevk;
     res_nextd = nextd;
@@ -811,7 +811,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     {
         if (xstep == curr_step)
             return;
-        printf("\n----- this is result of call on step %u", xstep);
+        printf("\n----- This is result of call on step %u", xstep);
     }
     else
     {
@@ -820,7 +820,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
             pr_imres();
             return;
         }
-        printf("\n----- result of call on step %u : ", xstep);
+        printf("\n----- Result of call on step %u : ", xstep);
         rfpexm("     ", xprevk, xnextd);
         res_step = curr_step;
         res_prevk = xprevk;

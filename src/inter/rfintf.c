@@ -261,7 +261,7 @@ void rfexec(void (*func)(void))
             const T_LINKCB *pk = s_st.dot->info.codep;
             const T_LINKCB *prevk = pk->prev;
             const T_LINKCB *nextd = s_st.dot->next;
-            printf("\n step: %d", s_st.stop);
+            printf("\n Step: %d", s_st.stop);
             rfpexm(" Term: ", prevk, nextd);
             rfrun(&s_st);
             if (s_st.state == 1)
