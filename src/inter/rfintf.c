@@ -118,9 +118,9 @@ bool slins(T_LINKCB *p, size_t k)
 bool linskd(T_ST *ast, void (*f)(void))
 {
     if (!lexist(ast))
-        rfabe("Linskd: process doesn't exist still");
+        rfabe("linskd: process doesn't exist still");
     if (ast->dot != NULL)
-        rfabe("Linskd: there are 'k'-signes in view field");
+        rfabe("linskd: there are 'k'-signes in view field");
     if (!slins(ast->view, 3))
         return false;
     T_LINKCB *p = ast->view->next;
@@ -164,9 +164,9 @@ void rfcanc(const T_ST *ast)
     if (rf_init)
         rfinit();
     if (!lexist(ast))
-        rfabe("Rfcanc: process doesn't exist");
+        rfabe("rfcanc: process doesn't exist");
     if (ast->state == 4)
-        rfabe("Rfcanc: process is in job yet");
+        rfabe("rfcanc: process is in job yet");
     ast->stprev->stnext = ast->stnext;
     ast->stnext->stprev = ast->stprev;
     T_LINKCB *flhead1 = refal.flhead->prev;
@@ -527,7 +527,7 @@ bool lcre(T_ST *ast)
     if (rf_init)
         rfinit();
     if (lexist(ast))
-        rfabe("Lcre: process already exists");
+        rfabe("lcre: process already exists");
     ast->view = refal.flhead->next;
     if (ast->view == refal.flhead)
         return false;
