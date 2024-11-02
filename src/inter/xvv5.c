@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-21
+// 2024-11-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -64,7 +64,7 @@ static void open_(void)
       f = fopen(namf, s);
       if (f == NULL)
       {
-         printf("\n REFAL(open): can't open file %s", namf);
+         printf("\n xopen: can't open file %s", namf);
          neot1 = true;
          break;
       }
@@ -75,7 +75,7 @@ static void open_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\n REFAL(open): format error");
+      printf("\n xopen: format error");
    refal.upshot = 2;
    return;
 }
@@ -112,7 +112,7 @@ static void close_(void)
       fclose(f);
       return;
    } while (false);
-   printf("\nREFAL(close): format error");
+   printf("\nxclose: format error");
    refal.upshot = 2;
    return;
 }
@@ -140,7 +140,7 @@ static void get_(void)
          f = fopen(namf, "r");
          if (f == NULL)
          {
-            printf("\nREFAL(get): can't open file %s", namf);
+            printf("\nxget: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -166,7 +166,7 @@ static void get_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nREFAL(get): format error");
+      printf("\nxget: format error");
    refal.upshot = 2;
    return;
 }
@@ -195,7 +195,7 @@ static void put_(void)
          f = fopen(namf, "w");
          if (f == NULL)
          {
-            printf("\nREFAL(put): can't open file %s", namf);
+            printf("\nxput: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -232,7 +232,7 @@ static void put_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nREFAL(put): format error");
+      printf("\nxput: format error");
    refal.upshot = 2;
    return;
 }
