@@ -115,9 +115,19 @@ static void sfop_w(const char *s, BU *b)
     if (b->buf == NULL)
     {
         if (b == &sysut2)
-            un = 49152; // 8192*6
+        {
+            if (LBLL == 4)
+                un = 49152; // 8192*6
+            else
+                un = 81920; // 8192*10
+        }
         else
-            un = 65528; // 65536-8
+        {
+            if (LBLL == 4)
+                un = 65528; // 65536-8
+            else
+                un = 98292; // 98304-12
+        }
         size_t lon;
         while (true)
         {
