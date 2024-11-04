@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-27
+// 2024-11-05
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -114,20 +114,10 @@ static void sfop_w(const char *s, BU *b)
     size_t un = 0;
     if (b->buf == NULL)
     {
-        if (options.mincomp)
-        {
-            if (b == &sysut2)
-                un = 2040; // 2040=340*6
-            else
-                un = 2040; // 2040=2048-8
-        }
+        if (b == &sysut2)
+            un = 49152; // 8192*6
         else
-        {
-            if (b == &sysut2)
-                un = 49152; // 8192*6
-            else
-                un = 65528; // 65536-8 (for bc mojno - 4)
-        }
+            un = 65528; // 65536-8
         size_t lon;
         while (true)
         {

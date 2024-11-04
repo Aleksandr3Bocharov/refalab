@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2024-11-05
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -250,7 +250,6 @@ int main(int argc, char *argv[])
         printf("\n   nn  no_function_names");
         printf("\n   ns  no_source_listing");
         printf("\n   fn  full_names");
-        printf("\n   cm  minimal_memory_for_compiler");
         printf("\n\n");
         exit(1);
     };
@@ -280,7 +279,6 @@ int main(int argc, char *argv[])
     options.extname = false;
     options.multmod = false;
     options.names = true;
-    options.mincomp = false;
     for (size_t j = 2; j < (size_t)argc; ++j)
     {
         strcpy(parm, argv[j]);
@@ -295,8 +293,6 @@ int main(int argc, char *argv[])
                     options.source = false;
                 else if (strncmp(parm + ii, "fn", 2) == 0)
                     options.extname = true;
-                else if (strncmp(parm + ii, "cm", 2) == 0)
-                    options.mincomp = true;
                 else if (strncmp(parm + ii, "mm", 2) == 0)
                     options.multmod = true;
                 else
@@ -307,7 +303,7 @@ int main(int argc, char *argv[])
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
                     printf("Unknown option: %s\n", parm + ii);
-                    printf("Options may be: mm,nn,ns,fn,cm\n");
+                    printf("Options may be: mm, nn, ns, fn\n");
                     exit(1);
                 }
                 temp = ii;
