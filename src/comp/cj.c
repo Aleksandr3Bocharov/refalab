@@ -129,6 +129,11 @@ static void sfop_w(const char *s, BU *b)
                 un = 98292; // 98304-12
         }
         size_t lon;
+        size_t min_oshex;
+        if (LBLL == 4)
+            min_oshex = 16;
+        else
+            min_oshex = 24;
         while (true)
         {
             b->buf = (char *)malloc(un);
@@ -145,9 +150,9 @@ static void sfop_w(const char *s, BU *b)
                 if (b == &sysut2)
                     lon /= 2;
                 else
-                    lon = (lon + 8) / 2 - 8;
+                    lon = (lon + LBLL + 4) / 2 - LBLL - 4;
                 un = lon;
-                if (un < 16)
+                if (un < min_oshex)
                     oshex();
             }
         } // while
@@ -297,7 +302,12 @@ void jstart(void)
 
 size_t jwhere(void)
 {
-    if (curr_addr > 65535)
+    size_t max_addr;
+    if (LBLL == 4)
+        max_addr = 65535;
+    else
+        max_addr = 98303;
+    if (curr_addr > max_addr)
     {
         printf("Module too long\n");
         exit(1);
