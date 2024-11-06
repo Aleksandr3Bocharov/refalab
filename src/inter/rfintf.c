@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2024-11-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -120,7 +120,7 @@ bool linskd(T_ST *ast, void (*f)(void))
     if (!lexist(ast))
         rfabe("linskd: process doesn't exist still");
     if (ast->dot != NULL)
-        rfabe("linskd: there are 'k'-signes in view field");
+        rfabe("linskd: there are '<'-signes in view field");
     if (!slins(ast->view, 3))
         return false;
     T_LINKCB *p = ast->view->next;
