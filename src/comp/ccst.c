@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2024-11-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------   file  CCST.C  ---------------
@@ -364,14 +364,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = NEXT_LPE;
             break;
         case LPE7:
-            // sign 'k'
-            pchosh("306 sign 'k' in left part");
+            // sign '<'
+            pchosh("306 sign '<' in left part");
             n--;
             state = NEXT_LPE;
             break;
         case LPE8:
-            // sign '.'
-            pchosh("307 sign '.' in left part");
+            // sign '>'
+            pchosh("307 sign '>' in left part");
             n--;
             state = NEXT_LPE;
             break;
@@ -1553,10 +1553,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = GET_RPE;
             break;
         case RPE7:
-            // sign "k"
+            // sign '<'
             if (ur_skob > 511)
             {
-                pchosh("407 including of the signs 'k' > 511");
+                pchosh("407 including of the signs '<' > 511");
                 state = RP_OSH300;
                 break;
             }
@@ -1574,9 +1574,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = SW_RPE;
             break;
         case RPE8:
-            // sign '.'
+            // sign '>'
             if (ur_skob == 1)
-                pchosh("404 too many sign '.' in right part");
+                pchosh("404 too many sign '>' in right part");
             else
             {
                 if (kol_skob[ur_skob] != 0)
@@ -1602,7 +1602,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             else*/
             jbyte(n_eos);
             if (ur_skob != 1)
-                pchosh("403 too many signs 'k' in right part");
+                pchosh("403 too many signs '<' in right part");
             if (kol_skob[ur_skob] != 0)
                 pchosh("401 too many '(' in right part");
             return;
