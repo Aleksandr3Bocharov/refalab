@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-05
+// 2024-11-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -74,7 +74,6 @@ typedef enum scn_states
     SCNV,
     SCNVI,
     SCNKK,
-    SCNK,
     SCNP,
     SCNEOL,
     SCNEOS,
@@ -151,7 +150,7 @@ FILE *systxt; // for module names
 uint32_t nommod;
 char parm_i[40]; // sourse file name
 // Aleksandr Bocharov   // compiler version
-const char vers_i[] = "RefalAB Version 0.2.2-rc 20241102 (c) Aleksandr Bocharov";
+const char vers_i[] = "RefalAB Version 0.2.3-rc 20241107 (c) Aleksandr Bocharov";
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
 
 static FILE *sysin;
@@ -762,11 +761,6 @@ void scan(void)
             case '<':
                 scn_state = SCNKK;
                 break;
-            case 'k':
-            case 'K':
-                scn_state = SCNK;
-                break;
-            case '.':
             case '>':
                 scn_state = SCNP;
                 break;
@@ -916,10 +910,6 @@ void scan(void)
                 class[m + i - 1] = '*';
                 m -= 2;
             }
-            scn_state = SCNGCR;
-            break;
-        case SCNK:
-            scn_e.t = 7;
             scn_state = SCNGCR;
             break;
         case SCNP:
