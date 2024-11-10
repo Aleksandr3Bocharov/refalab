@@ -2,19 +2,19 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-08
+* 2024-11-10
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
-* Расширение библиотеки РефалАБ.
-* Рефал-функции.
+* Рефал-функции библиотеки РефалАБ.
 *====================================================================
 
 EXT         START
             ENTRY Call, Map, FoldL, FoldR
             ENTRY MapAccum, DelAccum
             ENTRY LoadFile, SaveFile
-            ENTRY Trim, TrimL, TrimR, WhiteSpaces(WSpaces) 
+            ENTRY WhiteSpaces(WSpaces), IsWhiteSpace(IsWSpace)
+            ENTRY Trim, TrimL, TrimR  
             ENTRY Exist, Set
             ENTRY True, False
             EXTRN XOpen, XClose, XGet, XPut
@@ -30,7 +30,7 @@ Call +
 Map +
     WC WN ET +
             = <Call WC WN> <Map WC ET>
-    WC      =
+    W0      =
 
 * <FoldL WC WA WI*> == WA'
 FoldL +
@@ -89,34 +89,40 @@ SaveFile +
 SaveFileWriteBracketLine +
     SN (EL) = <XPut SN EL>
 
+WhiteSpaces S   ' \n\t\v\f\r'
+
+* <IsWhiteSpace SW> == /True/ | /False/
+IsWhiteSpace +
+    S(:WhiteSpaces:)W +
+            = /True/
+    S0      = /False/
+
 * <Trim E> == E'
 Trim +
     EL      = <TrimL <TrimR EL>>
-
-WhiteSpaces S   ' \n\t\v\f\r'
 
 * <TrimL E> == E'
 TrimL +
     S(:WhiteSpaces:)W EL +
             = <TrimL EL>
-    EL      = EL
+    E0      = E0
   
 * <TrimR E> == E'
 TrimR +
     EL S(:WhiteSpaces:)W +
             = <TrimR EL>
-    EL      = EL
+    E0      = E0
   
 * <Exist W E> == /True/ | /False/
 Exist +
     WS EB WS EE +
             = /True/
-    WS EI   = /False/
+    WS E0   = /False/
   
 * <Set WE*> == WS*
 Set +
     EU WR EB WR EE +
             = EU <Set EB WR EE>
-    EU      = EU
+    E0      = E0
 
             END
