@@ -20,7 +20,7 @@ static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
-static void open_(void)
+static void xopen_(void)
 {
    char namf[41];
    for (size_t i = 0; i < 40; i++)
@@ -79,11 +79,11 @@ static void open_(void)
    refal.upshot = 2;
    return;
 }
-char open_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
+char xopen_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
 G_L_B char xopen = '\122';
-void (*open_1)(void) = open_;
+void (*xopen_1)(void) = xopen_;
 
-static void close_(void)
+static void xclose_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    do
@@ -116,11 +116,11 @@ static void close_(void)
    refal.upshot = 2;
    return;
 }
-char close_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
+char xclose_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
 G_L_B char xclose = '\122';
-void (*close_1)(void) = close_;
+void (*xclose_1)(void) = xclose_;
 
-static void get_(void)
+static void xget_(void)
 {
    T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -170,11 +170,11 @@ static void get_(void)
    refal.upshot = 2;
    return;
 }
-char get_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
+char xget_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
 G_L_B char xget = '\122';
-void (*get_1)(void) = get_;
+void (*xget_1)(void) = xget_;
 
-static void put_(void)
+static void xput_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -236,8 +236,8 @@ static void put_(void)
    refal.upshot = 2;
    return;
 }
-char put_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
+char xput_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
 G_L_B char xput = '\122';
-void (*put_1)(void) = put_;
+void (*xput_1)(void) = xput_;
 
 //----------  end of file XVV5.C  -----------
