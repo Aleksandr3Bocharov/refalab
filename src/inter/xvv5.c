@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2024-11-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -26,7 +26,7 @@ static void open_(void)
    for (size_t i = 0; i < 40; i++)
       namf[i] = '\0';
    const T_LINKCB *p = refal.preva->next;
-   bool neot1 = true;
+   bool neot1 = false;
    do
    {
       if (p->tag != TAGO)
@@ -41,7 +41,7 @@ static void open_(void)
       if (j >= fmax)
          break;
       char s[2];
-      s[1] = 0;
+      s[1] = '\0';
       if (c == 'R' || c == 'r')
          s[0] = 'r';
       else if (c == 'W' || c == 'w')
