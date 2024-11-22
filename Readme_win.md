@@ -1,7 +1,7 @@
 Readme для Windows
 ---------------------
 
-### Сборка РефалАБ в Windows
+### Сборка РефалАБ
 
 [Mingw-W64](https://winlibs.com/) (UCRT Runtime Clang 18.1.8 или позже (with POSIX threads)) требуется.
 
