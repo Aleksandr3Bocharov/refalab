@@ -6,57 +6,57 @@
 
 #############################################################################
 # comp_dbg_linux.mak
-# 	makefile for building of the compiler from RefalAB language (debug mode), 
-# 	result - bin/RefalAB_dbg executable module.
-#       Version for Linux (UNIX, FreeBSD)
+# makefile for building of the compiler from RefalAB language (debug mode)
+# result - bin/RefalAB_dbg executable module
+# Version for Linux (UNIX, FreeBSD)
 #############################################################################
 
 ####### Compiler, tools and options
 
 .SUFFIXES: .c 
 
-CC		=	clang
-CFLAGS		=	-pipe -Wall -O2 -Dmdebug -DUNIX
-LINK		=	clang
+CC = clang
+CFLAGS	 = -pipe -Wall -O2 -Dmdebug -DUNIX
+LINK	 = clang
 
-S		=	src/comp
-BIN_DIR		=	bin
+S = src/comp
+BIN_DIR = bin
 
 ####### Files
 
-SOURCES =			\
-		$(S)/ccst.c 	\
-		$(S)/cerr.c 	\
-		$(S)/cgop.c 	\
-		$(S)/cj.c 	\
-		$(S)/clu.c 	\
-		$(S)/cs.c 	\
-		$(S)/plc.c 	\
-		$(S)/refal.c
+SOURCES = \
+    $(S)/ccst.c \
+    $(S)/cerr.c \
+    $(S)/cgop.c \
+    $(S)/cj.c \
+    $(S)/clu.c \
+    $(S)/cs.c \
+    $(S)/plc.c \
+    $(S)/refal.c
 
-OBJECTS =			\
-		$(S)/ccst.o 	\
-		$(S)/cerr.o 	\
-		$(S)/cgop.o 	\
-		$(S)/cj.o 	\
-		$(S)/clu.o 	\
-		$(S)/cs.o 	\
-		$(S)/plc.o 	\
-		$(S)/refal.o
+OBJECTS = \
+    $(S)/ccst.o \
+    $(S)/cerr.o \
+    $(S)/cgop.o \
+    $(S)/cj.o \
+    $(S)/clu.o \
+    $(S)/cs.o \
+    $(S)/plc.o \
+    $(S)/refal.o
 
-TARGET =	RefalAB_dbg
+TARGET = RefalAB_dbg
 
 ####### Implicit rules
 
 .c.o:
-	$(CC) -c $(CFLAGS) -o $@ $<
+    $(CC) -c $(CFLAGS) -o $@ $<
 
 ####### Build rules
 
-all:	$(TARGET)
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)  
-	$(LINK) $(LFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS) 
+    $(LINK) $(LFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS) 
 
 ####### Dependences
 
