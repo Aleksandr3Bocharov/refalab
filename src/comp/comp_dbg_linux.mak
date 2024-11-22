@@ -16,8 +16,8 @@
 .SUFFIXES: .c 
 
 CC = clang
-CFLAGS	= -pipe -Wall -O2 -Dmdebug -DUNIX
-LINK	= clang
+CFLAGS = -pipe -Wall -O2 -Dmdebug -DUNIX
+LINK = clang
 
 S = src/comp
 BIN_DIR = bin
