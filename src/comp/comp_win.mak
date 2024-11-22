@@ -6,8 +6,8 @@
 
 #############################################################################
 # comp_win.mak
-# makefile for building of the compiler from RefalAB language, 
-# result - bin\RefalAB executable module.
+# makefile for building of the compiler from RefalAB language 
+# result - bin\RefalAB executable module
 # Version for Windows
 #############################################################################
 
