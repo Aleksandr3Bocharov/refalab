@@ -7,7 +7,7 @@
 #############################################################################
 # inter_lib_dbg_linux.mak
 #	Makefile for interpreter library (libRefalAB_dbg.a) (debug mode) creation,
-# 	result - lib/libRefalAB_dbg.a library
+# result - lib/libRefalAB_dbg.a library
 #       Version for Linux (UNIX, FreeBSD)
 #############################################################################
 
