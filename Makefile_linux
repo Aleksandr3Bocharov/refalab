@@ -6,38 +6,38 @@
 
 #############################################################################
 # Makefile
-#       Makefile for building RefalAB system
-#       for Linux (UNIX, FreeBSD)
+# Makefile for building RefalAB system
+# for Linux (UNIX, FreeBSD)
 #############################################################################
 
-MAKE	=	make
+MAKE =	 make
 
 all:
 
 # PHASE I:
-# Make the compiler from RefalAB language, 
-# result bin/RefalAB executable module.
-# result bin/RefalAB_dbg executable module (debug mode).
+# Make the compiler from RefalAB language
+# result bin/RefalAB executable module
+# result bin/RefalAB_dbg executable module (debug mode)
 
-	mkdir -p bin
-	$(MAKE) -f src/comp/comp_linux.mak
-	src/comp/delbin
-	$(MAKE) -f src/comp/comp_dbg_linux.mak
-	src/comp/delbin
+mkdir -p bin
+$(MAKE) -f src/comp/comp_linux.mak
+src/comp/delbin
+$(MAKE) -f src/comp/comp_dbg_linux.mak
+src/comp/delbin
 	
 # PHASE II:
-# Make the interpreter from "jazyk sborki",  
-# result lib/libRefalAB.a - set of object modules.
-# result lib/libRefalAB_dbg.a - set of object modules (debug mode).
+# Make the interpreter from "jazyk sborki"
+# result lib/libRefalAB.a - set of object modules
+# result lib/libRefalAB_dbg.a - set of object modules (debug mode)
 # result lib/mainrf.o lib/rfdbg.o
 
-	mkdir -p lib
-	$(MAKE) -f src/inter/inter_lib_linux.mak
-	src/inter/delbin
-	$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
-	src/inter/delbin
-	$(MAKE) -f src/inter/inter_o_linux.mak
-	src/inter/copy_obj
-	src/inter/delbin
+mkdir -p lib
+$(MAKE) -f src/inter/inter_lib_linux.mak
+src/inter/delbin
+$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
+src/inter/delbin
+$(MAKE) -f src/inter/inter_o_linux.mak
+src/inter/copy_obj
+src/inter/delbin
 
 #### end of Makefile
