@@ -40,4 +40,4 @@ $(MAKE) -f src/inter/inter_o_linux.mak
 src/inter/copy_obj
 src/inter/delbin
 
-#### end of Makefile
+#### End of Makefile
