@@ -7,7 +7,7 @@
 #############################################################################
 # Makefile
 # Makefile for building RefalAB system
-# for Windows
+# Version for Windows
 #############################################################################
 
 MAKE = mingw32-make
