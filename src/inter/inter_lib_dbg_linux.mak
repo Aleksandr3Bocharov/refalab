@@ -18,9 +18,9 @@
 CC = clang
 CFLAGS = -pipe -Wall -O2 -Dmdebug -DUNIX
 AR = ar
-REFXCV = src/inter/refxcv	# refal + assembler for xcv
+REFXCV = src/inter/refxcv # refal + assembler for xcv
 REFEXT = src/inter/refext 	# refal + assembler for xext
-REFPLATFORM = src/inter/refplatform 	# refal + assembler for xplatform
+REFPLATFORM = src/inter/refplatform # refal + assembler for xplatform
 REFLIB = lib/libRefalAB_dbg.a
 S = src/inter
 
