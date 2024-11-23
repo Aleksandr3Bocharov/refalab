@@ -40,4 +40,4 @@ $(MAKE) -f src\inter\inter_o_win.mak
 src\inter\copy_obj.bat
 src\inter\delbin.bat
 
-#### end of Makefile
+#### End of Makefile
