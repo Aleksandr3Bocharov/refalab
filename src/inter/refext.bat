@@ -8,9 +8,9 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 
 rem *******************************************************************
 rem refext.bat
-rem 	special script
-rem	compile xext.ref from refal to GNU-assembler + assembling. 
-rem	result: xext.o  
+rem special script
+rem compile xext.ref from refal to GNU-assembler + assembling. 
+rem result: xext.o  
 rem *******************************************************************
 
 bin\RefalAB src\inter\xext > src\inter\xext.log
