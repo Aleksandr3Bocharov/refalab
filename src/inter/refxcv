@@ -3,14 +3,14 @@
 # Copyright 2024 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-09-25
+# 2024-11-23
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 # *******************************************************************
 # refxcv
-# 	special script
-#	compile xcv.ref from refal to GNU-assembler + assembling. 
-#	result: xcv.o  
+# special script
+# compile xcv.ref from refal to GNU-assembler + assembling
+# result: xcv.o  
 # *******************************************************************
 
 bin/RefalAB src/inter/xcv > src/inter/xcv.log
