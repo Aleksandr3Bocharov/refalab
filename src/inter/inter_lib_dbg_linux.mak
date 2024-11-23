@@ -79,34 +79,34 @@ $(REFLIB): $(OBJECTS)
 
 ####### Dependences
 
-$(S)/d.o:	$(S)/d.c $(S)/refal.def
+$(S)/d.o: $(S)/d.c $(S)/refal.def
 
-$(S)/rfintf.o: 	$(S)/rfintf.c $(S)/refal.def
+$(S)/rfintf.o: $(S)/rfintf.c $(S)/refal.def
 
-$(S)/rfrun1.o: 	$(S)/rfrun1.c $(S)/refal.def
+$(S)/rfrun1.o: $(S)/rfrun1.c $(S)/refal.def
 
-$(S)/rfrun2.o: 	$(S)/rfrun2.c $(S)/refal.def
+$(S)/rfrun2.o: $(S)/rfrun2.c $(S)/refal.def
 
-$(S)/xapply.o: 	$(S)/xapply.c $(S)/refal.def
+$(S)/xapply.o: $(S)/xapply.c $(S)/refal.def
 
-$(S)/xar.o: 	$(S)/xar.c $(S)/refal.def
+$(S)/xar.o: $(S)/xar.c $(S)/refal.def
 
-$(S)/xcf.o: 	$(S)/xcf.c $(S)/refal.def
+$(S)/xcf.o: $(S)/xcf.c $(S)/refal.def
 
-$(S)/xcoden.o: 	$(S)/xcoden.c $(S)/refal.def
+$(S)/xcoden.o: $(S)/xcoden.c $(S)/refal.def
 
-$(S)/xgcd.o: 	$(S)/xgcd.c $(S)/refal.def
+$(S)/xgcd.o: $(S)/xgcd.c $(S)/refal.def
 
-$(S)/xjak.o: 	$(S)/xjak.c $(S)/refal.def
+$(S)/xjak.o: $(S)/xjak.c $(S)/refal.def
 
-$(S)/xmo.o: 	$(S)/xmo.c $(S)/refal.def
+$(S)/xmo.o: $(S)/xmo.c $(S)/refal.def
 
 $(S)/xrename.o: $(S)/xrename.c $(S)/refal.def
 
-$(S)/xtime.o: 	$(S)/xtime.c $(S)/refal.def
+$(S)/xtime.o: $(S)/xtime.c $(S)/refal.def
 
-$(S)/xvv.o: 	$(S)/xvv.c $(S)/refal.def
+$(S)/xvv.o: $(S)/xvv.c $(S)/refal.def
 
-$(S)/xvv5.o: 	$(S)/xvv5.c $(S)/refal.def
+$(S)/xvv5.o: $(S)/xvv5.c $(S)/refal.def
 
 ####### End of Makefile
