@@ -95,7 +95,7 @@ $(S)\xcf.o: $(S)\xcf.c $(S)\refal.def
 
 $(S)\xgcd.o: $(S)\xgcd.c $(S)\refal.def
 
-$(S)\xjak.o: 	$(S)\xjak.c $(S)\refal.def
+$(S)\xjak.o: $(S)\xjak.c $(S)\refal.def
 
 $(S)\xmo.o: $(S)\xmo.c $(S)\refal.def
 
@@ -105,6 +105,6 @@ $(S)\xtime.o: $(S)\xtime.c $(S)\refal.def
 
 $(S)\xvv.o: $(S)\xvv.c $(S)\refal.def
 
-$(S)\xvv5.o: 	$(S)\xvv5.c $(S)\refal.def
+$(S)\xvv5.o: $(S)\xvv5.c $(S)\refal.def
 
 ####### End of Makefile
