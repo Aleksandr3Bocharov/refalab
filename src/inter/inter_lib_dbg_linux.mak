@@ -68,7 +68,7 @@ OBJECTS = \
     $(REFEXT) 
     $(REFPLATFORM)
 .c.o:
-     $(CC) $(CFLAGS) -c $< -o $@ 
+    $(CC) $(CFLAGS) -c $< -o $@ 
 
 ####### Build rules
 
