@@ -9,7 +9,7 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 rem *******************************************************************
 rem refplatform.bat
 rem special script
-rem compile xplatformwin.ref from refal to GNU-assembler + assembling. 
+rem compile xplatformwin.ref from refal to GNU-assembler + assembling
 rem result: xplatform.o  
 rem *******************************************************************
 
