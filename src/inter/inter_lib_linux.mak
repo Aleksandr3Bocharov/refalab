@@ -95,9 +95,9 @@ $(S)/xcf.o: $(S)/xcf.c $(S)/refal.def
 
 $(S)/xcoden.o: $(S)/xcoden.c $(S)/refal.def
 
-$(S)/xgcd.o: 	$(S)/xgcd.c $(S)/refal.def
+$(S)/xgcd.o: $(S)/xgcd.c $(S)/refal.def
 
-$(S)/xjak.o: 	$(S)/xjak.c $(S)/refal.def
+$(S)/xjak.o: $(S)/xjak.c $(S)/refal.def
 
 $(S)/xmo.o: $(S)/xmo.c $(S)/refal.def
 
