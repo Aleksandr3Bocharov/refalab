@@ -15,66 +15,67 @@
 
 .SUFFIXES: .c .ref
 
-CC	=	clang
-CFLAGS	=	-pipe -Wall -O2 -Dmdebug -DUNIX
-AR	=	ar
-REFXCV	=	src/inter/refxcv	# refal + assembler for xcv
-REFEXT	=	src/inter/refext 	# refal + assembler for xext
-REFPLATFORM	=	src/inter/refplatform 	# refal + assembler for xplatform
-REFLIB	=	lib/libRefalAB_dbg.a
-S	=      	src/inter
+CC = clang
+CFLAGS = -pipe -Wall -O2 -Dmdebug -DUNIX
+AR = ar
+REFXCV = src/inter/refxcv	# refal + assembler for xcv
+REFEXT = src/inter/refext 	# refal + assembler for xext
+REFPLATFORM = src/inter/refplatform 	# refal + assembler for xplatform
+REFLIB = lib/libRefalAB_dbg.a
+S = src/inter
+
 ####### Files
 
-SOURCES =		\
-	$(S)/d.c	\
-	$(S)/rfintf.c 	\
-	$(S)/rfrun1.c 	\
-	$(S)/rfrun2.c 	\
-	$(S)/xapply.c 	\
-	$(S)/xar.c 	\
-	$(S)/xcf.c 	\
-	$(S)/xgcd.c 	\
-	$(S)/xjak.c 	\
-	$(S)/xmo.c 	\
-	$(S)/xrename.c 	\
-	$(S)/xtime.c 	\
-	$(S)/xvv.c 	\
-	$(S)/xvv5.c 	
+SOURCES = \
+    $(S)/d.c \
+    $(S)/rfintf.c \
+    $(S)/rfrun1.c \
+    $(S)/rfrun2.c \
+    $(S)/xapply.c \
+    $(S)/xar.c \
+    $(S)/xcf.c \
+    $(S)/xgcd.c \
+    $(S)/xjak.c \
+    $(S)/xmo.c \
+    $(S)/xrename.c \
+    $(S)/xtime.c \
+    $(S)/xvv.c \
+    $(S)/xvv5.c 	
 
-OBJECTS =		\
-	$(S)/d.o 	\
-	$(S)/rfintf.o 	\
-	$(S)/rfrun1.o 	\
-	$(S)/rfrun2.o 	\
-	$(S)/xapply.o 	\
-	$(S)/xar.o 	\
-	$(S)/xcf.o 	\
-	$(S)/xcv.o 	\
-	$(S)/xext.o 	\
-	$(S)/xgcd.o 	\
-	$(S)/xjak.o 	\
-	$(S)/xmo.o 	\
-	$(S)/xplatform.o 	\
-	$(S)/xrename.o 	\
-	$(S)/xtime.o 	\
-	$(S)/xvv.o 	\
-	$(S)/xvv5.o
+OBJECTS = \
+    $(S)/d.o \
+    $(S)/rfintf.o \
+    $(S)/rfrun1.o \
+    $(S)/rfrun2.o \
+    $(S)/xapply.o \
+    $(S)/xar.o \
+    $(S)/xcf.o \
+    $(S)/xcv.o \
+    $(S)/xext.o \
+    $(S)/xgcd.o \
+    $(S)/xjak.o \
+    $(S)/xmo.o \
+    $(S)/xplatform.o \
+    $(S)/xrename.o \
+    $(S)/xtime.o \
+    $(S)/xvv.o \
+    $(S)/xvv5.o
 
 ####### Implicit rules
 
 .ref.o: 
-	$(REFXCV)  
-	$(REFEXT) 
-	$(REFPLATFORM)
+    $(REFXCV)  
+    $(REFEXT) 
+    $(REFPLATFORM)
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $@ 
+     $(CC) $(CFLAGS) -c $< -o $@ 
 
 ####### Build rules
 
 all: $(REFLIB)
 
 $(REFLIB): $(OBJECTS)
-	$(AR) rs $(REFLIB) $(OBJECTS) 
+    $(AR) rs $(REFLIB) $(OBJECTS) 
 
 ####### Dependences
 
