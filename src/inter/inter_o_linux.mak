@@ -7,6 +7,7 @@
 #############################################################################
 # inter_o_linux.mak
 # Makefile for mainrf.o rfdbg.o creation
+# result - lib/mainrf.o lib/rfdbg.o 
 # Version for Linux ( UNIX, FreeBSD )
 #############################################################################
 
