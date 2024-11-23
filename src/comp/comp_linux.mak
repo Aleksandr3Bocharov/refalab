@@ -6,7 +6,7 @@
 
 #############################################################################
 # comp_linux.mak
-# makefile for building of the compiler from RefalAB language 
+# Makefile for building of the compiler from RefalAB language 
 # result - bin/RefalAB executable module
 # Version for Linux (UNIX, FreeBSD)
 #############################################################################
