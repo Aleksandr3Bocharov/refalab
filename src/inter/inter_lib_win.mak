@@ -89,7 +89,7 @@ $(S)\rfrun2.o: $(S)\rfrun2.c $(S)\refal.def
 
 $(S)\xapply.o: $(S)\xapply.c $(S)\refal.def
 
-$(S)\xar.o: 	$(S)\xar.c $(S)\refal.def
+$(S)\xar.o: $(S)\xar.c $(S)\refal.def
 
 $(S)\xcf.o: $(S)\xcf.c $(S)\refal.def
 
@@ -103,7 +103,7 @@ $(S)\xrename.o: $(S)\xrename.c $(S)\refal.def
 
 $(S)\xtime.o: $(S)\xtime.c $(S)\refal.def
 
-$(S)\xvv.o: 	$(S)\xvv.c $(S)\refal.def
+$(S)\xvv.o: $(S)\xvv.c $(S)\refal.def
 
 $(S)\xvv5.o: $(S)\xvv5.c $(S)\refal.def
 
