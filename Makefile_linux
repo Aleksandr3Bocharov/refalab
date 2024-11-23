@@ -7,7 +7,7 @@
 #############################################################################
 # Makefile
 # Makefile for building RefalAB system
-# for Linux (UNIX, FreeBSD)
+# Version for Linux (UNIX, FreeBSD)
 #############################################################################
 
 MAKE = make
