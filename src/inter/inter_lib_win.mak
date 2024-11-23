@@ -97,7 +97,7 @@ $(S)\xgcd.o: $(S)\xgcd.c $(S)\refal.def
 
 $(S)\xjak.o: $(S)\xjak.c $(S)\refal.def
 
-$(S)\xmo.o: 	$(S)\xmo.c $(S)\refal.def
+$(S)\xmo.o: $(S)\xmo.c $(S)\refal.def
 
 $(S)\xrename.o: $(S)\xrename.c $(S)\refal.def
 
