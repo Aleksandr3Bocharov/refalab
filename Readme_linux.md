@@ -7,11 +7,11 @@ Clang 18.1.8 или позже требуется.
 
 Распакуйте дистрибутив в любую директорию X.
 
-	cd X/RefalAB
+    cd X/RefalAB
 
 Переименуйте сборочный файл для Linux Makefile_linux в Makefile.
 
-	make
+    make
 
 Результатом сборки будут:
 1. компиляторы bin/RefalAB и bin/RefalAB_dbg (режим отладки).
@@ -25,7 +25,7 @@ Clang 18.1.8 или позже требуется.
 
 Для этого войдите в X/RefalAB и используйте скрипт set_env.
 
-	source ./set_env
+    source ./set_env
 
 После этого будут созданны следующие переменные окружения ({RefalAB} - путь к папке RefalAB):
 1. $REFALABBIN={RefalAB}/bin.
@@ -37,16 +37,16 @@ Clang 18.1.8 или позже требуется.
 
 Чтобы сделать их постоянными, необходимо добавить в файл .bashrc директории $HOME строки:
 
-	export REFALABBIN={RefalAB}/bin
-	export REFALABLIB={RefalAB}/lib
-	export REFALABINCLUDE={RefalAB}/include
-	export REFALABCFLAGS="-pipe -Wall -O2"
+    export REFALABBIN={RefalAB}/bin
+    export REFALABLIB={RefalAB}/lib
+    export REFALABINCLUDE={RefalAB}/include
+    export REFALABCFLAGS="-pipe -Wall -O2"
 
 ### Начало работы
 
 Для запуска тестовых примеров войдите в X/RefalAB и используйте скрипт RefalABclg:
 
-	./RefalABclg tests/{name}
+    ./RefalABclg tests/{name}
 
 где {name} := hello | fact | test0..test5 .
  
