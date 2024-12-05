@@ -8,7 +8,7 @@
 
 # *******************************************************************
 # set_env
-# Set Environments Variables for RefalAB
+# set environments variables for RefalAB
 # *******************************************************************
 
 export REFALABBIN=$PWD/bin
