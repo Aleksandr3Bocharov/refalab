@@ -8,7 +8,7 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 
 rem *******************************************************************
 rem set_env.bat
-rem Set Environments Variables for RefalAB
+rem set environments variables for RefalAB
 rem *******************************************************************
 
 setx REFALABBIN %~dp0bin
