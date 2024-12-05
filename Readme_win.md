@@ -7,11 +7,11 @@ Readme для Windows
 
 Распакуйте дистрибутив в любую директорию X.
 
-	cd X\RefalAB
+    cd X\RefalAB
 
 Переименуйте сборочный файл для Windows Makefile_win в Makefile.
 
-	mingw32-make
+    mingw32-make
 
 Результатом сборки будут:
 1. компиляторы bin\RefalAB.exe и bin\RefalAB_dbg.exe (режим отладки).
@@ -35,7 +35,7 @@ Readme для Windows
 
 Для запуска тестовых примеров войдите в X\RefalAB и используйте скрипт RefalABclg.bat:
 
-	RefalABclg tests\{name}
+    RefalABclg tests\{name}
 
 где {name} := hello | fact | test0..test5 .
  
