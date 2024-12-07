@@ -1573,8 +1573,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 link(nextr->prev, et[2]->next);
                 link(et[1]->prev, flhead->next);
             };
-            //  delete k and  .
-            // DELKD
+            //  delete < and >
+            // DELKD:
             link(et[2], nextr);
             link(flhead, et[1]);
             i_state = ADVSTEP;
