@@ -49,14 +49,14 @@ TARGET = RefalAB_dbg
 ####### Implicit rules
 
 .c.o:
-    $(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 ####### Build rules
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)  
-    $(LINK) $(LFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS) 
+	$(LINK) $(LFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS) 
 
 ####### Dependences
 
