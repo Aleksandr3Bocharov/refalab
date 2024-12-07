@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-27
+// 2024-12-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -171,9 +171,9 @@ void sswap(const char *idp, size_t lid)
             l0 = 255 > scn_.modnmlen + lid + 1 ? scn_.modnmlen + lid + 1 : 255;
         else
             l0 = lid;
-        j0 = (j0 + l0 + 2) % 4;
+        j0 = (j0 + l0 + 2) % 8;
         if (j0 != 0)
-            j0 = 4 - j0;
+            j0 = 8 - j0;
         for (size_t k0 = 1; k0 <= j0; k0++)
             jbyte(' ');
         fnhead(idp, lid);
