@@ -19,11 +19,11 @@ all:
 # result - bin/RefalAB executable module
 # result - bin/RefalAB_dbg executable module (debug mode)
 
-mkdir -p bin
-$(MAKE) -f src/comp/comp_linux.mak
-src/comp/delbin
-$(MAKE) -f src/comp/comp_dbg_linux.mak
-src/comp/delbin
+	mkdir -p bin
+	$(MAKE) -f src/comp/comp_linux.mak
+	src/comp/delbin
+	$(MAKE) -f src/comp/comp_dbg_linux.mak
+	src/comp/delbin
 	
 # PHASE II:
 # Make the interpreter from "jazyk sborki"
@@ -31,13 +31,13 @@ src/comp/delbin
 # result - lib/libRefalAB_dbg.a library (debug mode)
 # result - lib/mainrf.o lib/rfdbg.o
 
-mkdir -p lib
-$(MAKE) -f src/inter/inter_lib_linux.mak
-src/inter/delbin
-$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
-src/inter/delbin
-$(MAKE) -f src/inter/inter_o_linux.mak
-src/inter/copy_obj
-src/inter/delbin
+	mkdir -p lib
+	$(MAKE) -f src/inter/inter_lib_linux.mak
+	src/inter/delbin
+	$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
+	src/inter/delbin
+	$(MAKE) -f src/inter/inter_o_linux.mak
+	src/inter/copy_obj
+	src/inter/delbin
 
 #### End of Makefile

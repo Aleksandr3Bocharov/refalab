@@ -19,11 +19,11 @@ all:
 # result - bin\RefalAB executable module
 # result - bin\RefalAB_dbg executable module (debug mode)
 
-if not exist bin mkdir bin
-$(MAKE) -f src\comp\comp_win.mak
-src\comp\delbin.bat
-$(MAKE) -f src\comp\comp_dbg_win.mak
-src\comp\delbin.bat
+	if not exist bin mkdir bin
+	$(MAKE) -f src\comp\comp_win.mak
+	src\comp\delbin.bat
+	$(MAKE) -f src\comp\comp_dbg_win.mak
+	src\comp\delbin.bat
 
 # PHASE II:
 # Make the interpreter from "jazyk sborki" 
@@ -31,13 +31,13 @@ src\comp\delbin.bat
 # result - lib\libRefalAB_dbg.a library (debug mode)
 # result - lib\mainrf.o lib\rfdbg.o
 
-if not exist lib mkdir lib
-$(MAKE) -f src\inter\inter_lib_win.mak
-src\inter\delbin.bat
-$(MAKE) -f src\inter\inter_lib_dbg_win.mak
-src\inter\delbin.bat
-$(MAKE) -f src\inter\inter_o_win.mak
-src\inter\copy_obj.bat
-src\inter\delbin.bat
+	if not exist lib mkdir lib
+	$(MAKE) -f src\inter\inter_lib_win.mak
+	src\inter\delbin.bat
+	$(MAKE) -f src\inter\inter_lib_dbg_win.mak
+	src\inter\delbin.bat
+	$(MAKE) -f src\inter\inter_o_win.mak
+	src\inter\copy_obj.bat
+	src\inter\delbin.bat
 
 #### End of Makefile
