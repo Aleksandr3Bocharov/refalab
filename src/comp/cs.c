@@ -164,7 +164,7 @@ void sswap(const char *idp, size_t lid)
     if (p->mode & '\020')
         p504(idp, lid);
     else
-    { //  align box head on the word board
+    { //  align box head on the 2 word board
         size_t j0 = jwhere();
         size_t l0;
         if (options.extname)
