@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-21
+// 2024-12-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XJAK.C ------------
@@ -36,7 +36,8 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
         p = (T_LINKCB *)q;
         if (p->prev == NULL)
         {
-            p->prev = p->next = p;
+            p->next = p;
+            p->prev = p->next;
             p->info.codep = refal.svar;
             p->tag = 0;
             refal.svar = p;
