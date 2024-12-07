@@ -64,18 +64,18 @@ OBJECTS = \
 ####### Implicit rules
 
 .ref.o: 
-    $(REFXCV)
-    $(REFEXT) 
-    $(REFPLATFORM)  
+	$(REFXCV)
+	$(REFEXT) 
+	$(REFPLATFORM)  
 .c.o:
-    $(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@ 
 
 ####### Build rules
 
 all: $(REFLIB)
 
 $(REFLIB): $(OBJECTS)
-    $(AR) rs $(REFLIB) $(OBJECTS) 
+	$(AR) rs $(REFLIB) $(OBJECTS) 
 
 ####### Dependences
 

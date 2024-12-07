@@ -31,7 +31,7 @@ OBJECTS = \
 ####### Implicit rules
 
 .c.o:
-    $(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@ 
 
 ####### Build rules
 
