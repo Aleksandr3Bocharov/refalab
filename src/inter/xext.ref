@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-11-10
+* 2024-12-09
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -14,7 +14,7 @@
 EXT         START
             ENTRY Call, Map, FoldL, FoldR
             ENTRY MapAccum, DelAccum
-            ENTRY LoadFile, SaveFile
+            ENTRY LoadFile, SaveFile, AppendFile(AppFile)
             ENTRY WhiteSpaces(WSpaces), IsWhiteSpace(IsWSpace)
             ENTRY Trim, TrimL, TrimR  
             ENTRY Exist, Set
@@ -90,6 +90,13 @@ SaveFile +
   
 SaveFileWriteBracketLine +
     SN (EL) = <XPut SN EL>
+
+* <AppendFile S(/0/../4/)N (V(O)F) (E(O)L)*> == 
+AppendFile +
+    SN (EF) EL +
+            = <XOpen 'a' SN EF> +
+            <Map (/SaveFileWriteBracketLine/ SN) EL> +
+            <XClose 'w' SN>
 
 WhiteSpaces S   ' \n\t\v\f\r'
 
