@@ -1,13 +1,13 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-30
+// 2024-12-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
 //                 General MO:
 //     p1, m1, numb, symb, first, last,
-//     lengr, lengw, multe, delf, crel
+//     lengr, lengw, multe, delf, lrel
 //------------------------------------------
 
 #include <stdio.h>
@@ -417,7 +417,7 @@ char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
 G_L_B char delf = '\122';
 void (*delf_1)(void) = delf_;
 
-static void crel_(void)
+static void lrel_(void)
 {
     T_LINKCB *p = refal.preva->next;
     do
@@ -485,8 +485,8 @@ static void crel_(void)
     refal.upshot = 2;
     return;
 }
-char crel_0[] = {Z4 'C', 'R', 'E', 'L', '\004'};
-G_L_B char crel = '\122';
-void (*crel_1)(void) = crel_;
+char lrel_0[] = {Z4 'L', 'R', 'E', 'L', '\004'};
+G_L_B char lrel = '\122';
+void (*lrel_1)(void) = lrel_;
 
 //-------------------- end of file  XMO.C ----------------
