@@ -2,14 +2,14 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-11
+* 2024-12-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1       START
             ENTRY Go
             EXTRN Add, Sub, Mul, Dr, Div
             EXTRN AddN, SubN, MulN, DrN, DivN
-            EXTRN P1, M1, Prout, Numb, Symb, Proutm, CRel
+            EXTRN P1, M1, Prout, Numb, Symb, Proutm, LRel
 
 Go          = <F1> <F2> <F3> <F4>
 
@@ -117,22 +117,22 @@ F4          = <Prp1 /0/> +
             <Prnu '-+45'> +
             <Prnu '++'> +      
             <Prsy /128/ /0/> +
-*  prowerka CREL
-            <CRel ('a') 'a'> <CRel (/1/ /2/) /1/ /2/> +
-            <CRel (/CRel/) /CRel/> <CRel ('\101\n') '\101\n'> +
-            <CRel (/67/ /66/) '\103\102'> <CRel ('A') '\101'> +
-            <CRel ('ab') 'a'>  <CRel ('ab') 'b'> +
-            <CRel ('ba') 'a'>  <CRel ('ba') 'b'> +
-            <CRel ('a') 'ab'>  <CRel ('b') 'ab'> +
-            <CRel ('a') 'ba'>  <CRel ('b') 'ba'> +
-            <CRel ('ab') 'ba'> <CRel ('ba') 'ab'> +
-            <CRel ('100') '99'> <CRel ('99') '100'> +
-            <CRel ('010') '99'> <CRel ('99') '010'> +
+*  prowerka LRel
+            <LRel ('a') 'a'> <LRel (/1/ /2/) /1/ /2/> +
+            <LRel (/LRel/) /LRel/> <LRel ('\101\n') '\101\n'> +
+            <LRel (/67/ /66/) '\103\102'> <LRel ('A') '\101'> +
+            <LRel ('ab') 'a'>  <LRel ('ab') 'b'> +
+            <LRel ('ba') 'a'>  <LRel ('ba') 'b'> +
+            <LRel ('a') 'ab'>  <LRel ('b') 'ab'> +
+            <LRel ('a') 'ba'>  <LRel ('b') 'ba'> +
+            <LRel ('ab') 'ba'> <LRel ('ba') 'ab'> +
+            <LRel ('100') '99'> <LRel ('99') '100'> +
+            <LRel ('010') '99'> <LRel ('99') '010'> +
 *  neot
-            <CRel ('a' ('b')) 'b'> +
-            <CRel> <CRel /0/> +
-            <CRel /CRel/> +
-            <CRel ('a') 'b' ('123')> <CRel '123'>
+            <LRel ('a' ('b')) 'b'> +
+            <LRel> <LRel /0/> +
+            <LRel /LRel/> +
+            <LRel ('a') 'b' ('123')> <LRel '123'>
 
 Prad +
     E1      = <Prow /Add/ E1>
