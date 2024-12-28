@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-07
+// 2024-12-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -441,7 +441,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             else if ((pr->tag & 0001) != TAGO)
                 rfabe("rfpexm: unknown bracket type ");
             else
-                printf("/<%x>,%p/", pr->tag, (void *)pr->info.codep);
+                printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
         }
     }
     if (fr)
