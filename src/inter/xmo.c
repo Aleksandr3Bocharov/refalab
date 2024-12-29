@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-12-18
+// 2024-12-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -390,10 +390,10 @@ static void delf_(void)
     {
         sk = dot->info.codep;
         if (sk == NULL)
-            rfabe("delf: sign '#' missing ");
+            rfabe("delf: sign '#' missing");
         dot = sk->info.codep;
         if (dot == NULL)
-            rfabe("delf: sign '#' missing ");
+            rfabe("delf: sign '#' missing");
         nd = dot->next;
         if (nd->info.infoc != '#')
             continue;
