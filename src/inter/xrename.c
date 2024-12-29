@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2024-12-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -33,10 +33,7 @@ static void unlnk_(void)
         }
     namf[i] = '\0';
     if (unlink(namf) == -1)
-    {
-        printf("\nunlnk: error\n");
-        exit(1);
-    }
+        rfabe("unlnk: error");
     return;
 }
 char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
@@ -80,10 +77,7 @@ static void renam_(void)
             break;
         namt[i] = '\0';
         if (rename(namf, namt) == -1)
-        {
-            printf("\nrenam: error\n");
-            exit(1);
-        }
+            rfabe("renam: error");
         return;
     } while (false);
     printf("\nrenam: format error");
