@@ -1,7 +1,7 @@
 // Copyright 2024 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-12-29
+// 2025-01-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -297,6 +297,11 @@ static void lengr_(void)
     while (p != refal.nexta)
     {
         n++;
+        if (n > 16777215)
+        {
+            refal.upshot = 2;
+            return;
+        }
         p = p->next;
     }
     refal.preva->tag = TAGN;
@@ -316,6 +321,11 @@ static void lengw_(void)
     while (p != refal.nexta)
     {
         n++;
+        if (n > 16777215)
+        {
+            refal.upshot = 2;
+            return;
+        }
         if (p->tag == TAGLB)
             p = p->info.codep;
         p = p->next;
