@@ -17,21 +17,20 @@
 static void unlnk_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    size_t i;
-    char namf[40];
-    for (i = 0; p != refal.nexta; i++)
-        if (p->tag != TAGO || i >= 40)
+    char namf[41];
+    for (size_t i = 0; i < 41; i++)
+        namf[i] = '\0';
+    for (size_t i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO || i == 40)
         {
             printf("\nunlnk: format error");
             refal.upshot = 2;
             return;
         }
-        else
-        {
-            namf[i] = p->info.infoc;
-            p = p->next;
-        }
-    namf[i] = '\0';
+        namf[i] = p->info.infoc;
+        p = p->next;
+    }
     if (unlink(namf) == -1)
         rfabe("unlnk: error");
     return;
@@ -43,14 +42,15 @@ void (*unlnk_1)(void) = unlnk_;
 static void renam_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    size_t i;
-    char namf[40];
+    char namf[41];
+    for (size_t i = 0; i < 41; i++)
+        namf[i] = '\0';
     bool heot = false;
     do
     {
-        for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
+        for (size_t i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
         {
-            if (p->tag != TAGO || i >= 40)
+            if (p->tag != TAGO || i == 40)
             {
                 heot = true;
                 break;
@@ -60,12 +60,13 @@ static void renam_(void)
         }
         if (heot)
             break;
-        namf[i] = '\0';
         p = p->next;
-        char namt[40]; // from => to
-        for (i = 0; p != refal.nexta; i++)
+        char namt[41]; // from => to
+        for (size_t i = 0; i < 41; i++)
+            namt[i] = '\0';
+        for (size_t i = 0; p != refal.nexta; i++)
         {
-            if (p->tag != TAGO || i >= 40)
+            if (p->tag != TAGO || i == 40)
             {
                 heot = true;
                 break;
@@ -75,7 +76,6 @@ static void renam_(void)
         }
         if (heot)
             break;
-        namt[i] = '\0';
         if (rename(namf, namt) == -1)
             rfabe("renam: error");
         return;
