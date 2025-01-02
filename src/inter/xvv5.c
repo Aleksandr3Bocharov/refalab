@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-12-09
+// 2025-01-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -23,7 +23,7 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static void xopen_(void)
 {
    char namf[41];
-   for (size_t i = 0; i < 40; i++)
+   for (size_t i = 0; i < 41; i++)
       namf[i] = '\0';
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
