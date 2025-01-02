@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2025-01-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- XCF.C ---------------
@@ -24,7 +24,7 @@ static adr *func_f = NULL;
 static void ftochar_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    if (p->tag != TAGF)
+    if (p->next != refal.nexta || p->tag != TAGF)
     {
         printf("\nftochar: format error");
         refal.upshot = 2;
@@ -64,7 +64,7 @@ void (*ftochar_1)(void) = ftochar_;
 static void functab_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    if (p->tag != TAGF)
+    if (p->next != refal.nexta || p->tag != TAGF)
     {
         printf("\nfunctab: format error");
         refal.upshot = 2;
