@@ -85,12 +85,12 @@ static void numb_(void)
     T_LINKCB *pp = p;
     while (p->tag == TAGO && p->info.infoc == '0')
         p = p->next;
-    char str[12];
+    char str[11];
     size_t i;
     bool neot = false;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO || i == 11)
+        if (p->tag != TAGO || i == 10)
         {
             neot = true;
             break;
