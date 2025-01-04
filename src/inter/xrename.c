@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-03
+// 2025-01-04
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -18,9 +18,8 @@ static void unlnk_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     char namf[255];
-    for (size_t i = 0; i < 255; i++)
-        namf[i] = '\0';
-    for (size_t i = 0; p != refal.nexta; i++)
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
     {
         if (p->tag != TAGO || i == 254)
         {
@@ -31,6 +30,7 @@ static void unlnk_(void)
         namf[i] = p->info.infoc;
         p = p->next;
     }
+    namf[i] = '\0';
     if (unlink(namf) == -1)
         rfabe("unlnk: error");
     return;
@@ -43,12 +43,11 @@ static void renam_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     char namf[255];
-    for (size_t i = 0; i < 255; i++)
-        namf[i] = '\0';
+    size_t i;
     bool heot = false;
     do
     {
-        for (size_t i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
+        for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
         {
             if (p->tag != TAGO || i == 254)
             {
@@ -60,11 +59,10 @@ static void renam_(void)
         }
         if (heot)
             break;
+        namf[i] = '\0';
         p = p->next;
         char namt[255]; // from => to
-        for (size_t i = 0; i < 255; i++)
-            namt[i] = '\0';
-        for (size_t i = 0; p != refal.nexta; i++)
+        for (i = 0; p != refal.nexta; i++)
         {
             if (p->tag != TAGO || i == 254)
             {
@@ -76,6 +74,7 @@ static void renam_(void)
         }
         if (heot)
             break;
+        namt[i] = '\0';
         if (rename(namf, namt) == -1)
             rfabe("renam: error");
         return;
