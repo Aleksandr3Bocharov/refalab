@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-04
+// 2025-01-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -98,6 +98,8 @@ static void xclose_(void)
          break;
       const uint32_t j = gcoden(p);
       if (j >= fmax)
+         break;
+      if (p->next != refal.nexta)
          break;
       if (c == 'R' || c == 'r')
       {
