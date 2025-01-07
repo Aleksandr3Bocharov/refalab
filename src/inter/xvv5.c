@@ -135,6 +135,8 @@ static void xget_(void)
       const uint32_t j = gcoden(p);
       if (j >= fmax)
          break;
+      if (p->next != refal.nexta)
+         break;
       f = uniget[j];
       if (f == NULL)
       {
