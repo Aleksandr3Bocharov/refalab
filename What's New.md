@@ -2,7 +2,7 @@
 --------------
 
 Внесены изменения в работу (или исправлены ошибки) первичных функций
-ftochar, functab, lengr, lengw, numb, renam, unlnk, xclose, xget и xopen.
+ftochar, functab, lengr, lengw, numb, renam, unlnk, xclose, xget, xopen и xput.
 
 Изменен вывод нестандартных символов в интерфейсной функции rfpexm.
 
