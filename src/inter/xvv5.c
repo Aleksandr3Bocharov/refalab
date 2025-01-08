@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-07
+// 2025-01-08
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -207,32 +207,30 @@ static void xput_(void)
          }
          uniput[j] = f;
       }
+      const T_LINKCB *q = p;
+      bool neot2 = false;
+      while (q != refal.nexta)
+      {
+         if (q->tag != TAGO && q->tag != TAGLB && q->tag != TAGRB)
+         {
+            neot2 = true;
+            break;
+         }
+         q = q->next;
+      }
+      if (neot2)
+         break;
       while (p != refal.nexta)
       {
          int cc;
-         if (p->tag != TAGO)
-         {
-            if (p->tag != TAGLB && p->tag != TAGRB)
-            {
-               refal.upshot = 2;
-               return;
-            }
-            else
-            {
-               if (p->tag == TAGLB)
-                  cc = '(';
-               else
-                  cc = ')';
-               putc(cc, f);
-               p = p->next;
-            }
-         }
+         if (p->tag == TAGLB)
+            cc = '(';
+         else if (p->tag == TAGRB)
+            cc = ')';
          else
-         {
             cc = p->info.infoc;
-            putc(cc, f);
-            p = p->next;
-         }
+         putc(cc, f);
+         p = p->next;
       }
       putc('\n', f);
       return;
