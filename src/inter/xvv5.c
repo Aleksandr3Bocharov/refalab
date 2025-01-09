@@ -1,16 +1,17 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-08
+// 2025-01-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
-//    REFAL-5 compatible file input/output
+//           MO: file input/output
 //------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfintf.h"
 
