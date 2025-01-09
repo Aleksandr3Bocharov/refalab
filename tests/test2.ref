@@ -2,27 +2,28 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-02
+* 2025-01-09
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST2       START
             ENTRY Go
-            EXTRN OpnPut, OpnGet, ClsPut, ClsGet, LibGet, LibPut
-            EXTRN Print, Prout, FtoChar, ChartoF, FuncTab, Renam, Unlnk
+            EXTRN XOpen, XClose, XGet, XPut, Renam, Unlnk
+            EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
             EMPTY ffff
 
 Go          = <FuncTab /Prout/> +
             < <ChartoF 'prout'> ' eto prout'> +
             < <ChartoF 'PROUT'> ' eto PROUT'> +
-*           <OpnGet /6/ 'bb'> +    !!  neot  !!
-            <OpnPut 'lala.tes'> +
-            <LibPut ' str 1'> <LibPut ' str 2'> <ClsPut> +
-            <OpnPut '*' 'lala.tes'> <LibPut ' str 3'> <ClsPut> +
+*           <XOpen 'r' /6/ 'bb'> +    !!  neot  !!
+            <XOpen 'w' /0/ 'lala.tes'> +
+            <XPut /0/ ' str 1'> <XPut /0/ ' str 2'> <XClose 'w' /0/> +
+            <XOpen 'a' /1/ 'lala.tes'> +
+            <XPut /1/  ' str 3'> <XClose 'w' /1/> +
             <Renam 'lala.tes*lala.tos'> +
-            <OpnGet /4/ 'lala.tos'> +
-            <Print <LibGet /4/>> <Print <LibGet /4/>> +
-            <Print <LibGet /4/>> +
-            <Print <LibGet /4/>> <ClsGet /4/> +
+            <XOpen 'r' /4/ 'lala.tos'> +
+            <Print <XGet /4/>> <Print <XGet /4/>> +
+            <Print <XGet /4/>> +
+            <Print <XGet /4/>> <XClose 'r' /4/> +
             <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
             <FuncTab /tttt/> +
             < <ChartoF 'tttt'> 'werno'> +
