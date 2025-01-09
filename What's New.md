@@ -1,6 +1,9 @@
 Что нового?
 --------------
 
+Удалены следующие первичные функции из библиотеки РефалАБ:
+clsget, clsput, libget, libput, opnget, opnput.
+
 Внесены изменения в работу (или исправлены ошибки) первичных функций
 ftochar, functab, lengr, lengw, numb, renam, unlnk, xclose, xget, xopen и xput.
 
