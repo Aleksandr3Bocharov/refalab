@@ -441,6 +441,15 @@ static void lrel_(void)
         char c = '=';
         for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
         {
+            //  ( ( =
+            //  ( ) >
+            //  ( S >
+            //  ) ( <
+            //  ) ) =
+            //  ) S <
+            //  S ( <
+            //  S ) >
+            //  S S !  
             if (p->tag == TAGLB)
             {
                 if (q->tag != TAGLB)
