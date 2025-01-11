@@ -439,7 +439,6 @@ static void lrel_(void)
         T_LINKCB *q = pp->next;
         const T_LINKCB *q1 = refal.nexta;
         char c = '=';
-        bool fail = false;
         for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
         {
             if (p->tag == TAGLB)
@@ -463,8 +462,6 @@ static void lrel_(void)
             else if ((size_t)p->info.codep < (size_t)q->info.codep)
                 c = '<';
         }
-        if (fail)
-            break;
         if (c == '=')
         {
             if (p == pp && q != q1)
@@ -472,22 +469,6 @@ static void lrel_(void)
             if (q == q1 && p != pp)
                 c = '>';
         }
-        for (; p != pp; p = p->next)
-            if (p->tag == TAGLB)
-            {
-                fail = true;
-                break;
-            }
-        if (fail)
-            break;
-        for (; q != q1; q = q->next)
-            if (q->tag == TAGLB)
-            {
-                fail = true;
-                break;
-            }
-        if (fail)
-            break;
         p = refal.preva->next;
         p->tag = TAGO;
         p->info.codep = NULL;
