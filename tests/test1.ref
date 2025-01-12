@@ -132,7 +132,7 @@ F4          = <Prp1 /0/> +
             <LRel ('a' ('b')) 'ab'> <LRel ('abc') 'a' ('123')> +
             <LRel ('a' ('b')) 'a' ('c')> +
             <LRel ('a' ('b')) 'a' ('b')> +
-            <LRel ('a' ('b') 'c') 'a' ('b')> +
+            <LRel ('a' ('bc')) 'a' ('b')> +
 *  neot
             <LRel> <LRel /0/> +
             <LRel /LRel/> +
