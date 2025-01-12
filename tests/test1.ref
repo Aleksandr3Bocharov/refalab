@@ -1,8 +1,8 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-12-18
+* 2025-01-12
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1       START
@@ -128,11 +128,14 @@ F4          = <Prp1 /0/> +
             <LRel ('ab') 'ba'> <LRel ('ba') 'ab'> +
             <LRel ('100') '99'> <LRel ('99') '100'> +
             <LRel ('010') '99'> <LRel ('99') '010'> +
+            <LRel ('a' ('b')) 'b'> <LRel ('a') 'b' ('123')> +
+            <LRel ('a' ('b')) 'ab'> <LRel ('abc') 'a' ('123')> +
+            <LRel ('a' ('b')) 'a' ('b')> +
+            <LRel ('a' ('b') 'c') 'a' ('b')> +
 *  neot
-            <LRel ('a' ('b')) 'b'> +
             <LRel> <LRel /0/> +
             <LRel /LRel/> +
-            <LRel ('a') 'b' ('123')> <LRel '123'>
+            <LRel '123'>
 
 Prad +
     E1      = <Prow /Add/ E1>
