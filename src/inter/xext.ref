@@ -1,8 +1,8 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-12-09
+* 2025-01-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -69,7 +69,7 @@ MapAccumAddScanned +
 DelAccum +
     WA ER   = ER
 
-* <LoadFile S(/0/../4/)N V(O)F> == (E(O)L)*
+* <LoadFile S(/0/../4/)N E(O)F> == (E(O)L)*
 LoadFile +
     SN EF   = <XOpen 'r' SN EF> +
             <DoLoadFile SN <XGet SN>> +
@@ -81,7 +81,7 @@ DoLoadFile +
             = (EL)
     SN EL   = (EL) <DoLoadFile SN <XGet SN>>
 
-* <SaveFile S(/0/../4/)N (V(O)F) (E(O)L)*> == 
+* <SaveFile S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 SaveFile +
     SN (EF) EL +
             = <XOpen 'w' SN EF> +
@@ -91,7 +91,7 @@ SaveFile +
 SaveFileWriteBracketLine +
     SN (EL) = <XPut SN EL>
 
-* <AppendFile S(/0/../4/)N (V(O)F) (E(O)L)*> == 
+* <AppendFile S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 AppendFile +
     SN (EF) EL +
             = <XOpen 'a' SN EF> +
