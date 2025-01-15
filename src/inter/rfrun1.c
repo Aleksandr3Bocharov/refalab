@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-02
+// 2025-01-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN1.C -------------------
@@ -946,7 +946,7 @@ void rfrun(T_ST *ast) // adress of current state table
             n = *(vpc + NMBL);
             et[nel + 1] = b2->prev;
             b0 = et[n]->next;
-            i_state = LED1;
+            i_state = RED1;
             break;
         case RED1:
             if (b0 == et[n - 1])
