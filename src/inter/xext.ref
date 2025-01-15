@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-14
+* 2025-01-15
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -130,8 +130,8 @@ Exist +
   
 * <Set WE*> == WS*
 Set +
-    EU WR EB WR EE +
-            = EU <Set EB WR EE>
+    R EB WS EM WS EE +
+            = <Set EB WS EM> EE
     E0      = E0
 
             END
