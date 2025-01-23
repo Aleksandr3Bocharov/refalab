@@ -9,7 +9,8 @@
 clsget, clsput, libget, libput, opnget, opnput.
 
 Внесены изменения в работу (или исправлены ошибки) первичных функций
-ftochar, functab, lengr, lengw, lrel, numb, renam, unlnk, xclose, xget, xopen и xput.
+delf, ftochar, functab, lengr, lengw, lrel, numb, renam, unlnk,
+xclose, xget, xopen и xput.
 
 Изменен вывод нестандартных символов в интерфейсной функции rfpexm.
 
