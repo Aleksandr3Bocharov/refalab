@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-02
+// 2025-01-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- XCF.C ---------------
@@ -16,7 +16,7 @@
 #include "refal.def"
 #include "rfintf.h"
 
-typedef char *adr;
+typedef uint8_t *adr;
 
 static size_t func_n = 0;
 static adr *func_f = NULL;
@@ -70,7 +70,7 @@ static void functab_(void)
         refal.upshot = 2;
         return;
     }
-    char *u = (char *)p->info.codef;
+    uint8_t *u = p->info.codef;
     for (size_t i = 0; i < func_n; i++)
         if (u == func_f[i])
             return;
@@ -117,7 +117,7 @@ static void chartof_(void)
     u[i] = (char)i;
     ++i;
     u[i] = 2; // HEOT
-    char *j = u + i;
+    uint8_t *j = (uint8_t *)(u + i);
     union
     {
         char b[2];
@@ -127,13 +127,13 @@ static void chartof_(void)
     for (size_t k = 0; k < func_n; k++)
     {
         d.b[0] = *(func_f[k] - 1);
-        if (i == (size_t)d.w + 1 && strncmp(u, func_f[k] - (d.w + 1), d.w) == 0)
+        if (i == (size_t)d.w + 1 && strncmp(u, (char*)(func_f[k] - (d.w + 1)), d.w) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
             p = refal.preva->next;
             p->tag = TAGF;
-            p->info.codef = (uint8_t *)func_f[k];
+            p->info.codef = func_f[k];
             if (p->next != refal.nexta)
                 rfdel(p, refal.nexta);
             rftpl(refal.prevr, p->prev, p->next);
@@ -149,7 +149,7 @@ static void chartof_(void)
     func_n++;
     p = refal.preva->next;
     p->tag = TAGF;
-    p->info.codef = (uint8_t *)j;
+    p->info.codef = j;
     if (p->next != refal.nexta)
         rfdel(p, refal.nexta);
     rftpl(refal.prevr, p->prev, p->next);

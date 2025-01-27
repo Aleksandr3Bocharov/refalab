@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-01-25
+// 2024-01-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -673,7 +673,7 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     {
         if (x->tag != y->tag)
             return NULL;
-        if (x->info.codef != y->info.codef)
+        if (x->info.codep != y->info.codep)
             if (x->tag != TAGLB && x->tag != TAGRB)
                 return NULL;
         x = x->next;
