@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-23
+// 2025-01-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -42,7 +42,7 @@ static void p1_(void)
     return;
 }
 char p1_0[] = {Z2 'P', '1', '\002'};
-G_L_B char p1 = '\122';
+G_L_B uint8_t p1 = '\122';
 void (*p1_1)(void) = p1_;
 
 static void m1_(void)
@@ -68,7 +68,7 @@ static void m1_(void)
     return;
 }
 char m1_0[] = {Z2 'M', '1', '\002'};
-G_L_B char m1 = '\122';
+G_L_B uint8_t m1 = '\122';
 void (*m1_1)(void) = m1_;
 
 static void numb_(void)
@@ -137,7 +137,7 @@ static void numb_(void)
     return;
 }
 char numb_0[] = {Z4 'N', 'U', 'M', 'B', '\004'};
-G_L_B char numb = '\122';
+G_L_B uint8_t numb = '\122';
 void (*numb_1)(void) = numb_;
 
 static void symb_(void)
@@ -209,7 +209,7 @@ static void symb_(void)
     return;
 }
 char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
-G_L_B char symb = '\122';
+G_L_B uint8_t symb = '\122';
 void (*symb_1)(void) = symb_;
 
 static void first_(void)
@@ -246,7 +246,7 @@ static void first_(void)
     return;
 }
 char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
-G_L_B char first = '\122';
+G_L_B uint8_t first = '\122';
 void (*first_1)(void) = first_;
 
 static void last_(void)
@@ -287,7 +287,7 @@ static void last_(void)
     return;
 }
 char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
-G_L_B char last = '\122';
+G_L_B uint8_t last = '\122';
 void (*last_1)(void) = last_;
 
 static void lengr_(void)
@@ -311,7 +311,7 @@ static void lengr_(void)
     return;
 }
 char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
-G_L_B char lengr = '\122';
+G_L_B uint8_t lengr = '\122';
 void (*lengr_1)(void) = lengr_;
 
 static void lengw_(void)
@@ -337,7 +337,7 @@ static void lengw_(void)
     return;
 }
 char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
-G_L_B char lengw = '\122';
+G_L_B uint8_t lengw = '\122';
 void (*lengw_1)(void) = lengw_;
 
 static void multe_(void)
@@ -382,7 +382,7 @@ static void multe_(void)
     return;
 }
 char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', '\005'};
-G_L_B char multe = '\122';
+G_L_B uint8_t multe = '\122';
 void (*multe_1)(void) = multe_;
 
 static void delf_(void)
@@ -422,7 +422,7 @@ static void delf_(void)
     return;
 }
 char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
-G_L_B char delf = '\122';
+G_L_B uint8_t delf = '\122';
 void (*delf_1)(void) = delf_;
 
 static void lrel_(void)
@@ -472,7 +472,7 @@ static void lrel_(void)
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', '\004'};
-G_L_B char lrel = '\122';
+G_L_B uint8_t lrel = '\122';
 void (*lrel_1)(void) = lrel_;
 
 //-------------------- end of file  XMO.C ----------------

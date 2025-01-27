@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-12-07
+// 2025-01-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XJAK.C ------------
@@ -78,7 +78,7 @@ static void br_(void)
     return;
 }
 char br_0[] = {Z2 'B', 'R', '\002'};
-G_L_B char br = '\122';
+G_L_B uint8_t br = '\122';
 void (*br_1)(void) = br_;
 
 static void dg_(void)
@@ -111,7 +111,7 @@ static void dg_(void)
     return;
 }
 char dg_0[] = {Z2 'D', 'G', '\002'};
-G_L_B char dg = '\122';
+G_L_B uint8_t dg = '\122';
 void (*dg_1)(void) = dg_;
 
 static void dgall_(void)
@@ -124,7 +124,7 @@ static void dgall_(void)
     return;
 }
 char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
-G_L_B char dgall = '\122';
+G_L_B uint8_t dgall = '\122';
 void (*dgal_1)(void) = dgall_;
 
 static void gtr_(void)
@@ -140,7 +140,7 @@ static void gtr_(void)
     return;
 }
 char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
-G_L_B char gtr = '\122';
+G_L_B uint8_t gtr = '\122';
 void (*gtr_1)(void) = gtr_;
 
 static void rdr_(void)
@@ -160,7 +160,7 @@ static void rdr_(void)
     return;
 }
 char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
-G_L_B char rdr = '\122';
+G_L_B uint8_t rdr = '\122';
 void (*rdr_1)(void) = rdr_;
 
 static void ptr_(void)
@@ -177,7 +177,7 @@ static void ptr_(void)
     return;
 }
 char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
-G_L_B char ptr = '\122';
+G_L_B uint8_t ptr = '\122';
 void (*ptr_1)(void) = ptr_;
 
 static void wtr_(void)
@@ -194,7 +194,7 @@ static void wtr_(void)
     return;
 }
 char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
-G_L_B char wtr = '\122';
+G_L_B uint8_t wtr = '\122';
 void (*wtr_1)(void) = wtr_;
 
 static void swr_(void)
@@ -211,7 +211,7 @@ static void swr_(void)
     return;
 }
 char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
-G_L_B char swr = '\122';
+G_L_B uint8_t swr = '\122';
 void (*swr_1)(void) = swr_;
 
 static void rp_(void)
@@ -269,7 +269,7 @@ static void rp_(void)
     return;
 }
 char rp_0[] = {Z2 'R', 'P', '\002'};
-G_L_B char rp = '\122';
+G_L_B uint8_t rp = '\122';
 void (*rp_1)(void) = rp_;
 
 static void cp_(void)
@@ -300,7 +300,7 @@ static void cp_(void)
     return;
 }
 char cp_0[] = {Z2 'C', 'P', '\002'};
-G_L_B char cp = '\122';
+G_L_B uint8_t cp = '\122';
 void (*cp_1)(void) = cp_;
 
 static void new_(void)
@@ -324,7 +324,7 @@ static void new_(void)
     return;
 }
 char new_0[] = {Z3 'N', 'E', 'W', '\003'};
-G_L_B char new = '\122';
+G_L_B uint8_t new = '\122';
 void (*new_1)(void) = new_;
 
 //----------------- end of file  XJAK.C ----------------

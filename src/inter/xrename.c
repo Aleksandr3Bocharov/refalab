@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-04
+// 2025-01-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -36,7 +36,7 @@ static void unlnk_(void)
     return;
 }
 char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
-G_L_B char unlnk = '\122';
+G_L_B uint8_t unlnk = '\122';
 void (*unlnk_1)(void) = unlnk_;
 
 static void renam_(void)
@@ -84,7 +84,7 @@ static void renam_(void)
     return;
 }
 char renam_0[] = {Z5 'R', 'E', 'N', 'A', 'M', '\005'};
-G_L_B char renam = '\122';
+G_L_B uint8_t renam = '\122';
 void (*renam_1)(void) = renam_;
 
 //-------- end of file  XRENAME.C -------
