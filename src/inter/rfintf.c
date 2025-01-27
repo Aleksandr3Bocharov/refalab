@@ -373,7 +373,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         else if (pr->tag == TAGF)
         {
             putchar('\'');
-            const char *f = (char *)(pr->info.codef - 1);
+            const char *f = (char *)(pr->info.codef) - 1;
             const uint8_t l = (uint8_t)*f;
             f -= l;
             for (size_t k = 1; k <= l; k++, f++)
@@ -429,7 +429,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             else if (pr->tag == TAGF)
             {
                 putchar('/');
-                const char *f = (char *)(pr->info.codef - 1);
+                const char *f = (char *)(pr->info.codef) - 1;
                 const uint8_t l = (uint8_t)*f;
                 f -= l;
                 for (size_t k = 1; k <= l; k++, f++)
