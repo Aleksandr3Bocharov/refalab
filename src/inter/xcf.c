@@ -123,10 +123,10 @@ static void chartof_(void)
         char b[2];
         uint16_t w;
     } d;
-    d.b[1] = 0;
+    d.b[1] = '\0';
     for (size_t k = 0; k < func_n; k++)
     {
-        d.b[0] = *(func_f[k] - 1);
+        d.b[0] = *((char *)func_f[k] - 1);
         if (i == (size_t)d.w + 1 && strncmp(u, (char*)func_f[k] - (d.w + 1), d.w) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
