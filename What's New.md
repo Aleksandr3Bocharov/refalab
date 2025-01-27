@@ -1,6 +1,8 @@
 Что нового?
 --------------
 
+Внесены изменения в работу первичной функции lldupl.
+
 Внесены изменения в работу рефал-функции Set из библиотеки РефалАБ.
 
 Исправлена ошибка в работе интерпретатора.
@@ -9,7 +11,7 @@
 clsget, clsput, libget, libput, opnget, opnput.
 
 Внесены изменения в работу (или исправлены ошибки) первичных функций
-delf, ftochar, functab, lengr, lengw, lrel, numb, renam, unlnk,
+chartof, delf, ftochar, functab, lengr, lengw, lrel, numb, renam, unlnk,
 xclose, xget, xopen и xput.
 
 Изменен вывод нестандартных символов в интерфейсной функции rfpexm.
