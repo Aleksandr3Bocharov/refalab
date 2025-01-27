@@ -30,7 +30,7 @@ static void ftochar_(void)
         refal.upshot = 2;
         return;
     }
-    const char *u = (char *)p->info.codef - 1;
+    const char *u = (char *)(p->info.codef - 1);
     union
     {
         char b[2];
