@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-27
+// 2025-01-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- MAINRF.C -------------------
@@ -9,14 +9,15 @@
 //------------------------------------------------
 
 #include <stdio.h>
+#include <stdint.h>
 #include "rfintf.h"
 
 // GO -> go
-extern void go(void);
+extern uint8_t go;
 
 int main(void)
 {
-    rfexec(go);
+    rfexec(&go);
     printf("\n");
 }
 

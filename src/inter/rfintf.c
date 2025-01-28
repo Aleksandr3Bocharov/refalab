@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-01-27
+// 2024-01-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -115,7 +115,7 @@ bool slins(T_LINKCB *p, size_t k)
     return lins(p, k);
 }
 
-bool linskd(T_ST *ast, void (*f)(void))
+bool linskd(T_ST *ast, uint8_t *f)
 {
     if (!lexist(ast))
         rfabe("linskd: process doesn't exist still");
@@ -130,7 +130,7 @@ bool linskd(T_ST *ast, void (*f)(void))
     q->tag = TAGD;
     q->info.codep = p;
     r->tag = TAGF;
-    r->info.codep = (T_LINKCB *)f;
+    r->info.codef = f;
     ast->dot = q;
     return true;
 }
@@ -211,7 +211,7 @@ void rftermm(void)
     }
 }
 
-void rfexec(void (*func)(void))
+void rfexec(uint8_t *func)
 {
     T_ST s_st;
     if (rf_init)
