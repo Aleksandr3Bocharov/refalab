@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-07
+// 2025-02-08
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -243,7 +243,11 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         printf("\n");
-        printf("\nSyntax: refal source_file [(option,...,option)]");
+#ifdef mdebug
+        printf("\nSyntax: RefalAB_dbg source_file [(option,...,option)]");
+#else
+        printf("\nSyntax: RefalAB source_file [(option,...,option)]");
+#endif
         printf("\nOptions:");
         printf("\n   mm  multi_module");
         printf("\n   nn  no_function_names");
