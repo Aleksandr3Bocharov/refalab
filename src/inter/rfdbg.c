@@ -1,11 +1,11 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-29
+// 2025-02-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- RFDBG.C -------------
-//          Standard REFAL-Debugger
+//          Standard RefalAB debugger
 //------------------------------------------
 
 #include <stdio.h>
@@ -32,7 +32,7 @@ int main(void)
             break;
         rfdbg(&s_st); // there is exit
     } while (false);
-    printf("\nREFAL-debugger: no memory for initialization");
+    printf("\nRefalAB debugger: no memory for initialization");
     fclose(stdin);
     rftermm();
     printf("\n");
