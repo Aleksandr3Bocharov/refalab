@@ -57,7 +57,7 @@ static void appl_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = 1000;
+    s_st->stop = 100;
     // s_st->stop = 0x7FFFFFFF;
 #ifdef mdebug
     const uint32_t s_stop = s_st->stop;
