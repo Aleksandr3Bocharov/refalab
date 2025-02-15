@@ -229,7 +229,8 @@ void rfexec(uint8_t *func)
         rftermm();
         return;
     }
-    s_st.stop = 0x7FFFFFFF;
+    s_st.stop = 1000;
+    //s_st.stop = 0x7FFFFFFF;
 #ifdef mdebug
     const uint32_t s_stop = s_st.stop;
 #endif

@@ -1,13 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-27
+// 2025-02-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XAPPLY.C ------------
 //                 MO: apply
 //--------------------------------------------
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "refal.def"
@@ -56,11 +57,29 @@ static void appl_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = 0x7FFFFFFF;
+    s_st->stop = 1000;
+    // s_st->stop = 0x7FFFFFFF;
+#ifdef mdebug
+    const uint32_t s_stop = s_st->stop;
+#endif
     do
     {
         if (dba == NULL)
+        {
+#ifdef mdebug
+            s_st->stop = s_st->step + 1;
+            const T_LINKCB *pk = s_st->dot->info.codep;
+            const T_LINKCB *prevk = pk->prev;
+            const T_LINKCB *nextd = s_st->dot->next;
+            printf("\n Step: %d", s_st->stop);
+            rfpexm(" Term: ", prevk, nextd);
+            rfrun(s_st);
+            if (s_st->state == 1)
+                rfpexm(" Result: ", prevk, nextd);
+#else
             rfrun(s_st); // net prokrutki
+#endif
+        }
         else
             (*dba)(s_st); // prokrutka vkluchena
         if (s_st->state == 3)
