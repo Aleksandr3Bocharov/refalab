@@ -310,9 +310,6 @@ void rfexec(uint8_t *func)
         case ABEND:
             switch (s_st.state)
             {
-            case 1:
-                printf("\nStop on step number");
-                break;
             case 2:
                 printf("\nRecognition impossible");
                 break;

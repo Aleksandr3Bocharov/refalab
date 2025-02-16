@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-02-15
+// 2025-02-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XAPPLY.C ------------
@@ -57,7 +57,7 @@ static void appl_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = 100;
+    s_st->stop = 10;
     // s_st->stop = 0x7FFFFFFF;
 #ifdef mdebug
     const uint32_t s_stop = s_st->stop;
@@ -67,6 +67,8 @@ static void appl_(void)
         if (dba == NULL)
         {
 #ifdef mdebug
+            //if (s_st->step >= s_stop)
+            //    s_st->step = 0;
             s_st->stop = s_st->step + 1;
             const T_LINKCB *pk = s_st->dot->info.codep;
             const T_LINKCB *prevk = pk->prev;
@@ -78,6 +80,11 @@ static void appl_(void)
                 rfpexm(" Result: ", prevk, nextd);
 #else
             rfrun(s_st); // net prokrutki
+            if (s_st->state == 1 && s_st->dot != NULL)
+            {
+                s_st->step = 0;
+                continue;
+            }
 #endif
         }
         else
