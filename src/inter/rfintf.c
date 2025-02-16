@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-01-29
+// 2025-02-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -229,7 +229,7 @@ void rfexec(uint8_t *func)
         rftermm();
         return;
     }
-    s_st.stop = 100;
+    s_st.stop = 10;
     //s_st.stop = 0x7FFFFFFF;
 #ifdef mdebug
     const uint32_t s_stop = s_st.stop;
@@ -259,6 +259,11 @@ void rfexec(uint8_t *func)
                 if (s_st.state == 3)
                     if (lincrm())
                         go = true;
+                if (s_st.step >= s_stop)
+                {
+                    s_st.step = 0;
+                    go = true;
+                }
                 if (!go)
                 {
                     ex_state = ABEND;
@@ -281,6 +286,11 @@ void rfexec(uint8_t *func)
             if (s_st.state == 3)
                 if (lincrm())
                     break;
+            if (s_st.state == 1 && s_st.dot != NULL)
+            {
+                s_st.step = 0;
+                break;
+            }
             if (s_st.dot != NULL)
             {
                 ex_state = ABEND;
