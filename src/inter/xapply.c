@@ -57,8 +57,7 @@ static void appl_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = 10;
-    // s_st->stop = 0x7FFFFFFF;
+    s_st->stop = 0x7FFFFFFF;
 #ifdef mdebug
     const uint32_t s_stop = s_st->stop;
 #endif
@@ -67,11 +66,11 @@ static void appl_(void)
         if (dba == NULL)
         {
 #ifdef mdebug
-            //if (s_st->step >= s_stop)
-            //    s_st->step = 0;
+            if (s_st->step >= s_stop)
+                s_st->step = 0;
             s_st->stop = s_st->step + 1;
-            const T_LINKCB *pk = s_st->dot->info.codep;
-            const T_LINKCB *prevk = pk->prev;
+            const T_LINKCB *pk1 = s_st->dot->info.codep;
+            const T_LINKCB *prevk = pk1->prev;
             const T_LINKCB *nextd = s_st->dot->next;
             printf("\n Step: %d", s_st->stop);
             rfpexm(" Term: ", prevk, nextd);
@@ -95,6 +94,10 @@ static void appl_(void)
     } while (s_st->state == 1 && s_st->dot != NULL);
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
+#ifdef mdebug
+    if (dba == NULL)
+        upst->stop = upst->step + 1;
+#endif
     switch (s_st->state)
     {
     case 1:
