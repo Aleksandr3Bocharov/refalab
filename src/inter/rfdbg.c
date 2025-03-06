@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-02-14
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- RFDBG.C -------------
@@ -17,7 +17,7 @@
 #include "rfintf.h"
 
 static T_ST s_st;
-extern uint8_t go;
+extern uint8_t refalab_go;
 
 int main(void)
 {
@@ -28,7 +28,7 @@ int main(void)
             break;
         if (!lcre(&s_st))
             break;
-        if (!linskd(&s_st, &go))
+        if (!linskd(&s_st, &refalab_go))
             break;
         rfdbg(&s_st); // there is exit
     } while (false);

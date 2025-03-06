@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-27
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XVV.C ------------
@@ -48,7 +48,7 @@ static void pr1_(void)
     return;
 }
 char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', '\005'};
-G_L_B uint8_t print = '\122';
+G_L_B uint8_t refalab_print = '\122';
 void (*pr1_1)(void) = pr1_;
 
 static void pr2_(void)
