@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-09
+* 2025-03-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0       START
@@ -11,7 +11,7 @@ TEST0       START
             EXTRN First, Last, LengR, LengW
             EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Prout, Proutm
             EXTRN Dr
-            EXTRN XOpen, XClose, XGet, XPut, Renam, Unlnk
+            EXTRN XOpen, XClose, XGet, XPut, Rename, Unlink
             EXTRN Br, Rp, Dg, DgAll, Cp, Print
             EMPTY Tra, Em1, Em2, Em3, Pus
             SWAP Sw
@@ -107,10 +107,10 @@ Prvv        = <XOpen 'w' /0/ 'lala.put'> +
             <XPut /0/ ' str 1'> <XPut /0/ ' str 2'> <XClose 'w' /0/> +
             <XOpen 'a' /1/ 'lala.put'> +
             <XPut /1/ ' str 3'> <XClose 'w' /1/> +
-            <Renam 'lala.put*lala.get'> +
+            <Rename 'lala.put*lala.get'> +
             <XOpen 'r' /4/ 'lala.get'> +
             <Print <XGet /4/>> <Print <XGet /4/>> +
-            <Print <XGet /4/>> <XClose 'r' /4/> <Unlnk 'lala.get'>
+            <Print <XGet /4/>> <XClose 'r' /4/> <Unlink 'lala.get'>
 
 *
 Prsw        = <Sw1 <New /123456/>> <Wtr /Sw/ /123456/> <Ptr /Sw/ '0'> +

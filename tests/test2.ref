@@ -2,12 +2,12 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-09
+* 2025-03-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST2       START
             ENTRY Go
-            EXTRN XOpen, XClose, XGet, XPut, Renam, Unlnk
+            EXTRN XOpen, XClose, XGet, XPut, Rename, Unlink
             EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
             EMPTY ffff
 
@@ -19,7 +19,7 @@ Go          = <FuncTab /Prout/> +
             <XPut /0/ ' str 1'> <XPut /0/ ' str 2'> <XClose 'w' /0/> +
             <XOpen 'a' /1/ 'lala.tes'> +
             <XPut /1/  ' str 3'> <XClose 'w' /1/> +
-            <Renam 'lala.tes*lala.tos'> +
+            <Rename 'lala.tes*lala.tos'> +
             <XOpen 'r' /4/ 'lala.tos'> +
             <Print <XGet /4/>> <Print <XGet /4/>> +
             <Print <XGet /4/>> +
@@ -27,7 +27,7 @@ Go          = <FuncTab /Prout/> +
             <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
             <FuncTab /tttt/> +
             < <ChartoF 'tttt'> 'werno'> +
-            <Unlnk 'lala.tos'>
+            <Unlink 'lala.tos'>
 
 tttt +
     E1      = <Prout E1>
