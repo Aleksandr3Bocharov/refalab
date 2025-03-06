@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-27
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -83,7 +83,7 @@ static void xopen_(void)
    return;
 }
 char xopen_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
-G_L_B uint8_t xopen = '\122';
+G_L_B uint8_t refalab_xopen = '\122';
 void (*xopen_1)(void) = xopen_;
 
 static void xclose_(void)
@@ -122,7 +122,7 @@ static void xclose_(void)
    return;
 }
 char xclose_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
-G_L_B uint8_t xclose = '\122';
+G_L_B uint8_t refalab_xclose = '\122';
 void (*xclose_1)(void) = xclose_;
 
 static void xget_(void)
@@ -178,7 +178,7 @@ static void xget_(void)
    return;
 }
 char xget_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
-G_L_B uint8_t xget = '\122';
+G_L_B uint8_t refalab_xget = '\122';
 void (*xget_1)(void) = xget_;
 
 static void xput_(void)
@@ -242,7 +242,7 @@ static void xput_(void)
    return;
 }
 char xput_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
-G_L_B uint8_t xput = '\122';
+G_L_B uint8_t refalab_xput = '\122';
 void (*xput_1)(void) = xput_;
 
 //----------  end of file XVV5.C  -----------

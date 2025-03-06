@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-27
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -544,7 +544,7 @@ static void gcd_(void)
         }
 }
 char gcd_0[] = {Z3 'G', 'C', 'D', '\003'};
-G_L_B uint8_t gcd = '\122';
+G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
 
 //------------------ end of file  XGCD.C ----------------

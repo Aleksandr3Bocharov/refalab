@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-02-17
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XAPPLY.C ------------
@@ -119,7 +119,7 @@ static void appl_(void)
     return;
 }
 char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', '\005'};
-G_L_B uint8_t apply = '\122';
+G_L_B uint8_t refalab_apply = '\122';
 void (*appl_1)(void) = appl_;
 
 //----------  end of file XAPPLY.C  -----------
