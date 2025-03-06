@@ -15,7 +15,7 @@
 #include "refal.def"
 #include "rfintf.h"
 
-static void unlnk_(void)
+static void unlink_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     char namf[255];
@@ -24,7 +24,7 @@ static void unlnk_(void)
     {
         if (p->tag != TAGO || i == 254)
         {
-            printf("\nunlnk: format error");
+            printf("\nunlink: format error");
             refal.upshot = 2;
             return;
         }
@@ -32,15 +32,15 @@ static void unlnk_(void)
         p = p->next;
     }
     namf[i] = '\0';
-    if (unlink(namf) == -1)
-        rfabe("unlnk: error");
+    if (_unlink(namf) == -1)
+        rfabe("unlink: error");
     return;
 }
-char unlnk_0[] = {Z5 'U', 'N', 'L', 'N', 'K', '\005'};
-G_L_B uint8_t refalab_unlnk = '\122';
-void (*unlnk_1)(void) = unlnk_;
+char unlink_0[] = {Z6 'U', 'N', 'L', 'I', 'N', 'K', '\006'};
+G_L_B uint8_t refalab_unlink = '\122';
+void (*unlink_1)(void) = unlink_;
 
-static void renam_(void)
+static void rename_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     char namf[255];
@@ -77,15 +77,15 @@ static void renam_(void)
             break;
         namt[i] = '\0';
         if (rename(namf, namt) == -1)
-            rfabe("renam: error");
+            rfabe("rename: error");
         return;
     } while (false);
-    printf("\nrenam: format error");
+    printf("\nrename: format error");
     refal.upshot = 2;
     return;
 }
-char renam_0[] = {Z5 'R', 'E', 'N', 'A', 'M', '\005'};
-G_L_B uint8_t refalab_renam = '\122';
-void (*renam_1)(void) = renam_;
+char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', '\006'};
+G_L_B uint8_t refalab_rename = '\122';
+void (*rename_1)(void) = rename_;
 
 //-------- end of file  XRENAME.C -------
