@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-05
+// 2025-03-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -493,14 +493,14 @@ void jend(void)
 #ifdef UNIX
                     // begin name without underlining _
                     if (LBLL == 4)
-                        fputs("\t.long\t", syslin);
+                        fputs("\t.long\trefalab_", syslin);
                     else
-                        fputs("\t.quad\t", syslin);
+                        fputs("\t.quad\trefalab_", syslin);
 #else // Windows - with underlining _ in x86
                     if (LBLL == 4)
-                        fputs("\t.long\t_", syslin);
+                        fputs("\t.long\t_refalab_", syslin);
                     else
-                        fputs("\t.quad\t", syslin);
+                        fputs("\t.quad\trefalab_", syslin);
 #endif
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)
@@ -520,12 +520,12 @@ void jend(void)
 //
 #ifdef UNIX
             // begin name without underlining _
-            fputs("\t.extern\t", syslin);
+            fputs("\t.extern\trefalab_", syslin);
 #else // Windows
             if (LBLL == 4)
-                fputs("\t.extern\t_", syslin);
+                fputs("\t.extern\t_refalab_", syslin);
             else
-                fputs("\t.extern\t", syslin);
+                fputs("\t.extern\trefalab_", syslin);
 #endif
             for (size_t i = 0; i < qx->le; i++)
                 fputc(tolower(*(qx->e + i)), syslin);
@@ -542,6 +542,7 @@ void jend(void)
             if (LBLL == 4)
                 fputc('_', syslin);
 #endif
+            fputs("refalab_", syslin);
             for (size_t i = 0; i < q->le; i++)
                 // translate name to lower case
                 fputc(tolower(*(q->e + i)), syslin);
@@ -550,12 +551,12 @@ void jend(void)
                 pp = pp->info.infop;
 #ifdef UNIX
             // begin name without underlining _
-            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t", nommod, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", nommod, pp->info.infon);
 #else // Windows
             if (LBLL == 4)
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_", nommod, pp->info.infon);
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_refalab_", nommod, pp->info.infon);
             else
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t", nommod, pp->info.infon);
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", nommod, pp->info.infon);
 #endif
             fputs(bufs, syslin);
             for (size_t i = 0; i < q->le; i++)
