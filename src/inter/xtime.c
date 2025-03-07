@@ -5,8 +5,8 @@
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XTIME.C ------------
-//        MO: rftime (date and time)
-//            rftm (current process time)
+//        MO: time (date and time)
+//            tm (current process time)
 //-------------------------------------------
 
 #include <stdio.h>
@@ -19,7 +19,7 @@
 
 static T_TIMESPEC t0, t1;
 
-static void rftime_(void)
+static void time_(void)
 {
     if (refal.preva->next != refal.nexta)
     {
@@ -42,11 +42,11 @@ static void rftime_(void)
     }
     return;
 }
-char rftime_0[] = {Z6 'R', 'F', 'T', 'I', 'M', 'E', '\006'};
-G_L_B uint8_t refalab_rftime = '\122';
-void (*rftime_1)(void) = rftime_;
+char time_0[] = {Z4 'T', 'I', 'M', 'E', '\004'};
+G_L_B uint8_t refalab_time = '\122';
+void (*time_1)(void) = time_;
 
-static void rftm_(void)
+static void tm_(void)
 {
     T_LINKCB *p = refal.preva->next;
     if (p->next == refal.nexta && p->tag == TAGO)
@@ -91,8 +91,8 @@ static void rftm_(void)
     refal.upshot = 2;
     return;
 }
-char rftm_0[] = {Z4 'R', 'F', 'T', 'M', '\004'};
-G_L_B uint8_t refalab_rftm = '\122';
-void (*rftm_1)(void) = rftm_;
+char tm_0[] = {Z2 'T', 'M', '\002'};
+G_L_B uint8_t refalab_tm = '\122';
+void (*tm_1)(void) = tm_;
 
 //------------------ end of file  XTIME.C ----------------
