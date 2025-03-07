@@ -21,7 +21,7 @@ static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
-static void xopen_(void)
+static void open_(void)
 {
    char namf[255];
    const T_LINKCB *p = refal.preva->next;
@@ -67,7 +67,7 @@ static void xopen_(void)
       f = fopen(namf, s);
       if (f == NULL)
       {
-         printf("\n xopen: can't open file %s", namf);
+         printf("\n open: can't open file %s", namf);
          neot1 = true;
          break;
       }
@@ -78,15 +78,15 @@ static void xopen_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\n xopen: format error");
+      printf("\n open: format error");
    refal.upshot = 2;
    return;
 }
-char xopen_0[] = {Z5 'X', 'O', 'P', 'E', 'N', '\005'};
-G_L_B uint8_t refalab_xopen = '\122';
-void (*xopen_1)(void) = xopen_;
+char open_0[] = {Z4 'O', 'P', 'E', 'N', '\004'};
+G_L_B uint8_t refalab_open = '\122';
+void (*open_1)(void) = open_;
 
-static void xclose_(void)
+static void close_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    do
@@ -117,15 +117,15 @@ static void xclose_(void)
       fclose(f);
       return;
    } while (false);
-   printf("\nxclose: format error");
+   printf("\nclose: format error");
    refal.upshot = 2;
    return;
 }
-char xclose_0[] = {Z6 'X', 'C', 'L', 'O', 'S', 'E', '\006'};
-G_L_B uint8_t refalab_xclose = '\122';
-void (*xclose_1)(void) = xclose_;
+char close_0[] = {Z5 'C', 'L', 'O', 'S', 'E', '\005'};
+G_L_B uint8_t refalab_close = '\122';
+void (*close_1)(void) = close_;
 
-static void xget_(void)
+static void get_(void)
 {
    T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -147,7 +147,7 @@ static void xget_(void)
          f = fopen(namf, "r");
          if (f == NULL)
          {
-            printf("\nxget: can't open file %s", namf);
+            printf("\nget: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -173,15 +173,15 @@ static void xget_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nxget: format error");
+      printf("\nget: format error");
    refal.upshot = 2;
    return;
 }
-char xget_0[] = {Z4 'X', 'G', 'E', 'T', '\004'};
-G_L_B uint8_t refalab_xget = '\122';
-void (*xget_1)(void) = xget_;
+char get_0[] = {Z3 'G', 'E', 'T', '\003'};
+G_L_B uint8_t refalab_get = '\122';
+void (*get_1)(void) = get_;
 
-static void xput_(void)
+static void put_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -202,7 +202,7 @@ static void xput_(void)
          f = fopen(namf, "w");
          if (f == NULL)
          {
-            printf("\nxput: can't open file %s", namf);
+            printf("\nput: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -237,12 +237,12 @@ static void xput_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nxput: format error");
+      printf("\nput: format error");
    refal.upshot = 2;
    return;
 }
-char xput_0[] = {Z4 'X', 'P', 'U', 'T', '\004'};
-G_L_B uint8_t refalab_xput = '\122';
-void (*xput_1)(void) = xput_;
+char put_0[] = {Z3 'P', 'U', 'T', '\003'};
+G_L_B uint8_t refalab_put = '\122';
+void (*put_1)(void) = put_;
 
 //----------  end of file XVV5.C  -----------
