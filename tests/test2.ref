@@ -7,23 +7,23 @@
 
 TEST2       START
             ENTRY Go
-            EXTRN XOpen, XClose, XGet, XPut, Rename, Unlink
+            EXTRN Open, Close, Get, Put, Rename, Unlink
             EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
             EMPTY ffff
 
 Go          = <FuncTab /Prout/> +
             < <ChartoF 'prout'> ' eto prout'> +
             < <ChartoF 'PROUT'> ' eto PROUT'> +
-*           <XOpen 'r' /6/ 'bb'> +    !!  neot  !!
-            <XOpen 'w' /0/ 'lala.tes'> +
-            <XPut /0/ ' str 1'> <XPut /0/ ' str 2'> <XClose 'w' /0/> +
-            <XOpen 'a' /1/ 'lala.tes'> +
-            <XPut /1/  ' str 3'> <XClose 'w' /1/> +
+*           <Open 'r' /6/ 'bb'> +    !!  neot  !!
+            <Open 'w' /0/ 'lala.tes'> +
+            <Put /0/ ' str 1'> <Put /0/ ' str 2'> <Close 'w' /0/> +
+            <Open 'a' /1/ 'lala.tes'> +
+            <Put /1/  ' str 3'> <Close 'w' /1/> +
             <Rename 'lala.tes*lala.tos'> +
-            <XOpen 'r' /4/ 'lala.tos'> +
-            <Print <XGet /4/>> <Print <XGet /4/>> +
-            <Print <XGet /4/>> +
-            <Print <XGet /4/>> <XClose 'r' /4/> +
+            <Open 'r' /4/ 'lala.tos'> +
+            <Print <Get /4/>> <Print <Get /4/>> +
+            <Print <Get /4/>> +
+            <Print <Get /4/>> <Close 'r' /4/> +
             <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
             <FuncTab /tttt/> +
             < <ChartoF 'tttt'> 'werno'> +
