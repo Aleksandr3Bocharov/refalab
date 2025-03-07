@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-15
+* 2025-03-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -19,7 +19,7 @@ EXT         START
             ENTRY Trim, TrimL, TrimR  
             ENTRY Exist, Set
             ENTRY True, False
-            EXTRN XOpen, XClose, XGet, XPut
+            EXTRN Open, Close, Get, Put
             EMPTY True, False
 
 * <Call WC EA> == ER
@@ -71,32 +71,32 @@ DelAccum +
 
 * <LoadFile S(/0/../4/)N E(O)F> == (E(O)L)*
 LoadFile +
-    SN EF   = <XOpen 'r' SN EF> +
-            <DoLoadFile SN <XGet SN>> +
-            <XClose 'r' SN>
+    SN EF   = <Open 'r' SN EF> +
+            <DoLoadFile SN <Get SN>> +
+            <Close 'r' SN>
   
 DoLoadFile +
     SN /0/  =
     SN EL /0/ +
             = (EL)
-    SN EL   = (EL) <DoLoadFile SN <XGet SN>>
+    SN EL   = (EL) <DoLoadFile SN <Get SN>>
 
 * <SaveFile S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 SaveFile +
     SN (EF) EL +
-            = <XOpen 'w' SN EF> +
+            = <Open 'w' SN EF> +
             <Map (/SaveFileWriteBracketLine/ SN) EL> +
-            <XClose 'w' SN>
+            <Close 'w' SN>
   
 SaveFileWriteBracketLine +
-    SN (EL) = <XPut SN EL>
+    SN (EL) = <Put SN EL>
 
 * <AppendFile S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 AppendFile +
     SN (EF) EL +
-            = <XOpen 'a' SN EF> +
+            = <Open 'a' SN EF> +
             <Map (/SaveFileWriteBracketLine/ SN) EL> +
-            <XClose 'w' SN>
+            <Close 'w' SN>
 
 WhiteSpaces S   ' \n\t\v\f\r'
 
