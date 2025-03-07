@@ -15,6 +15,10 @@
 #include "refal.def"
 #include "rfintf.h"
 
+#ifdef UNIX
+#define _unlink unlink
+#endif
+
 static void unlink_(void)
 {
     const T_LINKCB *p = refal.preva->next;
