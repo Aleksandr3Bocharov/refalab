@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-07
+// 2025-03-10
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -148,10 +148,10 @@ FILE *syslin; // for assem
 FILE *systxt; // for module names
 
 uint32_t nommod;
-char parm_i[40]; // sourse file name
-// Aleksandr Bocharov   // compiler version
-const char vers_i[] = "RefalAB Version 0.3.1 20250307 (c) Aleksandr Bocharov";
 char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
+
+// Aleksandr Bocharov   // compiler version
+static const char* vers_i = "RefalAB Version 0.3.1 20250307 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
 static size_t m; // current symbol number
@@ -264,8 +264,6 @@ int main(int argc, char *argv[])
         strcat(parm, ".ref");
 
     printf("\n%s:\n", parm);
-    for (i = 0; i <= strlen(parm) + 1; i++)
-        parm_i[i] = parm[i];
     sysin = fopen(parm, "r");
     if (sysin == NULL)
     {

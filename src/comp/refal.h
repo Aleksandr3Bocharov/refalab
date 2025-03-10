@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-02-14
+// 2025-03-10
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -53,9 +53,7 @@ extern FILE *syslin; // for assem
 extern FILE *systxt; // for module names
 
 extern uint32_t nommod;
-extern char parm_i[];       // sourse file name
-extern const char vers_i[]; // compiler version
-extern char mod_i[];        // module name
+extern char mod_i[13];        // module name
 
 extern void oshibka(void);
 extern void scan(void);
