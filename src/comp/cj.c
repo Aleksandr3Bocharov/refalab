@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-07
+// 2025-03-10
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -434,7 +434,7 @@ void jend(void)
     zakon();
     if (options.multmod)
     {
-        strcat(mod_i, ".asm");
+        strcat(mod_i, ".s");
         syslin = fopen(mod_i, "w");
         if (syslin == NULL)
         {

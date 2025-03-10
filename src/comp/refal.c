@@ -148,10 +148,10 @@ FILE *syslin; // for assem
 FILE *systxt; // for module names
 
 uint32_t nommod;
-char mod_i[13]; // 8+4+1 (xxxxxxxx.yyy0)
+char mod_i[11]; // 8+2+1 (xxxxxxxx.y0)
 
 // Aleksandr Bocharov   // compiler version
-static const char* vers_i = "RefalAB Version 0.3.1 20250307 (c) Aleksandr Bocharov";
+static const char *vers_i = "RefalAB Version 0.3.1 20250307 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
 static size_t m; // current symbol number
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        strcat(parm, ".asm");
+        strcat(parm, ".s");
         syslin = fopen(parm, "w");
         if (syslin == NULL)
         {
@@ -375,7 +375,6 @@ int main(int argc, char *argv[])
         switch (mod_state)
         {
         case START_OF_MODULE:
-            //  time processing missing here
             kolosh = 0;
             nommod++;
             flags.was_72 = false;
