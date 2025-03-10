@@ -12,8 +12,6 @@ rem delete temporary working files
 rem *******************************************************************
 
 cd  src\comp\
-del *.s 
-del *.o 
+del *.s
+del *.o
 del *.log
-
-
