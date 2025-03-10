@@ -432,16 +432,6 @@ static void zakon(void)
 void jend(void)
 {
     zakon();
-    if (options.multmod)
-    {
-        strcat(mod_i, ".s");
-        syslin = fopen(mod_i, "w");
-        if (syslin == NULL)
-        {
-            printf("Can't open %s\n", mod_i);
-            exit(8);
-        }
-    }
     d.w = 0;
     // heading generating
     fputs(".data\n", syslin);
@@ -569,20 +559,6 @@ void jend(void)
     // termination
     sfclr(&sysut1);
     sfclr(&sysut2);
-    if (options.multmod)
-    {
-        fclose(syslin);
-        if (mod_length != 0)
-        {
-            fputc(' ', systxt);
-            fputs(mod_i, systxt);
-        }
-        else
-        {
-            nommod--;
-            unlink(mod_i);
-        }
-    }
     q = first_ent;
     while (q != NULL)
     {

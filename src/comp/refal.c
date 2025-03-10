@@ -148,7 +148,6 @@ FILE *syslin; // for assem
 FILE *systxt; // for module names
 
 uint32_t nommod;
-char mod_i[11]; // 8+2+1 (xxxxxxxx.y0)
 
 // Aleksandr Bocharov   // compiler version
 static const char *vers_i = "RefalAB Version 0.3.1 20250307 (c) Aleksandr Bocharov";
@@ -188,7 +187,6 @@ static char stmkey[6];
 static size_t fixm;       // start sentence position
 static char mod_name[9];  // module name
 static size_t mod_length; // module length
-static bool again;        // next module processing feature
 static bool _eoj;         // "sysin" end flag
 
 static void lblkey(bool pr);
@@ -249,7 +247,6 @@ int main(int argc, char *argv[])
         printf("\nSyntax: RefalAB source_file [(option,...,option)]");
 #endif
         printf("\nOptions:");
-        printf("\n   mm  multi_module");
         printf("\n   nn  no_function_names");
         printf("\n   ns  no_source_listing");
         printf("\n   fn  full_names");
@@ -278,7 +275,6 @@ int main(int argc, char *argv[])
     options.source = true;
     // options.stmnmb = false;
     options.extname = false;
-    options.multmod = false;
     options.names = true;
     for (size_t j = 2; j < (size_t)argc; ++j)
     {
@@ -294,8 +290,6 @@ int main(int argc, char *argv[])
                     options.source = false;
                 else if (strncmp(parm + ii, "fn", 2) == 0)
                     options.extname = true;
-                else if (strncmp(parm + ii, "mm", 2) == 0)
-                    options.multmod = true;
                 else
                 {
                     for (temp = 0; *(parm + temp) != '\0'; temp++)
@@ -304,7 +298,7 @@ int main(int argc, char *argv[])
                     if (*(parm + temp) == ')')
                         *(parm + temp) = '\0';
                     printf("Unknown option: %s\n", parm + ii);
-                    printf("Options may be: mm, nn, ns, fn\n");
+                    printf("Options may be: nn, ns, fn\n");
                     exit(1);
                 }
                 temp = ii;
@@ -346,25 +340,12 @@ int main(int argc, char *argv[])
     for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
         parm[i + 1] = *(argv[1] + i + 1);
     parm[i] = '\0';
-    if (options.multmod)
+    strcat(parm, ".s");
+    syslin = fopen(parm, "w");
+    if (syslin == NULL)
     {
-        strcat(parm, ".txt");
-        systxt = fopen(parm, "w");
-        if (systxt == NULL)
-        {
-            printf("Can't open %s\n", parm);
-            exit(8);
-        }
-    }
-    else
-    {
-        strcat(parm, ".s");
-        syslin = fopen(parm, "w");
-        if (syslin == NULL)
-        {
-            printf("Can't open %s\n", parm);
-            exit(8);
-        }
+        printf("Can't open %s\n", parm);
+        exit(8);
     }
     flags.was_err = false;
     cdnumb = 0;
@@ -404,8 +385,6 @@ int main(int argc, char *argv[])
             }
             const size_t lbl_leng8 = 8 > lbl_leng ? lbl_leng : 8;
             strncpy(mod_name, stmlbl, lbl_leng8);
-            strncpy(mod_i, mod_name, lbl_leng8);
-            mod_i[lbl_leng8] = '\0';
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
             jstart();
@@ -435,7 +414,6 @@ int main(int argc, char *argv[])
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
-                again = true;
                 mod_state = END_STATEMENT;
                 break;
             }
@@ -482,7 +460,6 @@ int main(int argc, char *argv[])
         case END_IS_MISSING:
             pchosh("003 end directive missing");
             kolosh++;
-            again = false;
             mod_state = END_STATEMENT;
             break;
         case END_STATEMENT:
@@ -499,41 +476,20 @@ int main(int argc, char *argv[])
             }
             s_term();
             pchzkl();
-            if (_eoj || !options.multmod)
-            {
-                mod_state = END_OF_SYSIN;
-                break;
-            }
-            if (again)
-            {
-                mod_state = START_OF_MODULE;
-                break;
-            }
             mod_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
             fclose(sysin);
             if (options.source)
                 fclose(sysprint);
-            if (!options.multmod)
-            {
-                mod_length = jwhere();
-                fclose(syslin);
-                if (mod_length == 0 || flags.was_err)
-                    unlink(parm);
-            }
+            mod_length = jwhere();
+            fclose(syslin);
+            if (mod_length == 0 || flags.was_err)
+                unlink(parm);
             if (flags.was_err)
-            {
-                if (options.multmod)
-                    unlink(parm);
                 exit(1);
-            }
             else
-            {
-                if (nommod <= 1 && options.multmod)
-                    unlink(parm); // for multimod
                 exit(0);
-            }
             return 0;
         }
 } // main program  end

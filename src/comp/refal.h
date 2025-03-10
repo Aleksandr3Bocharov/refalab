@@ -21,7 +21,6 @@ typedef struct opt_
     bool source;
     // bool stmnmb;
     bool extname;
-    bool multmod;
     bool names;
 } T_OPT;
 
@@ -53,7 +52,6 @@ extern FILE *syslin; // for assem
 extern FILE *systxt; // for module names
 
 extern uint32_t nommod;
-extern char mod_i[11]; // module name
 
 extern void oshibka(void);
 extern void scan(void);
