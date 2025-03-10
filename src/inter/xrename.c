@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-07
+// 2025-03-10
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -14,10 +14,6 @@
 #include <unistd.h>
 #include "refal.def"
 #include "rfintf.h"
-
-#ifdef UNIX
-#define _unlink unlink
-#endif
 
 static void unlink_(void)
 {
