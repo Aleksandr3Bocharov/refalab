@@ -247,19 +247,22 @@ int main(int argc, char *argv[])
         printf("\nSyntax: RefalAB source_file [option ... option]");
 #endif
         printf("\nOptions:");
-        printf("\n   nn  no_function_names");
-        printf("\n   ns  no_source_listing");
-        printf("\n   fn  full_names");
+        printf("\n   nn  No function names");
+        printf("\n   ns  No source listing");
+        printf("\n   fn  Full names");
         printf("\n\n");
         exit(1);
     };
 
-    char parm[40];
+    if (strlen(argv[1]) > 250)
+    {
+        printf("Source file name is too long\n");
+        exit(1);
+    }
+    char parm[255];
     size_t i;
     strcpy(parm, argv[1]);
-    if (index_x(parm, ".") < 0)
-        strcat(parm, ".ref");
-
+    strcat(parm, ".ref");
     printf("\n%s:\n", parm);
     sysin = fopen(parm, "r");
     if (sysin == NULL)
@@ -289,12 +292,9 @@ int main(int argc, char *argv[])
             printf("Options may be: nn, ns, fn\n");
             exit(1);
         }
-    parm[0] = *argv[1];
-    for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
-        parm[i + 1] = *(argv[1] + i + 1);
-    parm[i] = '\0';
     if (options.source)
     {
+        strcpy(parm, argv[1]);
         strcat(parm, ".lst");
         sysprint = fopen(parm, "w");
         if (sysprint == NULL)
@@ -303,10 +303,7 @@ int main(int argc, char *argv[])
             exit(8);
         }
     }
-    parm[0] = *argv[1];
-    for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
-        parm[i + 1] = *(argv[1] + i + 1);
-    parm[i] = '\0';
+    strcpy(parm, argv[1]);
     strcat(parm, ".s");
     syslin = fopen(parm, "w");
     if (syslin == NULL)
@@ -330,8 +327,7 @@ int main(int argc, char *argv[])
             card[80] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
-            for (i = 0; i < 9; i++)
-                mod_name[i] = '\0';
+            memset((void *)mod_name, '\0', 9);
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
