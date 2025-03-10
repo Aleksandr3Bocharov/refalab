@@ -366,7 +366,6 @@ int main(int argc, char *argv[])
             exit(8);
         }
     }
-    //  print of page title missing here
     flags.was_err = false;
     cdnumb = 0;
     scn_.nomkar = 0;
@@ -532,7 +531,7 @@ int main(int argc, char *argv[])
             else
             {
                 if (nommod <= 1 && options.multmod)
-                    unlink(parm); // for multimod.
+                    unlink(parm); // for multimod
                 exit(0);
             }
             return 0;
