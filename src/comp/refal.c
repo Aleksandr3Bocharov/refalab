@@ -277,51 +277,18 @@ int main(int argc, char *argv[])
     options.extname = false;
     options.names = true;
     for (size_t j = 2; j < (size_t)argc; ++j)
-    {
-        strcpy(parm, argv[j]);
-        if (parm[0] == '(')
-        {
-            for (int32_t ii = 1; ii < 40 && parm[ii] != ')' && parm[ii] != '\0';)
-            {
-                int32_t temp;
-                if (strncmp(parm + ii, "nn", 2) == 0)
-                    options.names = false;
-                else if (strncmp(parm + ii, "ns", 2) == 0)
-                    options.source = false;
-                else if (strncmp(parm + ii, "fn", 2) == 0)
-                    options.extname = true;
-                else
-                {
-                    for (temp = 0; *(parm + temp) != '\0'; temp++)
-                        ;
-                    temp--;
-                    if (*(parm + temp) == ')')
-                        *(parm + temp) = '\0';
-                    printf("Unknown option: %s\n", parm + ii);
-                    printf("Options may be: nn, ns, fn\n");
-                    exit(1);
-                }
-                temp = ii;
-                ii = index_x(parm + ii, ",") + 1;
-                if (ii == 0)
-                {
-                    ii = index_x(parm + temp, ")");
-                    if (ii == -1)
-                    {
-                        printf("Missing ')' in option definition\n");
-                        exit(1);
-                    }
-                }
-                ii += temp;
-            } // end for
-            strcpy(parm, argv[1]);
-        } // end if
+        if (strcmp(argv[j], "nn") == 0)
+            options.names = false;
+        else if (strcmp(argv[j], "ns") == 0)
+            options.source = false;
+        else if (strcmp(argv[j], "fn") == 0)
+            options.extname = true;
         else
         {
-            printf("Illegal options definition: %s\n", parm);
+            printf("Unknown option: %s\n", argv[j]);
+            printf("Options may be: nn, ns, fn\n");
             exit(1);
         }
-    } // end for
     parm[0] = *argv[1];
     for (i = 0; parm[i] != '\0' && parm[i] != '.'; ++i)
         parm[i + 1] = *(argv[1] + i + 1);
