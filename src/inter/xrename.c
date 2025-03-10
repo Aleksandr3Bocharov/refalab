@@ -32,7 +32,7 @@ static void unlink_(void)
         p = p->next;
     }
     namf[i] = '\0';
-    if (_unlink(namf) == -1)
+    if (unlink(namf) == -1)
         rfabe("unlink: error");
     return;
 }
