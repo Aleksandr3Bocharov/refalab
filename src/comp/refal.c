@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-10
+// 2025-03-11
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -254,12 +254,15 @@ int main(int argc, char *argv[])
         exit(1);
     };
 
-    if (strlen(argv[1]) > 250)
+    char *parm = (char *)malloc(strlen(argv[1]) + 5);
+    if (parm == NULL)
     {
-        printf("Source file name is too long\n");
+        printf("\nNo enough memory for initialization\n");
         exit(1);
     }
-    char parm[255];
+#ifdef mdebug
+    printf("\nmalloc(main): parm=%p", (void *)parm);
+#endif
     size_t i;
     strcpy(parm, argv[1]);
     strcat(parm, ".ref");
@@ -449,6 +452,11 @@ int main(int argc, char *argv[])
             fclose(syslin);
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
+#ifdef mdebug
+            printf("free(main) parm=%p\n", (void *)parm);
+#endif
+            free(parm);
+            parm = NULL;
             if (flags.was_err)
                 exit(1);
             else
