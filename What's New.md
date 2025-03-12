@@ -1,6 +1,10 @@
 Что нового?
 --------------
 
+**Версия 0.3.2**
+
+**14-03-2025**
+
 Исправлена проблема при компоновке исполняемых файлов в Linux (UNIX, FreeBSD):  
 "missing .note.GNU-stack section implies executable stack".
 
