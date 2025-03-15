@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-11
+// 2025-03-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
             card[80] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
-            memset((void *)mod_name, '\0', 9);
+            memset(mod_name, '\0', 9);
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
