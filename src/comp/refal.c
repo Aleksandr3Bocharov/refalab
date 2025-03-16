@@ -1578,11 +1578,7 @@ static bool get_id(char id[40], size_t *lid)
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    // if identifier length > 40 then delete tail
-    while (class[m] == 'L' || class[m] == 'D')
-    {
-        EH_ROMA0;
-    }
+    EH_ROMA0;
     return true;
 }
 
@@ -1599,11 +1595,7 @@ static bool get_idm(char id[8], size_t *lid)
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    // if identifier length > 8 then delete tail
-    while (class[m] == 'L' || class[m] == 'D')
-    {
-        EH_ROMA0;
-    }
+    EH_ROMA0;
     return true;
 }
 
