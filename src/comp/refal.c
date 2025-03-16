@@ -1028,7 +1028,7 @@ static void gsp(char n)
 static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
-    char id[255];
+    char id[40];
     size_t lid;
     T_LINKTI code;
     T_SP_STATES sp_state = SPCBLO;
