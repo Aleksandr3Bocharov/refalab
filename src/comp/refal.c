@@ -1605,7 +1605,6 @@ static bool get_idm(char id[8], size_t *lid)
     {
         EH_ROMA0;
     }
-    (*lid)++;
     return true;
 }
 
