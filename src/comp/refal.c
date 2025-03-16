@@ -811,7 +811,7 @@ void scan(void)
             scn_state = SCNVI;
             break;
         case SCNVI:
-            if (class[m] != 'L' && class[m] != 'D')
+            if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             {
                 scn_state = OSH102;
                 break;
@@ -826,7 +826,7 @@ void scan(void)
                 c[m - 1] = '/';
                 size_t i;
                 for (i = 1;
-                     class[m + i] == 'L' || class[m + i] == 'D';
+                     class[m + i] == 'L' || c[m + i] == '_' || class[m + i] == 'D';
                      i++)
                 {
                     c[m + i - 1] = c[m + i];
@@ -1568,13 +1568,13 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 static bool get_id(char id[40], size_t *lid)
 { // read identifier
     memset(id, ' ', 40);
-    if (class[m] != 'L')
+    if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < 40; (*lid)++)
     {
         EH_ROMA0;
-        if (class[m] != 'L' && class[m] != 'D')
+        if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
@@ -1585,13 +1585,13 @@ static bool get_id(char id[40], size_t *lid)
 // read external identifier
 static bool get_idm(char id[8], size_t *lid)
 {
-    if (class[m] != 'L')
+    if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < 8; (*lid)++)
     {
         EH_ROMA0;
-        if (class[m] != 'L' && class[m] != 'D')
+        if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
