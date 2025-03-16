@@ -1185,7 +1185,7 @@ static bool specif(char tail)
                 sp_state = OSH203;
                 break;
             }
-            if (strncmp(stmlbl, id, lid) == 0 && stmlbl[lid] == ' ')
+            if (strncmp(stmlbl, id, lid) == 0 && (stmlbl[lid] == ' ' || lid == 40))
                 pchosh("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
