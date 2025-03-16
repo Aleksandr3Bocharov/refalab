@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-15
+// 2025-03-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -1568,6 +1568,7 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 
 static bool get_id(char id[40], size_t *lid)
 { // read identifier
+    memset(id, ' ', 40);
     for (size_t i = 0; i < 40; id[i++] = ' ')
         ;
     if (class[m] != 'L')
