@@ -598,8 +598,7 @@ static void lblkey(bool pr)
             break;
         }
     blout();
-    for (size_t i = 0; i < 6; i++)
-        stmkey[i] = ' ';
+    memset(stmkey, ' ', 6);
     do
     {
         if (c[m] == ' ')
