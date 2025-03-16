@@ -1569,8 +1569,6 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
 static bool get_id(char id[40], size_t *lid)
 { // read identifier
     memset(id, ' ', 40);
-    for (size_t i = 0; i < 40; id[i++] = ' ')
-        ;
     if (class[m] != 'L')
         return false;
     id[0] = (char)toupper(c[m]);
