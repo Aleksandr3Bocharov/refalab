@@ -1,8 +1,8 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-11-10
+* 2025-03-17
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -17,27 +17,27 @@
 *====================================================================
 
 PLATFORM    START
-            ENTRY Platform, DirectorySeparator(DirSep)
-            ENTRY DirectorySeparators(DirSeps)
-            ENTRY IsDirectorySeparator(IsDirSep)
-            ENTRY PathSeparator(PathSep)
+            ENTRY Platform, Directory_Separator(DirSep)
+            ENTRY Directory_Separators(DirSeps)
+            ENTRY Is_Directory_Separator(IsDirSep)
+            ENTRY Path_Separator(PathSep)
             ENTRY POSIX, Windows
             EXTRN True, False
             EMPTY POSIX, Windows
 
 Platform    = /POSIX/
 
-DirectorySeparator +
+Directory_Separator +
             = '/'
 
-DirectorySeparators S   '/'
+Directory_Separators S   '/'
 
-IsDirectorySeparator +
-    S(:DirectorySeparators:)D +
+Is_Directory_Separator +
+    S(:Directory_Separators:)D +
             = /True/
     S0      = /False/
 
-PathSeparator +
+Path_Separator +
             = ':'
 
             END
