@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-10
+// 2025-03-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -16,6 +16,9 @@
 #include <stdbool.h>
 #include "cgop.h"
 
+#define MAX_ID_LEN 40
+#define MAX_EXT_ID_LEN 8
+
 typedef struct opt_
 { // compiling   options
     bool source;
@@ -29,8 +32,8 @@ extern T_OPT options;
 typedef struct scn_
 { // the table for corresponding with scanner
     uint32_t nomkar;
-    char modname_var[40]; // module name
-    size_t modnmlen;      // module name length
+    char modname_var[MAX_ID_LEN]; // module name
+    size_t modnmlen;              // module name length
     //    uint16_t curr_stmnmb;
 } T_SCN;
 

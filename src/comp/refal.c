@@ -181,13 +181,13 @@ static char *class = class72 + 6;
 static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
-static char stmlbl[40];
-static char prevlb[40];
+static char stmlbl[MAX_ID_LEN];
+static char prevlb[MAX_ID_LEN + 1];
 static char stmkey[6];
-static size_t fixm;       // start sentence position
-static char mod_name[9];  // module name
-static size_t mod_length; // module length
-static bool _eoj;         // "sysin" end flag
+static size_t fixm;          // start sentence position
+static char mod_name[8 + 1]; // module name
+static size_t mod_length;    // module length
+static bool _eoj;            // "sysin" end flag
 
 static void lblkey(bool pr);
 static void pch130(void);
@@ -200,9 +200,9 @@ static void pchzkl(void);
 static void pchk(void);
 static void gsp(char n);
 static bool specif(char tail);
-static bool get_id(char id[40], size_t *lid);
+static bool get_id(char id[MAX_ID_LEN], size_t *lid);
 static bool get_idm(char id[8], size_t *lid);
-static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid);
+static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC t0;
@@ -404,9 +404,8 @@ int main(int argc, char *argv[])
                 trprev();
                 if (lbl_leng != 0)
                 {
-                    for (i = 0; i < lbl_leng; i++)
-                        prevlb[i] = stmlbl[i];
-                    prevlb[i] = '\0';
+                    strncpy(prevlb, stmlbl, lbl_leng);
+                    prevlb[lbl_leng] = '\0';
                 }
             }
             else
@@ -470,7 +469,7 @@ static void trprev(void)
     size_t n = strlen(prevlb);
     if (n != 0 && lbl_leng == 0)
     {
-        strcpy(stmlbl, prevlb);
+        strncpy(stmlbl, prevlb, n);
         lbl_leng = n;
     }
     else if (n != 0)
@@ -639,7 +638,7 @@ static void lblkey(bool pr)
 
 void scan(void)
 {
-    static char id[40];
+    static char id[MAX_ID_LEN];
     static size_t id_leng;
     static const uint8_t *p;
     static size_t scode;
@@ -1028,7 +1027,7 @@ static void gsp(char n)
 static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
-    char id[40];
+    char id[MAX_ID_LEN];
     size_t lid;
     T_LINKTI code;
     T_SP_STATES sp_state = SPCBLO;
@@ -1185,7 +1184,7 @@ static bool specif(char tail)
                 sp_state = OSH203;
                 break;
             }
-            if (strncmp(stmlbl, id, lid) == 0 && (stmlbl[lid] == ' ' || lid == 40))
+            if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_ID_LEN || stmlbl[lid] == ' '))
                 pchosh("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
@@ -1419,7 +1418,7 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
     blout();
     while (true)
     {
-        char id[40];
+        char id[MAX_ID_LEN];
         size_t lid;
         if (!get_id(id, &lid))
             break;
@@ -1445,7 +1444,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
     blout();
     while (true)
     {
-        char id[40];
+        char id[MAX_ID_LEN];
         size_t lid;
         if (!get_id(id, &lid))
             break;
@@ -1486,7 +1485,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
 static void equ(void)
 { // treatement of directives having 'EQU' type
     blout();
-    char id[40];
+    char id[MAX_ID_LEN];
     size_t lid;
     do
     {
@@ -1506,7 +1505,7 @@ static void pch130(void)
     return;
 }
 
-static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read multiple symbol
+static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
@@ -1565,13 +1564,13 @@ static bool get_csmb(T_LINKTI *code, char id[40], size_t *lid) // procedure read
     return true;
 }
 
-static bool get_id(char id[40], size_t *lid)
+static bool get_id(char id[MAX_ID_LEN], size_t *lid)
 { // read identifier
-    memset(id, ' ', 40);
+    memset(id, ' ', MAX_ID_LEN);
     if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
-    for (*lid = 1; *lid < 40; (*lid)++)
+    for (*lid = 1; *lid < MAX_ID_LEN; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
