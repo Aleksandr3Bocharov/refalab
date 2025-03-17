@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-12
+// 2025-03-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -25,7 +25,7 @@ typedef struct ent
 { // entry table element
     struct ent *next;
     T_U *p;
-    char e[8];
+    char e[MAX_EXT_ID_LEN];
     size_t le;
 } T_ENT;
 
@@ -33,7 +33,7 @@ typedef struct ext
 { // external pointer table element
     struct ext *next;
     T_U *p;
-    char e[8];
+    char e[MAX_EXT_ID_LEN];
     size_t le;
 } T_EXT;
 
@@ -376,7 +376,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     last_ent = r;
     r->p = pp;
     r->next = NULL;
-    r->le = 8 < ll ? 8 : ll;
+    r->le = MAX_EXT_ID_LEN < ll ? MAX_EXT_ID_LEN : ll;
     strncpy(r->e, ee, r->le);
     pp->mode |= '\040';
     return;
@@ -396,7 +396,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     last_ext = rx;
     rx->p = pp;
     rx->next = NULL;
-    rx->le = 8 < ll ? 8 : ll;
+    rx->le = MAX_EXT_ID_LEN < ll ? MAX_EXT_ID_LEN : ll;
     strncpy(rx->e, ee, rx->le);
     pp->mode |= '\220';
     n_ext++;

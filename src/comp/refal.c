@@ -201,7 +201,7 @@ static void pchk(void);
 static void gsp(char n);
 static bool specif(char tail);
 static bool get_id(char id[MAX_ID_LEN], size_t *lid);
-static bool get_idm(char id[8], size_t *lid);
+static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid);
 static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid);
 
 typedef struct timespec T_TIMESPEC;
@@ -1448,7 +1448,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         size_t lid;
         if (!get_id(id, &lid))
             break;
-        char ide[8];
+        char ide[MAX_EXT_ID_LEN];
         size_t lide;
         if (c[m] == '(')
         {
@@ -1462,7 +1462,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         }
         else
         {
-            lide = lid > 8 ? 8 : lid;
+            lide = lid > MAX_EXT_ID_LEN ? MAX_EXT_ID_LEN : lid;
             strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
@@ -1582,12 +1582,12 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
 }
 
 // read external identifier
-static bool get_idm(char id[8], size_t *lid)
+static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
 {
     if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
-    for (*lid = 1; *lid < 8; (*lid)++)
+    for (*lid = 1; *lid < MAX_EXT_ID_LEN; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
