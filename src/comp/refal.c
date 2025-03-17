@@ -185,7 +185,7 @@ static char stmlbl[MAX_ID_LEN];
 static char prevlb[MAX_ID_LEN + 1];
 static char stmkey[6];
 static size_t fixm;          // start sentence position
-static char mod_name[8 + 1]; // module name
+static char mod_name[MAX_ID_LEN + 1]; // module name
 static size_t mod_length;    // module length
 static bool _eoj;            // "sysin" end flag
 
@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
             card[80] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
-            memset(mod_name, '\0', 9);
+            memset(mod_name, '\0', MAX_ID_LEN + 1);
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
@@ -349,8 +349,7 @@ int main(int argc, char *argv[])
                 mod_state = KEYS;
                 break;
             }
-            const size_t lbl_leng8 = 8 > lbl_leng ? lbl_leng : 8;
-            strncpy(mod_name, stmlbl, lbl_leng8);
+            strncpy(mod_name, stmlbl, lbl_leng);
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
             jstart();
@@ -1624,7 +1623,7 @@ static void pchzkl(void)
 { // print conclusion
     char pr_line[180];
     sprintf(pr_line,
-            "mod_name = %-8s    mod_length(lines) = %d\n", mod_name, cdnumb);
+            "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
     if (options.source)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);

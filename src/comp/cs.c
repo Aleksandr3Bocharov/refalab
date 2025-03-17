@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-12-07
+// 2025-03-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -281,7 +281,7 @@ static void fnhead(const char *idp, size_t lid)
         {
             const char *idpm = scn_.modname_var;
             l0 = scn_.modnmlen;
-            for (k0 = 0; k0 < l0 && k0 < 8; k0++)
+            for (k0 = 0; k0 < l0; k0++)
                 jbyte(*(idpm + k0));
             jbyte(':');
             ll = k0 + 1;
