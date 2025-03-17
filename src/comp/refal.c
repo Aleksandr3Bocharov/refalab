@@ -184,10 +184,10 @@ static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[MAX_ID_LEN];
 static char prevlb[MAX_ID_LEN + 1];
 static char stmkey[6];
-static size_t fixm;          // start sentence position
+static size_t fixm;                   // start sentence position
 static char mod_name[MAX_ID_LEN + 1]; // module name
-static size_t mod_length;    // module length
-static bool _eoj;            // "sysin" end flag
+static size_t mod_length;             // module length
+static bool _eoj;                     // "sysin" end flag
 
 static void lblkey(bool pr);
 static void pch130(void);
