@@ -50,11 +50,11 @@ FoldR +
 * <Map_Accumulator WC WA WI*> == WA′ ER
 Map_Accumulator +
     WC WA ET +
-            = <Do_Map_Accumulator WC WA () ET>
+            = <Map_Accumulator_Aux WC WA () ET>
   
-Do_Map_Accumulator +
+Map_Accumulator_Aux +
     WC WA (ER) WN ET +
-            = <Do_Map_Accumulator WC +
+            = <Map_Accumulator_Aux WC +
                 <Map_Accumulator_Add_Scanned +
                     <Call WC WA WN> +
                 (ER)> +
@@ -73,30 +73,30 @@ Del_Accumulator +
 * <Load_File S(/0/../4/)N E(O)F> == (E(O)L)*
 Load_File +
     SN EF   = <Open 'r' SN EF> +
-            <Do_Load_File SN <Get SN>> +
+            <Load_File_Aux SN <Get SN>> +
             <Close 'r' SN>
   
-Do_Load_File +
+Load_File_Aux +
     SN /0/  =
     SN EL /0/ +
             = (EL)
-    SN EL   = (EL) <Do_Load_File SN <Get SN>>
+    SN EL   = (EL) <Load_File_Aux SN <Get SN>>
 
 * <Save_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 Save_File +
     SN (EF) EL +
             = <Open 'w' SN EF> +
-            <Map (/Save_File_Write_Bracket_Line/ SN) EL> +
+            <Map (/Do_Write_Bracket_Line/ SN) EL> +
             <Close 'w' SN>
   
-Save_File_Write_Bracket_Line +
+Do_Write_Bracket_Line +
     SN (EL) = <Put SN EL>
 
 * <Append_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 Append_File +
     SN (EF) EL +
             = <Open 'a' SN EF> +
-            <Map (/Save_File_Write_Bracket_Line/ SN) EL> +
+            <Map (/Do_Write_Bracket_Line/ SN) EL> +
             <Close 'w' SN>
 
 White_Spaces S   ' \n\t\v\f\r'
