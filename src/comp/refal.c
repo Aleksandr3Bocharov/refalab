@@ -21,7 +21,6 @@
 #include "cerr.h"
 #include "cj.h"
 #include "cgop.h"
-#include "plc.h"
 #include "cs.h"
 #include "ccst.h"
 

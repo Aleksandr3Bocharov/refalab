@@ -31,7 +31,6 @@ SOURCES = \
     $(S)\cj.c \
     $(S)\clu.c \
     $(S)\cs.c \
-    $(S)\plc.c \
     $(S)\refal.c
 
 OBJECTS = \
@@ -41,7 +40,6 @@ OBJECTS = \
     $(S)\cj.o \
     $(S)\clu.o \
     $(S)\cs.o \
-    $(S)\plc.o \
     $(S)\refal.o
 
 TARGET = RefalAB_dbg
@@ -71,8 +69,6 @@ $(S)\cj.o: $(S)\cj.c
 $(S)\clu.o: $(S)\clu.c
 
 $(S)\cs.o: $(S)\cs.c
-
-$(S)\plc.o: $(S)\plc.c
 
 $(S)\refal.o: $(S)\refal.c
 
