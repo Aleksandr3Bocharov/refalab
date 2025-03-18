@@ -29,7 +29,7 @@ S = src\inter
 SOURCES = \
     $(S)\d.c \
     $(S)\rfintf.c \
-    $(S)\rfrun1.c \
+    $(S)\rfrun.c \
     $(S)\xapply.c \
     $(S)\xar.c \
     $(S)\xcf.c \
@@ -44,7 +44,7 @@ SOURCES = \
 OBJECTS = \
     $(S)\d.o \
     $(S)\rfintf.o \
-    $(S)\rfrun1.o \
+    $(S)\rfrun.o \
     $(S)\xapply.o \
     $(S)\xar.o \
     $(S)\xcf.o \
@@ -81,7 +81,7 @@ $(S)\d.o: $(S)\d.c
 
 $(S)\rfintf.o: $(S)\rfintf.c
 
-$(S)\rfrun1.o: $(S)\rfrun1.c
+$(S)\rfrun.o: $(S)\rfrun.c
 
 $(S)\xapply.o: $(S)\xapply.c
 

@@ -16,7 +16,7 @@
 #include <time.h>
 #include "refal.def"
 #include "rfintf.h"
-#include "rfrun1.h"
+#include "rfrun.h"
 
 T_REFAL refal;
 
