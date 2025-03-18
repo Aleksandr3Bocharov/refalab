@@ -4,12 +4,12 @@
 // 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//--------------- file -- REFAL.DEF -----------------
+//--------------- file -- REFALAB.H -----------------
 //          Developer version
 //---------------------------------------------------
 
-#ifndef REFAL_DEF
-#define REFAL_DEF
+#ifndef REFALAB_H
+#define REFALAB_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -130,4 +130,4 @@ extern void rfdbg(T_ST *s_st);
 
 #endif
 
-//-------  end of file REFAL.DEF ---------
+//-------  end of file REFALAB.H ---------
