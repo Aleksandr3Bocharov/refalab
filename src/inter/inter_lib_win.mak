@@ -1,7 +1,7 @@
-# Copyright 2024 Aleksandr Bocharov
+# Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-11-23
+# 2025-03-18
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -18,9 +18,9 @@
 CC = clang
 CFLAGS = -pipe -Wall -O2 
 AR = ar
-REFXCV = src\inter\refxcv.bat # refal + assembler for xcv
-REFEXT = src\inter\refext.bat # refal + assembler for xext
-REFPLATFORM = src\inter\refplatform.bat # refal + assembler for xplatform
+REFXCV = src\inter\refxcv.bat
+REFEXT = src\inter\refext.bat
+REFPLATFORM = src\inter\refplatform.bat
 REFLIB = lib\libRefalAB.a
 S = src\inter
 
@@ -79,32 +79,32 @@ $(REFLIB): $(OBJECTS)
 
 ####### Dependences
 
-$(S)\d.o: $(S)\d.c $(S)\refal.def
+$(S)\d.o: $(S)\d.c
 
-$(S)\rfintf.o: $(S)\rfintf.c $(S)\refal.def
+$(S)\rfintf.o: $(S)\rfintf.c
 
-$(S)\rfrun1.o: $(S)\rfrun1.c $(S)\refal.def
+$(S)\rfrun1.o: $(S)\rfrun1.c
 
-$(S)\rfrun2.o: $(S)\rfrun2.c $(S)\refal.def
+$(S)\rfrun2.o: $(S)\rfrun2.c
 
-$(S)\xapply.o: $(S)\xapply.c $(S)\refal.def
+$(S)\xapply.o: $(S)\xapply.c
 
-$(S)\xar.o: $(S)\xar.c $(S)\refal.def
+$(S)\xar.o: $(S)\xar.c
 
-$(S)\xcf.o: $(S)\xcf.c $(S)\refal.def
+$(S)\xcf.o: $(S)\xcf.c
 
-$(S)\xgcd.o: $(S)\xgcd.c $(S)\refal.def
+$(S)\xgcd.o: $(S)\xgcd.c
 
-$(S)\xjak.o: $(S)\xjak.c $(S)\refal.def
+$(S)\xjak.o: $(S)\xjak.c
 
-$(S)\xmo.o: $(S)\xmo.c $(S)\refal.def
+$(S)\xmo.o: $(S)\xmo.c
 
-$(S)\xrename.o: $(S)\xrename.c $(S)\refal.def
+$(S)\xrename.o: $(S)\xrename.c
 
-$(S)\xtime.o: $(S)\xtime.c $(S)\refal.def
+$(S)\xtime.o: $(S)\xtime.c
 
-$(S)\xvv.o: $(S)\xvv.c $(S)\refal.def
+$(S)\xvv.o: $(S)\xvv.c
 
-$(S)\xvv5.o: $(S)\xvv5.c $(S)\refal.def
+$(S)\xvv5.o: $(S)\xvv5.c
 
 ####### End of Makefile

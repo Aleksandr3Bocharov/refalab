@@ -1,7 +1,7 @@
-# Copyright 2024 Aleksandr Bocharov
+# Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-11-23
+# 2025-03-18
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -41,6 +41,6 @@ all: $(OBJECTS)
 
 $(S)/mainrf.o: $(S)/mainrf.c
 
-$(S)/rfdbg.o: $(S)/rfdbg.c $(S)/refal.def
+$(S)/rfdbg.o: $(S)/rfdbg.c
 
 ####### End of Makefile
