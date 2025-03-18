@@ -31,8 +31,7 @@ Call +
         = <Call WC EB EA>
 
 * <Map WC WI*> == ER
-Map +
-    WC WN ET +
+Map WC WN ET +
         = <Call WC WN> <Map WC ET>
     W0  =
 
@@ -140,8 +139,7 @@ Exist +
         = /False/
   
 * <Set WE*> == WS*
-Set +
-    R EB WS EM WS EE +
+Set R EB WS EM WS EE +
         = <Set EB WS EM> EE
     E0  = E0
 
