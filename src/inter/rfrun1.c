@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-01-15
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN1.C -------------------
@@ -1627,18 +1627,6 @@ void rfrun(T_ST *ast) // adress of current state table
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
-            // EOSSN (NN);
-            /*case EOSSN:
-                memcpy(&refal.stmnmb, vpc + NMBL, NMBL + NMBL);
-                i_state = EOS;
-                break; */
-            // SETNOS(L);
-            /*case SETNOS:
-                memcpy(&inch.inr, vpc + NMBL, LBLL);
-                refal.nostm = *(inch.inr);
-                vpc = vpc + NMBL + LBLL;
-                i_state = NEXTOP;
-                break; */
             // C-refal-function execution
         case CFUNC:
             memcpy(&fptr, vpc + NMBL + Z_0, LBLL);

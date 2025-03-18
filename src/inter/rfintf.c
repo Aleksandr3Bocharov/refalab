@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-02-17
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -151,8 +151,6 @@ void rfinit(void)
     phd->next = phd;
     phd->tag = TAGO;
     phd->info.codep = NULL;
-    // p->nostm = 0;
-    // p->stmnmb = 0;
     p->tm.mode = true;
     if (p->tm.mode)
         timespec_get(&p->tm.start, TIME_UTC);
