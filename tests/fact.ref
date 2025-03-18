@@ -1,36 +1,34 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-07
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-FACT        START
-            ENTRY Go
-            EXTRN Numb, Symb, Cvd, First 
-            EXTRN Mul
-            EXTRN Prout, Card, M1
+FACT +
+    START
+    ENTRY Go
+    EXTRN Numb, Symb, Cvd, First 
+    EXTRN Mul
+    EXTRN Prout, Card, M1
 
-Go          = <Fact <Numb <Card ' Give a number: '>>>
+Go      = <Fact <Numb <Card ' Give a number: '>>>
 
 Fact +
-    /0/     = 
-    E1      = <Pr <Symb E1> '!=' +
-            <Cvd <F E1>>> + 
-            <Go>
+    /0/ = 
+    E1  = <Pr <Symb E1> '!=' +
+        <Cvd <F E1>>> + 
+        <Go>
 
-F +
-    /1/ = /1/
+F   /1/ = /1/
     E1  = <Mul (E1) <F <M1 E1>>>
 
-Pr +
-        =
+Pr      =
     E1  = <Pr1 <First /80/ E1>>
 
-Pr1 +
-    (E1) E2 +
+Pr1 (E1) E2 +
         = <Prout E1> <Pr E2>
     '*' E1 +
         = <Prout E1>
 
-            END
+    END

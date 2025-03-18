@@ -2,34 +2,35 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-07
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-TEST2       START
-            ENTRY Go
-            EXTRN Open, Close, Get, Put, Rename, Unlink
-            EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
-            EMPTY ffff
+TEST2 +
+    START
+    ENTRY Go
+    EXTRN Open, Close, Get, Put, Rename, Unlink
+    EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
+    EMPTY ffff
 
-Go          = <FuncTab /Prout/> +
-            < <ChartoF 'prout'> ' eto prout'> +
-            < <ChartoF 'PROUT'> ' eto PROUT'> +
-*           <Open 'r' /6/ 'bb'> +    !!  neot  !!
-            <Open 'w' /0/ 'lala.tes'> +
-            <Put /0/ ' str 1'> <Put /0/ ' str 2'> <Close 'w' /0/> +
-            <Open 'a' /1/ 'lala.tes'> +
-            <Put /1/  ' str 3'> <Close 'w' /1/> +
-            <Rename 'lala.tes*lala.tos'> +
-            <Open 'r' /4/ 'lala.tos'> +
-            <Print <Get /4/>> <Print <Get /4/>> +
-            <Print <Get /4/>> +
-            <Print <Get /4/>> <Close 'r' /4/> +
-            <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
-            <FuncTab /tttt/> +
-            < <ChartoF 'tttt'> 'werno'> +
-            <Unlink 'lala.tos'>
+Go      = <FuncTab /Prout/> +
+        < <ChartoF 'prout'> ' eto prout'> +
+        < <ChartoF 'PROUT'> ' eto PROUT'> +
+*       <Open 'r' /6/ 'bb'> +    !!  neot  !!
+        <Open 'w' /0/ 'lala.tes'> +
+        <Put /0/ ' str 1'> <Put /0/ ' str 2'> <Close 'w' /0/> +
+        <Open 'a' /1/ 'lala.tes'> +
+        <Put /1/  ' str 3'> <Close 'w' /1/> +
+        <Rename 'lala.tes*lala.tos'> +
+        <Open 'r' /4/ 'lala.tos'> +
+        <Print <Get /4/>> <Print <Get /4/>> +
+        <Print <Get /4/>> +
+        <Print <Get /4/>> <Close 'r' /4/> +
+        <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
+        <FuncTab /tttt/> +
+        < <ChartoF 'tttt'> 'werno'> +
+        <Unlink 'lala.tos'>
 
 tttt +
-    E1      = <Prout E1>
+    E1  = <Prout E1>
 
-            END
+    END

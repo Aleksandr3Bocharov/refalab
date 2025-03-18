@@ -2,130 +2,132 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-07
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-TEST0       START
-            ENTRY Go
-            EXTRN Add, Sub, Mul, M1, P1, Numb, Symb
-            EXTRN First, Last, LengR, LengW
-            EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Prout, Proutm
-            EXTRN Dr
-            EXTRN Open, Close, Get, Put, Rename, Unlink
-            EXTRN Br, Rp, Dg, DgAll, Cp, Print
-            EMPTY Tra, Em1, Em2, Em3, Pus
-            SWAP Sw
+TEST0 +
+    START
+    ENTRY Go
+    EXTRN Add, Sub, Mul, Dr, M1, P1, Numb, Symb
+    EXTRN First, Last, LengR, LengW
+    EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr
+    EXTRN Print, Prout, Proutm
+    EXTRN Open, Close, Get, Put, Rename, Unlink
+    EXTRN Br, Rp, Dg, DgAll, Cp
+    EMPTY Tra, Em1, Em2, Em3, Pus
+    SWAP Sw
 
-Div +
-    E1      = <Div0 <Dr E1>>
+Div E1  = <Div0 <Dr E1>>
 
 Div0 +
-    E1 (E2) = E1
+    E1 (E2) +
+        = E1
 
-Bspe  S  '2134' /Pus/
+Bspe +
+    S  '2134' /Pus/
 
-Go          = <Prsw> +
-            <Prvv> +
-            <Prkop> +
-            <Dal1> +
-            <Prspe /Pus/ 'as01a432l7l' /Em3/>
+Go  = <Prsw> +
+    <Prvv> +
+    <Prkop> +
+    <Dal1> +
+    <Prspe /Pus/ 'as01a432l7l' /Em3/>
 
 *      prowerka  specifikacii
 Prspe +
     E2 S(/Em1/ /Em2/ /Em3/)1 +
-            = <Prout ' symbol-/em/' S1> <Prspe E2>
+        = <Prout ' symbol-/em/' S1> <Prspe E2>
     S(:Bspe:)1 Ek +
-            = <Prout ' symbol-b=' S1> <Prspe Ek>
+        = <Prout ' symbol-b=' S1> <Prspe Ek>
     R Eh S('l7')1 +
-            = <Prout ' symbol-l=' S1> <Prspe Eh>
-    Ss Ek   = <Prout '  symbol=' Ss> <Prspe Ek>
-            =
+        = <Prout ' symbol-l=' S1> <Prspe Eh>
+    Ss Ek +
+        = <Prout '  symbol=' Ss> <Prspe Ek>
+        =
 
 *      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
-Dal1        = <Prmu (/126/) /2/> <Prmu (/65536/) /64/> +
-            <Prmu (/16777215/) /1/> +
-            <Prmu (/65536/) /512/> +  
-            <Prdl (/65536/) /4/> <Prdl (/65536/) /666/> +
-*           <Prdl (/1/) /0/> +      neot
-            <Prp1 /4/> <Prp1 /65536/> <Prp1 /128/> +
-*           <Prp1 /16777215/> +     neot
-            <Dal>
+Dal1    = <Prmu (/126/) /2/> <Prmu (/65536/) /64/> +
+        <Prmu (/16777215/) /1/> +
+        <Prmu (/65536/) /512/> +  
+        <Prdl (/65536/) /4/> <Prdl (/65536/) /666/> +
+*       <Prdl (/1/) /0/> +      neot
+        <Prp1 /4/> <Prp1 /65536/> <Prp1 /128/> +
+*       <Prp1 /16777215/> +     neot
+        <Dal>
 
-Dal         = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
-            <Prfe /3/ '1234567'> <Prla /3/ '123456'> <Prfe /1/ /2/> +
-            <Prla /3/ /1/ /2/ /3/ '567'> +
-*           <Prfe '123'> <Prla '123'> +          neot
-            <Prnu '125'> <Prnu '76666'> <Prnu '16777215'> +
-            <Prnu '17777215'> <Prnu '-45'> +
-            <Prsy /5678/> <Prsy /16777215/> +
-            <Prad (/128/) /456/> <Prad (/16777215/) /2/> +
-            <Prm1 /3/> <Prm1 /128/> <Prm1 /16777215/> +
-            <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
+Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
+        <Prfe /3/ '1234567'> <Prla /3/ '123456'> <Prfe /1/ /2/> +
+        <Prla /3/ /1/ /2/ /3/ '567'> +
+*       <Prfe '123'> <Prla '123'> +          neot
+        <Prnu '125'> <Prnu '76666'> <Prnu '16777215'> +
+        <Prnu '17777215'> <Prnu '-45'> +
+        <Prsy /5678/> <Prsy /16777215/> +
+        <Prad (/128/) /456/> <Prad (/16777215/) /2/> +
+        <Prm1 /3/> <Prm1 /128/> <Prm1 /16777215/> +
+        <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
 
 Prmu +
-    E1      = <Prow /Mul/ E1>
+    E1  = <Prow /Mul/ E1>
 
 Prnu +
-    E1      = <Prow /Numb/ E1>
+    E1  = <Prow /Numb/ E1>
 
 Prsy +
-    E1      = <Prow /Symb/ E1>
+    E1  = <Prow /Symb/ E1>
 
 Prad +
-    E1      = <Prow /Add/ E1>
+    E1  = <Prow /Add/ E1>
 
 Prsu +
-    E1      = <Prow /Sub/ E1>
+    E1  = <Prow /Sub/ E1>
 
 Prm1 +
-    E1      = <Prow /M1/ E1>
+    E1  = <Prow /M1/ E1>
 
 Prdl +
-    E1      = <Prow /Div/ E1>
+    E1  = <Prow /Div/ E1>
 
 Prp1 +
-    E1      = <Prow /P1/ E1>
+    E1  = <Prow /P1/ E1>
 
 Prfe +
-    E1      = <Prow /First/ E1>
+    E1  = <Prow /First/ E1>
 
 Prla +
-    E1      = <Prow /Last/ E1>
+    E1  = <Prow /Last/ E1>
 
 Prow +
-    S1 E2   = <Proutm S1 ', whod=' E2 '  wyh=' < S1 E2>>
+    S1 E2 +
+        = <Proutm S1 ', whod=' E2 '  wyh=' < S1 E2>>
 
 *
 *
-Prkop       = <Br 'cc' '=' /123/> <Br 'mmm' '=' '345'> +
-            <Rp 'mmm' '=' '879'> <Dg 'mmm'> +
-            <Cp 'cc'> <DgAll> +
-            <Br /Tra/ '=' '765'> <Rp /Tra/ '=' /16777215/> <Dg /Tra/>
+Prkop   = <Br 'cc' '=' /123/> <Br 'mmm' '=' '345'> +
+        <Rp 'mmm' '=' '879'> <Dg 'mmm'> +
+        <Cp 'cc'> <DgAll> +
+        <Br /Tra/ '=' '765'> <Rp /Tra/ '=' /16777215/> <Dg /Tra/>
 
 *
-Prvv        = <Open 'w' /0/ 'lala.put'> +
-            <Put /0/ ' str 1'> <Put /0/ ' str 2'> <Close 'w' /0/> +
-            <Open 'a' /1/ 'lala.put'> +
-            <Put /1/ ' str 3'> <Close 'w' /1/> +
-            <Rename 'lala.put*lala.get'> +
-            <Open 'r' /4/ 'lala.get'> +
-            <Print <Get /4/>> <Print <Get /4/>> +
-            <Print <Get /4/>> <Close 'r' /4/> <Unlink 'lala.get'>
+Prvv    = <Open 'w' /0/ 'lala.put'> +
+        <Put /0/ ' str 1'> <Put /0/ ' str 2'> <Close 'w' /0/> +
+        <Open 'a' /1/ 'lala.put'> +
+        <Put /1/ ' str 3'> <Close 'w' /1/> +
+        <Rename 'lala.put*lala.get'> +
+        <Open 'r' /4/ 'lala.get'> +
+        <Print <Get /4/>> <Print <Get /4/>> +
+        <Print <Get /4/>> <Close 'r' /4/> <Unlink 'lala.get'>
 
 *
-Prsw        = <Sw1 <New /123456/>> <Wtr /Sw/ /123456/> <Ptr /Sw/ '0'> +
-            <Rdr /Sw/> <Gtr /Sw/>
+Prsw    = <Sw1 <New /123456/>> <Wtr /Sw/ /123456/> <Ptr /Sw/ '0'> +
+        <Rdr /Sw/> <Gtr /Sw/>
 
-Sw1 +
-    Rx      = <Ptr Rx /2/> <Rdr Rx> <Wtr Rx /12/> <Sw2 Rx>
+Sw1 Rx  = <Ptr Rx /2/> <Rdr Rx> <Wtr Rx /12/> <Sw2 Rx>
 
-Sw2 +
-    Rx      = <Ptr Rx /3/> <Rdr Rx> <Gtr Rx> +
-            <Swr Rx '0' /16777215/ '0'> +
-            <Prout <Rdr Rx>>
+Sw2 Rx  = <Ptr Rx /3/> <Rdr Rx> <Gtr Rx> +
+        <Swr Rx '0' /16777215/ '0'> +
+        <Prout <Rdr Rx>>
 
 Prln +
-    E1      = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
-            '  wyh-w=' <LengW E1>>
+    E1  = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
+        '  wyh-w=' <LengW E1>>
 
-            END
+    END

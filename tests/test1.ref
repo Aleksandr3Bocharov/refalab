@@ -2,185 +2,187 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-01-12
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-TEST1       START
-            ENTRY Go
-            EXTRN Add, Sub, Mul, Dr, Div
-            EXTRN AddN, SubN, MulN, DrN, DivN
-            EXTRN P1, M1, Prout, Numb, Symb, Proutm, LRel
+TEST1 +
+    START
+    ENTRY Go
+    EXTRN Add, Sub, Mul, Dr, Div
+    EXTRN AddN, SubN, MulN, DrN, DivN
+    EXTRN P1, M1, Numb, Symb, Prout, Proutm, LRel
 
-Go          = <F1> <F2> <F3> <F4>
+Go      = <F1> <F2> <F3> <F4>
 
 *  prowerka mul, dr, div, add, sub
-F1          = <Prad (/1/) /2/> +
-            <Prad () /2/> +
-            <Prad (/1/)> +
-            <Prad (/1/) '-' /2/> +
-            <Prsu (/1/) /2/> +
-            <Prsu () /2/> +
-            <Prsu (/1/)> +
-            <Prsu (/1/) '-' /2/> +
-            <Prmu( '-' /126/)> +
-            <Prmu () /2/> +
-            <Prmu ('-' /126/) /2/> +
-            <Prmu (/65536/) /64/> +
-            <Prmu ('-' /2/) '-' /2/> +
-            <Prmu (/16777215/) '-' /1/> +
-            <Prmu ('-'/65536/) '-' /512/> +    
-            <Prdr (/5/) /3/> +
-            <Prdr (/5/) '-' /3/> +
-            <Prdr ('-' /5/) /3/> +
-            <Prdr ('-' /5/) '-' /3/> +
-            <Prdr (/5/) /33/> +
-            <Prdr (/5/) '-' /33/> +
-            <Prdr ('-' /5/) /33/> +
-            <Prdr ('-' /5/) '-' /33/> +
-            <Prdl (/5/) /3/> +
-            <Prdl (/5/) '-' /3/> +
-            <Prdl ('-' /5/) /3/> +
-            <Prdl ('-' /5/) '-' /3/> +
-            <Prdl (/5/) /33/> +
-            <Prdl (/5/) '-' /33/> +
-            <Prdl ('-' /5/) /33/> +
-            <Prdl ('-' /5/) '-' /33/> 
+F1      = <Prad (/1/) /2/> +
+        <Prad () /2/> +
+        <Prad (/1/)> +
+        <Prad (/1/) '-' /2/> +
+        <Prsu (/1/) /2/> +
+        <Prsu () /2/> +
+        <Prsu (/1/)> +
+        <Prsu (/1/) '-' /2/> +
+        <Prmu( '-' /126/)> +
+        <Prmu () /2/> +
+        <Prmu ('-' /126/) /2/> +
+        <Prmu (/65536/) /64/> +
+        <Prmu ('-' /2/) '-' /2/> +
+        <Prmu (/16777215/) '-' /1/> +
+        <Prmu ('-'/65536/) '-' /512/> +    
+        <Prdr (/5/) /3/> +
+        <Prdr (/5/) '-' /3/> +
+        <Prdr ('-' /5/) /3/> +
+        <Prdr ('-' /5/) '-' /3/> +
+        <Prdr (/5/) /33/> +
+        <Prdr (/5/) '-' /33/> +
+        <Prdr ('-' /5/) /33/> +
+        <Prdr ('-' /5/) '-' /33/> +
+        <Prdl (/5/) /3/> +
+        <Prdl (/5/) '-' /3/> +
+        <Prdl ('-' /5/) /3/> +
+        <Prdl ('-' /5/) '-' /3/> +
+        <Prdl (/5/) /33/> +
+        <Prdl (/5/) '-' /33/> +
+        <Prdl ('-' /5/) /33/> +
+        <Prdl ('-' /5/) '-' /33/> 
      
 *  prowerka muln, drn, divn, addn, subn
-F2          = <Pradn (/1/) /2/> +
-            <Pradn () /2/> +
-            <Pradn (/1/)> +
-            <Pradn (/1/) '-' /2/> +
-            <Prsun (/1/) /2/> +
-            <Prsun () /2/> +
-            <Prsun (/1/)> +
-            <Prsun (/1/) '-' /2/> +
-            <Prmun ('-' /126/)> +
-            <Prmun () /2/> +
-            <Prmun ('-' /126/) /2/> +
-            <Prmun (/65536/) /64/> +
-            <Prmun ('-' /2/) '-' /2/> +
-            <Prmun (/16777215/) '-' /1/> +
-            <Prmun ('-' /65536/) '-' /512/> +    
-            <Prdrn (/5/) /3/> +
-            <Prdrn (/5/) '-' /3/> +
-            <Prdrn ('-' /5/) /3/> +
-            <Prdrn ('-' /5/) '-' /3/> +
-            <Prdrn (/5/) /33/> +
-            <Prdrn (/5/) '-' /33/> +
-            <Prdrn ('-' /5/) /33/> +
-            <Prdrn ('-' /5/) '-' /33/> +
-            <Prdln (/5/) /3/> +
-            <Prdln (/5/) '-' /3/> +
-            <Prdln ('-' /5/) /3/> +
-            <Prdln ('-' /5/) '-' /3/> +
-            <Prdln (/5/) /33/> +
-            <Prdln (/5/) '-' /33/> +
-            <Prdln ('-' /5/) /33/> +
-            <Prdln( '-' /5/) '-' /33/>      
+F2      = <Pradn (/1/) /2/> +
+        <Pradn () /2/> +
+        <Pradn (/1/)> +
+        <Pradn (/1/) '-' /2/> +
+        <Prsun (/1/) /2/> +
+        <Prsun () /2/> +
+        <Prsun (/1/)> +
+        <Prsun (/1/) '-' /2/> +
+        <Prmun ('-' /126/)> +
+        <Prmun () /2/> +
+        <Prmun ('-' /126/) /2/> +
+        <Prmun (/65536/) /64/> +
+        <Prmun ('-' /2/) '-' /2/> +
+        <Prmun (/16777215/) '-' /1/> +
+        <Prmun ('-' /65536/) '-' /512/> +    
+        <Prdrn (/5/) /3/> +
+        <Prdrn (/5/) '-' /3/> +
+        <Prdrn ('-' /5/) /3/> +
+        <Prdrn ('-' /5/) '-' /3/> +
+        <Prdrn (/5/) /33/> +
+        <Prdrn (/5/) '-' /33/> +
+        <Prdrn ('-' /5/) /33/> +
+        <Prdrn ('-' /5/) '-' /33/> +
+        <Prdln (/5/) /3/> +
+        <Prdln (/5/) '-' /3/> +
+        <Prdln ('-' /5/) /3/> +
+        <Prdln ('-' /5/) '-' /3/> +
+        <Prdln (/5/) /33/> +
+        <Prdln (/5/) '-' /33/> +
+        <Prdln ('-' /5/) /33/> +
+        <Prdln( '-' /5/) '-' /33/>      
 
 *  neot
-F3          = <Prad ('+') /2/> +
-            <Prad (/2/) '-'> +
-            <Prdr (/1/) /0/> +      
-            <Prdr (/1/ /2/ /3/ /4/) /0/ /0/> +
-            <Prdl (/1/)> +
-            <Prdrn (/1/) /0/> +      
-            <Prdrn (/1/ /2/ /3/ /4/) /0/ /0/> +
-            <Prdln (/1/)>   
+F3      = <Prad ('+') /2/> +
+        <Prad (/2/) '-'> +
+        <Prdr (/1/) /0/> +      
+        <Prdr (/1/ /2/ /3/ /4/) /0/ /0/> +
+        <Prdl (/1/)> +
+        <Prdrn (/1/) /0/> +      
+        <Prdrn (/1/ /2/ /3/ /4/) /0/ /0/> +
+        <Prdln (/1/)>   
 
 *  prowerka p1, m1, numb, symb
-F4          = <Prp1 /0/> +
-            <Prp1 /16777214/> +
-            <Prm1 /1/> +
-            <Prm1 /16777215/> +
-            <Prnu '1000'> +
-            <Prnu '-16777216'>  +
-            <Prnu '1000000000'> +
-            <Prnu '2147483647'> +
-            <Prnu> +
-            <Prnu '-'> +
-            <Prnu '+'> +
-            <Prsy /1000/> +
-            <Prsy '-' /1/ /0/> +
-            <Prsy> +
-            <Prsy '-'> +
-            <Prsy '+'> +
-            <Prsy /59/ /10144256/> +
-            <Prsy /127/ /16777215/> +
-            <Prsy '+' /0/ /0/ /0/> +
+F4      = <Prp1 /0/> +
+        <Prp1 /16777214/> +
+        <Prm1 /1/> +
+        <Prm1 /16777215/> +
+        <Prnu '1000'> +
+        <Prnu '-16777216'>  +
+        <Prnu '1000000000'> +
+        <Prnu '2147483647'> +
+        <Prnu> +
+        <Prnu '-'> +
+        <Prnu '+'> +
+        <Prsy /1000/> +
+        <Prsy '-' /1/ /0/> +
+        <Prsy> +
+        <Prsy '-'> +
+        <Prsy '+'> +
+        <Prsy /59/ /10144256/> +
+        <Prsy /127/ /16777215/> +
+        <Prsy '+' /0/ /0/ /0/> +
 *  neot
-            <Prp1 /16777215/> +
-            <Prp1 '+' /1/> +     
-            <Prm1 /0/> +
-            <Prnu '2147483648'> +
-            <Prnu '-+45'> +
-            <Prnu '++'> +      
-            <Prsy /128/ /0/> +
+        <Prp1 /16777215/> +
+        <Prp1 '+' /1/> +     
+        <Prm1 /0/> +
+        <Prnu '2147483648'> +
+        <Prnu '-+45'> +
+        <Prnu '++'> +      
+        <Prsy /128/ /0/> +
 *  prowerka LRel
-            <LRel ('a') 'a'> <LRel (/1/ /2/) /1/ /2/> +
-            <LRel (/LRel/) /LRel/> <LRel ('\101\n') '\101\n'> +
-            <LRel (/67/ /66/) '\103\102'> <LRel ('A') '\101'> +
-            <LRel ('ab') 'a'>  <LRel ('ab') 'b'> +
-            <LRel ('ba') 'a'>  <LRel ('ba') 'b'> +
-            <LRel ('a') 'ab'>  <LRel ('b') 'ab'> +
-            <LRel ('a') 'ba'>  <LRel ('b') 'ba'> +
-            <LRel ('ab') 'ba'> <LRel ('ba') 'ab'> +
-            <LRel ('100') '99'> <LRel ('99') '100'> +
-            <LRel ('010') '99'> <LRel ('99') '010'> +
-            <LRel ('a' ('b')) 'b'> <LRel ('a') 'b' ('123')> +
-            <LRel ('a' ('b')) 'ab'> <LRel ('abc') 'a' ('123')> +
-            <LRel ('a' ('b')) 'a' ('c')> +
-            <LRel ('a' ('b')) 'a' ('b')> +
-            <LRel ('a' ('bc')) 'a' ('b')> +
+        <LRel ('a') 'a'> <LRel (/1/ /2/) /1/ /2/> +
+        <LRel (/LRel/) /LRel/> <LRel ('\101\n') '\101\n'> +
+        <LRel (/67/ /66/) '\103\102'> <LRel ('A') '\101'> +
+        <LRel ('ab') 'a'>  <LRel ('ab') 'b'> +
+        <LRel ('ba') 'a'>  <LRel ('ba') 'b'> +
+        <LRel ('a') 'ab'>  <LRel ('b') 'ab'> +
+        <LRel ('a') 'ba'>  <LRel ('b') 'ba'> +
+        <LRel ('ab') 'ba'> <LRel ('ba') 'ab'> +
+        <LRel ('100') '99'> <LRel ('99') '100'> +
+        <LRel ('010') '99'> <LRel ('99') '010'> +
+        <LRel ('a' ('b')) 'b'> <LRel ('a') 'b' ('123')> +
+        <LRel ('a' ('b')) 'ab'> <LRel ('abc') 'a' ('123')> +
+        <LRel ('a' ('b')) 'a' ('c')> +
+        <LRel ('a' ('b')) 'a' ('b')> +
+        <LRel ('a' ('bc')) 'a' ('b')> +
 *  neot
-            <LRel> <LRel /0/> +
-            <LRel /LRel/> +
-            <LRel '123'>
+        <LRel> <LRel /0/> +
+        <LRel /LRel/> +
+        <LRel '123'>
 
 Prad +
-    E1      = <Prow /Add/ E1>
+    E1  = <Prow /Add/ E1>
 
 Prsu +
-    E1      = <Prow /Sub/ E1>
+    E1  = <Prow /Sub/ E1>
 
 Prmu +
-    E1      = <Prow /Mul/ E1>
+    E1  = <Prow /Mul/ E1>
 
 Prdr +
-    E1      = <Prow /Dr/ E1>
+    E1  = <Prow /Dr/ E1>
 
 Prdl +
-    E1      = <Prow/Div/ E1>
+    E1  = <Prow/Div/ E1>
 
 Pradn +
-    E1      = <Prow /AddN/ E1>
+    E1  = <Prow /AddN/ E1>
 
 Prsun +
-    E1      = <Prow /SubN/ E1>
+    E1  = <Prow /SubN/ E1>
 
 Prmun +
-    E1      = <Prow /MulN/ E1>
+    E1  = <Prow /MulN/ E1>
 
 Prdrn +
-    E1      = <Prow /DrN/ E1>
+    E1  = <Prow /DrN/ E1>
 
 Prdln +
-    E1      = <Prow /DivN/ E1>
+    E1  = <Prow /DivN/ E1>
 
 Prm1 +
-    E1      = <Prow /M1/ E1>
+    E1  = <Prow /M1/ E1>
 
 Prp1 +
-    E1      = <Prow /P1/ E1>
+    E1  = <Prow /P1/ E1>
 
 Prnu +
-    E1      = <Prow /Numb/ E1>
+    E1  = <Prow /Numb/ E1>
 
 Prsy +
-    E1      = <Prow /Symb/ E1>
+    E1  = <Prow /Symb/ E1>
 
 Prow +
-    S1 E2   = <Proutm S1 ': in=' E2 '  out=' < S1 E2>>
+    S1 E2 +
+        = <Proutm S1 ': in=' E2 '  out=' < S1 E2>>
 
-            END
+    END

@@ -1,39 +1,39 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-08
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
-TEST3       START
-            ENTRY Go
-            EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr, Proutm, Prout
-            EXTRN Br, Rp, Dg, DgAll, Cp, Print
-            EMPTY Tra
-            SWAP Sw
+TEST3 +
+    START
+    ENTRY Go
+    EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr
+    EXTRN Print, Proutm, Prout
+    EXTRN Br, Rp, Dg, DgAll, Cp
+    EMPTY Tra
+    SWAP Sw
 
-Go          = <Br 'cc' '=' /123/> +
-            <Br 'mmm' '=' '345'> <Br 'mmm' '=' '879'> +
-            <Proutm ' d.b. 879:  ' <Dg 'mmm'>> +
-            <Rp 'cc' '=' '1'> <Cp 'cc'> +
-            <Proutm ' d.b. 345 i 1: ' <DgAll>> +
-            <Rp /Tra/ '=' '765'> <Rp /Tra/ '=' /16777215/> +
-            <Proutm ' d.b. /16777215/: ' <Dg /Tra/>> +
+Go      = <Br 'cc' '=' /123/> +
+        <Br 'mmm' '=' '345'> <Br 'mmm' '=' '879'> +
+        <Proutm ' d.b. 879:  ' <Dg 'mmm'>> +
+        <Rp 'cc' '=' '1'> <Cp 'cc'> +
+        <Proutm ' d.b. 345 i 1: ' <DgAll>> +
+        <Rp /Tra/ '=' '765'> <Rp /Tra/ '=' /16777215/> +
+        <Proutm ' d.b. /16777215/: ' <Dg /Tra/>> +
 *
 *
-            <Sw1 <New /123456/>> +
-            <Wtr /Sw/ /123456/> <Wtr /Sw/ '0'> +
-            <Proutm ' d.b. 0 i 0: ' <Rdr /Sw/> <Gtr /Sw/> <Rdr /Sw/>>
+        <Sw1 <New /123456/>> +
+        <Wtr /Sw/ /123456/> <Wtr /Sw/ '0'> +
+        <Proutm ' d.b. 0 i 0: ' <Rdr /Sw/> <Gtr /Sw/> <Rdr /Sw/>>
 
-Sw1 +
-    Rx      = <Proutm ' d.b. /123456/: ' <Swr Rx /2/>> +
-            <Proutm ' d.b. /2/: ' <Rdr Rx>> +
-            <Wtr Rx /12/> <Sw2 Rx>
+Sw1 Rx  = <Proutm ' d.b. /123456/: ' <Swr Rx /2/>> +
+        <Proutm ' d.b. /2/: ' <Rdr Rx>> +
+        <Wtr Rx /12/> <Sw2 Rx>
 
-Sw2 +
-    Rx      = <Ptr Rx /3/> +
-            <Proutm ' d.b. 2*(/12/ /3/): ' <Rdr Rx> <Gtr Rx>> +
-            <Prout ' d.b. pusto: ' <Swr Rx '0' /16777215/ '0'>> +
-            <Prout <Rdr Rx>>
+Sw2 Rx  = <Ptr Rx /3/> +
+        <Proutm ' d.b. 2*(/12/ /3/): ' <Rdr Rx> <Gtr Rx>> +
+        <Prout ' d.b. pusto: ' <Swr Rx '0' /16777215/ '0'>> +
+        <Prout <Rdr Rx>>
 
-            END
+    END
