@@ -30,7 +30,6 @@ SOURCES = \
     $(S)/d.c \
     $(S)/rfintf.c \
     $(S)/rfrun1.c \
-    $(S)/rfrun2.c \
     $(S)/xapply.c \
     $(S)/xar.c \
     $(S)/xcf.c \
@@ -46,7 +45,6 @@ OBJECTS = \
     $(S)/d.o \
     $(S)/rfintf.o \
     $(S)/rfrun1.o \
-    $(S)/rfrun2.o \
     $(S)/xapply.o \
     $(S)/xar.o \
     $(S)/xcf.o \
@@ -84,8 +82,6 @@ $(S)/d.o: $(S)/d.c
 $(S)/rfintf.o: $(S)/rfintf.c
 
 $(S)/rfrun1.o: $(S)/rfrun1.c
-
-$(S)/rfrun2.o: $(S)/rfrun2.c
 
 $(S)/xapply.o: $(S)/xapply.c
 

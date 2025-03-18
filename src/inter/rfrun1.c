@@ -4,18 +4,18 @@
 // 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//----------- file RFRUN1.C -------------------
-//      Refal-interpretator (part 1)
+//----------- file RFRUN.C -------------------
+//      Refal-interpretator
 //---------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "refal.def"
 #include "rfrun1.h"
 #include "rfintf.h"
-#include "rfrun2.h"
 
 // for unlooping:
 
@@ -146,15 +146,32 @@ typedef enum i_states
     SWAP,
     SWAPREF,
     BLF,
-    //    EOSSN,
-    //    SETNOS,
     CFUNC,
     CFDONE,
     CFLACK
 } T_I_STATES;
 
+typedef enum sp_states
+{
+    SPCRET,
+    SPCNXT,
+    SPCCLL,
+    SPCW,
+    SPCNG,
+    SPCNGW,
+    SPCSC,
+    SPCS,
+    SPCB,
+    SPCF,
+    SPCN,
+    SPCR,
+    SPCD,
+    SPCO,
+    SPCL
+} T_SP_STATES;
+
 typedef struct sav_
-{ // save area for var-part of REFAL-block
+{ // save area for var-part of refal-block
     uint32_t upshot_;
     T_LINKCB *preva_;
     T_LINKCB *nexta_;
@@ -163,10 +180,30 @@ typedef struct sav_
     T_ST *currst_;
 } T_SAV;
 
+typedef struct wjs
+{ // jump stack structure
+    T_LINKCB *jsb1;
+    T_LINKCB *jsb2;
+    size_t jsnel;
+    uint8_t *jsvpc;
+} T_WJS;
+
+typedef struct ts
+{ // translation stack structure
+    T_LINKCB *ts0;
+    T_LINKCB *ts1;
+    T_LINKCB *ts2;
+} T_TS;
+
+typedef struct spcs
+{
+    bool spls;
+    uint8_t *svpc;
+} T_SPCS;
+
 static union
-{ // structure for pointer and integer aligning
+{ // structure for pointer aligning
     uint8_t *ptr;
-    //    uint16_t *inr;
 } inch;
 
 static T_LINKCB *et[256]; // element table
@@ -188,6 +225,15 @@ static const uint8_t *vpca; // additional vpc
 static size_t i, n, m;
 
 static void (*fptr)(void);
+
+static bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);
+static bool letter(char s);
+static bool digit(char s);
+static void link(T_LINKCB *x, T_LINKCB *y);
+static void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc);
+static void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
+static void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
+static void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 void rfrun(T_ST *ast) // adress of current state table
 {
@@ -283,7 +329,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // state remove from
         case EXIT:
             ast->dot = quasik.info.codep;
-            // restore REFAL-block
+            // restore refal-block
             refal.upshot = savecr->upshot_;
             refal.preva = savecr->preva_;
             refal.nexta = savecr->nexta_;
@@ -541,12 +587,6 @@ void rfrun(T_ST *ast) // adress of current state table
             case 0117:
                 i_state = BLF;
                 break;
-            // case 0120:
-            //     i_state = EOSSN;
-            //     break;
-            // case 0121:
-            //     i_state = SETNOS;
-            //     break;
             case 0122:
                 i_state = CFUNC;
             };
@@ -1675,4 +1715,242 @@ void rfrun(T_ST *ast) // adress of current state table
         }
 }
 
-//------------ end of file RFRUN1.C ----------
+static bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
+// specifier interpreter
+{
+    // spcs-pointer
+    T_SPCS *spcsp = pspcsp;
+    uint8_t *spcvpc; // virtual specifier counter
+    memcpy(&spcvpc, vpc + NMBL, LBLL);
+    uint8_t spcopc;
+    // positiveness feature of specifier element
+    bool spcpls = true;
+    T_SP_STATES sp_state = SPCNXT;
+    while (true)
+        switch (sp_state)
+        {
+        // return from specifier element if "YES"
+        case SPCRET:
+            if (spcsp == pspcsp)
+                return spcpls;
+            spcsp--;
+            // work variable
+            const bool spcwrk = spcpls;
+            spcpls = spcsp->spls;
+            spcvpc = spcsp->svpc;
+            if (spcwrk)
+                break;
+            spcvpc = spcvpc + LBLL;
+            sp_state = SPCNXT;
+            break;
+        // return from specifier element if "NO"
+        case SPCNXT:
+            // specifier code
+            spcopc = *spcvpc;
+            spcvpc = spcvpc + NMBL;
+            // switch
+            // SPCOP
+            switch (spcopc)
+            {
+            case 0000:
+                sp_state = SPCCLL;
+                break;
+            case 0001:
+                sp_state = SPCW;
+                break;
+            case 0002:
+                sp_state = SPCNG;
+                break;
+            case 0003:
+                sp_state = SPCNGW;
+                break;
+            case 0004:
+                sp_state = SPCSC;
+                break;
+            case 0005:
+                sp_state = SPCS;
+                break;
+            case 0006:
+                sp_state = SPCB;
+                break;
+            case 0007:
+                sp_state = SPCF;
+                break;
+            case 0010:
+                sp_state = SPCN;
+                break;
+            case 0011:
+                sp_state = SPCR;
+                break;
+            case 0012:
+                sp_state = SPCO;
+                break;
+            case 0013:
+                sp_state = SPCD;
+                break;
+            case 0014:
+                sp_state = SPCL;
+            }
+            break;
+            // SPCCLL(L);
+        case SPCCLL:
+            spcsp->spls = spcpls;
+            spcsp->svpc = spcvpc;
+            memcpy(&spcvpc, spcvpc, LBLL);
+            spcsp++;
+            spcpls = true;
+            sp_state = SPCNXT;
+            break;
+        case SPCW:
+            sp_state = SPCRET;
+            break;
+        case SPCNG:
+            spcpls = !spcpls;
+            sp_state = SPCNXT;
+            break;
+        case SPCNGW:
+            spcpls = !spcpls;
+            sp_state = SPCRET;
+            break;
+        case SPCSC:
+            if (memcmp(spcvpc, &b->tag, SMBL) == 0)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            spcvpc = spcvpc + SMBL;
+            sp_state = SPCNXT;
+            break;
+        case SPCS:
+            if ((b->tag & 0001) == TAGO)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCB:
+            if ((b->tag & 0001) != TAGO)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCF:
+            if (b->tag == TAGF)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCN:
+            if (b->tag == TAGN)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCR:
+            if (b->tag == TAGR)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCO:
+            if (b->tag == TAGO)
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCD:
+            if (b->tag != TAGO)
+            {
+                sp_state = SPCNXT;
+                break;
+            }
+            if (digit(b->info.infoc))
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+            break;
+        case SPCL:
+            if (b->tag != TAGO)
+            {
+                sp_state = SPCNXT;
+                break;
+            }
+            if (letter(b->info.infoc))
+            {
+                sp_state = SPCRET;
+                break;
+            }
+            sp_state = SPCNXT;
+        }
+} //             end      spc
+
+static bool letter(char s)
+{
+    if ((s >= 'A' && s <= 'Z') || // A..Z
+        (s >= 'a' && s <= 'z'))   // a..z
+        return true;
+    return false;
+}
+
+static bool digit(char s)
+{
+    if (s >= '0' && s <= '9')
+        return true;
+    return false;
+}
+
+static void link(T_LINKCB *x, T_LINKCB *y)
+{
+    x->next = y;
+    y->prev = x;
+    return;
+}
+
+static void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc)
+{
+    jsp->jsb1 = *ab1;
+    jsp->jsb2 = *ab2;
+    jsp->jsnel = *anel;
+    jsp->jsvpc = *avpc;
+    return;
+}
+
+static void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc)
+{
+    *ab1 = jsp->jsb1;
+    *ab2 = jsp->jsb2;
+    *anel = jsp->jsnel;
+    *avpc = jsp->jsvpc;
+    return;
+}
+
+static void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+{
+    tsp->ts0 = *ax;
+    tsp->ts1 = *ay;
+    tsp->ts2 = *az;
+    return;
+}
+
+static void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+{
+    *ax = tsp->ts0;
+    *ay = tsp->ts1;
+    *az = tsp->ts2;
+    return;
+}
+
+//------------ end of file RFRUN.C ----------
