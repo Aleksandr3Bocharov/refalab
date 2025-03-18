@@ -101,27 +101,6 @@ typedef struct refal_
     } tm;
 } T_REFAL;
 
-typedef struct wjs
-{ // jump stack structure
-    T_LINKCB *jsb1;
-    T_LINKCB *jsb2;
-    size_t jsnel;
-    uint8_t *jsvpc;
-} T_WJS;
-
-typedef struct ts
-{ // translation stack structure
-    T_LINKCB *ts0;
-    T_LINKCB *ts1;
-    T_LINKCB *ts2;
-} T_TS;
-
-typedef struct spcs
-{
-    bool spls;
-    uint8_t *svpc;
-} T_SPCS;
-
 extern T_REFAL refal;
 
 extern void rfabe(const char *amsg);
@@ -145,14 +124,6 @@ extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
 extern bool lrqlk(size_t l);
 
 extern void rfrun(T_ST *ast);
-
-extern void link(T_LINKCB *x, T_LINKCB *y);
-extern bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);
-
-extern void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
-extern void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc);
-extern void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
-extern void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 extern void (*dba)(T_ST *);
 extern void rfdbg(T_ST *s_st);
