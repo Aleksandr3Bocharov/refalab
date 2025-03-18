@@ -10,7 +10,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "refal.def"
+#include "refalab.h"
 #include "cgop.h"
 #include "cj.h"
 

@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "refal.def"
+#include "refalab.h"
 #include "cs.h"
 #include "cerr.h"
 #include "cj.h"

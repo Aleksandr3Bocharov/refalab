@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "refal.def"
+#include "refalab.h"
 #include "clu.h"
 #include "refal.h"
 

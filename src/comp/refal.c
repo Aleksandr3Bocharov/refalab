@@ -16,7 +16,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
-#include "refal.def"
+#include "refalab.h"
 #include "refal.h"
 #include "cerr.h"
 #include "cj.h"
