@@ -1,49 +1,53 @@
-* Copyright 2024 Aleksandr Bocharov
+* Copyright 2025 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2024-10-14
+* 2025-03-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
 * Рефал-функции библиотеки РефалАБ.
 *====================================================================
 
-CV          START
-            ENTRY Cvb, Cvd
-            EXTRN Numb, Symb
-            EXTRN Add, Mul, Dr, DrN
+CV  START
+    ENTRY Cvb, Cvd
+    EXTRN Numb, Symb
+    EXTRN Add, Mul, Dr, DrN
 
 Cvb +
     '-' V(D)X +
-            = '-' <Cvb0 VX>
+        = '-' <Cvb0 VX>
     '+' V(D)X +
-            = <Cvb0 VX>
-    E(D)X   = <Cvb0 EX>
+        = <Cvb0 VX>
+    E(D)X +
+        = <Cvb0 EX>
 
 Cvb0 +
     VX S1 S2 S3 S4 S5 S6 S7 S8 S9 +
-            = <Add (<Mul (<Cvb0 VX>) /59/ /10144256/>) +
-            <Numb S1 S2 S3 S4 S5 S6 S7 S8 S9>>
-    Ex      = <Numb Ex>
+        = <Add (<Mul (<Cvb0 VX>) /59/ /10144256/>) +
+        <Numb S1 S2 S3 S4 S5 S6 S7 S8 S9>>
+    Ex  = <Numb Ex>
 
 Cvd +
     '-' V(N)X +
-            = '-' <Cvd0 VX>
+        = '-' <Cvd0 VX>
     '+' V(N)X +
-            = <Cvd0 VX>
-    E(N)X   = <Cvd0 EX>
+        = <Cvd0 VX>
+    E(N)X +
+        = <Cvd0 EX>
 
 Cvd0 +
-    EX      = <Cvd1 <DrN (EX) /59//10144256/>>
+    EX  = <Cvd1 <DrN (EX) /59//10144256/>>
 
 Cvd1 +
-    (EY)    = <Symb EY>
-    EX (EY) = <Cvd0 EX> <Cvd2 <Symb EY>>
+    (EY) +
+        = <Symb EY>
+    EX (EY) +
+        = <Cvd0 EX> <Cvd2 <Symb EY>>
 
 Cvd2 +
     S1 S2 S3 S4 S5 S6 S7 S8 S9 +
-            = S1 S2 S3 S4 S5 S6 S7 S8 S9
-    EX      = <Cvd2 '0' EX>
+        = S1 S2 S3 S4 S5 S6 S7 S8 S9
+    EX  = <Cvd2 '0' EX>
 
-            END
+    END
