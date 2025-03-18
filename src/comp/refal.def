@@ -1,15 +1,15 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-09-27
+// 2024-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//--------------- file -- REFAL.DEF -----------------
+//--------------- file -- REFALAB.H -----------------
 //          Compiler version
 //---------------------------------------------------
 
-#ifndef REFAL_DEF
-#define REFAL_DEF
+#ifndef REFALAB_H
+#define REFALAB_H
 
 #include <stdint.h>
 
@@ -31,4 +31,4 @@
 
 #endif
 
-//-------  end of file REFAL.DEF ---------
+//-------  end of file REFALAB.H ---------
