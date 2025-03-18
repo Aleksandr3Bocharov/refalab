@@ -11,7 +11,7 @@
 #ifndef RFRUN_H
 #define RFRUN_H
 
-#include "refal.def"
+#include "refalab.h"
 
 extern void rfrun(T_ST *ast);
 

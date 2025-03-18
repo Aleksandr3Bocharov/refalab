@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "refal.def"
+#include "refalab.h"
 #include "d.h"
 #include "rfintf.h"
 #include "rfrun.h"

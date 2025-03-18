@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "refal.def"
+#include "refalab.h"
 #include "rfintf.h"
 #include "rfrun.h"
 #include "d.h"

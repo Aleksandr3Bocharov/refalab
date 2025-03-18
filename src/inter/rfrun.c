@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "refal.def"
+#include "refalab.h"
 #include "rfrun.h"
 #include "rfintf.h"
 

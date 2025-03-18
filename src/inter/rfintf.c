@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
-#include "refal.def"
+#include "refalab.h"
 #include "rfintf.h"
 #include "rfrun.h"
 
