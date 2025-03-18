@@ -1,7 +1,7 @@
-# Copyright 2024 Aleksandr Bocharov
+# Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2024-11-23
+# 2025-03-18
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -62,18 +62,18 @@ $(TARGET): $(OBJECTS)
 
 $(S)\ccst.o: $(S)\ccst.c
 
-$(S)\cerr.o: $(S)\cerr.c $(S)\refal.def
+$(S)\cerr.o: $(S)\cerr.c
 
-$(S)\cgop.o: $(S)\cgop.c $(S)\refal.def
+$(S)\cgop.o: $(S)\cgop.c
 
-$(S)\cj.o: $(S)\cj.c $(S)\refal.def
+$(S)\cj.o: $(S)\cj.c
 
-$(S)\clu.o: $(S)\clu.c $(S)\refal.def
+$(S)\clu.o: $(S)\clu.c
 
-$(S)\cs.o: $(S)\cs.c $(S)\refal.def
+$(S)\cs.o: $(S)\cs.c
 
 $(S)\plc.o: $(S)\plc.c
 
-$(S)\refal.o: $(S)\refal.c $(S)\refal.def
+$(S)\refal.o: $(S)\refal.c
 
 ### End of Makefile
