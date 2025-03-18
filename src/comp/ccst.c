@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-11-07
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------   file  CCST.C  ---------------
@@ -1593,13 +1593,6 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE10:
             // sentence end
-            // scn_.curr_stmnmb++;
-            /*if (options.stmnmb)
-            {
-                jbyte(n_eossn);
-                ghw(scn_.curr_stmnmb);
-            }
-            else*/
             jbyte(n_eos);
             if (ur_skob != 1)
                 pchosh("403 too many signs '<' in right part");

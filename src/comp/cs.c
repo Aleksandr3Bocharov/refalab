@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-17
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -30,7 +30,6 @@ static T_ARR_LBL *first_arr_lbl = NULL;
 static size_t n_lbl = 15;
 static T_I_LBL *pfail = NULL;    // statememt FAIL label
 static T_I_LBL *next_stm = NULL; // next statement label
-// static T_I_LBL *next_nos = NULL; // next halfword label with
 //  a number of statements
 static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
@@ -89,7 +88,6 @@ void fndef(const char *idp, size_t lid)
     { // new function
         func_end();
         T_U *p = lookup(idp, lid);
-        // scn_.curr_stmnmb = 0;
         next_stm = alloc_lbl();
         p->type = (p->type) | '\100';
         if ((p->mode) & '\020')
@@ -99,11 +97,6 @@ void fndef(const char *idp, size_t lid)
             fnhead(idp, lid);
             p->def = scn_.nomkar;
             jlabel(p);
-            /*if (options.stmnmb)
-            {
-                next_nos = alloc_lbl();
-                gopl(n_setnos, (uint8_t *)next_nos);
-            };*/
             gopl(n_sjump, (uint8_t *)next_stm);
         }
     }
@@ -132,11 +125,6 @@ static void func_end(void)
             jbyte(n_fail);
         }
         next_stm = NULL;
-        /*if (options.stmnmb)
-        {
-            jlabel((T_U *)next_nos);
-            ghw(scn_.curr_stmnmb);
-        }*/
     }
     return;
 }

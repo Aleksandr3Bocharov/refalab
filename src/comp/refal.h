@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-17
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -22,7 +22,6 @@
 typedef struct opt_
 { // compiling   options
     bool source;
-    // bool stmnmb;
     bool extname;
     bool names;
 } T_OPT;
@@ -34,7 +33,6 @@ typedef struct scn_
     uint32_t nomkar;
     char modname_var[MAX_ID_LEN]; // module name
     size_t modnmlen;              // module name length
-    //    uint16_t curr_stmnmb;
 } T_SCN;
 
 extern T_SCN scn_;

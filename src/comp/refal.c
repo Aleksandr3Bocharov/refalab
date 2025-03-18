@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-17
+// 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -279,7 +279,6 @@ int main(int argc, char *argv[])
     SET_time();
 
     options.source = true;
-    // options.stmnmb = false;
     options.extname = false;
     options.names = true;
     for (size_t j = 2; j < (size_t)argc; ++j)
@@ -325,7 +324,6 @@ int main(int argc, char *argv[])
             kolosh = 0;
             nommod++;
             flags.was_72 = false;
-            // scn_.curr_stmnmb = 0;
             _eoj = false;
             card[80] = '\n';
             prevlb[0] = '\0';
