@@ -4,12 +4,12 @@
 // 2024-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//--------------- file -- REFAL.DEF -----------------
+//--------------- file -- REFALAB.H -----------------
 //          Interpretator version
 //---------------------------------------------------
 
-#ifndef REFAL_DEF
-#define REFAL_DEF
+#ifndef REFALAB_H
+#define REFALAB_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -100,4 +100,4 @@ typedef struct refal_
 
 #endif
 
-//-------  end of file REFAL.DEF ---------
+//-------  end of file REFALAB.H ---------
