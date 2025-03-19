@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-18
+* 2025-03-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -26,21 +26,21 @@ PLATFORM +
     EXTRN True, False
     EMPTY Windows, POSIX
 
-Platform +
+Platform
         = /Windows/
 
-Directory_Separator +
+Directory_Separator
         = '\\'
 
-Directory_Separators +
+Directory_Separators
     S   '\\/'
 
-Is_Directory_Separator +
+Is_Directory_Separator
     S(:Directory_Separators:)D +
         = /True/
     S0  = /False/
         
-Path_Separator +
+Path_Separator
         = ';'
 
     END

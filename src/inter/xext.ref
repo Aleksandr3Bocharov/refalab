@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-18
+* 2025-03-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -24,7 +24,7 @@ EXT START
     EMPTY True, False
 
 * <Call WC EA> == ER
-Call +
+Call
     SF EA +
         = < SF EA>
     (WC EB) EA +
@@ -36,25 +36,25 @@ Map WC WN ET +
     W0  =
 
 * <FoldL WC WA WI*> == WA'
-FoldL +
+FoldL
     WC WA WN ET +
         = <FoldL WC <Call WC WA WN> ET>
     WC WA +
         = WA
 
 * <FoldR WC WI* WA> == WA'
-FoldR +
+FoldR
     WC EH WP WA +
         = <FoldR WC EH <Call WC WP WA>>
     WC WA +
         = WA
 
 * <Map_Accumulator WC WA WI*> == WA′ ER
-Map_Accumulator +
+Map_Accumulator
     WC WA ET +
         = <Map_Accumulator_Aux WC WA () ET>
   
-Map_Accumulator_Aux +
+Map_Accumulator_Aux
     WC WA (ER) WN ET +
         = <Map_Accumulator_Aux WC +
             <Map_Accumulator_Add_Scanned +
@@ -64,23 +64,23 @@ Map_Accumulator_Aux +
     WC WA (ER) +
         = WA ER
   
-Map_Accumulator_Add_Scanned + 
+Map_Accumulator_Add_Scanned 
     WA ES (ER) +
         = WA (ER ES)
 
 * <Del_Accumulator W E> == E
-Del_Accumulator +
+Del_Accumulator
     WA ER +
         = ER
 
 * <Load_File S(/0/../4/)N E(O)F> == (E(O)L)*
-Load_File +
+Load_File
     SN EF +
         = <Open 'r' SN EF> +
         <Load_File_Aux SN <Get SN>> +
         <Close 'r' SN>
   
-Load_File_Aux +
+Load_File_Aux
     SN /0/ +
         =
     SN EL /0/ +
@@ -89,50 +89,50 @@ Load_File_Aux +
         = (EL) <Load_File_Aux SN <Get SN>>
 
 * <Save_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
-Save_File +
+Save_File
     SN (EF) EL +
         = <Open 'w' SN EF> +
         <Map (/Do_Write_Bracket_Line/ SN) EL> +
         <Close 'w' SN>
   
-Do_Write_Bracket_Line +
+Do_Write_Bracket_Line
     SN (EL) +
         = <Put SN EL>
 
 * <Append_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
-Append_File +
+Append_File
     SN (EF) EL +
         = <Open 'a' SN EF> +
         <Map (/Do_Write_Bracket_Line/ SN) EL> +
         <Close 'w' SN>
 
-White_Spaces +
+White_Spaces
     S   ' \n\t\v\f\r'
 
 * <Is_White_Space SW> == /True/ | /False/
-Is_White_Space +
+Is_White_Space
     S(:White_Spaces:)W +
         = /True/
     S0  = /False/
 
 * <Trim E> == E'
-Trim +
+Trim
     EL  = <TrimL <TrimR EL>>
 
 * <TrimL E> == E'
-TrimL +
+TrimL
     S(:White_Spaces:)W EL +
         = <TrimL EL>
     E0  = E0
   
 * <TrimR E> == E'
-TrimR +
+TrimR
     EL S(:White_Spaces:)W +
         = <TrimR EL>
     E0  = E0
   
 * <Exist W E> == /True/ | /False/
-Exist +
+Exist
     WS EB WS EE +
         = /True/
     WS E0 +

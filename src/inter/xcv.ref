@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-18
+* 2025-03-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -14,22 +14,20 @@ CV  START
     EXTRN Numb, Symb
     EXTRN Add, Mul, Dr, DrN
 
-Cvb +
-    '-' V(D)X +
+Cvb '-' V(D)X +
         = '-' <Cvb0 VX>
     '+' V(D)X +
         = <Cvb0 VX>
     E(D)X +
         = <Cvb0 EX>
 
-Cvb0 +
+Cvb0
     VX S1 S2 S3 S4 S5 S6 S7 S8 S9 +
         = <Add (<Mul (<Cvb0 VX>) /59/ /10144256/>) +
         <Numb S1 S2 S3 S4 S5 S6 S7 S8 S9>>
     Ex  = <Numb Ex>
 
-Cvd +
-    '-' V(N)X +
+Cvd '-' V(N)X +
         = '-' <Cvd0 VX>
     '+' V(N)X +
         = <Cvd0 VX>
