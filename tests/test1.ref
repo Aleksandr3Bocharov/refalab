@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-18
+* 2025-03-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1 +
@@ -139,49 +139,49 @@ F4      = <Prp1 /0/> +
         <LRel /LRel/> +
         <LRel '123'>
 
-Prad +
+Prad
     E1  = <Prow /Add/ E1>
 
-Prsu +
+Prsu
     E1  = <Prow /Sub/ E1>
 
-Prmu +
+Prmu
     E1  = <Prow /Mul/ E1>
 
-Prdr +
+Prdr
     E1  = <Prow /Dr/ E1>
 
-Prdl +
+Prdl
     E1  = <Prow/Div/ E1>
 
-Pradn +
+Pradn
     E1  = <Prow /AddN/ E1>
 
-Prsun +
+Prsun
     E1  = <Prow /SubN/ E1>
 
-Prmun +
+Prmun
     E1  = <Prow /MulN/ E1>
 
-Prdrn +
+Prdrn
     E1  = <Prow /DrN/ E1>
 
-Prdln +
+Prdln
     E1  = <Prow /DivN/ E1>
 
-Prm1 +
+Prm1
     E1  = <Prow /M1/ E1>
 
-Prp1 +
+Prp1
     E1  = <Prow /P1/ E1>
 
-Prnu +
+Prnu
     E1  = <Prow /Numb/ E1>
 
-Prsy +
+Prsy
     E1  = <Prow /Symb/ E1>
 
-Prow +
+Prow
     S1 E2 +
         = <Proutm S1 ': in=' E2 '  out=' < S1 E2>>
 

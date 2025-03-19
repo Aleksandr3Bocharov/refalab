@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-18
+* 2025-03-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST4 +
@@ -14,11 +14,11 @@ TEST4 +
 Go      = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
         <Dal>
 
-Bspe +
+Bspe
     S   '2134' /Pus/
 
 *      prowerka  specifikacii
-Prspe +
+Prspe
     E2 S(/Em1/ /Em2/ /Em3/)1 +
         = <Prout ' symbol-/em/' S1> <Prspe E2>
     S(:Bspe:)1 Ek +
@@ -35,18 +35,18 @@ Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
 *  neot
         <Prfe '123'> <Prla '123'>
 
-Prfe +
+Prfe
     E1  = <Prow /First/ E1>
 
-Prla +
+Prla
     E1  = <Prow /Last/ E1>
 
-Prow +
+Prow
     S1 E2 +
         = <Proutm S1 ', whod=' E2 '  wyh=' < S1 E2>>
 *
 *
-Prln +
+Prln
     E1  = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
         '  wyh-w=' <LengW E1>>
                                  
