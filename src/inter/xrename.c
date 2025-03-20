@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -36,7 +36,7 @@ static void unlink_(void)
         rfabe("unlink: error");
     return;
 }
-char unlink_0[] = {Z6 'U', 'N', 'L', 'I', 'N', 'K', '\006'};
+char unlink_0[] = {Z6 'U', 'N', 'L', 'I', 'N', 'K', (char)6};
 G_L_B uint8_t refalab_unlink = '\122';
 void (*unlink_1)(void) = unlink_;
 
@@ -84,7 +84,7 @@ static void rename_(void)
     refal.upshot = 2;
     return;
 }
-char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', '\006'};
+char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
 G_L_B uint8_t refalab_rename = '\122';
 void (*rename_1)(void) = rename_;
 

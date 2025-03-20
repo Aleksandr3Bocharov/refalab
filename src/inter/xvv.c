@@ -37,7 +37,7 @@ static void card_(void)
     }
     return;
 }
-char card_0[] = {Z4 'C', 'A', 'R', 'D', '\004'};
+char card_0[] = {Z4 'C', 'A', 'R', 'D', (char)4};
 G_L_B uint8_t refalab_card = '\122';
 void (*card_1)(void) = card_;
 
@@ -47,7 +47,7 @@ static void pr1_(void)
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', '\005'};
+char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', (char)5};
 G_L_B uint8_t refalab_print = '\122';
 void (*pr1_1)(void) = pr1_;
 
@@ -57,7 +57,7 @@ static void pr2_(void)
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', '\006'};
+char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_printm = '\122';
 void (*pr2_1)(void) = pr2_;
 
@@ -66,7 +66,7 @@ static void pr3_(void)
     rfpex("", refal.preva, refal.nexta);
     return;
 }
-char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', '\005'};
+char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', (char)5};
 G_L_B uint8_t refalab_prout = '\122';
 void (*pr3_1)(void) = pr3_;
 
@@ -75,7 +75,7 @@ static void pr4_(void)
     rfpexm("", refal.preva, refal.nexta);
     return;
 }
-char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', '\006'};
+char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_proutm = '\122';
 void (*pr4_1)(void) = pr4_;
 

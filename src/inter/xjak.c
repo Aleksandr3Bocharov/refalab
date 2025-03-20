@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XJAK.C ------------
@@ -77,7 +77,7 @@ static void br_(void)
     rftpl(pl, refal.preva, refal.nexta);
     return;
 }
-char br_0[] = {Z2 'B', 'R', '\002'};
+char br_0[] = {Z2 'B', 'R', (char)2};
 G_L_B uint8_t refalab_br = '\122';
 void (*br_1)(void) = br_;
 
@@ -110,7 +110,7 @@ static void dg_(void)
     rfdel(pl, pr);
     return;
 }
-char dg_0[] = {Z2 'D', 'G', '\002'};
+char dg_0[] = {Z2 'D', 'G', (char)2};
 G_L_B uint8_t refalab_dg = '\122';
 void (*dg_1)(void) = dg_;
 
@@ -123,7 +123,7 @@ static void dgall_(void)
         rftpl(refal.prevr, ast->store, ast->store);
     return;
 }
-char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', '\005'};
+char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_dgall = '\122';
 void (*dgal_1)(void) = dgall_;
 
@@ -139,7 +139,7 @@ static void gtr_(void)
     rftpl(refal.prevr, p, p);
     return;
 }
-char gtr_0[] = {Z3 'G', 'T', 'R', '\003'};
+char gtr_0[] = {Z3 'G', 'T', 'R', (char)3};
 G_L_B uint8_t refalab_gtr = '\122';
 void (*gtr_1)(void) = gtr_;
 
@@ -159,7 +159,7 @@ static void rdr_(void)
     }; // LACK
     return;
 }
-char rdr_0[] = {Z3 'R', 'D', 'R', '\003'};
+char rdr_0[] = {Z3 'R', 'D', 'R', (char)3};
 G_L_B uint8_t refalab_rdr = '\122';
 void (*rdr_1)(void) = rdr_;
 
@@ -176,7 +176,7 @@ static void ptr_(void)
     rftpl(q, r, refal.nexta);
     return;
 }
-char ptr_0[] = {Z3 'P', 'T', 'R', '\003'};
+char ptr_0[] = {Z3 'P', 'T', 'R', (char)3};
 G_L_B uint8_t refalab_ptr = '\122';
 void (*ptr_1)(void) = ptr_;
 
@@ -193,7 +193,7 @@ static void wtr_(void)
     rftpl(p, r, refal.nexta);
     return;
 }
-char wtr_0[] = {Z3 'W', 'T', 'R', '\003'};
+char wtr_0[] = {Z3 'W', 'T', 'R', (char)3};
 G_L_B uint8_t refalab_wtr = '\122';
 void (*wtr_1)(void) = wtr_;
 
@@ -210,7 +210,7 @@ static void swr_(void)
     rftpl(p, r, refal.nexta);
     return;
 }
-char swr_0[] = {Z3 'S', 'W', 'R', '\003'};
+char swr_0[] = {Z3 'S', 'W', 'R', (char)3};
 G_L_B uint8_t refalab_swr = '\122';
 void (*swr_1)(void) = swr_;
 
@@ -268,7 +268,7 @@ static void rp_(void)
     refal.upshot = 2;
     return;
 }
-char rp_0[] = {Z2 'R', 'P', '\002'};
+char rp_0[] = {Z2 'R', 'P', (char)2};
 G_L_B uint8_t refalab_rp = '\122';
 void (*rp_1)(void) = rp_;
 
@@ -299,7 +299,7 @@ static void cp_(void)
         refal.upshot = 3; // LACK
     return;
 }
-char cp_0[] = {Z2 'C', 'P', '\002'};
+char cp_0[] = {Z2 'C', 'P', (char)2};
 G_L_B uint8_t refalab_cp = '\122';
 void (*cp_1)(void) = cp_;
 
@@ -323,7 +323,7 @@ static void new_(void)
     refal.dvar = refal.preva;
     return;
 }
-char new_0[] = {Z3 'N', 'E', 'W', '\003'};
+char new_0[] = {Z3 'N', 'E', 'W', (char)3};
 G_L_B uint8_t refalab_new = '\122';
 void (*new_1)(void) = new_;
 

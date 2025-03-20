@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XTIME.C ------------
@@ -42,7 +42,7 @@ static void time_(void)
     }
     return;
 }
-char time_0[] = {Z4 'T', 'I', 'M', 'E', '\004'};
+char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
 G_L_B uint8_t refalab_time = '\122';
 void (*time_1)(void) = time_;
 
@@ -91,7 +91,7 @@ static void tm_(void)
     refal.upshot = 2;
     return;
 }
-char tm_0[] = {Z2 'T', 'M', '\002'};
+char tm_0[] = {Z2 'T', 'M', (char)2};
 G_L_B uint8_t refalab_tm = '\122';
 void (*tm_1)(void) = tm_;
 

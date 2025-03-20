@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -41,7 +41,7 @@ static void p1_(void)
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-char p1_0[] = {Z2 'P', '1', '\002'};
+char p1_0[] = {Z2 'P', '1', (char)2};
 G_L_B uint8_t refalab_p1 = '\122';
 void (*p1_1)(void) = p1_;
 
@@ -67,7 +67,7 @@ static void m1_(void)
     rftpl(refal.prevr, p->prev, p->next);
     return;
 }
-char m1_0[] = {Z2 'M', '1', '\002'};
+char m1_0[] = {Z2 'M', '1', (char)2};
 G_L_B uint8_t refalab_m1 = '\122';
 void (*m1_1)(void) = m1_;
 
@@ -136,7 +136,7 @@ static void numb_(void)
     rftpl(refal.prevr, pz->prev, pp->next);
     return;
 }
-char numb_0[] = {Z4 'N', 'U', 'M', 'B', '\004'};
+char numb_0[] = {Z4 'N', 'U', 'M', 'B', (char)4};
 G_L_B uint8_t refalab_numb = '\122';
 void (*numb_1)(void) = numb_;
 
@@ -208,7 +208,7 @@ static void symb_(void)
     rftpl(refal.prevr, pz->prev, p);
     return;
 }
-char symb_0[] = {Z4 'S', 'Y', 'M', 'B', '\004'};
+char symb_0[] = {Z4 'S', 'Y', 'M', 'B', (char)4};
 G_L_B uint8_t refalab_symb = '\122';
 void (*symb_1)(void) = symb_;
 
@@ -245,7 +245,7 @@ static void first_(void)
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', '\005'};
+char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', (char)5};
 G_L_B uint8_t refalab_first = '\122';
 void (*first_1)(void) = first_;
 
@@ -286,7 +286,7 @@ static void last_(void)
     rftpl(p, refal.nextr, refal.nexta);
     return;
 }
-char last_0[] = {Z4 'L', 'A', 'S', 'T', '\004'};
+char last_0[] = {Z4 'L', 'A', 'S', 'T', (char)4};
 G_L_B uint8_t refalab_last = '\122';
 void (*last_1)(void) = last_;
 
@@ -310,7 +310,7 @@ static void lengr_(void)
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', '\005'};
+char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', (char)5};
 G_L_B uint8_t refalab_lengr = '\122';
 void (*lengr_1)(void) = lengr_;
 
@@ -336,7 +336,7 @@ static void lengw_(void)
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
-char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', '\005'};
+char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', (char)5};
 G_L_B uint8_t refalab_lengw = '\122';
 void (*lengw_1)(void) = lengw_;
 
@@ -381,7 +381,7 @@ static void multe_(void)
     }
     return;
 }
-char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', '\005'};
+char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', (char)5};
 G_L_B uint8_t refalab_multe = '\122';
 void (*multe_1)(void) = multe_;
 
@@ -421,7 +421,7 @@ static void delf_(void)
     refal.nextr->info.codep = nd;
     return;
 }
-char delf_0[] = {Z4 'D', 'E', 'L', 'F', '\004'};
+char delf_0[] = {Z4 'D', 'E', 'L', 'F', (char)4};
 G_L_B uint8_t refalab_delf = '\122';
 void (*delf_1)(void) = delf_;
 
@@ -471,7 +471,7 @@ static void lrel_(void)
     refal.upshot = 2;
     return;
 }
-char lrel_0[] = {Z4 'L', 'R', 'E', 'L', '\004'};
+char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
 G_L_B uint8_t refalab_lrel = '\122';
 void (*lrel_1)(void) = lrel_;
 

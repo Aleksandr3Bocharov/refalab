@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -82,7 +82,7 @@ static void open_(void)
    refal.upshot = 2;
    return;
 }
-char open_0[] = {Z4 'O', 'P', 'E', 'N', '\004'};
+char open_0[] = {Z4 'O', 'P', 'E', 'N', (char)4};
 G_L_B uint8_t refalab_open = '\122';
 void (*open_1)(void) = open_;
 
@@ -121,7 +121,7 @@ static void close_(void)
    refal.upshot = 2;
    return;
 }
-char close_0[] = {Z5 'C', 'L', 'O', 'S', 'E', '\005'};
+char close_0[] = {Z5 'C', 'L', 'O', 'S', 'E', (char)5};
 G_L_B uint8_t refalab_close = '\122';
 void (*close_1)(void) = close_;
 
@@ -177,7 +177,7 @@ static void get_(void)
    refal.upshot = 2;
    return;
 }
-char get_0[] = {Z3 'G', 'E', 'T', '\003'};
+char get_0[] = {Z3 'G', 'E', 'T', (char)3};
 G_L_B uint8_t refalab_get = '\122';
 void (*get_1)(void) = get_;
 
@@ -241,7 +241,7 @@ static void put_(void)
    refal.upshot = 2;
    return;
 }
-char put_0[] = {Z3 'P', 'U', 'T', '\003'};
+char put_0[] = {Z3 'P', 'U', 'T', (char)3};
 G_L_B uint8_t refalab_put = '\122';
 void (*put_1)(void) = put_;
 
