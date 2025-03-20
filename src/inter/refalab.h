@@ -32,7 +32,7 @@
 #define Z5 '0',
 #define Z6
 #define Z7 '0', '0', '0', '0', '0', '0', '0',
-#define Z8 '0', '0', '0', '0', '0', '0',
+#define Z0 '0', '0', '0', '0', '0', '0',
 
 #define G_L_B
 #define gcoden(p) p->info.coden
