@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -17,7 +17,7 @@
 #include "cgop.h"
 
 #define MAX_ID_LEN 40
-#define MAX_EXT_ID_LEN 8
+#define MAX_EXT_ID_LEN 32
 
 typedef struct opt_
 { // compiling   options
