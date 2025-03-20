@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-03-18
+// 2024-03-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -25,12 +25,14 @@
 #define TAGD 7
 
 #define Z_0 0
+#define Z1 '0', '0', '0', '0', '0',
 #define Z2 '0', '0', '0', '0',
 #define Z3 '0', '0', '0',
 #define Z4 '0', '0',
 #define Z5 '0',
 #define Z6
 #define Z7 '0', '0', '0', '0', '0', '0', '0',
+#define Z8 '0', '0', '0', '0', '0', '0',
 
 #define G_L_B
 #define gcoden(p) p->info.coden
@@ -44,7 +46,7 @@
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
-typedef struct linkcb_
+    typedef struct linkcb_
 {
     struct linkcb_ *prev;
     struct linkcb_ *next;
