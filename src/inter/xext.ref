@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-20
+* 2025-03-21
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -14,8 +14,7 @@
 EXT START
     ENTRY Call, Map, FoldL, FoldR
     ENTRY Map_Accumulator, Del_Accumulator
-    ENTRY Load_File(LoadFile), Save_File(SaveFile)
-    ENTRY Append_File(AppFile)
+    ENTRY Load_File, Save_File, Append_File
     ENTRY White_Spaces(WSpaces), Is_White_Space(IsWSpace)
     ENTRY Trim, TrimL, TrimR  
     ENTRY Exist, Set
