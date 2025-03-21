@@ -4,8 +4,9 @@
 Первичные функции   из библиотеки РефалАБ
 переименованы соответственно в   .
 
-Рефал-функции DelAccum, MapAccum из библиотеки РефалАБ
-переименованы соответственно в Del_Accumulator, Map_Accumulator.
+Рефал-функции AppFile, DelAccum, LoadFile, MapAccum, SaveFile из библиотеки РефалАБ
+переименованы соответственно в Append_File, Del_Accumulator, Load_File,
+Map_Accumulator, Save_File.
 
 Внесены изменения в файл заголовков include\refalab.h для разработчиков.
 
