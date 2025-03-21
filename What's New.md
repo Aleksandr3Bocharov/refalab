@@ -4,12 +4,13 @@
 Первичные функции   из библиотеки РефалАБ
 переименованы соответственно в   .
 
-Спецификаторы WSpaces   из библиотеки РефалАБ
-переименованы соответственно в  White_Spaces .
+Спецификаторы DirSeps, WSpaces из библиотеки РефалАБ
+переименованы соответственно в  Directory_Separators, White_Spaces.
 
-Рефал-функции AppFile, DelAccum, IsWSpace, LoadFile, MapAccum, SaveFile из библиотеки РефалАБ
-переименованы соответственно в Append_File, Del_Accumulator, Is_White_Space, Load_File,
-Map_Accumulator, Save_File.
+Рефал-функции AppFile, DelAccum, DirSep, IsDirSep, IsWSpace, LoadFile,
+MapAccum, PathSep, SaveFile из библиотеки РефалАБ переименованы соответственно
+в Append_File, Del_Accumulator, Directory_Separator,
+Is_Directory_Separator, Is_White_Space, Load_File, Map_Accumulator, Path_Separator, Save_File.
 
 Внесены изменения в файл заголовков include\refalab.h для разработчиков.
 
