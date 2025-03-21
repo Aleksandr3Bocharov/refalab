@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-19
+* 2025-03-21
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -18,10 +18,10 @@
 
 PLATFORM +
     START
-    ENTRY Platform, Directory_Separator(DirSep)
-    ENTRY Directory_Separators(DirSeps)
-    ENTRY Is_Directory_Separator(IsDirSep)
-    ENTRY Path_Separator(PathSep)
+    ENTRY Platform, Directory_Separator
+    ENTRY Directory_Separators
+    ENTRY Is_Directory_Separator
+    ENTRY Path_Separator
     ENTRY POSIX, Windows
     EXTRN True, False
     EMPTY POSIX, Windows
