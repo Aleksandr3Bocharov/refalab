@@ -7,8 +7,8 @@
 Спецификаторы WSpaces   из библиотеки РефалАБ
 переименованы соответственно в  White_Spaces .
 
-Рефал-функции AppFile, DelAccum, LoadFile, MapAccum, SaveFile из библиотеки РефалАБ
-переименованы соответственно в Append_File, Del_Accumulator, Load_File,
+Рефал-функции AppFile, DelAccum, IsWSpace, LoadFile, MapAccum, SaveFile из библиотеки РефалАБ
+переименованы соответственно в Append_File, Del_Accumulator, Is_White_Space, Load_File,
 Map_Accumulator, Save_File.
 
 Внесены изменения в файл заголовков include\refalab.h для разработчиков.
