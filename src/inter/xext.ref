@@ -15,7 +15,7 @@ EXT START
     ENTRY Call, Map, FoldL, FoldR
     ENTRY Map_Accumulator, Del_Accumulator
     ENTRY Load_File, Save_File, Append_File
-    ENTRY White_Spaces(WSpaces), Is_White_Space(IsWSpace)
+    ENTRY White_Spaces, Is_White_Space
     ENTRY Trim, TrimL, TrimR  
     ENTRY Exist, Set
     ENTRY True, False
