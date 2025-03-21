@@ -4,6 +4,9 @@
 Первичные функции   из библиотеки РефалАБ
 переименованы соответственно в   .
 
+Спецификаторы WSpaces   из библиотеки РефалАБ
+переименованы соответственно в  White_Spaces .
+
 Рефал-функции AppFile, DelAccum, LoadFile, MapAccum, SaveFile из библиотеки РефалАБ
 переименованы соответственно в Append_File, Del_Accumulator, Load_File,
 Map_Accumulator, Save_File.
