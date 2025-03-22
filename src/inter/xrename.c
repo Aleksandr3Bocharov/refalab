@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-03-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -15,7 +15,7 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-static void unlink_(void)
+static void remove_file_(void)
 {
     const T_LINKCB *p = refal.preva->next;
     char namf[255];
@@ -24,7 +24,7 @@ static void unlink_(void)
     {
         if (p->tag != TAGO || i == 254)
         {
-            printf("\nunlink: format error");
+            printf("\nremove_file: format error");
             refal.upshot = 2;
             return;
         }
@@ -33,12 +33,12 @@ static void unlink_(void)
     }
     namf[i] = '\0';
     if (unlink(namf) == -1)
-        rfabe("unlink: error");
+        rfabe("remove_file: error");
     return;
 }
-char unlink_0[] = {Z6 'U', 'N', 'L', 'I', 'N', 'K', (char)6};
-G_L_B uint8_t refalab_unlink = '\122';
-void (*unlink_1)(void) = unlink_;
+char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
+G_L_B uint8_t refalab_remove_file = '\122';
+void (*remove_file_1)(void) = remove_file_;
 
 static void rename_(void)
 {
