@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-21
+* 2025-03-23
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -12,7 +12,7 @@
 *====================================================================
 
 EXT START
-    ENTRY Call, Map, FoldL, FoldR
+    ENTRY Apply, Map, FoldL, FoldR
     ENTRY Map_Accumulator, Del_Accumulator
     ENTRY Load_File, Save_File, Append_File
     ENTRY White_Spaces, Is_White_Space
@@ -22,29 +22,29 @@ EXT START
     EXTRN Open, Close, Get, Put
     EMPTY True, False
 
-* <Call WC EA> == ER
-Call
+* <Apply WC EA> == ER
+Apply
     SF EA +
         = < SF EA>
     (WC EB) EA +
-        = <Call WC EB EA>
+        = <Apply WC EB EA>
 
 * <Map WC WI*> == ER
 Map WC WN ET +
-        = <Call WC WN> <Map WC ET>
+        = <Apply WC WN> <Map WC ET>
     W0  =
 
 * <FoldL WC WA WI*> == WA'
 FoldL
     WC WA WN ET +
-        = <FoldL WC <Call WC WA WN> ET>
+        = <FoldL WC <Apply WC WA WN> ET>
     WC WA +
         = WA
 
 * <FoldR WC WI* WA> == WA'
 FoldR
     WC EH WP WA +
-        = <FoldR WC EH <Call WC WP WA>>
+        = <FoldR WC EH <Apply WC WP WA>>
     WC WA +
         = WA
 
@@ -57,7 +57,7 @@ Map_Accumulator_Aux
     WC WA (ER) WN ET +
         = <Map_Accumulator_Aux WC +
             <Map_Accumulator_Add_Scanned +
-                <Call WC WA WN> +
+                <Apply WC WA WN> +
             (ER)> +
         ET>
     WC WA (ER) +
