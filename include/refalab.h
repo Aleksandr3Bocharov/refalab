@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-03-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -125,7 +125,7 @@ extern bool lrqlk(size_t l);
 
 extern void rfrun(T_ST *ast);
 
-extern void (*dba)(T_ST *);
+extern void (*dbt)(T_ST *);
 extern void rfdbg(T_ST *s_st);
 
 #endif
