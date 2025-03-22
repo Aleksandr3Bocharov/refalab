@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-19
+* 2025-03-23
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0 +
@@ -12,7 +12,7 @@ TEST0 +
     EXTRN First, Last, LengR, LengW
     EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr
     EXTRN Print, Prout, Proutm
-    EXTRN Open, Close, Get, Put, Rename, Unlink
+    EXTRN Open, Close, Get, Put, Rename, Remove_File
     EXTRN Br, Rp, Dg, DgAll, Cp
     EMPTY Tra, Em1, Em2, Em3, Pus
     SWAP Sw
@@ -114,7 +114,7 @@ Prvv    = <Open 'w' /0/ 'lala.put'> +
         <Rename 'lala.put*lala.get'> +
         <Open 'r' /4/ 'lala.get'> +
         <Print <Get /4/>> <Print <Get /4/>> +
-        <Print <Get /4/>> <Close 'r' /4/> <Unlink 'lala.get'>
+        <Print <Get /4/>> <Close 'r' /4/> <Remove_File 'lala.get'>
 
 *
 Prsw    = <Sw1 <New /123456/>> <Wtr /Sw/ /123456/> <Ptr /Sw/ '0'> +
