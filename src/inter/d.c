@@ -96,7 +96,7 @@ static void get_arg(void);
 static bool get_det(void);
 static bool get_numb(int32_t *numb);
 static bool get_yn(const char *b);
-static void dbapp(T_ST *ss_st);
+static void dbtry(T_ST *ss_st);
 static void getpf(const T_ST *ss_st);
 static void one_step(T_ST *ss_st);
 static void pr_euc(void);
@@ -104,7 +104,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
 static void pr_imres(void);
 static void pr_step(void);
 
-void (*dba)(T_ST *) = NULL;
+void (*dbt)(T_ST *) = NULL;
 
 void rfdbg(T_ST *s_st)
 {
@@ -280,7 +280,7 @@ void rfdbg(T_ST *s_st)
         s_upto = 0x7FFFFFFF;
     //==================================
     //  initialization
-    dba = dbapp;
+    dbt = dbtry;
     printed_step = 0;
     euc_step = 0;
     res_step = 0;
@@ -502,7 +502,7 @@ void rfdbg(T_ST *s_st)
         }
 }
 
-static void dbapp(T_ST *ss_st)
+static void dbtry(T_ST *ss_st)
 {
     T_LINKCB *v1 = prevk;
     T_LINKCB *v2 = nextd;

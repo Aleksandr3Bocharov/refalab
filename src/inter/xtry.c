@@ -16,7 +16,7 @@
 #include "rfrun.h"
 #include "d.h"
 
-static void appl_(void)
+static void try_(void)
 {
     T_ST *s_st;
     size_t l = (size_t)&s_st;
@@ -63,7 +63,7 @@ static void appl_(void)
 #endif
     do
     {
-        if (dba == NULL)
+        if (dbt == NULL)
         {
 #ifdef mdebug
             if (s_st->step >= s_stop)
@@ -87,7 +87,7 @@ static void appl_(void)
 #endif
         }
         else
-            (*dba)(s_st); // prokrutka vkluchena
+            (*dbt)(s_st); // prokrutka vkluchena
         if (s_st->state == 3)
             if (lincrm())
                 s_st->state = 1;
@@ -95,7 +95,7 @@ static void appl_(void)
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
 #ifdef mdebug
-    if (dba == NULL)
+    if (dbt == NULL)
         upst->stop = upst->step + 1;
 #endif
     switch (s_st->state)
@@ -118,8 +118,8 @@ static void appl_(void)
     free(s_st);
     return;
 }
-char appl_0[] = {Z5 'A', 'P', 'P', 'L', 'Y', (char)5};
-G_L_B uint8_t refalab_apply = '\122';
-void (*appl_1)(void) = appl_;
+char try_0[] = {Z3 'T', 'R', 'Y', (char)3};
+G_L_B uint8_t refalab_try = '\122';
+void (*try_1)(void) = try_;
 
 //----------  end of file XTRY.C  ---------------
