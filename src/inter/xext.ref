@@ -19,7 +19,7 @@ EXT START
     ENTRY Trim, TrimL, TrimR  
     ENTRY Exist, Set
     ENTRY True, False
-    EXTRN Open, Close, Get, Put
+    EXTRN FOpen, FClose, FGetS, FPutS
     EMPTY True, False
 
 * <Apply WC EA> == ER
@@ -75,9 +75,9 @@ Del_Accumulator
 * <Load_File S(/0/../4/)N E(O)F> == (E(O)L)*
 Load_File
     SN EF +
-        = <Open 'r' SN EF> +
-        <Load_File_Aux SN <Get SN>> +
-        <Close 'r' SN>
+        = <FOpen 'r' SN EF> +
+        <Load_File_Aux SN <FGetS SN>> +
+        <FClose 'r' SN>
   
 Load_File_Aux
     SN /0/ +
@@ -85,25 +85,25 @@ Load_File_Aux
     SN EL /0/ +
         = (EL)
     SN EL +
-        = (EL) <Load_File_Aux SN <Get SN>>
+        = (EL) <Load_File_Aux SN <FGetS SN>>
 
 * <Save_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 Save_File
     SN (EF) EL +
-        = <Open 'w' SN EF> +
+        = <FOpen 'w' SN EF> +
         <Map (/Do_Write_Bracket_Line/ SN) EL> +
-        <Close 'w' SN>
+        <FClose 'w' SN>
   
 Do_Write_Bracket_Line
     SN (EL) +
-        = <Put SN EL>
+        = <FPutS SN EL>
 
 * <Append_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
 Append_File
     SN (EF) EL +
-        = <Open 'a' SN EF> +
+        = <FOpen 'a' SN EF> +
         <Map (/Do_Write_Bracket_Line/ SN) EL> +
-        <Close 'w' SN>
+        <FClose 'w' SN>
 
 White_Spaces
     S   ' \n\t\v\f\r'

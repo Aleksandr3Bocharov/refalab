@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-03-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XVV5.C ------------
@@ -21,7 +21,7 @@ static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
-static void open_(void)
+static void fopen_(void)
 {
    char namf[255];
    const T_LINKCB *p = refal.preva->next;
@@ -82,11 +82,11 @@ static void open_(void)
    refal.upshot = 2;
    return;
 }
-char open_0[] = {Z4 'O', 'P', 'E', 'N', (char)4};
-G_L_B uint8_t refalab_open = '\122';
-void (*open_1)(void) = open_;
+char fopen_0[] = {Z5 'F', 'O', 'P', 'E', 'N', (char)5};
+G_L_B uint8_t refalab_fopen = '\122';
+void (*fopen_1)(void) = fopen_;
 
-static void close_(void)
+static void fclose_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    do
@@ -121,11 +121,11 @@ static void close_(void)
    refal.upshot = 2;
    return;
 }
-char close_0[] = {Z5 'C', 'L', 'O', 'S', 'E', (char)5};
-G_L_B uint8_t refalab_close = '\122';
-void (*close_1)(void) = close_;
+char fclose_0[] = {Z6 'F', 'C', 'L', 'O', 'S', 'E', (char)6};
+G_L_B uint8_t refalab_fclose = '\122';
+void (*fclose_1)(void) = fclose_;
 
-static void get_(void)
+static void fgets_(void)
 {
    T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -177,11 +177,11 @@ static void get_(void)
    refal.upshot = 2;
    return;
 }
-char get_0[] = {Z3 'G', 'E', 'T', (char)3};
-G_L_B uint8_t refalab_get = '\122';
-void (*get_1)(void) = get_;
+char fgets_0[] = {Z5 'F', 'G', 'E', 'T', 'S', (char)5};
+G_L_B uint8_t refalab_fgets = '\122';
+void (*fgets_1)(void) = fgets_;
 
-static void put_(void)
+static void fputs_(void)
 {
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
@@ -241,8 +241,8 @@ static void put_(void)
    refal.upshot = 2;
    return;
 }
-char put_0[] = {Z3 'P', 'U', 'T', (char)3};
-G_L_B uint8_t refalab_put = '\122';
-void (*put_1)(void) = put_;
+char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
+G_L_B uint8_t refalab_fputs = '\122';
+void (*fputs_1)(void) = fputs_;
 
 //----------  end of file XVV5.C  -----------
