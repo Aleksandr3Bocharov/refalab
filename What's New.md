@@ -3,8 +3,8 @@
 
 Внесено изменение в файл заголовков include\refalab.h для разработчиков.
 
-Первичные функции apply, unlink из библиотеки РефалАБ
-переименованы соответственно в try, remove_file.
+Первичные функции apply, close, get, open, put, unlink из библиотеки РефалАБ
+переименованы соответственно в try, fclose, fget, fopen, fput, remove_file.
 
 Спецификаторы DirSeps, WSpaces из библиотеки РефалАБ
 переименованы соответственно в  Directory_Separators, White_Spaces.
