@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-23
+// 2025-03-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -153,8 +153,6 @@ static const char *vers_i = "RefalAB Version 0.4.0 20250323 (c) Aleksandr Bochar
 
 static FILE *sysin;
 static size_t m; // current symbol number
-static char strg_c[78];
-static size_t lbl_leng;
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
 static const char *card72 = card;
@@ -174,6 +172,7 @@ static const char ns_r = '\11';
 static const char ns_s = '\5';
 static const char ns_sc = '\4';
 static const char ns_w = '\1';
+static char strg_c[78];
 static char *c = strg_c + 6;
 static char class72[78];
 static char *class = class72 + 6;
@@ -181,6 +180,7 @@ static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[MAX_ID_LEN];
+static size_t lbl_leng;
 static char prevlb[MAX_ID_LEN + 1];
 static char stmkey[6];
 static size_t fixm;                   // start sentence position
