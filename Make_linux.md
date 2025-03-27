@@ -28,7 +28,9 @@
 
     ./RefalABclg tests/{name}
 
-где {name} := hello | fact | test0..test5 .
+где
+
+    {name} := hello | fact | test0..test5
  
 Для работы примера "fact" (факториал n) вы должны ввести целое число n.
 
