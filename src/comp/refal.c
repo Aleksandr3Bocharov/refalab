@@ -136,7 +136,6 @@ T_SCN_E scn_e;
 
 static struct
 {
-    bool was_72;
     bool uzhe_krt;
     bool was_err;
     bool uzhekrt_t;
@@ -322,7 +321,6 @@ int main(int argc, char *argv[])
         case START_OF_MODULE:
             kolosh = 0;
             nommod++;
-            flags.was_72 = false;
             _eoj = false;
             card[80] = '\n';
             prevlb[0] = '\0';
@@ -556,7 +554,7 @@ static void rdcard(void)
         flags.uzhekrt_t = false;
         if (options.source)
             pchk();
-        if (!flags.was_72 && komm())
+        if (komm())
             continue;
         if (empcard)
         {
@@ -567,11 +565,7 @@ static void rdcard(void)
         break;
     }
     if (*(c + 71) != ' ')
-        flags.was_72 = true;
-    else
-        flags.was_72 = false;
-    if (*(c + 71) != ' ')
-        *(c + 71) = '+'; //!!!
+        *(c + 71) = '+';
     m = 0;
     return;
 }
