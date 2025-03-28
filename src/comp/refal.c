@@ -24,29 +24,29 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define EH_ROMA                      \
-    if (m != 71)                     \
-    {                                \
-        m++;                         \
-        if (m == 71 && c[71] == '+') \
-        {                            \
-            rdcard();                \
-            if (_eoj)                \
-                return;              \
-        }                            \
+#define EH_ROMA                                \
+    if (m != strlen(c) - 1)                    \
+    {                                          \
+        m++;                                   \
+        if (m == strlen(c) - 1 && c[m] == '+') \
+        {                                      \
+            rdcard();                          \
+            if (_eoj)                          \
+                return;                        \
+        }                                      \
     }
 
-#define EH_ROMA0                     \
-    if (m != 71)                     \
-    {                                \
-        m++;                         \
-        if (m == 71 && c[71] == '+') \
-        {                            \
-            rdcard();                \
-            if (_eoj)                \
-                return false;        \
-        }                            \
-    }
+#define EH_ROMA0                               \
+    if (m != strlen(c) - 1)                    \
+    {                                          \
+        m++;                                   \
+        if (m == strlen(c) - 1 && c[m] == '+') \
+        {                                      \
+            rdcard();                          \
+            if (_eoj)                          \
+                return false;                  \
+        }                                      \
+    }                                          \
 
 typedef enum mod_states
 {
@@ -151,9 +151,9 @@ uint32_t nommod;
 static const char *vers_i = "RefalAB Version 0.4.0 20250323 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
-static size_t m; // current symbol number
-static bool empcard;  // flags for empty card
-static char card[81]; // card buffer (input)
+static size_t m;        // current symbol number
+static bool empcard;    // flags for empty card
+static char card[81];   // card buffer (input)
 static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -1586,14 +1586,12 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
 
 //**********************************************************
 //                  missing blanks
-//       before call: (m = 71) !! (m != 71)
-//  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' '))
 //**********************************************************
 static void blout(void)
 {
     while (true)
     {
-        while (m != 71 && c[m] == ' ')
+        while (m != strlen(c) - 1 && c[m] == ' ')
             m++;
         if (c[m] == '+')
         {
