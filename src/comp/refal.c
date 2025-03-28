@@ -46,7 +46,7 @@
             if (_eoj)                          \
                 return false;                  \
         }                                      \
-    }                                          \
+    }
 
 typedef enum mod_states
 {
@@ -588,26 +588,14 @@ static void lblkey(bool pr)
     memset(stmkey, ' ', 6);
     do
     {
-        if (c[m] == ' ')
+        if (c[m] == '\0')
             break;
         fixm = m;
         size_t l = 0;
         while (c[m] != ' ')
         {
-            if (m == 71)
-            {
-                const size_t delta = 71 - fixm;
-                const int32_t fixm1 = (int32_t)(0 - delta);
-                for (m = 0; m != delta; m++)
-                {
-                    c[fixm1 + (int32_t)m] = c[fixm + m];
-                    class[fixm1 + (int32_t)m] = class[fixm + m];
-                }
-                rdcard();
-                fixm = (size_t)fixm1;
-                if (c[0] == ' ')
-                    break;
-            }
+            if (c[m] == '\0')
+                break;
             if (l == 6)
             {
                 m = fixm;
