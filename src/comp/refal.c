@@ -1366,13 +1366,12 @@ static void pchk(void)
     if (!flags.uzhe_krt && sysprint != NULL)
     {
         flags.uzhe_krt = true;
-        card[72] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
             size_t i;
-            for (i = 76; i > 4; i--)
+            for (i = strlen(tmpstr) - 1; i > 4; i--)
                 if (tmpstr[i] != ' ')
                     break;
             i++;
@@ -1390,7 +1389,6 @@ static void pchk_t(void)
     if (!flags.uzhekrt_t)
     {
         flags.uzhekrt_t = true;
-        card[72] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
