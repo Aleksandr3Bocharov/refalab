@@ -1410,13 +1410,12 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
             break;
         (*prog)(id, lid);
         blout();
-        if (m == 71 && c[m] == ' ')
+        if (c[m] == '\0')
             return;
         if (c[m] == ',')
         {
-            EH_ROMA;
-            if (c[m] == ' ')
-                blout();
+            m++;
+            blout();
             continue;
         }
         break;
@@ -1434,17 +1433,21 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         size_t lid;
         if (!get_id(id, &lid))
             break;
+        blout();
         char ide[MAX_EXT_ID_LEN];
         size_t lide;
         if (c[m] == '(')
         {
-            EH_ROMA;
+            m++;
+            blout();
             if (!get_idm(ide, &lide))
                 break;
             (*prog)(id, lid, ide, lide);
+            blout();
             if (c[m] != ')')
                 break;
-            EH_ROMA;
+            m++;
+            blout();
         }
         else
         {
@@ -1452,14 +1455,12 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
-        blout();
-        if (m == 71 && c[m] == ' ')
+        if (c[m] == '\0')
             return;
         if (c[m] == ',')
         {
-            EH_ROMA;
-            if (c[m] == ' ')
-                blout();
+            m++;
+            blout();
             continue;
         }
         break;
@@ -1478,7 +1479,8 @@ static void equ(void)
         if (!get_id(id, &lid))
             break;
         sequ(stmlbl, lbl_leng, id, lid);
-        if (c[m] == ' ')
+        blout();
+        if (c[m] == '\0')
             return;
     } while (false);
     pch130();
@@ -1558,12 +1560,12 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < MAX_ID_LEN; (*lid)++)
     {
-        EH_ROMA0;
+        m++;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    EH_ROMA0;
+    m++;
     return true;
 }
 
@@ -1575,12 +1577,12 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < MAX_EXT_ID_LEN; (*lid)++)
     {
-        EH_ROMA0;
+        m++;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    EH_ROMA0;
+    m++;
     return true;
 }
 
@@ -1591,7 +1593,7 @@ static void blout(void)
 {
     while (true)
     {
-        while (m != strlen(c) - 1 && c[m] == ' ')
+        while (c[m] == ' ')
             m++;
         if (c[m] == '+')
         {
