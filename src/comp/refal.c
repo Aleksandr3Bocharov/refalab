@@ -154,7 +154,6 @@ static FILE *sysin;
 static size_t m; // current symbol number
 static bool empcard;  // flags for empty card
 static char card[81]; // card buffer (input)
-static const char *card72 = card;
 static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -171,10 +170,10 @@ static const char ns_r = '\11';
 static const char ns_s = '\5';
 static const char ns_sc = '\4';
 static const char ns_w = '\1';
-static char strg_c[78];
+static char strg_c[87];
 static char *c = strg_c + 6;
-static char class72[78];
-static char *class = class72 + 6;
+static char class80[87];
+static char *class = class80 + 6;
 static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
@@ -322,7 +321,7 @@ int main(int argc, char *argv[])
             kolosh = 0;
             nommod++;
             _eoj = false;
-            card[80] = '\n';
+            card[80] = '\0';
             prevlb[0] = '\0';
             mod_length = 0;
             memset(mod_name, '\0', MAX_ID_LEN + 1);
@@ -497,14 +496,14 @@ static void rdline(char *s)
     }
     if (cs == EOF && i == 0)
         _eoj = true;
-    for (; i < 80; i++)
-        *(s + i) = ' ';
+    *(s + i) = '\0';
     return;
 }
 
 static void translate(const char *str, char *class1)
 { // L,D,* - classification procedure
-    for (size_t i = 0; i < 72; ++i)
+    size_t i;
+    for (i = 0; i < strlen(str); ++i)
     {
         *(class1 + i) = '*';
         const int j = *(str + i);
@@ -527,13 +526,14 @@ static void translate(const char *str, char *class1)
                 continue;
             };
     }
+    *(class1 + i) = '\0';
     return;
 }
 
 static bool komm(void)
 {
     const char *k;
-    for (k = c; *k == ' ' || *k == '\t'; k++)
+    for (k = c; *k == ' '; k++)
         ;
     if (*k == '*')
         return true;
@@ -546,8 +546,8 @@ static void rdcard(void)
     while (true)
     {
         rdline(card);
-        strncpy(c, card72, 72);
-        translate(card72, class);
+        strcpy(c, card);
+        translate(card, class);
         ++scn_.nomkar;
         ++cdnumb;
         flags.uzhe_krt = false;
