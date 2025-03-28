@@ -1497,7 +1497,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    EH_ROMA0;
+    m++;
     do
     {
         if (class[m] == 'D')
@@ -1509,7 +1509,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             bool csmbend = false;
             while (true)
             {
-                EH_ROMA0;
+                m++;
                 if (class[m] != 'D')
                 {
                     code->tag = TAGN;
@@ -1526,13 +1526,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             }
             if (csmbend)
                 break;
-            while (true)
-            {
-                EH_ROMA0;
-                if (class[m] == 'D')
-                    continue;
-                break;
-            }
+            m++;
             pchosh("111 symbol-number > 16777215");
             break;
         }
