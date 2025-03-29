@@ -24,28 +24,28 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define EH_ROMA                                \
-    if (m != strlen(c) - 1)                    \
-    {                                          \
-        m++;                                   \
-        if (m == strlen(c) - 1 && c[m] == '+') \
-        {                                      \
-            rdcard();                          \
-            if (_eoj)                          \
-                return;                        \
-        }                                      \
+#define EH_ROMA                      \
+    if (m != 71)                     \
+    {                                \
+        m++;                         \
+        if (m == 71 && c[71] != ' ') \
+        {                            \
+            rdcard();                \
+            if (_eoj)                \
+                return;              \
+        }                            \
     }
 
-#define EH_ROMA0                               \
-    if (m != strlen(c) - 1)                    \
-    {                                          \
-        m++;                                   \
-        if (m == strlen(c) - 1 && c[m] == '+') \
-        {                                      \
-            rdcard();                          \
-            if (_eoj)                          \
-                return false;                  \
-        }                                      \
+#define EH_ROMA0                     \
+    if (m != 71)                     \
+    {                                \
+        m++;                         \
+        if (m == 71 && c[71] != ' ') \
+        {                            \
+            rdcard();                \
+            if (_eoj)                \
+                return false;        \
+        }                            \
     }
 
 typedef enum mod_states
@@ -136,6 +136,7 @@ T_SCN_E scn_e;
 
 static struct
 {
+    bool was_72;
     bool uzhe_krt;
     bool was_err;
     bool uzhekrt_t;
@@ -151,9 +152,10 @@ uint32_t nommod;
 static const char *vers_i = "RefalAB Version 0.4.0 20250323 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
-static size_t m;        // current symbol number
-static bool empcard;    // flags for empty card
-static char card[81];   // card buffer (input)
+static size_t m; // current symbol number
+static bool empcard;  // flags for empty card
+static char card[81]; // card buffer (input)
+static const char *card72 = card;
 static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -170,10 +172,10 @@ static const char ns_r = '\11';
 static const char ns_s = '\5';
 static const char ns_sc = '\4';
 static const char ns_w = '\1';
-static char strg_c[87];
+static char strg_c[78];
 static char *c = strg_c + 6;
-static char class80[87];
-static char *class = class80 + 6;
+static char class72[78];
+static char *class = class72 + 6;
 static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
@@ -320,8 +322,9 @@ int main(int argc, char *argv[])
         case START_OF_MODULE:
             kolosh = 0;
             nommod++;
+            flags.was_72 = false;
             _eoj = false;
-            card[80] = '\0';
+            card[80] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
             memset(mod_name, '\0', MAX_ID_LEN + 1);
@@ -496,14 +499,14 @@ static void rdline(char *s)
     }
     if (cs == EOF && i == 0)
         _eoj = true;
-    *(s + i) = '\0';
+    for (; i < 80; i++)
+        *(s + i) = ' ';
     return;
 }
 
 static void translate(const char *str, char *class1)
 { // L,D,* - classification procedure
-    size_t i;
-    for (i = 0; i < strlen(str); ++i)
+    for (size_t i = 0; i < 72; ++i)
     {
         *(class1 + i) = '*';
         const int j = *(str + i);
@@ -526,14 +529,13 @@ static void translate(const char *str, char *class1)
                 continue;
             };
     }
-    *(class1 + i) = '\0';
     return;
 }
 
 static bool komm(void)
 {
     const char *k;
-    for (k = c; *k == ' '; k++)
+    for (k = c; *k == ' ' || *k == '\t'; k++)
         ;
     if (*k == '*')
         return true;
@@ -546,15 +548,15 @@ static void rdcard(void)
     while (true)
     {
         rdline(card);
-        strcpy(c, card);
-        translate(card, class);
+        strncpy(c, card72, 72);
+        translate(card72, class);
         ++scn_.nomkar;
         ++cdnumb;
         flags.uzhe_krt = false;
         flags.uzhekrt_t = false;
         if (options.source)
             pchk();
-        if (komm())
+        if (!flags.was_72 && komm())
             continue;
         if (empcard)
         {
@@ -564,6 +566,12 @@ static void rdcard(void)
         }
         break;
     }
+    if (*(c + 71) != ' ')
+        flags.was_72 = true;
+    else
+        flags.was_72 = false;
+    if (*(c + 71) != ' ')
+        *(c + 71) = '+'; //!!!
     m = 0;
     return;
 }
@@ -588,14 +596,26 @@ static void lblkey(bool pr)
     memset(stmkey, ' ', 6);
     do
     {
-        if (c[m] == '\0')
+        if (c[m] == ' ')
             break;
         fixm = m;
         size_t l = 0;
         while (c[m] != ' ')
         {
-            if (c[m] == '\0')
-                break;
+            if (m == 71)
+            {
+                const size_t delta = 71 - fixm;
+                const int32_t fixm1 = (int32_t)(0 - delta);
+                for (m = 0; m != delta; m++)
+                {
+                    c[fixm1 + (int32_t)m] = c[fixm + m];
+                    class[fixm1 + (int32_t)m] = class[fixm + m];
+                }
+                rdcard();
+                fixm = (size_t)fixm1;
+                if (c[0] == ' ')
+                    break;
+            }
             if (l == 6)
             {
                 m = fixm;
@@ -1354,12 +1374,13 @@ static void pchk(void)
     if (!flags.uzhe_krt && sysprint != NULL)
     {
         flags.uzhe_krt = true;
+        card[72] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
             size_t i;
-            for (i = strlen(tmpstr) - 1; i > 4; i--)
+            for (i = 76; i > 4; i--)
                 if (tmpstr[i] != ' ')
                     break;
             i++;
@@ -1377,6 +1398,7 @@ static void pchk_t(void)
     if (!flags.uzhekrt_t)
     {
         flags.uzhekrt_t = true;
+        card[72] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
@@ -1398,12 +1420,13 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
             break;
         (*prog)(id, lid);
         blout();
-        if (c[m] == '\0')
+        if (m == 71 && c[m] == ' ')
             return;
         if (c[m] == ',')
         {
-            m++;
-            blout();
+            EH_ROMA;
+            if (c[m] == ' ')
+                blout();
             continue;
         }
         break;
@@ -1421,21 +1444,17 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         size_t lid;
         if (!get_id(id, &lid))
             break;
-        blout();
         char ide[MAX_EXT_ID_LEN];
         size_t lide;
         if (c[m] == '(')
         {
-            m++;
-            blout();
+            EH_ROMA;
             if (!get_idm(ide, &lide))
                 break;
             (*prog)(id, lid, ide, lide);
-            blout();
             if (c[m] != ')')
                 break;
-            m++;
-            blout();
+            EH_ROMA;
         }
         else
         {
@@ -1443,12 +1462,14 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
-        if (c[m] == '\0')
+        blout();
+        if (m == 71 && c[m] == ' ')
             return;
         if (c[m] == ',')
         {
-            m++;
-            blout();
+            EH_ROMA;
+            if (c[m] == ' ')
+                blout();
             continue;
         }
         break;
@@ -1467,8 +1488,7 @@ static void equ(void)
         if (!get_id(id, &lid))
             break;
         sequ(stmlbl, lbl_leng, id, lid);
-        blout();
-        if (c[m] == '\0')
+        if (c[m] == ' ')
             return;
     } while (false);
     pch130();
@@ -1485,7 +1505,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    m++;
+    EH_ROMA0;
     do
     {
         if (class[m] == 'D')
@@ -1497,7 +1517,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             bool csmbend = false;
             while (true)
             {
-                m++;
+                EH_ROMA0;
                 if (class[m] != 'D')
                 {
                     code->tag = TAGN;
@@ -1514,7 +1534,13 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             }
             if (csmbend)
                 break;
-            m++;
+            while (true)
+            {
+                EH_ROMA0;
+                if (class[m] == 'D')
+                    continue;
+                break;
+            }
             pchosh("111 symbol-number > 16777215");
             break;
         }
@@ -1542,12 +1568,12 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < MAX_ID_LEN; (*lid)++)
     {
-        m++;
+        EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    m++;
+    EH_ROMA0;
     return true;
 }
 
@@ -1559,23 +1585,25 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     id[0] = (char)toupper(c[m]);
     for (*lid = 1; *lid < MAX_EXT_ID_LEN; (*lid)++)
     {
-        m++;
+        EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    m++;
+    EH_ROMA0;
     return true;
 }
 
 //**********************************************************
 //                  missing blanks
+//       before call: (m = 71) !! (m != 71)
+//  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' '))
 //**********************************************************
 static void blout(void)
 {
     while (true)
     {
-        while (c[m] == ' ')
+        while (m != 71 && c[m] == ' ')
             m++;
         if (c[m] == '+')
         {
