@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-27
+// 2025-03-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -24,28 +24,30 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define EH_ROMA                      \
-    if (m != 71)                     \
-    {                                \
-        m++;                         \
-        if (m == 71 && c[71] != ' ') \
-        {                            \
-            rdcard();                \
-            if (_eoj)                \
-                return;              \
-        }                            \
+#define CUT 72
+
+#define EH_ROMA                                \
+    if (m != CUT - 1)                          \
+    {                                          \
+        m++;                                   \
+        if (m == CUT - 1 && c[CUT - 1] != ' ') \
+        {                                      \
+            rdcard();                          \
+            if (_eoj)                          \
+                return;                        \
+        }                                      \
     }
 
-#define EH_ROMA0                     \
-    if (m != 71)                     \
-    {                                \
-        m++;                         \
-        if (m == 71 && c[71] != ' ') \
-        {                            \
-            rdcard();                \
-            if (_eoj)                \
-                return false;        \
-        }                            \
+#define EH_ROMA0                               \
+    if (m != CUT - 1)                          \
+    {                                          \
+        m++;                                   \
+        if (m == CUT - 1 && c[CUT - 1] != ' ') \
+        {                                      \
+            rdcard();                          \
+            if (_eoj)                          \
+                return false;                  \
+        }                                      \
     }
 
 typedef enum mod_states
@@ -136,7 +138,7 @@ T_SCN_E scn_e;
 
 static struct
 {
-    bool was_72;
+    bool was_cut;
     bool uzhe_krt;
     bool was_err;
     bool uzhekrt_t;
@@ -152,10 +154,10 @@ uint32_t nommod;
 static const char *vers_i = "RefalAB Version 0.4.0 20250323 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
-static size_t m; // current symbol number
-static bool empcard;  // flags for empty card
-static char card[81]; // card buffer (input)
-static const char *card72 = card;
+static size_t m;           // current symbol number
+static bool empcard;       // flags for empty card
+static char card[CUT + 9]; // card buffer (input)
+static const char *card_cut = card;
 static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
@@ -172,10 +174,10 @@ static const char ns_r = '\11';
 static const char ns_s = '\5';
 static const char ns_sc = '\4';
 static const char ns_w = '\1';
-static char strg_c[78];
+static char strg_c[CUT + 6];
 static char *c = strg_c + 6;
-static char class72[78];
-static char *class = class72 + 6;
+static char class_cut[CUT + 6];
+static char *class = class_cut + 6;
 static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
@@ -322,9 +324,9 @@ int main(int argc, char *argv[])
         case START_OF_MODULE:
             kolosh = 0;
             nommod++;
-            flags.was_72 = false;
+            flags.was_cut = false;
             _eoj = false;
-            card[80] = '\n';
+            card[CUT + 8] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
             memset(mod_name, '\0', MAX_ID_LEN + 1);
@@ -475,11 +477,11 @@ static void trprev(void)
 }
 
 static void rdline(char *s)
-{ // read 80 symbols from sysin
+{ // read CUT + 8 symbols from sysin
     empcard = true;
     size_t i;
     int cs = getc(sysin);
-    for (i = 0; cs != '\n' && cs != EOF && i < 80; i++)
+    for (i = 0; cs != '\n' && cs != EOF && i < CUT + 8; i++)
     {
         if (cs == '\t')
         {
@@ -499,14 +501,14 @@ static void rdline(char *s)
     }
     if (cs == EOF && i == 0)
         _eoj = true;
-    for (; i < 80; i++)
+    for (; i < CUT + 8; i++)
         *(s + i) = ' ';
     return;
 }
 
 static void translate(const char *str, char *class1)
 { // L,D,* - classification procedure
-    for (size_t i = 0; i < 72; ++i)
+    for (size_t i = 0; i < CUT; ++i)
     {
         *(class1 + i) = '*';
         const int j = *(str + i);
@@ -548,15 +550,15 @@ static void rdcard(void)
     while (true)
     {
         rdline(card);
-        strncpy(c, card72, 72);
-        translate(card72, class);
+        strncpy(c, card_cut, CUT);
+        translate(card_cut, class);
         ++scn_.nomkar;
         ++cdnumb;
         flags.uzhe_krt = false;
         flags.uzhekrt_t = false;
         if (options.source)
             pchk();
-        if (!flags.was_72 && komm())
+        if (!flags.was_cut && komm())
             continue;
         if (empcard)
         {
@@ -567,9 +569,9 @@ static void rdcard(void)
         break;
     }
     if (*(c + 71) != ' ')
-        flags.was_72 = true;
+        flags.was_cut = true;
     else
-        flags.was_72 = false;
+        flags.was_cut = false;
     if (*(c + 71) != ' ')
         *(c + 71) = '+'; //!!!
     m = 0;
@@ -1374,7 +1376,7 @@ static void pchk(void)
     if (!flags.uzhe_krt && sysprint != NULL)
     {
         flags.uzhe_krt = true;
-        card[72] = '\0';
+        card[CUT] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
@@ -1398,7 +1400,7 @@ static void pchk_t(void)
     if (!flags.uzhekrt_t)
     {
         flags.uzhekrt_t = true;
-        card[72] = '\0';
+        card[CUT] = '\0';
         if (!_eoj)
         {
             char tmpstr[100];
