@@ -1,18 +1,17 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-03-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//----------- file RFRUN1.H -------------------
-//      Refal-interpretator (part 1)
-//---------------------------------------------
+//-----------  file  --  XSYS.H --------------
+//                 MO: arg
+//--------------------------------------------
 
-#ifndef RFRUN_H
-#define RFRUN_H
+#ifndef XSYS_H
+#define XSYS_H
 
-#include "refalab.h"
-
-extern void rfrun(T_ST *ast);
+extern int gargc;
+extern char *gargv[];
 
 #endif
