@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-23
+// 2025-03-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------- file -- XRENAME.C ------------
@@ -18,11 +18,11 @@
 static void remove_file_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    char namf[255];
+    char namf[MAX_FILE_NAME + 1];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO || i == 254)
+        if (p->tag != TAGO || i == MAX_FILE_NAME)
         {
             printf("\nremove_file: format error");
             refal.upshot = 2;
@@ -43,14 +43,14 @@ void (*remove_file_1)(void) = remove_file_;
 static void rename_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    char namf[255];
+    char namf[MAX_FILE_NAME + 1];
     size_t i;
     bool heot = false;
     do
     {
         for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
         {
-            if (p->tag != TAGO || i == 254)
+            if (p->tag != TAGO || i == MAX_FILE_NAME)
             {
                 heot = true;
                 break;
@@ -62,10 +62,10 @@ static void rename_(void)
             break;
         namf[i] = '\0';
         p = p->next;
-        char namt[255]; // from => to
+        char namt[MAX_FILE_NAME + 1]; // from => to
         for (i = 0; p != refal.nexta; i++)
         {
-            if (p->tag != TAGO || i == 254)
+            if (p->tag != TAGO || i == MAX_FILE_NAME)
             {
                 heot = true;
                 break;

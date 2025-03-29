@@ -23,7 +23,7 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
 static void fopen_(void)
 {
-   char namf[255];
+   char namf[MAX_FILE_NAME + 1];
    const T_LINKCB *p = refal.preva->next;
    bool neot1 = false;
    do
@@ -53,7 +53,7 @@ static void fopen_(void)
       size_t i;
       for (i = 0; p != refal.nexta; i++)
       {
-         if (p->tag != TAGO || i == 254)
+         if (p->tag != TAGO || i == MAX_FILE_NAME)
          {
             neot = true;
             break;
@@ -67,7 +67,7 @@ static void fopen_(void)
       f = fopen(namf, s);
       if (f == NULL)
       {
-         printf("\n open: can't open file %s", namf);
+         printf("\nfopen: can't open file %s", namf);
          neot1 = true;
          break;
       }
@@ -78,7 +78,7 @@ static void fopen_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\n open: format error");
+      printf("\nfopen: format error");
    refal.upshot = 2;
    return;
 }
@@ -117,7 +117,7 @@ static void fclose_(void)
       fclose(f);
       return;
    } while (false);
-   printf("\nclose: format error");
+   printf("\nfclose: format error");
    refal.upshot = 2;
    return;
 }
@@ -147,7 +147,7 @@ static void fgets_(void)
          f = fopen(namf, "r");
          if (f == NULL)
          {
-            printf("\nget: can't open file %s", namf);
+            printf("\nfgets: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -173,7 +173,7 @@ static void fgets_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nget: format error");
+      printf("\nfgets: format error");
    refal.upshot = 2;
    return;
 }
@@ -202,7 +202,7 @@ static void fputs_(void)
          f = fopen(namf, "w");
          if (f == NULL)
          {
-            printf("\nput: can't open file %s", namf);
+            printf("\nfputs: can't open file %s", namf);
             neot1 = true;
             break;
          }
@@ -237,7 +237,7 @@ static void fputs_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nput: format error");
+      printf("\nfputs: format error");
    refal.upshot = 2;
    return;
 }
