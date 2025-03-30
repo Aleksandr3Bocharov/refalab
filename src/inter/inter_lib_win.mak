@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-03-23
+# 2025-03-30
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -36,6 +36,7 @@ SOURCES = \
     $(S)\xjak.c \
     $(S)\xmo.c \
     $(S)\xrename.c \
+    $(S)\xsys.c \
     $(S)\xtime.c \
     $(S)\xtry.c \
     $(S)\xvv.c \
@@ -54,6 +55,7 @@ OBJECTS = \
     $(S)\xmo.o \
     $(S)\xplatform.o \
     $(S)\xrename.o \
+    $(S)\xsys.o \
     $(S)\xtime.o \
     $(S)\xtry.o \
     $(S)\xvv.o \
@@ -94,6 +96,8 @@ $(S)\xjak.o: $(S)\xjak.c
 $(S)\xmo.o: $(S)\xmo.c
 
 $(S)\xrename.o: $(S)\xrename.c
+
+$(S)\xsys.o: $(S)\xsys.c
 
 $(S)\xtime.o: $(S)\xtime.c
 
