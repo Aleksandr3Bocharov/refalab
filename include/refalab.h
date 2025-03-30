@@ -110,7 +110,6 @@ extern void rfexec(uint8_t *func);
 extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn);
-extern void rfgetargs(int argc, char *argv[]);
 extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
@@ -125,6 +124,8 @@ extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
 extern bool lrqlk(size_t l);
 
 extern void rfrun(T_ST *ast);
+
+extern void rfgetargs(int argc, char *argv[]);
 
 extern void (*dbt)(T_ST *);
 extern void rfdbg(T_ST *s_st);
