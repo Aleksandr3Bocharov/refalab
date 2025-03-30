@@ -14,8 +14,14 @@
 #include "rfintf.h"
 #include "xsys.h"
 
-const int *pargc = NULL;
-char **pargv = NULL;
+static int gargc;
+static char **gargv = NULL;
+
+void rfgetargs(int argc, char *argv[])
+{
+    gargc = argc;
+    gargv = argv;
+}
 
 static void arg_(void)
 {
@@ -25,10 +31,10 @@ static void arg_(void)
         if (p->next != refal.nexta || p->tag != TAGN)
             break;
         const uint32_t argn = gcoden(p);
-        if (argn >= *pargc)
+        if (argn >= gargc)
             return;
         p = refal.prevr;
-        const char *argvn = pargv[argn];
+        const char *argvn = gargv[argn];
         if (!slins(p, strlen(argvn)))
             return;
         for (size_t i = 0; argvn[i] != '\0'; i++)

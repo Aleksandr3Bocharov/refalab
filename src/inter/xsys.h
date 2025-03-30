@@ -11,7 +11,6 @@
 #ifndef XSYS_H
 #define XSYS_H
 
-extern const int *pargc;
-extern char **pargv;
+extern void rfgetargs(int argc, char *argv[]);
 
 #endif
