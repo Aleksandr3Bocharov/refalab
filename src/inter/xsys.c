@@ -14,7 +14,7 @@
 #include "rfintf.h"
 #include "xsys.h"
 
-static int gargc;
+static int gargc = 0;
 static char **gargv = NULL;
 
 void rfgetargs(int argc, char *argv[])
