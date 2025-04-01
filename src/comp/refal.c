@@ -1379,10 +1379,10 @@ static void pchk(void)
         card[CUT] = '\0';
         if (!_eoj)
         {
-            char tmpstr[100];
+            char tmpstr[CUT + 28];
             sprintf(tmpstr, "%4d %s", cdnumb, card);
             size_t i;
-            for (i = 76; i > 4; i--)
+            for (i = CUT + 4; i > 4; i--)
                 if (tmpstr[i] != ' ')
                     break;
             i++;
@@ -1403,7 +1403,7 @@ static void pchk_t(void)
         card[CUT] = '\0';
         if (!_eoj)
         {
-            char tmpstr[100];
+            char tmpstr[CUT + 28];
             sprintf(tmpstr, "%4d %s\n", cdnumb, card);
             fputs(tmpstr, systerm);
         }
