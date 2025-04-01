@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-29
+// 2025-04-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -24,7 +24,7 @@
 #include "cs.h"
 #include "ccst.h"
 
-#define CUT 72
+#define CUT 88
 
 #define EH_ROMA                                \
     if (m != CUT - 1)                          \
@@ -568,12 +568,12 @@ static void rdcard(void)
         }
         break;
     }
-    if (*(c + 71) != ' ')
+    if (*(c + CUT - 1) != ' ')
         flags.was_cut = true;
     else
         flags.was_cut = false;
-    if (*(c + 71) != ' ')
-        *(c + 71) = '+'; //!!!
+    if (*(c + CUT - 1) != ' ')
+        *(c + CUT - 1) = '+'; //!!!
     m = 0;
     return;
 }
@@ -604,9 +604,9 @@ static void lblkey(bool pr)
         size_t l = 0;
         while (c[m] != ' ')
         {
-            if (m == 71)
+            if (m == CUT - 1)
             {
-                const size_t delta = 71 - fixm;
+                const size_t delta = CUT - 1 - fixm;
                 const int32_t fixm1 = (int32_t)(0 - delta);
                 for (m = 0; m != delta; m++)
                 {
@@ -850,7 +850,7 @@ void scan(void)
             break;
         case SCNA:
             EH_ROMA;
-            if (m == 71)
+            if (m == CUT - 1)
             {
                 scn_state = OSH101;
                 break;
@@ -864,7 +864,7 @@ void scan(void)
             scn_state = SCNCHR;
             break;
         case STATE1: // within letter chain
-            if (m == 71)
+            if (m == CUT - 1)
             {
                 scn_state = OSH101;
                 break;
@@ -1197,7 +1197,7 @@ static bool specif(char tail)
             break;
         case SPCA:
             EH_ROMA0;
-            if (m == 71)
+            if (m == CUT - 1)
             {
                 sp_state = OSH205;
                 break;
@@ -1284,7 +1284,7 @@ static bool specif(char tail)
                 gsymbol(&code);
             }
             EH_ROMA0;
-            if (m == 71)
+            if (m == CUT - 1)
             {
                 sp_state = OSH205;
                 break;
@@ -1422,7 +1422,7 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
             break;
         (*prog)(id, lid);
         blout();
-        if (m == 71 && c[m] == ' ')
+        if (m == CUT - 1 && c[m] == ' ')
             return;
         if (c[m] == ',')
         {
@@ -1465,7 +1465,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             (*prog)(id, lid, ide, lide);
         }
         blout();
-        if (m == 71 && c[m] == ' ')
+        if (m == CUT - 1 && c[m] == ' ')
             return;
         if (c[m] == ',')
         {
@@ -1596,16 +1596,16 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     return true;
 }
 
-//**********************************************************
+//********************************************************************
 //                  missing blanks
-//       before call: (m = 71) !! (m != 71)
-//  under call:((m=71)&&(c[m]=' '))!!((m!=71)&&(c[m]!=' '))
-//**********************************************************
+//       before call: (m = CUT - 1) !! (m != CUT - 1)
+//  under call:((m=CUT - 1)&&(c[m]=' '))!!((m!=CUT - 1)&&(c[m]!=' '))
+//********************************************************************
 static void blout(void)
 {
     while (true)
     {
-        while (m != 71 && c[m] == ' ')
+        while (m != CUT - 1 && c[m] == ' ')
             m++;
         if (c[m] == '+')
         {
