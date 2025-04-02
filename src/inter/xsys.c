@@ -8,6 +8,8 @@
 //                 MO: arg
 //--------------------------------------------
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include "refalab.h"
@@ -58,17 +60,17 @@ static void system_(void)
     T_LINKCB *p = refal.preva->next;
     size_t i;
     for (i = 0; p != refal.nexta; i++)
+    {
         if (p->tag != TAGO)
         {
             refal.upshot = 2;
             return;
         }
+        p = p->next;
+    }
     char *cmd = (char *)malloc(i + 1);
     if (cmd == NULL)
         rfabe("system: error");
-#ifdef mdebug
-    printf("\nmalloc(system): cmd=%p", (void *)cmd);
-#endif
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
@@ -78,9 +80,6 @@ static void system_(void)
     *(cmd + i) = '\0';
     // fflush(NULL);
     int sys = system(cmd);
-#ifdef mdebug
-    printf("free(system) cmd=%p\n", (void *)cmd);
-#endif
     free(cmd);
     p = refal.prevr;
     if (sys < 0)
