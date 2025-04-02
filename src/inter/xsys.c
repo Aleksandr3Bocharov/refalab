@@ -78,13 +78,27 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    // fflush(NULL);
     int sys = system(cmd);
-    sys = -2147483648;
     free(cmd);
-    if (sys == -2147483648)
-        return;
     p = refal.prevr;
+    if (sys == -2147483648)
+    {
+        if (!slins(p, 3))
+            return;
+        p = p->next;
+        p->info.codep = NULL;
+        p->tag = TAGO;
+        p->info.infoc = '-';
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        pcoden(p, 128);
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        pcoden(p, 0);
+        return;
+    }
     if (sys < 0)
     {
         if (!slins(p, 1))
