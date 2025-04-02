@@ -58,8 +58,8 @@ static void system_(void)
     const T_LINKCB *p = refal.preva->next;
     const T_LINKCB *q = p;
     size_t i;
-    for (i = 0; p->tag != TAGO; i++)
-        if (p->tag != TAGO || i == MAX_FILE_NAME)
+    for (i = 0; p != refal.nexta; i++)
+        if (p->tag != TAGO)
         {
             refal.upshot = 2;
             return;
