@@ -55,7 +55,7 @@ void (*arg_1)(void) = arg_;
 
 static void system_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     size_t i;
     for (i = 0; p != refal.nexta; i++)
         if (p->tag != TAGO)
@@ -76,12 +76,22 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    const int sys = system(cmd);
+    int sys = system(cmd);
 #ifdef mdebug
     printf("free(system) cmd=%p\n", (void *)cmd);
 #endif
     free(cmd);
-
+    p = refal.prevr;
+    if (sys < 0)
+    {
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->info.codep = NULL;
+        p->tag = TAGO;
+        p->info.infoc = '-';
+        sys = -sys;
+    }
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
