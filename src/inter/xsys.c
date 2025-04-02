@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-30
+// 2025-04-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------
@@ -67,7 +67,7 @@ static void system_(void)
     if (cmd == NULL)
         rfabe("system: error");
 #ifdef mdebug
-    printf("\nmalloc(system): parm=%p", (void *)cmd);
+    printf("\nmalloc(system): cmd=%p", (void *)cmd);
 #endif
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
@@ -78,10 +78,10 @@ static void system_(void)
     *(cmd + i) = '\0';
     const int sys = system(cmd);
 #ifdef mdebug
-    printf("free(system) parm=%p\n", (void *)cmd);
+    printf("free(system) cmd=%p\n", (void *)cmd);
 #endif
     free(cmd);
-    
+
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
