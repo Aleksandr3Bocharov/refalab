@@ -80,6 +80,12 @@ static void system_(void)
     *(cmd + i) = '\0';
     int sys = system(cmd);
     free(cmd);
+#ifdef UNIX
+    if (WIFEXITED(sys) != 0)
+        sys = WEXITSTATUS(sys);
+    else
+        sys = -1;
+#endif
     p = refal.prevr;
     if (sys == -2147483648)
     {
