@@ -76,6 +76,7 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
+    // fflush(NULL);
     int sys = system(cmd);
 #ifdef mdebug
     printf("free(system) cmd=%p\n", (void *)cmd);
@@ -92,6 +93,22 @@ static void system_(void)
         p->info.infoc = '-';
         sys = -sys;
     }
+    if (!slins(p, 1))
+        return;
+    p = p->next;
+    p->tag = TAGN;
+    p->info.codep = NULL;
+    if (sys > 16777215)
+    {
+        pcoden(p, sys >> 24);
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        sys &= 0xffffff;
+    }
+    pcoden(p, sys);
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
