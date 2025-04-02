@@ -94,7 +94,6 @@ static void system_(void)
         p->tag = TAGO;
         p->info.infoc = '-';
         sys = -sys;
-        printf("%d\n", sys);
     }
     if (!slins(p, 1))
         return;
