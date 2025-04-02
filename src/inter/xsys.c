@@ -53,4 +53,39 @@ char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
 G_L_B uint8_t refalab_arg = '\122';
 void (*arg_1)(void) = arg_;
 
+static void system_(void)
+{
+    const T_LINKCB *p = refal.preva->next;
+    const T_LINKCB *q = p;
+    size_t i;
+    for (i = 0; p->tag != TAGO; i++)
+        if (p->tag != TAGO || i == MAX_FILE_NAME)
+        {
+            refal.upshot = 2;
+            return;
+        }
+    namf[i] = '\0';
+    p = p->next;
+    char namt[MAX_FILE_NAME + 1]; // from => to
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO || i == MAX_FILE_NAME)
+        {
+            heot = true;
+            break;
+        }
+        namt[i] = p->info.infoc;
+        p = p->next;
+    }
+    if (heot)
+        break;
+    namt[i] = '\0';
+    if (rename(namf, namt) == -1)
+        rfabe("rename: error");
+    return;
+}
+char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
+G_L_B uint8_t refalab_system = '\122';
+void (*system_1)(void) = system_;
+
 //----------  end of file XSYS.C  ---------------
