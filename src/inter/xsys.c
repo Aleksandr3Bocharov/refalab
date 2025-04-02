@@ -80,7 +80,10 @@ static void system_(void)
     *(cmd + i) = '\0';
     // fflush(NULL);
     int sys = system(cmd);
+    sys = -2147483648;
     free(cmd);
+    if (sys == -2147483648)
+        return;
     p = refal.prevr;
     if (sys < 0)
     {
@@ -91,6 +94,7 @@ static void system_(void)
         p->tag = TAGO;
         p->info.infoc = '-';
         sys = -sys;
+        printf("%d\n", sys);
     }
     if (!slins(p, 1))
         return;
