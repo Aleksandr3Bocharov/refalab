@@ -56,7 +56,6 @@ void (*arg_1)(void) = arg_;
 static void system_(void)
 {
     const T_LINKCB *p = refal.preva->next;
-    const T_LINKCB *q = p;
     size_t i;
     for (i = 0; p != refal.nexta; i++)
         if (p->tag != TAGO)
@@ -64,24 +63,25 @@ static void system_(void)
             refal.upshot = 2;
             return;
         }
-    namf[i] = '\0';
-    p = p->next;
-    char namt[MAX_FILE_NAME + 1]; // from => to
-    for (i = 0; p != refal.nexta; i++)
+    char *cmd = (char *)malloc(i + 1);
+    if (cmd == NULL)
+        rfabe("system: error");
+#ifdef mdebug
+    printf("\nmalloc(system): parm=%p", (void *)cmd);
+#endif
+    p = refal.preva->next;
+    for (size_t j = 0; j < i; j++)
     {
-        if (p->tag != TAGO || i == MAX_FILE_NAME)
-        {
-            heot = true;
-            break;
-        }
-        namt[i] = p->info.infoc;
+        *(cmd + j) = p->info.infoc;
         p = p->next;
     }
-    if (heot)
-        break;
-    namt[i] = '\0';
-    if (rename(namf, namt) == -1)
-        rfabe("rename: error");
+    *(cmd + i) = '\0';
+    const int sys = system(cmd);
+#ifdef mdebug
+    printf("free(system) parm=%p\n", (void *)cmd);
+#endif
+    free(cmd);
+    
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
