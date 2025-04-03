@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-04-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN.C -------------------
@@ -226,14 +226,14 @@ static size_t i, n, m;
 
 static void (*fptr)(void);
 
-static bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b);
+static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
-static void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc);
-static void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
-static void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
-static void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
+static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc);
+static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
+static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
+static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 void rfrun(T_ST *ast) // adress of current state table
 {
@@ -1715,13 +1715,13 @@ void rfrun(T_ST *ast) // adress of current state table
         }
 }
 
-static bool spc(T_SPCS *pspcsp, const uint8_t *vpc, const T_LINKCB *b)
+static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b)
 // specifier interpreter
 {
     // spcs-pointer
     T_SPCS *spcsp = pspcsp;
     uint8_t *spcvpc; // virtual specifier counter
-    memcpy(&spcvpc, vpc + NMBL, LBLL);
+    memcpy(&spcvpc, vpc_ + NMBL, LBLL);
     uint8_t spcopc;
     // positiveness feature of specifier element
     bool spcpls = true;
@@ -1919,37 +1919,37 @@ static void link(T_LINKCB *x, T_LINKCB *y)
     return;
 }
 
-static void putjs(T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc)
+static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc)
 {
-    jsp->jsb1 = *ab1;
-    jsp->jsb2 = *ab2;
-    jsp->jsnel = *anel;
-    jsp->jsvpc = *avpc;
+    jsp_->jsb1 = *ab1;
+    jsp_->jsb2 = *ab2;
+    jsp_->jsnel = *anel;
+    jsp_->jsvpc = *avpc;
     return;
 }
 
-static void getjs(const T_WJS *jsp, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc)
+static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc)
 {
-    *ab1 = jsp->jsb1;
-    *ab2 = jsp->jsb2;
-    *anel = jsp->jsnel;
-    *avpc = jsp->jsvpc;
+    *ab1 = jsp_->jsb1;
+    *ab2 = jsp_->jsb2;
+    *anel = jsp_->jsnel;
+    *avpc = jsp_->jsvpc;
     return;
 }
 
-static void putts(T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
-    tsp->ts0 = *ax;
-    tsp->ts1 = *ay;
-    tsp->ts2 = *az;
+    tsp_->ts0 = *ax;
+    tsp_->ts1 = *ay;
+    tsp_->ts2 = *az;
     return;
 }
 
-static void getts(const T_TS *tsp, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
-    *ax = tsp->ts0;
-    *ay = tsp->ts1;
-    *az = tsp->ts2;
+    *ax = tsp_->ts0;
+    *ay = tsp_->ts1;
+    *az = tsp_->ts2;
     return;
 }
 
