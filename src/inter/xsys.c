@@ -5,7 +5,7 @@
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------
-//                 MO: arg
+//                 MO: arg, system, exit
 //--------------------------------------------
 
 #include <stdio.h>
