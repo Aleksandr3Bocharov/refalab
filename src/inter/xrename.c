@@ -12,8 +12,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include "refalab.h"
 #include "rfintf.h"
+
+extern uint8_t refalab_true, refalab_false;
 
 static void remove_file_(void)
 {
@@ -88,7 +91,7 @@ void (*rename_1)(void) = rename_;
 
 static void exist_file_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     char namf[MAX_FILE_NAME + 1];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
@@ -102,7 +105,20 @@ static void exist_file_(void)
         p = p->next;
     }
     namf[i] = '\0';
-    
+    p = refal.prevr;
+    if (!slins(p, 1))
+        return;
+    p = p->next;
+    p->tag = TAGF;
+    p->info.codep = NULL;
+    struct stat st_buf;
+    if (stat(namf, &st_buf) == 0)
+        if (S_ISREG(st_buf.st_mode))
+        {
+            p->info.codef = &refalab_true;
+            return;
+        }
+    p->info.codef = &refalab_false;
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
