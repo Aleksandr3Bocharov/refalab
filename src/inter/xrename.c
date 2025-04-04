@@ -111,14 +111,11 @@ static void exist_file_(void)
     p = p->next;
     p->tag = TAGF;
     p->info.codep = NULL;
+    p->info.codef = &refalab_false;
     struct stat st_buf;
     if (stat(namf, &st_buf) == 0)
         if (S_ISREG(st_buf.st_mode))
-        {
             p->info.codef = &refalab_true;
-            return;
-        }
-    p->info.codef = &refalab_false;
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
