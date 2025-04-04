@@ -117,7 +117,6 @@ static void fclose_(void)
       fclose(f);
       return;
    } while (false);
-   printf("\nfclose: format error");
    refal.upshot = 2;
    return;
 }
