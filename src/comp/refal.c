@@ -151,7 +151,7 @@ FILE *systxt; // for module names
 uint32_t nommod;
 
 // Aleksandr Bocharov   // compiler version
-static const char *vers_i = "RefalAB Version 0.4.0 20250323 (c) Aleksandr Bocharov";
+static const char *vers_i = "RefalAB Version 0.4.1 20250407 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
 static size_t m;           // current symbol number
