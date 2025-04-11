@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
                 if (m != CUT - 1 || c[m] != ' ')
                     pch130();
             }
-            else if (strncasecmp(stmkey, "end", 3) == 0)
+            else if (lbl_leng == 0 && strncasecmp(stmkey, "end", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
@@ -392,13 +392,13 @@ int main(int argc, char *argv[])
                 mod_state = END_STATEMENT;
                 break;
             }
-            else if (strncasecmp(stmkey, "entry", 5) == 0)
+            else if (lbl_leng == 0 && strncasecmp(stmkey, "entry", 5) == 0)
                 ilm(sentry);
-            else if (strncasecmp(stmkey, "extrn", 5) == 0)
+            else if (lbl_leng == 0 && strncasecmp(stmkey, "extrn", 5) == 0)
                 ilm(sextrn);
-            else if (strncasecmp(stmkey, "empty", 5) == 0)
+            else if (lbl_leng == 0 && strncasecmp(stmkey, "empty", 5) == 0)
                 il(sempty);
-            else if (strncasecmp(stmkey, "swap", 4) == 0)
+            else if (lbl_leng == 0 && strncasecmp(stmkey, "swap", 4) == 0)
                 il(sswap);
             else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
