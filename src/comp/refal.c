@@ -352,6 +352,9 @@ int main(int argc, char *argv[])
             strncpy(scn_.modname_var, stmlbl, lbl_leng);
             scn_.modnmlen = lbl_leng;
             jstart();
+            blout();
+            if (m != CUT - 1 || c[m] != ' ')
+                pch130();
             mod_state = NEXT_STM;
             break;
         case NEXT_STM:
@@ -373,11 +376,19 @@ int main(int argc, char *argv[])
                 cst(dir, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "start", 5) == 0)
+            {
                 pchosh("002 too many start-directive");
+                blout();
+                if (m != CUT - 1 || c[m] != ' ')
+                    pch130();
+            }
             else if (strncasecmp(stmkey, "end", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
+                blout();
+                if (m != CUT - 1 || c[m] != ' ')
+                    pch130();
                 mod_state = END_STATEMENT;
                 break;
             }
@@ -1490,7 +1501,8 @@ static void equ(void)
         if (!get_id(id, &lid))
             break;
         sequ(stmlbl, lbl_leng, id, lid);
-        if (c[m] == ' ')
+        blout();
+        if (m == CUT - 1 && c[m] == ' ')
             return;
     } while (false);
     pch130();
