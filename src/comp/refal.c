@@ -392,13 +392,13 @@ int main(int argc, char *argv[])
                 mod_state = END_STATEMENT;
                 break;
             }
-            else if (lbl_leng == 0 && strncasecmp(stmkey, "entry", 5) == 0)
+            else if (strncasecmp(stmkey, "entry", 5) == 0)
                 ilm(sentry);
-            else if (lbl_leng == 0 && strncasecmp(stmkey, "extrn", 5) == 0)
+            else if (strncasecmp(stmkey, "extrn", 5) == 0)
                 ilm(sextrn);
-            else if (lbl_leng == 0 && strncasecmp(stmkey, "empty", 5) == 0)
+            else if (strncasecmp(stmkey, "empty", 5) == 0)
                 il(sempty);
-            else if (lbl_leng == 0 && strncasecmp(stmkey, "swap", 4) == 0)
+            else if (strncasecmp(stmkey, "swap", 4) == 0)
                 il(sswap);
             else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
@@ -1424,6 +1424,11 @@ static void pchk_t(void)
 
 static void il(void (*prog)(const char *, size_t)) // treatment of directives having 'EMPTY' type
 {
+    if (lbl_leng != 0)
+    {
+        pch130();
+        return;
+    }
     blout();
     while (true)
     {
@@ -1450,6 +1455,11 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
 
 static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // treatment of directives having 'ENTRY' type
 {
+    if (lbl_leng != 0)
+    {
+        pch130();
+        return;
+    }
     blout();
     while (true)
     {
