@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-01
+// 2025-04-11
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
                 break;
             }
             s_init();
-            if (strncmp(stmkey, "start", 5) != 0 && strncmp(stmkey, "START", 5) != 0)
+            if (strncasecmp(stmkey, "start", 5) != 0)
             {
                 pchosh("001 START-directive missing");
                 scn_.modnmlen = 0;
@@ -360,42 +360,42 @@ int main(int argc, char *argv[])
             mod_state = KEYS;
             break;
         case KEYS:
-            if (strncmp(stmkey, "l ", 2) == 0 || strncmp(stmkey, "L ", 2) == 0)
+            if (strncasecmp(stmkey, "l ", 2) == 0)
             {
                 dir = true;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if (strncmp(stmkey, "r ", 2) == 0 || strncmp(stmkey, "R ", 2) == 0)
+            else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
                 dir = false;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
-            else if (strncmp(stmkey, "start", 5) == 0 || strncmp(stmkey, "START", 5) == 0)
+            else if (strncasecmp(stmkey, "start", 5) == 0)
                 pchosh("002 too many start-directive");
-            else if (strncmp(stmkey, "end", 3) == 0 || strncmp(stmkey, "END", 3) == 0)
+            else if (strncasecmp(stmkey, "end", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
                 mod_state = END_STATEMENT;
                 break;
             }
-            else if (strncmp(stmkey, "entry", 5) == 0 || strncmp(stmkey, "ENTRY", 5) == 0)
+            else if (strncasecmp(stmkey, "entry", 5) == 0)
                 ilm(sentry);
-            else if (strncmp(stmkey, "extrn", 5) == 0 || strncmp(stmkey, "EXTRN", 5) == 0)
+            else if (strncasecmp(stmkey, "extrn", 5) == 0)
                 ilm(sextrn);
-            else if (strncmp(stmkey, "empty", 5) == 0 || strncmp(stmkey, "EMPTY", 5) == 0)
+            else if (strncasecmp(stmkey, "empty", 5) == 0)
                 il(sempty);
-            else if (strncmp(stmkey, "swap", 4) == 0 || strncmp(stmkey, "SWAP", 4) == 0)
+            else if (strncasecmp(stmkey, "swap", 4) == 0)
                 il(sswap);
-            else if (strncmp(stmkey, "s ", 2) == 0 || strncmp(stmkey, "S ", 2) == 0)
+            else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
                 trprev();
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
-            else if (strncmp(stmkey, "equ", 3) == 0 || strncmp(stmkey, "EQU", 3) == 0)
+            else if (strncasecmp(stmkey, "equ", 3) == 0)
                 equ();
             else if (stmkey[0] == ' ')
             {
