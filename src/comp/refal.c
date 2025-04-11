@@ -382,13 +382,18 @@ int main(int argc, char *argv[])
                 if (m != CUT - 1 || c[m] != ' ')
                     pch130();
             }
-            else if (lbl_leng == 0 && strncasecmp(stmkey, "end", 3) == 0)
+            else if (strncasecmp(stmkey, "end", 3) == 0)
             {
                 if (prevlb[0] != '\0')
                     sempty(prevlb, strlen(prevlb));
-                blout();
-                if (m != CUT - 1 || c[m] != ' ')
+                if (lbl_leng != 0)
                     pch130();
+                else
+                {
+                    blout();
+                    if (m != CUT - 1 || c[m] != ' ')
+                        pch130();
+                }
                 mod_state = END_STATEMENT;
                 break;
             }
