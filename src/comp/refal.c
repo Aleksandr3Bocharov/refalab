@@ -606,7 +606,7 @@ static void lblkey(bool pr)
                 lbl_leng = 0;
             else if (!get_id(stmlbl, &lbl_leng))
             {
-                pchosh("120 the first symbol is not letter or _ or blank");
+                pchosh("120 the first symbol is not letter or underscore or blank");
                 continue;
             }
             break;
