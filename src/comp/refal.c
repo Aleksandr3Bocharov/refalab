@@ -830,10 +830,10 @@ void scan(void)
                 scn_state = SCNERR;
                 break;
             }
+            EH_ROMA;
             scn_state = SCNVI;
             break;
         case SCNVI:
-            EH_ROMA;
             if (class[m] != 'L' && class[m] != 'D')
             {
                 scn_state = OSH102;
