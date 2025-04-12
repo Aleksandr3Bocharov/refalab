@@ -824,7 +824,7 @@ void scan(void)
             scn_state = SCNVI;
             break;
         case SCNVI:
-            if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
+            if (class[m] != 'L' && class[m] != 'D')
             {
                 scn_state = OSH102;
                 break;
