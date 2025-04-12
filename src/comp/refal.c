@@ -73,6 +73,7 @@ typedef enum scn_states
     SCNVV,
     SCNE,
     SCNV,
+    SCNVD,
     SCNVI,
     SCNKK,
     SCNP,
@@ -821,9 +822,18 @@ void scan(void)
                     }
                 }
             }
+            scn_state = SCNVD;
+            break;
+        case SCNVD:
+            if (c[m] != '.')
+            {
+                scn_state = SCNERR;
+                break;
+            }
             scn_state = SCNVI;
             break;
         case SCNVI:
+            EH_ROMA;
             if (class[m] != 'L' && class[m] != 'D')
             {
                 scn_state = OSH102;
@@ -1004,7 +1014,7 @@ void scan(void)
                 scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
             };
             EH_ROMA;
-            scn_state = SCNVI;
+            scn_state = SCNVD;
             break;
         case OSH101:
             pchosh("101 default of left apostroph");
