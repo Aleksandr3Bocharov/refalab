@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-11
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -92,6 +92,7 @@ typedef enum scn_states
     SABBR,
     OSH101,
     OSH102,
+    OSH103,
     SOSH203,
     SOSH204,
     SCNGCR,
@@ -827,7 +828,7 @@ void scan(void)
         case SCNVD:
             if (c[m] != '.')
             {
-                scn_state = SCNERR;
+                scn_state = OSH103;
                 break;
             }
             EH_ROMA;
@@ -1022,6 +1023,10 @@ void scan(void)
             break;
         case OSH102:
             pchosh("102 identifier index is't letter or digit");
+            scn_state = SCNERR;
+            break;
+        case OSH103:
+            pchosh("103 expected sign '.'");
             scn_state = SCNERR;
             break;
         case SOSH203:
