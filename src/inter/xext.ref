@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-23
+* 2025-04-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -22,124 +22,124 @@ EXT START
     EXTRN FOpen, FClose, FGetS, FPutS
     EMPTY True, False
 
-* <Apply WC EA> == ER
+* <Apply W.C E.A> == E.R
 Apply
-    SF EA +
-        = < SF EA>
-    (WC EB) EA +
-        = <Apply WC EB EA>
+    S.F E.A +
+        = < S.F E.A>
+    (W.C E.B) E.A +
+        = <Apply W.C E.B E.A>
 
-* <Map WC WI*> == ER
-Map WC WN ET +
-        = <Apply WC WN> <Map WC ET>
-    W0  =
+* <Map W.C W.I*> == E.R
+Map W.C W.N E.T +
+        = <Apply W.C W.N> <Map W.C E.T>
+    W.0 =
 
-* <FoldL WC WA WI*> == WA'
+* <FoldL W.C W.A W.I*> == W.A'
 FoldL
-    WC WA WN ET +
-        = <FoldL WC <Apply WC WA WN> ET>
-    WC WA +
-        = WA
+    W.C W.A W.N E.T +
+        = <FoldL W.C <Apply W.C W.A W.N> E.T>
+    W.C W.A +
+        = W.A
 
-* <FoldR WC WI* WA> == WA'
+* <FoldR W.C W.I* W.A> == W.A'
 FoldR
-    WC EH WP WA +
-        = <FoldR WC EH <Apply WC WP WA>>
-    WC WA +
-        = WA
+    W.C E.H W.P W.A +
+        = <FoldR W.C E.H <Apply W.C W.P W.A>>
+    W.C W.A +
+        = W.A
 
-* <Map_Accumulator WC WA WI*> == WA′ ER
+* <Map_Accumulator W.C W.A W.I*> == W.A′ E.R
 Map_Accumulator
-    WC WA ET +
-        = <Map_Accumulator_Aux WC WA () ET>
+    W.C W.A E.T +
+        = <Map_Accumulator_Aux W.C W.A () E.T>
   
 Map_Accumulator_Aux
-    WC WA (ER) WN ET +
-        = <Map_Accumulator_Aux WC +
+    W.C W.A (E.R) W.N E.T +
+        = <Map_Accumulator_Aux W.C +
             <Map_Accumulator_Add_Scanned +
-                <Apply WC WA WN> +
-            (ER)> +
-        ET>
-    WC WA (ER) +
-        = WA ER
+                <Apply W.C W.A W.N> +
+            (E.R)> +
+        E.T>
+    W.C W.A (E.R) +
+        = W.A E.R
   
 Map_Accumulator_Add_Scanned 
-    WA ES (ER) +
-        = WA (ER ES)
+    W.A E.S (E.R) +
+        = W.A (E.R E.S)
 
 * <Del_Accumulator W E> == E
 Del_Accumulator
-    WA ER +
-        = ER
+    W.A E.R +
+        = E.R
 
-* <Load_File S(/0/../4/)N E(O)F> == (E(O)L)*
+* <Load_File S(/0/../4/).N E(O).F> == (E(O).L)*
 Load_File
-    SN EF +
-        = <FOpen 'r' SN EF> +
-        <Load_File_Aux SN <FGetS SN>> +
-        <FClose 'r' SN>
+    S.N E.F +
+        = <FOpen 'r' S.N E.F> +
+        <Load_File_Aux S.N <FGetS S.N>> +
+        <FClose 'r' S.N>
   
 Load_File_Aux
-    SN /0/ +
+    S.N /0/ +
         =
-    SN EL /0/ +
-        = (EL)
-    SN EL +
-        = (EL) <Load_File_Aux SN <FGetS SN>>
+    S.N E.L /0/ +
+        = (E.L)
+    S.N E.L +
+        = (E.L) <Load_File_Aux S.N <FGetS S.N>>
 
-* <Save_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
+* <Save_File S(/0/../4/).N (E(O).F) (E(O).L)*> == 
 Save_File
-    SN (EF) EL +
-        = <FOpen 'w' SN EF> +
-        <Map (/Do_Write_Bracket_Line/ SN) EL> +
-        <FClose 'w' SN>
+    S.N (E.F) E.L +
+        = <FOpen 'w' S.N E.F> +
+        <Map (/Do_Write_Bracket_Line/ S.N) E.L> +
+        <FClose 'w' S.N>
   
 Do_Write_Bracket_Line
-    SN (EL) +
-        = <FPutS SN EL>
+    S.N (E.L) +
+        = <FPutS S.N E.L>
 
-* <Append_File S(/0/../4/)N (E(O)F) (E(O)L)*> == 
+* <Append_File S(/0/../4/).N (E(O).F) (E(O).L)*> == 
 Append_File
-    SN (EF) EL +
-        = <FOpen 'a' SN EF> +
-        <Map (/Do_Write_Bracket_Line/ SN) EL> +
-        <FClose 'w' SN>
+    S.N (E.F) E.L +
+        = <FOpen 'a' S.N E.F> +
+        <Map (/Do_Write_Bracket_Line/ S.N) E.L> +
+        <FClose 'w' S.N>
 
 White_Spaces
     S   ' \n\t\v\f\r'
 
-* <Is_White_Space SW> == /True/ | /False/
+* <Is_White_Space S.W> == /True/ | /False/
 Is_White_Space
-    S(:White_Spaces:)W +
+    S(:White_Spaces:).W +
         = /True/
-    S0  = /False/
+    S.0 = /False/
 
 * <Trim E> == E'
 Trim
-    EL  = <TrimL <TrimR EL>>
+    E.L = <TrimL <TrimR E.L>>
 
 * <TrimL E> == E'
 TrimL
-    S(:White_Spaces:)W EL +
-        = <TrimL EL>
-    E0  = E0
+    S(:White_Spaces:).W E.L +
+        = <TrimL E.L>
+    E.0 = E.0
   
 * <TrimR E> == E'
 TrimR
-    EL S(:White_Spaces:)W +
-        = <TrimR EL>
-    E0  = E0
+    E.L S(:White_Spaces:).W +
+        = <TrimR E.L>
+    E.0 = E.0
   
 * <Exist W E> == /True/ | /False/
 Exist
-    WS EB WS EE +
+    W.S E.B W.S E.E +
         = /True/
-    WS E0 +
+    W.S E.0 +
         = /False/
   
-* <Set WE*> == WS*
-Set R EB WS EM WS EE +
-        = <Set EB WS EM> EE
-    E0  = E0
+* <Set W.E*> == W.S*
+Set R E.B W.S E.M W.S E.E +
+        = <Set E.B W.S E.M> E.E
+    E.0 = E.0
 
     END

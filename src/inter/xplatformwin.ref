@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-21
+* 2025-04-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -36,9 +36,9 @@ Directory_Separators
     S   '\\/'
 
 Is_Directory_Separator
-    S(:Directory_Separators:)D +
+    S(:Directory_Separators:).D +
         = /True/
-    S0  = /False/
+    S.0 = /False/
         
 Path_Separator
         = ';'
