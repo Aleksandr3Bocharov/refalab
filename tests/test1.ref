@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-19
+* 2025-04-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1 +
@@ -140,49 +140,49 @@ F4      = <Prp1 /0/> +
         <LRel '123'>
 
 Prad
-    E1  = <Prow /Add/ E1>
+    E.1 = <Prow /Add/ E.1>
 
 Prsu
-    E1  = <Prow /Sub/ E1>
+    E.1 = <Prow /Sub/ E.1>
 
 Prmu
-    E1  = <Prow /Mul/ E1>
+    E.1 = <Prow /Mul/ E.1>
 
 Prdr
-    E1  = <Prow /Dr/ E1>
+    E.1 = <Prow /Dr/ E.1>
 
 Prdl
-    E1  = <Prow/Div/ E1>
+    E.1 = <Prow /Div/ E.1>
 
 Pradn
-    E1  = <Prow /AddN/ E1>
+    E.1 = <Prow /AddN/ E.1>
 
 Prsun
-    E1  = <Prow /SubN/ E1>
+    E.1 = <Prow /SubN/ E.1>
 
 Prmun
-    E1  = <Prow /MulN/ E1>
+    E.1 = <Prow /MulN/ E.1>
 
 Prdrn
-    E1  = <Prow /DrN/ E1>
+    E.1 = <Prow /DrN/ E.1>
 
 Prdln
-    E1  = <Prow /DivN/ E1>
+    E.1 = <Prow /DivN/ E.1>
 
 Prm1
-    E1  = <Prow /M1/ E1>
+    E.1 = <Prow /M1/ E.1>
 
 Prp1
-    E1  = <Prow /P1/ E1>
+    E.1 = <Prow /P1/ E.1>
 
 Prnu
-    E1  = <Prow /Numb/ E1>
+    E.1 = <Prow /Numb/ E.1>
 
 Prsy
-    E1  = <Prow /Symb/ E1>
+    E.1 = <Prow /Symb/ E.1>
 
 Prow
-    S1 E2 +
-        = <Proutm S1 ': in=' E2 '  out=' < S1 E2>>
+    S.1 E.2 +
+        = <Proutm S.1 ': in=' E.2 '  out=' < S.1 E.2>>
 
     END
