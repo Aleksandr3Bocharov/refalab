@@ -1027,7 +1027,7 @@ void scan(void)
             scn_state = SCNERR;
             break;
         case OSH103:
-            pchosh("103 expected sign '.'");
+            pchosh("103 sign '.' expected");
             scn_state = SCNERR;
             break;
         case SOSH203:
