@@ -94,8 +94,6 @@
 #define n_eos '\115'
 #define n_swap '\116'
 #define n_blf '\117'
-//#define n_eossn '\120'
-//#define n_setnos '\121'
 
 extern void cst(bool dir, char *lbl, size_t lblleng);
 
