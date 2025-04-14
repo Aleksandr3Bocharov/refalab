@@ -835,13 +835,13 @@ void scan(void)
             scn_state = SCNVI;
             break;
         case SCNVI:
-            if (class[m] != 'L' && class[m] != 'D')
+            if (!get_id(id, &id_leng))
             {
                 scn_state = OSH102;
                 break;
             }
-            scn_e.ci = c[m];
-            scn_state = SCNGCR;
+            scn_e.ci = id[0];
+            scn_state = SCNRET;
             break;
         case SCNKK:
             scn_e.t = 7;
@@ -1022,7 +1022,7 @@ void scan(void)
             scn_state = SCNERR;
             break;
         case OSH102:
-            pchosh("102 identifier index is't letter or digit");
+            pchosh("102 sign '.' followed by no letter or underscore");
             scn_state = SCNERR;
             break;
         case OSH103:
@@ -1030,7 +1030,7 @@ void scan(void)
             scn_state = SCNERR;
             break;
         case SOSH203:
-            pchosh("203 sign ':' followed by no letter");
+            pchosh("203 sign ':' followed by no letter or underscore");
             scn_state = SCNERR;
             break;
         case SOSH204:
@@ -1381,7 +1381,7 @@ static bool specif(char tail)
             sp_state = OSH200;
             break;
         case OSH203:
-            pchosh("203 sign ':' followed by no letter within specifier ");
+            pchosh("203 sign ':' followed by no letter or underscore within specifier ");
             sp_state = OSH200;
             break;
         case OSH204:
