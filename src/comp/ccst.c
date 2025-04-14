@@ -1614,7 +1614,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
 static void isk_v(void)
 {
     for (ind = 1; ind <= kol_per; ind++)
-        if (v[ind].si_leng == scn_e.si_leng && strncmp(v[ind].si, scn_e.si, v[ind].si_leng))
+        if (v[ind].si_leng == scn_e.si_leng && strncmp(v[ind].si, scn_e.si, v[ind].si_leng) == 0)
             return;
     ind = ++kol_per;
     strncpy(v[ind].si, scn_e.si, scn_e.si_leng);
