@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------   file  CCST.C  ---------------
@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
@@ -159,17 +160,17 @@ static struct
     uint32_t e_level;
 } x[100];
 
-// ???whole list
 static struct
-{ // ???variable table elements
+{ // variable table elements
     size_t last;
     uint32_t _t, _q;
     uint32_t rem;
-    char ci;
+    char si[MAX_ID_LEN];
+    size_t si_leng;
     bool _v;
 } v[50];
 
-// ???variable table elements
+// whole list
 static struct
 {
     size_t _next;
@@ -1613,10 +1614,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
 static void isk_v(void)
 {
     for (ind = 1; ind <= kol_per; ind++)
-        if (v[ind].ci == scn_e.ci)
+        if (v[ind].si_leng == scn_e.si_leng && strncmp(v[ind].si, scn_e.si, v[ind].si_leng))
             return;
     ind = ++kol_per;
-    v[ind].ci = scn_e.ci;
+    strncpy(v[ind].si, scn_e.si, scn_e.si_leng);
+    v[ind].si_leng = scn_e.si_leng;
     v[ind]._t = 0;
     v[ind].rem = 1;
     v[ind].last = 0;
@@ -1662,13 +1664,13 @@ static void gen_bsb(void)
 
 static void pch303(void)
 {
-    pchosa("303 differents for variable ", v[ind].ci);
+    pchosj("303 differents for variable ", v[ind].si, v[ind].si_leng, "");
     return;
 }
 
 static void pch406(void)
 {
-    pchosa("406 in left part missing variable ", v[ind].ci);
+    pchosj("406 in left part missing variable ", v[ind].si, v[ind].si_leng, "");
     return;
 }
 

@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -38,9 +38,10 @@ typedef struct scn_
 extern T_SCN scn_;
 
 typedef struct scn_e_
-{               // current statement element
-    uint32_t t; //    element type
-    char ci;    //    variable index
+{                        // current statement element
+    uint32_t t;          //    element type
+    char si[MAX_ID_LEN]; //    variable idenfifier
+    size_t si_leng;      // variable identifier length
     bool v;
     T_LINKTI code;
     T_LINKTI spec;

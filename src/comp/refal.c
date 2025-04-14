@@ -840,7 +840,8 @@ void scan(void)
                 scn_state = OSH102;
                 break;
             }
-            scn_e.ci = id[0];
+            strncpy(scn_e.si, id, id_leng);
+            scn_e.si_leng = id_leng;
             scn_state = SCNRET;
             break;
         case SCNKK:
