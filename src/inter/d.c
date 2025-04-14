@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -264,7 +264,7 @@ void rfdbg(T_ST *s_st)
     }
     while (true)
     {
-        printf("\n E1= (y/n) : ");
+        printf("\n E.1= (y/n) : ");
         fgets(buff, 100, stdin);
         for (i = 0; *(buff + i) == ' '; i++)
             ;
@@ -906,7 +906,7 @@ static bool get_det(void)
     }
     if (ab)
     {
-        printf("\nREFAL debugger: no storage\n");
+        printf("\nRefalAB debugger: no storage\n");
         exit(1);
         return false;
     }
