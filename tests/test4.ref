@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-03-19
+* 2025-04-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST4 +
@@ -19,14 +19,14 @@ Bspe
 
 *      prowerka  specifikacii
 Prspe
-    E2 S(/Em1/ /Em2/ /Em3/)1 +
-        = <Prout ' symbol-/em/' S1> <Prspe E2>
-    S(:Bspe:)1 Ek +
-        = <Prout ' symbol-1234p=' S1> <Prspe Ek>
-    R Eh S('l7')1 +
-        = <Prout ' symbol-l7=' S1> <Prspe Eh>
-    Ss Ek +
-        = <Prout '  symbol =' Ss> <Prspe Ek>
+    E.2 S(/Em1/ /Em2/ /Em3/).1 +
+        = <Prout ' symbol-/em/' S.1> <Prspe E.2>
+    S(:Bspe:).1 E.k +
+        = <Prout ' symbol-1234p=' S.1> <Prspe E.k>
+    R E.h S('l7').1 +
+        = <Prout ' symbol-l7=' S.1> <Prspe E.h>
+    S.s E.k +
+        = <Prout '  symbol =' S.s> <Prspe E.k>
         =
 
 Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
@@ -36,18 +36,18 @@ Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
         <Prfe '123'> <Prla '123'>
 
 Prfe
-    E1  = <Prow /First/ E1>
+    E.1 = <Prow /First/ E.1>
 
 Prla
-    E1  = <Prow /Last/ E1>
+    E.1  = <Prow /Last/ E.1>
 
 Prow
-    S1 E2 +
-        = <Proutm S1 ', whod=' E2 '  wyh=' < S1 E2>>
+    S.1 E.2 +
+        = <Proutm S.1 ', whod=' E.2 '  wyh=' < S.1 E.2>>
 *
 *
 Prln
-    E1  = <Prout ' lengr,lengw: whod=' E1 '  wyh-r=' <LengR E1> +
-        '  wyh-w=' <LengW E1>>
+    E.1 = <Prout ' lengr,lengw: whod=' E.1 '  wyh-r=' <LengR E.1> +
+        '  wyh-w=' <LengW E.1>>
                                  
     END
