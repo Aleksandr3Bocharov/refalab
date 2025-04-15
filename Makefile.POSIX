@@ -1,13 +1,13 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-02-05
+# 2025-04-14
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
 # Makefile
 # Makefile for building RefalAB system
-# Version for Linux (UNIX, FreeBSD)
+# Version for POSIX
 #############################################################################
 
 MAKE = make
@@ -21,9 +21,9 @@ all:
 
 	mkdir -p bin
 	src/comp/delbin
-	$(MAKE) -f src/comp/comp_linux.mak
+	$(MAKE) -f src/comp/comp.POSIX.mak
 	src/comp/delbin
-	$(MAKE) -f src/comp/comp_dbg_linux.mak
+	$(MAKE) -f src/comp/comp_dbg.POSIX.mak
 	src/comp/delbin
 	
 # PHASE II:
@@ -34,11 +34,11 @@ all:
 
 	mkdir -p lib
 	src/comp/delbin
-	$(MAKE) -f src/inter/inter_lib_linux.mak
+	$(MAKE) -f src/inter/inter_lib.POSIX.mak
 	src/inter/delbin
-	$(MAKE) -f src/inter/inter_lib_dbg_linux.mak
+	$(MAKE) -f src/inter/inter_lib_dbg.POSIX.mak
 	src/inter/delbin
-	$(MAKE) -f src/inter/inter_o_linux.mak
+	$(MAKE) -f src/inter/inter_o.POSIX.mak
 	src/inter/copy_obj
 	src/inter/delbin
 
