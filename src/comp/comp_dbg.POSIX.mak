@@ -16,7 +16,7 @@
 .SUFFIXES: .c 
 
 CC = clang
-CFLAGS = -pipe -Wall -O2 -Dmdebug -DUNIX
+CFLAGS = -pipe -Wall -O2 -Dmdebug -DPOSIX
 LINK = clang
 
 S = src/comp
