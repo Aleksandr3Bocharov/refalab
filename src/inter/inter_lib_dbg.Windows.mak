@@ -89,7 +89,11 @@ $(S)\xar.o: $(S)\xar.c
 
 $(S)\xcf.o: $(S)\xcf.c
 
+$(S)\xfio.o: $(S)\xfio.c
+
 $(S)\xgcd.o: $(S)\xgcd.c
+
+$(S)\xio.o: $(S)\xio.c
 
 $(S)\xjak.o: $(S)\xjak.c
 
@@ -102,9 +106,5 @@ $(S)\xsys.o: $(S)\xsys.c
 $(S)\xtime.o: $(S)\xtime.c
 
 $(S)\xtry.o: $(S)\xtry.c
-
-$(S)\xvv.o: $(S)\xvv.c
-
-$(S)\xvv5.o: $(S)\xvv5.c
 
 ####### End of Makefile
