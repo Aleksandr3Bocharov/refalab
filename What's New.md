@@ -77,7 +77,7 @@ Is_Directory_Separator, Is_White_Space, Load_File, Map_Accumulator, Path_Separat
 
 **14-03-2025**
 
-Исправлена проблема при компоновке исполняемых файлов в Linux (UNIX, FreeBSD):  
+Исправлена проблема при компоновке исполняемых файлов в среде POSIX:  
 "missing .note.GNU-stack section implies executable stack".
 
 Теперь аргумент имя_файла компилятора задается без указания расширения ".ref"
