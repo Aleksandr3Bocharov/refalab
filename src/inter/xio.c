@@ -4,7 +4,7 @@
 // 2025-03-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-------------- file -- XVV.C ------------
+//-------------- file -- XIO.C ------------
 //           MO: input/output
 //-----------------------------------------
 
@@ -79,4 +79,4 @@ char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_proutm = '\122';
 void (*pr4_1)(void) = pr4_;
 
-//------------------ end of file  XVV.C ----------------
+//------------------ end of file  XIO.C ----------------
