@@ -34,8 +34,8 @@ SOURCES = \
     $(S)/xcf.c \
     $(S)/xfio.c \
     $(S)/xgcd.c \
-    $(S)/xjak.c \
     $(S)/xio.c \
+    $(S)/xjak.c \
     $(S)/xmo.c \
     $(S)/xrename.c \
     $(S)/xsys.c \
@@ -52,8 +52,8 @@ OBJECTS = \
     $(S)/xext.o \
     $(S)/xfio.o \
     $(S)/xgcd.o \
-    $(S)/xjak.o \
     $(S)/xio.o \
+    $(S)/xjak.o \
     $(S)/xmo.o \
     $(S)/xplatform.o \
     $(S)/xrename.o \
@@ -95,9 +95,9 @@ $(S)/xfio.o: $(S)/xfio.c
 
 $(S)/xgcd.o: $(S)/xgcd.c
 
-$(S)/xjak.o: $(S)/xjak.c
-
 $(S)/xio.o: $(S)/xio.c
+
+$(S)/xjak.o: $(S)/xjak.c
 
 $(S)/xmo.o: $(S)/xmo.c
 
