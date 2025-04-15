@@ -1,11 +1,11 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-03-30
+# 2025-04-14
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
-# inter_lib_win.mak
+# inter_lib.Windows.mak
 # Makefile for interpreter library (libRefalAB.a) creation
 # result - lib\libRefalAB.a library
 # Version for Windows
