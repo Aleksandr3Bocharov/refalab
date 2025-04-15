@@ -75,7 +75,7 @@ OBJECTS = \
 all: $(REFLIB)
 
 $(REFLIB): $(OBJECTS)
-    $(AR) rs $(REFLIB) $(OBJECTS) 
+	$(AR) rs $(REFLIB) $(OBJECTS) 
 
 ####### Dependences
 
