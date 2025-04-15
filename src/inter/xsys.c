@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-03
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------
@@ -80,7 +80,7 @@ static void system_(void)
     *(cmd + i) = '\0';
     int sys = system(cmd);
     free(cmd);
-#ifdef UNIX
+#ifdef POSIX
     if (WIFEXITED(sys) != 0)
         sys = WEXITSTATUS(sys);
     else
