@@ -78,74 +78,78 @@ Del_Accumulator
     W._ E.Any +
         = E.Any
 
-* <Load_File S(/0/../4/).N E(O).F> == (E(O).L)*
+* <Load_File S(/0/../4/).Handle E(O).FileName> == E.Lines
+* E.Lines ::= (E(O).Line)*
 Load_File
-    S.N E.F +
-        = <FOpen 'r' S.N E.F> +
-        <Load_File_Aux S.N <FGetS S.N>> +
-        <FClose 'r' S.N>
+    S.Handle E.FileName +
+        = <FOpen 'r' S.Handle E.FileName> +
+        <Load_File_Aux S.Handle <FGetS S.Handle>> +
+        <FClose 'r' S.Handle>
   
 Load_File_Aux
-    S.N /0/ +
+    S.Handle /0/ +
         =
-    S.N E.L /0/ +
-        = (E.L)
-    S.N E.L +
-        = (E.L) <Load_File_Aux S.N <FGetS S.N>>
+    S.Handle E.Line /0/ +
+        = (E.Line)
+    S.Handle E.Line +
+        = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
-* <Save_File S(/0/../4/).N (E(O).F) (E(O).L)*> == 
+* <Save_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
+* E.Lines ::= (E(O).Line)*
 Save_File
-    S.N (E.F) E.L +
-        = <FOpen 'w' S.N E.F> +
-        <Map (/Do_Write_Bracket_Line/ S.N) E.L> +
-        <FClose 'w' S.N>
+    S.Handle (E.FileName) E.Lines +
+        = <FOpen 'w' S.Handle E.FileName> +
+        <Map (/Do_Write_Bracket_Line/ S.Handle) E.Lines> +
+        <FClose 'w' S.Handle>
   
 Do_Write_Bracket_Line
-    S.N (E.L) +
-        = <FPutS S.N E.L>
+    S.Handle (E.Line) +
+        = <FPutS S.Handle E.Line>
 
-* <Append_File S(/0/../4/).N (E(O).F) (E(O).L)*> == 
+* <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
+* E.Lines ::= (E(O).Line)*
 Append_File
-    S.N (E.F) E.L +
-        = <FOpen 'a' S.N E.F> +
-        <Map (/Do_Write_Bracket_Line/ S.N) E.L> +
-        <FClose 'w' S.N>
+    S.Handle (E.FileName) E.Lines +
+        = <FOpen 'a' S.Handle E.FileName> +
+        <Map (/Do_Write_Bracket_Line/ S.Handle) E.Lines> +
+        <FClose 'w' S.Handle>
 
 White_Spaces
     S   ' \n\t\v\f\r'
 
-* <Is_White_Space S.W> == /True/ | /False/
+* <Is_White_Space S.Any> == /True/ | /False/
 Is_White_Space
-    S(:White_Spaces:).W +
+    S(:White_Spaces:)._ +
         = /True/
     S._ = /False/
 
-* <Trim E> == E'
+* <Trim E.Any> == E.Any′
 Trim
-    E.L = <TrimL <TrimR E.L>>
+    E.Any +
+        = <TrimL <TrimR E.Any>>
 
-* <TrimL E> == E'
+* <TrimL E.Any> == E.Any′
 TrimL
-    S(:White_Spaces:).W E.L +
-        = <TrimL E.L>
+    S(:White_Spaces:)._ E.Any +
+        = <TrimL E.Any>
     E._ = E._
-  
-* <TrimR E> == E'
+
+* <TrimR E.Any> == E.Any′
 TrimR
-    E.L S(:White_Spaces:).W +
-        = <TrimR E.L>
+    E.Any S(:White_Spaces:)._ +
+        = <TrimR E.Any>
     E._ = E._
-  
-* <Exist W E> == /True/ | /False/
+
+* <Exist W.Elem E.SampleElems> == /True/ | /False/
 Exist
-    W.S E.B W.S E.E +
+    W.Sample E.Items_B W.Sample E.Items_E +
         = /True/
-    W.S E._ +
+    W._ E.__ +
         = /False/
-  
-* <Set W.E*> == W.S*
-Set R E.B W.S E.M W.S E.E +
-        = <Set E.B W.S E.M> E.E
+
+* <Set W.Item*> == W.Item*′
+Set R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques +
+        = <Set E.Items_B W.Repeated E.Items_E> E.Uniques
     E._ = E._
 
     END
