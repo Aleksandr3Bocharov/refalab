@@ -15,7 +15,7 @@
 
     cd X\RefalAB
 
-Переименуйте сборочный файл для Windows Makefile_win в Makefile. Запустите процесс сборки:
+Переименуйте сборочный файл для Windows Makefile.Windows в Makefile. Запустите процесс сборки:
 
     mingw32-make
 
