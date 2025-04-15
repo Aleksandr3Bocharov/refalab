@@ -91,9 +91,13 @@ $(S)/xcf.o: $(S)/xcf.c
 
 $(S)/xcoden.o: $(S)/xcoden.c
 
+$(S)/xfio.o: $(S)/xfio.c
+
 $(S)/xgcd.o: $(S)/xgcd.c
 
 $(S)/xjak.o: $(S)/xjak.c
+
+$(S)/xio.o: $(S)/xio.c
 
 $(S)/xmo.o: $(S)/xmo.c
 
@@ -104,9 +108,5 @@ $(S)/xsys.o: $(S)/xsys.c
 $(S)/xtime.o: $(S)/xtime.c
 
 $(S)/xtry.o: $(S)/xtry.c
-
-$(S)/xvv.o: $(S)/xvv.c
-
-$(S)/xvv5.o: $(S)/xvv5.c
 
 ####### End of Makefile
