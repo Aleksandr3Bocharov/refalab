@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -480,7 +480,7 @@ void jend(void)
                 else
                 {
 //     external   label
-#ifdef UNIX
+#ifdef POSIX
                     // begin name without underlining _
                     if (LBLL == 4)
                         fputs("\t.long\trefalab_", syslin);
@@ -508,7 +508,7 @@ void jend(void)
         while (qx != NULL)
         {
 //
-#ifdef UNIX
+#ifdef POSIX
             // begin name without underlining _
             fputs("\t.extern\trefalab_", syslin);
 #else // Windows
@@ -527,7 +527,7 @@ void jend(void)
         q = first_ent->next;
         while (q != NULL)
         {
-#ifndef UNIX
+#ifndef POSIX
             // begin name with underlining _ in x86
             if (LBLL == 4)
                 fputc('_', syslin);
@@ -539,7 +539,7 @@ void jend(void)
             const T_U *pp = q->p;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
-#ifdef UNIX
+#ifdef POSIX
             // begin name without underlining _
             sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", nommod, pp->info.infon);
 #else // Windows
@@ -555,7 +555,7 @@ void jend(void)
             fputc('\n', syslin);
             q = q->next;
         };
-#ifdef UNIX
+#ifdef POSIX
         fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", syslin);
 #endif
     }
