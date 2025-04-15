@@ -1,13 +1,13 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-03-18
+# 2025-04-14
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
-# inter_o_linux.mak
+# inter_o.POSIX.mak
 # Makefile for mainrf.o rfdbg.o creation
-# Version for Linux ( UNIX, FreeBSD )
+# Version for POSIX
 #############################################################################
 
 ####### Compiler, tools and options
