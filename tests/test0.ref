@@ -17,11 +17,11 @@ TEST0 +
     EMPTY Tra, Em1, Em2, Em3, Pus
     SWAP Sw
 
-Div E.1 = <Div0 <Dr E.1>>
+Div E.N = <Div0 <Dr E.N>>
 
 Div0
-    E.1 (E.2) +
-        = E.1
+    E.N (E._) +
+        = E.N
 
 Bspe
     S  '2134' /Pus/
@@ -34,14 +34,14 @@ Go  = <Prsw> +
 
 *      prowerka  specifikacii
 Prspe
-    E.2 S(/Em1/ /Em2/ /Em3/).1 +
-        = <Prout ' symbol-/em/' S.1> <Prspe E.2>
-    S(:Bspe:).1 E.k +
-        = <Prout ' symbol-b=' S.1> <Prspe E.k>
-    R E.h S('l7').1 +
-        = <Prout ' symbol-l=' S.1> <Prspe E.h>
-    S.s E.k +
-        = <Prout '  symbol=' S.s> <Prspe E.k>
+    E.E S(/Em1/ /Em2/ /Em3/).S +
+        = <Prout ' symbol-/em/' S.S> <Prspe E.E>
+    S(:Bspe:).S E.k +
+        = <Prout ' symbol-b=' S.S> <Prspe E.k>
+    R E.h S('l7').S +
+        = <Prout ' symbol-l=' S.S> <Prspe E.h>
+    S.S E.k +
+        = <Prout '  symbol=' S.S> <Prspe E.k>
         =
 
 *      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
@@ -66,38 +66,38 @@ Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
         <Prsu (/16777215/) /2/> <Prsu (/2/) /456/>
 
 Prmu
-    E.1 = <Prow /Mul/ E.1>
+    E.N = <Prow /Mul/ E.N>
 
 Prnu
-    E.1 = <Prow /Numb/ E.1>
+    E.N = <Prow /Numb/ E.N>
 
 Prsy
-    E.1 = <Prow /Symb/ E.1>
+    E.N = <Prow /Symb/ E.N>
 
 Prad
-    E.1 = <Prow /Add/ E.1>
+    E.N = <Prow /Add/ E.N>
 
 Prsu
-    E.1 = <Prow /Sub/ E.1>
+    E.N = <Prow /Sub/ E.N>
 
 Prm1
-    E.1 = <Prow /M1/ E.1>
+    E.N = <Prow /M1/ E.N>
 
 Prdl
-    E.1 = <Prow /Div/ E.1>
+    E.N = <Prow /Div/ E.N>
 
 Prp1
-    E.1 = <Prow /P1/ E.1>
+    E.N = <Prow /P1/ E.N>
 
 Prfe
-    E.1 = <Prow /First/ E.1>
+    E.E = <Prow /First/ E.E>
 
 Prla
-    E.1 = <Prow /Last/ E.1>
+    E.E = <Prow /Last/ E.E>
 
 Prow
-    S.1 E.2 +
-        = <Proutm S.1 ', whod=' E.2 '  wyh=' < S.1 E.2>>
+    S.F E.E +
+        = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>
 
 *
 *
@@ -127,7 +127,7 @@ Sw2 R.x = <Ptr R.x /3/> <Rdr R.x> <Gtr R.x> +
         <Prout <Rdr R.x>>
 
 Prln
-    E.1 = <Prout ' lengr,lengw: whod=' E.1 '  wyh-r=' <LengR E.1> +
-        '  wyh-w=' <LengW E.1>>
+    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> +
+        '  wyh-w=' <LengW E.E>>
 
     END

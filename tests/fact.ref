@@ -16,19 +16,19 @@ Go      = <Fact <Numb <Card ' Give a number: '>>>
 
 Fact
     /0/ = 
-    E.1 = <Pr <Symb E.1> '!=' +
-        <Cvd <F E.1>>> + 
+    E.N = <Pr <Symb E.N> '!=' +
+        <Cvd <F E.N>>> + 
         <Go>
 
 F   /1/ = /1/
-    E.1 = <Mul (E.1) <F <M1 E.1>>>
+    E.N = <Mul (E.N) <F <M1 E.N>>>
 
 Pr      =
-    E.1 = <Pr1 <First /80/ E.1>>
+    E.S = <Pr1 <First /80/ E.S>>
 
-Pr1 (E.1) E.2 +
-        = <Prout E.1> <Pr E.2>
-    '*' E.1 +
-        = <Prout E.1>
+Pr1 (E.S) E.E +
+        = <Prout E.S> <Pr E.E>
+    '*' E.S +
+        = <Prout E.S>
 
     END

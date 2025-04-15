@@ -37,6 +37,6 @@ Go      = <P <Numb '-1000'>> +
         <Symb /128/ /0/> +
         <Symb '-' /128/ /0/> 
 
-P   E.1 = <Prout E.1 ' : ' <Symb E.1>>
+P   E.N = <Prout E.N ' : ' <Symb E.N>>
 
     END

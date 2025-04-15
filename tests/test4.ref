@@ -19,14 +19,14 @@ Bspe
 
 *      prowerka  specifikacii
 Prspe
-    E.2 S(/Em1/ /Em2/ /Em3/).1 +
-        = <Prout ' symbol-/em/' S.1> <Prspe E.2>
-    S(:Bspe:).1 E.k +
-        = <Prout ' symbol-1234p=' S.1> <Prspe E.k>
-    R E.h S('l7').1 +
-        = <Prout ' symbol-l7=' S.1> <Prspe E.h>
-    S.s E.k +
-        = <Prout '  symbol =' S.s> <Prspe E.k>
+    E.E S(/Em1/ /Em2/ /Em3/).S +
+        = <Prout ' symbol-/em/' S.S> <Prspe E.E>
+    S(:Bspe:).S E.k +
+        = <Prout ' symbol-1234p=' S.S> <Prspe E.k>
+    R E.h S('l7').S +
+        = <Prout ' symbol-l7=' S.S> <Prspe E.h>
+    S.S E.k +
+        = <Prout '  symbol =' S.S> <Prspe E.k>
         =
 
 Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
@@ -36,18 +36,18 @@ Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
         <Prfe '123'> <Prla '123'>
 
 Prfe
-    E.1 = <Prow /First/ E.1>
+    E.E = <Prow /First/ E.E>
 
 Prla
-    E.1  = <Prow /Last/ E.1>
+    E.E  = <Prow /Last/ E.E>
 
 Prow
-    S.1 E.2 +
-        = <Proutm S.1 ', whod=' E.2 '  wyh=' < S.1 E.2>>
+    S.F E.E +
+        = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>
 *
 *
 Prln
-    E.1 = <Prout ' lengr,lengw: whod=' E.1 '  wyh-r=' <LengR E.1> +
-        '  wyh-w=' <LengW E.1>>
+    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> +
+        '  wyh-w=' <LengW E.E>>
                                  
     END

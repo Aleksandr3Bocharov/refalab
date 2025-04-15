@@ -140,49 +140,49 @@ F4      = <Prp1 /0/> +
         <LRel '123'>
 
 Prad
-    E.1 = <Prow /Add/ E.1>
+    E.N = <Prow /Add/ E.N>
 
 Prsu
-    E.1 = <Prow /Sub/ E.1>
+    E.N = <Prow /Sub/ E.N>
 
 Prmu
-    E.1 = <Prow /Mul/ E.1>
+    E.N = <Prow /Mul/ E.N>
 
 Prdr
-    E.1 = <Prow /Dr/ E.1>
+    E.N = <Prow /Dr/ E.N>
 
 Prdl
-    E.1 = <Prow /Div/ E.1>
+    E.N = <Prow /Div/ E.N>
 
 Pradn
-    E.1 = <Prow /AddN/ E.1>
+    E.N = <Prow /AddN/ E.N>
 
 Prsun
-    E.1 = <Prow /SubN/ E.1>
+    E.N = <Prow /SubN/ E.N>
 
 Prmun
-    E.1 = <Prow /MulN/ E.1>
+    E.N = <Prow /MulN/ E.N>
 
 Prdrn
-    E.1 = <Prow /DrN/ E.1>
+    E.N = <Prow /DrN/ E.N>
 
 Prdln
-    E.1 = <Prow /DivN/ E.1>
+    E.N = <Prow /DivN/ E.N>
 
 Prm1
-    E.1 = <Prow /M1/ E.1>
+    E.N = <Prow /M1/ E.N>
 
 Prp1
-    E.1 = <Prow /P1/ E.1>
+    E.N = <Prow /P1/ E.N>
 
 Prnu
-    E.1 = <Prow /Numb/ E.1>
+    E.N = <Prow /Numb/ E.N>
 
 Prsy
-    E.1 = <Prow /Symb/ E.1>
+    E.N = <Prow /Symb/ E.N>
 
 Prow
-    S.1 E.2 +
-        = <Proutm S.1 ': in=' E.2 '  out=' < S.1 E.2>>
+    S.F E.E +
+        = <Proutm S.F ': in=' E.E '  out=' < S.F E.E>>
 
     END
