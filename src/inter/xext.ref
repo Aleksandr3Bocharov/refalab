@@ -22,31 +22,37 @@ EXT START
     EXTRN FOpen, FClose, FGetS, FPutS
     EMPTY True, False
 
-* <Apply W.C E.A> == E.R
+* <Apply W.Closure E.Arg> == E.Res
+* W.Closure ::= S.Fn | (W.Closure' E.Bounded)
 Apply
-    S.F E.A +
-        = < S.F E.A>
-    (W.C E.B) E.A +
-        = <Apply W.C E.B E.A>
+    S.Fn E.Argument +
+        = < S.Fn E.Argument>
+    (W.Closure E.Bounded) E.Argument +
+        = <Apply W.Closure E.Bounded E.Argument>
 
-* <Map W.C W.I*> == E.R
-Map W.C W.N E.T +
-        = <Apply W.C W.N> <Map W.C E.T>
+* <Map W.Closure W.Item*> == E.ItemRes*
+* <Apply W.Closure W.Item> == E.ItemRes
+Map W.Fn W.Next E.Tail +
+        = <Apply W.Fn W.Next> <Map W.Fn E.Tail>
     W._ =
 
-* <FoldL W.C W.A W.I*> == W.A'
+* <FoldL W.Closure W.Accum W.Item*> == W.Accum'
+* <Apply W.Closure W.Accum W.Item> == W.Accum′
+* W.Accum′ ::= W.Accum
 FoldL
-    W.C W.A W.N E.T +
-        = <FoldL W.C <Apply W.C W.A W.N> E.T>
-    W.C W.A +
-        = W.A
+    W.Fn W.Acc W.Next E.Tail +
+        = <FoldL W.Fn <Apply W.Fn W.Acc W.Next> E.Tail>
+    W.Fn W.Acc +
+        = W.Acc
 
-* <FoldR W.C W.I* W.A> == W.A'
+* <FoldR W.Closure W.Item* W.Accum> == W.Accum'
+* <Apply W.Closure W.Item W.Accum> == W.Accum′
+* W.Accum′ ::= W.Accum
 FoldR
-    W.C E.H W.P W.A +
-        = <FoldR W.C E.H <Apply W.C W.P W.A>>
-    W.C W.A +
-        = W.A
+    W.Fn E.Head W.Prev W.Acc +
+        = <FoldR W.Fn E.Head <Apply W.Fn W.Prev W.Acc>>
+    W.Fn W.Acc+
+        = W.Acc
 
 * <Map_Accumulator W.C W.A W.I*> == W.A′ E.R
 Map_Accumulator
