@@ -32,15 +32,15 @@ SOURCES = \
     $(S)\rfrun.c \
     $(S)\xar.c \
     $(S)\xcf.c \
+    $(S)\xfio.c \
     $(S)\xgcd.c \
+    $(S)\xio.c \
     $(S)\xjak.c \
     $(S)\xmo.c \
     $(S)\xrename.c \
     $(S)\xsys.c \
     $(S)\xtime.c \
-    $(S)\xtry.c \
-    $(S)\xvv.c \
-    $(S)\xvv5.c 	
+    $(S)\xtry.c
 
 OBJECTS = \
     $(S)\d.o \
@@ -50,16 +50,16 @@ OBJECTS = \
     $(S)\xcf.o \
     $(S)\xcv.o \
     $(S)\xext.o \
+    $(S)\xfio.o \
     $(S)\xgcd.o \
+    $(S)\xio.o \
     $(S)\xjak.o \
     $(S)\xmo.o \
     $(S)\xplatform.o \
     $(S)\xrename.o \
     $(S)\xsys.o \
     $(S)\xtime.o \
-    $(S)\xtry.o \
-    $(S)\xvv.o \
-    $(S)\xvv5.o
+    $(S)\xtry.o
 
 ####### Implicit rules
 
