@@ -32,7 +32,7 @@ Apply
 * <Map W.C W.I*> == E.R
 Map W.C W.N E.T +
         = <Apply W.C W.N> <Map W.C E.T>
-    W.0 =
+    W._ =
 
 * <FoldL W.C W.A W.I*> == W.A'
 FoldL
@@ -112,7 +112,7 @@ White_Spaces
 Is_White_Space
     S(:White_Spaces:).W +
         = /True/
-    S.0 = /False/
+    S._ = /False/
 
 * <Trim E> == E'
 Trim
@@ -122,24 +122,24 @@ Trim
 TrimL
     S(:White_Spaces:).W E.L +
         = <TrimL E.L>
-    E.0 = E.0
+    E._ = E._
   
 * <TrimR E> == E'
 TrimR
     E.L S(:White_Spaces:).W +
         = <TrimR E.L>
-    E.0 = E.0
+    E._ = E._
   
 * <Exist W E> == /True/ | /False/
 Exist
     W.S E.B W.S E.E +
         = /True/
-    W.S E.0 +
+    W.S E._ +
         = /False/
   
 * <Set W.E*> == W.S*
 Set R E.B W.S E.M W.S E.E +
         = <Set E.B W.S E.M> E.E
-    E.0 = E.0
+    E._ = E._
 
     END

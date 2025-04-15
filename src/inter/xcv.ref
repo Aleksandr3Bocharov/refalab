@@ -22,9 +22,9 @@ Cvb '-' V(D).X +
         = <Cvb0 E.X>
 
 Cvb0
-    V.X S.1 S.2 S.3 S.4 S.5 S.6 S.7 S.8 S.9 +
+    V.X S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9 +
         = <Add (<Mul (<Cvb0 V.X>) /59/ /10144256/>) +
-        <Numb S.1 S.2 S.3 S.4 S.5 S.6 S.7 S.8 S.9>>
+        <Numb S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9>>
     E.X = <Numb E.X>
 
 Cvd '-' V(N).X +
@@ -44,8 +44,8 @@ Cvd1 +
         = <Cvd0 E.X> <Cvd2 <Symb E.Y>>
 
 Cvd2 +
-    S.1 S.2 S.3 S.4 S.5 S.6 S.7 S.8 S.9 +
-        = S.1 S.2 S.3 S.4 S.5 S.6 S.7 S.8 S.9
+    S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9 +
+        = S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9
     E.X = <Cvd2 '0' E.X>
 
     END
