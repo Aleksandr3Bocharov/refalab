@@ -23,20 +23,20 @@ EXT START
     EMPTY True, False
 
 * <Apply W.Closure E.Arg> == E.Res
-* W.Closure ::= S.Fn | (W.Closure' E.Bounded)
+* W.Closure ::= S.Fn | (W.Closure′ E.Bounded)
 Apply
     S.Fn E.Argument +
         = < S.Fn E.Argument>
     (W.Closure E.Bounded) E.Argument +
         = <Apply W.Closure E.Bounded E.Argument>
 
-* <Map W.Closure W.Item*> == E.ItemRes*
-* <Apply W.Closure W.Item> == E.ItemRes
+* <Map W.Closure W.Item*> == E.Item_Res*
+* <Apply W.Closure W.Item> == E.Item_Res
 Map W.Fn W.Next E.Tail +
         = <Apply W.Fn W.Next> <Map W.Fn E.Tail>
     W._ =
 
-* <FoldL W.Closure W.Accum W.Item*> == W.Accum'
+* <FoldL W.Closure W.Accum W.Item*> == W.Accum′
 * <Apply W.Closure W.Accum W.Item> == W.Accum′
 * W.Accum′ ::= W.Accum
 FoldL
@@ -45,7 +45,7 @@ FoldL
     W.Fn W.Acc +
         = W.Acc
 
-* <FoldR W.Closure W.Item* W.Accum> == W.Accum'
+* <FoldR W.Closure W.Item* W.Accum> == W.Accum′
 * <Apply W.Closure W.Item W.Accum> == W.Accum′
 * W.Accum′ ::= W.Accum
 FoldR
@@ -54,29 +54,30 @@ FoldR
     W.Fn W.Acc+
         = W.Acc
 
-* <Map_Accumulator W.C W.A W.I*> == W.A′ E.R
+* <Map_Accumulator W.Closure W.Accum W.Item*> == W.Accum′ E.Item_Res*
+* <Apply W.Closure W.Accum W.Item> == W.Accum′ E.Item_Res
+* W.Accum′ ::= W.Accum
 Map_Accumulator
-    W.C W.A E.T +
-        = <Map_Accumulator_Aux W.C W.A () E.T>
+    W.Fn W.Acc E.Tail +
+        = <Map_Accumulator_Aux W.Fn W.Acc () E.Tail>
   
 Map_Accumulator_Aux
-    W.C W.A (E.R) W.N E.T +
-        = <Map_Accumulator_Aux W.C +
+    W.Fn W.Acc (E.Scanned) W.Next E.Tail +
+        = <Map_Accumulator_Aux W.Fn +
             <Map_Accumulator_Add_Scanned +
-                <Apply W.C W.A W.N> +
-            (E.R)> +
-        E.T>
-    W.C W.A (E.R) +
-        = W.A E.R
+                <Apply W.Fn W.Acc W.Next> (E.Scanned)> +
+        E.Tail>
+    W.Fn W.Acc (E.Scanned) +
+        = W.Acc E.Scanned
   
 Map_Accumulator_Add_Scanned 
-    W.A E.S (E.R) +
-        = W.A (E.R E.S)
+    W.Acc E.Step_Scanned (E.Scanned) +
+        = W.Acc (E.Scanned E.Step_Scanned)
 
-* <Del_Accumulator W E> == E
+* <Del_Accumulator W.Accum E.Any> == E.Any′
 Del_Accumulator
-    W.A E.R +
-        = E.R
+    W._ E.Any +
+        = E.Any
 
 * <Load_File S(/0/../4/).N E(O).F> == (E(O).L)*
 Load_File
