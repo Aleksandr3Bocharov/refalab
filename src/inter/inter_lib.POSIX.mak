@@ -32,10 +32,10 @@ SOURCES = \
     $(S)/rfrun.c \
     $(S)/xar.c \
     $(S)/xcf.c \
-	$(S)/xfio.c \
+    $(S)/xfio.c \
     $(S)/xgcd.c \
     $(S)/xjak.c \
-	$(S)/xio.c \
+    $(S)/xio.c \
     $(S)/xmo.c \
     $(S)/xrename.c \
     $(S)/xsys.c \
@@ -50,10 +50,10 @@ OBJECTS = \
     $(S)/xcf.o \
     $(S)/xcv.o \
     $(S)/xext.o \
-	$(S)/xfio.o \
+    $(S)/xfio.o \
     $(S)/xgcd.o \
     $(S)/xjak.o \
-	$(S)/xio.o \
+    $(S)/xio.o \
     $(S)/xmo.o \
     $(S)/xplatform.o \
     $(S)/xrename.o \
