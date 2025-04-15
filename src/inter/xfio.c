@@ -4,7 +4,7 @@
 // 2025-03-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-----------  file  --  XVV5.C ------------
+//-----------  file  --  XFIO.C ------------
 //           MO: file input/output
 //------------------------------------------
 
@@ -244,4 +244,4 @@ char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
 
-//----------  end of file XVV5.C  -----------
+//----------  end of file XFIO.C  -----------
