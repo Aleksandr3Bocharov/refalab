@@ -36,9 +36,9 @@ Directory_Separators
     S   '/'
 
 Is_Directory_Separator
-    S(:Directory_Separators:).D +
+    S(:Directory_Separators:)._ +
         = /True/
-    S.0 = /False/
+    S._ = /False/
 
 Path_Separator
         = ':'
