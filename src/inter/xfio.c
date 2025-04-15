@@ -1,21 +1,27 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-23
+// 2025-04-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
 //           MO: file input/output
+//           MO: file remove/rename/exist
 //------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include "refalab.h"
 #include "rfintf.h"
 
+#define MAX_FILE_NAME 254
 #define fmax 5
+
+extern uint8_t refalab_true, refalab_false;
 
 static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
@@ -243,5 +249,109 @@ static void fputs_(void)
 char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
+
+static void remove_file_(void)
+{
+    const T_LINKCB *p = refal.preva->next;
+    char namf[MAX_FILE_NAME + 1];
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO || i == MAX_FILE_NAME)
+        {
+            refal.upshot = 2;
+            return;
+        }
+        namf[i] = p->info.infoc;
+        p = p->next;
+    }
+    namf[i] = '\0';
+    if (unlink(namf) == -1)
+        rfabe("remove_file: error");
+    return;
+}
+char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
+G_L_B uint8_t refalab_remove_file = '\122';
+void (*remove_file_1)(void) = remove_file_;
+
+static void rename_(void)
+{
+    const T_LINKCB *p = refal.preva->next;
+    char namf[MAX_FILE_NAME + 1];
+    size_t i;
+    bool heot = false;
+    do
+    {
+        for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
+        {
+            if (p->tag != TAGO || i == MAX_FILE_NAME)
+            {
+                heot = true;
+                break;
+            }
+            namf[i] = p->info.infoc;
+            p = p->next;
+        }
+        if (heot)
+            break;
+        namf[i] = '\0';
+        p = p->next;
+        char namt[MAX_FILE_NAME + 1]; // from => to
+        for (i = 0; p != refal.nexta; i++)
+        {
+            if (p->tag != TAGO || i == MAX_FILE_NAME)
+            {
+                heot = true;
+                break;
+            }
+            namt[i] = p->info.infoc;
+            p = p->next;
+        }
+        if (heot)
+            break;
+        namt[i] = '\0';
+        if (rename(namf, namt) == -1)
+            rfabe("rename: error");
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
+G_L_B uint8_t refalab_rename = '\122';
+void (*rename_1)(void) = rename_;
+
+static void exist_file_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    char namf[MAX_FILE_NAME + 1];
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO || i == MAX_FILE_NAME)
+        {
+            refal.upshot = 2;
+            return;
+        }
+        namf[i] = p->info.infoc;
+        p = p->next;
+    }
+    namf[i] = '\0';
+    p = refal.prevr;
+    if (!slins(p, 1))
+        return;
+    p = p->next;
+    p->tag = TAGF;
+    p->info.codep = NULL;
+    p->info.codef = &refalab_false;
+    struct stat st_buf;
+    if (stat(namf, &st_buf) == 0)
+        if (S_ISREG(st_buf.st_mode))
+            p->info.codef = &refalab_true;
+    return;
+}
+char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
+G_L_B uint8_t refalab_exist_file = '\122';
+void (*exist_file_1)(void) = exist_file_;
 
 //----------  end of file XFIO.C  -----------
