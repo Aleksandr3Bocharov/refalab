@@ -15,7 +15,7 @@
 .SUFFIXES: .c
 
 CC = clang
-CFLAGS = -pipe -Wall -O2 -DUNIX
+CFLAGS = -pipe -Wall -O2 -DPOSIX
 S = src/inter
 
 ####### Files

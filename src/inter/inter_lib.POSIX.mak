@@ -16,7 +16,7 @@
 .SUFFIXES: .c .ref
 
 CC = clang
-CFLAGS = -pipe -Wall -O2 -DUNIX
+CFLAGS = -pipe -Wall -O2 -DPOSIX
 AR = ar
 REFXCV = src/inter/refxcv
 REFEXT = src/inter/refext
