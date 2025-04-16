@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-04-17
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -264,7 +264,7 @@ void rfdbg(T_ST *s_st)
     }
     while (true)
     {
-        printf("\n E.1= (y/n) : ");
+        printf("\n E._= (y/n) : ");
         fgets(buff, 100, stdin);
         for (i = 0; *(buff + i) == ' '; i++)
             ;
