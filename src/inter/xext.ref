@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-04-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -23,7 +23,7 @@ EXT START
     EMPTY True, False
 
 * <Apply W.Closure E.Arg> == E.Res
-* W.Closure ::= S.Fn | (W.Closure′ E.Bounded)
+* W.Closure ::= S.Fn | (W.Closure E.Bounded)
 Apply
     S.Fn E.Argument +
         = < S.Fn E.Argument>
