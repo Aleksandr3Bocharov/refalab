@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-04-21
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -24,7 +24,7 @@ Cvb '-' V(D).X +
 Cvb0
     V.X S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9 +
         = <Add (<Mul (<Cvb0 V.X>) /59/ /10144256/>) +
-        <Numb S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9>>
+            <Numb S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9>>
     E.X = <Numb E.X>
 
 Cvd '-' V(N).X +
