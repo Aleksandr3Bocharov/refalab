@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-18
+* 2025-04-21
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -65,7 +65,7 @@ Map_Accumulator_Aux
     W.Fn W.Acc (E.Scanned) W.Next E.Tail +
         = <Map_Accumulator_Aux W.Fn +
             <Map_Accumulator_Add_Scanned <Apply W.Fn W.Acc W.Next> (E.Scanned)> +
-        E.Tail>
+            E.Tail>
     W.Fn W.Acc (E.Scanned) +
         = W.Acc E.Scanned
   
