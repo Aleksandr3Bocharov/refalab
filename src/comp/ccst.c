@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-04-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------   file  CCST.C  ---------------
@@ -1664,13 +1664,13 @@ static void gen_bsb(void)
 
 static void pch303(void)
 {
-    pchosj("303 differents for variable ", v[ind].si, v[ind].si_leng, "");
+    pchose("303 differents for variable ", v[ind].si, v[ind].si_leng);
     return;
 }
 
 static void pch406(void)
 {
-    pchosj("406 in left part missing variable ", v[ind].si, v[ind].si_leng, "");
+    pchose("406 in left part missing variable ", v[ind].si, v[ind].si_leng);
     return;
 }
 

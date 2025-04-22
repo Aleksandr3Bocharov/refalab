@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-04-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CERR.C  --------------- 
@@ -18,6 +18,21 @@ void pchosh(const char *s)
     oshibka();
     char tmp[255];
     sprintf(tmp, "***** %s\n", s);
+    if (sysprint != NULL)
+        fputs(tmp, sysprint);
+    fputs(tmp, systerm);
+    return;
+}
+
+void pchose(const char *s, const char *t, size_t lt)
+{
+    oshibka();
+    char tmp1[255];
+    for (size_t i = 0; i < lt; i++)
+        tmp1[i] = *(t + i);
+    tmp1[lt] = '\0';
+    char tmp[512];
+    sprintf(tmp, "***** %s %s\n", s, tmp1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
