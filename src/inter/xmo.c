@@ -1,13 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-04-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
 //                 General MO:
 //     p1, m1, numb, symb, first, last,
-//     lengr, lengw, multe, delf, lrel
+//     lengr, lengw, multe, delf, lrel,
+//     char,
 //------------------------------------------
 
 #include <stdio.h>
@@ -474,5 +475,24 @@ static void lrel_(void)
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
 G_L_B uint8_t refalab_lrel = '\122';
 void (*lrel_1)(void) = lrel_;
+
+static void char_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    while (p != refal.nexta)
+    {
+        if (p->tag == TAGN)
+        {
+            p->tag = TAGO;
+            p->info.infoc = (char)p->info.coden;
+        }
+        p = p->next;
+    }
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char char_0[] = {Z4 'C', 'H', 'A', 'R', (char)4};
+G_L_B uint8_t refalab_char = '\122';
+void (*char_1)(void) = char_;
 
 //-------------------- end of file  XMO.C ----------------
