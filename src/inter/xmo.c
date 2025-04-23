@@ -484,7 +484,7 @@ static void char_(void)
         if (p->tag == TAGN)
         {
             p->tag = TAGO;
-            p->info.infoc = (char)p->info.coden;
+            p->info.infoc = (char)gcoden(p);
         }
         p = p->next;
     }
