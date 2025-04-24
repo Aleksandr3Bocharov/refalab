@@ -495,4 +495,23 @@ char char_0[] = {Z4 'C', 'H', 'A', 'R', (char)4};
 G_L_B uint8_t refalab_char = '\122';
 void (*char_1)(void) = char_;
 
+static void ord_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    while (p != refal.nexta)
+    {
+        if (p->tag == TAGO)
+        {
+            p->tag = TAGN;
+            pcoden(p, (uint8_t)p->info.infoc);
+        }
+        p = p->next;
+    }
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char ord_0[] = {Z3 'O', 'R', 'D', (char)3};
+G_L_B uint8_t refalab_ord = '\122';
+void (*ord_1)(void) = ord_;
+
 //-------------------- end of file  XMO.C ----------------
