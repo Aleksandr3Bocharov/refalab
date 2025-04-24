@@ -8,12 +8,13 @@
 //                 General MO:
 //     p1, m1, numb, symb, first, last,
 //     lengr, lengw, multe, delf, lrel,
-//     char,
+//     char, ord, upper, lower
 //------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
@@ -513,5 +514,21 @@ static void ord_(void)
 char ord_0[] = {Z3 'O', 'R', 'D', (char)3};
 G_L_B uint8_t refalab_ord = '\122';
 void (*ord_1)(void) = ord_;
+
+static void upper_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    while (p != refal.nexta)
+    {
+        if (p->tag == TAGO)
+            p->info.infoc = (char)toupper(p->info.infoc);
+        p = p->next;
+    }
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char upper_0[] = {Z5 'U', 'P', 'P', 'E', 'R', (char)5};
+G_L_B uint8_t refalab_upper = '\122';
+void (*upper_1)(void) = upper_;
 
 //-------------------- end of file  XMO.C ----------------
