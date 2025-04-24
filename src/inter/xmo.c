@@ -531,4 +531,20 @@ char upper_0[] = {Z5 'U', 'P', 'P', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_upper = '\122';
 void (*upper_1)(void) = upper_;
 
+static void lower_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    while (p != refal.nexta)
+    {
+        if (p->tag == TAGO)
+            p->info.infoc = (char)tolower(p->info.infoc);
+        p = p->next;
+    }
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};
+G_L_B uint8_t refalab_lower = '\122';
+void (*lower_1)(void) = lower_;
+
 //-------------------- end of file  XMO.C ----------------
