@@ -1,11 +1,12 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-04-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------
-//                 MO: arg, system, exit
+//                 MO: arg, system, exit,
+//                     get_env
 //--------------------------------------------
 
 #include <stdio.h>
@@ -160,5 +161,48 @@ static void exit_(void)
 char exit_0[] = {Z4 'E', 'X', 'I', 'T', (char)4};
 G_L_B uint8_t refalab_exit = '\122';
 void (*exit_1)(void) = exit_;
+
+static void get_env_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO)
+        {
+            refal.upshot = 2;
+            return;
+        }
+        p = p->next;
+    }
+    char *env_name = (char *)malloc(i + 1);
+    if (env_name == NULL)
+        rfabe("get_env: error");
+    p = refal.preva->next;
+    for (size_t j = 0; j < i; j++)
+    {
+        *(env_name + j) = p->info.infoc;
+        p = p->next;
+    }
+    *(env_name + i) = '\0';
+    const char *env_value = getenv(env_name);
+    free(env_name);
+    if (env_value == NULL)
+        return;
+    p = refal.prevr;
+    if (!slins(p, strlen(env_value)))
+        return;
+    for (i = 0; *(env_value + i) != '\0'; i++)
+    {
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = *(env_value + i);
+    }
+    return;
+}
+char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
+G_L_B uint8_t refalab_get_env = '\122';
+void (*get_env_1)(void) = get_env_;
 
 //----------  end of file XSYS.C  ---------------
