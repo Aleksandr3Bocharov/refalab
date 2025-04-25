@@ -12,29 +12,7 @@
 #include <stdint.h>
 #include "refalab.h"
 #include "rfintf.h"
-
 /*
-static r05_number random_digit_in_range(r05_number limit)
-{
-    const r05_number MAX = ~0;
-    r05_number max_valid;
-    r05_number random;
-
-    if (limit == 0)
-    {
-        return 0;
-    }
-
-    max_valid = MAX - MAX % limit;
-
-    do
-    {
-        random = random_digit();
-    } while (random >= max_valid);
-
-    return random % limit;
-}
-
 static r05_number random_digit(void)
 {
     enum
@@ -71,6 +49,19 @@ static r05_number random_digit(void)
     return result;
 }
 */
+static uint32_t random_number_in_range(uint32_t limit)
+{
+    const uint32_t max = 0xffffff;
+    if (limit == 0)
+        return 0;
+    const uint32_t max_valid = max - max % limit;
+    uint32_t random;
+    do
+    {
+        random = random_number();
+    } while (random >= max_valid);
+    return random % limit;
+}
 
 static void random_(void)
 {
