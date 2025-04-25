@@ -29,27 +29,25 @@ void rfgetargs(int argc, char *argv[])
 static void arg_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    do
+    if (p->next != refal.nexta || p->tag != TAGN)
     {
-        if (p->next != refal.nexta || p->tag != TAGN)
-            break;
-        const size_t argn = gcoden(p);
-        if (argn >= gargc)
-            return;
-        p = refal.prevr;
-        const char *argvn = gargv[argn];
-        if (!slins(p, strlen(argvn)))
-            return;
-        for (size_t i = 0; argvn[i] != '\0'; i++)
-        {
-            p = p->next;
-            p->tag = TAGO;
-            p->info.codep = NULL;
-            p->info.infoc = argvn[i];
-        }
+        refal.upshot = 2;
         return;
-    } while (false);
-    refal.upshot = 2;
+    }
+    const size_t argn = gcoden(p);
+    if (argn >= gargc)
+        return;
+    p = refal.prevr;
+    const char *argvn = gargv[argn];
+    if (!slins(p, strlen(argvn)))
+        return;
+    for (size_t i = 0; argvn[i] != '\0'; i++)
+    {
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = argvn[i];
+    }
     return;
 }
 char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
