@@ -9,7 +9,6 @@
 //            random_number
 //-------------------------------------------
 
-// #include <stdio.h>
 #include <stdint.h>
 #include "refalab.h"
 #include "rfintf.h"
@@ -75,37 +74,25 @@ static r05_number random_digit(void)
 
 static void random_(void)
 {
-    /*    struct r05_node *callable = arg_begin->next;
-        struct r05_node *pcount = callable->next;
-        r05_number count;
-
-        if (R05_DATATAG_NUMBER != pcount->tag || pcount->next != arg_end)
-        {
-            r05_recognition_impossible();
-        }
-
-        count = pcount->info.number;
-        count = count > 0 ? count - 1 : 1;
-        count = random_digit_in_range(count) + 1;
-
-        r05_reset_allocator();
-        while (count > 0)
-        {
-            r05_alloc_number(random_digit());
-            --count;
-        }
-
-        r05_splice_from_freelist(arg_begin);
-        r05_splice_to_freelist(arg_begin, arg_end);
-    */
-    const T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.preva->next;
     uint32_t count = gcoden(p);
     if (p->next != refal.nexta || p->tag != TAGN || count == 0)
     {
         refal.upshot = 2;
         return;
     }
-    count = random_digit_in_range(count) + 1;
+    count = random_number_in_range(count) + 1;
+    p = refal.prevr;
+    if (!slins(p, count))
+        return;
+    while (count > 0)
+    {
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        pcoden(p, random_number());
+        count--;
+    }
     return;
 }
 char random_0[] = {Z6 'R', 'A', 'N', 'D', 'O', 'M', (char)6};
@@ -122,10 +109,10 @@ static void random_number_(void)
     }
     const uint32_t max = gcoden(p);
     uint32_t res;
-    if (max != 16777215)
-        res = random_digit_in_range(max + 1);
+    if (max != 0xffffff)
+        res = random_number_in_range(max + 1);
     else
-        res = random_digit();
+        res = random_number();
     pcoden(p, res);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;

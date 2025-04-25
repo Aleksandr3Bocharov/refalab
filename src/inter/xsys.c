@@ -119,7 +119,7 @@ static void system_(void)
     p = p->next;
     p->tag = TAGN;
     p->info.codep = NULL;
-    if (sys > 16777215)
+    if (sys > 0xffffff)
     {
         pcoden(p, (uint32_t)sys >> 24);
         if (!slins(p, 1))

@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-23
+// 2025-04-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -31,7 +31,7 @@ static void p1_(void)
     {
 
         l = gcoden(p) + 1;
-        if (l > 16777215)
+        if (l > 0xffffff)
             neot = true;
     }
     if (neot)
@@ -126,7 +126,7 @@ static void numb_(void)
     uint32_t l = (uint32_t)atol(str);
     pp->tag = TAGN;
     pp->info.codep = NULL;
-    if (l > 16777215)
+    if (l > 0xffffff)
     {
         pcoden(pp, l >> 24);
         pp = pp->next;
@@ -299,7 +299,7 @@ static void lengr_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > 16777215)
+        if (n > 0xffffff)
         {
             refal.upshot = 2;
             return;
@@ -323,7 +323,7 @@ static void lengw_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > 16777215)
+        if (n > 0xffffff)
         {
             refal.upshot = 2;
             return;
