@@ -95,4 +95,4 @@ char tm_0[] = {Z2 'T', 'M', (char)2};
 G_L_B uint8_t refalab_tm = '\122';
 void (*tm_1)(void) = tm_;
 
-//------------------ end of file  XTIME.C ----------------
+//-------------- end of file  XTIME.C --------------
