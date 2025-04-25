@@ -5,7 +5,7 @@
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XTIME.C ------------
-//        MO: time (date and time)
+//        MO: time (date and time),
 //            tm (current process time)
 //-------------------------------------------
 
