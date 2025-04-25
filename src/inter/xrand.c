@@ -114,7 +114,7 @@ static void random_number_(void)
     else
         res = random_number();
     pcoden(p, res);
-    rftpl(refal.prevr, refal.preva, refal.nexta);
+    rftpl(refal.prevr, p->prev, p->next);
     return;
 }
 char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)13};
