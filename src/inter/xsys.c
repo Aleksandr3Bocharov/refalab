@@ -212,7 +212,7 @@ static void get_current_working_dir_(void)
         refal.upshot = 2;
         return;
     }
-    const char *cwd = getcwd(NULL, 0);
+    char *cwd = getcwd(NULL, 0);
     if (cwd == NULL)
         return;
     T_LINKCB *p = refal.prevr;
