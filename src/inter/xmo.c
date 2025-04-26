@@ -8,7 +8,7 @@
 //                 General MO:
 //     p1, m1, numb, symb, first, last,
 //     lengr, lengw, multe, delf, lrel,
-//     char, ord, upper, lower
+//     char, ord, upper, lower, step
 //------------------------------------------
 
 #include <stdio.h>
@@ -546,5 +546,36 @@ static void lower_(void)
 char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_lower = '\122';
 void (*lower_1)(void) = lower_;
+
+static void step_(void)
+{
+    if (refal.preva->next != refal.nexta)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    uint32_t step = refal.currst->step;
+    T_LINKCB *p = refal.prevr;
+    if (!slins(p, 1))
+        return;
+    p = p->next;
+    p->tag = TAGN;
+    p->info.codep = NULL;
+    if (step > 0xffffff)
+    {
+        pcoden(p, step >> 24);
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        step &= 0xffffff;
+    }
+    pcoden(p, step);
+    return;
+}
+char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
+G_L_B uint8_t refalab_step = '\122';
+void (*step_1)(void) = step_;
 
 //-------------------- end of file  XMO.C ----------------
