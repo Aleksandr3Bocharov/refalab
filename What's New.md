@@ -2,7 +2,7 @@
 --------------
 
 Добавлены первичные функции в библиотеку РефалАБ: char, get_current_working_dir, get_env,
-lower, ord, random, random_number, upper.
+lower, ord, random, random_number, step, upper.
 
 Внесены изменения в вывод ошибок при компилировании РефалАБ-программ.
 
