@@ -4,15 +4,17 @@
 // 2025-04-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-----------  file  --  XSYS.C --------------
+//-----------  file  --  XSYS.C ---------------
 //                 MO: arg, system, exit,
-//                     get_env
-//--------------------------------------------
+//                     get_env,
+//                     get_current_working_dir
+//---------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "refalab.h"
 #include "rfintf.h"
 #include "xsys.h"
@@ -202,5 +204,32 @@ static void get_env_(void)
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
 G_L_B uint8_t refalab_get_env = '\122';
 void (*get_env_1)(void) = get_env_;
+
+static void get_current_working_dir_(void)
+{
+    if (refal.preva->next != refal.nexta)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const char *cwd = getcwd(NULL, 0);
+    if (cwd == NULL)
+        return;
+    T_LINKCB *p = refal.prevr;
+    if (!slins(p, strlen(cwd)))
+        return;
+    for (size_t i = 0; *(cwd + i) != '\0'; i++)
+    {
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = *(cwd + i);
+    }
+    free(cwd);
+    return;
+}
+char get_current_working_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N', 'T', '_', 'W', 'O', 'R', 'K', 'I', 'N', 'G', '_', 'D', 'I', 'R', (char)23};
+G_L_B uint8_t refalab_get_current_working_dir = '\122';
+void (*get_current_working_dir_1)(void) = get_current_working_dir_;
 
 //----------  end of file XSYS.C  ---------------
