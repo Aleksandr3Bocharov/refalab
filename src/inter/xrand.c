@@ -10,45 +10,38 @@
 //-------------------------------------------
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <time.h>
 #include "refalab.h"
 #include "rfintf.h"
-/*
-static r05_number random_digit(void)
+
+#define CMINDELAY 24
+#define CMAXDELAY 55
+
+static bool init = false;
+static size_t k = CMAXDELAY - 1;
+static size_t j = CMINDELAY - 1;
+static uint32_t y[CMAXDELAY];
+
+static uint32_t random_number(void)
 {
-    enum
-    {
-        cMinDelay = 24,
-        cMaxDelay = 55
-    };
-
-    static int init = 0;
-    static size_t k = cMaxDelay - 1;
-    static size_t j = cMinDelay - 1;
-    static r05_number y[cMaxDelay];
-
-    r05_number result;
-
     if (!init)
     {
-        r05_number seed = (r05_number)time(NULL);
-        size_t i;
-
-        for (i = 0; i < cMaxDelay; ++i)
+        uint32_t seed = (uint32_t)time(NULL);
+        for (size_t i = 0; i < CMAXDELAY; ++i)
         {
             seed = seed * 1103515245 + 12345;
             y[i] = seed;
         }
-
-        init = 1;
+        init = true;
     }
-
-    result = y[k] = y[k] + y[j];
-    k = (k + cMaxDelay - 1) % cMaxDelay;
-    j = (j + cMaxDelay - 1) % cMaxDelay;
-
-    return result;
+    y[k] += y[j];
+    const uint32_t result = y[k];
+    k = (k + CMAXDELAY - 1) % CMAXDELAY;
+    j = (j + CMAXDELAY - 1) % CMAXDELAY;
+    return result % (0xffffff + 1);
 }
-*/
+
 static uint32_t random_number_in_range(uint32_t limit)
 {
     const uint32_t max = 0xffffff;
@@ -66,24 +59,28 @@ static uint32_t random_number_in_range(uint32_t limit)
 static void random_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    uint32_t count = gcoden(p);
-    if (p->next != refal.nexta || p->tag != TAGN || count == 0)
+    do
     {
-        refal.upshot = 2;
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        uint32_t count = gcoden(p);
+        if (count == 0)
+            break;
+        count = random_number_in_range(count) + 1;
+        p = refal.prevr;
+        if (!slins(p, count))
+            return;
+        while (count > 0)
+        {
+            p = p->next;
+            p->tag = TAGN;
+            p->info.codep = NULL;
+            pcoden(p, random_number());
+            count--;
+        }
         return;
-    }
-    count = random_number_in_range(count) + 1;
-    p = refal.prevr;
-    if (!slins(p, count))
-        return;
-    while (count > 0)
-    {
-        p = p->next;
-        p->tag = TAGN;
-        p->info.codep = NULL;
-        pcoden(p, random_number());
-        count--;
-    }
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char random_0[] = {Z6 'R', 'A', 'N', 'D', 'O', 'M', (char)6};
