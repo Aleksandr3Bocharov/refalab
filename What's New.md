@@ -5,8 +5,6 @@
 
 Внесены изменения в интерфейсной функции lcre.
 
-Внесены изменения в первичной функции try.
-
 Добавлены первичные функции в библиотеку РефалАБ: char, get_current_working_dir, get_env,
 lower, ord, random, random_number, step, upper.
 
