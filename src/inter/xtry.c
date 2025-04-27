@@ -57,7 +57,7 @@ static void try_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = upst->stop;
+    s_st->stop = MAX_STOP;
 #ifdef mdebug
     const uint32_t s_stop = s_st->stop;
 #endif
