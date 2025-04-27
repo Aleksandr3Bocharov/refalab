@@ -12,9 +12,14 @@
 
     cd X/RefalAB
 
-Переименуйте сборочный файл для POSIX Makefile.POSIX в Makefile. Запустите процесс сборки:
+Запустите процесс сборки одним из  двух способов:
+- Переименуйте сборочный файл для Windows Makefile.POSIX в Makefile. Выполните
 
     make
+  
+- Выполните
+
+    make --file=Makefile.POSIX
 
 Результатом сборки будут:
 1. РефалАБ-компиляторы bin/RefalAB и bin/RefalAB_dbg (режим отладки).
