@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-23
+// 2025-04-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XTRY.C --------------
@@ -57,7 +57,7 @@ static void try_(void)
     rftpl(pk, refal.preva, refal.nexta);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
-    s_st->stop = 0x7FFFFFFF;
+    s_st->stop = upst->stop;
 #ifdef mdebug
     const uint32_t s_stop = s_st->stop;
 #endif

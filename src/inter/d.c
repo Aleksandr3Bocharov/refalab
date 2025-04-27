@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-17
+// 2025-04-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -67,7 +67,7 @@ static bool was_le;
 static bool was_eq;
 static uint32_t s_from = 0;
 static uint32_t s_upto = 0;
-static uint32_t s_stop = 2147483647;
+static uint32_t s_stop = MAX_STOP;
 static uint32_t nogcl = 0; // garbage collection counter
 static size_t s_arg;
 static size_t l_arg;
