@@ -3,7 +3,7 @@
 
 Внесено изменение в файл заголовков include\refalab.h для разработчиков.
 
-Внесены изменения в интерфейсной функции lcre.
+Внесено изменение в интерфейсной функции lcre.
 
 Добавлены первичные функции в библиотеку РефалАБ: char, get_current_working_dir, get_env,
 lower, ord, random, random_number, step, upper.
