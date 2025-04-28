@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-25
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -1573,7 +1573,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
                 }
                 const uint32_t l = (uint32_t)(c[m] - '0');
                 k = k * 10 + l;
-                if (k <= 0xffffff)
+                if (k <= MAX_NUMBER)
                     continue;
                 break;
             }
