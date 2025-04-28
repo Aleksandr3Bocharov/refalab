@@ -103,7 +103,7 @@ static void numb_(void)
             neot = true;
             break;
         }
-        if (i == 9 && strncmp(str, "2147483647", i + 1) > 0)
+        if (i == 9 && strncmp(str, "4294967295", i + 1) > 0)
         {
             neot = true;
             break;
@@ -123,7 +123,7 @@ static void numb_(void)
         pp = refal.nexta->prev;
         pz = pp;
     }
-    uint32_t l = (uint32_t)atol(str);
+    uint32_t l = (uint32_t)atoll(str);
     pp->tag = TAGN;
     pp->info.codep = NULL;
     if (l > MAX_NUMBER)
@@ -167,7 +167,7 @@ static void symb_(void)
     if (!neot)
     {
         p = p->prev;
-        if (i == 2 && gcoden(pp) >= 128)
+        if (i == 2 && gcoden(pp) >= 256)
             neot = true;
     }
     if (neot)
