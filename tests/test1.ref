@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-04-28
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1 +
@@ -98,7 +98,7 @@ F4      = <Prp1 /0/> +
         <Prnu '1000'> +
         <Prnu '-16777216'>  +
         <Prnu '1000000000'> +
-        <Prnu '2147483647'> +
+        <Prnu '4294967295'> +
         <Prnu> +
         <Prnu '-'> +
         <Prnu '+'> +
@@ -108,16 +108,16 @@ F4      = <Prp1 /0/> +
         <Prsy '-'> +
         <Prsy '+'> +
         <Prsy /59/ /10144256/> +
-        <Prsy /127/ /16777215/> +
+        <Prsy /255/ /16777215/> +
         <Prsy '+' /0/ /0/ /0/> +
 *  neot
         <Prp1 /16777215/> +
         <Prp1 '+' /1/> +     
         <Prm1 /0/> +
-        <Prnu '2147483648'> +
+        <Prnu '4294967296'> +
         <Prnu '-+45'> +
         <Prnu '++'> +      
-        <Prsy /128/ /0/> +
+        <Prsy /256/ /0/> +
 *  prowerka LRel
         <LRel ('a') 'a'> <LRel (/1/ /2/) /1/ /2/> +
         <LRel (/LRel/) /LRel/> <LRel ('\101\n') '\101\n'> +
