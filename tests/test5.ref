@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-04-28
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST5 +
@@ -19,7 +19,7 @@ Go      = <P <Numb '-1000'>> +
         <P <Numb '-000000000000000000000000000000001'>> +
         <P <Numb '+000000000000000000000000000000001'>> +
         <P <Numb '1000000000'>> +
-        <P <Numb '2147483647'>> +
+        <P <Numb '4294967295'>> +
         <P <Numb '+15'>> +
         <Prout '/0/:' <Symb>> +
         <Prout '/0/:' <Symb '+'>> +
@@ -30,12 +30,12 @@ Go      = <P <Numb '-1000'>> +
         <Prout '/1/:' <Symb /0/ /0/ /0/ /0/ /1/>> +
         <Prout '-/1/:' <Symb '-' /0/ /0/ /0/ /0/ /1/>> +
         <Prout '/1/:' <Symb '+' /0/ /0/ /0/ /0/ /1/>> +
-        <Prout <Symb /127/ /16777215/>> +
+        <Prout <Symb /255/ /16777215/>> +
 *  neoty:
-        <Numb '2147483648'> +
-        <Numb '-2147483648'> +
-        <Symb /128/ /0/> +
-        <Symb '-' /128/ /0/> 
+        <Numb '4294967296'> +
+        <Numb '-4294967296'> +
+        <Symb /256/ /0/> +
+        <Symb '-' /256/ /0/> 
 
 P   E.N = <Prout E.N ' : ' <Symb E.N>>
 
