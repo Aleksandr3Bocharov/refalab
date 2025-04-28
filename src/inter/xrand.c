@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-25
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XRAND.C ------------
@@ -39,12 +39,12 @@ static uint32_t random_number(void)
     const uint32_t result = y[k];
     k = (k + CMAXDELAY - 1) % CMAXDELAY;
     j = (j + CMAXDELAY - 1) % CMAXDELAY;
-    return result % (0xffffff + 1);
+    return result % (MAX_NUMBER + 1);
 }
 
 static uint32_t random_number_in_range(uint32_t limit)
 {
-    const uint32_t max = 0xffffff;
+    const uint32_t max = MAX_NUMBER;
     if (limit == 0)
         return 0;
     const uint32_t max_valid = max - max % limit;
@@ -97,7 +97,7 @@ static void random_number_(void)
     }
     const uint32_t max = gcoden(p);
     uint32_t res;
-    if (max != 0xffffff)
+    if (max != MAX_NUMBER)
         res = random_number_in_range(max + 1);
     else
         res = random_number();

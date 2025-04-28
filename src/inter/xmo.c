@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-25
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -31,7 +31,7 @@ static void p1_(void)
     {
 
         l = gcoden(p) + 1;
-        if (l > 0xffffff)
+        if (l > MAX_NUMBER)
             neot = true;
     }
     if (neot)
@@ -126,13 +126,13 @@ static void numb_(void)
     uint32_t l = (uint32_t)atol(str);
     pp->tag = TAGN;
     pp->info.codep = NULL;
-    if (l > 0xffffff)
+    if (l > MAX_NUMBER)
     {
         pcoden(pp, l >> 24);
         pp = pp->next;
         pp->tag = TAGN;
         pp->info.codep = NULL;
-        l &= 0xffffff;
+        l &= MAX_NUMBER;
     }
     pcoden(pp, l);
     rftpl(refal.prevr, pz->prev, pp->next);
@@ -177,7 +177,7 @@ static void symb_(void)
     }
     uint32_t l = gcoden(p);
     if (i == 2)
-        l += 16777216 * gcoden(pp);
+        l += (MAX_NUMBER + 1) * gcoden(pp);
     if (i == 0 || l == 0)
     {
         pz = pp;
@@ -299,7 +299,7 @@ static void lengr_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > 0xffffff)
+        if (n > MAX_NUMBER)
         {
             refal.upshot = 2;
             return;
@@ -323,7 +323,7 @@ static void lengw_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > 0xffffff)
+        if (n > MAX_NUMBER)
         {
             refal.upshot = 2;
             return;
@@ -561,7 +561,7 @@ static void step_(void)
     p = p->next;
     p->tag = TAGN;
     p->info.codep = NULL;
-    if (step > 0xffffff)
+    if (step > MAX_NUMBER)
     {
         pcoden(p, step >> 24);
         if (!slins(p, 1))
@@ -569,7 +569,7 @@ static void step_(void)
         p = p->next;
         p->tag = TAGN;
         p->info.codep = NULL;
-        step &= 0xffffff;
+        step &= MAX_NUMBER;
     }
     pcoden(p, step);
     return;

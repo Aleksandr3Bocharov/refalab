@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-25
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C ---------------
@@ -121,7 +121,7 @@ static void system_(void)
     p = p->next;
     p->tag = TAGN;
     p->info.codep = NULL;
-    if (sys > 0xffffff)
+    if (sys > MAX_NUMBER)
     {
         pcoden(p, (uint32_t)sys >> 24);
         if (!slins(p, 1))
@@ -129,7 +129,7 @@ static void system_(void)
         p = p->next;
         p->tag = TAGN;
         p->info.codep = NULL;
-        sys &= 0xffffff;
+        sys &= MAX_NUMBER;
     }
     pcoden(p, (uint32_t)sys);
     return;

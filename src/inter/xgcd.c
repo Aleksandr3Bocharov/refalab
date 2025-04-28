@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -13,15 +13,13 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define d24 16777216
 #define HMAX 4096
-#define MASKA 0xFFFFFF
 
 static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
 {                                                              //  X - ukaz. na konec
     uint32_t peren = 0;
     const size_t ip = 24 - j;
-    const uint32_t m = MASKA >> j; // maska
+    const uint32_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dl; i++)
     {
         const uint32_t g = gcoden(X);
@@ -235,7 +233,7 @@ static void gcd_(void)
                     pr->info.codep = NULL;
                     pcoden(pr, v1);
                     pr = pr->next;
-                    A = A & MASKA;
+                    A = A & MAX_NUMBER;
                 }
                 pr->tag = TAGN;
                 pr->info.codep = NULL;
@@ -347,19 +345,19 @@ static void gcd_(void)
                     int32_t r0 = r[i] + vs3 + vs4;
                     if (r0 < 0)
                     {
-                        vs3 = r0 / d24;
-                        r0 %= d24;
+                        vs3 = r0 / (MAX_NUMBER + 1);
+                        r0 %= MAX_NUMBER + 1;
                     }
                     else
                     {
                         vs3 = r0 >> 24;
-                        r0 &= MASKA;
+                        r0 &= MAX_NUMBER;
                     }
                     r[i] = vs1 + vs2 + vs3;
                     if (r0 < 0)
                     {
                         r[i]--;
-                        r0 += d24;
+                        r0 += MAX_NUMBER + 1;
                     }
                     pcoden(p[i], (uint32_t)r0);
                     p[i] = p[i]->prev;
@@ -465,11 +463,11 @@ static void gcd_(void)
                         ymn(&a, &b);
                         b += (int32_t)peren;
                         peren = (uint32_t)b >> 24;
-                        b &= MASKA;
+                        b &= MAX_NUMBER;
                         J = gcoden(Xt);
                         if (J < (uint32_t)b)
                         {
-                            J += d24;
+                            J += MAX_NUMBER + 1;
                             peren += 1;
                         }
                         pcoden(Xt, J - (uint32_t)b);
@@ -487,9 +485,9 @@ static void gcd_(void)
                             {
                                 a = (int32_t)(gcoden(Xt) + gcoden(Yt) + J);
                                 J = 0;
-                                if (a >= d24)
+                                if (a >= MAX_NUMBER + 1)
                                 {
-                                    a -= d24;
+                                    a -= MAX_NUMBER + 1;
                                     J = 1;
                                 }
                                 pcoden(Xt, (uint32_t)a);
@@ -508,7 +506,7 @@ static void gcd_(void)
             {
                 peren = 0;
                 i = 24 - n;
-                c = MASKA >> i;
+                c = MAX_NUMBER >> i;
                 // denormalizacija ostatka
                 for (px = hd[0]; px != tl[0]->next; px = px->next)
                 {

@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-04-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -22,7 +22,6 @@
 #define Odr 5
 
 #define HMAX 4096
-#define MAX 16777216
 #define SMAX 24
 
 static void oper(uint32_t o, uint32_t prn);
@@ -213,7 +212,7 @@ static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makr
 {                                                  //  X - ukaz. na konec
     uint32_t peren = 0;
     const size_t ip = 24 - j;
-    const uint32_t m = 0xFFFFFF >> j; // maska
+    const uint32_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dls; i++)
     {
         const uint32_t g = gcoden(X);
@@ -277,9 +276,9 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     else
                         pcoden(x, gcoden(x) + peren);
-                    if (gcoden(x) >= MAX)
+                    if (gcoden(x) >= MAX_NUMBER + 1)
                     {
-                        pcoden(x, gcoden(x) - MAX);
+                        pcoden(x, gcoden(x) - MAX_NUMBER - 1);
                         peren = 1;
                     }
                     else
@@ -312,7 +311,7 @@ static void oper(uint32_t o, uint32_t prn)
                         j -= (int32_t)peren;
                     if (j < 0)
                     {
-                        j += MAX;
+                        j += MAX_NUMBER + 1;
                         peren = 1;
                     }
                     else
@@ -388,9 +387,9 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     j = (int32_t)(gcoden(p) + b + peren);
                     peren = 0;
-                    if (j >= MAX)
+                    if (j >= MAX_NUMBER + 1)
                     {
-                        j -= MAX;
+                        j -= MAX_NUMBER + 1;
                         peren++;
                     }
                     peren += a;
@@ -568,11 +567,11 @@ static void oper(uint32_t o, uint32_t prn)
                     ymn(&a, &b);
                     b += peren;
                     peren = b >> SMAX;
-                    b &= MAX - 1;
+                    b &= MAX_NUMBER;
                     j = (int32_t)gcoden(Xt);
                     if (j < (int32_t)b)
                     {
-                        j += MAX;
+                        j += MAX_NUMBER + 1;
                         peren += 1;
                     }
                     pcoden(Xt, (uint32_t)j - b);
@@ -589,9 +588,9 @@ static void oper(uint32_t o, uint32_t prn)
                         {
                             a = gcoden(Xt) + gcoden(Yt) + (uint32_t)j;
                             j = 0;
-                            if (a >= MAX)
+                            if (a >= MAX_NUMBER + 1)
                             {
-                                a -= MAX;
+                                a -= MAX_NUMBER + 1;
                                 j = 1;
                             }
                             pcoden(Xt, a);
@@ -612,7 +611,7 @@ static void oper(uint32_t o, uint32_t prn)
         { // denormalizacija ostatka
             peren = 0;
             i = 24 - n;
-            c = 0xFFFFFF >> i;
+            c = MAX_NUMBER >> i;
             for (x = Xn; x != Xk->next; x = x->next)
             {
                 a = gcoden(x);
