@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-21
+* 2025-04-29
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -15,11 +15,12 @@ EXT START
     ENTRY Apply, Map, FoldL, FoldR
     ENTRY Map_Accumulator, Del_Accumulator
     ENTRY Load_File, Save_File, Append_File
+    ENTRY Inc, Dec
     ENTRY White_Spaces, Is_White_Space
     ENTRY Trim, TrimL, TrimR  
     ENTRY Exist, Set
     ENTRY True, False
-    EXTRN FOpen, FClose, FGetS, FPutS
+    EXTRN Add, Sub, FOpen, FClose, FGetS, FPutS
     EMPTY True, False
 
 * <Apply W.Closure E.Arg> == E.Res
@@ -113,6 +114,20 @@ Append_File
         = <FOpen 'a' S.Handle E.FileName> +
         <Map (/Do_Write_Bracket_Line/ S.Handle) E.Lines> +
         <FClose 'w' S.Handle>
+
+* <Inc E.Number*> == E.Number1
+* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
+* E.Number1 ::= '-'? S(N).Number+
+Inc
+    E.Number +
+        = <Add (E.Number) /1/>
+
+* <Dec E.Number*> == E.Number1
+* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
+* E.Number1 ::= '-'? S(N).Number+
+Dec
+    E.Number +
+        = <Sub (E.Number) /1/>
 
 White_Spaces
     S   ' \n\t\v\f\r'
