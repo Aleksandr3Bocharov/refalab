@@ -12,13 +12,11 @@
 *====================================================================
 
 EXT START
-    ENTRY Apply, Map, FoldL, FoldR
-    ENTRY Map_Accumulator, Del_Accumulator
+    ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
     ENTRY Load_File, Save_File, Append_File
     ENTRY Inc, Dec, ArgList
-    ENTRY White_Spaces, Is_White_Space
-    ENTRY Trim, TrimL, TrimR  
-    ENTRY Exist, Set
+    ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
+    ENTRY Exist, Set, Empty
     ENTRY True, False
     EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg
     EMPTY True, False
@@ -181,4 +179,8 @@ Set R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques +
         = <Set E.Items_B W.Repeated E.Items_E> E.Uniques
     E._ = E._
 
+* <Empty E.Any> ==
+Empty
+    E._ =
+    
     END
