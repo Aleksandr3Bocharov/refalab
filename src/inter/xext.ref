@@ -16,9 +16,9 @@ EXT START
     ENTRY Load_File, Save_File, Append_File
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
-    ENTRY Exist, Set, Empty
+    ENTRY Min, Max, Exist, Set, Empty
     ENTRY True, False
-    EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg
+    EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
     EMPTY True, False
 
 * <Apply W.Closure E.Arg> == E.Res
@@ -166,6 +166,30 @@ TrimR
     E.Any S(:White_Spaces:)._ +
         = <TrimR E.Any>
     E._ = E._
+
+* <Min W.Min+> == W.Min
+Min W.X W.Y +
+        = <Min_Aux <LRel (W.X) W.Y> W.X W.Y>
+    W.First E.Tail +
+        = <FoldL /Min/ W.First E.Tail>
+
+Min_Aux
+    '<' W.X E._ +
+        = W.X
+    E._ W.Y +
+        = W.Y
+
+* <Max W.Max+> == W.Max
+Max W.X W.Y +
+        = <Max_Aux <LRel (W.X) W.Y> W.X W.Y>
+    W.First E.Tail +
+        = <FoldL /Max/ W.First E.Tail>
+
+Max_Aux
+    '>' W.X E._ +
+        = W.X
+    E._ W.Y +
+        = W.Y
 
 * <Exist W.Elem E.SampleElems> == /True/ | /False/
 Exist
