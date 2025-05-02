@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-05-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -342,7 +342,6 @@ static void exist_file_(void)
         return;
     p = p->next;
     p->tag = TAGF;
-    p->info.codep = NULL;
     p->info.codef = &refalab_false;
     struct stat st_buf;
     if (stat(namf, &st_buf) == 0)
