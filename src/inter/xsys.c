@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-28
+// 2025-05-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C ---------------
@@ -103,7 +103,6 @@ static void system_(void)
         p = p->next;
         p->tag = TAGN;
         p->info.codep = NULL;
-        pcoden(p, 0);
         return;
     }
     if (sys < 0)

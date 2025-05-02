@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-28
+// 2025-05-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -265,7 +265,6 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn = Xn->prev; //  pripisywaem  0
                 Xn->tag = TAGN;
                 Xn->info.codep = NULL;
-                pcoden(Xn, 0);
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
@@ -297,7 +296,6 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn = Xn->prev; //  pripisywaem 0
                 Xn->tag = TAGN;
                 Xn->info.codep = NULL;
-                pcoden(Xn, 0);
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
@@ -341,7 +339,6 @@ static void oper(uint32_t o, uint32_t prn)
         {
             x->tag = TAGN;
             x->info.codep = NULL;
-            pcoden(x, 0);
         } //  zanulen rezultat
         if (Xdl < Ydl)
             obmen();
@@ -349,7 +346,6 @@ static void oper(uint32_t o, uint32_t prn)
         Xn = Xn->prev;
         Xn->tag = TAGN;
         Xn->info.codep = NULL;
-        pcoden(Xn, 0);
         T_LINKCB *f;
         uint32_t c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
@@ -455,7 +451,6 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn = Xn->prev;
                 Xn->tag = TAGN;
                 Xn->info.codep = NULL;
-                pcoden(Xn, 0);
             }
             rftpl(refal.prevr, Xn->prev, Xk->next);
             return;
@@ -483,7 +478,6 @@ static void oper(uint32_t o, uint32_t prn)
         Xn = Xn->prev;
         Xn->tag = TAGN;
         Xn->info.codep = NULL;
-        pcoden(Xn, 0);
         Xdl++;
         size_t i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
@@ -491,7 +485,6 @@ static void oper(uint32_t o, uint32_t prn)
         y = Yn->prev;
         y->tag = TAGN;
         y->info.codep = NULL;
-        pcoden(y, 0);
         size_t n = 0;
         if (Ydl != 0)
         { // wozmovna normalizacija
@@ -666,7 +659,6 @@ static void oper(uint32_t o, uint32_t prn)
         x = refal.preva->next;
         x->tag = TAGN;
         x->info.codep = NULL;
-        pcoden(x, 0);
         rftpl(refal.prevr, x->prev, x->next);
         return;
     }

@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-28
+// 2025-05-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -306,7 +306,6 @@ static void gcd_(void)
                 hd[1] = hd[1]->prev;
                 hd[1]->tag = TAGN;
                 hd[1]->info.codep = NULL;
-                pcoden(hd[1], 0);
                 l[1]++;
             }
             p[0] = tl[0];
@@ -375,7 +374,6 @@ static void gcd_(void)
             hd[0] = hd[0]->prev;
             hd[0]->tag = TAGN;
             hd[0]->info.codep = NULL;
-            pcoden(hd[0], 0);
             l[0]++;
             T_LINKCB *px;
             for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
@@ -383,7 +381,6 @@ static void gcd_(void)
             T_LINKCB *py = hd[1]->prev;
             py->tag = TAGN;
             py->info.codep = NULL;
-            pcoden(py, 0);
             size_t n = 0;
             int32_t b;
             if (l[1] != 0)
