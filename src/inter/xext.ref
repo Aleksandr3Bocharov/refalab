@@ -181,7 +181,7 @@ QSort_Aux
 
 DoQSort
     ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next +
-        = <DoQSort_Aux <LRel (W.Next) W.Pivot>
+        = <DoQSort_Aux <LRel (W.Next) W.Pivot> +
             ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next>
 
 DoQSort_Aux
