@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-29
+// 2025-05-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -485,7 +485,9 @@ static void chr_(void)
         if (p->tag == TAGN)
         {
             p->tag = TAGO;
-            p->info.infoc = (char)gcoden(p);
+            const char c = (char)gcoden(p);
+            p->info.codep = NULL;
+            p->info.infoc = c;
         }
         p = p->next;
     }
