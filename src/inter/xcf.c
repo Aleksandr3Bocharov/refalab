@@ -76,6 +76,8 @@ static void functab_(void)
         func_f = (adr *)malloc(sizeof(adr));
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+    if (func_f == NULL)
+        rfabe("functab: error");
     func_f[func_n] = u;
     func_n++;
     return;
@@ -109,6 +111,8 @@ static void chartof_(void)
     }
     p = refal.preva->next;
     char *u = (char *)malloc(i + 2);
+    if (u == NULL)
+        rfabe("chartof: error");
     for (i = 0; p != refal.nexta; i++, p = p->next)
         u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
@@ -124,7 +128,7 @@ static void chartof_(void)
     for (size_t k = 0; k < func_n; k++)
     {
         d.b[0] = *((char *)func_f[k] - 1);
-        if (i == (size_t)d.w + 1 && strncmp(u, (char*)func_f[k] - (d.w + 1), d.w) == 0)
+        if (i == (size_t)d.w + 1 && strncmp(u, (char *)func_f[k] - (d.w + 1), d.w) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
@@ -142,6 +146,8 @@ static void chartof_(void)
         func_f = (adr *)malloc(sizeof(adr));
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+    if (func_f == NULL)
+        rfabe("chartof: error");
     func_f[func_n] = j;
     func_n++;
     p = refal.preva->next;
