@@ -6,7 +6,7 @@
 Внесены изменения в работу первичных функций chartof, ftochar, functab.
 
 Добавлены новые пустые функции в библиотеку РефалАБ: Void, Label, Number,
-Reference, Latin, Decimal, Char, Brackets, OtherT.
+Reference, Latin, Digit, Char, Brackets, OtherT.
 
 Проведена оптимизация в коде некоторых первичных функций библиотеки РефалАБ.
 
