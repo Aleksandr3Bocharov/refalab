@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-03
+// 2025-05-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN.C -------------------
@@ -239,7 +239,8 @@ void rfrun(T_ST *ast) // adress of current state table
 {
     // dynamic area DSA
     T_SAV *savecr = malloc(sizeof(T_SAV));
-    // u.ii = 0;
+    if (savecr == NULL)
+        rfabe("rfrun: no memory");
     if (!lexist(ast))
         rfabe("rfrun: attempt to run unexisting process");
     if (ast->state == 4)
