@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-01
+* 2025-05-03
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -18,8 +18,10 @@ EXT START
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty
     ENTRY True, False
+    ENTRY Void, Label, Number, Reference, Latin, Decimal, Char, Brackets, OtherT
     EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
     EMPTY True, False
+    EMPTY Void, Label, Number, Reference, Latin, Decimal, Char, Brackets, OtherT
 
 * <Apply W.Closure E.Arg> == E.Res
 * W.Closure ::= S.Fn | (W.Closure E.Bounded)
@@ -231,5 +233,25 @@ Set R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques +
 * <Empty E.Any> ==
 Empty
     E._ =
-    
+
+* <Type E.Any> == S.Type E.Any
+* S.Type ::= /Void/ | /Label/ | /Number/ | /Reference/ | /Latin/ | /Decimal/ | /Char/ |
+*            /Brackets/ | /OtherT/ 
+Type    = /Void/
+    S(F).Symbol E._ +
+        = /Label/ S.Symbol E._
+    S(N).Symbol E._ +
+        = /Number/ S.Symbol E._
+    S(R).Symbol E._ +
+        = /Reference/ S.Symbol E._
+    S(L).Symbol E._ +
+        = /Latin/ S.Symbol E._
+    S(D).Symbol E._ +
+        = /Decimal/ S.Symbol E._
+    S(O).Symbol E._ +
+        = /Char/ S.Symbol E._
+    (E.Expr) E._ +
+        = /Brackets/ (E.Expr) E._
+    E._ = /OtherT/ E._
+
     END
