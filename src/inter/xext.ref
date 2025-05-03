@@ -16,7 +16,7 @@ EXT START
     ENTRY Load_File, Save_File, Append_File
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
-    ENTRY QSort, Min, Max, Exist, Set, Empty
+    ENTRY QSort, Min, Max, Exist, Set, Empty, Type
     ENTRY True, False
     ENTRY Void, Label, Number, Reference, Latin, Decimal, Char, Brackets, OtherT
     EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
