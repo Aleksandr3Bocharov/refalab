@@ -203,7 +203,7 @@ char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
 G_L_B uint8_t refalab_get_env = '\122';
 void (*get_env_1)(void) = get_env_;
 
-static void get_working_dir_(void)
+static void get_current_dir_(void)
 {
     if (refal.preva->next != refal.nexta)
     {
@@ -226,8 +226,8 @@ static void get_working_dir_(void)
     free(cwd);
     return;
 }
-char get_working_dir_0[] = {Z7 'G', 'E', 'T', '_', 'W', 'O', 'R', 'K', 'I', 'N', 'G', '_', 'D', 'I', 'R', (char)15};
-G_L_B uint8_t refalab_get_working_dir = '\122';
-void (*get_working_dir_1)(void) = get_working_dir_;
+char get_current_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N', 'T', '_', 'D', 'I', 'R', (char)15};
+G_L_B uint8_t refalab_get_current_dir = '\122';
+void (*get_current_dir_1)(void) = get_current_dir_;
 
 //----------  end of file XSYS.C  ---------------
