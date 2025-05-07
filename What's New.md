@@ -18,7 +18,7 @@ Reference, Latin, Digit, Char, Brackets, OtherT.
 
 Внесено изменение в интерфейсной функции lcre.
 
-Добавлены первичные функции в библиотеку РефалАБ: chr, get_working_dir, get_env,
+Добавлены первичные функции в библиотеку РефалАБ: chr, get_current_dir, get_env,
 lower, ord, random, random_number, step, upper.
 
 Внесены изменения в вывод ошибок при компилировании РефалАБ-программ.
