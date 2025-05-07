@@ -1,14 +1,13 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-01
+// 2025-05-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-----------  file  --  XSYS.C ---------------
+//-----------  file  --  XSYS.C ----------------
 //                 MO: arg, system, exit,
-//                     get_env,
-//                     get_current_working_dir
-//---------------------------------------------
+//                     get_env, get_working_dir
+//----------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -204,7 +203,7 @@ char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
 G_L_B uint8_t refalab_get_env = '\122';
 void (*get_env_1)(void) = get_env_;
 
-static void get_current_working_dir_(void)
+static void get_working_dir_(void)
 {
     if (refal.preva->next != refal.nexta)
     {
@@ -227,8 +226,8 @@ static void get_current_working_dir_(void)
     free(cwd);
     return;
 }
-char get_current_working_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N', 'T', '_', 'W', 'O', 'R', 'K', 'I', 'N', 'G', '_', 'D', 'I', 'R', (char)23};
-G_L_B uint8_t refalab_get_current_working_dir = '\122';
-void (*get_current_working_dir_1)(void) = get_current_working_dir_;
+char get_working_dir_0[] = {Z7 'G', 'E', 'T', '_', 'W', 'O', 'R', 'K', 'I', 'N', 'G', '_', 'D', 'I', 'R', (char)15};
+G_L_B uint8_t refalab_get_working_dir = '\122';
+void (*get_working_dir_1)(void) = get_working_dir_;
 
 //----------  end of file XSYS.C  ---------------
