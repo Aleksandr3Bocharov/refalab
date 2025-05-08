@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-03
+* 2025-05-07
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -16,7 +16,7 @@ EXT START
     ENTRY Load_File, Save_File, Append_File
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
-    ENTRY QSort, Min, Max, Exist, Set, Empty, Type
+    ENTRY QSort, Min, Max, Exist, Set, Empty, Type, IsType
     ENTRY True, False
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
     EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
@@ -253,5 +253,56 @@ Type    = /Void/
     (E.Expr) E._ +
         = /Brackets/ (E.Expr) E._
     E._ = /OtherT/ E._
+
+* <IsType S.Type E.Any> == /True/ | /False/
+* S.Type ::= /Void/ | /Label/ | /Number/ | /Reference/ | /Char/ | /Latin/ | /Digit/ |
+*            /Brackets/ | /OtherT/
+IsType
+    /Void/ +
+        = /True/
+    /Void/ E._ +
+        = /False/
+    /Label/ S(F).Symbol E._ +
+        = /True/
+    /Label/ E._ +
+        = /False/
+    /Number/ S(N).Symbol E._ +
+        = /True/
+    /Number/ E._ +
+        = /False/
+    /Reference/ S(R).Symbol E._ +
+        = /True/
+    /Reference/ E._ +
+        = /False/
+    /Char/ S(O).Symbol E._ +
+        = /True/
+    /Char/ E._ +
+        = /False/
+    /Latin/ S(L).Symbol E._ +
+        = /True/
+    /Latin/ E._ +
+        = /False/
+    /Digit/ S(D).Symbol E._ +
+        = /True/
+    /Digit/ E._ +
+        = /False/
+    /Brackets/ (E.Expr) E._ +
+        = /True/
+    /Brackets/ E._ +
+        = /False/
+    /OtherT/ +
+        = /False/
+    /OtherT/ S(F).Symbol E._ +
+        = /False/
+    /OtherT/ S(N).Symbol E._ +
+        = /False/
+    /OtherT/ S(R).Symbol E._ +
+        = /False/
+    /OtherT/ S(O).Symbol E._ +
+        = /False/
+    /OtherT/ (E.Expr) E._ +
+        = /False/
+    /OtherT/ E._ +
+        = /True/
 
     END
