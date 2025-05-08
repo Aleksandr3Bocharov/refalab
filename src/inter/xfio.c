@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-01
+// 2025-05-08
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -73,7 +73,7 @@ static void fopen_(void)
       f = fopen(namf, s);
       if (f == NULL)
       {
-         printf("\nfopen: can't open file %s", namf);
+         printf("fopen: can't open file %s\n", namf);
          neot1 = true;
          break;
       }
@@ -84,7 +84,7 @@ static void fopen_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nfopen: format error");
+      printf("fopen: format error\n");
    refal.upshot = 2;
    return;
 }
@@ -152,7 +152,7 @@ static void fgets_(void)
          f = fopen(namf, "r");
          if (f == NULL)
          {
-            printf("\nfgets: can't open file %s", namf);
+            printf("fgets: can't open file %s\n", namf);
             neot1 = true;
             break;
          }
@@ -178,7 +178,7 @@ static void fgets_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nfgets: format error");
+      printf("fgets: format error\n");
    refal.upshot = 2;
    return;
 }
@@ -207,7 +207,7 @@ static void fputs_(void)
          f = fopen(namf, "w");
          if (f == NULL)
          {
-            printf("\nfputs: can't open file %s", namf);
+            printf("fputs: can't open file %s\n", namf);
             neot1 = true;
             break;
          }
@@ -242,7 +242,7 @@ static void fputs_(void)
       return;
    } while (false);
    if (!neot1)
-      printf("\nfputs: format error");
+      printf("fputs: format error\n");
    refal.upshot = 2;
    return;
 }

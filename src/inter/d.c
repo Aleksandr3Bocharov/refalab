@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-27
+// 2025-05-08
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -273,6 +273,7 @@ void rfdbg(T_ST *s_st)
                 continue;
         break;
     }
+    printf("\n");
     //  set FROM and TO
     if (!s_from && (s_upto || trace_cond))
         s_from = 1;
@@ -438,44 +439,44 @@ void rfdbg(T_ST *s_st)
             dbg_state = DBG_NOT_YET;
             break;
         case DBG_DONE:
-            printf("\nConcretization is executed ");
+            printf("Concretization is executed\n");
             dbg_state = DBG_EOJ;
             break;
         case DBG_TRAP:
-            printf("\nFunction name trap");
+            printf("Function name trap\n");
             dbg_state = DBG_ABEND1;
             break;
         case DBG_ABEND:
             switch (s_st->state)
             {
             case 1:
-                printf("\nStop on step number ");
+                printf("Stop on step number\n");
                 break;
             case 2:
-                printf("\nRecognition impossible");
+                printf("Recognition impossible\n");
                 break;
             case 3:
-                printf("\nFree memory exhausted ");
+                printf("Free memory exhausted\n");
             }
             getpf(s_st);
             dbg_state = DBG_ABEND1;
             break;
         case DBG_ABEND1:
-            printf("\nLeading functional term: ");
+            printf("Leading functional term:\n");
             rfpexm("     ", prevk, nextd);
             dbg_state = DBG_EOJ;
             break;
         case DBG_EOJ:
-            printf("\nCompleted steps number = %u", s_st->step);
-            printf("\nView field: ");
+            printf("Completed steps number = %u\n", s_st->step);
+            printf("View field:\n");
             rfpexm("     ", s_st->view, s_st->view);
             if (s_st->store->next != s_st->store)
             {
-                printf("\nBurried: ");
+                printf("Burried:\n");
                 rfpexm("     ", s_st->store, s_st->store);
             }
             if (nogcl != 0)
-                printf("\nGarbage collection number = %d", nogcl);
+                printf("Garbage collection number = %d\n", nogcl);
             if (refal.tm.mode)
             {
                 timespec_get(&refal.tm.stop, TIME_UTC);
@@ -492,11 +493,10 @@ void rfdbg(T_ST *s_st)
                 im %= 60;
                 char s[30];
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-                printf("\nElapsed time = %s", s);
+                printf("Elapsed time = %s\n", s);
             }
             rfcanc(s_st);
             rftermm();
-            printf("\n");
             exit(0);
             return;
         }
@@ -663,25 +663,25 @@ static void dbtry(T_ST *ss_st)
             db_state = DB_NOT_YET;
             break;
         case DB_TRAP:
-            printf("\nFunction name trap");
+            printf("Function name trap\n");
             db_state = DB_ABEND;
             break;
         case DB_ABEND:
-            printf("\nLeading functional term: ");
+            printf("Leading functional term:\n");
             rfpexm("     ", prevk, nextd);
             db_state = DB_EOJ;
             break;
         case DB_EOJ:
-            printf("\nCompleted steps number = %u", ss_st->step);
-            printf("\nView field: ");
+            printf("Completed steps number = %u\n", ss_st->step);
+            printf("View field:\n");
             rfpexm("     ", ss_st->view, ss_st->view);
             if (ss_st->store->next != ss_st->store)
             {
-                printf("\nBurried: ");
+                printf("Burried:\n");
                 rfpexm("     ", ss_st->store, ss_st->store);
             }
             if (nogcl != 0)
-                printf("\nGarbage collection number = %d", nogcl);
+                printf("Garbage collection number = %d\n", nogcl);
             if (refal.tm.mode)
             {
                 timespec_get(&refal.tm.stop, TIME_UTC);
@@ -698,9 +698,8 @@ static void dbtry(T_ST *ss_st)
                 im %= 60;
                 char s[30];
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-                printf("\nElapsed time = %s", s);
+                printf("Elapsed time = %s\n", s);
             }
-            printf("\n");
             exit(0);
             return;
         case DB_DO:
@@ -752,8 +751,8 @@ static void one_step(T_ST *ss_st)
             euc_step = curr_step;
             rfpexm("       Leading term : ", prevk, nextd);
         }
-        printf("\n*** Recognition impossible ");
-        printf("\n*** Change leading term by empty term and continue ***");
+        printf("*** Recognition impossible\n");
+        printf("*** Change leading term by empty term and continue ***\n");
         ss_st->dot = pk->info.codep;
         rfdel(prevk, nextd);
         ss_st->state = 1;
@@ -766,7 +765,7 @@ static void pr_step(void)
 {
     if (curr_step != printed_step)
     {
-        printf("\n***** Step %u", curr_step);
+        printf("***** Step %u\n", curr_step);
         printed_step = curr_step;
     }
     return;
@@ -811,7 +810,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     {
         if (xstep == curr_step)
             return;
-        printf("\n----- This is result of call on step %u", xstep);
+        printf("----- This is result of call on step %u\n", xstep);
     }
     else
     {
@@ -820,7 +819,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
             pr_imres();
             return;
         }
-        printf("\n----- Result of call on step %u : ", xstep);
+        printf("----- Result of call on step %u :\n", xstep);
         rfpexm("     ", xprevk, xnextd);
         res_step = curr_step;
         res_prevk = xprevk;
@@ -929,7 +928,7 @@ static bool get_numb(int32_t *numb)
 {
     if (sscanf(buff, "%d", numb) == 0 || *numb < 1)
     {
-        printf("\n                        Invalid number; repeat please.");
+        printf("\n                        Invalid number; repeat please.\n");
         return false;
     }
     return true;
@@ -939,7 +938,7 @@ static bool get_yn(const char *b)
 {
     if (*b != 'y' && *b != 'n')
     {
-        printf("\n                        Answer is \"y/n\"; repeat please.");
+        printf("\n                        Answer is \"y/n\"; repeat please.\n");
         return false;
     }
     if (*b == 'y')

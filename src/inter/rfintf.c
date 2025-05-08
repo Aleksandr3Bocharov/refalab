@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-27
+// 2025-08-05
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -29,7 +29,7 @@ static void rflist(T_LINKCB *par, size_t n);
 
 void rfabe(const char *amsg)
 {
-    printf("\n *** refal-abend *** %s\n", amsg);
+    printf(" *** refal-abend *** %s\n", amsg);
     exit(1);
     return;
 }
@@ -56,7 +56,7 @@ bool lincrm(void)
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
 #ifdef mdebug
-    printf("\nlincrm: n=%zu after new_block=%p", n, (void *)new_block);
+    printf("lincrm: n=%zu after new_block=%p\n", n, (void *)new_block);
 #endif
     if (new_block == NULL)
         return false;
@@ -203,7 +203,7 @@ void rftermm(void)
         T_LINKCB *new_block = last_block;
         last_block = new_block->prev;
 #ifdef mdebug
-        printf("\nlincrm: free new_block=%p", (void *)new_block);
+        printf("lincrm: free new_block=%p\n", (void *)new_block);
 #endif
         free(new_block);
     }
@@ -223,7 +223,7 @@ void rfexec(uint8_t *func)
         lack = true;
     if (lack)
     {
-        printf("\nNo enough memory for initialization");
+        printf("\nNo enough memory for initialization\n");
         rftermm();
         return;
     }
@@ -271,7 +271,7 @@ void rfexec(uint8_t *func)
             const T_LINKCB *pk = s_st.dot->info.codep;
             const T_LINKCB *prevk = pk->prev;
             const T_LINKCB *nextd = s_st.dot->next;
-            printf("\n Step: %d", s_st.stop);
+            printf(" Step: %d\n", s_st.stop);
             rfpexm(" Term: ", prevk, nextd);
             rfrun(&s_st);
             if (s_st.state == 1)
@@ -298,7 +298,7 @@ void rfexec(uint8_t *func)
 #endif
         case DONE:
 #ifdef mdebug
-            printf("\nConcretization is executed");
+            printf("Concretization is executed\n");
             ex_state = EOJ;
 #else
             ex_state = RET;
@@ -308,23 +308,23 @@ void rfexec(uint8_t *func)
             switch (s_st.state)
             {
             case 2:
-                printf("\nRecognition impossible");
+                printf("Recognition impossible\n");
                 break;
             case 3:
-                printf("\nFree memory exhausted");
+                printf("Free memory exhausted\n");
             }
             ex_state = EOJ;
             break;
         case EOJ:
-            printf("\nTotal steps number = %u", s_st.step);
+            printf("Total steps number = %u\n", s_st.step);
             if (s_st.view->next != s_st.view)
             {
-                printf("\nView field:");
+                printf("View field:\n");
                 rfpexm("            ", s_st.view, s_st.view);
             }
             if (s_st.store->next != s_st.store)
             {
-                printf("\nBurried:");
+                printf("Burried:\n");
                 rfpexm("         ", s_st.store, s_st.store);
             }
             if (refal.tm.mode)
@@ -343,7 +343,7 @@ void rfexec(uint8_t *func)
                 im %= 60;
                 char s[30];
                 sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-                printf("\nElapsed time = %s", s);
+                printf("Elapsed time = %s\n", s);
             }
             ex_state = RET;
             break;
@@ -356,13 +356,13 @@ void rfexec(uint8_t *func)
 
 void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
 {
-    printf("\n%s", pt);
+    printf("%s", pt);
     while (pr != pn->prev)
     {
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->prev)
-            rfabe("rfpex: list structure violation");
+            rfabe("\nrfpex: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -388,23 +388,24 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
-            rfabe("rfpex: unknown bracket type ");
+            rfabe("\nrfpex: unknown bracket type ");
         else
             printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
     }
+    printf("\n");
     return;
 }
 
 void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
 {
-    printf("\n%s", pt);
+    printf("%s", pt);
     bool fr = false;
     while (pr != pn->prev)
     {
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr->prev != pr1)
-            rfabe("rfpexm: list structure violation");
+            rfabe("\nrfpexm: list structure violation");
         if (pr->tag == TAGO)
         {
             if (!fr)
@@ -444,13 +445,14 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
             else if ((pr->tag & 0001) != TAGO)
-                rfabe("rfpexm: unknown bracket type ");
+                rfabe("\nrfpexm: unknown bracket type ");
             else
                 printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
         }
     }
     if (fr)
         putchar('\'');
+    printf("\n");
     return;
 }
 
