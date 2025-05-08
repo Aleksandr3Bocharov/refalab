@@ -11,7 +11,7 @@ Reference, Latin, Digit, Char, Brackets, OtherT.
 Проведена оптимизация в коде некоторых первичных функций библиотеки РефалАБ.
 
 Добавлены новые рефал-функции в библиотеку РефалАБ: ArgList, Dec, Empty, Inc,
-IsType, Min, Max, QSort, Type.
+Is_Type, Min, Max, QSort, Type.
 
 Внесены изменения в работу первичных функций: numb, symb.
 
