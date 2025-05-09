@@ -23,7 +23,7 @@ Is_Type, Min, Max, QSort, Type.
 Внесено изменение в интерфейсной функции lcre.
 
 Добавлены первичные функции в библиотеку РефалАБ: chr, get_current_dir, get_env,
-lower, ord, random, random_number, step, upper.
+lower, write, writem, wrout, wroutm, ord, random, random_number, step, upper.
 
 Внесены изменения в вывод ошибок при компилировании РефалАБ-программ.
 
