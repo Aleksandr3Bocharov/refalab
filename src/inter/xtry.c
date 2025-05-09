@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-08
+// 2025-05-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XTRY.C --------------
@@ -73,10 +73,10 @@ static void try_(void)
             const T_LINKCB *prevk = pk1->prev;
             const T_LINKCB *nextd = s_st->dot->next;
             printf(" Step: %d\n", s_st->stop);
-            rfpexm(" Term: ", prevk, nextd);
+            rfpexm(" Term: ", prevk, nextd, true);
             rfrun(s_st);
             if (s_st->state == 1)
-                rfpexm(" Result: ", prevk, nextd);
+                rfpexm(" Result: ", prevk, nextd, true);
 #else
             rfrun(s_st); // net prokrutki
             if (s_st->state == 1 && s_st->dot != NULL)

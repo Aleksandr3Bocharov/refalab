@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-05-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XIO.C ------------
@@ -17,7 +17,7 @@
 static void card_(void)
 {
     if (refal.preva->next != refal.nexta)
-        rfpex("", refal.preva, refal.nexta);
+        rfpex("", refal.preva, refal.nexta, false);
     T_LINKCB *p = refal.prevr;
     int c = getchar();
     while (c != '\n')
@@ -43,7 +43,7 @@ void (*card_1)(void) = card_;
 
 static void pr1_(void)
 {
-    rfpex("", refal.preva, refal.nexta);
+    rfpex("", refal.preva, refal.nexta, true);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
@@ -53,7 +53,7 @@ void (*pr1_1)(void) = pr1_;
 
 static void pr2_(void)
 {
-    rfpexm("", refal.preva, refal.nexta);
+    rfpexm("", refal.preva, refal.nexta, true);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
@@ -63,7 +63,7 @@ void (*pr2_1)(void) = pr2_;
 
 static void pr3_(void)
 {
-    rfpex("", refal.preva, refal.nexta);
+    rfpex("", refal.preva, refal.nexta, true);
     return;
 }
 char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', (char)5};
@@ -72,7 +72,7 @@ void (*pr3_1)(void) = pr3_;
 
 static void pr4_(void)
 {
-    rfpexm("", refal.preva, refal.nexta);
+    rfpexm("", refal.preva, refal.nexta, true);
     return;
 }
 char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};

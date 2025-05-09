@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-05
+// 2025-05-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -272,10 +272,10 @@ void rfexec(uint8_t *func)
             const T_LINKCB *prevk = pk->prev;
             const T_LINKCB *nextd = s_st.dot->next;
             printf(" Step: %d\n", s_st.stop);
-            rfpexm(" Term: ", prevk, nextd);
+            rfpexm(" Term: ", prevk, nextd, true);
             rfrun(&s_st);
             if (s_st.state == 1)
-                rfpexm(" Result: ", prevk, nextd);
+                rfpexm(" Result: ", prevk, nextd, true);
             break;
 #else
             // no debug info
@@ -320,12 +320,12 @@ void rfexec(uint8_t *func)
             if (s_st.view->next != s_st.view)
             {
                 printf("View field:\n");
-                rfpexm("            ", s_st.view, s_st.view);
+                rfpexm("            ", s_st.view, s_st.view, true);
             }
             if (s_st.store->next != s_st.store)
             {
                 printf("Burried:\n");
-                rfpexm("         ", s_st.store, s_st.store);
+                rfpexm("         ", s_st.store, s_st.store, true);
             }
             if (refal.tm.mode)
             {
@@ -354,7 +354,7 @@ void rfexec(uint8_t *func)
         }
 }
 
-void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
+void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
 {
     printf("%s", pt);
     while (pr != pn->prev)
@@ -392,11 +392,12 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
         else
             printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
     }
-    printf("\n");
+    if (nl)
+        printf("\n");
     return;
 }
 
-void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
+void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
 {
     printf("%s", pt);
     bool fr = false;
@@ -452,7 +453,8 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn)
     }
     if (fr)
         putchar('\'');
-    printf("\n");
+    if (nl)
+        printf("\n");
     return;
 }
 

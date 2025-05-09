@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-08
+// 2025-05-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -463,17 +463,17 @@ void rfdbg(T_ST *s_st)
             break;
         case DBG_ABEND1:
             printf("Leading functional term:\n");
-            rfpexm("     ", prevk, nextd);
+            rfpexm("     ", prevk, nextd, true);
             dbg_state = DBG_EOJ;
             break;
         case DBG_EOJ:
             printf("Completed steps number = %u\n", s_st->step);
             printf("View field:\n");
-            rfpexm("     ", s_st->view, s_st->view);
+            rfpexm("     ", s_st->view, s_st->view, true);
             if (s_st->store->next != s_st->store)
             {
                 printf("Burried:\n");
-                rfpexm("     ", s_st->store, s_st->store);
+                rfpexm("     ", s_st->store, s_st->store, true);
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
@@ -668,17 +668,17 @@ static void dbtry(T_ST *ss_st)
             break;
         case DB_ABEND:
             printf("Leading functional term:\n");
-            rfpexm("     ", prevk, nextd);
+            rfpexm("     ", prevk, nextd, true);
             db_state = DB_EOJ;
             break;
         case DB_EOJ:
             printf("Completed steps number = %u\n", ss_st->step);
             printf("View field:\n");
-            rfpexm("     ", ss_st->view, ss_st->view);
+            rfpexm("     ", ss_st->view, ss_st->view, true);
             if (ss_st->store->next != ss_st->store)
             {
                 printf("Burried:\n");
-                rfpexm("     ", ss_st->store, ss_st->store);
+                rfpexm("     ", ss_st->store, ss_st->store, true);
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
@@ -749,7 +749,7 @@ static void one_step(T_ST *ss_st)
         if (euc_step != curr_step)
         {
             euc_step = curr_step;
-            rfpexm("       Leading term : ", prevk, nextd);
+            rfpexm("       Leading term : ", prevk, nextd, true);
         }
         printf("*** Recognition impossible\n");
         printf("*** Change leading term by empty term and continue ***\n");
@@ -782,7 +782,7 @@ static void pr_euc(void)
             res_nextd != nextd)
         {
             pr_step();
-            rfpexm("      Leading term : ", prevk, nextd);
+            rfpexm("      Leading term : ", prevk, nextd, true);
         }
     }
     return;
@@ -793,7 +793,7 @@ static void pr_imres(void)
     if (curr_step > s_upto || curr_step < s_from)
         return;
     pr_step();
-    rfpexm("      Result : ", prevk, nextd);
+    rfpexm("      Result : ", prevk, nextd, true);
     res_step = curr_step;
     res_prevk = prevk;
     res_nextd = nextd;
@@ -820,7 +820,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
             return;
         }
         printf("----- Result of call on step %u :\n", xstep);
-        rfpexm("     ", xprevk, xnextd);
+        rfpexm("     ", xprevk, xnextd, true);
         res_step = curr_step;
         res_prevk = xprevk;
         res_nextd = xnextd;
