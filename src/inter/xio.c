@@ -79,4 +79,42 @@ char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_proutm = '\122';
 void (*pr4_1)(void) = pr4_;
 
+static void wr1_(void)
+{
+    rfpex("", refal.preva, refal.nexta, false);
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char wr1_0[] = {Z5 'W', 'R', 'I', 'T', 'E', (char)5};
+G_L_B uint8_t refalab_write = '\122';
+void (*wr1_1)(void) = wr1_;
+
+static void wr2_(void)
+{
+    rfpexm("", refal.preva, refal.nexta, false);
+    rftpl(refal.prevr, refal.preva, refal.nexta);
+    return;
+}
+char wr2_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'M', (char)6};
+G_L_B uint8_t refalab_writem = '\122';
+void (*wr2_1)(void) = wr2_;
+
+static void wr3_(void)
+{
+    rfpex("", refal.preva, refal.nexta, false);
+    return;
+}
+char wr3_0[] = {Z5 'W', 'R', 'O', 'U', 'T', (char)5};
+G_L_B uint8_t refalab_wrout = '\122';
+void (*wr3_1)(void) = wr3_;
+
+static void wr4_(void)
+{
+    rfpexm("", refal.preva, refal.nexta, false);
+    return;
+}
+char wr4_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'M', (char)6};
+G_L_B uint8_t refalab_wroutm = '\122';
+void (*wr4_1)(void) = wr4_;
+
 //------------------ end of file  XIO.C ----------------
