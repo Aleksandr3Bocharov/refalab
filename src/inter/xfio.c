@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "refalab.h"
 #include "rfintf.h"
 
