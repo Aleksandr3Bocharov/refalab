@@ -348,19 +348,26 @@ void (*rename_1)(void) = rename_;
 static void exist_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    char namf[MAX_FILE_NAME + 1];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO || i == MAX_FILE_NAME)
+        if (p->tag != TAGO)
         {
             refal.upshot = 2;
             return;
         }
-        namf[i] = p->info.infoc;
         p = p->next;
     }
-    namf[i] = '\0';
+    char *namf = (char *)malloc(i + 1);
+    if (namf == NULL)
+        rfabe("exist_file: error");
+    p = refal.preva->next;
+    for (size_t j = 0; j < i; j++)
+    {
+        *(namf + j) = p->info.infoc;
+        p = p->next;
+    }
+    *(namf + i) = '\0';
     p = refal.prevr;
     if (!slins(p, 1))
         return;
@@ -371,6 +378,7 @@ static void exist_file_(void)
     if (stat(namf, &st_buf) == 0)
         if (S_ISREG(st_buf.st_mode))
             p->info.codef = &refalab_true;
+    free(namf);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
