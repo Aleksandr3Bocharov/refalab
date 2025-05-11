@@ -148,17 +148,9 @@ static void fgets_(void)
         f = uniget[j];
         if (f == NULL)
         {
-            char namf[11];
-            strcpy(namf, "REFAL0.DAT");
-            namf[5] = (char)j + '0';
-            f = fopen(namf, "r");
-            if (f == NULL)
-            {
-                printf("fgets: can't open file %s\n", namf);
-                neot1 = true;
-                break;
-            }
-            uniget[j] = f;
+            printf("fgets: file %u not open\n", j);
+            neot1 = true;
+            break;
         }
         p = refal.prevr;
         int c = getc(f);
@@ -203,17 +195,9 @@ static void fputs_(void)
         f = uniput[j];
         if (f == NULL)
         {
-            char namf[11];
-            strcpy(namf, "REFAL0.DAT");
-            namf[5] = (char)j + '0';
-            f = fopen(namf, "w");
-            if (f == NULL)
-            {
-                printf("fputs: can't open file %s\n", namf);
-                neot1 = true;
-                break;
-            }
-            uniput[j] = f;
+            printf("fputs: file %u not open\n", j);
+            neot1 = true;
+            break;
         }
         const T_LINKCB *q = p;
         bool neot2 = false;
