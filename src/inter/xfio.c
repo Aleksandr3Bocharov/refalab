@@ -300,45 +300,67 @@ void (*remove_file_1)(void) = remove_file_;
 
 static void rename_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
-    char namf[MAX_FILE_NAME + 1];
+    T_LINKCB *p = refal.preva->next;
     size_t i;
-    bool heot = false;
-    do
+    for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
     {
-        for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
+        if (p->tag != TAGO)
         {
-            if (p->tag != TAGO || i == MAX_FILE_NAME)
-            {
-                heot = true;
-                break;
-            }
-            namf[i] = p->info.infoc;
-            p = p->next;
+            refal.upshot = 2;
+            return;
         }
-        if (heot)
-            break;
-        namf[i] = '\0';
         p = p->next;
-        char namt[MAX_FILE_NAME + 1]; // from => to
-        for (i = 0; p != refal.nexta; i++)
+    }
+    p = p->next;
+    size_t j;
+    for (j = 0; p != refal.nexta; j++)
+    {
+        if (p->tag != TAGO)
         {
-            if (p->tag != TAGO || i == MAX_FILE_NAME)
-            {
-                heot = true;
-                break;
-            }
-            namt[i] = p->info.infoc;
-            p = p->next;
+            refal.upshot = 2;
+            return;
         }
-        if (heot)
-            break;
-        namt[i] = '\0';
-        if (rename(namf, namt) == -1)
-            rfabe("rename: error");
-        return;
-    } while (false);
-    refal.upshot = 2;
+        p = p->next;
+    }
+    char *namf = (char *)malloc(i + 1);
+    if (namf == NULL)
+        rfabe("rename: error");
+    p = refal.preva->next;
+    size_t k;
+    for (k = 0; k < i; k++)
+    {
+        *(namf + k) = p->info.infoc;
+        p = p->next;
+    }
+    *(namf + i) = '\0';
+    char *namt = (char *)malloc(j + 1); // from -> to
+    if (namt == NULL)
+        rfabe("rename: error");
+    p = p->next;
+    for (k = 0; k < j; k++)
+    {
+        *(namt + k) = p->info.infoc;
+        p = p->next;
+    }
+    *(namt + j) = '\0';
+    const int r = rename(namf, namt);
+    const int err = errno;
+    free(namf);
+    free(namt);
+    if (r == -1)
+    {
+        char *serr = strerror(err);
+        p = refal.prevr;
+        if (!slins(p, strlen(serr)))
+            return;
+        for (i = 0; *(serr + i) != '\0'; i++)
+        {
+            p = p->next;
+            p->tag = TAGO;
+            p->info.codep = NULL;
+            p->info.infoc = *(serr + i);
+        }
+    }
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
