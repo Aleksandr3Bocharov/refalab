@@ -111,9 +111,9 @@ void (*fopen_1)(void) = fopen_;
 
 static void fclose_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
     do
     {
+        T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGO)
             break;
         const char c = p->info.infoc;
@@ -137,7 +137,22 @@ static void fclose_(void)
         }
         else
             break;
-        fclose(f);
+        const int cl = fclose(f);
+        const int err = errno;
+        if (cl == EOF)
+        {
+            char *serr = strerror(err);
+            p = refal.prevr;
+            if (!slins(p, strlen(serr)))
+                return;
+            for (size_t i = 0; *(serr + i) != '\0'; i++)
+            {
+                p = p->next;
+                p->tag = TAGO;
+                p->info.codep = NULL;
+                p->info.infoc = *(serr + i);
+            }
+        }
         return;
     } while (false);
     refal.upshot = 2;
