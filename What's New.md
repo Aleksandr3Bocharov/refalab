@@ -6,8 +6,8 @@
 
 Исправлена ошибка в работе интерфейсной функции rfrun.
 
-Внесены изменения в работу первичных функций: chartof, exist_file, fgets, fopen, fputs,
-ftochar, functab, numb, symb, remove_file, rename.
+Внесены изменения в работу первичных функций: chartof, exist_file, fclose,
+fgets, fopen, fputs, ftochar, functab, numb, symb, remove_file, rename.
 
 Добавлены новые пустые функции в библиотеку РефалАБ: Void, Label, Number,
 Reference, Latin, Digit, Char, Brackets, OtherT.
