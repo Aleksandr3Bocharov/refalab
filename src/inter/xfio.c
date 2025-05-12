@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-10
+// 2025-05-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -20,7 +20,6 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define MAX_FILE_NAME 254
 #define fmax 5
 
 extern uint8_t refalab_true, refalab_false;
