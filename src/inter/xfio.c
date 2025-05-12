@@ -190,7 +190,7 @@ static void fgets_(void)
                 return;
             p = p->next;
             p->info.codep = NULL;
-            if (c == EOF || c == '\032')
+            if (c == EOF)
             {
                 p->tag = TAGN;
                 return;
