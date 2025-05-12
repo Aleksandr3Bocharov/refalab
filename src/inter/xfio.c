@@ -164,10 +164,9 @@ void (*fclose_1)(void) = fclose_;
 
 static void fgets_(void)
 {
-    T_LINKCB *p = refal.preva->next;
-    bool neot1 = false;
     do
     {
+        T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -176,12 +175,6 @@ static void fgets_(void)
         if (p->next != refal.nexta)
             break;
         f = uniget[j];
-        if (f == NULL)
-        {
-            printf("fgets: file %u not open\n", j);
-            neot1 = true;
-            break;
-        }
         p = refal.prevr;
         int c = getc(f);
         while (c != '\n')
@@ -201,8 +194,6 @@ static void fgets_(void)
         }
         return;
     } while (false);
-    if (!neot1)
-        printf("fgets: format error\n");
     refal.upshot = 2;
     return;
 }
@@ -212,10 +203,9 @@ void (*fgets_1)(void) = fgets_;
 
 static void fputs_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
-    bool neot1 = false;
     do
     {
+        const T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -223,24 +213,18 @@ static void fputs_(void)
         if (j >= fmax)
             break;
         f = uniput[j];
-        if (f == NULL)
-        {
-            printf("fputs: file %u not open\n", j);
-            neot1 = true;
-            break;
-        }
         const T_LINKCB *q = p;
-        bool neot2 = false;
+        bool neot = false;
         while (q != refal.nexta)
         {
             if (q->tag != TAGO && q->tag != TAGLB && q->tag != TAGRB)
             {
-                neot2 = true;
+                neot = true;
                 break;
             }
             q = q->next;
         }
-        if (neot2)
+        if (neot)
             break;
         while (p != refal.nexta)
         {
@@ -254,11 +238,8 @@ static void fputs_(void)
             putc(cc, f);
             p = p->next;
         }
-        putc('\n', f);
         return;
     } while (false);
-    if (!neot1)
-        printf("fputs: format error\n");
     refal.upshot = 2;
     return;
 }
