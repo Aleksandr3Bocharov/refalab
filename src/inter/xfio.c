@@ -186,6 +186,26 @@ static void fgets_(void)
             if (c == EOF)
             {
                 p->tag = TAGN;
+                const int eof = feof(f);
+                if (eof != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGN;
+                    p->info.codep = NULL;
+                    pcoden(p, (uint32_t)eof);
+                }
+                const int err = ferror(f);
+                if (err != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGN;
+                    p->info.codep = NULL;
+                    pcoden(p, (uint32_t)err);
+                }
                 return;
             }
             p->tag = TAGO;
