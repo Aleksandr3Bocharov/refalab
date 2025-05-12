@@ -31,11 +31,10 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
 static void fopen_(void)
 {
-    char namf[MAX_FILE_NAME + 1];
-    const T_LINKCB *p = refal.preva->next;
     bool neot1 = false;
     do
     {
+        const T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGO)
             break;
         const char c = p->info.infoc;
@@ -58,27 +57,38 @@ static void fopen_(void)
         else
             break;
         bool neot = false;
+        const T_LINKCB *q = p;
         size_t i;
         for (i = 0; p != refal.nexta; i++)
         {
-            if (p->tag != TAGO || i == MAX_FILE_NAME)
+            if (p->tag != TAGO)
             {
                 neot = true;
                 break;
             }
-            namf[i] = p->info.infoc;
             p = p->next;
         }
         if (neot)
             break;
-        namf[i] = '\0';
+        char *namf = (char *)malloc(i + 1);
+        if (namf == NULL)
+            rfabe("fopen: error");
+        p = q;
+        for (size_t j = 0; j < i; j++)
+        {
+            *(namf + j) = p->info.infoc;
+            p = p->next;
+        }
+        *(namf + i) = '\0';
         f = fopen(namf, s);
         if (f == NULL)
         {
             printf("fopen: can't open file %s\n", namf);
+            free(namf);
             neot1 = true;
             break;
         }
+        free(namf);
         if (s[0] == 'r')
             uniget[j] = f;
         else
