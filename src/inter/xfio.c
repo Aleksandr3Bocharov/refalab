@@ -30,10 +30,9 @@ static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
 
 static void fopen_(void)
 {
-    bool neot1 = false;
     do
     {
-        const T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGO)
             break;
         const char c = p->info.infoc;
@@ -56,7 +55,7 @@ static void fopen_(void)
         else
             break;
         bool neot = false;
-        const T_LINKCB *q = p;
+        T_LINKCB *q = p;
         size_t i;
         for (i = 0; p != refal.nexta; i++)
         {
@@ -80,22 +79,29 @@ static void fopen_(void)
         }
         *(namf + i) = '\0';
         f = fopen(namf, s);
+        const int err = errno;
+        free(namf);
         if (f == NULL)
         {
-            printf("fopen: can't open file %s\n", namf);
-            free(namf);
-            neot1 = true;
-            break;
+            char *serr = strerror(err);
+            p = refal.prevr;
+            if (!slins(p, strlen(serr)))
+                return;
+            for (i = 0; *(serr + i) != '\0'; i++)
+            {
+                p = p->next;
+                p->tag = TAGO;
+                p->info.codep = NULL;
+                p->info.infoc = *(serr + i);
+            }
+            return;
         }
-        free(namf);
         if (s[0] == 'r')
             uniget[j] = f;
         else
             uniput[j] = f;
         return;
     } while (false);
-    if (!neot1)
-        printf("fopen: format error\n");
     refal.upshot = 2;
     return;
 }
