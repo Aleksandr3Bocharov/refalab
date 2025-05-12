@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-07
+* 2025-05-12
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -105,7 +105,7 @@ Save_File
   
 Do_Write_Bracket_Line
     S.Handle (E.Line) +
-        = <FPutS S.Handle E.Line>
+        = <FPutS S.Handle E.Line '\n'>
 
 * <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
 * E.Lines ::= (E(O).Line)*
