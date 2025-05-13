@@ -24,6 +24,7 @@
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
+extern uint8_t refalab_feof, refalab_ferror;
 
 static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
@@ -206,25 +207,21 @@ static void fgets_(void)
             if (c == EOF)
             {
                 p->tag = TAGN;
-                const int eof = feof(f);
-                if (eof != 0)
+                if (feof(f) != 0)
                 {
                     if (!slins(p, 1))
                         return;
                     p = p->next;
-                    p->tag = TAGN;
-                    p->info.codep = NULL;
-                    pcoden(p, (uint32_t)eof);
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_feof;
                 }
-                const int err = ferror(f);
-                if (err != 0)
+                if (ferror(f) != 0)
                 {
                     if (!slins(p, 1))
                         return;
                     p = p->next;
-                    p->tag = TAGN;
-                    p->info.codep = NULL;
-                    pcoden(p, (uint32_t)err);
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_ferror;
                 }
                 return;
             }
