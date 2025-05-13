@@ -17,10 +17,10 @@ EXT START
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
-    ENTRY True, False, NULL
+    ENTRY True, False, NULL, FEOF, FError
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
     EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
-    EMPTY True, False, NULL
+    EMPTY True, False, NULL, FEOF, FError
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
 
 * <Apply W.Closure E.Arg> == E.Res
