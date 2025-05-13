@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-12
+// 2025-05-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -23,6 +23,7 @@
 #define fmax 5
 
 extern uint8_t refalab_true, refalab_false;
+extern uint8_t refalab_null;
 
 static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
@@ -137,6 +138,16 @@ static void fclose_(void)
         }
         else
             break;
+        if (f == NULL)
+        {
+            p = refal.prevr;
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        } 
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
