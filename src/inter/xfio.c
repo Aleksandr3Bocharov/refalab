@@ -24,11 +24,16 @@
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
-extern uint8_t refalab_feof, refalab_ferror;
 
 static FILE *f;
 static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
 static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
+
+char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
+G_L_B uint8_t refalab_feof = '\002';
+
+char ferror_0[] = {Z6 'F', 'E', 'R', 'R', 'O', 'R', (char)6};
+G_L_B uint8_t refalab_ferror = '\002';
 
 static void fopen_(void)
 {
