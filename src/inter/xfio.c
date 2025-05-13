@@ -147,7 +147,7 @@ static void fclose_(void)
             p->tag = TAGF;
             p->info.codef = &refalab_null;
             return;
-        } 
+        }
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
@@ -187,6 +187,15 @@ static void fgets_(void)
             break;
         f = uniget[j];
         p = refal.prevr;
+        if (f == NULL)
+        {
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        }
         int c = getc(f);
         while (c != '\n')
         {
