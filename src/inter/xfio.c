@@ -242,7 +242,7 @@ static void fputs_(void)
 {
     do
     {
-        const T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -263,6 +263,16 @@ static void fputs_(void)
         }
         if (neot)
             break;
+        if (f == NULL)
+        {
+            p = refal.prevr;
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        }
         while (p != refal.nexta)
         {
             int cc;
@@ -272,7 +282,27 @@ static void fputs_(void)
                 cc = ')';
             else
                 cc = p->info.infoc;
-            putc(cc, f);
+            if (putc(cc, f) == EOF)
+            {
+                p = refal.prevr;
+                if (feof(f) != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_feof;
+                }
+                if (ferror(f) != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_ferror;
+                }
+                return;
+            }
             p = p->next;
         }
         return;
