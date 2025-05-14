@@ -79,7 +79,8 @@ Del_Accumulator
     W._ E.Any +
         = E.Any
 
-* <Load_File S(/0/../4/).Handle E(O).FileName> == E.Lines
+* <Load_File S(/0/../4/).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).OpenError /NULL/ | E.Lines V(/FEOF/ /FError/).Errors E(O).CloseError
 * E.Lines ::= (E(O).Line)*
 Load_File
     S.Handle E.FileName +
@@ -88,10 +89,12 @@ Load_File
         <FClose 'r' S.Handle>
   
 Load_File_Aux
-    S.Handle /0/ +
+    E._ /NULL/ +
         =
-    S.Handle E.Line /0/ +
-        = (E.Line)
+    S.Handle /0/ E.Errors +
+        = E.Errors
+    S.Handle E.Line /0/ E.Errors +
+        = (E.Line) E.Errors
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
