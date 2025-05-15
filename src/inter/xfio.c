@@ -193,14 +193,23 @@ static void fgets_(void)
     do
     {
         T_LINKCB *p = refal.preva->next;
-        if (p->tag != TAGN)
-            break;
-        const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = uniget[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef != &refalab_stdin)
+                break;
+            f = stdin;
+        }
+        else
             break;
         if (p->next != refal.nexta)
             break;
-        f = uniget[j];
         p = refal.prevr;
         if (f == NULL)
         {
@@ -257,13 +266,25 @@ static void fputs_(void)
     do
     {
         T_LINKCB *p = refal.preva->next;
-        if (p->tag != TAGN)
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = uniput[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
             break;
-        const uint32_t j = gcoden(p);
         p = p->next;
-        if (j >= fmax)
-            break;
-        f = uniput[j];
         const T_LINKCB *q = p;
         bool neot = false;
         while (q != refal.nexta)
