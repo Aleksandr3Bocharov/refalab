@@ -98,17 +98,24 @@ Load_File_Aux
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
-* <Save_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
+* <Save_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
+* E.Out ::= V(O).OpenError /NULL/ | E(/FEOF/ /FError/).Errors E(O).CloseError
 Save_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'w' S.Handle E.FileName> +
-        <Map (/Do_Write_Bracket_Line/ S.Handle) E.Lines> +
+        <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose 'w' S.Handle>
-  
-Do_Write_Bracket_Line
-    S.Handle (E.Line) +
-        = <FPutS S.Handle E.Line '\n'>
+
+Write_Bracket_Lines
+    S._ =
+    S.Handle (E.Line) E.Rest_Lines +
+        = <Write_Bracket_Lines_Aux <FPutS S.Handle E.Line '\n'> S.Handle E.Rest_Lines>
+
+Write_Bracket_Lines_Aux
+    /NULL/ E._ +
+        =
+    
 
 * <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
 * E.Lines ::= (E(O).Line)*
