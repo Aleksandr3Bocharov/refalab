@@ -91,9 +91,9 @@ Load_File
 Load_File_Aux
     E._ /NULL/ +
         =
-    S.Handle /0/ E.Errors +
+    S._ /0/ E.Errors +
         = E.Errors
-    S.Handle E.Line /0/ E.Errors +
+    S._ E.Line /0/ E.Errors +
         = (E.Line) E.Errors
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
