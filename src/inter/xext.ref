@@ -19,7 +19,7 @@ EXT START
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
     ENTRY True, False, NULL
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
-    EXTRN FOpen, FClose, FGetS, FPutS, Add, Sub, P1, Arg, LRel
+    EXTRN FOpen, FClose, FGetS, FPutS, FEOF, FError, Add, Sub, P1, Arg, LRel
     EMPTY True, False, NULL
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
 
@@ -115,14 +115,17 @@ Write_Bracket_Lines
 Write_Bracket_Lines_Aux
     /NULL/ E._ +
         =
-    
+    V(/FEOF/ /FError/).Errors E._ +
+        = V.Errors
+    E._ = <Write_Bracket_Lines E._>
 
-* <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> ==
+* <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
+* E.Out ::= V(O).OpenError /NULL/ | E(/FEOF/ /FError/).Errors E(O).CloseError
 Append_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'a' S.Handle E.FileName> +
-        <Map (/Do_Write_Bracket_Line/ S.Handle) E.Lines> +
+        <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose 'w' S.Handle>
 
 * <Inc E.Number*> == E.Number1
