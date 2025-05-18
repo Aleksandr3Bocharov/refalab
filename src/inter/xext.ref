@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-14
+* 2025-05-17
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -80,7 +80,7 @@ Del_Accumulator
         = E.Any
 
 * <Load_File S(/0/../4/).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).OpenError /NULL/ | E.Lines V(/FEOF/ /FError/).Errors E(O).CloseError
+* V.Out ::= V(O).Open_Error /NULL/ | E.Lines V(/FEOF/ /FError/).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
     S.Handle E.FileName +
@@ -91,16 +91,16 @@ Load_File
 Load_File_Aux
     E._ /NULL/ +
         =
-    S._ /0/ E.Errors +
-        = E.Errors
-    S._ E.Line /0/ E.Errors +
-        = (E.Line) E.Errors
+    S._ /0/ E.EOF +
+        = E.EOF
+    S._ E.Line /0/ E.EOF +
+        = (E.Line) E.EOF
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
 * <Save_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
-* E.Out ::= V(O).OpenError /NULL/ | E(/FEOF/ /FError/).Errors E(O).CloseError
+* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
 Save_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'w' S.Handle E.FileName> +
@@ -115,13 +115,13 @@ Write_Bracket_Lines
 Write_Bracket_Lines_Aux
     /NULL/ E._ +
         =
-    V(/FEOF/ /FError/).Errors E._ +
-        = V.Errors
+    V(/FEOF/ /FError/).EOF E._ +
+        = V.EOF
     E._ = <Write_Bracket_Lines E._>
 
 * <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
-* E.Out ::= V(O).OpenError /NULL/ | E(/FEOF/ /FError/).Errors E(O).CloseError
+* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
 Append_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'a' S.Handle E.FileName> +
