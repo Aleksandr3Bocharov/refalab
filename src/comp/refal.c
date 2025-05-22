@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-17
+// 2025-05-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -319,6 +319,7 @@ int main(int argc, char *argv[])
     flags.was_err = false;
     cdnumb = 0;
     scn_.nomkar = 0;
+    bool impl = false;
     T_MOD_STATES mod_state = START_OF_MODULE;
     while (true)
         switch (mod_state)
@@ -365,7 +366,19 @@ int main(int argc, char *argv[])
             mod_state = KEYS;
             break;
         case KEYS:
-            if (strncasecmp(stmkey, "l ", 2) == 0)
+            if (strncasecmp(stmkey, "impl", 4) == 0)
+            {
+                if (lbl_leng != 0)
+                    pch130();
+                else
+                {
+                    blout();
+                    if (m != CUT - 1 || c[m] != ' ')
+                        pch130();
+                };
+                impl = true;
+            }
+            else if (strncasecmp(stmkey, "l ", 2) == 0)
             {
                 dir = true;
                 trprev();
