@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-17
+* 2025-05-23
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -12,6 +12,7 @@
 *====================================================================
 
 EXT START
+
     ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
     ENTRY Load_File, Save_File, Append_File
     ENTRY Inc, Dec, ArgList
@@ -22,6 +23,11 @@ EXT START
     EXTRN FOpen, FClose, FGetS, FPutS, FEOF, FError, Add, Sub, P1, Arg, LRel
     EMPTY True, False, NULL
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
+
+White_Spaces +
+    S   ' \n\t\v\f\r'
+
+    IMPL
 
 * <Apply W.Closure E.Arg> == E.Res
 * W.Closure ::= S.Fn | (W.Closure E.Bounded)
@@ -155,9 +161,6 @@ SwArgList_Aux
         =
     S.Next E.Arg +
         = (E.Arg) <ArgList_Aux S.Next>
-
-White_Spaces
-    S   ' \n\t\v\f\r'
 
 * <Is_White_Space S.Any> == /True/ | /False/
 Is_White_Space
