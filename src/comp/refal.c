@@ -368,6 +368,8 @@ int main(int argc, char *argv[])
         case KEYS:
             if (strncasecmp(stmkey, "impl", 4) == 0)
             {
+                if (impl == true)
+                    pchosh("011 impl-directive in the impl-section");
                 if (lbl_leng != 0)
                     pch130();
                 else
@@ -392,7 +394,10 @@ int main(int argc, char *argv[])
             }
             else if (strncasecmp(stmkey, "start", 5) == 0)
             {
-                pchosh("002 too many start-directive");
+                if (impl == true)
+                    pchosh("012 start-directive in the impl-section");
+                else
+                    pchosh("002 too many start-directive");
                 blout();
                 if (m != CUT - 1 || c[m] != ' ')
                     pch130();
