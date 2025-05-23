@@ -418,21 +418,43 @@ int main(int argc, char *argv[])
                 break;
             }
             else if (strncasecmp(stmkey, "entry", 5) == 0)
+            {
+                if (impl == true)
+                    pchosh("013 entry-directive in the impl-section");
                 ilm(sentry);
+            }
             else if (strncasecmp(stmkey, "extrn", 5) == 0)
+            {
+                if (impl == true)
+                    pchosh("014 extrn-directive in the impl-section");
                 ilm(sextrn);
+            }
             else if (strncasecmp(stmkey, "empty", 5) == 0)
+            {
+                if (impl == true)
+                    pchosh("015 empty-directive in the impl-section");
                 il(sempty);
+            }
             else if (strncasecmp(stmkey, "swap", 4) == 0)
+            {
+                if (impl == true)
+                    pchosh("016 swap-directive in the impl-section");
                 il(sswap);
+            }
             else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
+                if (impl == true)
+                    pchosh("017 s-directive in the impl-section");
                 trprev();
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
             else if (strncasecmp(stmkey, "equ", 3) == 0)
+            {
+                if (impl == true)
+                    pchosh("018 equ-directive in the impl-section");
                 equ();
+            }
             else if (stmkey[0] == ' ')
             {
                 trprev();
