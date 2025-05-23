@@ -382,12 +382,16 @@ int main(int argc, char *argv[])
             }
             else if (strncasecmp(stmkey, "l ", 2) == 0)
             {
+                if (impl == false)
+                    pchosh("021 l-directive not in the impl-section");
                 dir = true;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
+                if (impl == false)
+                    pchosh("022 r-directive not in the impl-section");
                 dir = false;
                 trprev();
                 cst(dir, stmlbl, lbl_leng);
@@ -460,12 +464,16 @@ int main(int argc, char *argv[])
                 trprev();
                 if (lbl_leng != 0)
                 {
+                    if (impl == false)
+                        pchosh("023 function not in the impl-section");
                     strncpy(prevlb, stmlbl, lbl_leng);
                     prevlb[lbl_leng] = '\0';
                 }
             }
             else
             {
+                if (impl == false)
+                    pchosh("021 l-directive not in the impl-section");
                 m = fixm; // return to left
                 dir = true;
                 trprev();
@@ -479,7 +487,7 @@ int main(int argc, char *argv[])
             mod_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
-            pchosh("003 end directive missing");
+            pchosh("003 end-directive missing");
             kolosh++;
             mod_state = END_STATEMENT;
             break;
