@@ -449,7 +449,6 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     pchosh("017 s-directive in the impl-section");
-                trprev();
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
