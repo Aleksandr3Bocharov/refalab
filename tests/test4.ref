@@ -2,20 +2,23 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-05-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST4 +
     START
+
     ENTRY Go
     EXTRN First, Last, LengR, LengW, Prout, Proutm
     EMPTY Pus, Em1, Em2, Em3
 
+Bspe +
+    S   '2134' /Pus/
+
+    IMPL
+
 Go      = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
         <Dal>
-
-Bspe
-    S   '2134' /Pus/
 
 *      prowerka  specifikacii
 Prspe

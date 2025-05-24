@@ -2,17 +2,20 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-14
+* 2025-05-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST3 +
     START
+
     ENTRY Go
     EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr
     EXTRN Print, Proutm, Prout
     EXTRN Br, Rp, Dg, DgAll, Cp
     EMPTY Tra
     SWAP Sw
+
+    IMPL
 
 Go      = <Br 'cc' '=' /123/> +
         <Br 'mmm' '=' '345'> <Br 'mmm' '=' '879'> +

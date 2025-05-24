@@ -2,13 +2,16 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-28
+* 2025-05-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST5 +
     START
+
     ENTRY Go
     EXTRN Prout, Numb, Symb
+
+    IMPL
 
 Go      = <P <Numb '-1000'>> +
         <P <Numb '-16777216'>> +

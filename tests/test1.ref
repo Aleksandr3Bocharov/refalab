@@ -2,15 +2,18 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-04-28
+* 2025-05-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1 +
     START
+
     ENTRY Go
     EXTRN Add, Sub, Mul, Dr, Div
     EXTRN AddN, SubN, MulN, DrN, DivN
     EXTRN P1, M1, Numb, Symb, Prout, Proutm, LRel
+
+    IMPL
 
 Go      = <F1> <F2> <F3> <F4>
 

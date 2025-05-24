@@ -2,11 +2,12 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-12
+* 2025-05-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0 +
     START
+
     ENTRY Go
     EXTRN Add, Sub, Mul, Dr, M1, P1, Numb, Symb
     EXTRN First, Last, LengR, LengW
@@ -17,14 +18,16 @@ TEST0 +
     EMPTY Tra, Em1, Em2, Em3, Pus
     SWAP Sw
 
+Bspe +
+    S  '2134' /Pus/
+
+    IMPL
+
 Div E.N = <Div0 <Dr E.N>>
 
 Div0
     E.N (E._) +
         = E.N
-
-Bspe
-    S  '2134' /Pus/
 
 Go  = <Prsw> +
     <Prvv> +
