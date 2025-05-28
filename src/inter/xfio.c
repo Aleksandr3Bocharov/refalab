@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-14
+// 2025-05-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -348,6 +348,72 @@ static void fputs_(void)
 char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
+
+static void read_bytes_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag != TAGN)
+            break;
+        const uint32_t j = gcoden(p);
+        if (j >= fmax)
+            break;
+        f = uniget[j];
+        p = p->next;
+        if (p->tag != TAGN)
+            break;
+        uint32_t count = gcoden(p);
+        if (p->next != refal.nexta)
+            break;
+        p = refal.prevr;
+        if (f == NULL)
+        {
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        }
+        if (!slins(p, count))
+            return;
+        for (; count > 0; count--)
+        {
+            p = p->next;
+            p->tag = TAGN;
+            p->info.codep = NULL;
+            const int c = getc(f);
+            if (c == EOF)
+            {
+                if (feof(f) != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_feof;
+                }
+                if (ferror(f) != 0)
+                {
+                    if (!slins(p, 1))
+                        return;
+                    p = p->next;
+                    p->tag = TAGF;
+                    p->info.codef = &refalab_ferror;
+                }
+                return;
+            }
+            pcoden(p, (uint8_t)c);
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char read_bytes_0[] = {Z2 'R', 'E', 'A', 'D', '_', 'B', 'Y', 'T', 'E', 'S', (char)10};
+G_L_B uint8_t refalab_read_bytes = '\122';
+void (*read_bytes_1)(void) = read_bytes_;
 
 static void remove_file_(void)
 {
