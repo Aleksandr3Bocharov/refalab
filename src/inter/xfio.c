@@ -413,7 +413,7 @@ static void fread_(void)
 }
 char fread_0[] = {Z5 'F', 'R', 'E', 'A', 'D', (char)5};
 G_L_B uint8_t refalab_fread = '\122';
-void (*fread)(void) = fread_;
+void (*fread_1)(void) = fread_;
 
 static void remove_file_(void)
 {
