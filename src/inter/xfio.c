@@ -349,7 +349,7 @@ char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
 
-static void read_bytes_(void)
+static void fread_(void)
 {
     do
     {
@@ -411,9 +411,9 @@ static void read_bytes_(void)
     refal.upshot = 2;
     return;
 }
-char read_bytes_0[] = {Z2 'R', 'E', 'A', 'D', '_', 'B', 'Y', 'T', 'E', 'S', (char)10};
-G_L_B uint8_t refalab_read_bytes = '\122';
-void (*read_bytes_1)(void) = read_bytes_;
+char fread_0[] = {Z5 'F', 'R', 'E', 'A', 'D', (char)5};
+G_L_B uint8_t refalab_fread = '\122';
+void (*fread)(void) = fread_;
 
 static void remove_file_(void)
 {
