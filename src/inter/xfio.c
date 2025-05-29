@@ -51,17 +51,10 @@ static void fopen_(void)
         T_LINKCB *p = refal.preva->next;
         if (p->tag != TAGO)
             break;
-        const char c = p->info.infoc;
-        p = p->next;
-        uint32_t j;
-        if (p->tag != TAGN)
-            break;
-        j = gcoden(p);
-        p = p->next;
-        if (j >= fmax)
-            break;
-        char s[2];
+        char c = p->info.infoc;
+        char s[3];
         s[1] = '\0';
+        s[2] = '\0';
         if (c == 'R' || c == 'r')
             s[0] = 'r';
         else if (c == 'W' || c == 'w')
@@ -70,6 +63,22 @@ static void fopen_(void)
             s[0] = 'a';
         else
             break;
+        p = p->next;
+        if (p->tag == TAGO)
+        {
+            c = p->info.infoc;
+            if (c == 'B' || c == 'b')
+                s[1] = 'b';
+            else
+                break;
+            p = p->next;
+        }
+        if (p->tag != TAGN)
+            break;
+        const uint32_t j = gcoden(p);
+        if (j >= fmax)
+            break;
+        p = p->next;
         bool neot = false;
         T_LINKCB *q = p;
         size_t i;
@@ -88,9 +97,9 @@ static void fopen_(void)
         if (namf == NULL)
             rfabe("fopen: error");
         p = q;
-        for (size_t j = 0; j < i; j++)
+        for (size_t k = 0; k < i; k++)
         {
-            *(namf + j) = p->info.infoc;
+            *(namf + k) = p->info.infoc;
             p = p->next;
         }
         *(namf + i) = '\0';
