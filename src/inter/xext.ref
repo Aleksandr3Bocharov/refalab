@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-23
+* 2025-05-30
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -86,7 +86,7 @@ Del_Accumulator
         = E.Any
 
 * <Load_File S(/0/../4/).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).Open_Error /NULL/ | E.Lines V(/FEOF/ /FError/).EOF E(O).Close_Error
+* V.Out ::= V(O).Open_Error /NULL/ | E.Lines S(/FEOF/ /FError/).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
     S.Handle E.FileName +
@@ -97,10 +97,10 @@ Load_File
 Load_File_Aux
     E._ /NULL/ +
         =
-    S._ /0/ E.EOF +
-        = E.EOF
-    S._ E.Line /0/ E.EOF +
-        = (E.Line) E.EOF
+    S._ S(/FEOF/ /FError/).EOF +
+        = S.EOF
+    S._ E.Line S(/FEOF/ /FError/).EOF +
+        = (E.Line) S.EOF
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
@@ -121,8 +121,8 @@ Write_Bracket_Lines
 Write_Bracket_Lines_Aux
     /NULL/ E._ +
         =
-    V(/FEOF/ /FError/).EOF E._ +
-        = V.EOF
+    S(/FEOF/ /FError/).EOF E._ +
+        = S.EOF
     E._ = <Write_Bracket_Lines E._>
 
 * <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
