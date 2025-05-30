@@ -327,25 +327,30 @@ static void fputs_(void)
                 cc = ')';
             else
                 cc = p->info.infoc;
-            if (putc(cc, f) == EOF)
+            const int pcc = putc(cc, f);
+            enum
             {
-                p = refal.prevr;
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
+            if (pcc == EOF)
+            {
                 if (feof(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                if (!slins(p, 1))
+                    return;
+                p = p->next;
+                p->tag = TAGF;
+                if (err == FEOF)
                     p->info.codef = &refalab_feof;
-                }
-                if (ferror(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                else
                     p->info.codef = &refalab_ferror;
-                }
                 return;
             }
             p = p->next;
