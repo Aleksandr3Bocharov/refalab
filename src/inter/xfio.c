@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-28
+// 2025-05-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -236,25 +236,26 @@ static void fgets_(void)
                 return;
             p = p->next;
             p->info.codep = NULL;
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
             if (c == EOF)
             {
-                p->tag = TAGN;
                 if (feof(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p->tag = TAGF;
+                if (err == FEOF)
                     p->info.codef = &refalab_feof;
-                }
-                if (ferror(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                else
                     p->info.codef = &refalab_ferror;
-                }
                 return;
             }
             p->tag = TAGO;
