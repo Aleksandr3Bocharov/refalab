@@ -396,29 +396,31 @@ static void fread_(void)
         for (; count > 0; count--)
         {
             p = p->next;
-            p->tag = TAGN;
             p->info.codep = NULL;
             const int c = getc(f);
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
             if (c == EOF)
             {
                 if (feof(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p->tag = TAGF;
+                if (err == FEOF)
                     p->info.codef = &refalab_feof;
-                }
-                if (ferror(f) != 0)
-                {
-                    if (!slins(p, 1))
-                        return;
-                    p = p->next;
-                    p->tag = TAGF;
+                else
                     p->info.codef = &refalab_ferror;
-                }
                 return;
             }
+            p->tag = TAGN;
             pcoden(p, (uint8_t)c);
         }
         return;
