@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-30
+// 2025-06-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -343,6 +343,7 @@ static void fputs_(void)
             }
             if (err != OK)
             {
+                p = refal.prevr;
                 if (!slins(p, 1))
                     return;
                 p = p->next;
@@ -431,6 +432,86 @@ static void fread_(void)
 char fread_0[] = {Z5 'F', 'R', 'E', 'A', 'D', (char)5};
 G_L_B uint8_t refalab_fread = '\122';
 void (*fread_1)(void) = fread_;
+
+static void fwrite_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag != TAGN)
+            break;
+        const uint32_t j = gcoden(p);
+        if (j >= fmax)
+            break;
+        f = uniput[j];
+        p = p->next;
+        const T_LINKCB *q = p;
+        bool neot = false;
+        while (q != refal.nexta)
+        {
+            if (q->tag != TAGO && q->tag != TAGN)
+            {
+                neot = true;
+                break;
+            }
+            q = q->next;
+        }
+        if (neot)
+            break;
+        if (f == NULL)
+        {
+            p = refal.prevr;
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        }
+        while (p != refal.nexta)
+        {
+            int cc;
+            if (p->tag == TAGO)
+                cc = p->info.infoc;
+            else
+                cc = (uint8_t)gcoden(p);
+            const int pcc = putc(cc, f);
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
+            if (pcc == EOF)
+            {
+                if (feof(f) != 0)
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p = refal.prevr;
+                if (!slins(p, 1))
+                    return;
+                p = p->next;
+                p->tag = TAGF;
+                if (err == FEOF)
+                    p->info.codef = &refalab_feof;
+                else
+                    p->info.codef = &refalab_ferror;
+                return;
+            }
+            p = p->next;
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char fwrite_0[] = {Z6 'F', 'W', 'R', 'I', 'T', 'E', (char)6};
+G_L_B uint8_t refalab_fwrite = '\122';
+void (*fwrite_1)(void) = fwrite_;
 
 static void remove_file_(void)
 {
