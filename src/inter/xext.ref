@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-30
+* 2025-06-14
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -14,13 +14,14 @@
 EXT START
 
     ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
-    ENTRY Load_File, Save_File, Append_File
+    ENTRY Load_File, Save_File, Append_File, Load_FBytes
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
     ENTRY True, False, NULL
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
-    EXTRN FOpen, FClose, FGetS, FPutS, FEOF, FError, Add, Sub, P1, Arg, LRel
+    EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError 
+    EXTRN Add, Sub, P1, Arg, LRel
     EMPTY True, False, NULL
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
 
@@ -133,6 +134,23 @@ Append_File
         = <FOpen 'a' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose 'w' S.Handle>
+
+* <Load_FBytes S(/0/../4/).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error /NULL/ | E.Bytes S(/FEOF/ /FError/).EOF E(O).Close_Error
+* E.Bytes ::= S(N).Byte*
+Load_FBytes
+    S.Handle E.FileName +
+        = <FOpen 'rb' S.Handle E.FileName> +
+        <Load_FBytes_Aux S.Handle <FRead S.Handle /4096/>> +
+        <FClose 'r' S.Handle>
+  
+Load_FBytes_Aux
+    E._ /NULL/ +
+        =
+    S._ E.Bytes S(/FEOF/ /FError/).EOF +
+        = E.Bytes S.EOF
+    S.Handle E.Bytes +
+        = E.Bytes <Load_FBytes_Aux S.Handle <FRead S.Handle /4096/>>
 
 * <Inc E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*

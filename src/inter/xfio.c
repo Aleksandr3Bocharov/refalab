@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-06-07
+// 2025-06-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -419,6 +419,7 @@ static void fread_(void)
                     p->info.codef = &refalab_feof;
                 else
                     p->info.codef = &refalab_ferror;
+                rfdel(p, refal.nextr);
                 return;
             }
             p->tag = TAGN;
