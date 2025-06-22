@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-06-21
+* 2025-06-23
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -14,7 +14,7 @@
 EXT START
 
     ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
-    ENTRY Load_File, Save_File, Append_File, Load_FBytes, Save_FBytes
+    ENTRY Load_File, Save_File, Append_File, Load_FBytes, Save_FBytes, Append_FBytes
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
@@ -165,6 +165,15 @@ Write_FBytes
     /NULL/ +
         =
     E._ = E._
+
+* <Append_FBytes S(/0/../4/).Handle (E(O).FileName) E.Bytes> == E.Out
+* E.Bytes ::= S(ON).Byte*
+* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
+Append_FBytes
+    S.Handle (E.FileName) E.Bytes +
+        = <FOpen 'ab' S.Handle E.FileName> +
+        <Write_FBytes <FWrite S.Handle E.Bytes>> +
+        <FClose 'w' S.Handle>
 
 * <Inc E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
