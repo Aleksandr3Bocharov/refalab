@@ -7,7 +7,7 @@ Load_FBytes, Save_FBytes.
 Внесены изменения в работу рефал-функций из библиотеки РефалАБ:
 Append_File, Load_File, Save_File.
 
-Внесены изменения в работу первичных функций: fgets, fopen, fputs.
+Внесены изменения в работу первичных функций: fclose, fgets, fopen, fputs.
 
 Добавлены первичные функции в библиотеку РефалАБ: fread, fwrite.
 
