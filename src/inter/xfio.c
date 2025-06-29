@@ -26,7 +26,7 @@ extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 
 static FILE *f;
-static FILE *file[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
@@ -119,7 +119,7 @@ static void fopen_(void)
                 p->info.infoc = *(serr + i);
             }
         }
-        file[j] = f;
+        files[j] = f;
         return;
     } while (false);
     refal.upshot = 2;
@@ -141,8 +141,8 @@ static void fclose_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        f = file[j];
-        file[j] = NULL;
+        f = files[j];
+        files[j] = NULL;
         if (f == NULL)
         {
             p = refal.prevr;
@@ -188,7 +188,7 @@ static void fgets_(void)
             const uint32_t j = gcoden(p);
             if (j >= fmax)
                 break;
-            f = file[j];
+            f = files[j];
         }
         else if (p->tag == TAGF)
         {
@@ -262,7 +262,7 @@ static void fputs_(void)
             const uint32_t j = gcoden(p);
             if (j >= fmax)
                 break;
-            f = file[j];
+            f = files[j];
         }
         else if (p->tag == TAGF)
         {
@@ -356,7 +356,7 @@ static void fread_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        f = file[j];
+        f = files[j];
         p = p->next;
         if (p->tag != TAGN)
             break;
@@ -425,7 +425,7 @@ static void fwrite_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        f = file[j];
+        f = files[j];
         p = p->next;
         const T_LINKCB *q = p;
         bool neot = false;
