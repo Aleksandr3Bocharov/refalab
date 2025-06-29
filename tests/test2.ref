@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-25
+* 2025-06-30
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST2 +
@@ -18,16 +18,16 @@ TEST2 +
 Go      = <FuncTab /Prout/> +
         < <ChartoF 'prout'> ' eto prout'> +
         < <ChartoF 'PROUT'> ' eto PROUT'> +
-*       <FOpen 'r' /6/ 'bb'> +    !!  neot  !!
+*       <FOpen 'r' /10/ 'bb'> +    !!  neot  !!
         <FOpen 'w' /0/ 'lala.tes'> +
-        <FPutS /0/ ' str 1\n'> <FPutS /0/ ' str 2\n'> <FClose 'w' /0/> +
+        <FPutS /0/ ' str 1\n'> <FPutS /0/ ' str 2\n'> <FClose /0/> +
         <FOpen 'a' /1/ 'lala.tes'> +
-        <FPutS /1/  ' str 3\n'> <FClose 'w' /1/> +
+        <FPutS /1/  ' str 3\n'> <FClose /1/> +
         <Rename 'lala.tes*lala.tos'> +
         <FOpen 'r' /4/ 'lala.tos'> +
         <Print <FGetS /4/>> <Print <FGetS /4/>> +
         <Print <FGetS /4/>> +
-        <Print <FGetS /4/>> <FClose 'r' /4/> +
+        <Print <FGetS /4/>> <FClose /4/> +
         <Prout ' d.b. ffff: ' <FtoChar /ffff/>> +
         <FuncTab /tttt/> +
         < <ChartoF 'tttt'> 'werno'> +
