@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-06-23
+* 2025-06-30
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -93,7 +93,7 @@ Load_File
     S.Handle E.FileName +
         = <FOpen 'r' S.Handle E.FileName> +
         <Load_File_Aux S.Handle <FGetS S.Handle>> +
-        <FClose 'r' S.Handle>
+        <FClose S.Handle>
   
 Load_File_Aux
     E._ /NULL/ +
@@ -112,7 +112,7 @@ Save_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'w' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
-        <FClose 'w' S.Handle>
+        <FClose S.Handle>
 
 Write_Bracket_Lines
     S._ =
@@ -133,7 +133,7 @@ Append_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'a' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
-        <FClose 'w' S.Handle>
+        <FClose S.Handle>
 
 * <Load_FBytes S(/0/../4/).Handle E(O).FileName> == V.Out
 * V.Out ::= V(O).Open_Error /NULL/ | E.Bytes S(/FEOF/ /FError/).EOF E(O).Close_Error
@@ -142,7 +142,7 @@ Load_FBytes
     S.Handle E.FileName +
         = <FOpen 'rb' S.Handle E.FileName> +
         <Load_FBytes_Aux S.Handle <FRead S.Handle /4096/>> +
-        <FClose 'r' S.Handle>
+        <FClose S.Handle>
   
 Load_FBytes_Aux
     E._ /NULL/ +
@@ -159,7 +159,7 @@ Save_FBytes
     S.Handle (E.FileName) E.Bytes +
         = <FOpen 'wb' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
-        <FClose 'w' S.Handle>
+        <FClose S.Handle>
 
 Write_FBytes
     /NULL/ +
@@ -173,7 +173,7 @@ Append_FBytes
     S.Handle (E.FileName) E.Bytes +
         = <FOpen 'ab' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
-        <FClose 'w' S.Handle>
+        <FClose S.Handle>
 
 * <Inc E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
