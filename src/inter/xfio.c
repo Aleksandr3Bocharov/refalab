@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-06-14
+// 2025-06-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -20,14 +20,13 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define fmax 5
+#define fmax 10
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 
 static FILE *f;
-static FILE *uniput[fmax] = {NULL, NULL, NULL, NULL, NULL};
-static FILE *uniget[fmax] = {NULL, NULL, NULL, NULL, NULL};
+static FILE *file[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
@@ -119,12 +118,8 @@ static void fopen_(void)
                 p->info.codep = NULL;
                 p->info.infoc = *(serr + i);
             }
-            return;
         }
-        if (s[0] == 'r')
-            uniget[j] = f;
-        else
-            uniput[j] = f;
+        file[j] = f;
         return;
     } while (false);
     refal.upshot = 2;
@@ -139,10 +134,6 @@ static void fclose_(void)
     do
     {
         T_LINKCB *p = refal.preva->next;
-        if (p->tag != TAGO)
-            break;
-        const char c = p->info.infoc;
-        p = p->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -150,18 +141,8 @@ static void fclose_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        if (c == 'R' || c == 'r')
-        {
-            f = uniget[j];
-            uniget[j] = NULL;
-        }
-        else if (c == 'W' || c == 'w')
-        {
-            f = uniput[j];
-            uniput[j] = NULL;
-        }
-        else
-            break;
+        f = file[j];
+        file[j] = NULL;
         if (f == NULL)
         {
             p = refal.prevr;
@@ -207,7 +188,7 @@ static void fgets_(void)
             const uint32_t j = gcoden(p);
             if (j >= fmax)
                 break;
-            f = uniget[j];
+            f = file[j];
         }
         else if (p->tag == TAGF)
         {
@@ -281,7 +262,7 @@ static void fputs_(void)
             const uint32_t j = gcoden(p);
             if (j >= fmax)
                 break;
-            f = uniput[j];
+            f = file[j];
         }
         else if (p->tag == TAGF)
         {
@@ -375,7 +356,7 @@ static void fread_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        f = uniget[j];
+        f = file[j];
         p = p->next;
         if (p->tag != TAGN)
             break;
@@ -444,7 +425,7 @@ static void fwrite_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        f = uniput[j];
+        f = file[j];
         p = p->next;
         const T_LINKCB *q = p;
         bool neot = false;
