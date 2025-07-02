@@ -528,7 +528,7 @@ static void fseek_(void)
         else if (p->info.codef == &refalab_end)
             origin = SEEK_END;
         else if (p->info.codef == &refalab_cur)
-            origin = SEEK_END;
+            origin = SEEK_CUR;
         else
             break;
         if (p->next != refal.nexta)
