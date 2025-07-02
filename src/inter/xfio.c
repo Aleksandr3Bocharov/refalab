@@ -524,21 +524,18 @@ static void fseek_(void)
         int origin;
         if (p->next != refal.nexta)
             break;
-        p = refal.prevr;
-        if (!slins(p, 1))
-            return;
-        p = p->next;
-        p->tag = TAGF;
         if (f == NULL)
         {
+            p = refal.prevr;
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
             p->info.codef = &refalab_null;
             return;
         }
         const int res = fseek(f, offset, origin);
-        if (res == 0)
-            p->info.codef = &refalab_true;
-        else
-            p->info.codef = &refalab_false;
+        const int err = errno;
         return;
     } while (false);
     refal.upshot = 2;
