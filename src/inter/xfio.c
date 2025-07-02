@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-06-30
+// 2025-07-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -495,6 +495,59 @@ char fwrite_0[] = {Z6 'F', 'W', 'R', 'I', 'T', 'E', (char)6};
 G_L_B uint8_t refalab_fwrite = '\122';
 void (*fwrite_1)(void) = fwrite_;
 
+static void fseek_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag != TAGN)
+            break;
+        const uint32_t j = gcoden(p);
+        if (j >= fmax)
+            break;
+        f = files[j];
+        p = p->next;
+        const char zn = p->info.infoc;
+        long int z = 1;
+        if (p->tag == TAGO && (zn == '-' || zn == '+'))
+        {
+            p = p->next;
+            if (zn == '-')
+                z = -1;
+        }
+        if (p->tag != TAGN)
+            break;
+        const long int offset = z * gcoden(p);
+        p = p->next;
+        if (p->tag != TAGF)
+            break;
+        int origin;
+        if (p->next != refal.nexta)
+            break;
+        p = refal.prevr;
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->tag = TAGF;
+        if (f == NULL)
+        {
+            p->info.codef = &refalab_null;
+            return;
+        }
+        const int res = fseek(f, offset, origin);
+        if (res == 0)
+            p->info.codef = &refalab_true;
+        else
+            p->info.codef = &refalab_false;
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char fseek_0[] = {Z5 'F', 'S', 'E', 'E', 'K', (char)5};
+G_L_B uint8_t refalab_fseek = '\122';
+void (*fseek_1)(void) = fseek_;
+
 static void remove_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
@@ -635,7 +688,10 @@ static void exist_file_(void)
     *(namf + i) = '\0';
     p = refal.prevr;
     if (!slins(p, 1))
+    {
+        free(namf);
         return;
+    }
     p = p->next;
     p->tag = TAGF;
     p->info.codef = &refalab_false;
