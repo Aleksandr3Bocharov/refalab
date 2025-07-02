@@ -24,6 +24,7 @@
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
+extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -517,25 +518,36 @@ static void fseek_(void)
         }
         if (p->tag != TAGN)
             break;
-        const long int offset = z * gcoden(p);
+        const long int offset = z * (long int)gcoden(p);
         p = p->next;
         if (p->tag != TAGF)
             break;
         int origin;
+        if (p->info.codef == &refalab_begin)
+            origin = SEEK_SET;
+        else if (p->info.codef == &refalab_end)
+            origin = SEEK_END;
+        else if (p->info.codef == &refalab_cur)
+            origin = SEEK_END;
+        else
+            break;
         if (p->next != refal.nexta)
             break;
+        p = refal.prevr;
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->tag = TAGF;
         if (f == NULL)
         {
-            p = refal.prevr;
-            if (!slins(p, 1))
-                return;
-            p = p->next;
-            p->tag = TAGF;
             p->info.codef = &refalab_null;
             return;
         }
         const int res = fseek(f, offset, origin);
-        const int err = errno;
+        if (res == 0)
+            p->info.codef = &refalab_true;
+        else
+            p->info.codef = &refalab_false;
         return;
     } while (false);
     refal.upshot = 2;
