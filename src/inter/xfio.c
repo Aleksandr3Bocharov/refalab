@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-02
+// 2025-07-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -533,21 +533,32 @@ static void fseek_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        p = refal.prevr;
-        if (!slins(p, 1))
-            return;
-        p = p->next;
-        p->tag = TAGF;
         if (f == NULL)
         {
+            p = refal.prevr;
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
             p->info.codef = &refalab_null;
             return;
         }
         const int res = fseek(f, offset, origin);
-        if (res == 0)
-            p->info.codef = &refalab_true;
-        else
-            p->info.codef = &refalab_false;
+        const int err = errno;
+        if (res == -1)
+        {
+            char *serr = strerror(err);
+            p = refal.prevr;
+            if (!slins(p, strlen(serr)))
+                return;
+            for (size_t i = 0; *(serr + i) != '\0'; i++)
+            {
+                p = p->next;
+                p->tag = TAGO;
+                p->info.codep = NULL;
+                p->info.infoc = *(serr + i);
+            }
+        }
         return;
     } while (false);
     refal.upshot = 2;
