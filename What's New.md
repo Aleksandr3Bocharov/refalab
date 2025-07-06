@@ -11,7 +11,7 @@ Append_File, Load_File, Save_File.
 
 Внесены изменения в работу первичных функций: fclose, fgets, fopen, fputs.
 
-Добавлены первичные функции в библиотеку РефалАБ: fread, fseek, fwrite.
+Добавлены первичные функции в библиотеку РефалАБ: fread, fseek, ftell, fwrite.
 
 
 
