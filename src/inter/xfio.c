@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-03
+// 2025-07-07
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ------------
@@ -567,6 +567,70 @@ static void fseek_(void)
 char fseek_0[] = {Z5 'F', 'S', 'E', 'E', 'K', (char)5};
 G_L_B uint8_t refalab_fseek = '\122';
 void (*fseek_1)(void) = fseek_;
+
+static void ftell_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag != TAGN)
+            break;
+        const uint32_t j = gcoden(p);
+        if (j >= fmax)
+            break;
+        if (p->next != refal.nexta)
+            break;
+        f = files[j];
+        p = refal.prevr;
+        if (f == NULL)
+        {
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            return;
+        }
+        long int res = ftell(f);
+        const int err = errno;
+        if (res == -1)
+        {
+            char *serr = strerror(err);
+            if (!slins(p, strlen(serr)))
+                return;
+            for (size_t i = 0; *(serr + i) != '\0'; i++)
+            {
+                p = p->next;
+                p->tag = TAGO;
+                p->info.codep = NULL;
+                p->info.infoc = *(serr + i);
+            }
+            return;
+        }
+        if (!slins(p, 1))
+            return;
+        p = p->next;
+        p->tag = TAGN;
+        p->info.codep = NULL;
+        if (res > MAX_NUMBER)
+        {
+            pcoden(p, (uint32_t)res >> 24);
+            if (!slins(p, 1))
+                return;
+            p = p->next;
+            p->tag = TAGN;
+            p->info.codep = NULL;
+            res &= MAX_NUMBER;
+        }
+        pcoden(p, (uint32_t)res);
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
+G_L_B uint8_t refalab_ftell = '\122';
+void (*ftell_1)(void) = ftell_;
 
 static void remove_file_(void)
 {
