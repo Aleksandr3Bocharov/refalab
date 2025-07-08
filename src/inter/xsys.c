@@ -1,13 +1,13 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-07
+// 2025-07-08
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-----------  file  --  XSYS.C ----------------
-//                 MO: arg, system, exit,
-//                     get_env, get_working_dir
-//----------------------------------------------
+//-----------  file  --  XSYS.C --------------------
+//                 MO: arg, system, exit, get_env, 
+//                     change_dir, get_working_dir
+//--------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -202,6 +202,52 @@ static void get_env_(void)
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
 G_L_B uint8_t refalab_get_env = '\122';
 void (*get_env_1)(void) = get_env_;
+
+static void change_dir_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO)
+        {
+            refal.upshot = 2;
+            return;
+        }
+        p = p->next;
+    }
+    char *namd = (char *)malloc(i + 1);
+    if (namd == NULL)
+        rfabe("change_dir: error");
+    p = refal.preva->next;
+    for (size_t j = 0; j < i; j++)
+    {
+        *(namd + j) = p->info.infoc;
+        p = p->next;
+    }
+    *(namd + i) = '\0';
+    const int ch = chdir(namd);
+    const int err = errno;
+    free(namd);
+    if (ch == -1)
+    {
+        char *serr = strerror(err);
+        p = refal.prevr;
+        if (!slins(p, strlen(serr)))
+            return;
+        for (i = 0; *(serr + i) != '\0'; i++)
+        {
+            p = p->next;
+            p->tag = TAGO;
+            p->info.codep = NULL;
+            p->info.infoc = *(serr + i);
+        }
+    }
+    return;
+}
+char change_dir_0[] = {Z2 'C', 'H', 'A', 'N', 'G', 'E', '_', 'D', 'I', 'R', (char)10};
+G_L_B uint8_t refalab_change_dir = '\122';
+void (*change_dir_1)(void) = change_dir_;
 
 static void get_current_dir_(void)
 {
