@@ -1,13 +1,13 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-07
+// 2025-07-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-----------  file  --  XFIO.C ------------
+//-----------  file  --  XFIO.C ---------------
 //           MO: file input/output
-//           MO: file remove/rename/exist
-//------------------------------------------
+//           MO: file/dir remove/rename/exist
+//---------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -789,5 +789,48 @@ static void exist_file_(void)
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
 G_L_B uint8_t refalab_exist_file = '\122';
 void (*exist_file_1)(void) = exist_file_;
+
+static void exist_dir_(void)
+{
+    T_LINKCB *p = refal.preva->next;
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO)
+        {
+            refal.upshot = 2;
+            return;
+        }
+        p = p->next;
+    }
+    char *namd = (char *)malloc(i + 1);
+    if (namd == NULL)
+        rfabe("exist_dir: error");
+    p = refal.preva->next;
+    for (size_t j = 0; j < i; j++)
+    {
+        *(namd + j) = p->info.infoc;
+        p = p->next;
+    }
+    *(namd + i) = '\0';
+    p = refal.prevr;
+    if (!slins(p, 1))
+    {
+        free(namd);
+        return;
+    }
+    p = p->next;
+    p->tag = TAGF;
+    p->info.codef = &refalab_false;
+    struct stat st_buf;
+    if (stat(namd, &st_buf) == 0)
+        if (S_ISDIR(st_buf.st_mode))
+            p->info.codef = &refalab_true;
+    free(namd);
+    return;
+}
+char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
+G_L_B uint8_t refalab_exist_dir = '\122';
+void (*exist_dir_1)(void) = exist_dir_;
 
 //----------  end of file XFIO.C  -----------
