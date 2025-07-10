@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <errno.h>
 #include "refalab.h"
 #include "rfintf.h"
 #include "xsys.h"
