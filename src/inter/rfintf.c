@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-09
+// 2025-07-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -56,7 +56,7 @@ bool lincrm(void)
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
 #ifdef mdebug
-    printf("lincrm: n=%zu after new_block=%p\n", n, (void *)new_block);
+    fprintf(stderr, "lincrm: n=%zu after new_block=%p\n", n, (void *)new_block);
 #endif
     if (new_block == NULL)
         return false;
@@ -203,7 +203,7 @@ void rftermm(void)
         T_LINKCB *new_block = last_block;
         last_block = new_block->prev;
 #ifdef mdebug
-        printf("lincrm: free new_block=%p\n", (void *)new_block);
+        fprintf(stderr, "lincrm: free new_block=%p\n", (void *)new_block);
 #endif
         free(new_block);
     }
