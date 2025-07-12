@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-10
+// 2025-07-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 #ifdef mdebug
-    printf("\nmalloc(main): parm=%p", (void *)parm);
+    fprintf(stderr, "\nmalloc(main): parm=%p", (void *)parm);
 #endif
     size_t i;
     strcpy(parm, argv[1]);
@@ -515,7 +515,7 @@ int main(int argc, char *argv[])
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
 #ifdef mdebug
-            printf("free(main) parm=%p\n", (void *)parm);
+            fprintf(stderr, "free(main) parm=%p\n", (void *)parm);
 #endif
             free(parm);
             parm = NULL;

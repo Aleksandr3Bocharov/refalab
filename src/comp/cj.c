@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-07-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -101,14 +101,14 @@ static void sfop_w(const char *s, BU *b)
     {
         free(b->nam);
 #ifdef mdebug
-        printf("free(cj) b->nam=%p\n", (void *)b->nam);
+        fprintf(stderr, "free(cj) b->nam=%p\n", (void *)b->nam);
 #endif
     }
     b->nam = (char *)malloc(strlen(s) + 1);
     if (b->nam == NULL)
         oshex();
 #ifdef mdebug
-    printf("malloc(cj): b->nam=%p\n", (void *)b->nam);
+    fprintf(stderr, "malloc(cj): b->nam=%p\n", (void *)b->nam);
 #endif
     strcpy(b->nam, s);
     size_t un = 0;
@@ -140,7 +140,7 @@ static void sfop_w(const char *s, BU *b)
             if (b->buf != NULL)
             {
 #ifdef mdebug
-                printf("malloc(cj): b->buf=%p un=%zu\n", (void *)b->buf, un);
+                fprintf(stderr, "malloc(cj): b->buf=%p un=%zu\n", (void *)b->buf, un);
 #endif
                 break;
             }
@@ -204,8 +204,8 @@ static void sfclr(BU *b)
     free(b->nam);
     free(b->buf);
 #ifdef mdebug
-    printf("free(sfclr) b->nam(c 0)=%p\n", (void *)b->nam);
-    printf("            b->buf(c 0)=%p\n", (void *)b->buf);
+    fprintf(stderr, "free(sfclr) b->nam(c 0)=%p\n", (void *)b->nam);
+    fprintf(stderr, "            b->buf(c 0)=%p\n", (void *)b->buf);
 #endif
     b->nam = NULL;
     b->buf = NULL;
@@ -283,7 +283,7 @@ void jstart(void)
     if (first_ent == NULL)
         oshex();
 #ifdef mdebug
-    printf("malloc(cj): first_ent=%p\n", (void *)first_ent);
+    fprintf(stderr, "malloc(cj): first_ent=%p\n", (void *)first_ent);
 #endif
     last_ent = first_ent;
     first_ent->next = NULL;
@@ -291,7 +291,7 @@ void jstart(void)
     if (first_ext == NULL)
         oshex();
 #ifdef mdebug
-    printf("malloc(cj): first_ext=%p\n", (void *)first_ext);
+    fprintf(stderr, "malloc(cj): first_ext=%p\n", (void *)first_ext);
 #endif
     last_ext = first_ext;
     first_ext->next = NULL;
@@ -370,7 +370,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     if (r == NULL)
         oshex();
 #ifdef mdebug
-    printf("malloc(cj): r(ent)=%p\n", (void *)r);
+    fprintf(stderr, "malloc(cj): r(ent)=%p\n", (void *)r);
 #endif
     last_ent->next = r;
     last_ent = r;
@@ -390,7 +390,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     if (rx == NULL)
         oshex();
 #ifdef mdebug
-    printf("malloc(cj): rx(ext)=%p\n", (void *)rx);
+    fprintf(stderr, "malloc(cj): rx(ext)=%p\n", (void *)rx);
 #endif
     last_ext->next = rx;
     last_ext = rx;
@@ -567,7 +567,7 @@ void jend(void)
     {
         r = q->next;
 #ifdef mdebug
-        printf("free(cj) q=%p\n", (void *)q);
+        fprintf(stderr, "free(cj) q=%p\n", (void *)q);
 #endif
         free(q);
         q = r;
@@ -577,7 +577,7 @@ void jend(void)
     {
         rx = qx->next;
 #ifdef mdebug
-        printf("free(cj) qx=%p\n", (void *)qx);
+        fprintf(stderr, "free(cj) qx=%p\n", (void *)qx);
 #endif
         free(qx);
         qx = rx;

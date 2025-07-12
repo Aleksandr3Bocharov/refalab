@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2025-07-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------------  file  --  CLU.C  -------------------
@@ -29,7 +29,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
 {
     T_U *p = (T_U *)calloc(1, sizeof(T_U));
 #ifdef mdebug
-    printf("calloc(clu-nov_uzel): p=%p l=%zu t=%o\n", (void *)p, p->l, p->type);
+    fprintf(stderr, "calloc(clu-nov_uzel): p=%p l=%zu t=%o\n", (void *)p, p->l, p->type);
 #endif
     if (p == NULL)
         uns_sto();
@@ -46,7 +46,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     p->def = 0;
     char *q = calloc(1, lid);
 #ifdef mdebug
-    printf("calloc(clu-id): q=%p l=%zu\n", (void *)q, lid);
+    fprintf(stderr, "calloc(clu-id): q=%p l=%zu\n", (void *)q, lid);
 #endif
     if (q == NULL)
         uns_sto();
@@ -96,7 +96,7 @@ T_U *lookup(const char *idp, size_t lid)
                         { // create new item
                             T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
 #ifdef mdebug
-                            printf("calloc(clu-lookup): r1=%p\n", (void *)r1);
+                            fprintf(stderr, "calloc(clu-lookup): r1=%p\n", (void *)r1);
 #endif
                             if (r1 == NULL)
                                 uns_sto();
@@ -280,15 +280,15 @@ static void kil_tree(T_U *p)
         {
             T_REFW *r1 = r2->next;
 #ifdef mdebug
-            printf("free(clu): r2=%p\n", (void *)r2);
+            fprintf(stderr, "free(clu): r2=%p\n", (void *)r2);
 #endif
             free(r2);
             r2 = r1;
         }
         r = q->j;
 #ifdef mdebug
-        printf("free(clu):id=%p\n", (void *)q->id);
-        printf("           q=%p\n", (void *)q);
+        fprintf(stderr, "free(clu):id=%p\n", (void *)q->id);
+        fprintf(stderr, "           q=%p\n", (void *)q);
 #endif
         free(q->id);
         free(q);
