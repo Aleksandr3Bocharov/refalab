@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-09
+// 2025-07-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -95,7 +95,7 @@ static void fopen_(void)
             break;
         char *namf = (char *)malloc(i + 1);
         if (namf == NULL)
-            rfabe("fopen: error");
+            rfabe("fopen: malloc error");
         p = q;
         for (size_t k = 0; k < i; k++)
         {
@@ -647,7 +647,7 @@ static void remove_file_(void)
     }
     char *namf = (char *)malloc(i + 1);
     if (namf == NULL)
-        rfabe("remove_file: error");
+        rfabe("remove_file: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
@@ -704,7 +704,7 @@ static void rename_(void)
     }
     char *namf = (char *)malloc(i + 1);
     if (namf == NULL)
-        rfabe("rename: error");
+        rfabe("rename: malloc error");
     p = refal.preva->next;
     size_t k;
     for (k = 0; k < i; k++)
@@ -715,7 +715,7 @@ static void rename_(void)
     *(namf + i) = '\0';
     char *namt = (char *)malloc(j + 1); // from -> to
     if (namt == NULL)
-        rfabe("rename: error");
+        rfabe("rename: malloc error");
     p = p->next;
     for (k = 0; k < j; k++)
     {
@@ -762,7 +762,7 @@ static void exist_file_(void)
     }
     char *namf = (char *)malloc(i + 1);
     if (namf == NULL)
-        rfabe("exist_file: error");
+        rfabe("exist_file: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
@@ -805,7 +805,7 @@ static void exist_dir_(void)
     }
     char *namd = (char *)malloc(i + 1);
     if (namd == NULL)
-        rfabe("exist_dir: error");
+        rfabe("exist_dir: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {

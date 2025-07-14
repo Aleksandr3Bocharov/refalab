@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-03
+// 2025-07-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //------------ file -- XCF.C ---------------
@@ -77,7 +77,7 @@ static void functab_(void)
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
     if (func_f == NULL)
-        rfabe("functab: error");
+        rfabe("functab: malloc or realloc error");
     func_f[func_n] = u;
     func_n++;
     return;
@@ -112,7 +112,7 @@ static void chartof_(void)
     p = refal.preva->next;
     char *u = (char *)malloc(i + 2);
     if (u == NULL)
-        rfabe("chartof: error");
+        rfabe("chartof: malloc error");
     for (i = 0; p != refal.nexta; i++, p = p->next)
         u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
@@ -147,7 +147,7 @@ static void chartof_(void)
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
     if (func_f == NULL)
-        rfabe("chartof: error");
+        rfabe("chartof: malloc or realloc error");
     func_f[func_n] = j;
     func_n++;
     p = refal.preva->next;

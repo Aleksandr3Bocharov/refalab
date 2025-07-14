@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-08
+// 2025-07-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -71,7 +71,7 @@ static void system_(void)
     }
     char *cmd = (char *)malloc(i + 1);
     if (cmd == NULL)
-        rfabe("system: error");
+        rfabe("system: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
@@ -176,7 +176,7 @@ static void get_env_(void)
     }
     char *env_name = (char *)malloc(i + 1);
     if (env_name == NULL)
-        rfabe("get_env: error");
+        rfabe("get_env: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
@@ -219,7 +219,7 @@ static void change_dir_(void)
     }
     char *namd = (char *)malloc(i + 1);
     if (namd == NULL)
-        rfabe("change_dir: error");
+        rfabe("change_dir: malloc error");
     p = refal.preva->next;
     for (size_t j = 0; j < i; j++)
     {
