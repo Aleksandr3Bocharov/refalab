@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-12
+// 2025-07-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -429,15 +429,24 @@ static void zakon(void)
     return;
 } // zakon
 
+static void write_asm(int put)
+{
+    if (put == EOF)
+    {
+        printf("Write i/o error in asm file\n");
+        exit(8);
+    }
+}
+
 void jend(void)
 {
     zakon();
     d.w = 0;
     // heading generating
-    fputs(".data\n", syslin);
+    write_asm(fputs(".data\n", syslin));
     char bufs[81];
     sprintf(bufs, "_d%d$:\n", nommod);
-    fputs(bufs, syslin);
+    write_asm(fputs(bufs, syslin));
     //  empty module test
     if (mod_length != 0)
     {
@@ -454,15 +463,15 @@ void jend(void)
                 if (k % 60 == 0)
                 {
                     if (k != 0)
-                        fputc('\n', syslin);
-                    fputs("\t.byte\t", syslin);
+                        write_asm(fputc('\n', syslin));
+                    write_asm(fputs("\t.byte\t", syslin));
                 }
                 sprintf(bufs, "%d", d.w);
-                fputs(bufs, syslin);
+                write_asm(fputs(bufs, syslin));
                 if (k % 60 != 59 && k != (size_t)(delta - 1))
-                    fputc(',', syslin);
+                    write_asm(fputc(',', syslin));
             }
-            fputc('\n', syslin);
+            write_asm(fputc('\n', syslin));
             const T_U *p = rl.point;
             if (p != NULL)
             {
@@ -475,7 +484,7 @@ void jend(void)
                         sprintf(bufs, "\t.long\t_d%d$+%zu\n", nommod, p->info.infon);
                     else
                         sprintf(bufs, "\t.quad\t_d%d$+%zu\n", nommod, p->info.infon);
-                    fputs(bufs, syslin);
+                    write_asm(fputs(bufs, syslin));
                 }
                 else
                 {
@@ -483,21 +492,21 @@ void jend(void)
 #ifdef POSIX
                     // begin name without underlining _
                     if (LBLL == 4)
-                        fputs("\t.long\trefalab_", syslin);
+                        write_asm(fputs("\t.long\trefalab_", syslin));
                     else
-                        fputs("\t.quad\trefalab_", syslin);
+                        write_asm(fputs("\t.quad\trefalab_", syslin));
 #else // Windows - with underlining _ in x86
                     if (LBLL == 4)
-                        fputs("\t.long\t_refalab_", syslin);
+                        write_asm(fputs("\t.long\t_refalab_", syslin));
                     else
-                        fputs("\t.quad\trefalab_", syslin);
+                        write_asm(fputs("\t.quad\trefalab_", syslin));
 #endif
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)
                         qx = qx->next;
                     for (size_t i = 0; i < qx->le; i++)
-                        fputc(tolower(*(qx->e + i)), syslin);
-                    fputs("\n", syslin);
+                        write_asm(fputc(tolower(*(qx->e + i)), syslin));
+                    write_asm(fputs("\n", syslin));
                 }
                 continue;
             } // if
@@ -510,19 +519,19 @@ void jend(void)
 //
 #ifdef POSIX
             // begin name without underlining _
-            fputs("\t.extern\trefalab_", syslin);
+            write_asm(fputs("\t.extern\trefalab_", syslin));
 #else // Windows
             if (LBLL == 4)
-                fputs("\t.extern\t_refalab_", syslin);
+                write_asm(fputs("\t.extern\t_refalab_", syslin));
             else
-                fputs("\t.extern\trefalab_", syslin);
+                write_asm(fputs("\t.extern\trefalab_", syslin));
 #endif
             for (size_t i = 0; i < qx->le; i++)
-                fputc(tolower(*(qx->e + i)), syslin);
-            fputs(":byte\n", syslin);
+                write_asm(fputc(tolower(*(qx->e + i)), syslin));
+            write_asm(fputs(":byte\n", syslin));
             qx = qx->next;
         } // while
-        fputs(".data\n", syslin);
+        write_asm(fputs(".data\n", syslin));
         // entry label generating
         q = first_ent->next;
         while (q != NULL)
@@ -530,12 +539,12 @@ void jend(void)
 #ifndef POSIX
             // begin name with underlining _ in x86
             if (LBLL == 4)
-                fputc('_', syslin);
+                write_asm(fputc('_', syslin));
 #endif
-            fputs("refalab_", syslin);
+            write_asm(fputs("refalab_", syslin));
             for (size_t i = 0; i < q->le; i++)
                 // translate name to lower case
-                fputc(tolower(*(q->e + i)), syslin);
+                write_asm(fputc(tolower(*(q->e + i)), syslin));
             const T_U *pp = q->p;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
@@ -548,15 +557,15 @@ void jend(void)
             else
                 sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", nommod, pp->info.infon);
 #endif
-            fputs(bufs, syslin);
+            write_asm(fputs(bufs, syslin));
             for (size_t i = 0; i < q->le; i++)
                 // translate name to lower case
-                fputc(tolower(*(q->e + i)), syslin);
-            fputc('\n', syslin);
+                write_asm(fputc(tolower(*(q->e + i)), syslin));
+            write_asm(fputc('\n', syslin));
             q = q->next;
         };
 #ifdef POSIX
-        fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", syslin);
+        write_asm(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", syslin));
 #endif
     }
     // termination
