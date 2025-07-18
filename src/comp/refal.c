@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-17
+// 2025-07-18
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -721,7 +721,17 @@ void scan(void)
             blout();
             switch (c[m])
             {
-            case '/':
+            case '&':
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
                 scn_state = SCNSC;
                 break;
             case '(':
@@ -895,7 +905,7 @@ void scan(void)
             scn_e.t = 7;
             if (c[m + 1] != ' ')
             {
-                c[m - 1] = '/';
+                c[m - 1] = '&';
                 size_t i;
                 for (i = 1;
                      class[m + i] == 'L' || c[m + i] == '_' || class[m + i] == 'D';
@@ -904,7 +914,7 @@ void scan(void)
                     c[m + i - 1] = c[m + i];
                     class[m + i - 1] = class[m + i];
                 }
-                c[m + i - 1] = '/';
+                c[m + i - 1] = ' ';
                 class[m + i - 1] = '*';
                 m -= 2;
             }
@@ -1127,7 +1137,17 @@ static bool specif(char tail)
             case ')':
                 sp_state = SPCR;
                 break;
-            case '/':
+            case '&':
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
                 sp_state = SPCESC;
                 break;
             case ':':
@@ -1597,7 +1617,6 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    EH_ROMA0;
     do
     {
         if (class[m] == 'D')
@@ -1636,19 +1655,15 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             pchosh("111 symbol-number > 16777215");
             break;
         }
+        EH_ROMA0;
         if (!get_id(id, lid))
         {
-            pchosh("112 unknown type of the multiple symbol ");
+            pchosh("112 unknown type of the multiple symbol");
             return false;
         }
         code->info.codef = (uint8_t *)fnref(id, *lid);
         code->tag = TAGF;
     } while (false);
-    if (c[m] != '/')
-    {
-        pchosh("113 default '/' under multiple symbol ");
-        return false;
-    }
     return true;
 }
 
