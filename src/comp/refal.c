@@ -815,7 +815,7 @@ void scan(void)
             break;
         case EGO:
             scn_e.t = 1;
-            scn_state = SCNGCR;
+            scn_state = SCNRET;
             break;
         case SCNL:
             scn_e.t = 2;
