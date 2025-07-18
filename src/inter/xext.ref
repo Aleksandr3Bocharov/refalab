@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-02
+* 2025-07-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -86,8 +86,8 @@ Del_Accumulator
     W._ E.Any +
         = E.Any
 
-* <Load_File S(/0/../4/).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).Open_Error /NULL/ | E.Lines S(/FEOF/ /FError/).EOF E(O).Close_Error
+* <Load_File S(0..4).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error &NULL | E.Lines S(&FEOF &FError).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
     S.Handle E.FileName +
@@ -96,18 +96,18 @@ Load_File
         <FClose S.Handle>
   
 Load_File_Aux
-    E._ /NULL/ +
+    E._ &NULL +
         =
-    S._ S(/FEOF/ /FError/).EOF +
+    S._ S(&FEOF &FError).EOF +
         = S.EOF
-    S._ E.Line S(/FEOF/ /FError/).EOF +
+    S._ E.Line S(&FEOF &FError).EOF +
         = (E.Line) S.EOF
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
 
-* <Save_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
+* <Save_File S(0..4).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
-* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
 Save_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'w' S.Handle E.FileName> +
@@ -120,41 +120,41 @@ Write_Bracket_Lines
         = <Write_Bracket_Lines_Aux <FPutS S.Handle E.Line '\n'> S.Handle E.Rest_Lines>
 
 Write_Bracket_Lines_Aux
-    /NULL/ E._ +
+    &NULL E._ +
         =
-    S(/FEOF/ /FError/).EOF E._ +
+    S(&FEOF &FError).EOF E._ +
         = S.EOF
     E._ = <Write_Bracket_Lines E._>
 
-* <Append_File S(/0/../4/).Handle (E(O).FileName) E.Lines> == E.Out
+* <Append_File S(0..4).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
-* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
 Append_File
     S.Handle (E.FileName) E.Lines +
         = <FOpen 'a' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose S.Handle>
 
-* <Load_FBytes S(/0/../4/).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).Open_Error /NULL/ | E.Bytes S(/FEOF/ /FError/).EOF E(O).Close_Error
+* <Load_FBytes S(0..4).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error &NULL | E.Bytes S(&FEOF &FError).EOF E(O).Close_Error
 * E.Bytes ::= S(N).Byte*
 Load_FBytes
     S.Handle E.FileName +
         = <FOpen 'rb' S.Handle E.FileName> +
-        <Load_FBytes_Aux S.Handle <FRead S.Handle /4096/>> +
+        <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>> +
         <FClose S.Handle>
   
 Load_FBytes_Aux
-    E._ /NULL/ +
+    E._ &NULL +
         =
-    S._ E.Bytes S(/FEOF/ /FError/).EOF +
+    S._ E.Bytes S(&FEOF &FError).EOF +
         = E.Bytes S.EOF
     S.Handle E.Bytes +
-        = E.Bytes <Load_FBytes_Aux S.Handle <FRead S.Handle /4096/>>
+        = E.Bytes <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>>
 
-* <Save_FBytes S(/0/../4/).Handle (E(O).FileName) E.Bytes> == E.Out
+* <Save_FBytes S(0..4).Handle (E(O).FileName) E.Bytes> == E.Out
 * E.Bytes ::= S(ON).Byte*
-* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
 Save_FBytes
     S.Handle (E.FileName) E.Bytes +
         = <FOpen 'wb' S.Handle E.FileName> +
@@ -162,13 +162,13 @@ Save_FBytes
         <FClose S.Handle>
 
 Write_FBytes
-    /NULL/ +
+    &NULL +
         =
     E._ = E._
 
-* <Append_FBytes S(/0/../4/).Handle (E(O).FileName) E.Bytes> == E.Out
+* <Append_FBytes S(0..4).Handle (E(O).FileName) E.Bytes> == E.Out
 * E.Bytes ::= S(ON).Byte*
-* E.Out ::= V(O).Open_Error /NULL/ | E(/FEOF/ /FError/).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
 Append_FBytes
     S.Handle (E.FileName) E.Bytes +
         = <FOpen 'ab' S.Handle E.FileName> +
@@ -180,18 +180,18 @@ Append_FBytes
 * E.Number1 ::= '-'? S(N).Number+
 Inc
     E.Number +
-        = <Add (E.Number) /1/>
+        = <Add (E.Number) 1>
 
 * <Dec E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
 * E.Number1 ::= '-'? S(N).Number+
 Dec
     E.Number +
-        = <Sub (E.Number) /1/>
+        = <Sub (E.Number) 1>
 
 * <ArgList> == (S(O).Arg+)*
 ArgList
-        = <ArgList_Aux /1/>
+        = <ArgList_Aux 1>
 
 ArgList_Aux
     S.Next +
@@ -203,11 +203,11 @@ SwArgList_Aux
     S.Next E.Arg +
         = (E.Arg) <ArgList_Aux S.Next>
 
-* <Is_White_Space S.Any> == /True/ | /False/
+* <Is_White_Space S.Any> == &True | &False
 Is_White_Space
     S(:White_Spaces:)._ +
-        = /True/
-    S._ = /False/
+        = &True
+    S._ = &False
 
 * <Trim E.Any> == E.Any′
 Trim
@@ -232,7 +232,7 @@ QSort
     W.Pivot +
         = W.Pivot
     W.Pivot E.Items +
-        = <QSort_Aux <FoldL /DoQSort/ (() (W.Pivot) ()) E.Items>>
+        = <QSort_Aux <FoldL &DoQSort (() (W.Pivot) ()) E.Items>>
 
 QSort_Aux
     ((E.Less) (E.Equal) (E.Greater)) +
@@ -255,7 +255,7 @@ DoQSort_Aux
 Min W.X W.Y +
         = <Min_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
-        = <FoldL /Min/ W.First E.Tail>
+        = <FoldL &Min W.First E.Tail>
 
 Min_Aux
     '<' W.X E._ +
@@ -267,7 +267,7 @@ Min_Aux
 Max W.X W.Y +
         = <Max_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
-        = <FoldL /Max/ W.First E.Tail>
+        = <FoldL &Max W.First E.Tail>
 
 Max_Aux
     '>' W.X E._ +
@@ -275,12 +275,12 @@ Max_Aux
     E._ W.Y +
         = W.Y
 
-* <Exist W.Elem E.Sample_Elems> == /True/ | /False/
+* <Exist W.Elem E.Sample_Elems> == &True | &False
 Exist
     W.Sample E.Items_B W.Sample E.Items_E +
-        = /True/
+        = &True
     W._ E.__ +
-        = /False/
+        = &False
 
 * <Set W.Item*> == W.Item*′
 Set R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques +
@@ -292,74 +292,74 @@ Empty
     E._ =
 
 * <Type E.Any> == S.Type E.SubType E.Any
-* S.Type ::= /Void/ | /Label/ | /Number/ | /Reference/ | /Char/ | /Brackets/ | /OtherT/
-* E.SubType ::= /Latin/ | /Digit/ |
-Type    = /Void/
+* S.Type ::= &Void | &Label | &Number | &Reference | &Char | &Brackets | &OtherT
+* E.SubType ::= &Latin | &Digit |
+Type    = &Void
     S(F).Symbol E._ +
-        = /Label/ S.Symbol E._
+        = &Label S.Symbol E._
     S(N).Symbol E._ +
-        = /Number/ S.Symbol E._
+        = &Number S.Symbol E._
     S(R).Symbol E._ +
-        = /Reference/ S.Symbol E._
+        = &Reference S.Symbol E._
     S(L).Symbol E._ +
-        = /Char/ /Latin/ S.Symbol E._
+        = &Char &Latin S.Symbol E._
     S(D).Symbol E._ +
-        = /Char/ /Digit/ S.Symbol E._
+        = &Char &Digit S.Symbol E._
     S(O).Symbol E._ +
-        = /Char/ S.Symbol E._
+        = &Char S.Symbol E._
     (E.Expr) E._ +
-        = /Brackets/ (E.Expr) E._
-    E._ = /OtherT/ E._
+        = &Brackets (E.Expr) E._
+    E._ = &OtherT E._
 
-* <Is_Type S.Type E.Any> == /True/ | /False/
-* S.Type ::= /Void/ | /Label/ | /Number/ | /Reference/ | /Char/ | /Latin/ | /Digit/ |
-*            /Brackets/ | /OtherT/
+* <Is_Type S.Type E.Any> == &True | &False
+* S.Type ::= &Void | &Label | &Number | &Reference | &Char | &Latin | &Digit |
+*            &Brackets | &OtherT
 Is_Type
-    /Void/ +
-        = /True/
-    /Void/ E._ +
-        = /False/
-    /Label/ S(F).Symbol E._ +
-        = /True/
-    /Label/ E._ +
-        = /False/
-    /Number/ S(N).Symbol E._ +
-        = /True/
-    /Number/ E._ +
-        = /False/
-    /Reference/ S(R).Symbol E._ +
-        = /True/
-    /Reference/ E._ +
-        = /False/
-    /Char/ S(O).Symbol E._ +
-        = /True/
-    /Char/ E._ +
-        = /False/
-    /Latin/ S(L).Symbol E._ +
-        = /True/
-    /Latin/ E._ +
-        = /False/
-    /Digit/ S(D).Symbol E._ +
-        = /True/
-    /Digit/ E._ +
-        = /False/
-    /Brackets/ (E.Expr) E._ +
-        = /True/
-    /Brackets/ E._ +
-        = /False/
-    /OtherT/ +
-        = /False/
-    /OtherT/ S(F).Symbol E._ +
-        = /False/
-    /OtherT/ S(N).Symbol E._ +
-        = /False/
-    /OtherT/ S(R).Symbol E._ +
-        = /False/
-    /OtherT/ S(O).Symbol E._ +
-        = /False/
-    /OtherT/ (E.Expr) E._ +
-        = /False/
-    /OtherT/ E._ +
-        = /True/
+    &Void +
+        = &True
+    &Void E._ +
+        = &False
+    &Label S(F).Symbol E._ +
+        = &True
+    &Label E._ +
+        = &False
+    &Number S(N).Symbol E._ +
+        = &True
+    &Number E._ +
+        = &False
+    &Reference S(R).Symbol E._ +
+        = &True
+    &Reference E._ +
+        = &False
+    &Char S(O).Symbol E._ +
+        = &True
+    &Char E._ +
+        = &False
+    &Latin S(L).Symbol E._ +
+        = &True
+    &Latin E._ +
+        = &False
+    &Digit S(D).Symbol E._ +
+        = &True
+    &Digit E._ +
+        = &False
+    &Brackets (E.Expr) E._ +
+        = &True
+    &Brackets E._ +
+        = &False
+    &OtherT +
+        = &False
+    &OtherT S(F).Symbol E._ +
+        = &False
+    &OtherT S(N).Symbol E._ +
+        = &False
+    &OtherT S(R).Symbol E._ +
+        = &False
+    &OtherT S(O).Symbol E._ +
+        = &False
+    &OtherT (E.Expr) E._ +
+        = &False
+    &OtherT E._ +
+        = &True
 
     END

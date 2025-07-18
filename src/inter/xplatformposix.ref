@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-23
+* 2025-07-18
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -33,15 +33,15 @@ Directory_Separators +
     IMPL
 
 Platform
-        = /POSIX/
+        = &POSIX
 
 Directory_Separator
         = '/'
 
 Is_Directory_Separator
     S(:Directory_Separators:)._ +
-        = /True/
-    S._ = /False/
+        = &True
+    S._ = &False
 
 Path_Separator
         = ':'
