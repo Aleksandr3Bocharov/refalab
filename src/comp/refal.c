@@ -1272,7 +1272,7 @@ static bool specif(char tail)
             gsp(ns_sc);
             if (left_part)
                 gsymbol(&code);
-            sp_state = SPCGC;
+            sp_state = SPCBLO;
             break;
         case SPCSP:
             EH_ROMA0;
