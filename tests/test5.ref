@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-25
+* 2025-07-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST5 +
@@ -24,21 +24,21 @@ Go      = <P <Numb '-1000'>> +
         <P <Numb '1000000000'>> +
         <P <Numb '4294967295'>> +
         <P <Numb '+15'>> +
-        <Prout '/0/:' <Symb>> +
-        <Prout '/0/:' <Symb '+'>> +
-        <Prout '/0/:' <Symb '-'>> +
-        <Prout '/0/:' <Symb /0/>> +
-        <Prout '/16777216/:' <Symb /1/ /0/>> +
-        <Prout '/1/:' <Symb /0/ /1/>> +
-        <Prout '/1/:' <Symb /0/ /0/ /0/ /0/ /1/>> +
-        <Prout '-/1/:' <Symb '-' /0/ /0/ /0/ /0/ /1/>> +
-        <Prout '/1/:' <Symb '+' /0/ /0/ /0/ /0/ /1/>> +
-        <Prout <Symb /255/ /16777215/>> +
+        <Prout '0:' <Symb>> +
+        <Prout '0:' <Symb '+'>> +
+        <Prout '0:' <Symb '-'>> +
+        <Prout '0:' <Symb 0>> +
+        <Prout '16777216:' <Symb 1 0>> +
+        <Prout '1:' <Symb 0 1>> +
+        <Prout '1:' <Symb 0 0 0 0 1>> +
+        <Prout '-1:' <Symb '-' 0 0 0 0 1>> +
+        <Prout '1:' <Symb '+' 0 0 0 0 1>> +
+        <Prout <Symb 255 16777215>> +
 *  neoty:
         <Numb '4294967296'> +
         <Numb '-4294967296'> +
-        <Symb /256/ /0/> +
-        <Symb '-' /256/ /0/> 
+        <Symb 256 0> +
+        <Symb '-' 256 0> 
 
 P   E.N = <Prout E.N ' : ' <Symb E.N>>
 

@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-05-25
+* 2025-07-19
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST4 +
@@ -13,17 +13,17 @@ TEST4 +
     EMPTY Pus, Em1, Em2, Em3
 
 Bspe +
-    S   '2134' /Pus/
+    S   '2134' &Pus
 
     IMPL
 
-Go      = <Prspe /Pus/ 'as01a432l7l' /Em3/> +
+Go      = <Prspe &Pus 'as01a432l7l' &Em3> +
         <Dal>
 
 *      prowerka  specifikacii
 Prspe
-    E.E S(/Em1/ /Em2/ /Em3/).S +
-        = <Prout ' symbol-/em/' S.S> <Prspe E.E>
+    E.E S(&Em1 &Em2 &Em3).S +
+        = <Prout ' symbol-&em' S.S> <Prspe E.E>
     S(:Bspe:).S E.k +
         = <Prout ' symbol-1234p=' S.S> <Prspe E.k>
     R E.h S('l7').S +
@@ -32,17 +32,17 @@ Prspe
         = <Prout '  symbol =' S.S> <Prspe E.k>
         =
 
-Dal     = <Prln /0/ /1/ '345678'> <Prln (/0/ /1/) '345678'> +
-        <Prfe /3/ '1234567'> <Prla /3/ '123456'> <Prfe /1/ /2/> +
-        <Prla /3/ /1/ /2/ /3/ '567'> +
+Dal     = <Prln 0 1 '345678'> <Prln (0 1) '345678'> +
+        <Prfe 3 '1234567'> <Prla 3 '123456'> <Prfe 1 2> +
+        <Prla 3 1 2 3 '567'> +
 *  neot
         <Prfe '123'> <Prla '123'>
 
 Prfe
-    E.E = <Prow /First/ E.E>
+    E.E = <Prow &First E.E>
 
 Prla
-    E.E  = <Prow /Last/ E.E>
+    E.E  = <Prow &Last E.E>
 
 Prow
     S.F E.E +
