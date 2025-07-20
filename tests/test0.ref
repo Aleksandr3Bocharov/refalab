@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-19
+* 2025-07-20
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0 +
@@ -51,7 +51,7 @@ Prspe
 Dal1    = <Prmu (126) 2> <Prmu (65536) 64> +
         <Prmu (16777215) 1> +
         <Prmu (65536) 512> +  
-        <Prdl (65536) 4> <Prdl (65536) 666> +
+        <Prdl (65536) 4> <Prdl (65536) 777> +
 *       <Prdl (1) 0> +      neot
         <Prp1 4> <Prp1 65536> <Prp1 128> +
 *       <Prp1 16777215> +     neot
