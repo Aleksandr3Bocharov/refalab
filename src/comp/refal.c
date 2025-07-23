@@ -1652,7 +1652,9 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
                     continue;
                 break;
             }
-            pchosh("111 symbol-number > 16777215");
+            char osh111[64];
+            sprintf(osh111, "111 symbol-number > %d", MAX_NUMBER);
+            pchosh(osh111);
             break;
         }
         EH_ROMA0;
@@ -1683,10 +1685,14 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
     size_t i = 0;
     while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
     {
-        if (i == 1)
-            pchosh("113 identifier length > 40");
         EH_ROMA0;
         i++;
+    }
+    if (i > 1)
+    {
+        char osh113[64];
+        sprintf(osh113, "113 identifier length > %d", MAX_ID_LEN);
+        pchosh(osh113);
     }
     return true;
 }
@@ -1707,10 +1713,14 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     size_t i = 0;
     while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
     {
-        if (i == 1)
-            pchosh("114 external identifier length > 32");
         EH_ROMA0;
         i++;
+    }
+    if (i > 1)
+    {
+        char osh114[64];
+        sprintf(osh114, "114 external identifier length > %d", MAX_EXT_ID_LEN);
+        pchosh(osh114);
     }
     return true;
 }
