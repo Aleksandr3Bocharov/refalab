@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-18
+// 2025-07-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -1658,7 +1658,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
         EH_ROMA0;
         if (!get_id(id, lid))
         {
-            pchosh("112 unknown type of the multiple symbol");
+            pchosh("114 unknown type of the multiple symbol");
             return false;
         }
         code->info.codef = (uint8_t *)fnref(id, *lid);
@@ -1680,7 +1680,14 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    EH_ROMA0;
+    size_t i = 0;
+    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
+    {
+        if (i == 1)
+            pchosh("112 identifier length > 40");
+        EH_ROMA0;
+        i++;
+    }
     return true;
 }
 
@@ -1697,7 +1704,14 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
             return true;
         id[*lid] = (char)toupper(c[m]);
     }
-    EH_ROMA0;
+    size_t i = 0;
+    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
+    {
+        if (i == 1)
+            pchosh("113 external identifier length > 32");
+        EH_ROMA0;
+        i++;
+    }
     return true;
 }
 
