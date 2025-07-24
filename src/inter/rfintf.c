@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-12
+// 2025-07-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -424,7 +424,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
                 putchar('\'');
             };
             if (pr->tag == TAGK)
-                putchar('<');
+                printf("< ");
             else if (pr->tag == TAGD)
                 putchar('>');
             else if (pr->tag == TAGLB)
@@ -432,16 +432,21 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (pr->tag == TAGRB)
                 putchar(')');
             else if (pr->tag == TAGN)
-                printf("/%u/", gcoden(pr));
+            {
+                printf("%u", gcoden(pr));
+                if (pr->next->tag == TAGN)
+                    putchar(' ');
+            }
             else if (pr->tag == TAGF)
             {
-                putchar('/');
+                putchar('&');
                 const char *f = (char *)(pr->info.codef) - 1;
                 const uint8_t l = (uint8_t)*f;
                 f -= l;
                 for (size_t k = 1; k <= l; k++, f++)
                     putchar(toupper(*f));
-                putchar('/');
+                if (pr->next->tag == TAGN)
+                    putchar(' ');
             }
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
