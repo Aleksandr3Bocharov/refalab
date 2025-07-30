@@ -417,23 +417,21 @@ void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         else if (pr->tag == TAGRB)
             putchar(')');
         else if (pr->tag == TAGN)
-            printf("'%u'", gcoden(pr));
+            printf("%u", gcoden(pr));
         else if (pr->tag == TAGF)
         {
-            putchar('\'');
             const char *f = (char *)(pr->info.codef) - 1;
             const uint8_t l = (uint8_t)*f;
             f -= l;
             for (size_t k = 1; k <= l; k++, f++)
                 putchar(toupper(*f));
-            putchar('\'');
         }
         else if (pr->tag == TAGR)
-            printf("'%%%p'", (void *)pr->info.codep);
+            printf("%%%p", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
             rfabe("\nrfpexf: unknown bracket type");
         else
-            printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
+            printf("%x,%p", pr->tag, (void *)pr->info.codep);
     }
     if (nl)
         printf("\n");
