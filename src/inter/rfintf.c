@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-25
+// 2025-07-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -388,7 +388,50 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
-            rfabe("\nrfpex: unknown bracket type ");
+            rfabe("\nrfpex: unknown bracket type");
+        else
+            printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
+    }
+    if (nl)
+        printf("\n");
+    return;
+}
+
+void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
+{
+    printf("%s", pt);
+    while (pr != pn->prev)
+    {
+        const T_LINKCB *pr1 = pr;
+        pr = pr->next;
+        if (pr1 != pr->prev)
+            rfabe("\nrfpexf: list structure violation");
+        if (pr->tag == TAGO)
+            putchar(pr->info.infoc);
+        else if (pr->tag == TAGK)
+            putchar('<');
+        else if (pr->tag == TAGD)
+            putchar('>');
+        else if (pr->tag == TAGLB)
+            putchar('(');
+        else if (pr->tag == TAGRB)
+            putchar(')');
+        else if (pr->tag == TAGN)
+            printf("'%u'", gcoden(pr));
+        else if (pr->tag == TAGF)
+        {
+            putchar('\'');
+            const char *f = (char *)(pr->info.codef) - 1;
+            const uint8_t l = (uint8_t)*f;
+            f -= l;
+            for (size_t k = 1; k <= l; k++, f++)
+                putchar(toupper(*f));
+            putchar('\'');
+        }
+        else if (pr->tag == TAGR)
+            printf("'%%%p'", (void *)pr->info.codep);
+        else if ((pr->tag & 0001) != TAGO)
+            rfabe("\nrfpexf: unknown bracket type");
         else
             printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
     }
@@ -451,7 +494,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
             else if ((pr->tag & 0001) != TAGO)
-                rfabe("\nrfpexm: unknown bracket type ");
+                rfabe("\nrfpexm: unknown bracket type");
             else
                 printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
         }

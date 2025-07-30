@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-09
+// 2025-07-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.H ------------------
@@ -26,6 +26,7 @@ extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
 extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
+extern void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
