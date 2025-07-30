@@ -397,7 +397,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
     return;
 }
 
-void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
+void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
 {
     printf("%s", pt);
     while (pr != pn->prev)
@@ -405,7 +405,7 @@ void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->prev)
-            rfabe("\nrfpexf: list structure violation");
+            rfabe("\nrfpexs: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -429,7 +429,7 @@ void rfpexf(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         else if (pr->tag == TAGR)
             printf("%%%p", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
-            rfabe("\nrfpexf: unknown bracket type");
+            rfabe("\nrfpexs: unknown bracket type");
         else
             printf("%x,%p", pr->tag, (void *)pr->info.codep);
     }
