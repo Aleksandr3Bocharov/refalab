@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-09
+// 2025-07-31
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XIO.C ------------
@@ -53,31 +53,41 @@ void (*pr1_1)(void) = pr1_;
 
 static void pr2_(void)
 {
-    rfpexm("", refal.preva, refal.nexta, true);
+    rfpexs("", refal.preva, refal.nexta, true);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', (char)6};
-G_L_B uint8_t refalab_printm = '\122';
+char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'S', (char)6};
+G_L_B uint8_t refalab_prints = '\122';
 void (*pr2_1)(void) = pr2_;
 
 static void pr3_(void)
 {
-    rfpex("", refal.preva, refal.nexta, true);
+    rfpexm("", refal.preva, refal.nexta, true);
+    rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char pr3_0[] = {Z5 'P', 'R', 'O', 'U', 'T', (char)5};
-G_L_B uint8_t refalab_prout = '\122';
+char pr3_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', (char)6};
+G_L_B uint8_t refalab_printm = '\122';
 void (*pr3_1)(void) = pr3_;
 
 static void pr4_(void)
 {
+    rfpex("", refal.preva, refal.nexta, true);
+    return;
+}
+char pr4_0[] = {Z5 'P', 'R', 'O', 'U', 'T', (char)5};
+G_L_B uint8_t refalab_prout = '\122';
+void (*pr4_1)(void) = pr4_;
+
+static void pr5_(void)
+{
     rfpexm("", refal.preva, refal.nexta, true);
     return;
 }
-char pr4_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
+char pr5_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_proutm = '\122';
-void (*pr4_1)(void) = pr4_;
+void (*pr5_1)(void) = pr5_;
 
 static void wr1_(void)
 {
