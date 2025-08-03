@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-31
+// 2025-08-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XIO.C ------------
@@ -82,12 +82,21 @@ void (*pr4_1)(void) = pr4_;
 
 static void pr5_(void)
 {
+    rfpexs("", refal.preva, refal.nexta, true);
+    return;
+}
+char pr5_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'S', (char)6};
+G_L_B uint8_t refalab_prouts = '\122';
+void (*pr5_1)(void) = pr5_;
+
+static void pr6_(void)
+{
     rfpexm("", refal.preva, refal.nexta, true);
     return;
 }
-char pr5_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
+char pr6_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_proutm = '\122';
-void (*pr5_1)(void) = pr5_;
+void (*pr6_1)(void) = pr6_;
 
 static void wr1_(void)
 {
@@ -101,30 +110,49 @@ void (*wr1_1)(void) = wr1_;
 
 static void wr2_(void)
 {
-    rfpexm("", refal.preva, refal.nexta, false);
+    rfpexs("", refal.preva, refal.nexta, false);
     rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char wr2_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'M', (char)6};
-G_L_B uint8_t refalab_writem = '\122';
+char wr2_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'S', (char)6};
+G_L_B uint8_t refalab_writes = '\122';
 void (*wr2_1)(void) = wr2_;
 
 static void wr3_(void)
 {
-    rfpex("", refal.preva, refal.nexta, false);
+    rfpexm("", refal.preva, refal.nexta, false);
+    rftpl(refal.prevr, refal.preva, refal.nexta);
     return;
 }
-char wr3_0[] = {Z5 'W', 'R', 'O', 'U', 'T', (char)5};
-G_L_B uint8_t refalab_wrout = '\122';
+char wr3_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'M', (char)6};
+G_L_B uint8_t refalab_writem = '\122';
 void (*wr3_1)(void) = wr3_;
 
 static void wr4_(void)
 {
+    rfpex("", refal.preva, refal.nexta, false);
+    return;
+}
+char wr4_0[] = {Z5 'W', 'R', 'O', 'U', 'T', (char)5};
+G_L_B uint8_t refalab_wrout = '\122';
+void (*wr4_1)(void) = wr4_;
+
+static void wr5_(void)
+{
+    rfpexs("", refal.preva, refal.nexta, false);
+    return;
+}
+char wr5_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'S', (char)6};
+G_L_B uint8_t refalab_wrouts = '\122';
+void (*wr5_1)(void) = wr5_;
+
+static void wr6_(void)
+{
     rfpexm("", refal.preva, refal.nexta, false);
     return;
 }
-char wr4_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'M', (char)6};
+char wr6_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_wroutm = '\122';
-void (*wr4_1)(void) = wr4_;
+void (*wr6_1)(void) = wr6_;
 
 //------------------ end of file  XIO.C ----------------
