@@ -17,7 +17,7 @@
 static void card_(void)
 {
     if (refal.preva->next != refal.nexta)
-        rfpex("", refal.preva, refal.nexta, false);
+        rfpexs("", refal.preva, refal.nexta, false);
     T_LINKCB *p = refal.prevr;
     int c = getchar();
     while (c != '\n')
