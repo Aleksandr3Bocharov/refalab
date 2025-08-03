@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-19
+* 2025-08-03
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 FACT +
@@ -11,7 +11,7 @@ FACT +
     ENTRY Go
     EXTRN Numb, Symb, Cvd, First
     EXTRN Mul
-    EXTRN Prout, Card, M1
+    EXTRN Prouts, Card, M1
 
     IMPL
 
@@ -19,19 +19,19 @@ Go      = <Fact <Numb <Card ' Give a number: '>>>
 
 Fact
     0   = 
-    E.N = <Pr <Symb E.N> '!=' +
-        <Cvd <F E.N>>> + 
+    S.N = <Pr S.N '!=' +
+        <Cvd <F S.N>>> + 
         <Go>
 
 F   1   = 1
-    E.N = <Mul (E.N) <F <M1 E.N>>>
+    S.N = <Mul (S.N) <F <M1 S.N>>>
 
 Pr      =
     E.S = <Pr1 <First 80 E.S>>
 
 Pr1 (E.S) E.E +
-        = <Prout E.S> <Pr E.E>
+        = <Prouts E.S> <Pr E.E>
     '*' E.S +
-        = <Prout E.S>
+        = <Prouts E.S>
 
     END
