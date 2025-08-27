@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -380,6 +381,7 @@ static void fprint_(void)
         p = p->next;
         while (p != refal.nexta)
         {
+            const int pcc;
             if (p->tag == TAGO)
                 putchar(p->info.infoc);
             else if (p->tag == TAGLB)
