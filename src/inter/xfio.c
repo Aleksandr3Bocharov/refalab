@@ -347,6 +347,95 @@ char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
 
+static void fprint_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (f == NULL)
+        {
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
+            return;
+        }
+        p = p->next;
+        while (p != refal.nexta)
+        {
+            if (p->tag == TAGO)
+                putchar(p->info.infoc);
+            else if (p->tag == TAGLB)
+                putchar('(');
+            else if (p->tag == TAGRB)
+                putchar(')');
+            else if (p->tag == TAGN)
+                printf("'%u'", gcoden(p));
+            else if (p->tag == TAGF)
+            {
+                putchar('\'');
+                const char *f = (char *)(p->info.codef) - 1;
+                const uint8_t l = (uint8_t)*f;
+                f -= l;
+                for (size_t k = 1; k <= l; k++, f++)
+                    putchar(toupper(*f));
+                putchar('\'');
+            }
+            else if (p->tag == TAGR)
+                printf("'%%%p'", (void *)p->info.codep);
+            else
+                printf("'%x,%p'", p->tag, (void *)p->info.codep);
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
+            if (pcc == EOF)
+            {
+                if (feof(f) != 0)
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p->tag = TAGF;
+                if (err == FEOF)
+                    p->info.codef = &refalab_feof;
+                else
+                    p->info.codef = &refalab_ferror;
+                rftpl(refal.prevr, p->prev, p->next);
+                return;
+            }
+            p = p->next;
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char fprint_0[] = {Z6 'F', 'P', 'R', 'I', 'N', 'T', (char)6};
+G_L_B uint8_t refalab_fprint = '\122';
+void (*fprint_1)(void) = fprint_;
+
 static void fread_(void)
 {
     do
