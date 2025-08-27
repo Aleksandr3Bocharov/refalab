@@ -632,7 +632,7 @@ char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_ftell = '\122';
 void (*ftell_1)(void) = ftell_;
 
-static void isfeof_(void)
+static void is_feof_(void)
 {
     do
     {
@@ -672,11 +672,11 @@ static void isfeof_(void)
     refal.upshot = 2;
     return;
 }
-char isfeof_0[] = {Z6 'I', 'S', 'F', 'E', 'O', 'F', (char)6};
-G_L_B uint8_t refalab_isfeof = '\122';
-void (*isfeof_1)(void) = isfeof_;
+char is_feof_0[] = {Z7 'I', 'S', '_', 'F', 'E', 'O', 'F', (char)7};
+G_L_B uint8_t refalab_is_feof = '\122';
+void (*is_feof_1)(void) = is_feof_;
 
-static void isferror_(void)
+static void is_ferror_(void)
 {
     do
     {
@@ -716,9 +716,9 @@ static void isferror_(void)
     refal.upshot = 2;
     return;
 }
-char isferror_0[] = {Z0 'I', 'S', 'F', 'E', 'R', 'R', 'O', 'R', (char)8};
-G_L_B uint8_t refalab_isferror = '\122';
-void (*isferror_1)(void) = isferror_;
+char is_ferror_0[] = {Z1 'I', 'S', '_', 'F', 'E', 'R', 'R', 'O', 'R', (char)9};
+G_L_B uint8_t refalab_is_ferror = '\122';
+void (*is_ferror_1)(void) = is_ferror_;
 
 static void remove_file_(void)
 {
