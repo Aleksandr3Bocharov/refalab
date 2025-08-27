@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-14
+// 2025-08-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -631,6 +631,94 @@ static void ftell_(void)
 char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_ftell = '\122';
 void (*ftell_1)(void) = ftell_;
+
+static void isfeof_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdin)
+                f = stdin;
+            else if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (p->next != refal.nexta)
+            break;
+        p->tag = TAGF;
+        if (f == NULL)
+            p->info.codef = &refalab_null;
+        else if (feof(f) != 0)
+            p->info.codef = &refalab_true;
+        else
+            p->info.codef = &refalab_false;
+        rftpl(refal.prevr, p->prev, p->next);
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char isfeof_0[] = {Z6 'I', 'S', 'F', 'E', 'O', 'F', (char)6};
+G_L_B uint8_t refalab_isfeof = '\122';
+void (*isfeof_1)(void) = isfeof_;
+
+static void isferror_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdin)
+                f = stdin;
+            else if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (p->next != refal.nexta)
+            break;
+        p->tag = TAGF;
+        if (f == NULL)
+            p->info.codef = &refalab_null;
+        else if (ferror(f) != 0)
+            p->info.codef = &refalab_true;
+        else
+            p->info.codef = &refalab_false;
+        rftpl(refal.prevr, p->prev, p->next);
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char isferror_0[] = {Z0 'I', 'S', 'F', 'E', 'R', 'R', 'O', 'R', (char)8};
+G_L_B uint8_t refalab_isferror = '\122';
+void (*isferror_1)(void) = isferror_;
 
 static void remove_file_(void)
 {
