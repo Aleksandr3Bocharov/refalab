@@ -381,31 +381,47 @@ static void fprint_(void)
         p = p->next;
         while (p != refal.nexta)
         {
-            const int pcc;
+            int pcc = 0;
+            char s[512];
             if (p->tag == TAGO)
-                putchar(p->info.infoc);
+                pcc = putc(p->info.infoc, f);
             else if (p->tag == TAGLB)
-                putchar('(');
+                pcc = putc('(', f);
             else if (p->tag == TAGRB)
-                putchar(')');
+                pcc = putc(')', f);
             else if (p->tag == TAGN)
-                printf("'%u'", gcoden(p));
+            {
+                sprintf(s, "'%u'", gcoden(p));
+                pcc = fputs(s, f);
+            }
             else if (p->tag == TAGF)
             {
-                putchar('\'');
-                const char *f = (char *)(p->info.codef) - 1;
-                const uint8_t l = (uint8_t)*f;
-                f -= l;
-                for (size_t k = 1; k <= l; k++, f++)
-                    putchar(toupper(*f));
-                putchar('\'');
+                sprintf(s, "'");
+                const char *n = (char *)(p->info.codef) - 1;
+                const uint8_t l = (uint8_t)*n;
+                n -= l;
+                char ch[2];
+                ch[1] = '\0';
+                for (size_t k = 1; k <= l; k++, n++)
+                {
+                    ch[0] = (char)toupper(*n);
+                    strcat(s, ch);
+                }
+                strcat(s, "'");
+                pcc = fputs(s, f);
             }
             else if (p->tag == TAGR)
-                printf("'%%%p'", (void *)p->info.codep);
+            {
+                sprintf(s, "'%%%p'", (void *)p->info.codep);
+                pcc = fputs(s, f);
+            }
             else if ((p->tag & 0001) != TAGO)
                 rfabe("fprint: unknown bracket type");
             else
-                printf("'%x,%p'", p->tag, (void *)p->info.codep);
+            {
+                sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
+                pcc = fputs(s, f);
+            }
             enum
             {
                 OK,
