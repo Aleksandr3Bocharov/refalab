@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-30
+// 2025-08-27
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -362,7 +362,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->prev)
-            rfabe("\nrfpex: list structure violation");
+            rfabe("rfpex: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -388,7 +388,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
-            rfabe("\nrfpex: unknown bracket type");
+            rfabe("rfpex: unknown bracket type");
         else
             printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
     }
@@ -405,7 +405,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->prev)
-            rfabe("\nrfpexs: list structure violation");
+            rfabe("rfpexs: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -429,7 +429,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         else if (pr->tag == TAGR)
             printf("%%%p", (void *)pr->info.codep);
         else if ((pr->tag & 0001) != TAGO)
-            rfabe("\nrfpexs: unknown bracket type");
+            rfabe("rfpexs: unknown bracket type");
         else
             printf("%x,%p", pr->tag, (void *)pr->info.codep);
     }
@@ -447,7 +447,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr->prev != pr1)
-            rfabe("\nrfpexm: list structure violation");
+            rfabe("rfpexm: list structure violation");
         if (pr->tag == TAGO)
         {
             if (!fr)
@@ -492,7 +492,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
             else if ((pr->tag & 0001) != TAGO)
-                rfabe("\nrfpexm: unknown bracket type");
+                rfabe("rfpexm: unknown bracket type");
             else
                 printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
         }

@@ -402,6 +402,8 @@ static void fprint_(void)
             }
             else if (p->tag == TAGR)
                 printf("'%%%p'", (void *)p->info.codep);
+            else if ((p->tag & 0001) != TAGO)
+                rfabe("fprint: unknown bracket type");
             else
                 printf("'%x,%p'", p->tag, (void *)p->info.codep);
             enum
