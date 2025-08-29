@@ -706,7 +706,7 @@ static void fprintm_(void)
                     sprintf(s, "'%%%p'", (void *)p->info.codep);
                 }
                 else if ((p->tag & 0001) != TAGO)
-                    rfabe("fprint: unknown bracket type");
+                    rfabe("fprintm: unknown bracket type");
                 else
                 {
                     sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
