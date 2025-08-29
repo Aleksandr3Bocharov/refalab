@@ -563,6 +563,190 @@ char fprints_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'S', (char)7};
 G_L_B uint8_t refalab_fprints = '\122';
 void (*fprints_1)(void) = fprints_;
 
+static void fprintm_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (f == NULL)
+        {
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
+            return;
+        }
+        p = p->next;
+        bool fr = false;
+
+        while (pr != pn->prev)
+        {
+            const T_LINKCB *pr1 = pr;
+            pr = pr->next;
+            if (pr->prev != pr1)
+                rfabe("rfpexm: list structure violation");
+            if (pr->tag == TAGO)
+            {
+                if (!fr)
+                {
+                    fr = true;
+                    putchar('\'');
+                };
+                putchar(pr->info.infoc);
+            }
+            else
+            {
+                if (fr)
+                {
+                    fr = false;
+                    putchar('\'');
+                };
+                if (pr->tag == TAGK)
+                    printf("< ");
+                else if (pr->tag == TAGD)
+                    putchar('>');
+                else if (pr->tag == TAGLB)
+                    putchar('(');
+                else if (pr->tag == TAGRB)
+                    putchar(')');
+                else if (pr->tag == TAGN)
+                {
+                    printf("%u", gcoden(pr));
+                    if (pr->next->tag == TAGN)
+                        putchar(' ');
+                }
+                else if (pr->tag == TAGF)
+                {
+                    putchar('&');
+                    const char *f = (char *)(pr->info.codef) - 1;
+                    const uint8_t l = (uint8_t)*f;
+                    f -= l;
+                    for (size_t k = 1; k <= l; k++, f++)
+                        putchar(toupper(*f));
+                    if (pr->next->tag == TAGN)
+                        putchar(' ');
+                }
+                else if (pr->tag == TAGR)
+                    printf("/%%%p/", (void *)pr->info.codep);
+                else if ((pr->tag & 0001) != TAGO)
+                    rfabe("rfpexm: unknown bracket type");
+                else
+                    printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
+            }
+        }
+        if (fr)
+            putchar('\'');
+
+        while (p != refal.nexta)
+        {
+            int pcc = 0;
+            char s[512];
+            if (p->tag == TAGO)
+            {
+                if (!fr)
+                {
+                    fr = true;
+                    sprintf(s, "'%c", p->info.infoc);
+                    pcc = fputs(s, f);
+                }
+                else
+                    pcc = putc(p->info.infoc, f);
+            }
+            else
+            {
+                if (fr)
+                {
+                    fr = false;
+                    sprintf(s, "'");
+                }
+                else
+                    s[0] = '\0';
+                if (p->tag == TAGLB)
+                    pcc = putc('(', f);
+                else if (p->tag == TAGRB)
+                    pcc = putc(')', f);
+                else if (p->tag == TAGN)
+                {
+                    sprintf(s, "'%u'", gcoden(p));
+                }
+                else if (p->tag == TAGF)
+                {
+                    sprintf(s, "'");
+                    const char *n = (char *)(p->info.codef) - 1;
+                    const uint8_t l = (uint8_t)*n;
+                    n -= l;
+                    char ch[2];
+                    ch[1] = '\0';
+                    for (size_t k = 1; k <= l; k++, n++)
+                    {
+                        ch[0] = (char)toupper(*n);
+                        strcat(s, ch);
+                    }
+                    strcat(s, "'");
+                }
+                else if (p->tag == TAGR)
+                {
+                    sprintf(s, "'%%%p'", (void *)p->info.codep);
+                }
+                else if ((p->tag & 0001) != TAGO)
+                    rfabe("fprint: unknown bracket type");
+                else
+                {
+                    sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
+                }
+                pcc = fputs(s, f);
+            }
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
+            if (pcc == EOF)
+            {
+                if (feof(f) != 0)
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p->tag = TAGF;
+                if (err == FEOF)
+                    p->info.codef = &refalab_feof;
+                else
+                    p->info.codef = &refalab_ferror;
+                rftpl(refal.prevr, p->prev, p->next);
+                return;
+            }
+            p = p->next;
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char fprintm_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'M', (char)7};
+G_L_B uint8_t refalab_fprintm = '\122';
+void (*fprintm_1)(void) = fprintm_;
+
 static void fread_(void)
 {
     do
