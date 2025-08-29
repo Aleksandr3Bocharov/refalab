@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-27
+// 2025-08-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -455,6 +455,113 @@ static void fprint_(void)
 char fprint_0[] = {Z6 'F', 'P', 'R', 'I', 'N', 'T', (char)6};
 G_L_B uint8_t refalab_fprint = '\122';
 void (*fprint_1)(void) = fprint_;
+
+static void fprints_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (f == NULL)
+        {
+            p->tag = TAGF;
+            p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
+            return;
+        }
+        p = p->next;
+        while (p != refal.nexta)
+        {
+            int pcc = 0;
+            char s[512];
+            if (p->tag == TAGO)
+                pcc = putc(p->info.infoc, f);
+            else if (p->tag == TAGLB)
+                pcc = putc('(', f);
+            else if (p->tag == TAGRB)
+                pcc = putc(')', f);
+            else if (p->tag == TAGN)
+            {
+                sprintf(s, "%u", gcoden(p));
+                pcc = fputs(s, f);
+            }
+            else if (p->tag == TAGF)
+            {
+                s[0] = '\0';
+                const char *n = (char *)(p->info.codef) - 1;
+                const uint8_t l = (uint8_t)*n;
+                n -= l;
+                char ch[2];
+                ch[1] = '\0';
+                for (size_t k = 1; k <= l; k++, n++)
+                {
+                    ch[0] = (char)toupper(*n);
+                    strcat(s, ch);
+                }
+                pcc = fputs(s, f);
+            }
+            else if (p->tag == TAGR)
+            {
+                sprintf(s, "%%%p", (void *)p->info.codep);
+                pcc = fputs(s, f);
+            }
+            else if ((p->tag & 0001) != TAGO)
+                rfabe("fprints: unknown bracket type");
+            else
+            {
+                sprintf(s, "%x,%p", p->tag, (void *)p->info.codep);
+                pcc = fputs(s, f);
+            }
+            enum
+            {
+                OK,
+                FEOF,
+                FERROR
+            } err = OK;
+            if (pcc == EOF)
+            {
+                if (feof(f) != 0)
+                    err = FEOF;
+                else if (ferror(f) != 0)
+                    err = FERROR;
+            }
+            if (err != OK)
+            {
+                p->tag = TAGF;
+                if (err == FEOF)
+                    p->info.codef = &refalab_feof;
+                else
+                    p->info.codef = &refalab_ferror;
+                rftpl(refal.prevr, p->prev, p->next);
+                return;
+            }
+            p = p->next;
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char fprints_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'S', (char)7};
+G_L_B uint8_t refalab_fprints = '\122';
+void (*fprints_1)(void) = fprints_;
 
 static void fread_(void)
 {
