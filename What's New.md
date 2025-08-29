@@ -5,7 +5,8 @@
 
 Внесены изменения в работу первичной функции: card.
 
-Добавлены первичные функции в библиотеку РефалАБ: is_feof, is_ferror, prints, prouts, writes, wrouts.
+Добавлены первичные функции в библиотеку РефалАБ: fprint, 
+is_feof, is_ferror, prints, prouts, writes, wrouts.
 
 Внесены изменения в файл заголовков include\refal.def для разработчиков.
 
