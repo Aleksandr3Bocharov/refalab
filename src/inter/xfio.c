@@ -309,15 +309,12 @@ static void fputs_(void)
             }
             if (err != OK)
             {
-                p = refal.prevr;
-                if (!slins(p, 1))
-                    return;
-                p = p->next;
                 p->tag = TAGF;
                 if (err == FEOF)
                     p->info.codef = &refalab_feof;
                 else
                     p->info.codef = &refalab_ferror;
+                rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
             p = p->next;
@@ -817,15 +814,12 @@ static void fwrite_(void)
             }
             if (err != OK)
             {
-                p = refal.prevr;
-                if (!slins(p, 1))
-                    return;
-                p = p->next;
                 p->tag = TAGF;
                 if (err == FEOF)
                     p->info.codef = &refalab_feof;
                 else
                     p->info.codef = &refalab_ferror;
+                rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
             p = p->next;
