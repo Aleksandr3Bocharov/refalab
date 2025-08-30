@@ -27,6 +27,13 @@ extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
+typedef enum types_eof
+{
+    GET,
+    PUT,
+    READ
+} T_TYPES_EOF;
+
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
@@ -50,6 +57,37 @@ static void get_null(T_LINKCB *p)
     p->info.codef = &refalab_null;
     rftpl(refal.prevr, p->prev, p->next);
     return;
+}
+
+static bool get_eof(int c, const FILE *f, T_LINKCB *p, T_TYPES_EOF type)
+{
+    enum
+    {
+        OK,
+        FEOF,
+        FERROR
+    } err = OK;
+    if (c == EOF)
+    {
+        if (feof(f) != 0)
+            err = FEOF;
+        else if (ferror(f) != 0)
+            err = FERROR;
+    }
+    if (err != OK)
+    {
+        p->tag = TAGF;
+        if (err == FEOF)
+            p->info.codef = &refalab_feof;
+        else
+            p->info.codef = &refalab_ferror;
+        if (type == PUT)
+            rftpl(refal.prevr, p->prev, p->next);
+        else if (type == READ)
+            rfdel(p, refal.nextr);
+        return true;
+    }
+    return false;
 }
 
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
