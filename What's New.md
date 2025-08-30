@@ -3,8 +3,8 @@
 
 Внесены изменения в интерфейсных функциях вывода.
 
-Внесены изменения в работу первичных функций: card, fopen, fclose, fseek, ftell,
-remove_file, rename.
+Внесены изменения в работу первичных функций: card, fopen, fclose, fgets, fputs,
+fread, fwrite, fseek, ftell, remove_file, rename.
 
 Добавлены первичные функции в библиотеку РефалАБ: fprint, fprintm, fprints, 
 is_feof, is_ferror, prints, prouts, writes, wrouts.
