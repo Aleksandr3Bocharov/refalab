@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-29
+// 2025-08-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -29,6 +29,20 @@ extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+
+static void str_error(const char *serr, T_LINKCB *p)
+{
+    if (!slins(p, strlen(serr)))
+        return;
+    for (size_t i = 0; *(serr + i) != '\0'; i++)
+    {
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = *(serr + i);
+    }
+    return;
+}
 
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
@@ -107,21 +121,9 @@ static void fopen_(void)
         f = fopen(namf, s);
         const int err = errno;
         free(namf);
-        if (f == NULL)
-        {
-            char *serr = strerror(err);
-            p = refal.prevr;
-            if (!slins(p, strlen(serr)))
-                return;
-            for (i = 0; *(serr + i) != '\0'; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = *(serr + i);
-            }
-        }
         files[j] = f;
+        if (f == NULL)
+            str_error(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -158,19 +160,7 @@ static void fclose_(void)
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-        {
-            char *serr = strerror(err);
-            p = refal.prevr;
-            if (!slins(p, strlen(serr)))
-                return;
-            for (size_t i = 0; *(serr + i) != '\0'; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = *(serr + i);
-            }
-        }
+            str_error(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -922,19 +912,7 @@ static void fseek_(void)
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-        {
-            char *serr = strerror(err);
-            p = refal.prevr;
-            if (!slins(p, strlen(serr)))
-                return;
-            for (size_t i = 0; *(serr + i) != '\0'; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = *(serr + i);
-            }
-        }
+            str_error(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -971,16 +949,7 @@ static void ftell_(void)
         const int err = errno;
         if (res == -1)
         {
-            char *serr = strerror(err);
-            if (!slins(p, strlen(serr)))
-                return;
-            for (size_t i = 0; *(serr + i) != '\0'; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = *(serr + i);
-            }
+            str_error(strerror(err), refal.prevr);
             return;
         }
         if (!slins(p, 1))
@@ -1123,19 +1092,7 @@ static void remove_file_(void)
     const int err = errno;
     free(namf);
     if (u == -1)
-    {
-        char *serr = strerror(err);
-        p = refal.prevr;
-        if (!slins(p, strlen(serr)))
-            return;
-        for (i = 0; *(serr + i) != '\0'; i++)
-        {
-            p = p->next;
-            p->tag = TAGO;
-            p->info.codep = NULL;
-            p->info.infoc = *(serr + i);
-        }
-    }
+        str_error(strerror(err), refal.prevr);
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -1192,19 +1149,7 @@ static void rename_(void)
     free(namf);
     free(namt);
     if (r == -1)
-    {
-        char *serr = strerror(err);
-        p = refal.prevr;
-        if (!slins(p, strlen(serr)))
-            return;
-        for (i = 0; *(serr + i) != '\0'; i++)
-        {
-            p = p->next;
-            p->tag = TAGO;
-            p->info.codep = NULL;
-            p->info.infoc = *(serr + i);
-        }
-    }
+        str_error(strerror(err), refal.prevr);
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
