@@ -37,6 +37,21 @@ typedef enum types_eof
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
+char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
+G_L_B uint8_t refalab_feof = '\002';
+
+char ferror_0[] = {Z6 'F', 'E', 'R', 'R', 'O', 'R', (char)6};
+G_L_B uint8_t refalab_ferror = '\002';
+
+char stdin_0[] = {Z5 'S', 'T', 'D', 'I', 'N', (char)5};
+G_L_B uint8_t refalab_stdin = '\002';
+
+char stdout_0[] = {Z6 'S', 'T', 'D', 'O', 'U', 'T', (char)6};
+G_L_B uint8_t refalab_stdout = '\002';
+
+char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
+G_L_B uint8_t refalab_stderr = '\002';
+
 static void get_strerror(const char *serr, T_LINKCB *p)
 {
     if (!slins(p, strlen(serr)))
@@ -59,7 +74,7 @@ static void get_null(T_LINKCB *p)
     return;
 }
 
-static bool get_eof(int c, const FILE *f, T_LINKCB *p, T_TYPES_EOF type)
+static bool get_eof(int c, FILE *f, T_LINKCB *p, T_TYPES_EOF type)
 {
     enum
     {
@@ -89,21 +104,6 @@ static bool get_eof(int c, const FILE *f, T_LINKCB *p, T_TYPES_EOF type)
     }
     return false;
 }
-
-char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
-G_L_B uint8_t refalab_feof = '\002';
-
-char ferror_0[] = {Z6 'F', 'E', 'R', 'R', 'O', 'R', (char)6};
-G_L_B uint8_t refalab_ferror = '\002';
-
-char stdin_0[] = {Z5 'S', 'T', 'D', 'I', 'N', (char)5};
-G_L_B uint8_t refalab_stdin = '\002';
-
-char stdout_0[] = {Z6 'S', 'T', 'D', 'O', 'U', 'T', (char)6};
-G_L_B uint8_t refalab_stdout = '\002';
-
-char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
-G_L_B uint8_t refalab_stderr = '\002';
 
 static void fopen_(void)
 {
