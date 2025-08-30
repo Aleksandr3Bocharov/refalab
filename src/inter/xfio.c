@@ -30,7 +30,7 @@ extern uint8_t refalab_begin, refalab_end, refalab_cur;
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
-static void str_error(const char *serr, T_LINKCB *p)
+static void get_strerror(const char *serr, T_LINKCB *p)
 {
     if (!slins(p, strlen(serr)))
         return;
@@ -41,6 +41,14 @@ static void str_error(const char *serr, T_LINKCB *p)
         p->info.codep = NULL;
         p->info.infoc = *(serr + i);
     }
+    return;
+}
+
+static void get_null(T_LINKCB *p)
+{
+    p->tag = TAGF;
+    p->info.codef = &refalab_null;
+    rftpl(refal.prevr, p->prev, p->next);
     return;
 }
 
@@ -123,7 +131,7 @@ static void fopen_(void)
         free(namf);
         files[j] = f;
         if (f == NULL)
-            str_error(strerror(err), refal.prevr);
+            get_strerror(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -149,15 +157,13 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-            str_error(strerror(err), refal.prevr);
+            get_strerror(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -191,9 +197,7 @@ static void fgets_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         p = refal.prevr;
@@ -277,9 +281,7 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         while (p != refal.nexta)
@@ -354,9 +356,7 @@ static void fprint_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         p = p->next;
@@ -462,9 +462,7 @@ static void fprints_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         p = p->next;
@@ -569,9 +567,7 @@ static void fprintm_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         p = p->next;
@@ -723,9 +719,7 @@ static void fread_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         p = refal.prevr;
@@ -797,9 +791,7 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         while (p != refal.nexta)
@@ -886,15 +878,13 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-            str_error(strerror(err), refal.prevr);
+            get_strerror(strerror(err), refal.prevr);
         return;
     } while (false);
     refal.upshot = 2;
@@ -919,16 +909,14 @@ static void ftell_(void)
         f = files[j];
         if (f == NULL)
         {
-            p->tag = TAGF;
-            p->info.codef = &refalab_null;
-            rftpl(refal.prevr, p->prev, p->next);
+            get_null(p);
             return;
         }
         long int res = ftell(f);
         const int err = errno;
         if (res == -1)
         {
-            str_error(strerror(err), refal.prevr);
+            get_strerror(strerror(err), refal.prevr);
             return;
         }
         p = refal.prevr;
@@ -1072,7 +1060,7 @@ static void remove_file_(void)
     const int err = errno;
     free(namf);
     if (u == -1)
-        str_error(strerror(err), refal.prevr);
+        get_strerror(strerror(err), refal.prevr);
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -1129,7 +1117,7 @@ static void rename_(void)
     free(namf);
     free(namt);
     if (r == -1)
-        str_error(strerror(err), refal.prevr);
+        get_strerror(strerror(err), refal.prevr);
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
