@@ -149,12 +149,9 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            p = refal.prevr;
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
         const int cl = fclose(f);
@@ -192,16 +189,14 @@ static void fgets_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        p = refal.prevr;
         if (f == NULL)
         {
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
+        p = refal.prevr;
         int c = getc(f);
         while (c != '\n')
         {
@@ -267,8 +262,7 @@ static void fputs_(void)
         }
         else
             break;
-        p = p->next;
-        const T_LINKCB *q = p;
+        const T_LINKCB *q = p->next;
         bool neot = false;
         while (q != refal.nexta)
         {
@@ -283,12 +277,9 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            p = refal.prevr;
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
         while (p != refal.nexta)
@@ -730,16 +721,14 @@ static void fread_(void)
         uint32_t count = gcoden(p);
         if (p->next != refal.nexta)
             break;
-        p = refal.prevr;
         if (f == NULL)
         {
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
+        p = refal.prevr;
         if (!slins(p, count))
             return;
         for (; count > 0; count--)
@@ -793,8 +782,7 @@ static void fwrite_(void)
         if (j >= fmax)
             break;
         f = files[j];
-        p = p->next;
-        const T_LINKCB *q = p;
+        const T_LINKCB *q = p->next;
         bool neot = false;
         while (q != refal.nexta)
         {
@@ -809,12 +797,9 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            p = refal.prevr;
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
         while (p != refal.nexta)
@@ -901,12 +886,9 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            p = refal.prevr;
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
         const int res = fseek(f, offset, origin);
@@ -935,14 +917,11 @@ static void ftell_(void)
         if (p->next != refal.nexta)
             break;
         f = files[j];
-        p = refal.prevr;
         if (f == NULL)
         {
-            if (!slins(p, 1))
-                return;
-            p = p->next;
             p->tag = TAGF;
             p->info.codef = &refalab_null;
+            rftpl(refal.prevr, p->prev, p->next);
             return;
         }
         long int res = ftell(f);
@@ -952,6 +931,7 @@ static void ftell_(void)
             str_error(strerror(err), refal.prevr);
             return;
         }
+        p = refal.prevr;
         if (!slins(p, 1))
             return;
         p = p->next;
