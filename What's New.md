@@ -13,7 +13,7 @@ is_feof, is_ferror, prints, prouts, writes, wrouts.
 
 Внесены изменения в файл заголовков include\refal.def для разработчиков.
 
-Добавлены новые интерфейсные функции: rfgbool, rfgeof, rfgnull, rfgstr, rfpexs.
+Добавлены новые интерфейсные функции: rfpexs, rfrbool, rfreof, rfrnull, rfrstr.
 
 
 
