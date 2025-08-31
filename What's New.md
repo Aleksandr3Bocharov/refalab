@@ -1,10 +1,12 @@
 Что нового?
 --------------
 
+Произведены оптимизации в первичных функциях: fopen, fclose, fgets, fputs,
+fread, fwrite, fseek, ftell, remove_file, rename, exist_file, exist_dir.
+
 Внесены изменения в интерфейсных функциях вывода.
 
-Внесены изменения в работу первичных функций: card, fopen, fclose, fgets, fputs,
-fread, fwrite, fseek, ftell, remove_file, rename, exist_file, exist_dir.
+Внесены изменения в работу первичной функции: card.
 
 Добавлены первичные функции в библиотеку РефалАБ: fprint, fprintm, fprints, 
 is_feof, is_ferror, prints, prouts, writes, wrouts.
