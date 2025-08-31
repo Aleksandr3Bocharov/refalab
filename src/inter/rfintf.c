@@ -742,7 +742,7 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     return y;
 }
 
-void rfgstr(const char *str)
+void rfrstr(const char *str)
 {
     T_LINKCB *p = refal.prevr;
     if (!slins(p, strlen(str)))
@@ -757,7 +757,7 @@ void rfgstr(const char *str)
     return;
 }
 
-void rfgnull(T_LINKCB *p)
+void rfrnull(T_LINKCB *p)
 {
     p->tag = TAGF;
     p->info.codef = &refalab_null;
@@ -765,7 +765,7 @@ void rfgnull(T_LINKCB *p)
     return;
 }
 
-void rfgbool(bool b, T_LINKCB *p)
+void rfrbool(bool b, T_LINKCB *p)
 {
     p->tag = TAGF;
     if (b)
@@ -775,7 +775,7 @@ void rfgbool(bool b, T_LINKCB *p)
     rftpl(refal.prevr, p->prev, p->next);
 }
 
-bool rfgeof(int c, FILE *f, T_LINKCB *p)
+bool rfreof(int c, FILE *f, T_LINKCB *p)
 {
     enum
     {

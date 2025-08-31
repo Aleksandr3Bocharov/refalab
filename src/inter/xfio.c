@@ -107,7 +107,7 @@ static void fopen_(void)
         free(namf);
         files[j] = f;
         if (f == NULL)
-            rfgstr(strerror(err));
+            rfrstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -133,13 +133,13 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-            rfgstr(strerror(err));
+            rfrstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -173,7 +173,7 @@ static void fgets_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         p = refal.prevr;
@@ -184,7 +184,7 @@ static void fgets_(void)
                 return;
             p = p->next;
             p->info.codep = NULL;
-            if (rfgeof(c, f, p))
+            if (rfreof(c, f, p))
                 return;
             p->tag = TAGO;
             p->info.infoc = (char)c;
@@ -237,7 +237,7 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         while (p != refal.nexta)
@@ -250,7 +250,7 @@ static void fputs_(void)
             else
                 cc = p->info.infoc;
             const int pcc = putc(cc, f);
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
             {
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
@@ -291,7 +291,7 @@ static void fprint_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         p = p->next;
@@ -338,7 +338,7 @@ static void fprint_(void)
                 sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
             {
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
@@ -379,7 +379,7 @@ static void fprints_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         p = p->next;
@@ -425,7 +425,7 @@ static void fprints_(void)
                 sprintf(s, "%x,%p", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
             {
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
@@ -466,7 +466,7 @@ static void fprintm_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         p = p->next;
@@ -539,7 +539,7 @@ static void fprintm_(void)
                 }
                 pcc = fputs(s, f);
             }
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
             {
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
@@ -549,7 +549,7 @@ static void fprintm_(void)
         if (fr)
         {
             const int pcc = putc('\'', f);
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
                 rftpl(refal.prevr, p->prev, p->next);
         }
         return;
@@ -580,7 +580,7 @@ static void fread_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         p = refal.prevr;
@@ -591,7 +591,7 @@ static void fread_(void)
             p = p->next;
             p->info.codep = NULL;
             const int c = getc(f);
-            if (rfgeof(c, f, p))
+            if (rfreof(c, f, p))
             {
                 rfdel(p, refal.nextr);
                 return;
@@ -634,7 +634,7 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         while (p != refal.nexta)
@@ -645,7 +645,7 @@ static void fwrite_(void)
             else
                 cc = (uint8_t)gcoden(p);
             const int pcc = putc(cc, f);
-            if (rfgeof(pcc, f, p))
+            if (rfreof(pcc, f, p))
             {
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
@@ -700,13 +700,13 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-            rfgstr(strerror(err));
+            rfrstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -731,14 +731,14 @@ static void ftell_(void)
         f = files[j];
         if (f == NULL)
         {
-            rfgnull(p);
+            rfrnull(p);
             return;
         }
         long int res = ftell(f);
         const int err = errno;
         if (res == -1)
         {
-            rfgstr(strerror(err));
+            rfrstr(strerror(err));
             return;
         }
         p = refal.prevr;
@@ -795,13 +795,13 @@ static void is_feof_(void)
         if (p->next != refal.nexta)
             break;
         if (f == NULL)
-            rfgnull(p);
+            rfrnull(p);
         else
         {
             bool b = false;
             if (feof(f) != 0)
                 b = true;
-            rfgbool(b, p);
+            rfrbool(b, p);
         }
         return;
     } while (false);
@@ -840,13 +840,13 @@ static void is_ferror_(void)
         if (p->next != refal.nexta)
             break;
         if (f == NULL)
-            rfgnull(p);
+            rfrnull(p);
         else
         {
             bool b = false;
             if (ferror(f) != 0)
                 b = true;
-            rfgbool(b, p);
+            rfrbool(b, p);
         }
         return;
     } while (false);
@@ -884,7 +884,7 @@ static void remove_file_(void)
     const int err = errno;
     free(namf);
     if (u == -1)
-        rfgstr(strerror(err));
+        rfrstr(strerror(err));
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -941,7 +941,7 @@ static void rename_(void)
     free(namf);
     free(namt);
     if (r == -1)
-        rfgstr(strerror(err));
+        rfrstr(strerror(err));
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
@@ -977,7 +977,7 @@ static void exist_file_(void)
         if (S_ISREG(st_buf.st_mode))
             b = true;
     free(namf);
-    rfgbool(b, refal.preva);
+    rfrbool(b, refal.preva);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -1013,7 +1013,7 @@ static void exist_dir_(void)
         if (S_ISDIR(st_buf.st_mode))
             b = true;
     free(namd);
-    rfgbool(b, refal.preva);
+    rfrbool(b, refal.preva);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
