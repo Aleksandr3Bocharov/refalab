@@ -68,6 +68,16 @@ static void rfgnull(T_LINKCB *p)
     return;
 }
 
+static void rfgbool(bool b, T_LINKCB *p)
+{
+    p->tag = TAGF;
+    if (b)
+        p->info.codef = &refalab_true;
+    else
+        p->info.codef = &refalab_false;
+    rftpl(refal.prevr, p->prev, p->next);
+}
+
 static bool rfgeof(int c, FILE *f, T_LINKCB *p)
 {
     enum
@@ -846,14 +856,15 @@ static void is_feof_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        p->tag = TAGF;
         if (f == NULL)
-            p->info.codef = &refalab_null;
-        else if (feof(f) != 0)
-            p->info.codef = &refalab_true;
+            rfgnull(p);
         else
-            p->info.codef = &refalab_false;
-        rftpl(refal.prevr, p->prev, p->next);
+        {
+            bool b = false;
+            if (feof(f) != 0)
+                b = true;
+            rfgbool(b, p);
+        }
         return;
     } while (false);
     refal.upshot = 2;
@@ -890,14 +901,15 @@ static void is_ferror_(void)
             break;
         if (p->next != refal.nexta)
             break;
-        p->tag = TAGF;
         if (f == NULL)
-            p->info.codef = &refalab_null;
-        else if (ferror(f) != 0)
-            p->info.codef = &refalab_true;
+            rfgnull(p);
         else
-            p->info.codef = &refalab_false;
-        rftpl(refal.prevr, p->prev, p->next);
+        {
+            bool b = false;
+            if (ferror(f) != 0)
+                b = true;
+            rfgbool(b, p);
+        }
         return;
     } while (false);
     refal.upshot = 2;
@@ -1021,20 +1033,13 @@ static void exist_file_(void)
         p = p->next;
     }
     *(namf + i) = '\0';
-    p = refal.prevr;
-    if (!slins(p, 1))
-    {
-        free(namf);
-        return;
-    }
-    p = p->next;
-    p->tag = TAGF;
-    p->info.codef = &refalab_false;
+    bool b = false;
     struct stat st_buf;
     if (stat(namf, &st_buf) == 0)
         if (S_ISREG(st_buf.st_mode))
-            p->info.codef = &refalab_true;
+            b = true;
     free(namf);
+    rfgbool(b, refal.preva);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -1064,20 +1069,13 @@ static void exist_dir_(void)
         p = p->next;
     }
     *(namd + i) = '\0';
-    p = refal.prevr;
-    if (!slins(p, 1))
-    {
-        free(namd);
-        return;
-    }
-    p = p->next;
-    p->tag = TAGF;
-    p->info.codef = &refalab_false;
+    bool b = false;
     struct stat st_buf;
     if (stat(namd, &st_buf) == 0)
         if (S_ISDIR(st_buf.st_mode))
-            p->info.codef = &refalab_true;
+            b = true;
     free(namd);
+    rfgbool(b, refal.preva);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
