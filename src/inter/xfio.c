@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-30
+// 2025-08-31
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -27,13 +27,6 @@ extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
-typedef enum types_eof
-{
-    GET,
-    PUT,
-    READ
-} T_TYPES_EOF;
-
 static FILE *f;
 static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
@@ -52,21 +45,22 @@ G_L_B uint8_t refalab_stdout = '\002';
 char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
 G_L_B uint8_t refalab_stderr = '\002';
 
-static void get_strerror(const char *serr, T_LINKCB *p)
+static void rfgstr(const char *str)
 {
-    if (!slins(p, strlen(serr)))
+    T_LINKCB *p = refal.prevr;
+    if (!slins(p, strlen(str)))
         return;
-    for (size_t i = 0; *(serr + i) != '\0'; i++)
+    for (size_t i = 0; *(str + i) != '\0'; i++)
     {
         p = p->next;
         p->tag = TAGO;
         p->info.codep = NULL;
-        p->info.infoc = *(serr + i);
+        p->info.infoc = *(str + i);
     }
     return;
 }
 
-static void get_null(T_LINKCB *p)
+static void rfgnull(T_LINKCB *p)
 {
     p->tag = TAGF;
     p->info.codef = &refalab_null;
@@ -74,7 +68,7 @@ static void get_null(T_LINKCB *p)
     return;
 }
 
-static bool get_eof(int c, FILE *f, T_LINKCB *p, T_TYPES_EOF type)
+static bool rfgeof(int c, FILE *f, T_LINKCB *p)
 {
     enum
     {
@@ -96,10 +90,6 @@ static bool get_eof(int c, FILE *f, T_LINKCB *p, T_TYPES_EOF type)
             p->info.codef = &refalab_feof;
         else
             p->info.codef = &refalab_ferror;
-        if (type == PUT)
-            rftpl(refal.prevr, p->prev, p->next);
-        else if (type == READ)
-            rfdel(p, refal.nextr);
         return true;
     }
     return false;
@@ -169,7 +159,7 @@ static void fopen_(void)
         free(namf);
         files[j] = f;
         if (f == NULL)
-            get_strerror(strerror(err), refal.prevr);
+            rfgstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -195,13 +185,13 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-            get_strerror(strerror(err), refal.prevr);
+            rfgstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -235,7 +225,7 @@ static void fgets_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         p = refal.prevr;
@@ -319,7 +309,7 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         while (p != refal.nexta)
@@ -391,7 +381,7 @@ static void fprint_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         p = p->next;
@@ -497,7 +487,7 @@ static void fprints_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         p = p->next;
@@ -602,7 +592,7 @@ static void fprintm_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         p = p->next;
@@ -754,7 +744,7 @@ static void fread_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         p = refal.prevr;
@@ -826,7 +816,7 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         while (p != refal.nexta)
@@ -910,13 +900,13 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-            get_strerror(strerror(err), refal.prevr);
+            rfgstr(strerror(err));
         return;
     } while (false);
     refal.upshot = 2;
@@ -941,14 +931,14 @@ static void ftell_(void)
         f = files[j];
         if (f == NULL)
         {
-            get_null(p);
+            rfgnull(p);
             return;
         }
         long int res = ftell(f);
         const int err = errno;
         if (res == -1)
         {
-            get_strerror(strerror(err), refal.prevr);
+            rfgstr(strerror(err));
             return;
         }
         p = refal.prevr;
@@ -1092,7 +1082,7 @@ static void remove_file_(void)
     const int err = errno;
     free(namf);
     if (u == -1)
-        get_strerror(strerror(err), refal.prevr);
+        rfgstr(strerror(err));
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -1149,7 +1139,7 @@ static void rename_(void)
     free(namf);
     free(namt);
     if (r == -1)
-        get_strerror(strerror(err), refal.prevr);
+        rfgstr(strerror(err));
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
