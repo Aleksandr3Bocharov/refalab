@@ -112,14 +112,14 @@ extern void rfabe(const char *amsg);
 extern void rfcanc(const T_ST *ast);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
-extern void rfgbool(bool b, T_LINKCB *p);
-extern bool rfgeof(int c, FILE *f, T_LINKCB *p);
-extern void rfgnull(T_LINKCB *p);
-extern void rfgstr(const char *str);
 extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
+extern void rfrbool(bool b, T_LINKCB *p);
+extern bool rfreof(int c, FILE *f, T_LINKCB *p);
+extern void rfrnull(T_LINKCB *p);
+extern void rfrstr(const char *str);
 extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
