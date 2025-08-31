@@ -236,28 +236,8 @@ static void fgets_(void)
                 return;
             p = p->next;
             p->info.codep = NULL;
-            enum
-            {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (c == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
+            if (rfgeof(c, f, p))
                 return;
-            }
             p->tag = TAGO;
             p->info.infoc = (char)c;
             c = getc(f);
@@ -322,26 +302,8 @@ static void fputs_(void)
             else
                 cc = p->info.infoc;
             const int pcc = putc(cc, f);
-            enum
+            if (rfgeof(pcc, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
@@ -428,26 +390,8 @@ static void fprint_(void)
                 sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            enum
+            if (rfgeof(pcc, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
@@ -533,26 +477,8 @@ static void fprints_(void)
                 sprintf(s, "%x,%p", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            enum
+            if (rfgeof(pcc, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
@@ -665,26 +591,8 @@ static void fprintm_(void)
                 }
                 pcc = fputs(s, f);
             }
-            enum
+            if (rfgeof(pcc, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
@@ -693,28 +601,8 @@ static void fprintm_(void)
         if (fr)
         {
             const int pcc = putc('\'', f);
-            enum
-            {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p = refal.preva;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
+            if (rfgeof(pcc, f, p))
                 rftpl(refal.prevr, p->prev, p->next);
-            }
         }
         return;
     } while (false);
@@ -755,26 +643,8 @@ static void fread_(void)
             p = p->next;
             p->info.codep = NULL;
             const int c = getc(f);
-            enum
+            if (rfgeof(c, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (c == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rfdel(p, refal.nextr);
                 return;
             }
@@ -827,26 +697,8 @@ static void fwrite_(void)
             else
                 cc = (uint8_t)gcoden(p);
             const int pcc = putc(cc, f);
-            enum
+            if (rfgeof(pcc, f, p))
             {
-                OK,
-                FEOF,
-                FERROR
-            } err = OK;
-            if (pcc == EOF)
-            {
-                if (feof(f) != 0)
-                    err = FEOF;
-                else if (ferror(f) != 0)
-                    err = FERROR;
-            }
-            if (err != OK)
-            {
-                p->tag = TAGF;
-                if (err == FEOF)
-                    p->info.codef = &refalab_feof;
-                else
-                    p->info.codef = &refalab_ferror;
                 rftpl(refal.prevr, p->prev, p->next);
                 return;
             }
