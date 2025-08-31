@@ -23,8 +23,6 @@
 
 #define fmax 10
 
-extern uint8_t refalab_true, refalab_false;
-extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
 static FILE *f;
@@ -44,66 +42,6 @@ G_L_B uint8_t refalab_stdout = '\002';
 
 char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
 G_L_B uint8_t refalab_stderr = '\002';
-
-static void rfgstr(const char *str)
-{
-    T_LINKCB *p = refal.prevr;
-    if (!slins(p, strlen(str)))
-        return;
-    for (size_t i = 0; *(str + i) != '\0'; i++)
-    {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = *(str + i);
-    }
-    return;
-}
-
-static void rfgnull(T_LINKCB *p)
-{
-    p->tag = TAGF;
-    p->info.codef = &refalab_null;
-    rftpl(refal.prevr, p->prev, p->next);
-    return;
-}
-
-static void rfgbool(bool b, T_LINKCB *p)
-{
-    p->tag = TAGF;
-    if (b)
-        p->info.codef = &refalab_true;
-    else
-        p->info.codef = &refalab_false;
-    rftpl(refal.prevr, p->prev, p->next);
-}
-
-static bool rfgeof(int c, FILE *f, T_LINKCB *p)
-{
-    enum
-    {
-        OK,
-        FEOF,
-        FERROR
-    } err = OK;
-    if (c == EOF)
-    {
-        if (feof(f) != 0)
-            err = FEOF;
-        else if (ferror(f) != 0)
-            err = FERROR;
-    }
-    if (err != OK)
-    {
-        p->tag = TAGF;
-        if (err == FEOF)
-            p->info.codef = &refalab_feof;
-        else
-            p->info.codef = &refalab_ferror;
-        return true;
-    }
-    return false;
-}
 
 static void fopen_(void)
 {

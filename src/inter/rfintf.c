@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-27
+// 2025-08-31
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -11,12 +11,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
 #include "refalab.h"
 #include "rfintf.h"
 #include "rfrun.h"
+
+extern uint8_t refalab_true, refalab_false;
+extern uint8_t refalab_null;
+extern uint8_t refalab_feof, refalab_ferror;
 
 T_REFAL refal;
 
@@ -735,6 +740,66 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
         y = y->next;
     }
     return y;
+}
+
+void rfgstr(const char *str)
+{
+    T_LINKCB *p = refal.prevr;
+    if (!slins(p, strlen(str)))
+        return;
+    for (size_t i = 0; *(str + i) != '\0'; i++)
+    {
+        p = p->next;
+        p->tag = TAGO;
+        p->info.codep = NULL;
+        p->info.infoc = *(str + i);
+    }
+    return;
+}
+
+void rfgnull(T_LINKCB *p)
+{
+    p->tag = TAGF;
+    p->info.codef = &refalab_null;
+    rftpl(refal.prevr, p->prev, p->next);
+    return;
+}
+
+void rfgbool(bool b, T_LINKCB *p)
+{
+    p->tag = TAGF;
+    if (b)
+        p->info.codef = &refalab_true;
+    else
+        p->info.codef = &refalab_false;
+    rftpl(refal.prevr, p->prev, p->next);
+}
+
+bool rfgeof(int c, FILE *f, T_LINKCB *p)
+{
+    enum
+    {
+        OK,
+        FEOF,
+        FERROR
+    } err = OK;
+    if (c == EOF)
+    {
+        if (feof(f) != 0)
+            err = FEOF;
+        else if (ferror(f) != 0)
+            err = FERROR;
+    }
+    if (err != OK)
+    {
+        p->tag = TAGF;
+        if (err == FEOF)
+            p->info.codef = &refalab_feof;
+        else
+            p->info.codef = &refalab_ferror;
+        return true;
+    }
+    return false;
 }
 
 //----------- end of file  RFINTF.C ------------

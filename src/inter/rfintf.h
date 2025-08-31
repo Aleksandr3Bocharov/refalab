@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-30
+// 2025-08-31
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.H ------------------
@@ -11,6 +11,7 @@
 #ifndef RFINTF_H
 #define RFINTF_H
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -24,6 +25,10 @@ extern void rfabe(const char *amsg);
 extern void rfcanc(const T_ST *ast);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
+extern void rfgbool(bool b, T_LINKCB *p);
+extern bool rfgeof(int c, FILE *f, T_LINKCB *p);
+extern void rfgnull(T_LINKCB *p);
+extern void rfgstr(const char *str);
 extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
