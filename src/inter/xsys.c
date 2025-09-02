@@ -5,7 +5,7 @@
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
-//                 MO: arg, system, exit, get_env, 
+//                 MO: arg, system, exit, get_env,
 //                     change_dir, get_working_dir
 //--------------------------------------------------
 
@@ -177,8 +177,9 @@ static void get_env_(void)
     const char *env_value = getenv(env_name);
     free(env_name);
     if (env_value == NULL)
-        return;
-    rfrstr(env_value);
+        rfrnull(refal.preva);
+    else
+        rfrstr(env_value);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
