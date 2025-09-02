@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-20
+// 2025-09-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XTIME.C ------------
@@ -30,16 +30,7 @@ static void time_(void)
     const time_t tim = time(NULL);
     char s[70];
     strftime(s, sizeof(s), "%c", localtime(&tim));
-    T_LINKCB *p = refal.prevr;
-    if (!slins(p, strlen(s)))
-        return;
-    for (size_t i = 0; s[i] != '\0'; i++)
-    {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = s[i];
-    }
+    rfrstr(s);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -74,16 +65,7 @@ static void tm_(void)
             im %= 60;
             char s[30];
             sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-            p = refal.prevr;
-            if (!slins(p, strlen(s)))
-                return;
-            for (size_t i = 0; s[i] != '\0'; i++)
-            {
-                p = p->next;
-                p->tag = TAGO;
-                p->info.codep = NULL;
-                p->info.infoc = s[i];
-            }
+            rfrstr(s);
             return;
         default:;
         }
