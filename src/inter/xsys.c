@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-14
+// 2025-09-02
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -39,17 +39,7 @@ static void arg_(void)
     const size_t argn = gcoden(p);
     if (argn >= gargc)
         return;
-    p = refal.prevr;
-    const char *argvn = gargv[argn];
-    if (!slins(p, strlen(argvn)))
-        return;
-    for (size_t i = 0; argvn[i] != '\0'; i++)
-    {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = argvn[i];
-    }
+    rfrstr(gargv[argn]);
     return;
 }
 char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
@@ -188,16 +178,7 @@ static void get_env_(void)
     free(env_name);
     if (env_value == NULL)
         return;
-    p = refal.prevr;
-    if (!slins(p, strlen(env_value)))
-        return;
-    for (i = 0; *(env_value + i) != '\0'; i++)
-    {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = *(env_value + i);
-    }
+    rfrstr(env_value);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
@@ -231,19 +212,7 @@ static void change_dir_(void)
     const int err = errno;
     free(namd);
     if (ch == -1)
-    {
-        char *serr = strerror(err);
-        p = refal.prevr;
-        if (!slins(p, strlen(serr)))
-            return;
-        for (i = 0; *(serr + i) != '\0'; i++)
-        {
-            p = p->next;
-            p->tag = TAGO;
-            p->info.codep = NULL;
-            p->info.infoc = *(serr + i);
-        }
-    }
+        rfrstr(strerror(err));
     return;
 }
 char change_dir_0[] = {Z2 'C', 'H', 'A', 'N', 'G', 'E', '_', 'D', 'I', 'R', (char)10};
@@ -260,16 +229,7 @@ static void get_current_dir_(void)
     char *cwd = getcwd(NULL, 0);
     if (cwd == NULL)
         return;
-    T_LINKCB *p = refal.prevr;
-    if (!slins(p, strlen(cwd)))
-        return;
-    for (size_t i = 0; *(cwd + i) != '\0'; i++)
-    {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = *(cwd + i);
-    }
+    rfrstr(cwd);
     free(cwd);
     return;
 }
