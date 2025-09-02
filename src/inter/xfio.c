@@ -741,23 +741,19 @@ static void ftell_(void)
             rfrstr(strerror(err));
             return;
         }
-        p = refal.prevr;
-        if (!slins(p, 1))
-            return;
-        p = p->next;
+        p = refal.preva;
         p->tag = TAGN;
         p->info.codep = NULL;
         if (res > MAX_NUMBER)
         {
             pcoden(p, (uint32_t)res >> 24);
-            if (!slins(p, 1))
-                return;
             p = p->next;
             p->tag = TAGN;
             p->info.codep = NULL;
             res &= MAX_NUMBER;
         }
         pcoden(p, (uint32_t)res);
+        rftpl(refal.prevr, refal.preva->prev, p->next);
         return;
     } while (false);
     refal.upshot = 2;
