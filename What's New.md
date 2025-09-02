@@ -1,6 +1,10 @@
 Что нового?
 --------------
 
+**Версия 0.8.1**
+
+**05-09-2025**
+
 Произведены оптимизации в первичных функциях: fopen, fclose, fgets, fputs,
 fread, fwrite, fseek, ftell, remove_file, rename, exist_file, exist_dir,
 time, tm, arg, change_dir, get_current_dir.
