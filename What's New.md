@@ -2,7 +2,8 @@
 --------------
 
 Произведены оптимизации в первичных функциях: fopen, fclose, fgets, fputs,
-fread, fwrite, fseek, ftell, remove_file, rename, exist_file, exist_dir.
+fread, fwrite, fseek, ftell, remove_file, rename, exist_file, exist_dir,
+time, tm.
 
 Внесены изменения в интерфейсных функциях вывода.
 
