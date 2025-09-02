@@ -773,6 +773,7 @@ void rfrbool(bool b, T_LINKCB *p)
     else
         p->info.codef = &refalab_false;
     rftpl(refal.prevr, p->prev, p->next);
+    return;
 }
 
 bool rfreof(int c, FILE *f, T_LINKCB *p)
