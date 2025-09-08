@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-01
+// 2025-09-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -209,7 +209,7 @@ static void ymn(uint32_t *a, uint32_t *b)
 }
 
 static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
-{                                                  //  X - ukaz. na konec
+{                                                   //  X - ukaz. na konec
     uint32_t peren = 0;
     const size_t ip = 24 - j;
     const uint32_t m = MAX_NUMBER >> j; // maska
@@ -232,7 +232,7 @@ static void oper(uint32_t o, uint32_t prn)
         return;
     }
     uint32_t a, b;
-    int32_t j;
+    int64_t j;
     uint32_t peren;
     bool rez0 = false;
     bool odnc = false;
@@ -270,18 +270,19 @@ static void oper(uint32_t o, uint32_t prn)
                 {
                     if (y != Yn->prev)
                     {
-                        pcoden(x, gcoden(x) + gcoden(y) + peren);
+                        j = gcoden(x) + gcoden(y) + peren;
                         y = y->prev;
                     }
                     else
-                        pcoden(x, gcoden(x) + peren);
-                    if (gcoden(x) >= MAX_NUMBER + 1)
+                        j = gcoden(x) + peren;
+                    if (j >= MAX_NUMBER + 1)
                     {
-                        pcoden(x, gcoden(x) - MAX_NUMBER - 1);
+                        j -= MAX_NUMBER + 1;
                         peren = 1;
                     }
                     else
                         peren = 0;
+                    pcoden(x, (uint32_t)j);
                 } // for
             }
             else
@@ -299,14 +300,14 @@ static void oper(uint32_t o, uint32_t prn)
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
-                    j = (int32_t)gcoden(x);
+                    j = gcoden(x);
                     if (y != Yn->prev)
                     {
-                        j -= (int32_t)(gcoden(y) + peren);
+                        j -= gcoden(y) + peren;
                         y = y->prev;
                     }
                     else
-                        j -= (int32_t)peren;
+                        j -= peren;
                     if (j < 0)
                     {
                         j += MAX_NUMBER + 1;
