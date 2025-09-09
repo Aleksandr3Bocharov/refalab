@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-28
+// 2025-09-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -43,7 +43,7 @@
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
-#define MAX_NUMBER 0xFFFFFF
+#define MAX_NUMBER 0xFFFFFFFFLL
 
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
