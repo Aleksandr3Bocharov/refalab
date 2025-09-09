@@ -270,11 +270,11 @@ static void oper(uint32_t o, uint32_t prn)
                 {
                     if (y != Yn->prev)
                     {
-                        j = gcoden(x) + gcoden(y) + peren;
+                        j = (int64_t)gcoden(x) + gcoden(y) + peren;
                         y = y->prev;
                     }
                     else
-                        j = gcoden(x) + peren;
+                        j = (int64_t)gcoden(x) + peren;
                     if (j >= MAX_NUMBER + 1)
                     {
                         j -= MAX_NUMBER + 1;
@@ -303,7 +303,7 @@ static void oper(uint32_t o, uint32_t prn)
                     j = gcoden(x);
                     if (y != Yn->prev)
                     {
-                        j -= gcoden(y) + peren;
+                        j -= (int64_t)gcoden(y) + peren;
                         y = y->prev;
                     }
                     else
