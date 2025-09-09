@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-05
+// 2025-09-09
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -1624,7 +1624,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            uint32_t k = (uint32_t)(c[m] - '0');
+            int64_t k = c[m] - '0';
             bool csmbend = false;
             while (true)
             {
@@ -1633,11 +1633,11 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
-                    code->info.coden = k;
+                    code->info.coden = (uint32_t)k;
                     csmbend = true;
                     break;
                 }
-                const uint32_t l = (uint32_t)(c[m] - '0');
+                const int64_t l = c[m] - '0';
                 k = k * 10 + l;
                 if (k <= MAX_NUMBER)
                     continue;
@@ -1653,7 +1653,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
                 break;
             }
             char osh111[64];
-            sprintf(osh111, "111 symbol-number > %d", MAX_NUMBER);
+            sprintf(osh111, "111 symbol-number > %lld", MAX_NUMBER);
             pchosh(osh111);
             break;
         }
