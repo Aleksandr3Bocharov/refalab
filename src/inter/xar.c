@@ -21,7 +21,7 @@
 #define Omul 3
 #define Odr 5
 
-#define HMAX 4096
+#define HMAX 65536
 #define SMAX 24
 
 static void oper(uint32_t o, uint32_t prn);
@@ -355,8 +355,8 @@ static void oper(uint32_t o, uint32_t prn)
             if (d != 0)
             { // umn. na 1 cifru
                 peren = 0;
-                const uint32_t b11 = d >> 12;
-                const uint32_t b22 = d & 0xFFF;
+                const uint32_t b11 = d >> 16;
+                const uint32_t b22 = d & 0xFFFF;
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
                 {
                     a = gcoden(x);
@@ -364,25 +364,25 @@ static void oper(uint32_t o, uint32_t prn)
                         b = 0;
                     else
                     {
-                        const uint32_t a11 = a >> 12;
-                        const uint32_t a22 = a & 0xFFF;
+                        const uint32_t a11 = a >> 16;
+                        const uint32_t a22 = a & 0xFFFF;
                         c = a22 * b22;
-                        b = c & 0xFFF;
-                        uint32_t r3 = c >> 12;
+                        b = c & 0xFFFF;
+                        uint32_t r3 = c >> 16;
                         c = a11 * b22;
-                        r3 += c & 0xFFF;
-                        uint32_t r2 = c >> 12;
+                        r3 += c & 0xFFFF;
+                        uint32_t r2 = c >> 16;
                         c = a22 * b11;
-                        r3 += c & 0xFFF;
-                        r2 += c >> 12;
+                        r3 += c & 0xFFFF;
+                        r2 += c >> 16;
                         c = a11 * b11;
-                        r2 += c & 0xFFF;
-                        const uint32_t r1 = c >> 12;
-                        const uint32_t r4 = r3 >> 12;
+                        r2 += c & 0xFFFF;
+                        const uint32_t r1 = c >> 16;
+                        const uint32_t r4 = r3 >> 16;
                         a = r1 * HMAX + r2 + r4;
-                        b += (r3 & 0xFFF) * HMAX;
+                        b += (r3 & 0xFFFF) * HMAX;
                     }
-                    j = (int32_t)(gcoden(p) + b + peren);
+                    j = (int64_t)gcoden(p) + b + peren;
                     peren = 0;
                     if (j >= MAX_NUMBER + 1)
                     {
