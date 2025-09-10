@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-09
+// 2025-09-10
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -22,7 +22,7 @@
 #define Odr 5
 
 #define HMAX 65536
-#define SMAX 24
+#define SMAX 32
 
 static void oper(uint32_t o, uint32_t prn);
 
@@ -186,32 +186,32 @@ static void ymn(uint32_t *a, uint32_t *b)
         *a = 0;
         return;
     }
-    const uint32_t a1 = *a >> 12;
-    const uint32_t b1 = *b >> 12;
-    const uint32_t a2 = *a & 0xFFF;
-    const uint32_t b2 = *b & 0xFFF;
+    const uint32_t a1 = *a >> 16;
+    const uint32_t b1 = *b >> 16;
+    const uint32_t a2 = *a & 0xFFFF;
+    const uint32_t b2 = *b & 0xFFFF;
     uint32_t r = a2 * b2;
-    *b = r & 0xFFF;
-    uint32_t r3 = r >> 12;
+    *b = r & 0xFFFF;
+    uint32_t r3 = r >> 16;
     r = a1 * b2;
-    r3 += r & 0xFFF;
-    uint32_t r2 = r >> 12;
+    r3 += r & 0xFFFF;
+    uint32_t r2 = r >> 16;
     r = a2 * b1;
-    r3 += r & 0xFFF;
-    r2 += r >> 12;
+    r3 += r & 0xFFFF;
+    r2 += r >> 16;
     r = a1 * b1;
-    r2 += r & 0xFFF;
-    const uint32_t r1 = r >> 12;
-    const uint32_t r4 = r3 >> 12;
+    r2 += r & 0xFFFF;
+    const uint32_t r1 = r >> 16;
+    const uint32_t r4 = r3 >> 16;
     *a = r1 * HMAX + r2 + r4;
-    *b += (r3 & 0xFFF) * HMAX;
+    *b += (r3 & 0xFFFF) * HMAX;
     return;
 }
 
 static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
 {                                                   //  X - ukaz. na konec
     uint32_t peren = 0;
-    const size_t ip = 24 - j;
+    const size_t ip = 32 - j;
     const uint32_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dls; i++)
     {
@@ -490,7 +490,7 @@ static void oper(uint32_t o, uint32_t prn)
         if (Ydl != 0)
         { // wozmovna normalizacija
             b = gcoden(Yn);
-            for (n = 0; b < 8388608; n++, b += b)
+            for (n = 0; b < 2147483648; n++, b += b)
                 ;
             if (n != 0)
             {
@@ -559,16 +559,16 @@ static void oper(uint32_t o, uint32_t prn)
                     b = gcoden(Yt);
                     a = c;
                     ymn(&a, &b);
-                    b += peren;
-                    peren = b >> SMAX;
-                    b &= MAX_NUMBER;
-                    j = (int32_t)gcoden(Xt);
-                    if (j < (int32_t)b)
+                    j = (int64_t)b + peren;
+                    peren = j >> SMAX;
+                    b = j & MAX_NUMBER;
+                    j = gcoden(Xt);
+                    if (j < b)
                     {
                         j += MAX_NUMBER + 1;
                         peren += 1;
                     }
-                    pcoden(Xt, (uint32_t)j - b);
+                    pcoden(Xt, (uint32_t)(j - b));
                     peren += a;
                 }
                 if (peren != 0)
@@ -577,19 +577,20 @@ static void oper(uint32_t o, uint32_t prn)
                         c -= 1;
                         Xt = x;
                         Yt = Yk;
-                        j = 0;
+                        uint32_t peren1 = 0;
                         for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                         {
-                            a = gcoden(Xt) + gcoden(Yt) + (uint32_t)j;
-                            j = 0;
-                            if (a >= MAX_NUMBER + 1)
+                            j = (int64_t)gcoden(Xt) + gcoden(Yt) + peren1;
+                            peren1 = 0;
+                            if (j >= MAX_NUMBER + 1)
                             {
-                                a -= MAX_NUMBER + 1;
-                                j = 1;
+                                j -= MAX_NUMBER + 1;
+                                peren1 = 1;
                             }
+                            a = (uint32_t)j;
                             pcoden(Xt, a);
                         }
-                        peren -= (uint32_t)j;
+                        peren -= peren1;
                     } while (peren != 0);
             }
             r->tag = TAGN;
@@ -604,7 +605,7 @@ static void oper(uint32_t o, uint32_t prn)
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
-            i = 24 - n;
+            i = 32 - n;
             c = MAX_NUMBER >> i;
             for (x = Xn; x != Xk->next; x = x->next)
             {
@@ -751,8 +752,8 @@ static void nrel_(void)
         else
         {
             if ((Xzn == '-' && Yzn == '+') ||
-                (Xzn == '-' && Yzn == '-' && !xmy()) ||
-                (Xzn == '+' && Yzn == '+' && xmy()))
+                (Xzn == '-' && Yzn == '-' && xmy() == 0) ||
+                (Xzn == '+' && Yzn == '+' && xmy() == 1))
                 c = '<';
             else
                 c = '>';
