@@ -515,16 +515,18 @@ static void oper(uint32_t o, uint32_t prn)
                 }
                 else
                 { // delim a,a1 na b
-                    a = a * 128 + (a1 >> 17);
-                    c = a / b << 17;
+                    int64_t aj = (int64_t)a * 128 + (a1 >> 17);
+                    int64_t cj = aj / b << 17;
                     b1 = a1 >> 10;
-                    a = (a % b * 128) + (b1 & 0x7F);
-                    c += a / b * 1024;
+                    aj = aj % b * 128 + (b1 & 0x7F);
+                    cj += aj / b * 1024;
                     b1 = a1 >> 3;
-                    a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 8;
-                    a = a % b * 8 + (a1 & 7);
-                    c += a / b;
+                    aj = aj % b * 128 + (b1 & 0x7F);
+                    cj += aj / b * 8;
+                    aj = aj % b * 8 + (a1 & 7);
+                    cj += aj / b;
+                    a = (uint32_t)aj;
+                    c = (uint32_t)cj;
                 }
                 b1 = gcoden(Yn->next);
                 if (Ydl > 1 && b1 != 0)
