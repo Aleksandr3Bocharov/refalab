@@ -174,7 +174,7 @@ static uint32_t xmy(void)
     return 2; // x=y
 }
 
-static void ymn(uint32_t *a, uint32_t *b)
+static void ymn(int64_t *a, int64_t *b)
 { // rez.: a - T_ST., b - ml
     if (*a == 0)
     {
@@ -186,23 +186,23 @@ static void ymn(uint32_t *a, uint32_t *b)
         *a = 0;
         return;
     }
-    const uint32_t a1 = *a >> 16;
-    const uint32_t b1 = *b >> 16;
-    const uint32_t a2 = *a & 0xFFFF;
-    const uint32_t b2 = *b & 0xFFFF;
-    uint32_t r = a2 * b2;
+    const int64_t a1 = *a >> 16;
+    const int64_t b1 = *b >> 16;
+    const int64_t a2 = *a & 0xFFFF;
+    const int64_t b2 = *b & 0xFFFF;
+    int64_t r = a2 * b2;
     *b = r & 0xFFFF;
-    uint32_t r3 = r >> 16;
+    int64_t r3 = r >> 16;
     r = a1 * b2;
     r3 += r & 0xFFFF;
-    uint32_t r2 = r >> 16;
+    int64_t r2 = r >> 16;
     r = a2 * b1;
     r3 += r & 0xFFFF;
     r2 += r >> 16;
     r = a1 * b1;
     r2 += r & 0xFFFF;
-    const uint32_t r1 = r >> 16;
-    const uint32_t r4 = r3 >> 16;
+    const int64_t r1 = r >> 16;
+    const int64_t r4 = r3 >> 16;
     *a = r1 * HMAX + r2 + r4;
     *b += (r3 & 0xFFFF) * HMAX;
     return;
@@ -210,14 +210,14 @@ static void ymn(uint32_t *a, uint32_t *b)
 
 static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
 {                                                   //  X - ukaz. na konec
-    uint32_t peren = 0;
+    int64_t peren = 0;
     const size_t ip = 32 - j;
-    const uint32_t m = MAX_NUMBER >> j; // maska
+    const int64_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dls; i++)
     {
-        const uint32_t g = gcoden(X);
-        const uint32_t a = (g & m) << j;
-        pcoden(X, a | peren);
+        const int64_t g = gcoden(X);
+        const int64_t a = (g & m) << j;
+        pcoden(X, (uint32_t)(a | peren));
         peren = g >> ip;
         X = X->prev;
     }
@@ -231,9 +231,7 @@ static void oper(uint32_t o, uint32_t prn)
         refal.upshot = 2;
         return;
     }
-    uint32_t a, b;
-    int64_t j;
-    uint32_t peren;
+    int64_t a, b, j, peren;
     bool rez0 = false;
     bool odnc = false;
     switch (o)
@@ -348,15 +346,15 @@ static void oper(uint32_t o, uint32_t prn)
         Xn->tag = TAGN;
         Xn->info.codep = NULL;
         T_LINKCB *f;
-        uint32_t c;
+        int64_t c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
         {
             const uint32_t d = gcoden(y);
             if (d != 0)
             { // umn. na 1 cifru
                 peren = 0;
-                const uint32_t b11 = d >> 16;
-                const uint32_t b22 = d & 0xFFFF;
+                const int64_t b11 = d >> 16;
+                const int64_t b22 = d & 0xFFFF;
                 for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
                 {
                     a = gcoden(x);
@@ -364,21 +362,21 @@ static void oper(uint32_t o, uint32_t prn)
                         b = 0;
                     else
                     {
-                        const uint32_t a11 = a >> 16;
-                        const uint32_t a22 = a & 0xFFFF;
+                        const int64_t a11 = a >> 16;
+                        const int64_t a22 = a & 0xFFFF;
                         c = a22 * b22;
                         b = c & 0xFFFF;
-                        uint32_t r3 = c >> 16;
+                        int64_t r3 = c >> 16;
                         c = a11 * b22;
                         r3 += c & 0xFFFF;
-                        uint32_t r2 = c >> 16;
+                        int64_t r2 = c >> 16;
                         c = a22 * b11;
                         r3 += c & 0xFFFF;
                         r2 += c >> 16;
                         c = a11 * b11;
                         r2 += c & 0xFFFF;
-                        const uint32_t r1 = c >> 16;
-                        const uint32_t r4 = r3 >> 16;
+                        const int64_t r1 = c >> 16;
+                        const int64_t r4 = r3 >> 16;
                         a = r1 * HMAX + r2 + r4;
                         b += (r3 & 0xFFFF) * HMAX;
                     }
@@ -501,13 +499,13 @@ static void oper(uint32_t o, uint32_t prn)
         do
         {
             a = gcoden(Xn);
-            const uint32_t a1 = gcoden(Xn->next);
+            const int64_t a1 = gcoden(Xn->next);
             b = gcoden(Yn);
             if (a == 0 && a1 < b)
                 c = 0;
             else
             {
-                uint32_t b1;
+                int64_t b1;
                 if (a == 0 && a1 >= b)
                 {
                     c = 1; //  t.k. b - normalizowano
@@ -515,27 +513,26 @@ static void oper(uint32_t o, uint32_t prn)
                 }
                 else
                 { // delim a,a1 na b
-                    int64_t aj = (int64_t)a * 128 + (a1 >> 17);
-                    int64_t cj = aj / b << 17;
+                    a = a * 128 + (a1 >> 17);
+                    c = a / b << 17;
                     b1 = a1 >> 10;
-                    aj = aj % b * 128 + (b1 & 0x7F);
-                    cj += aj / b * 1024;
+                    a = a % b * 128 + (b1 & 0x7F);
+                    c += a / b * 1024;
                     b1 = a1 >> 3;
-                    aj = aj % b * 128 + (b1 & 0x7F);
-                    cj += aj / b * 8;
-                    aj = aj % b * 8 + (a1 & 7);
-                    cj += aj / b;
-                    a = (uint32_t)aj;
-                    c = (uint32_t)cj;
+                    a = a % b * 128 + (b1 & 0x7F);
+                    c += a / b * 8;
+                    a = a % b * 8 + (a1 & 7);
+                    c += a / b;
+                    printf("\n 1 %lld %lld %lld\n", a, b, c);
                 }
                 b1 = gcoden(Yn->next);
                 if (Ydl > 1 && b1 != 0)
                 {
-                    uint32_t x1 = b1;
-                    uint32_t x2 = c;
+                    int64_t x1 = b1;
+                    int64_t x2 = c;
                     ymn(&x1, &x2);
-                    uint32_t y1 = a % b;
-                    const uint32_t y2 = gcoden(Xn->next->next);
+                    int64_t y1 = a % b;
+                    const int64_t y2 = gcoden(Xn->next->next);
                     i = 0;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
@@ -561,9 +558,9 @@ static void oper(uint32_t o, uint32_t prn)
                     b = gcoden(Yt);
                     a = c;
                     ymn(&a, &b);
-                    j = (int64_t)b + peren;
-                    peren = j >> SMAX;
-                    b = j & MAX_NUMBER;
+                    b += peren;
+                    peren = b >> SMAX;
+                    b &= MAX_NUMBER;
                     j = gcoden(Xt);
                     if (j < b)
                     {
@@ -579,31 +576,32 @@ static void oper(uint32_t o, uint32_t prn)
                         c -= 1;
                         Xt = x;
                         Yt = Yk;
-                        uint32_t peren1 = 0;
+                        j = 0;
                         for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
                         {
-                            j = (int64_t)gcoden(Xt) + gcoden(Yt) + peren1;
-                            peren1 = 0;
-                            if (j >= MAX_NUMBER + 1)
+                            a = (int64_t)gcoden(Xt) + gcoden(Yt) + j;
+                            j = 0;
+                            if (a >= MAX_NUMBER + 1)
                             {
-                                j -= MAX_NUMBER + 1;
-                                peren1 = 1;
+                                a -= MAX_NUMBER + 1;
+                                j = 1;
                             }
-                            a = (uint32_t)j;
-                            pcoden(Xt, a);
+                            pcoden(Xt, (uint32_t)a);
                         }
-                        peren -= peren1;
+                        peren -= j;
                     } while (peren != 0);
             }
+            printf("\n 2 %lld %lld %lld\n", a, b, c);
             r->tag = TAGN;
             r->info.codep = NULL;
-            pcoden(r, c);
+            pcoden(r, (uint32_t)c);
             r = r->next;
             x = x->next;
             Xn = Xn->next;
         } while (x != Xk->next);
         Xn = Xn->prev;
         r = r->prev;
+        printf("\n n %zu \n", n);
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
@@ -614,7 +612,8 @@ static void oper(uint32_t o, uint32_t prn)
                 a = gcoden(x);
                 b = a >> n | peren << i;
                 peren = a & c;
-                pcoden(x, b);
+                pcoden(x, (uint32_t)b);
+                printf("\n 4 %lld %lld %lld %lld\n", a, b, c, peren);
             }
         }
         for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
@@ -705,7 +704,7 @@ static void oper(uint32_t o, uint32_t prn)
     { // div/dr
         x->tag = TAGN;
         x->info.codep = NULL;
-        pcoden(x, b);
+        pcoden(x, (uint32_t)b);
         x = x->next;
     }
     y = x->next;
@@ -721,7 +720,7 @@ static void oper(uint32_t o, uint32_t prn)
     { // div/dr
         y->tag = TAGN;
         y->info.codep = NULL;
-        pcoden(y, a);
+        pcoden(y, (uint32_t)a);
         y = y->next;
     }
     x->tag = TAGLB;
