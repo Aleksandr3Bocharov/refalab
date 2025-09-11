@@ -211,7 +211,7 @@ static void ymn(int64_t *a, int64_t *b)
 static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
 {                                                   //  X - ukaz. na konec
     int64_t peren = 0;
-    const size_t ip = 32 - j;
+    const size_t ip = SMAX - j;
     const int64_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dls; i++)
     {
@@ -513,18 +513,18 @@ static void oper(uint32_t o, uint32_t prn)
                 }
                 else
                 { // delim a,a1 na b
-                    a = a * 128 + (a1 >> 25);
+                    a = (a << 7) + (a1 >> 25);
                     c = a / b << 25;
                     b1 = a1 >> 18;
-                    a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 262144;
+                    a = (a % b << 7) + (b1 & 0x7F);
+                    c += a / b << 18;
                     b1 = a1 >> 11;
-                    a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 2048;
+                    a = (a % b << 7) + (b1 & 0x7F);
+                    c += a / b << 11;
                     b1 = a1 >> 4;
-                    a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 16;
-                    a = a % b * 16 + (a1 & 15);
+                    a = (a % b << 7) + (b1 & 0x7F);
+                    c += a / b << 4;
+                    a = (a % b << 4) + (a1 & 0xF);
                     c += a / b;
                 }
                 b1 = gcoden(Yn->next);
@@ -605,7 +605,7 @@ static void oper(uint32_t o, uint32_t prn)
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
-            i = 32 - n;
+            i = SMAX - n;
             c = MAX_NUMBER >> i;
             for (x = Xn; x != Xk->next; x = x->next)
             {
