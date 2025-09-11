@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-10
+// 2025-09-11
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //---------------- file -- XAR.C -----------
@@ -513,17 +513,19 @@ static void oper(uint32_t o, uint32_t prn)
                 }
                 else
                 { // delim a,a1 na b
-                    a = a * 128 + (a1 >> 17);
-                    c = a / b << 17;
-                    b1 = a1 >> 10;
+                    a = a * 128 + (a1 >> 25);
+                    c = a / b << 25;
+                    b1 = a1 >> 18;
                     a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 1024;
-                    b1 = a1 >> 3;
+                    c += a / b * 262144;
+                    b1 = a1 >> 11;
                     a = a % b * 128 + (b1 & 0x7F);
-                    c += a / b * 8;
-                    a = a % b * 8 + (a1 & 7);
+                    c += a / b * 2048;
+                    b1 = a1 >> 4;
+                    a = a % b * 128 + (b1 & 0x7F);
+                    c += a / b * 16;
+                    a = a % b * 16 + (a1 & 15);
                     c += a / b;
-                    printf("\n 1 %lld %lld %lld\n", a, b, c);
                 }
                 b1 = gcoden(Yn->next);
                 if (Ydl > 1 && b1 != 0)
@@ -591,7 +593,6 @@ static void oper(uint32_t o, uint32_t prn)
                         peren -= j;
                     } while (peren != 0);
             }
-            printf("\n 2 %lld %lld %lld\n", a, b, c);
             r->tag = TAGN;
             r->info.codep = NULL;
             pcoden(r, (uint32_t)c);
@@ -601,7 +602,6 @@ static void oper(uint32_t o, uint32_t prn)
         } while (x != Xk->next);
         Xn = Xn->prev;
         r = r->prev;
-        printf("\n n %zu \n", n);
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
@@ -613,7 +613,6 @@ static void oper(uint32_t o, uint32_t prn)
                 b = a >> n | peren << i;
                 peren = a & c;
                 pcoden(x, (uint32_t)b);
-                printf("\n 4 %lld %lld %lld %lld\n", a, b, c, peren);
             }
         }
         for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
