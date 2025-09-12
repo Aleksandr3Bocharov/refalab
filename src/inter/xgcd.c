@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-01
+// 2025-09-12
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XGCD.C ------------
@@ -13,25 +13,26 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define HMAX 4096
+#define HMAX 65536
+#define SMAX 32
 
 static void norm(T_LINKCB *X, size_t dl, size_t j) //  normaliz. posledov. makrocifr
-{                                                              //  X - ukaz. na konec
-    uint32_t peren = 0;
-    const size_t ip = 24 - j;
-    const uint32_t m = MAX_NUMBER >> j; // maska
+{                                                  //  X - ukaz. na konec
+    int64_t peren = 0;
+    const size_t ip = SMAX - j;
+    const int64_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dl; i++)
     {
-        const uint32_t g = gcoden(X);
-        const uint32_t a = (g & m) << j;
-        pcoden(X, a | peren);
+        const int64_t g = gcoden(X);
+        const int64_t a = (g & m) << j;
+        pcoden(X, (uint32_t)(a | peren));
         peren = g >> ip;
         X = X->prev;
     }
     return;
 }
 
-static void ymn(int32_t *a, int32_t *b)
+static void ymn(int64_t *a, int64_t *b)
 { // rez.: a - star., b - mlad.
     if (*a == 0)
     {
@@ -43,25 +44,25 @@ static void ymn(int32_t *a, int32_t *b)
         *a = 0;
         return;
     }
-    const uint32_t a1 = (uint32_t)*a >> 12;
-    const uint32_t b1 = (uint32_t)*b >> 12;
-    const uint32_t a2 = *a & 0xFFF;
-    const uint32_t b2 = *b & 0xFFF;
-    uint32_t rr = a2 * b2;
-    *b = rr & 0xFFF;
-    uint32_t rr3 = rr >> 12;
+    const int64_t a1 = *a >> 16;
+    const int64_t b1 = *b >> 16;
+    const int64_t a2 = *a & 0xFFFF;
+    const int64_t b2 = *b & 0xFFFF;
+    int64_t rr = a2 * b2;
+    *b = rr & 0xFFFF;
+    int64_t rr3 = rr >> 16;
     rr = a1 * b2;
-    rr3 += rr & 0xFFF;
-    uint32_t rr2 = rr >> 12;
+    rr3 += rr & 0xFFFF;
+    int64_t rr2 = rr >> 16;
     rr = a2 * b1;
-    rr3 += rr & 0xFFF;
-    rr2 += rr >> 12;
+    rr3 += rr & 0xFFFF;
+    rr2 += rr >> 16;
     rr = a1 * b1;
-    rr2 += rr & 0xFFF;
-    const uint32_t rr1 = rr >> 12;
-    const uint32_t rr4 = rr3 >> 12;
-    *a = (int32_t)(rr1 * HMAX + rr2 + rr4);
-    *b += ((int32_t)rr3 & 0xFFF) * HMAX;
+    rr2 += rr & 0xFFFF;
+    const int64_t rr1 = rr >> 16;
+    const int64_t rr4 = rr3 >> 16;
+    *a = rr1 * HMAX + rr2 + rr4;
+    *b += (rr3 & 0xFFFF) * HMAX;
     return;
 }
 
@@ -111,7 +112,7 @@ static void gcd_(void)
             tl[i] = pr->prev;
         }
     }
-    uint32_t A;
+    int64_t A;
     size_t rez = 0;
     while (true)
         switch (gcd_state)
@@ -144,7 +145,7 @@ static void gcd_(void)
                 break;
             }
             //   delaem 1 > 2
-            uint32_t v1, v2;
+            int64_t v1, v2;
             if (l[0] == l[1])
             {
                 p[0] = hd[0];
@@ -200,11 +201,11 @@ static void gcd_(void)
             {
                 if (A >= 128)
                     break;
-                A = A << 24;
+                A <<= SMAX;
                 A += gcoden(pr);
                 pr = pr->next;
             }
-            uint32_t B;
+            int64_t B;
             if (l[0] == 1 || (l[0] == 2 && k == 2))
             {
                 // Evklid nad korotkimi
@@ -213,7 +214,7 @@ static void gcd_(void)
                 pr = hd[1];
                 for (k = 0; k < l[1]; k++)
                 {
-                    B = B << 24;
+                    B <<= SMAX;
                     B += gcoden(pr);
                     pr = pr->next;
                 }
@@ -226,18 +227,18 @@ static void gcd_(void)
                 }
                 // UTV: rez v A
                 pr = refal.preva->next;
-                v1 = A >> 24;
+                v1 = A >> SMAX;
                 if (v1 != 0)
                 {
                     pr->tag = TAGN;
                     pr->info.codep = NULL;
-                    pcoden(pr, v1);
+                    pcoden(pr, (uint32_t)v1);
                     pr = pr->next;
-                    A = A & MAX_NUMBER;
+                    A &= MAX_NUMBER;
                 }
                 pr->tag = TAGN;
                 pr->info.codep = NULL;
-                pcoden(pr, A);
+                pcoden(pr, (uint32_t)A);
                 pr = pr->next;
                 rftpl(refal.prevr, refal.preva, pr);
                 return;
@@ -245,9 +246,8 @@ static void gcd_(void)
             //    A - pribligenie
             //    k={ 1/2 }
             const size_t la = k;
-            const int32_t lb = (int32_t)(l[1] - (l[0] - la));
-            int32_t x[2];
-            uint32_t y[2];
+            const int64_t lb = (int64_t)l[1] - l[0] + la;
+            int64_t x[2], y[2];
             if (lb <= 0)
             {
                 gcd_state = SHD;
@@ -257,9 +257,9 @@ static void gcd_(void)
             // UTV:  l[0] = {1/2}
             B = 0;
             pr = hd[1];
-            for (k = 0; k < (uint32_t)lb; k++)
+            for (k = 0; k < (size_t)lb; k++)
             {
-                B = B << 24;
+                B <<= SMAX;
                 B += gcoden(pr);
                 pr = pr->next;
             }
@@ -270,10 +270,10 @@ static void gcd_(void)
             }
             //  metod Lemera
             //  A i B s nedostatkom
-            uint32_t AL = A;
-            uint32_t AH = A + 1;
-            uint32_t BL = B;
-            uint32_t BH = B + 1;
+            int64_t AL = A;
+            int64_t AH = A + 1;
+            int64_t BL = B;
+            int64_t BH = B + 1;
             x[0] = 1;
             x[1] = 0;
             y[0] = 0;
@@ -281,24 +281,24 @@ static void gcd_(void)
             //  vychisl koeff. X i Y
             while (BL != 0)
             {
-                const uint32_t Q = AL / BH;
+                const int64_t Q = AL / BH;
                 //  UTV:   Q>0
                 if (Q != AH / BL)
                     break;
-                const uint32_t RL = AL - Q * BH;
-                const uint32_t RH = AH - Q * BL;
+                const int64_t RL = AL - Q * BH;
+                const int64_t RH = AH - Q * BL;
                 //  UTV:   RL>=0
                 //  UTV:   RH>0
                 AL = BL;
                 AH = BH;
                 BL = RL;
                 BH = RH;
-                const int32_t xn = x[0] - (int32_t)Q * x[1];
-                const int32_t yn = (int32_t)(y[0] - Q * y[1]);
+                const int64_t xn = x[0] - Q * x[1];
+                const int64_t yn = y[0] - Q * y[1];
                 x[0] = x[1];
                 y[0] = y[1];
                 x[1] = xn;
-                y[1] = (uint32_t)yn;
+                y[1] = yn;
             }
             //   vyravnivanie dlin
             if (l[0] != l[1])
@@ -310,24 +310,24 @@ static void gcd_(void)
             }
             p[0] = tl[0];
             p[1] = tl[1];
-            int32_t r[] = {0, 0};
+            int64_t r[] = {0, 0};
             for (k = 0; k < l[0]; k++)
             {
-                const uint32_t s[] = {gcoden(p[0]), gcoden(p[1])};
-                int32_t vs3, vs4;
+                const int64_t s[] = {gcoden(p[0]), gcoden(p[1])};
+                int64_t vs3, vs4;
                 for (i = 0; i < 2; i++)
                 {
-                    int32_t vs1 = (int32_t)s[0];
-                    int32_t vs2 = (int32_t)s[1];
+                    int64_t vs1 = s[0];
+                    int64_t vs2 = s[1];
                     if (x[i] < 0)
                     {
                         vs3 = 0 - x[i];
-                        vs4 = (int32_t)y[i];
+                        vs4 = y[i];
                     }
                     else
                     {
                         vs3 = x[i];
-                        vs4 = 0 - (int32_t)y[i];
+                        vs4 = 0 - y[i];
                     }
                     ymn(&vs1, &vs3);
                     ymn(&vs2, &vs4);
@@ -341,7 +341,7 @@ static void gcd_(void)
                         vs2 = 0 - vs2;
                         vs4 = 0 - vs4;
                     }
-                    int32_t r0 = r[i] + vs3 + vs4;
+                    int64_t r0 = r[i] + vs3 + vs4;
                     if (r0 < 0)
                     {
                         vs3 = r0 / (MAX_NUMBER + 1);
@@ -349,7 +349,7 @@ static void gcd_(void)
                     }
                     else
                     {
-                        vs3 = r0 >> 24;
+                        vs3 = r0 >> SMAX;
                         r0 &= MAX_NUMBER;
                     }
                     r[i] = vs1 + vs2 + vs3;
@@ -382,11 +382,11 @@ static void gcd_(void)
             py->tag = TAGN;
             py->info.codep = NULL;
             size_t n = 0;
-            int32_t b;
+            int64_t b;
             if (l[1] != 0)
             { // wozmovna normalizacija
-                b = (int32_t)gcoden(hd[1]);
-                for (n = 0; b < 8388608; n++, b += b)
+                b = gcoden(hd[1]);
+                for (n = 0; b < 2147483648; n++, b += b)
                     ;
                 if (n != 0)
                 {
@@ -394,53 +394,56 @@ static void gcd_(void)
                     norm(tl[1], l[1], n);
                 }
             }
-            uint32_t peren = 0;
-            int32_t a, c;
+            int64_t peren = 0;
+            int64_t a, c;
             do
             {
-                a = (int32_t)gcoden(hd[0]);
-                const uint32_t a1 = gcoden(hd[0]->next);
-                b = (int32_t)gcoden(hd[1]);
-                if (a == 0 && a1 < (uint32_t)b)
+                a = gcoden(hd[0]);
+                const int64_t a1 = gcoden(hd[0]->next);
+                b = gcoden(hd[1]);
+                if (a == 0 && a1 < b)
                     c = 0;
                 else
                 {
-                    uint32_t b1;
-                    if (a == 0 && a1 >= (uint32_t)b)
+                    int64_t b1;
+                    if (a == 0 && a1 >= b)
                     {
                         c = 1; //  t.k. b - normalizowano
-                        a = (int32_t)a1;
+                        a = a1;
                     }
                     else
                     { // delim a,a1 na b
-                        a = a * 128 + (int32_t)(a1 >> 17);
-                        c = a / b << 17;
-                        b1 = a1 >> 10;
-                        a = a % b * 128 + (int32_t)(b1 & 0x7F);
-                        c += a / b * 1024;
-                        b1 = a1 >> 3;
-                        a = a % b * 128 + (int32_t)(b1 & 0x7F);
-                        c += a / b * 8;
-                        a = a % b * 8 + (int32_t)(a1 & 7);
+                        a = (a << 7) + (a1 >> 25);
+                        c = a / b << 25;
+                        b1 = a1 >> 18;
+                        a = (a % b << 7) + (b1 & 0x7F);
+                        c += a / b << 18;
+                        b1 = a1 >> 11;
+                        a = (a % b << 7) + (b1 & 0x7F);
+                        c += a / b << 11;
+                        b1 = a1 >> 4;
+                        a = (a % b << 7) + (b1 & 0x7F);
+                        c += a / b << 4;
+                        a = (a % b << 4) + (a1 & 0xF);
                         c += a / b;
                     }
                     b1 = gcoden(hd[1]->next);
                     if (l[1] > 1 && b1 != 0)
                     {
-                        x[0] = (int32_t)b1;
+                        x[0] = b1;
                         x[1] = c;
                         ymn(&x[0], &x[1]);
-                        y[0] = (uint32_t)(a % b);
+                        y[0] = a % b;
                         y[1] = gcoden(hd[0]->next->next);
                         i = 0;
-                        while (x[0] > (int32_t)y[0] || (x[0] == (int32_t)y[0] && x[1] > (int32_t)y[1]))
+                        while (x[0] > y[0] || (x[0] == y[0] && x[1] > y[1]))
                         {
                             c--;
                             i = 1;
-                            x[0] = (int32_t)b1;
+                            x[0] = b1;
                             x[1] = c;
                             ymn(&x[0], &x[1]);
-                            y[0] += (uint32_t)b;
+                            y[0] += b;
                         }
                         if (i == 1)
                             c++; // na wcjakij sluchaj
@@ -452,23 +455,23 @@ static void gcd_(void)
                     const T_LINKCB *Yt = tl[1];
                     T_LINKCB *Xt = px;
                     peren = 0;
-                    uint32_t J;
+                    int64_t J;
                     for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                     {
-                        b = (int32_t)gcoden(Yt);
+                        b = gcoden(Yt);
                         a = c;
                         ymn(&a, &b);
-                        b += (int32_t)peren;
-                        peren = (uint32_t)b >> 24;
+                        b += peren;
+                        peren = b >> SMAX;
                         b &= MAX_NUMBER;
                         J = gcoden(Xt);
-                        if (J < (uint32_t)b)
+                        if (J < b)
                         {
                             J += MAX_NUMBER + 1;
                             peren += 1;
                         }
-                        pcoden(Xt, J - (uint32_t)b);
-                        peren += (uint32_t)a;
+                        pcoden(Xt, (uint32_t)(J - b));
+                        peren += a;
                     }
                     if (peren != 0)
                     { // cifra welika
@@ -480,7 +483,7 @@ static void gcd_(void)
                             J = 0;
                             for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
                             {
-                                a = (int32_t)(gcoden(Xt) + gcoden(Yt) + J);
+                                a = (int64_t)gcoden(Xt) + gcoden(Yt) + J;
                                 J = 0;
                                 if (a >= MAX_NUMBER + 1)
                                 {
@@ -502,23 +505,23 @@ static void gcd_(void)
             if (n != 0)
             {
                 peren = 0;
-                i = 24 - n;
+                i = SMAX - n;
                 c = MAX_NUMBER >> i;
                 // denormalizacija ostatka
                 for (px = hd[0]; px != tl[0]->next; px = px->next)
                 {
-                    a = (int32_t)gcoden(px);
-                    b = a >> n | (int32_t)peren << i;
-                    peren = (uint32_t)(a & c);
+                    a = gcoden(px);
+                    b = a >> n | peren << i;
+                    peren = a & c;
                     pcoden(px, (uint32_t)b);
                 }
                 // denormalizacija delitelja
                 peren = 0;
                 for (px = hd[1]; px != tl[1]->next; px = px->next)
                 {
-                    a = (int32_t)gcoden(px);
-                    b = a >> n | (int32_t)peren << i;
-                    peren = (uint32_t)(a & c);
+                    a = gcoden(px);
+                    b = a >> n | peren << i;
+                    peren = a & c;
                     pcoden(px, (uint32_t)b);
                 }
             }
