@@ -246,7 +246,7 @@ static void gcd_(void)
             //    A - pribligenie
             //    k={ 1/2 }
             const size_t la = k;
-            const int64_t lb = (int64_t)l[1] - l[0] + la;
+            const int64_t lb = (int64_t)l[1] - (int64_t)l[0] + (int64_t)la;
             int64_t x[2], y[2];
             if (lb <= 0)
             {
