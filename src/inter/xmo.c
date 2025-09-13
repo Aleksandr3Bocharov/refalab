@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-01
+// 2025-09-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -22,25 +22,19 @@
 
 static void p1_(void)
 {
-    T_LINKCB *p = refal.preva->next;
-    uint32_t l;
-    bool neot = false;
-    if (p->next != refal.nexta || p->tag != TAGN)
-        neot = true;
-    else
+    do
     {
-
-        l = gcoden(p) + 1;
-        if (l > MAX_NUMBER)
-            neot = true;
-    }
-    if (neot)
-    {
-        refal.upshot = 2;
+        T_LINKCB *p = refal.preva->next;
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        uint32_t l = gcoden(p) + 1;
+        if (l == 0)
+            break;
+        pcoden(p, l);
+        rftpl(refal.prevr, p->prev, p->next);
         return;
-    }
-    pcoden(p, l);
-    rftpl(refal.prevr, p->prev, p->next);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char p1_0[] = {Z2 'P', '1', (char)2};
@@ -49,24 +43,19 @@ void (*p1_1)(void) = p1_;
 
 static void m1_(void)
 {
-    T_LINKCB *p = refal.preva->next;
-    int32_t l;
-    bool neot = false;
-    if (p->next != refal.nexta || p->tag != TAGN)
-        neot = true;
-    else
+    do
     {
-        l = (int32_t)gcoden(p) - 1;
-        if (l < 0)
-            neot = true;
-    }
-    if (neot)
-    {
-        refal.upshot = 2;
+        T_LINKCB *p = refal.preva->next;
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        uint32_t l = gcoden(p) - 1;
+        if (l == MAX_NUMBER)
+            break;
+        pcoden(p, l);
+        rftpl(refal.prevr, p->prev, p->next);
         return;
-    }
-    pcoden(p, (uint32_t)l);
-    rftpl(refal.prevr, p->prev, p->next);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char m1_0[] = {Z2 'M', '1', (char)2};
