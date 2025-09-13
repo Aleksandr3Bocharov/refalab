@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-11
+// 2025-09-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -676,7 +676,7 @@ static void fseek_(void)
         f = files[j];
         p = p->next;
         const char zn = p->info.infoc;
-        long int z = 1;
+        int64_t z = 1;
         if (p->tag == TAGO && (zn == '-' || zn == '+'))
         {
             p = p->next;
@@ -685,7 +685,10 @@ static void fseek_(void)
         }
         if (p->tag != TAGN)
             break;
-        const long int offset = z * (long int)gcoden(p);
+        const int64_t offset_abs = gcoden(p);
+        if (z == 1 ? offset_abs > 2147483647 : offset_abs > 2147483648)
+            break;
+        const long int offset = (long int)(z * offset_abs);
         p = p->next;
         if (p->tag != TAGF)
             break;
@@ -743,19 +746,10 @@ static void ftell_(void)
             rfrstr(strerror(err));
             return;
         }
-        p = refal.preva;
         p->tag = TAGN;
         p->info.codep = NULL;
-        if (res > MAX_NUMBER)
-        {
-            pcoden(p, (uint32_t)res >> 24);
-            p = p->next;
-            p->tag = TAGN;
-            p->info.codep = NULL;
-            res &= MAX_NUMBER;
-        }
         pcoden(p, (uint32_t)res);
-        rftpl(refal.prevr, refal.preva->prev, p->next);
+        rftpl(refal.prevr, p->prev, p->next);
         return;
     } while (false);
     refal.upshot = 2;
