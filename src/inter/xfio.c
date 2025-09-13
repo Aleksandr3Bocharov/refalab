@@ -746,8 +746,6 @@ static void ftell_(void)
             rfrstr(strerror(err));
             return;
         }
-        p->tag = TAGN;
-        p->info.codep = NULL;
         pcoden(p, (uint32_t)res);
         rftpl(refal.prevr, p->prev, p->next);
         return;
