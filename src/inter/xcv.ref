@@ -16,8 +16,11 @@ CV  START
 
     IMPL
 
-Cvb '-' V(D).X +
+Cvb '-' E('0').X +
+        = 0
+    '-' V(D).X +
         = '-' <Cvb0 V.X>
+    '+' = 0
     '+' V(D).X +
         = <Cvb0 V.X>
     E(D).X +
@@ -29,8 +32,11 @@ Cvb0
             <Numb S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9>>
     E.X = <Numb E.X>
 
-Cvd '-' V(N).X +
+Cvd '-' E(0).X +
+        = '0'
+    '-' V(N).X +
         = '-' <Cvd0 V.X>
+    '+' = '0'
     '+' V(N).X +
         = <Cvd0 V.X>
     E(N).X +
