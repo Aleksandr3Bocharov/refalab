@@ -112,18 +112,9 @@ static void numb_(void)
         pp = refal.nexta->prev;
         pz = pp;
     }
-    uint32_t l = (uint32_t)atoll(str);
     pp->tag = TAGN;
     pp->info.codep = NULL;
-    if (l > MAX_NUMBER)
-    {
-        pcoden(pp, l >> 24);
-        pp = pp->next;
-        pp->tag = TAGN;
-        pp->info.codep = NULL;
-        l &= MAX_NUMBER;
-    }
-    pcoden(pp, l);
+    pcoden(pp, (uint32_t)atoll(str));
     rftpl(refal.prevr, pz->prev, pp->next);
     return;
 }
@@ -146,27 +137,14 @@ static void symb_(void)
     while (p->tag == TAGN && gcoden(p) == 0)
         p = p->next;
     size_t i;
-    bool neot = false;
     for (i = 0; p != refal.nexta; i++, p = p->next)
-        if (p->tag != TAGN || i == 2)
+        if (p->tag != TAGN || i == 1)
         {
-            neot = true;
-            break;
+            refal.upshot = 2;
+            return;
         }
-    if (!neot)
-    {
-        p = p->prev;
-        if (i == 2 && gcoden(pp) >= 256)
-            neot = true;
-    }
-    if (neot)
-    {
-        refal.upshot = 2;
-        return;
-    }
+    p = p->prev;
     uint32_t l = gcoden(p);
-    if (i == 2)
-        l += (MAX_NUMBER + 1) * gcoden(pp);
     if (i == 0 || l == 0)
     {
         pz = pp;
