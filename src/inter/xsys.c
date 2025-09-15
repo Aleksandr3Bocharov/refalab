@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-02
+// 2025-09-15
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -69,7 +69,7 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    int sys = system(cmd);
+    const int sys = system(cmd);
     free(cmd);
 #ifdef POSIX
     if (WIFEXITED(sys) != 0)
@@ -77,50 +77,22 @@ static void system_(void)
     else
         sys = -1;
 #endif
-    p = refal.prevr;
-    if (sys == -2147483648)
-    {
-        if (!slins(p, 3))
-            return;
-        p = p->next;
-        p->info.codep = NULL;
-        p->tag = TAGO;
-        p->info.infoc = '-';
-        p = p->next;
-        p->tag = TAGN;
-        p->info.codep = NULL;
-        pcoden(p, 128);
-        p = p->next;
-        p->tag = TAGN;
-        p->info.codep = NULL;
-        return;
-    }
-    if (sys < 0)
+    int64_t sys_64 = sys;
+    p = refal.preva;
+    if (sys_64 < 0)
     {
         if (!slins(p, 1))
             return;
-        p = p->next;
-        p->info.codep = NULL;
         p->tag = TAGO;
+        p->info.codep = NULL;
         p->info.infoc = '-';
-        sys = -sys;
+        p = p->next;
+        sys_64 = -sys_64;
     }
-    if (!slins(p, 1))
-        return;
-    p = p->next;
     p->tag = TAGN;
     p->info.codep = NULL;
-    if (sys > MAX_NUMBER)
-    {
-        pcoden(p, (uint32_t)sys >> 24);
-        if (!slins(p, 1))
-            return;
-        p = p->next;
-        p->tag = TAGN;
-        p->info.codep = NULL;
-        sys &= MAX_NUMBER;
-    }
-    pcoden(p, (uint32_t)sys);
+    pcoden(p, (uint32_t)sys_64);
+    rftpl(refal.prevr, refal.nextr, p->next);
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
