@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-28
+// 2025-09-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XRAND.C ------------
@@ -44,9 +44,9 @@ static uint32_t random_number(void)
 
 static uint32_t random_number_in_range(uint32_t limit)
 {
-    const uint32_t max = MAX_NUMBER;
     if (limit == 0)
         return 0;
+    const uint32_t max = MAX_NUMBER;
     const uint32_t max_valid = max - max % limit;
     uint32_t random;
     do
