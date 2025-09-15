@@ -69,7 +69,7 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    const int sys = system(cmd);
+    int sys = system(cmd);
     free(cmd);
 #ifdef POSIX
     if (WIFEXITED(sys) != 0)
@@ -77,12 +77,14 @@ static void system_(void)
     else
         sys = -1;
 #endif
+    sys = -1;
     int64_t sys_64 = sys;
     p = refal.preva;
     if (sys_64 < 0)
     {
-        if (!slins(p, 1))
-            return;
+        if (p->next == refal.nexta)
+            if (!slins(p, 1))
+                return;
         p->tag = TAGO;
         p->info.codep = NULL;
         p->info.infoc = '-';
