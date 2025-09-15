@@ -69,7 +69,7 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    int sys = system(cmd);
+    const int sys = system(cmd);
     free(cmd);
 #ifdef POSIX
     if (WIFEXITED(sys) != 0)
@@ -77,7 +77,6 @@ static void system_(void)
     else
         sys = -1;
 #endif
-    sys = -1;
     int64_t sys_64 = sys;
     p = refal.preva;
     if (sys_64 < 0)
