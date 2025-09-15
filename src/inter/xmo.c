@@ -513,24 +513,10 @@ static void step_(void)
         refal.upshot = 2;
         return;
     }
-    uint32_t step = refal.currst->step;
-    T_LINKCB *p = refal.prevr;
-    if (!slins(p, 1))
-        return;
-    p = p->next;
-    p->tag = TAGN;
-    p->info.codep = NULL;
-    if (step > MAX_NUMBER)
-    {
-        pcoden(p, step >> 24);
-        if (!slins(p, 1))
-            return;
-        p = p->next;
-        p->tag = TAGN;
-        p->info.codep = NULL;
-        step &= MAX_NUMBER;
-    }
-    pcoden(p, step);
+    refal.preva->tag = TAGN;
+    refal.preva->info.codep = NULL;
+    pcoden(refal.preva, refal.currst->step);
+    rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
 char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
