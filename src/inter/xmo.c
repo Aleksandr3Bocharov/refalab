@@ -266,11 +266,6 @@ static void lengr_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > MAX_NUMBER)
-        {
-            refal.upshot = 2;
-            return;
-        }
         p = p->next;
     }
     refal.preva->tag = TAGN;
@@ -290,11 +285,6 @@ static void lengw_(void)
     while (p != refal.nexta)
     {
         n++;
-        if (n > MAX_NUMBER)
-        {
-            refal.upshot = 2;
-            return;
-        }
         if (p->tag == TAGLB)
             p = p->info.codep;
         p = p->next;
