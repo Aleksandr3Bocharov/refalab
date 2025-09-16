@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-20
+* 2025-09-17
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0 +
@@ -48,25 +48,26 @@ Prspe
         =
 
 *      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
-Dal1    = <Prmu (126) 2> <Prmu (65536) 64> +
-        <Prmu (16777215) 1> +
-        <Prmu (65536) 512> +  
+Dal1    = <Prmu (126) 2> <Prmu (16777216) 64> +
+        <Prmu (4294967295) 1> +
+        <Prmu (16777216) 512> +  
         <Prdl (65536) 4> <Prdl (65536) 777> +
 *       <Prdl (1) 0> +      neot
         <Prp1 4> <Prp1 65536> <Prp1 128> +
-*       <Prp1 16777215> +     neot
+*       <Prp1 4294967295> +     neot
         <Dal>
 
 Dal     = <Prln 0 1 '345678'> <Prln (0 1) '345678'> +
         <Prfe 3 '1234567'> <Prla 3 '123456'> <Prfe 1 2> +
         <Prla 3 1 2 3 '567'> +
 *       <Prfe '123'> <Prla '123'> +          neot
-        <Prnu '125'> <Prnu '76666'> <Prnu '16777215'> +
-        <Prnu '17777215'> <Prnu '-45'> +
-        <Prsy 5678> <Prsy 16777215> +
-        <Prad (128) 456> <Prad (16777215) 2> +
-        <Prm1 3> <Prm1 128> <Prm1 16777215> +
-        <Prsu (16777215) 2> <Prsu (2) 456>
+        <Prnu '125'> <Prnu '76666'> <Prnu '4294967295'> +
+*       <Prnu '4394967295'> +                neot
+        <Prnu '-45'> +
+        <Prsy 5678> <Prsy 4294967295> +
+        <Prad (128) 456> <Prad (4294967295) 2> +
+        <Prm1 3> <Prm1 128> <Prm1 4294967295> +
+        <Prsu (4294967295) 2> <Prsu (2) 456>
 
 Prmu
     E.N = <Prow &Mul E.N>
@@ -126,7 +127,7 @@ Prsw    = <Sw1 <New 123456>> <Wtr &Sw 123456> <Ptr &Sw '0'> +
 Sw1 R.x = <Ptr R.x 2> <Rdr R.x> <Wtr R.x 12> <Sw2 R.x>
 
 Sw2 R.x = <Ptr R.x 3> <Rdr R.x> <Gtr R.x> +
-        <Swr R.x '0' 16777215 '0'> +
+        <Swr R.x '0' 4294967295 '0'> +
         <Prout <Rdr R.x>>
 
 Prln
