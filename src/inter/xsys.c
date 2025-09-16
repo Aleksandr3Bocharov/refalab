@@ -102,22 +102,27 @@ void (*system_1)(void) = system_;
 
 static void exit_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
-    const char zn = p->info.infoc;
-    int z = 1;
-    if (p->tag == TAGO && (zn == '-' || zn == '+'))
+    do
     {
-        p = p->next;
-        if (zn == '-')
-            z = -1;
-    }
-    if (p->next != refal.nexta || p->tag != TAGN)
-    {
-        refal.upshot = 2;
+        const T_LINKCB *p = refal.preva->next;
+        const char zn = p->info.infoc;
+        int z = 1;
+        if (p->tag == TAGO && (zn == '-' || zn == '+'))
+        {
+            p = p->next;
+            if (zn == '-')
+                z = -1;
+        }
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        const int64_t exit_code_abs = gcoden(p);
+        if (z == 1 ? exit_code_abs > 2147483647 : exit_code_abs > 2147483648)
+            break;
+        const int exit_code = (int)(z * exit_code_abs);
+        exit(exit_code);
         return;
-    }
-    const int exit_code = z * (int)gcoden(p);
-    exit(exit_code);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char exit_0[] = {Z4 'E', 'X', 'I', 'T', (char)4};
