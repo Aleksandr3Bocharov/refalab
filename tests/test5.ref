@@ -14,7 +14,6 @@ TEST5 +
     IMPL
 
 Go      = <P <Numb '-1000'>> +
-        <P <Numb '-16777216'>> +
         <P <Numb>> +
         <P <Numb '+'>> +
         <P <Numb '-'>> +
@@ -28,17 +27,16 @@ Go      = <P <Numb '-1000'>> +
         <Prout '0:' <Symb '+'>> +
         <Prout '0:' <Symb '-'>> +
         <Prout '0:' <Symb 0>> +
-        <Prout '16777216:' <Symb 1 0>> +
         <Prout '1:' <Symb 0 1>> +
         <Prout '1:' <Symb 0 0 0 0 1>> +
         <Prout '-1:' <Symb '-' 0 0 0 0 1>> +
         <Prout '1:' <Symb '+' 0 0 0 0 1>> +
-        <Prout <Symb 255 16777215>> +
+        <Prout <Symb 4294967295>> +
 *  neoty:
         <Numb '4294967296'> +
         <Numb '-4294967296'> +
-        <Symb 256 0> +
-        <Symb '-' 256 0> 
+        <Symb 1 0> +
+        <Symb '-' 1 0> 
 
 P   E.N = <Prout E.N ' : ' <Symb E.N>>
 
