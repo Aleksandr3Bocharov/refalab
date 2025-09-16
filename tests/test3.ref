@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-19
+* 2025-09-17
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST3 +
@@ -22,8 +22,8 @@ Go      = <Br 'cc' '=' 123> +
         <Proutm ' d.b. 879:  ' <Dg 'mmm'>> +
         <Rp 'cc' '=' '1'> <Cp 'cc'> +
         <Proutm ' d.b. 345 i 1: ' <DgAll>> +
-        <Rp &Tra '=' '765'> <Rp &Tra '=' 16777215> +
-        <Proutm ' d.b. 16777215: ' <Dg &Tra>> +
+        <Rp &Tra '=' '765'> <Rp &Tra '=' 4294967295> +
+        <Proutm ' d.b. 4294967295: ' <Dg &Tra>> +
 *
 *
         <Sw1 <New 123456>> +
@@ -36,7 +36,7 @@ Sw1 R.x = <Proutm ' d.b. 123456: ' <Swr R.x 2>> +
 
 Sw2 R.x = <Ptr R.x 3> +
         <Proutm ' d.b. 2*(12 3): ' <Rdr R.x> <Gtr R.x>> +
-        <Prout ' d.b. pusto: ' <Swr R.x '0' 16777215 '0'>> +
+        <Prout ' d.b. pusto: ' <Swr R.x '0' 4294967295 '0'>> +
         <Prout <Rdr R.x>>
 
     END
