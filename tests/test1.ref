@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-07-19
+* 2025-09-17
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST1 +
@@ -29,10 +29,10 @@ F1      = <Prad (1) 2> +
         <Prmu( '-' 126)> +
         <Prmu () 2> +
         <Prmu ('-' 126) 2> +
-        <Prmu (65536) 64> +
+        <Prmu (16777216) 64> +
         <Prmu ('-' 2) '-' 2> +
-        <Prmu (16777215) '-' 1> +
-        <Prmu ('-'65536) '-' 512> +    
+        <Prmu (4294967295) '-' 1> +
+        <Prmu ('-'16777216) '-' 512> +    
         <Prdr (5) 3> +
         <Prdr (5) '-' 3> +
         <Prdr ('-' 5) 3> +
@@ -62,10 +62,10 @@ F2      = <Pradn (1) 2> +
         <Prmun ('-' 126)> +
         <Prmun () 2> +
         <Prmun ('-' 126) 2> +
-        <Prmun (65536) 64> +
+        <Prmun (16777216) 64> +
         <Prmun ('-' 2) '-' 2> +
-        <Prmun (16777215) '-' 1> +
-        <Prmun ('-' 65536) '-' 512> +    
+        <Prmun (4294967295) '-' 1> +
+        <Prmun ('-' 16777216) '-' 512> +    
         <Prdrn (5) 3> +
         <Prdrn (5) '-' 3> +
         <Prdrn ('-' 5) 3> +
@@ -95,32 +95,30 @@ F3      = <Prad ('+') 2> +
 
 *  prowerka p1, m1, numb, symb
 F4      = <Prp1 0> +
-        <Prp1 16777214> +
+        <Prp1 4294967294> +
         <Prm1 1> +
-        <Prm1 16777215> +
+        <Prm1 4294967295> +
         <Prnu '1000'> +
-        <Prnu '-16777216'>  +
         <Prnu '1000000000'> +
         <Prnu '4294967295'> +
         <Prnu> +
         <Prnu '-'> +
         <Prnu '+'> +
         <Prsy 1000> +
-        <Prsy '-' 1 0> +
         <Prsy> +
         <Prsy '-'> +
         <Prsy '+'> +
-        <Prsy 59 10144256> +
-        <Prsy 255 16777215> +
+        <Prsy 1000000000> +
+        <Prsy 4294967295> +
         <Prsy '+' 0 0 0> +
 *  neot
-        <Prp1 16777215> +
+        <Prp1 4294967295> +
         <Prp1 '+' 1> +     
         <Prm1 0> +
         <Prnu '4294967296'> +
         <Prnu '-+45'> +
         <Prnu '++'> +      
-        <Prsy 256 0> +
+        <Prsy 1 0> +
 *  prowerka LRel
         <LRel ('a') 'a'> <LRel (1 2) 1 2> +
         <LRel (&LRel) &LRel> <LRel ('\101\n') '\101\n'> +
