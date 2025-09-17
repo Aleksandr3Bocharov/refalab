@@ -69,7 +69,7 @@ static void system_(void)
         p = p->next;
     }
     *(cmd + i) = '\0';
-    const int sys = system(cmd);
+    int sys = system(cmd);
     free(cmd);
 #ifdef POSIX
     if (WIFEXITED(sys) != 0)
@@ -217,3 +217,4 @@ G_L_B uint8_t refalab_get_current_dir = '\122';
 void (*get_current_dir_1)(void) = get_current_dir_;
 
 //----------  end of file XSYS.C  ---------------
+
