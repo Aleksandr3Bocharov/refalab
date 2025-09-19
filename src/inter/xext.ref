@@ -25,6 +25,9 @@ EXT START
     EMPTY True, False, NULL, Begin, End, Cur
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
 
+Numbers_Files +
+    S   0 1 2 3 4 5 6 7 8 9
+
 White_Spaces +
     S   ' \n\t\v\f\r'
 
@@ -86,11 +89,11 @@ Del_Accumulator
     W._ E.Any +
         = E.Any
 
-* <Load_File S(0..9).Handle E(O).FileName> == V.Out
+* <Load_File S(:Numbers_Files:).Handle E(O).FileName> == V.Out
 * V.Out ::= V(O).Open_Error &NULL | E.Lines S(&FEOF &FError).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
-    S.Handle E.FileName +
+    S(:Numbers_Files:).Handle E(O).FileName +
         = <FOpen 'r' S.Handle E.FileName> +
         <Load_File_Aux S.Handle <FGetS S.Handle>> +
         <FClose S.Handle>
