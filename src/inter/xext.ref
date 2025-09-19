@@ -14,7 +14,9 @@
 EXT START
 
     ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
-    ENTRY Load_File, Save_File, Append_File, Load_FBytes, Save_FBytes, Append_FBytes
+    ENTRY Numbers_Files
+    ENTRY Load_File, Save_File, Append_File
+    ENTRY Load_FBytes, Save_FBytes, Append_FBytes
     ENTRY Inc, Dec, ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
