@@ -14,7 +14,7 @@
 EXT START
 
     ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
-    ENTRY Numbers_Files
+    ENTRY Numbers_Files, EOF
     ENTRY Load_File, Save_File, Append_File
     ENTRY Load_FBytes, Save_FBytes, Append_FBytes
     ENTRY Inc, Dec, ArgList
@@ -29,6 +29,9 @@ EXT START
 
 Numbers_Files +
     S   0 1 2 3 4 5 6 7 8 9
+
+EOF +
+    S   &FEOF &FError
 
 White_Spaces +
     S   ' \n\t\v\f\r'
@@ -92,7 +95,7 @@ Del_Accumulator
         = E.Any
 
 * <Load_File S(:Numbers_Files:).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).Open_Error &NULL | E.Lines S(&FEOF &FError).EOF E(O).Close_Error
+* V.Out ::= V(O).Open_Error &NULL | E.Lines S(:EOF:).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
     S(:Numbers_Files:).Handle E(O).FileName +
@@ -103,9 +106,9 @@ Load_File
 Load_File_Aux
     E._ &NULL +
         =
-    S._ S(&FEOF &FError).EOF +
+    S._ S(:EOF:).EOF +
         = S.EOF
-    S._ E.Line S(&FEOF &FError).EOF +
+    S._ E.Line S(:EOF:).EOF +
         = (E.Line) S.EOF
     S.Handle E.Line +
         = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
