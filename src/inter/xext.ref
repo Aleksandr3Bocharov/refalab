@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-19
+* 2025-09-20
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -124,15 +124,8 @@ Save_File
 
 Check_Lines
         =
-    (E.Line) E.Rest_Lines +
-        = <Check_Line E.Line> <Check_Lines E.Rest_Lines>
-
-Check_Line
-        =
-    S(O).Char E.Rest_Line +
-        = <Check_Line E.Rest_Line>
-    (E.Subline) E.Rest_Line +
-        = <Check_Line E.Subline> <Check_Line E.Rest_Line>
+    (E(O).Line) E.Rest_Lines +
+        = <Check_Lines E.Rest_Lines>
 
 Write_Bracket_Lines
     S._ =
@@ -148,10 +141,10 @@ Write_Bracket_Lines_Aux
 
 * <Append_File S(:Numbers_Files:).Handle (E(O).FileName) E.Lines> == E.Out
 * E.Lines ::= (E(O).Line)*
-* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Append_File
-    S.Handle (E.FileName) E.Lines +
-        = <FOpen 'a' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle (E(O).FileName) E(B).Lines +
+        = <Check_Lines E.Lines> <FOpen 'a' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose S.Handle>
 
