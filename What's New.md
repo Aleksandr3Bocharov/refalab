@@ -6,7 +6,7 @@
 Добавлены новые спецификаторы в библиотеку РефалАБ: EOF, Numbers_Files.
 
 Внесены изменения в работу рефал-функций из библиотеки РефалАБ:
-Apply, Load_File.
+Apply, Load_File, Save_File, Append_File.
 
 
 
