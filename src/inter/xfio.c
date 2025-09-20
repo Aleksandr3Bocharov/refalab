@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-14
+// 2025-09-20
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -226,7 +226,7 @@ static void fputs_(void)
         bool neot = false;
         while (q != refal.nexta)
         {
-            if (q->tag != TAGO && q->tag != TAGLB && q->tag != TAGRB)
+            if (q->tag != TAGO)
             {
                 neot = true;
                 break;
@@ -243,13 +243,7 @@ static void fputs_(void)
         p = p->next;
         while (p != refal.nexta)
         {
-            int cc;
-            if (p->tag == TAGLB)
-                cc = '(';
-            else if (p->tag == TAGRB)
-                cc = ')';
-            else
-                cc = p->info.infoc;
+            const int cc = p->info.infoc;
             const int pcc = putc(cc, f);
             if (rfreof(pcc, f, p))
             {
