@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-20
+* 2025-09-21
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -148,11 +148,11 @@ Append_File
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose S.Handle>
 
-* <Load_FBytes S(0..9).Handle E(O).FileName> == V.Out
-* V.Out ::= V(O).Open_Error &NULL | E.Bytes S(&FEOF &FError).EOF E(O).Close_Error
+* <Load_FBytes S(:Numbers_Files:).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error &NULL | E.Bytes S(:EOF:).EOF E(O).Close_Error
 * E.Bytes ::= S(N).Byte*
 Load_FBytes
-    S.Handle E.FileName +
+    S(:Numbers_Files:).Handle E(O).FileName +
         = <FOpen 'rb' S.Handle E.FileName> +
         <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>> +
         <FClose S.Handle>
@@ -160,16 +160,16 @@ Load_FBytes
 Load_FBytes_Aux
     E._ &NULL +
         =
-    S._ E.Bytes S(&FEOF &FError).EOF +
+    S._ E.Bytes S(:EOF:).EOF +
         = E.Bytes S.EOF
     S.Handle E.Bytes +
         = E.Bytes <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>>
 
-* <Save_FBytes S(0..9).Handle (E(O).FileName) E.Bytes> == E.Out
+* <Save_FBytes S(:Numbers_Files:).Handle (E(O).FileName) E.Bytes> == E.Out
 * E.Bytes ::= S(ON).Byte*
-* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Save_FBytes
-    S.Handle (E.FileName) E.Bytes +
+    S(:Numbers_Files:).Handle (E(O).FileName) E(ON).Bytes +
         = <FOpen 'wb' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
         <FClose S.Handle>
@@ -179,11 +179,11 @@ Write_FBytes
         =
     E._ = E._
 
-* <Append_FBytes S(0..9).Handle (E(O).FileName) E.Bytes> == E.Out
+* <Append_FBytes S(:Numbers_Files:).Handle (E(O).FileName) E.Bytes> == E.Out
 * E.Bytes ::= S(ON).Byte*
-* E.Out ::= V(O).Open_Error &NULL | E(&FEOF &FError).EOF E(O).Close_Error
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Append_FBytes
-    S.Handle (E.FileName) E.Bytes +
+    S(:Numbers_Files:).Handle (E(O).FileName) E(ON).Bytes +
         = <FOpen 'ab' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
         <FClose S.Handle>
