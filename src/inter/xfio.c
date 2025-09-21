@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-20
+// 2025-09-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -750,6 +750,51 @@ static void ftell_(void)
 char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_ftell = '\122';
 void (*ftell_1)(void) = ftell_;
+
+static void is_eof_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->tag == TAGN)
+        {
+            const uint32_t j = gcoden(p);
+            if (j >= fmax)
+                break;
+            f = files[j];
+        }
+        else if (p->tag == TAGF)
+        {
+            if (p->info.codef == &refalab_stdin)
+                f = stdin;
+            else if (p->info.codef == &refalab_stdout)
+                f = stdout;
+            else if (p->info.codef == &refalab_stderr)
+                f = stderr;
+            else
+                break;
+        }
+        else
+            break;
+        if (p->next != refal.nexta)
+            break;
+        if (f == NULL)
+            rfrnull(p);
+        else
+        {
+            bool b = false;
+            if (feof(f) != 0 || ferror(f) != 0)
+                b = true;
+            rfrbool(b, p);
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char is_eof_0[] = {Z6 'I', 'S', '_', 'E', 'O', 'F', (char)6};
+G_L_B uint8_t refalab_is_eof = '\122';
+void (*is_eof_1)(void) = is_eof_;
 
 static void is_feof_(void)
 {
