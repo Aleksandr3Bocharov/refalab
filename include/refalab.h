@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-09
+// 2025-09-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -116,9 +116,7 @@ extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
-extern void rfrbool(bool b, T_LINKCB *p);
 extern bool rfreof(int c, FILE *f, T_LINKCB *p);
-extern void rfrnull(T_LINKCB *p);
 extern void rfrstr(const char *str);
 extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
