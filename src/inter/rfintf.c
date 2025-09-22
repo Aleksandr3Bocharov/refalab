@@ -740,11 +740,8 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     return y;
 }
 
-void rfrstr(const char *str)
+T_LINKCB *rfrstr(const char *str, T_LINKCB *p)
 {
-    T_LINKCB *p = refal.prevr;
-    if (!slins(p, strlen(str)))
-        return;
     for (size_t i = 0; *(str + i) != '\0'; i++)
     {
         p = p->next;
@@ -752,7 +749,7 @@ void rfrstr(const char *str)
         p->info.codep = NULL;
         p->info.infoc = *(str + i);
     }
-    return;
+    return p;
 }
 
 bool rfreof(int c, FILE *f, T_LINKCB *p)
