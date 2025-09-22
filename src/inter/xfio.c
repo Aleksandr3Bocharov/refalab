@@ -152,7 +152,13 @@ static void fclose_(void)
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-            rfrstr(strerror(err), p);
+        {
+            const char *serr = strerror(err);
+            if (!slins(refal.nextr, strlen(serr) - 2))
+                return;
+            p = rfrstr(serr, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, refal.nexta);
+        }
         return;
     } while (false);
     refal.upshot = 2;
@@ -726,7 +732,13 @@ static void fseek_(void)
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-            rfrstr(strerror(err), p);
+        {
+            const char *serr = strerror(err);
+            if (!slins(refal.nextr, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
+                return;
+            p = rfrstr(serr, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, refal.nexta);
+        }
         return;
     } while (false);
     refal.upshot = 2;
@@ -759,11 +771,15 @@ static void ftell_(void)
         const int err = errno;
         if (res == -1)
         {
-            rfrstr(strerror(err), p);
+            const char *serr = strerror(err);
+            if (!slins(refal.nextr, strlen(serr) - 2))
+                return;
+            p = rfrstr(serr, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, refal.nexta);
             return;
         }
         pcoden(p, (uint32_t)res);
-        rftpl(refal.prevr, p->prev, p->next);
+        rftpl(refal.prevr, refal.preva, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;
