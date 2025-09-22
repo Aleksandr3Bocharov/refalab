@@ -109,7 +109,12 @@ static void fopen_(void)
         free(namf);
         files[j] = f;
         if (f == NULL)
-            rfrstr(strerror(err));
+        {
+            const char *serr = strerror(err);
+            if (!slins(refal.prevr, strlen(serr)))
+                return;
+            rfrstr(serr, refal.prevr);
+        }
         return;
     } while (false);
     refal.upshot = 2;
@@ -142,7 +147,7 @@ static void fclose_(void)
         const int cl = fclose(f);
         const int err = errno;
         if (cl == EOF)
-            rfrstr(strerror(err));
+            rfrstr(strerror(err), p);
         return;
     } while (false);
     refal.upshot = 2;
@@ -716,7 +721,7 @@ static void fseek_(void)
         const int res = fseek(f, offset, origin);
         const int err = errno;
         if (res == -1)
-            rfrstr(strerror(err));
+            rfrstr(strerror(err), p);
         return;
     } while (false);
     refal.upshot = 2;
@@ -749,7 +754,7 @@ static void ftell_(void)
         const int err = errno;
         if (res == -1)
         {
-            rfrstr(strerror(err));
+            rfrstr(strerror(err), p);
             return;
         }
         pcoden(p, (uint32_t)res);
@@ -931,7 +936,7 @@ static void remove_file_(void)
     const int err = errno;
     free(namf);
     if (u == -1)
-        rfrstr(strerror(err));
+        rfrstr(strerror(err), p);
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -988,7 +993,7 @@ static void rename_(void)
     free(namf);
     free(namt);
     if (r == -1)
-        rfrstr(strerror(err));
+        rfrstr(strerror(err), p);
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
