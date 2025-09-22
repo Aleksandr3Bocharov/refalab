@@ -156,7 +156,7 @@ static void fclose_(void)
             const char *serr = strerror(err);
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
-            p = rfrstr(serr, refal.nextr);
+            rfrstr(serr, refal.nextr);
             rftpl(refal.prevr, refal.nextr, refal.nexta);
         }
         return;
@@ -736,7 +736,7 @@ static void fseek_(void)
             const char *serr = strerror(err);
             if (!slins(refal.nextr, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
                 return;
-            p = rfrstr(serr, refal.nextr);
+            rfrstr(serr, refal.nextr);
             rftpl(refal.prevr, refal.nextr, refal.nexta);
         }
         return;
@@ -774,7 +774,7 @@ static void ftell_(void)
             const char *serr = strerror(err);
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
-            p = rfrstr(serr, refal.nextr);
+            rfrstr(serr, refal.nextr);
             rftpl(refal.prevr, refal.nextr, refal.nexta);
             return;
         }
