@@ -19,7 +19,6 @@
 #include "rfintf.h"
 #include "rfrun.h"
 
-extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_feof, refalab_ferror;
 
 T_REFAL refal;
@@ -753,17 +752,6 @@ void rfrstr(const char *str)
         p->info.codep = NULL;
         p->info.infoc = *(str + i);
     }
-    return;
-}
-
-void rfrbool(bool b, T_LINKCB *p)
-{
-    p->tag = TAGF;
-    if (b)
-        p->info.codef = &refalab_true;
-    else
-        p->info.codef = &refalab_false;
-    rftpl(refal.prevr, p->prev, p->next);
     return;
 }
 

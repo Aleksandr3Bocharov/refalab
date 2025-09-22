@@ -23,6 +23,7 @@
 
 #define fmax 10
 
+extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
@@ -795,10 +796,11 @@ static void is_eof_(void)
             rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
-        bool b = false;
         if (feof(f) != 0 || ferror(f) != 0)
-            b = true;
-        rfrbool(b, p);
+            refal.preva->info.codef = &refalab_true;
+        else
+            refal.preva->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -841,10 +843,11 @@ static void is_feof_(void)
             rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
-        bool b = false;
         if (feof(f) != 0)
-            b = true;
-        rfrbool(b, p);
+            refal.preva->info.codef = &refalab_true;
+        else
+            refal.preva->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -887,10 +890,11 @@ static void is_ferror_(void)
             rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
-        bool b = false;
         if (ferror(f) != 0)
-            b = true;
-        rfrbool(b, p);
+            refal.preva->info.codef = &refalab_true;
+        else
+            refal.preva->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -1014,13 +1018,13 @@ static void exist_file_(void)
         p = p->next;
     }
     *(namf + i) = '\0';
-    bool b = false;
     struct stat st_buf;
-    if (stat(namf, &st_buf) == 0)
-        if (S_ISREG(st_buf.st_mode))
-            b = true;
+    if (stat(namf, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
+        refal.preva->info.codef = &refalab_true;
+    else
+        refal.preva->info.codef = &refalab_false;
+    rftpl(refal.prevr, refal.nextr, refal.preva->next);
     free(namf);
-    rfrbool(b, refal.preva);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -1050,13 +1054,13 @@ static void exist_dir_(void)
         p = p->next;
     }
     *(namd + i) = '\0';
-    bool b = false;
     struct stat st_buf;
-    if (stat(namd, &st_buf) == 0)
-        if (S_ISDIR(st_buf.st_mode))
-            b = true;
+    if (stat(namd, &st_buf) == 0 && S_ISDIR(st_buf.st_mode))
+        refal.preva->info.codef = &refalab_true;
+    else
+        refal.preva->info.codef = &refalab_false;
+    rftpl(refal.prevr, refal.nextr, refal.preva->next);
     free(namd);
-    rfrbool(b, refal.preva);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
