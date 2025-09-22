@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-31
+// 2025-09-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -20,7 +20,6 @@
 #include "rfrun.h"
 
 extern uint8_t refalab_true, refalab_false;
-extern uint8_t refalab_null;
 extern uint8_t refalab_feof, refalab_ferror;
 
 T_REFAL refal;
@@ -754,14 +753,6 @@ void rfrstr(const char *str)
         p->info.codep = NULL;
         p->info.infoc = *(str + i);
     }
-    return;
-}
-
-void rfrnull(T_LINKCB *p)
-{
-    p->tag = TAGF;
-    p->info.codef = &refalab_null;
-    rftpl(refal.prevr, p->prev, p->next);
     return;
 }
 

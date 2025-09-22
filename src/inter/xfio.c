@@ -23,6 +23,7 @@
 
 #define fmax 10
 
+extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
 static FILE *f;
@@ -133,7 +134,8 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         const int cl = fclose(f);
@@ -173,7 +175,8 @@ static void fgets_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = refal.prevr;
@@ -237,7 +240,8 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = p->next;
@@ -286,7 +290,8 @@ static void fprint_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = p->next;
@@ -374,7 +379,8 @@ static void fprints_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = p->next;
@@ -461,7 +467,8 @@ static void fprintm_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = p->next;
@@ -575,7 +582,8 @@ static void fread_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = refal.prevr;
@@ -629,7 +637,8 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         p = p->next;
@@ -699,7 +708,8 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         const int res = fseek(f, offset, origin);
@@ -730,7 +740,8 @@ static void ftell_(void)
         f = files[j];
         if (f == NULL)
         {
-            rfrnull(p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
             return;
         }
         long int res = ftell(f);
@@ -779,14 +790,15 @@ static void is_eof_(void)
         if (p->next != refal.nexta)
             break;
         if (f == NULL)
-            rfrnull(p);
-        else
         {
-            bool b = false;
-            if (feof(f) != 0 || ferror(f) != 0)
-                b = true;
-            rfrbool(b, p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            return;
         }
+        bool b = false;
+        if (feof(f) != 0 || ferror(f) != 0)
+            b = true;
+        rfrbool(b, p);
         return;
     } while (false);
     refal.upshot = 2;
@@ -824,14 +836,15 @@ static void is_feof_(void)
         if (p->next != refal.nexta)
             break;
         if (f == NULL)
-            rfrnull(p);
-        else
         {
-            bool b = false;
-            if (feof(f) != 0)
-                b = true;
-            rfrbool(b, p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            return;
         }
+        bool b = false;
+        if (feof(f) != 0)
+            b = true;
+        rfrbool(b, p);
         return;
     } while (false);
     refal.upshot = 2;
@@ -869,14 +882,15 @@ static void is_ferror_(void)
         if (p->next != refal.nexta)
             break;
         if (f == NULL)
-            rfrnull(p);
-        else
         {
-            bool b = false;
-            if (ferror(f) != 0)
-                b = true;
-            rfrbool(b, p);
+            refal.preva->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            return;
         }
+        bool b = false;
+        if (ferror(f) != 0)
+            b = true;
+        rfrbool(b, p);
         return;
     } while (false);
     refal.upshot = 2;
