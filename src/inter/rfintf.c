@@ -742,6 +742,8 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
 
 T_LINKCB *rfrstr(const char *str, T_LINKCB *p)
 {
+    if (*str == '\0')
+        return NULL;
     for (size_t i = 0; *(str + i) != '\0'; i++)
     {
         p = p->next;
