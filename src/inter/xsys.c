@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-15
+// 2025-09-21
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -18,6 +18,8 @@
 #include "refalab.h"
 #include "rfintf.h"
 #include "xsys.h"
+
+extern uint8_t refalab_null;
 
 static size_t gargc = 0;
 static char **gargv = NULL;
@@ -155,9 +157,12 @@ static void get_env_(void)
     const char *env_value = getenv(env_name);
     free(env_name);
     if (env_value == NULL)
-        rfrnull(refal.preva);
-    else
-        rfrstr(env_value);
+    {
+        refal.preva->info.codef = &refalab_null;
+        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        return;
+    }
+    rfrstr(env_value);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
@@ -217,4 +222,3 @@ G_L_B uint8_t refalab_get_current_dir = '\122';
 void (*get_current_dir_1)(void) = get_current_dir_;
 
 //----------  end of file XSYS.C  ---------------
-
