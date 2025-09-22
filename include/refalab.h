@@ -117,7 +117,7 @@ extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const 
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern bool rfreof(int c, FILE *f, T_LINKCB *p);
-extern void rfrstr(const char *str);
+extern T_LINKCB *rfrstr(const char *str, T_LINKCB *p);
 extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
