@@ -31,7 +31,7 @@ static void p1_(void)
         if (l == 0)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, p->prev, p->next);
+        rftpl(refal.prevr, refal.preva, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;
@@ -52,7 +52,7 @@ static void m1_(void)
         if (l == MAX_NUMBER)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, p->prev, p->next);
+        rftpl(refal.prevr, refal.preva, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;
