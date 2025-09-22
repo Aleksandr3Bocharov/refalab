@@ -106,14 +106,19 @@ static void fopen_(void)
         *(namf + i) = '\0';
         f = fopen(namf, s);
         const int err = errno;
+        const int32_t al = 1 + (int32_t)strlen(s) + 1 + (int32_t)strlen(namf);
         free(namf);
         files[j] = f;
         if (f == NULL)
         {
             const char *serr = strerror(err);
-            if (!slins(refal.prevr, strlen(serr)))
-                return;
-            rfrstr(serr, refal.prevr);
+            // const int32_t al = 1 + (int32_t)strlen(s) + 1 + (int32_t)strlen(namf);
+            const int32_t d = (int32_t)strlen(serr) - al;
+            if (d > 0)
+                if (!slins(refal.nextr, (size_t)d))
+                    return;
+            p = rfrstr(serr, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, p->next);
         }
         return;
     } while (false);
