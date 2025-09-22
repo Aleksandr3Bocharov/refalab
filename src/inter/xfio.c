@@ -260,9 +260,9 @@ static void fputs_(void)
         {
             const int cc = p->info.infoc;
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, p))
+            if (rfreof(pcc, f, refal.preva))
             {
-                rftpl(refal.prevr, p->prev, p->next);
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
                 return;
             }
             p = p->next;
@@ -349,9 +349,9 @@ static void fprint_(void)
                 sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, p))
+            if (rfreof(pcc, f, refal.preva))
             {
-                rftpl(refal.prevr, p->prev, p->next);
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
                 return;
             }
             p = p->next;
@@ -437,9 +437,9 @@ static void fprints_(void)
                 sprintf(s, "%x,%p", p->tag, (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, p))
+            if (rfreof(pcc, f, refal.preva))
             {
-                rftpl(refal.prevr, p->prev, p->next);
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
                 return;
             }
             p = p->next;
@@ -552,9 +552,9 @@ static void fprintm_(void)
                 }
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, p))
+            if (rfreof(pcc, f, refal.preva))
             {
-                rftpl(refal.prevr, p->prev, p->next);
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
                 return;
             }
             p = p->next;
@@ -562,8 +562,8 @@ static void fprintm_(void)
         if (fr)
         {
             const int pcc = putc('\'', f);
-            if (rfreof(pcc, f, p))
-                rftpl(refal.prevr, p->prev, p->next);
+            if (rfreof(pcc, f, refal.preva))
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
         }
         return;
     } while (false);
@@ -661,9 +661,9 @@ static void fwrite_(void)
             else
                 cc = (uint8_t)gcoden(p);
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, p))
+            if (rfreof(pcc, f, refal.preva))
             {
-                rftpl(refal.prevr, p->prev, p->next);
+                rftpl(refal.prevr, refal.nextr, refal.preva->next);
                 return;
             }
             p = p->next;
