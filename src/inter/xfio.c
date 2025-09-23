@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-21
+// 2025-09-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -955,9 +955,19 @@ static void remove_file_(void)
     *(namf + i) = '\0';
     const int u = unlink(namf);
     const int err = errno;
+    const int32_t al = (int32_t)strlen(namf) + 1;
     free(namf);
     if (u == -1)
-        rfrstr(strerror(err), p);
+    {
+        const char *serr = strerror(err);
+        // const int32_t al = (int32_t)strlen(namf) + 1;
+        const int32_t d = (int32_t)strlen(serr) - al;
+        if (d > 0)
+            if (!slins(refal.nextr, (size_t)d))
+                return;
+        p = rfrstr(serr, refal.nextr);
+        rftpl(refal.prevr, refal.nextr, p->next);
+    }
     return;
 }
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
@@ -1011,10 +1021,20 @@ static void rename_(void)
     *(namt + j) = '\0';
     const int r = rename(namf, namt);
     const int err = errno;
+    const int32_t al = (int32_t)strlen(namf) + (int32_t)strlen(namt) + 2;
     free(namf);
     free(namt);
     if (r == -1)
-        rfrstr(strerror(err), p);
+    {
+        const char *serr = strerror(err);
+        // const int32_t al = (int32_t)strlen(namf) + (int32_t)strlen(namt) + 2;
+        const int32_t d = (int32_t)strlen(serr) - al;
+        if (d > 0)
+            if (!slins(refal.nextr, (size_t)d))
+                return;
+        p = rfrstr(serr, refal.nextr);
+        rftpl(refal.prevr, refal.nextr, p->next);
+    }
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
