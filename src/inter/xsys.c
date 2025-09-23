@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-21
+// 2025-09-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -41,7 +41,12 @@ static void arg_(void)
     const size_t argn = gcoden(p);
     if (argn >= gargc)
         return;
-    rfrstr(gargv[argn]);
+    const int32_t d = (int32_t)strlen(gargv[argn]) - 2;
+    if (d > 0)
+        if (!slins(refal.nextr, (size_t)d))
+            return;
+    p = rfrstr(gargv[argn], refal.nextr);
+    rftpl(refal.prevr, refal.nextr, p->next);
     return;
 }
 char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
@@ -162,7 +167,7 @@ static void get_env_(void)
         rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     }
-    rfrstr(env_value);
+    rfrstr(env_value, p);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
@@ -196,7 +201,7 @@ static void change_dir_(void)
     const int err = errno;
     free(namd);
     if (ch == -1)
-        rfrstr(strerror(err));
+        rfrstr(strerror(err), p);
     return;
 }
 char change_dir_0[] = {Z2 'C', 'H', 'A', 'N', 'G', 'E', '_', 'D', 'I', 'R', (char)10};
@@ -213,7 +218,7 @@ static void get_current_dir_(void)
     char *cwd = getcwd(NULL, 0);
     if (cwd == NULL)
         return;
-    rfrstr(cwd);
+    rfrstr(cwd, refal.preva);
     free(cwd);
     return;
 }
