@@ -28,9 +28,9 @@ static void time_(void)
     }
     setlocale(LC_TIME, "");
     const time_t tim = time(NULL);
-    char s[70];
+    char s[256];
     strftime(s, sizeof(s), "%c", localtime(&tim));
-    rfrstr(s);
+    rfrstr(s, refal.preva);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -65,7 +65,7 @@ static void tm_(void)
             im %= 60;
             char s[30];
             sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-            rfrstr(s);
+            rfrstr(s, p);
             return;
         default:;
         }
