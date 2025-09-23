@@ -205,11 +205,21 @@ static void change_dir_(void)
         p = p->next;
     }
     *(namd + i) = '\0';
+    const int32_t al = (int32_t)strlen(namd) + 1;
     const int ch = chdir(namd);
     const int err = errno;
     free(namd);
     if (ch == -1)
-        rfrstr(strerror(err), p);
+    {
+        const char *serr = strerror(err);
+        // const int32_t al = (int32_t)strlen(namd) + 1;
+        const int32_t d = (int32_t)strlen(serr) - al;
+        if (d > 0)
+            if (!slins(refal.nextr, (size_t)d))
+                return;
+        p = rfrstr(serr, refal.nextr);
+        rftpl(refal.prevr, refal.nextr, p->next);
+    }
     return;
 }
 char change_dir_0[] = {Z2 'C', 'H', 'A', 'N', 'G', 'E', '_', 'D', 'I', 'R', (char)10};
