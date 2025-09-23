@@ -39,7 +39,7 @@ static void arg_(void)
         return;
     }
     const size_t argn = gcoden(p);
-    if (argn >= gargc)
+    if (argn >= gargc || *gargv[argn] == '\0')
         return;
     const int32_t d = (int32_t)strlen(gargv[argn]) - 2;
     if (d > 0)
