@@ -236,7 +236,10 @@ static void get_current_dir_(void)
     char *cwd = getcwd(NULL, 0);
     if (cwd == NULL)
         return;
-    rfrstr(cwd, refal.preva);
+    if (!slins(refal.nextr, strlen(cwd) - 1))
+        return;
+    rfrstr(cwd, refal.nextr);
+    rftpl(refal.prevr, refal.nextr, refal.nexta);
     free(cwd);
     return;
 }
