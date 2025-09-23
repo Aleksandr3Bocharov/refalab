@@ -159,6 +159,7 @@ static void get_env_(void)
         p = p->next;
     }
     *(env_name + i) = '\0';
+    const int32_t al = (int32_t)strlen(env_name) + 1;
     const char *env_value = getenv(env_name);
     free(env_name);
     if (env_value == NULL)
@@ -167,7 +168,14 @@ static void get_env_(void)
         rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     }
-    rfrstr(env_value, p);
+    // const int32_t al = (int32_t)strlen(env_name) + 1;
+    const int32_t d = (int32_t)strlen(env_value) - al;
+    if (d > 0)
+        if (!slins(refal.nextr, (size_t)d))
+            return;
+    p = rfrstr(env_value, refal.nextr);
+    if (p != NULL)
+        rftpl(refal.prevr, refal.nextr, p->next);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
