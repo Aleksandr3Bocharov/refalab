@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-21
+// 2025-09-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -84,7 +84,7 @@ bool lrqlk(size_t l)
 
 bool lins(T_LINKCB *p, size_t l)
 {
-    if (l < 1)
+    if (l == 0)
         return true;
     T_LINKCB *q1 = refal.flhead;
     for (size_t n = 0; n < l; n++)
