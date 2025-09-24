@@ -53,18 +53,16 @@ void (*time_1)(void) = time_;
 
 static void tm_(void)
 {
-    T_LINKCB *p = refal.preva->next;
-    if (p->next == refal.nexta && p->tag == TAGO)
+    do
     {
+        T_LINKCB *p = refal.preva->next;
+        if (p->next != refal.nexta || p->tag != TAGO)
+            break;
         const char c = p->info.infoc;
-        switch (c)
-        {
-        case 's':
-        case 'S':
+        if (c == 'S' || c == 's')
             timespec_get(&t0, TIME_UTC);
-            return;
-        case 'g':
-        case 'G':
+        else if (c == 'G' || c == 'g')
+        {
             timespec_get(&t1, TIME_UTC);
             int32_t in = (int32_t)(t1.tv_nsec - t0.tv_nsec);
             uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
@@ -79,11 +77,12 @@ static void tm_(void)
             im %= 60;
             char s[30];
             sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-            rfrstr(s, p);
-            return;
-        default:;
+            //rfrstr(s, p);
         }
-    }
+        else
+            break;
+        return;
+    } while (false);
     refal.upshot = 2;
     return;
 }
