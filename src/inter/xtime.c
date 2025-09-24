@@ -17,6 +17,8 @@
 #include "refalab.h"
 #include "rfintf.h"
 
+extern uint8_t refalab_null;
+
 static T_TIMESPEC t0, t1;
 
 static void time_(void)
@@ -28,9 +30,21 @@ static void time_(void)
     }
     setlocale(LC_TIME, "");
     const time_t tim = time(NULL);
+    const struct tm *lt = localtime(&tim);
+    if (lt == NULL)
+    {
+        refal.preva->info.codef = &refalab_null;
+        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        return;
+    }
     char s[256];
-    strftime(s, sizeof(s), "%c", localtime(&tim));
-    rfrstr(s, refal.preva);
+    const size_t sl = strftime(s, sizeof(s), "%c", lt);
+    if (sl == 0)
+        return;
+    if (!slins(refal.nextr, sl - 1))
+        return;
+    rfrstr(s, refal.nextr);
+    rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
