@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-17
+// 2025-09-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -220,17 +220,17 @@ static void GET_time(void)
 {
     T_TIMESPEC t1;
     timespec_get(&t1, TIME_UTC);
-    int32_t in = (int32_t)(t1.tv_nsec - t0.tv_nsec);
-    uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
+    long int in = t1.tv_nsec - t0.tv_nsec;
+    int64_t is = (int64_t)difftime(t1.tv_sec, t0.tv_sec);
     if (in < 0)
     {
         in += 1000000000;
         is--;
     }
-    const uint32_t im = is / 60;
+    int64_t im = is / 60;
     is %= 60;
-    char s[25];
-    sprintf(s, "%02u:%02u.%09d", im, is, in);
+    char s[64];
+    sprintf(s, "%02lld:%02lld.%09ld", im, is, in);
     printf("                       elapsed time      = %s\n", s);
     return;
 }
