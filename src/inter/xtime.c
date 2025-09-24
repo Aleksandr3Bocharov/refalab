@@ -64,20 +64,23 @@ static void tm_(void)
         else if (c == 'G' || c == 'g')
         {
             timespec_get(&t1, TIME_UTC);
-            int32_t in = (int32_t)(t1.tv_nsec - t0.tv_nsec);
-            uint32_t is = (uint32_t)difftime(t1.tv_sec, t0.tv_sec);
+            long int in = t1.tv_nsec - t0.tv_nsec;
+            int64_t is = (int64_t)difftime(t1.tv_sec, t0.tv_sec);
             if (in < 0)
             {
                 in += 1000000000;
                 is--;
             }
-            uint32_t im = is / 60;
+            int64_t im = is / 60;
             is %= 60;
-            const uint32_t ih = im / 60;
+            const int64_t ih = im / 60;
             im %= 60;
-            char s[30];
-            sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
-            //rfrstr(s, p);
+            char s[64];
+            sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
+            if (!slins(refal.nextr, strlen(s) - 2))
+                return;
+            rfrstr(s, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, refal.nexta);
         }
         else
             break;
