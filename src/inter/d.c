@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-09
+// 2025-09-23
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- D.C ------------------
@@ -480,19 +480,19 @@ void rfdbg(T_ST *s_st)
             if (refal.tm.mode)
             {
                 timespec_get(&refal.tm.stop, TIME_UTC);
-                int32_t in = (int32_t)(refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec);
-                uint32_t is = (uint32_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
+                int64_t is = (int64_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;
                     is--;
                 }
-                uint32_t im = is / 60;
+                int64_t im = is / 60;
                 is %= 60;
-                const uint32_t ih = im / 60;
+                const int64_t ih = im / 60;
                 im %= 60;
-                char s[30];
-                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
+                char s[64];
+                sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
                 printf("Elapsed time = %s\n", s);
             }
             rfcanc(s_st);
@@ -685,19 +685,19 @@ static void dbtry(T_ST *ss_st)
             if (refal.tm.mode)
             {
                 timespec_get(&refal.tm.stop, TIME_UTC);
-                int32_t in = (int32_t)(refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec);
-                uint32_t is = (uint32_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
+                int64_t is = (int64_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;
                     is--;
                 }
-                uint32_t im = is / 60;
+                int64_t im = is / 60;
                 is %= 60;
-                const uint32_t ih = im / 60;
+                const int64_t ih = im / 60;
                 im %= 60;
-                char s[30];
-                sprintf(s, "%02u:%02u:%02u.%09d", ih, im, is, in);
+                char s[64];
+                sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
                 printf("Elapsed time = %s\n", s);
             }
             exit(0);
