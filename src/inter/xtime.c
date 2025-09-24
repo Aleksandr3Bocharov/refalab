@@ -65,15 +65,15 @@ static void tm_(void)
         {
             timespec_get(&t1, TIME_UTC);
             long int in = t1.tv_nsec - t0.tv_nsec;
-            int64_t is = (int64_t)difftime(t1.tv_sec, t0.tv_sec);
+            long long int is = (long long int)difftime(t1.tv_sec, t0.tv_sec);
             if (in < 0)
             {
                 in += 1000000000;
                 is--;
             }
-            int64_t im = is / 60;
+            long long int im = is / 60;
             is %= 60;
-            const int64_t ih = im / 60;
+            const long long int ih = im / 60;
             im %= 60;
             char s[64];
             sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);

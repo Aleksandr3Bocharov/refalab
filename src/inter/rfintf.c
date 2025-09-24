@@ -334,15 +334,15 @@ void rfexec(uint8_t *func)
             {
                 timespec_get(&refal.tm.stop, TIME_UTC);
                 long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
-                int64_t is = (int64_t)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                long long int is = (long long int)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;
                     is--;
                 }
-                int64_t im = is / 60;
+                long long int im = is / 60;
                 is %= 60;
-                const int64_t ih = im / 60;
+                const long long int ih = im / 60;
                 im %= 60;
                 char s[64];
                 sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
