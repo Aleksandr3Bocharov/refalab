@@ -81,21 +81,9 @@ static void fopen_(void)
             break;
         p = p->next;
         char namf[256];
-        bool neot = false;
-        size_t i;
-        for (i = 0; p != refal.nexta; i++)
-        {
-            if (p->tag != TAGO || i == 255)
-            {
-                neot = true;
-                break;
-            }
-            namf[i] = p->info.infoc;
-            p = p->next;
-        }
-        if (neot)
+        p = rfgstr(namf, 255, p);
+        if (p != refal.nexta)
             break;
-        namf[i] = '\0';
         f = fopen(namf, s);
         const int err = errno;
         files[j] = f;
@@ -923,18 +911,12 @@ static void remove_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
     char namf[256];
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    p = rfgstr(namf, 255, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO || i == 255)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        namf[i] = p->info.infoc;
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    namf[i] = '\0';
     const int u = unlink(namf);
     const int err = errno;
     if (u == -1)
@@ -959,33 +941,14 @@ static void rename_(void)
     {
         T_LINKCB *p = refal.preva->next;
         char namf[256];
-        size_t i;
-        for (i = 0; p != refal.nexta; i++)
-        {
-            if (p->tag != TAGO || i == 255)
-                break;
-            namf[i] = p->info.infoc;
-            p = p->next;
-        }
+        p = rfgstr(namf, 255, p);
         if (p->tag != TAGN || gcoden(p) != 0)
             break;
-        namf[i] = '\0';
         p = p->next;
         char namt[256];
-        bool neot = false;
-        for (i = 0; p != refal.nexta; i++)
-        {
-            if (p->tag != TAGO || i == 255)
-            {
-                neot = true;
-                break;
-            }
-            namt[i] = p->info.infoc;
-            p = p->next;
-        }
-        if (neot)
+        p = rfgstr(namt, 255, p);
+        if (p != refal.nexta)
             break;
-        namt[i] = '\0';
         const int r = rename(namf, namt);
         const int err = errno;
         if (r == -1)
