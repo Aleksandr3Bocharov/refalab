@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2025-09-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -779,6 +779,20 @@ bool rfreof(int c, FILE *f, T_LINKCB *p)
         return true;
     }
     return false;
+}
+
+T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p)
+{
+    size_t i;
+    for (i = 0; p != refal.nexta; i++)
+    {
+        if (p->tag != TAGO || i == l)
+            break;
+        *(str + i) = p->info.infoc;
+        p = p->next;
+    }
+    *(str + i) = '\0';
+    return p;
 }
 
 //----------- end of file  RFINTF.C ------------
