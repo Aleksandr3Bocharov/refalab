@@ -175,35 +175,25 @@ void (*get_env_1)(void) = get_env_;
 static void change_dir_(void)
 {
     T_LINKCB *p = refal.preva->next;
+    char namd[256];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO)
+        if (p->tag != TAGO || i == 255)
         {
             refal.upshot = 2;
             return;
         }
+        namd[i] = p->info.infoc;
         p = p->next;
     }
-    char *namd = (char *)malloc(i + 1);
-    if (namd == NULL)
-        rfabe("change_dir: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(namd + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(namd + i) = '\0';
-    const int32_t al = (int32_t)strlen(namd) + 1;
+    namd[i] = '\0';
     const int ch = chdir(namd);
     const int err = errno;
-    free(namd);
     if (ch == -1)
     {
         const char *serr = strerror(err);
-        // const int32_t al = (int32_t)strlen(namd) + 1;
-        const int32_t d = (int32_t)strlen(serr) - al;
+        const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namd) + 1);
         if (d > 0)
             if (!slins(refal.nextr, (size_t)d))
                 return;
