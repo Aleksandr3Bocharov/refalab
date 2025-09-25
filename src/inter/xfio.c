@@ -955,65 +955,52 @@ void (*remove_file_1)(void) = remove_file_;
 
 static void rename_(void)
 {
-    T_LINKCB *p = refal.preva->next;
-    size_t i;
-    for (i = 0; p->tag != TAGO || p->info.infoc != '*'; i++)
+    do
     {
-        if (p->tag != TAGO)
+        T_LINKCB *p = refal.preva->next;
+        char namf[256];
+        size_t i;
+        for (i = 0; p != refal.nexta; i++)
         {
-            refal.upshot = 2;
-            return;
+            if (p->tag != TAGO || i == 255)
+                break;
+            namf[i] = p->info.infoc;
+            p = p->next;
         }
+        if (p->tag != TAGN || gcoden(p) != 0)
+            break;
+        namf[i] = '\0';
         p = p->next;
-    }
-    p = p->next;
-    size_t j;
-    for (j = 0; p != refal.nexta; j++)
-    {
-        if (p->tag != TAGO)
+        char namt[256];
+        bool neot = false;
+        for (i = 0; p != refal.nexta; i++)
         {
-            refal.upshot = 2;
-            return;
+            if (p->tag != TAGO || i == 255)
+            {
+                neot = true;
+                break;
+            }
+            namt[i] = p->info.infoc;
+            p = p->next;
         }
-        p = p->next;
-    }
-    char *namf = (char *)malloc(i + 1);
-    if (namf == NULL)
-        rfabe("rename: malloc error");
-    p = refal.preva->next;
-    size_t k;
-    for (k = 0; k < i; k++)
-    {
-        *(namf + k) = p->info.infoc;
-        p = p->next;
-    }
-    *(namf + i) = '\0';
-    char *namt = (char *)malloc(j + 1); // from -> to
-    if (namt == NULL)
-        rfabe("rename: malloc error");
-    p = p->next;
-    for (k = 0; k < j; k++)
-    {
-        *(namt + k) = p->info.infoc;
-        p = p->next;
-    }
-    *(namt + j) = '\0';
-    const int r = rename(namf, namt);
-    const int err = errno;
-    const int32_t al = (int32_t)strlen(namf) + (int32_t)strlen(namt) + 2;
-    free(namf);
-    free(namt);
-    if (r == -1)
-    {
-        const char *serr = strerror(err);
-        // const int32_t al = (int32_t)strlen(namf) + (int32_t)strlen(namt) + 2;
-        const int32_t d = (int32_t)strlen(serr) - al;
-        if (d > 0)
-            if (!slins(refal.nextr, (size_t)d))
-                return;
-        p = rfrstr(serr, refal.nextr);
-        rftpl(refal.prevr, refal.nextr, p->next);
-    }
+        if (neot)
+            break;
+        namt[i] = '\0';
+        const int r = rename(namf, namt);
+        const int err = errno;
+        if (r == -1)
+        {
+            const char *serr = strerror(err);
+            const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
+            if (d > 0)
+                if (!slins(refal.nextr, (size_t)d))
+                    return;
+            p = rfrstr(serr, refal.nextr);
+            rftpl(refal.prevr, refal.nextr, p->next);
+        }
+        return;
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
