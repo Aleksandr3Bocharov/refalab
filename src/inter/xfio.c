@@ -80,40 +80,29 @@ static void fopen_(void)
         if (j >= fmax)
             break;
         p = p->next;
+        char namf[256];
         bool neot = false;
-        T_LINKCB *q = p;
         size_t i;
         for (i = 0; p != refal.nexta; i++)
         {
-            if (p->tag != TAGO)
+            if (p->tag != TAGO || i == 255)
             {
                 neot = true;
                 break;
             }
+            namf[i] = p->info.infoc;
             p = p->next;
         }
         if (neot)
             break;
-        char *namf = (char *)malloc(i + 1);
-        if (namf == NULL)
-            rfabe("fopen: malloc error");
-        p = q;
-        for (size_t k = 0; k < i; k++)
-        {
-            *(namf + k) = p->info.infoc;
-            p = p->next;
-        }
-        *(namf + i) = '\0';
+        namf[i] = '\0';
         f = fopen(namf, s);
         const int err = errno;
-        const int32_t al = (int32_t)strlen(s) + (int32_t)strlen(namf) + 2;
-        free(namf);
         files[j] = f;
         if (f == NULL)
         {
             const char *serr = strerror(err);
-            // const int32_t al = (int32_t)strlen(s) + (int32_t)strlen(namf) + 2;
-            const int32_t d = (int32_t)strlen(serr) - al;
+            const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(s) + (int32_t)strlen(namf) + 2);
             if (d > 0)
                 if (!slins(refal.nextr, (size_t)d))
                     return;
