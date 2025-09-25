@@ -12,7 +12,7 @@
 Добавлена первичная функция в библиотеку РефалАБ is_eof.
 
 Внесены изменения в работу первичных функций: fopen, fputs,
-remove_file, rename, time, tm, get_env.
+remove_file, rename, time, tm, get_env, change_dir.
 
 Добавлены новые спецификаторы в библиотеку РефалАБ: EOF, Numbers_Files.
 
