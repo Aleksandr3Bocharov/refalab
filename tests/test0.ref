@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-17
+* 2025-09-25
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 TEST0 +
@@ -115,7 +115,7 @@ Prvv    = <FOpen 'w' 0 'lala.put'> +
         <FPutS 0 ' str 1\n'> <FPutS 0 ' str 2\n'> <FClose 0> +
         <FOpen 'a' 1 'lala.put'> +
         <FPutS 1 ' str 3\n'> <FClose 1> +
-        <Rename 'lala.put*lala.get'> +
+        <Rename 'lala.put' 0 'lala.get'> +
         <FOpen 'r' 4 'lala.get'> +
         <Print <FGetS 4>> <Print <FGetS 4>> +
         <Print <FGetS 4>> <FClose 4> <Remove_File 'lala.get'>
