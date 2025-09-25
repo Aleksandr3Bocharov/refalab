@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2025-09-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -139,37 +139,27 @@ void (*exit_1)(void) = exit_;
 static void get_env_(void)
 {
     T_LINKCB *p = refal.preva->next;
+    char env_name[6001];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO)
+        if (p->tag != TAGO || i == 6000)
         {
             refal.upshot = 2;
             return;
         }
+        env_name[i] = p->info.infoc;
         p = p->next;
     }
-    char *env_name = (char *)malloc(i + 1);
-    if (env_name == NULL)
-        rfabe("get_env: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(env_name + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(env_name + i) = '\0';
-    const int32_t al = (int32_t)strlen(env_name) + 1;
+    env_name[i] = '\0';
     const char *env_value = getenv(env_name);
-    free(env_name);
     if (env_value == NULL)
     {
         refal.preva->info.codef = &refalab_null;
         rftpl(refal.prevr, refal.nextr, refal.preva->next);
         return;
     }
-    // const int32_t al = (int32_t)strlen(env_name) + 1;
-    const int32_t d = (int32_t)strlen(env_value) - al;
+    const int32_t d = (int32_t)strlen(env_value) - ((int32_t)strlen(env_name) + 1);
     if (d > 0)
         if (!slins(refal.nextr, (size_t)d))
             return;
