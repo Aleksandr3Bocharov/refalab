@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2025-09-25
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -922,35 +922,25 @@ void (*is_ferror_1)(void) = is_ferror_;
 static void remove_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
+    char namf[256];
     size_t i;
     for (i = 0; p != refal.nexta; i++)
     {
-        if (p->tag != TAGO)
+        if (p->tag != TAGO || i == 255)
         {
             refal.upshot = 2;
             return;
         }
+        namf[i] = p->info.infoc;
         p = p->next;
     }
-    char *namf = (char *)malloc(i + 1);
-    if (namf == NULL)
-        rfabe("remove_file: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(namf + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(namf + i) = '\0';
+    namf[i] = '\0';
     const int u = unlink(namf);
     const int err = errno;
-    const int32_t al = (int32_t)strlen(namf) + 1;
-    free(namf);
     if (u == -1)
     {
         const char *serr = strerror(err);
-        // const int32_t al = (int32_t)strlen(namf) + 1;
-        const int32_t d = (int32_t)strlen(serr) - al;
+        const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + 1);
         if (d > 0)
             if (!slins(refal.nextr, (size_t)d))
                 return;
