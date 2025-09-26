@@ -56,28 +56,14 @@ void (*arg_1)(void) = arg_;
 static void system_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    char cmd[6001];
+    p = rfgstr(cmd, 6000, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    char *cmd = (char *)malloc(i + 1);
-    if (cmd == NULL)
-        rfabe("system: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(cmd + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(cmd + i) = '\0';
     int sys = system(cmd);
-    free(cmd);
 #ifdef POSIX
     if (WIFEXITED(sys) != 0)
         sys = WEXITSTATUS(sys);
