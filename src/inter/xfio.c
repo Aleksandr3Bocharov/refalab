@@ -80,8 +80,8 @@ static void fopen_(void)
         if (j >= fmax)
             break;
         p = p->next;
-        char namf[256];
-        p = rfgstr(namf, 255, p);
+        char namf[MAX_PATHFILENAME + 1];
+        p = rfgstr(namf, MAX_PATHFILENAME, p);
         if (p != refal.nexta)
             break;
         f = fopen(namf, s);
@@ -910,8 +910,8 @@ void (*is_ferror_1)(void) = is_ferror_;
 static void remove_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    char namf[256];
-    p = rfgstr(namf, 255, p);
+    char namf[MAX_PATHFILENAME + 1];
+    p = rfgstr(namf, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
     {
         refal.upshot = 2;
@@ -940,13 +940,13 @@ static void rename_(void)
     do
     {
         T_LINKCB *p = refal.preva->next;
-        char namf[256];
-        p = rfgstr(namf, 255, p);
+        char namf[MAX_PATHFILENAME + 1];
+        p = rfgstr(namf, MAX_PATHFILENAME, p);
         if (p->tag != TAGN || gcoden(p) != 0)
             break;
         p = p->next;
-        char namt[256];
-        p = rfgstr(namt, 255, p);
+        char namt[MAX_PATHFILENAME + 1];
+        p = rfgstr(namt, MAX_PATHFILENAME, p);
         if (p != refal.nexta)
             break;
         const int r = rename(namf, namt);
@@ -973,33 +973,19 @@ void (*rename_1)(void) = rename_;
 static void exist_file_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    char namf[MAX_PATHFILENAME + 1];
+    p = rfgstr(namf, MAX_PATHFILENAME, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    char *namf = (char *)malloc(i + 1);
-    if (namf == NULL)
-        rfabe("exist_file: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(namf + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(namf + i) = '\0';
     struct stat st_buf;
     if (stat(namf, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
         refal.preva->info.codef = &refalab_true;
     else
         refal.preva->info.codef = &refalab_false;
     rftpl(refal.prevr, refal.nextr, refal.preva->next);
-    free(namf);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -1009,33 +995,19 @@ void (*exist_file_1)(void) = exist_file_;
 static void exist_dir_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    char namd[MAX_PATHFILENAME + 1];
+    p = rfgstr(namd, MAX_PATHFILENAME, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    char *namd = (char *)malloc(i + 1);
-    if (namd == NULL)
-        rfabe("exist_dir: malloc error");
-    p = refal.preva->next;
-    for (size_t j = 0; j < i; j++)
-    {
-        *(namd + j) = p->info.infoc;
-        p = p->next;
-    }
-    *(namd + i) = '\0';
     struct stat st_buf;
     if (stat(namd, &st_buf) == 0 && S_ISDIR(st_buf.st_mode))
         refal.preva->info.codef = &refalab_true;
     else
         refal.preva->info.codef = &refalab_false;
     rftpl(refal.prevr, refal.nextr, refal.preva->next);
-    free(namd);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
