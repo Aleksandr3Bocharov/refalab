@@ -126,18 +126,12 @@ static void get_env_(void)
 {
     T_LINKCB *p = refal.preva->next;
     char env_name[6001];
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    p = rfgstr(env_name, 6000, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO || i == 6000)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        env_name[i] = p->info.infoc;
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    env_name[i] = '\0';
     const char *env_value = getenv(env_name);
     if (env_value == NULL)
     {
