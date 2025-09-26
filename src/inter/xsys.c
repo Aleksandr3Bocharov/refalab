@@ -156,18 +156,12 @@ static void change_dir_(void)
 {
     T_LINKCB *p = refal.preva->next;
     char namd[256];
-    size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    p = rfgstr(namd, 255, p);
+    if (p != refal.nexta)
     {
-        if (p->tag != TAGO || i == 255)
-        {
-            refal.upshot = 2;
-            return;
-        }
-        namd[i] = p->info.infoc;
-        p = p->next;
+        refal.upshot = 2;
+        return;
     }
-    namd[i] = '\0';
     const int ch = chdir(namd);
     const int err = errno;
     if (ch == -1)
