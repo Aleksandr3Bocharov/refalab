@@ -155,8 +155,8 @@ void (*get_env_1)(void) = get_env_;
 static void change_dir_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    char namd[256];
-    p = rfgstr(namd, 255, p);
+    char namd[MAX_PATHFILENAME + 1];
+    p = rfgstr(namd, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
     {
         refal.upshot = 2;
