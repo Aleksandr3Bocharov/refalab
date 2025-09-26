@@ -125,8 +125,8 @@ void (*exit_1)(void) = exit_;
 static void get_env_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    char env_name[6001];
-    p = rfgstr(env_name, 6000, p);
+    char env_name[32768];
+    p = rfgstr(env_name, 32767, p);
     if (p != refal.nexta)
     {
         refal.upshot = 2;
