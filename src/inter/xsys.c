@@ -56,8 +56,8 @@ void (*arg_1)(void) = arg_;
 static void system_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    char cmd[6001];
-    p = rfgstr(cmd, 6000, p);
+    char cmd[8192];
+    p = rfgstr(cmd, 8191, p);
     if (p != refal.nexta)
     {
         refal.upshot = 2;
