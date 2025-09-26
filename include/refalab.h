@@ -49,6 +49,8 @@
 
 #define MAX_STOP 0x7FFFFFFF
 
+#define MAX_PATHFILENAME 4096
+
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
