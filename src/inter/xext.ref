@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-21
+* 2025-09-27
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -98,11 +98,24 @@ Del_Accumulator
 * V.Out ::= V(O).Open_Error &NULL | E.Lines S(:EOF:).EOF E(O).Close_Error
 * E.Lines ::= (E(O).Line)*
 Load_File
-    S(:Numbers_Files:).Handle E(O).FileName +
-        = <FOpen 'r' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle E.FileName +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <FOpen 'r' S.Handle E.FileName> +
         <Load_File_Aux S.Handle <FGetS S.Handle>> +
         <FClose S.Handle>
-  
+
+Check_FileName
+        =
+
+Check_FileName_Aux
+    S._ =
+    S.Char_Numbers W((O)).Symbol E.Rest_FileName +
+        = S.Char_Numbers W.Symbol E.Rest_FileName
+    4096 S.Symbol E.Rest_FileName +
+        = 4096 S.Symbol E.Rest_FileName
+    S.Char_Numbers S._ E.Rest_FileName +
+        = <Check_FileName_Aux <P1 S.Char_Numbers> E.Rest_FileName>
+
 Load_File_Aux
     E._ &NULL +
         =
@@ -117,8 +130,9 @@ Load_File_Aux
 * E.Lines ::= (E(O).Line)*
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Save_File
-    S(:Numbers_Files:).Handle (E(O).FileName) E(B).Lines +
-        = <Check_Lines E.Lines> <FOpen 'w' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle (E.FileName) E(B).Lines +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <Check_Lines E.Lines> <FOpen 'w' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose S.Handle>
 
@@ -143,8 +157,9 @@ Write_Bracket_Lines_Aux
 * E.Lines ::= (E(O).Line)*
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Append_File
-    S(:Numbers_Files:).Handle (E(O).FileName) E(B).Lines +
-        = <Check_Lines E.Lines> <FOpen 'a' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle (E.FileName) E(B).Lines +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <Check_Lines E.Lines> <FOpen 'a' S.Handle E.FileName> +
         <Write_Bracket_Lines S.Handle E.Lines> +
         <FClose S.Handle>
 
@@ -152,8 +167,9 @@ Append_File
 * V.Out ::= V(O).Open_Error &NULL | E.Bytes S(:EOF:).EOF E(O).Close_Error
 * E.Bytes ::= S(N).Byte*
 Load_FBytes
-    S(:Numbers_Files:).Handle E(O).FileName +
-        = <FOpen 'rb' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle E.FileName +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <FOpen 'rb' S.Handle E.FileName> +
         <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>> +
         <FClose S.Handle>
   
@@ -169,8 +185,9 @@ Load_FBytes_Aux
 * E.Bytes ::= S(ON).Byte*
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Save_FBytes
-    S(:Numbers_Files:).Handle (E(O).FileName) E(ON).Bytes +
-        = <FOpen 'wb' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle (E.FileName) E(ON).Bytes +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <FOpen 'wb' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
         <FClose S.Handle>
 
@@ -183,8 +200,9 @@ Write_FBytes
 * E.Bytes ::= S(ON).Byte*
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 Append_FBytes
-    S(:Numbers_Files:).Handle (E(O).FileName) E(ON).Bytes +
-        = <FOpen 'ab' S.Handle E.FileName> +
+    S(:Numbers_Files:).Handle (E.FileName) E(ON).Bytes +
+        = <Check_FileName <Check_FileName_Aux 0 E.FileName>> +
+        <FOpen 'ab' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
         <FClose S.Handle>
 
