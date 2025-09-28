@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-27
+* 2025-09-28
 * https://github.com/Aleksandr3Bocharov/RefalAB
 
 *====================================================================
@@ -22,6 +22,7 @@ EXT START
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
     ENTRY True, False, NULL, Begin, End, Cur
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
+    ENTRY Max_Number, Get_Max_Number, Is_Max_Number
     EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError 
     EXTRN Add, Sub, P1, Arg, LRel
     EMPTY True, False, NULL, Begin, End, Cur
@@ -35,6 +36,9 @@ EOF +
 
 White_Spaces +
     S   ' \n\t\v\f\r'
+
+Max_Number +
+    S   4294967295
 
     IMPL
 
@@ -374,5 +378,15 @@ Is_Type
         = &False
     &OtherT E._ +
         = &True
+
+* <Get_Max_Number> == 4294967295
+Get_Max_Number
+        = 4294967295
+
+* <Is_Max_Number S.Any> == &True | &False
+Is_Max_Number
+    S(:Max_Number:)._ +
+        = &True
+    S._ = &False
 
     END
