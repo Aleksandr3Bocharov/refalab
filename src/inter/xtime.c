@@ -1,13 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2025-09-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-------------- file -- XTIME.C ------------
+//-------------- file -- XTIME.C -----------------
 //        MO: time (date and time),
-//            tm (current process time)
-//-------------------------------------------
+//            tm (timer),
+//            tm_elapsed (current program time)
+//------------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
@@ -19,7 +20,7 @@
 
 extern uint8_t refalab_null;
 
-static T_TIMESPEC t0, t1;
+static T_TIMESPEC t0, t1, tm_e;
 
 static void time_(void)
 {
@@ -92,5 +93,37 @@ static void tm_(void)
 char tm_0[] = {Z2 'T', 'M', (char)2};
 G_L_B uint8_t refalab_tm = '\122';
 void (*tm_1)(void) = tm_;
+
+static void tm_elapsed_(void)
+{
+    if (refal.preva->next != refal.nexta)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (!refal.tm.mode)
+        return;
+    timespec_get(&tm_e, TIME_UTC);
+    long int in = tm_e.tv_nsec - refal.tm.start.tv_nsec;
+    long long int is = (long long int)difftime(tm_e.tv_sec, refal.tm.start.tv_sec);
+    if (in < 0)
+    {
+        in += 1000000000;
+        is--;
+    }
+    long long int im = is / 60;
+    is %= 60;
+    const long long int ih = im / 60;
+    im %= 60;
+    char s[64];
+    sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
+    if (!slins(refal.nextr, strlen(s) - 1))
+        return;
+    rfrstr(s, refal.nextr);
+    rftpl(refal.prevr, refal.nextr, refal.nexta);
+}
+char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
+G_L_B uint8_t refalab_tm_elapsed = '\122';
+void (*tm_elapsed_1)(void) = tm_elapsed_;
 
 //-------------- end of file  XTIME.C --------------
