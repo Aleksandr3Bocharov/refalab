@@ -4,11 +4,11 @@
 // 2025-09-28
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
-//-------------- file -- XTIME.C -----------------
+//-------------- file -- XTIME.C -----------------------
 //        MO: time (date and time),
 //            tm (timer),
-//            tm_elapsed (current program time)
-//------------------------------------------------
+//            tm_elapsed (current interpretator time)
+//------------------------------------------------------
 
 #include <stdio.h>
 #include <string.h>
