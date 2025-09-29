@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-25
+// 2025-09-29
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -49,7 +49,11 @@
 
 #define MAX_STOP 0x7FFFFFFF
 
+#ifdef POSIX
 #define MAX_PATHFILENAME 4096
+#else
+#define MAX_PATHFILENAME 260
+#endif
 
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
