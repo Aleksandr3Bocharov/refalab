@@ -45,6 +45,8 @@
 
 #define MAX_NUMBER 0xFFFFFFFFLL
 
+#define MAX_STOP 0x7FFFFFFF
+
 #ifdef POSIX
 #define MAX_PATHFILENAME 4096
 #else
