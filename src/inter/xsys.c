@@ -29,13 +29,13 @@ static void arg_(void)
         return;
     }
     const size_t argn = gcoden(p);
-    if (argn >= gargc || *gargv[argn] == '\0')
+    if (argn >= refal.arg.argc || *refal.arg.argv[argn] == '\0')
         return;
-    const int32_t d = (int32_t)strlen(gargv[argn]) - 2;
+    const int32_t d = (int32_t)strlen(refal.arg.argv[argn]) - 2;
     if (d > 0)
         if (!slins(refal.nextr, (size_t)d))
             return;
-    p = rfrstr(gargv[argn], refal.nextr);
+    p = rfrstr(refal.arg.argv[argn], refal.nextr);
     rftpl(refal.prevr, refal.nextr, p->next);
     return;
 }
