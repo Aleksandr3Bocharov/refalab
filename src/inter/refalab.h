@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-29
+// 2025-09-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -56,7 +56,7 @@
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
-    typedef struct linkcb_
+typedef struct linkcb_
 {
     struct linkcb_ *prev;
     struct linkcb_ *next;
@@ -102,6 +102,11 @@ typedef struct refal_
     T_LINKCB *flhead;
     T_LINKCB *svar;
     T_LINKCB *dvar;
+    struct
+    {
+        size_t argc;
+        char **argv;
+    } arg;
     struct
     {
         bool mode;

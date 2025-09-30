@@ -163,6 +163,8 @@ void rfinit(void)
     phd->next = phd;
     phd->tag = TAGO;
     phd->info.codep = NULL;
+    p->arg.argc = gargc;
+    p->arg.argv = gargv;
     p->tm.mode = true;
     if (p->tm.mode)
         timespec_get(&p->tm.start, TIME_UTC);
