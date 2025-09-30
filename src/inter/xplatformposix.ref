@@ -29,6 +29,9 @@ PLATFORM +
 Directory_Separators +
     S   '/'
 
+Max_PathFileName +
+    S   4096
+
     IMPL
 
 Platform
@@ -44,5 +47,13 @@ Is_Directory_Separator
 
 Path_Separator
         = ':'
+
+Get_Max_PathFileName
+        = 4096
+
+Is_Max_PathFileName
+    S(:Max_PathFileName:)._ +
+        = &True
+    S._ = &False
 
     END
