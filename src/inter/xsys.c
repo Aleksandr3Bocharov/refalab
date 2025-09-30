@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-25
+// 2025-09-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XSYS.C --------------------
@@ -17,18 +17,8 @@
 #include <errno.h>
 #include "refalab.h"
 #include "rfintf.h"
-#include "xsys.h"
 
 extern uint8_t refalab_null;
-
-static size_t gargc = 0;
-static char **gargv = NULL;
-
-void rfgetargs(int argc, char *argv[])
-{
-    gargc = (size_t)argc;
-    gargv = argv;
-}
 
 static void arg_(void)
 {

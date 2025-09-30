@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-08
+// 2025-09-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file -- MAINRF.C -------------------
@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "rfintf.h"
-#include "xsys.h"
 
 // GO -> go
 extern uint8_t refalab_go;

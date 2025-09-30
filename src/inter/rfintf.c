@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-25
+// 2025-09-30
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -23,12 +23,21 @@ extern uint8_t refalab_feof, refalab_ferror;
 
 T_REFAL refal;
 
+static size_t gargc = 0;
+static char **gargv = NULL;
+
 static T_LINKCB *last_block = NULL;
 static bool rf_init = true;
 static T_LINKCB hd;
 
 static bool lgcl(void);
 static void rflist(T_LINKCB *par, size_t n);
+
+void rfgetargs(int argc, char *argv[])
+{
+    gargc = (size_t)argc;
+    gargv = argv;
+}
 
 void rfabe(const char *amsg)
 {
