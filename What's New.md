@@ -1,8 +1,11 @@
 Что нового?
 --------------
 
+Добавлен новый специфичный для сред Windows и POSIX спецификатор в библиотеку РефалАБ - Max_PathFileName.
+
 Добавлены новые рефал-функции в библиотеку РефалАБ:
-Get_Max_Number, Is_Max_Number.
+1. Get_Max_Number, Is_Max_Number.
+2. Специфичные для сред Windows и POSIX - Get_Max_PathFileName, Is_Max_PathFileName.
 
 Добавлена новая интерфейсная функция rfgstr.
 
@@ -315,7 +318,7 @@ xclose, xget, xopen и xput.
 
 Добавлена новая рефал-функция в библиотеку РефалАБ: IsWSpace.
 
-Добавлен новый специфичный для сред Windows и POSIX спецификатор в библиотеку РефалАБ: DirSeps.
+Добавлен новый специфичный для сред Windows и POSIX спецификатор в библиотеку РефалАБ - DirSeps.
 
 
 
