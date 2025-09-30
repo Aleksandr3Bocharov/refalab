@@ -106,6 +106,11 @@ typedef struct refal_
     T_LINKCB *dvar;
     struct
     {
+        size_t argc;
+        char **argv;
+    } arg;
+    struct
+    {
         bool mode;
         T_TIMESPEC start;
         T_TIMESPEC stop;
