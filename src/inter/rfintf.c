@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-30
+// 2025-10-01
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -23,6 +23,11 @@ extern uint8_t refalab_feof, refalab_ferror;
 
 T_REFAL refal;
 
+static struct
+{
+    bool tmon;
+} options = {true};
+
 static size_t gargc = 0;
 static char **gargv = NULL;
 
@@ -37,6 +42,14 @@ void rfgetargs(int argc, char *argv[])
 {
     gargc = (size_t)argc;
     gargv = argv;
+    for (size_t i = 1; i < gargc; i++)
+        if (strncmp(gargv[i], "--rfinteropt", 12) == 0)
+        {
+            if (strstr(&gargv[i][12], "-tmoff") != NULL)
+                options.tmon = false;
+            break;
+        }
+    return;
 }
 
 void rfabe(const char *amsg)
@@ -165,7 +178,7 @@ void rfinit(void)
     phd->info.codep = NULL;
     p->arg.argc = gargc;
     p->arg.argv = gargv;
-    p->tm.mode = true;
+    p->tm.mode = options.tmon;
     if (p->tm.mode)
         timespec_get(&p->tm.start, TIME_UTC);
     return;
