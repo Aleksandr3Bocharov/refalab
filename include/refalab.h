@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-30
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //--------------- file -- REFALAB.H -----------------
@@ -49,7 +49,7 @@
 
 #define MAX_STOP 0x7FFFFFFF
 
-#ifdef POSIX
+#if defined POSIX
 #define MAX_PATHFILENAME 4096
 #else
 #define MAX_PATHFILENAME 260
