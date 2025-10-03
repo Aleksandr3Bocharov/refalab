@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-12
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------------  file  --  CLU.C  -------------------
@@ -28,7 +28,7 @@ void uns_sto(void)
 static T_U *nov_uzel(const char *idp, size_t lid)
 {
     T_U *p = (T_U *)calloc(1, sizeof(T_U));
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "calloc(clu-nov_uzel): p=%p l=%zu t=%o\n", (void *)p, p->l, p->type);
 #endif
     if (p == NULL)
@@ -45,7 +45,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     p->ref.numb[0] = scn_.nomkar;
     p->def = 0;
     char *q = calloc(1, lid);
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "calloc(clu-id): q=%p l=%zu\n", (void *)q, lid);
 #endif
     if (q == NULL)
@@ -95,7 +95,7 @@ T_U *lookup(const char *idp, size_t lid)
                         else
                         { // create new item
                             T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
-#ifdef mdebug
+#if defined mdebug
                             fprintf(stderr, "calloc(clu-lookup): r1=%p\n", (void *)r1);
 #endif
                             if (r1 == NULL)
@@ -279,14 +279,14 @@ static void kil_tree(T_U *p)
         while (r2 != NULL)
         {
             T_REFW *r1 = r2->next;
-#ifdef mdebug
+#if defined mdebug
             fprintf(stderr, "free(clu): r2=%p\n", (void *)r2);
 #endif
             free(r2);
             r2 = r1;
         }
         r = q->j;
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "free(clu):id=%p\n", (void *)q->id);
         fprintf(stderr, "           q=%p\n", (void *)q);
 #endif

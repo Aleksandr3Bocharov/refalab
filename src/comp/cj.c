@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-14
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -100,14 +100,14 @@ static void sfop_w(const char *s, BU *b)
     if (b->nam != NULL)
     {
         free(b->nam);
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "free(cj) b->nam=%p\n", (void *)b->nam);
 #endif
     }
     b->nam = (char *)malloc(strlen(s) + 1);
     if (b->nam == NULL)
         oshex();
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "malloc(cj): b->nam=%p\n", (void *)b->nam);
 #endif
     strcpy(b->nam, s);
@@ -139,7 +139,7 @@ static void sfop_w(const char *s, BU *b)
             b->buf = (char *)malloc(un);
             if (b->buf != NULL)
             {
-#ifdef mdebug
+#if defined mdebug
                 fprintf(stderr, "malloc(cj): b->buf=%p un=%zu\n", (void *)b->buf, un);
 #endif
                 break;
@@ -203,7 +203,7 @@ static void sfclr(BU *b)
         unlink(b->nam);
     free(b->nam);
     free(b->buf);
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "free(sfclr) b->nam(c 0)=%p\n", (void *)b->nam);
     fprintf(stderr, "            b->buf(c 0)=%p\n", (void *)b->buf);
 #endif
@@ -282,7 +282,7 @@ void jstart(void)
     first_ent = (T_ENT *)malloc(sizeof(T_ENT));
     if (first_ent == NULL)
         oshex();
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "malloc(cj): first_ent=%p\n", (void *)first_ent);
 #endif
     last_ent = first_ent;
@@ -290,7 +290,7 @@ void jstart(void)
     first_ext = (T_EXT *)malloc(sizeof(T_EXT));
     if (first_ext == NULL)
         oshex();
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "malloc(cj): first_ext=%p\n", (void *)first_ext);
 #endif
     last_ext = first_ext;
@@ -369,7 +369,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     r = (T_ENT *)malloc(sizeof(T_ENT));
     if (r == NULL)
         oshex();
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "malloc(cj): r(ent)=%p\n", (void *)r);
 #endif
     last_ent->next = r;
@@ -389,7 +389,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     rx = (T_EXT *)malloc(sizeof(T_EXT));
     if (rx == NULL)
         oshex();
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "malloc(cj): rx(ext)=%p\n", (void *)rx);
 #endif
     last_ext->next = rx;
@@ -575,7 +575,7 @@ void jend(void)
     while (q != NULL)
     {
         r = q->next;
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "free(cj) q=%p\n", (void *)q);
 #endif
         free(q);
@@ -585,7 +585,7 @@ void jend(void)
     while (qx != NULL)
     {
         rx = qx->next;
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "free(cj) qx=%p\n", (void *)qx);
 #endif
         free(qx);

@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-12
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------  file  --  CS.C  ---------------
@@ -58,7 +58,7 @@ static T_I_LBL *alloc_lbl(void)
     if (n_lbl == 15)
     {
         q = calloc(1, sizeof(T_ARR_LBL));
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "calloc(cs)_lbl: q=%p\n", (void *)q);
 #endif
         if (q == NULL)
@@ -322,7 +322,7 @@ void s_term(void)
     while (p != NULL)
     {
         T_ARR_LBL *p1 = p->nextl;
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "free(cs): p=%p\n", (void *)p);
 #endif
         free(p);

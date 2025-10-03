@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         printf("\n");
-#ifdef mdebug
+#if defined mdebug
         printf("\nSyntax: RefalAB_dbg source_file [option ... option]");
 #else
         printf("\nSyntax: RefalAB source_file [option ... option]");
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
         printf("\nNo enough memory for initialization\n");
         exit(1);
     }
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "\nmalloc(main): parm=%p", (void *)parm);
 #endif
     size_t i;
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
             fclose(syslin);
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
-#ifdef mdebug
+#if defined mdebug
             fprintf(stderr, "free(main) parm=%p\n", (void *)parm);
 #endif
             free(parm);
