@@ -489,7 +489,7 @@ void jend(void)
                 else
                 {
 //     external   label
-#ifdef POSIX
+#if defined POSIX
                     // begin name without underlining _
                     if (LBLL == 4)
                         write_asm(fputs("\t.long\trefalab_", syslin));
@@ -517,7 +517,7 @@ void jend(void)
         while (qx != NULL)
         {
 //
-#ifdef POSIX
+#if defined POSIX
             // begin name without underlining _
             write_asm(fputs("\t.extern\trefalab_", syslin));
 #else // Windows
@@ -536,7 +536,7 @@ void jend(void)
         q = first_ent->next;
         while (q != NULL)
         {
-#ifndef POSIX
+#if !defined POSIX
             // begin name with underlining _ in x86
             if (LBLL == 4)
                 write_asm(fputc('_', syslin));
@@ -548,7 +548,7 @@ void jend(void)
             const T_U *pp = q->p;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
-#ifdef POSIX
+#if defined POSIX
             // begin name without underlining _
             sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", nommod, pp->info.infon);
 #else // Windows
@@ -564,7 +564,7 @@ void jend(void)
             write_asm(fputc('\n', syslin));
             q = q->next;
         };
-#ifdef POSIX
+#if defined POSIX
         write_asm(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", syslin));
 #endif
     }
