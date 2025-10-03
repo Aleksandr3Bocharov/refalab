@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-01
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  RFINTF.C ------------------
@@ -80,7 +80,7 @@ bool lincrm(void)
         }
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
-#ifdef mdebug
+#if defined mdebug
     fprintf(stderr, "lincrm: n=%zu after new_block=%p\n", n, (void *)new_block);
 #endif
     if (new_block == NULL)
@@ -229,7 +229,7 @@ void rftermm(void)
     {
         T_LINKCB *new_block = last_block;
         last_block = new_block->prev;
-#ifdef mdebug
+#if defined mdebug
         fprintf(stderr, "lincrm: free new_block=%p\n", (void *)new_block);
 #endif
         free(new_block);
@@ -255,7 +255,7 @@ void rfexec(uint8_t *func)
         return;
     }
     s_st.stop = MAX_STOP;
-#ifdef mdebug
+#if defined mdebug
     const uint32_t s_stop = s_st.stop;
 #endif
     enum
@@ -270,7 +270,7 @@ void rfexec(uint8_t *func)
         switch (ex_state)
         {
         case AGAIN:
-#ifdef mdebug
+#if defined mdebug
             //	step by step execution with full debug trace information
             if (s_st.dot == NULL)
             {
@@ -324,7 +324,7 @@ void rfexec(uint8_t *func)
             break;
 #endif
         case DONE:
-#ifdef mdebug
+#if defined mdebug
             printf("Concretization is executed\n");
             ex_state = EOJ;
 #else

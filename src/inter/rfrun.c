@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-12
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //----------- file RFRUN.C -------------------
@@ -341,7 +341,7 @@ void rfrun(T_ST *ast) // adress of current state table
             return;
         case NEXTOP:
             opc = *vpc;
-#ifdef mdebug
+#if defined mdebug
             fprintf(stderr, " Switcher");
             fprintf(stderr, " code8=%o\t(D=%d,H=%x)\n", opc, opc, opc);
 #endif

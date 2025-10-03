@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-05-09
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XTRY.C --------------
@@ -58,14 +58,14 @@ static void try_(void)
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
     s_st->stop = MAX_STOP;
-#ifdef mdebug
+#if defined mdebug
     const uint32_t s_stop = s_st->stop;
 #endif
     do
     {
         if (dbt == NULL)
         {
-#ifdef mdebug
+#if defined mdebug
             if (s_st->step >= s_stop)
                 s_st->step = 0;
             s_st->stop = s_st->step + 1;
@@ -94,7 +94,7 @@ static void try_(void)
     } while (s_st->state == 1 && s_st->dot != NULL);
     rftpl(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
-#ifdef mdebug
+#if defined mdebug
     if (dbt == NULL)
         upst->stop = upst->step + 1;
 #endif
