@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-21
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-------------- file -- XMO.C -------------
@@ -387,47 +387,45 @@ void (*delf_1)(void) = delf_;
 static void lrel_(void)
 {
     T_LINKCB *p = refal.preva->next;
-    do
+    if (p->tag != TAGLB)
     {
-        if (p->tag != TAGLB)
-            break;
-        const T_LINKCB *pp = p->info.codep;
-        p = p->next;
-        T_LINKCB *q = pp->next;
-        const T_LINKCB *q1 = refal.nexta;
-        char c = '=';
-        for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
-            if ((p->tag == TAGLB && q->tag == TAGLB) ||
-                (p->tag == TAGRB && q->tag == TAGRB))
-                continue;
-            else if (p->tag == TAGLB || q->tag == TAGRB)
-                c = '>';
-            else if (p->tag == TAGRB || q->tag == TAGLB)
-                c = '<';
-            else if (p->tag > q->tag)
-                c = '>';
-            else if (p->tag < q->tag)
-                c = '<';
-            else if ((size_t)p->info.codep > (size_t)q->info.codep)
-                c = '>';
-            else if ((size_t)p->info.codep < (size_t)q->info.codep)
-                c = '<';
-        if (c == '=')
-        {
-            if (p == pp && q != q1)
-                c = '<';
-            else if (q == q1 && p != pp)
-                c = '>';
-        }
-        p = refal.preva->next;
-        p->tag = TAGO;
-        p->info.codep = NULL;
-        p->info.infoc = c;
-        q = p->next;
-        rftpl(refal.prevr, refal.preva, q);
+        refal.upshot = 2;
         return;
-    } while (false);
-    refal.upshot = 2;
+    }
+    const T_LINKCB *pp = p->info.codep;
+    p = p->next;
+    T_LINKCB *q = pp->next;
+    const T_LINKCB *q1 = refal.nexta;
+    char c = '=';
+    for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
+        if ((p->tag == TAGLB && q->tag == TAGLB) ||
+            (p->tag == TAGRB && q->tag == TAGRB))
+            continue;
+        else if (p->tag == TAGLB || q->tag == TAGRB)
+            c = '>';
+        else if (p->tag == TAGRB || q->tag == TAGLB)
+            c = '<';
+        else if (p->tag > q->tag)
+            c = '>';
+        else if (p->tag < q->tag)
+            c = '<';
+        else if ((size_t)p->info.codep > (size_t)q->info.codep)
+            c = '>';
+        else if ((size_t)p->info.codep < (size_t)q->info.codep)
+            c = '<';
+    if (c == '=')
+    {
+        if (p == pp && q != q1)
+            c = '<';
+        else if (q == q1 && p != pp)
+            c = '>';
+    }
+    p = refal.preva->next;
+    p->tag = TAGO;
+    p->info.codep = NULL;
+    p->info.infoc = c;
+    q = p->next;
+    rftpl(refal.prevr, refal.preva, q);
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
