@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-25
+// 2025-10-03
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  XFIO.C ---------------
@@ -325,7 +325,7 @@ static void fprint_(void)
                 sprintf(s, "'%%%p'", (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            else if ((p->tag & 0001) != TAGO)
+            else if ((p->tag & 0001) != 0)
                 rfabe("fprint: unknown bracket type");
             else
             {
@@ -413,7 +413,7 @@ static void fprints_(void)
                 sprintf(s, "%%%p", (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            else if ((p->tag & 0001) != TAGO)
+            else if ((p->tag & 0001) != 0)
                 rfabe("fprints: unknown bracket type");
             else
             {
@@ -525,7 +525,7 @@ static void fprintm_(void)
                     sprintf(sr, "/%%%p/", (void *)p->info.codep);
                     strcat(s, sr);
                 }
-                else if ((p->tag & 0001) != TAGO)
+                else if ((p->tag & 0001) != 0)
                     rfabe("fprintm: unknown bracket type");
                 else
                 {
