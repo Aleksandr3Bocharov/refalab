@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-04-14
+# 2025-09-05
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -32,7 +32,7 @@ all:
 # result - lib/libRefalAB_dbg.a library (debug mode)
 # result - lib/mainrf.o lib/rfdbg.o
 
-	mkdir -p lib
+	mkdir -p lib/obj
 	src/comp/delbin
 	$(MAKE) -f src/inter/inter_lib.POSIX.mak
 	src/inter/delbin
