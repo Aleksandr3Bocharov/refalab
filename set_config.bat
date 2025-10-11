@@ -11,5 +11,5 @@ rem set_config.bat
 rem set environments variables for make RefalAB
 rem *******************************************************************
 
-rem set REFALABMCOMP gcc
-set REFALABMCOMP clang
+rem set REFALABMCOMP=gcc
+set REFALABMCOMP=clang
