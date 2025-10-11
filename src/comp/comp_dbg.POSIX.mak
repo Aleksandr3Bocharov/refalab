@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-04-14
+# 2025-10-11
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 #############################################################################
@@ -15,9 +15,9 @@
 
 .SUFFIXES: .c 
 
-CC = clang
+CC = $(REFALABMCOMP)
 CFLAGS = -pipe -Wall -O2 -Dmdebug -DPOSIX
-LINK = clang
+LINK = $(REFALABMCOMP)
 
 S = src/comp
 BIN_DIR = bin
