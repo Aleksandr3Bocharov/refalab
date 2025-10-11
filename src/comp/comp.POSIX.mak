@@ -15,9 +15,9 @@
 
 .SUFFIXES: .c 
 
-CC = $(REFALABMCOMP)
+CC = clang
 CFLAGS = -pipe -Wall -O2 -DPOSIX
-LINK = $(REFALABMCOMP)
+LINK = clang
 
 S = src/comp
 BIN_DIR = bin
