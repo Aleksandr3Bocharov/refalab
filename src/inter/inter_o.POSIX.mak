@@ -14,7 +14,7 @@
 
 .SUFFIXES: .c
 
-CC = $(REFALABMCOMP)
+CC = clang
 CFLAGS = -pipe -Wall -O2 -DPOSIX
 S = src/inter
 

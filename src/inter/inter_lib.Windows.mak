@@ -15,7 +15,7 @@
 
 .SUFFIXES: .c .ref
 
-CC = $(REFALABMCOMP)
+CC = clang
 CFLAGS = -pipe -Wall -O2 
 AR = ar
 REFXCV = src\inter\refxcv.bat
