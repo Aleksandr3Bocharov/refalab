@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-14
+// 2025-10-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.H -------------
@@ -24,6 +24,7 @@ typedef struct opt_
     bool source;
     bool extname;
     bool names;
+    bool asmb;
 } T_OPT;
 
 extern T_OPT options;

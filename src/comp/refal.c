@@ -253,6 +253,7 @@ int main(int argc, char *argv[])
         printf("\n   -nn  No function names");
         printf("\n   -ns  No source listing");
         printf("\n   -fn  Full names");
+        printf("\n   -as  Assembler module");
         printf("\n\n");
         exit(1);
     };
@@ -284,6 +285,7 @@ int main(int argc, char *argv[])
     options.source = true;
     options.extname = false;
     options.names = true;
+    options.asmb = false;
     for (size_t j = 2; j < (size_t)argc; ++j)
         if (strcmp(argv[j], "-nn") == 0)
             options.names = false;
@@ -291,10 +293,12 @@ int main(int argc, char *argv[])
             options.source = false;
         else if (strcmp(argv[j], "-fn") == 0)
             options.extname = true;
+        else if (strcmp(argv[j], "-as") == 0)
+            options.asmb = true;
         else
         {
             printf("Unknown option: %s\n", argv[j]);
-            printf("Options may be: -nn, -ns, -fn\n");
+            printf("Options may be: -nn, -ns, -fn, -as\n");
             exit(1);
         }
     if (options.source)
