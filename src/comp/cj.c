@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2025-10-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------------  file  --  cj.C  -------------------
@@ -432,10 +432,11 @@ static void zakon(void)
 static void write_asm(int put)
 {
     if (put == EOF)
-    {
-        printf("Write i/o error in asm file\n");
-        exit(8);
-    }
+        if (feof(put) != 0 || ferror(put) != 0)
+        {
+            printf("Write i/o error in asm file\n");
+            exit(8);
+        }
 }
 
 void jend(void)
