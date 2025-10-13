@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-07
+// 2025-10-14
 // https://github.com/Aleksandr3Bocharov/RefalAB
 
 //-----------  file  --  REFAL.C -------------
@@ -250,9 +250,9 @@ int main(int argc, char *argv[])
         printf("\nSyntax: RefalAB source_file [option ... option]");
 #endif
         printf("\nOptions:");
-        printf("\n   nn  No function names");
-        printf("\n   ns  No source listing");
-        printf("\n   fn  Full names");
+        printf("\n   -nn  No function names");
+        printf("\n   -ns  No source listing");
+        printf("\n   -fn  Full names");
         printf("\n\n");
         exit(1);
     };
@@ -285,16 +285,16 @@ int main(int argc, char *argv[])
     options.extname = false;
     options.names = true;
     for (size_t j = 2; j < (size_t)argc; ++j)
-        if (strcmp(argv[j], "nn") == 0)
+        if (strcmp(argv[j], "-nn") == 0)
             options.names = false;
-        else if (strcmp(argv[j], "ns") == 0)
+        else if (strcmp(argv[j], "-ns") == 0)
             options.source = false;
-        else if (strcmp(argv[j], "fn") == 0)
+        else if (strcmp(argv[j], "-fn") == 0)
             options.extname = true;
         else
         {
             printf("Unknown option: %s\n", argv[j]);
-            printf("Options may be: nn, ns, fn\n");
+            printf("Options may be: -nn, -ns, -fn\n");
             exit(1);
         }
     if (options.source)
