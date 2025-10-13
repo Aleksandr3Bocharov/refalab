@@ -518,6 +518,29 @@ int main(int argc, char *argv[])
             fclose(syslin);
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
+            else if (!options.asmb)
+            {
+                char *cas = (char *)malloc(6 + strlen(parm) + 1 + strlen(parm) + 1);
+                if (cas == NULL)
+                {
+                    printf("No enough memory for compiling to %s.o\n", argv[1]);
+                    exit(1);
+                };
+                sprintf(cas, "as -o %s.o %s", argv[1], parm);
+                int res = system(cas);
+#if defined POSIX
+                if (WIFEXITED(res) != 0)
+                    res = WEXITSTATUS(res);
+                else
+                    res = -1;
+#endif
+                printf("res = %d cas = %s\n", res, cas);
+                if (res != 0)
+                {
+                    printf("Error compiling to %s.o\n", argv[1]);
+                    exit(1);
+                }
+            }
 #if defined mdebug
             fprintf(stderr, "free(main) parm=%p\n", (void *)parm);
 #endif
