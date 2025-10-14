@@ -50,6 +50,12 @@
         }                                      \
     }
 
+#if defined POSIX
+#define MAX_PATHFILENAME 4096
+#else
+#define MAX_PATHFILENAME 260
+#endif
+
 typedef enum mod_states
 {
     START_OF_MODULE,
@@ -258,15 +264,12 @@ int main(int argc, char *argv[])
         exit(1);
     };
 
-    char *parm = (char *)malloc(strlen(argv[1]) + 5);
-    if (parm == NULL)
+    if (strlen(argv[1]) > MAX_PATHFILENAME - 4)
     {
-        printf("\nNo enough memory for initialization\n");
+        printf("\nSource file name very long\n");
         exit(1);
     }
-#if defined mdebug
-    fprintf(stderr, "\nmalloc(main): parm=%p", (void *)parm);
-#endif
+    char parm[MAX_PATHFILENAME + 1];
     size_t i;
     strcpy(parm, argv[1]);
     strcat(parm, ".ref");
@@ -520,12 +523,7 @@ int main(int argc, char *argv[])
                 unlink(parm);
             else if (!options.asmb)
             {
-                char *cas = (char *)malloc(6 + strlen(parm) + 1 + strlen(parm) + 1);
-                if (cas == NULL)
-                {
-                    printf("No enough memory for compiling to %s.o\n", argv[1]);
-                    exit(1);
-                };
+                char cas[6 + MAX_PATHFILENAME - 2 + 1 + MAX_PATHFILENAME - 2 + 1];
                 sprintf(cas, "as -o %s.o %s", argv[1], parm);
                 int res = system(cas);
 #if defined POSIX
@@ -541,11 +539,6 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
             }
-#if defined mdebug
-            fprintf(stderr, "free(main) parm=%p\n", (void *)parm);
-#endif
-            free(parm);
-            parm = NULL;
             if (flags.was_err)
                 exit(1);
             else
