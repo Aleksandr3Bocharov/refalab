@@ -532,7 +532,6 @@ int main(int argc, char *argv[])
                 else
                     res = -1;
 #endif
-                printf("res = %d cas = %s\n", res, cas);
                 if (res != 0)
                 {
                     printf("Error compiling to %s.o\n", argv[1]);
