@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 
     if (strlen(argv[1]) > MAX_PATHFILENAME - 4)
     {
-        printf("\nSource file name very long\n");
+        printf("\nSource file name too long\n");
         exit(1);
     }
     char parm[MAX_PATHFILENAME + 1];
