@@ -3,17 +3,16 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-05
+# 2025-10-14
 # https://github.com/Aleksandr3Bocharov/RefalAB
 
 # *******************************************************************
 # RefalABdclg_dbg
-# compile from refal to GNU-assembler + debugger link + go
+# compile from refal to object file + debugger link + go
 # arg: $1 - name of refal programm (without ext ref)
 # result: running of $1.exe debugger in debugging mode 
 # *******************************************************************
 
 bin/RefalAB $1 > $1.log
-as -o $1.o $1.s >> $1.log
 clang -o $1 $1.o lib/obj/rfdbg.o -Llib -lRefalAB_dbg >> $1.log
 $1

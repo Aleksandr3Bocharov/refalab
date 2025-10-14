@@ -8,9 +8,9 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 
 rem *******************************************************************
 rem RefalABc.bat
-rem compile from refal to GNU-assembler 
+rem compile from refal to object file 
 rem arg: %1 - name of refal programm (without extension ref)
-rem result: %1.s in GNU assembler language 
+rem result: %1.o
 rem *******************************************************************
 
 bin\RefalAB %1 > %1.log
