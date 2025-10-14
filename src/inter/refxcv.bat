@@ -9,7 +9,7 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 rem *******************************************************************
 rem refxcv.bat
 rem special script
-rem compile xcv.ref from refal to GNU-assembler + assembling
+rem compile xcv.ref from refal to object file
 rem result: xcv.o  
 rem *******************************************************************
 

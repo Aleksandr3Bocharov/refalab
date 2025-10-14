@@ -9,7 +9,7 @@ rem https://github.com/Aleksandr3Bocharov/RefalAB
 rem *******************************************************************
 rem refext.bat
 rem special script
-rem compile xext.ref from refal to GNU-assembler + assembling
+rem compile xext.ref from refal to object file
 rem result: xext.o  
 rem *******************************************************************
 

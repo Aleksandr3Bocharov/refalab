@@ -9,7 +9,7 @@
 # *******************************************************************
 # refext
 # special script
-# compile xext.ref from refal to GNU-assembler + assembling 
+# compile xext.ref from refal to object file
 # result: xext.o  
 # *******************************************************************
 

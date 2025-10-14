@@ -9,7 +9,7 @@
 # *******************************************************************
 # refxcv
 # special script
-# compile xcv.ref from refal to GNU-assembler + assembling
+# compile xcv.ref from refal to object file
 # result: xcv.o  
 # *******************************************************************
 

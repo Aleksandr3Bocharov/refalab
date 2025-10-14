@@ -9,7 +9,7 @@
 # *******************************************************************
 # refplatform
 # special script
-# compile xplatformposix.ref from refal to GNU-assembler + assembling
+# compile xplatformposix.ref from refal to object file
 # result: xplatform.o  
 # *******************************************************************
 
