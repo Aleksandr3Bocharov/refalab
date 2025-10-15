@@ -13,4 +13,4 @@
 # result: xcv.o  
 # *******************************************************************
 
-bin/RefalAB src/inter/xcv -a,"-o xcv.o" > src/inter/xcv.log
+bin/RefalABc src/inter/xcv -a,"-o src/inter/xcv.o" > src/inter/xcv.log
