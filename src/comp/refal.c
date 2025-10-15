@@ -251,9 +251,9 @@ int main(int argc, char *argv[])
     {
         printf("\n");
 #if defined mdebug
-        printf("\nSyntax: RefalAB_dbg source_file [option ... option]");
+        printf("\nSyntax: RefalABc_dbg source_file [option ... option]");
 #else
-        printf("\nSyntax: RefalAB source_file [option ... option]");
+        printf("\nSyntax: RefalABc source_file [option ... option]");
 #endif
         printf("\nOptions:");
         printf("\n   -nn  No function names");
