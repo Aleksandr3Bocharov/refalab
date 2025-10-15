@@ -55,7 +55,7 @@ OBJECTS = \
     $(S)/xio.o \
     $(S)/xjak.o \
     $(S)/xmo.o \
-    $(S)/xplatformposix.o \
+    $(S)/xplatform.o \
     $(S)/xrand.o \
     $(S)/xsys.o \
     $(S)/xtime.o \

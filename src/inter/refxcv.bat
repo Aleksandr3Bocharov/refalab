@@ -13,4 +13,4 @@ rem compile xcv.ref from refal to object file
 rem result: xcv.o  
 rem *******************************************************************
 
-bin\RefalAB src\inter\xcv > src\inter\xcv.log
+bin\RefalAB src\inter\xcv -a,"-o xcv.o" > src\inter\xcv.log

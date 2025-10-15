@@ -56,7 +56,7 @@ OBJECTS = \
     $(S)\xjak.o \
     $(S)\xmo.o \
     $(S)\xrand.o \
-    $(S)\xplatformwin.o \
+    $(S)\xplatform.o \
     $(S)\xsys.o \
     $(S)\xtime.o \
     $(S)\xtry.o
