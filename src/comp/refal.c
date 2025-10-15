@@ -528,8 +528,8 @@ int main(int argc, char *argv[])
                 unlink(parm);
             else if (!options.asmb)
             {
-                char cas[6 + MAX_PATHFILENAME - 2 + 1 + MAX_PATHFILENAME - 2 + 1];
-                sprintf(cas, "as -o %s.o %s", argv[1], parm);
+                char cas[3 + 8191 + 1 + MAX_PATHFILENAME - 2 + 1];
+                sprintf(cas, "as %s %s", options.a, parm);
                 int res = system(cas);
 #if defined POSIX
                 if (WIFEXITED(res) != 0)
@@ -539,7 +539,7 @@ int main(int argc, char *argv[])
 #endif
                 if (res != 0)
                 {
-                    printf("Error compiling to %s.o\n", argv[1]);
+                    printf("Error compiling to object file\n");
                     exit(1);
                 }
             }
