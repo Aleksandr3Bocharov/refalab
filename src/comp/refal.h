@@ -25,6 +25,7 @@ typedef struct opt_
     bool extname;
     bool names;
     bool asmb;
+    char a[8192];
 } T_OPT;
 
 extern T_OPT options;
