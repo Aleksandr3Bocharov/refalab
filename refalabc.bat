@@ -7,7 +7,7 @@ rem 2025-10-14
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
-rem RefalABc.bat
+rem refalabc.bat
 rem compile from refal to object file 
 rem arg: %1 - name of refal programm (without extension ref)
 rem result: %1.o

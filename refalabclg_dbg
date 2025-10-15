@@ -7,7 +7,7 @@
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
-# RefalABclg_dbg
+# refalabclg_dbg
 # compile from refal to object file + link + go
 # arg: $1 - name of refal programm (without ext ref)
 # result: running of $1.exe in debugging mode 

@@ -7,7 +7,7 @@ rem 2025-10-14
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
-rem RefalABdclg_dbg.bat
+rem refalabdclg_dbg.bat
 rem compile from refal to object file + debugger link + go
 rem arg: %1 - name of refal programm (without ext ref)
 rem result: running of %1.exe debugger in debugging mode 

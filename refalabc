@@ -7,7 +7,7 @@
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
-# RefalABc
+# refalabc
 # compile from refal to object file
 # arg: $1 - name of refal programm (without extension ref)
 # result: $1.o
