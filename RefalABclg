@@ -13,6 +13,6 @@
 # result: running of $1.exe 
 # *******************************************************************
 
-bin/RefalAB $1 -a,"-o $1.o" > $1.log
+bin/RefalABc $1 -a,"-o $1.o" > $1.log
 clang -o $1 $1.o lib/obj/mainrf.o -Llib -lRefalAB >> $1.log
 $1
