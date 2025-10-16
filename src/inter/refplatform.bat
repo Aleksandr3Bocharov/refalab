@@ -13,4 +13,4 @@ rem compile xplatformwin.ref from refal to object file
 rem result: xplatform.o  
 rem *******************************************************************
 
-bin\RefalABc src\inter\xplatformwin -a,"-o src\inter\xplatform.o" > src\inter\xplatform.log
+bin\refalabc src\inter\xplatformwin -a,"-o src\inter\xplatform.o" > src\inter\xplatform.log

@@ -13,4 +13,4 @@
 # result: xplatform.o  
 # *******************************************************************
 
-bin/RefalABc src/inter/xplatformposix -a,"-o src/inter/xplatform.o" > src/inter/xplatform.log
+bin/refalabc src/inter/xplatformposix -a,"-o src/inter/xplatform.o" > src/inter/xplatform.log

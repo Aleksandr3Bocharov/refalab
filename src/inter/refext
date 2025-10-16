@@ -13,4 +13,4 @@
 # result: xext.o  
 # *******************************************************************
 
-bin/RefalABc src/inter/xext -a,"-o src/inter/xext.o" > src/inter/xext.log
+bin/refalabc src/inter/xext -a,"-o src/inter/xext.o" > src/inter/xext.log

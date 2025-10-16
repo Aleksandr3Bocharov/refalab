@@ -13,4 +13,4 @@ rem compile xext.ref from refal to object file
 rem result: xext.o  
 rem *******************************************************************
 
-bin\RefalABc src\inter\xext -a,"-o src\inter\xext.o" > src\inter\xext.log
+bin\refalabc src\inter\xext -a,"-o src\inter\xext.o" > src\inter\xext.log
