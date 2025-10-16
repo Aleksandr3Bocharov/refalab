@@ -13,6 +13,6 @@ rem arg: %1 - name of refal programm (without ext ref)
 rem result: running of %1.exe 
 rem *******************************************************************
 
-bin\RefalABc %1 -a,"-o %1.o" > %1.log
+bin\refalabc %1 -a,"-o %1.o" > %1.log
 clang -o %1.exe %1.o lib\obj\mainrf.o -Llib -lRefalAB >> %1.log
 %1.exe

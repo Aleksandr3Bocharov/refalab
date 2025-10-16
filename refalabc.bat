@@ -13,4 +13,4 @@ rem arg: %1 - name of refal programm (without extension ref)
 rem result: %1.o
 rem *******************************************************************
 
-bin\RefalABc %1 -a,"-o %1.o" > %1.log
+bin\refalabc %1 -a,"-o %1.o" > %1.log
