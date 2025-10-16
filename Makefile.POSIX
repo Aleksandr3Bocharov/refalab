@@ -28,8 +28,8 @@ all:
 	
 # PHASE II:
 # Make the interpreter from "jazyk sborki"
-# result - lib/libRefalAB.a library
-# result - lib/libRefalAB_dbg.a library (debug mode)
+# result - lib/librefalab.a library
+# result - lib/librefalab_dbg.a library (debug mode)
 # result - lib/mainrf.o lib/rfdbg.o
 
 	mkdir -p lib/obj
