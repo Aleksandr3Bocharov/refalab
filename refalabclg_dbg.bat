@@ -14,5 +14,5 @@ rem result: running of %1.exe in debugging mode
 rem *******************************************************************
 
 bin\refalabc %1 -a,"-o %1.o" > %1.log
-clang -o %1.exe %1.o lib\obj\mainrf.o -Llib -lRefalAB_dbg >> %1.log
+clang -o %1.exe %1.o lib\obj\mainrf.o -Llib -lrefalab_dbg >> %1.log
 %1.exe

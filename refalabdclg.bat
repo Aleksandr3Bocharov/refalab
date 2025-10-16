@@ -14,5 +14,5 @@ rem result: running of %1.exe debugger
 rem *******************************************************************
 
 bin\refalabc %1 -a,"-o %1.o" > %1.log
-clang -o %1.exe %1.o lib\obj\rfdbg.o -Llib -lRefalAB >> %1.log
+clang -o %1.exe %1.o lib\obj\rfdbg.o -Llib -lrefalab >> %1.log
 %1.exe
