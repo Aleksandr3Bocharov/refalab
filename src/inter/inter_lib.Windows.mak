@@ -19,8 +19,8 @@ CC = clang
 CFLAGS = -pipe -Wall -O2 
 AR = ar
 REFXCV = src\inter\refxcv.bat
-REFEXT = src\inter\refext.bat
-REFPLATFORM = src\inter\refplatform.bat
+REFEXT = src\inter\refxext.bat
+REFPLATFORM = src\inter\refxplatformwin.bat
 REFLIB = lib\libRefalAB.a
 S = src\inter
 

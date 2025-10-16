@@ -19,8 +19,8 @@ CC = clang
 CFLAGS = -pipe -Wall -O2 -DPOSIX
 AR = ar
 REFXCV = src/inter/refxcv
-REFEXT = src/inter/refext
-REFPLATFORM = src/inter/refplatform
+REFEXT = src/inter/refxext
+REFPLATFORM = src/inter/refxplatformposix
 REFLIB = lib/libRefalAB.a
 S = src/inter
 
