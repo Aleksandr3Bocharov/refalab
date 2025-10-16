@@ -25,7 +25,7 @@
     mingw32-make --file=Makefile.Windows
 
 Результатом сборки будут:
-1. РефалАБ-компиляторы bin\RefalABc.exe и bin\RefalABc_dbg.exe (режим отладки).
+1. РефалАБ-компиляторы bin\refalabc.exe и bin\refalabc_dbg.exe (режим отладки).
 2. интерпретаторы из промежуточного языка - 'языка сборки',
 выделенные как множества объектных модулей в библиотеках lib\libRefalAB.a и lib\libRefalAB_dbg.a (режим отладки).
 3. объектные файлы - lib\obj\mainrf.o (для запуска РефалАБ-программы)
@@ -52,3 +52,4 @@
 используя refalabclg_dbg.bat для запуска в режиме отладки,
 refalabdclg.bat для запуска отладчика,
 refalabclg_dbg.bat для запуска отладчика в режиме отладки.
+
