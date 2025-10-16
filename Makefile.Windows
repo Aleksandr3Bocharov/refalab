@@ -16,8 +16,8 @@ all:
 
 # PHASE I:
 # Make the compiler from RefalAB language
-# result - bin\RefalABc executable module
-# result - bin\RefalABc_dbg executable module (debug mode)
+# result - bin\refalabc executable module
+# result - bin\refalabc_dbg executable module (debug mode)
 
 	if not exist bin mkdir bin
 	src\comp\delbin.bat
