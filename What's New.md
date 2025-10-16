@@ -1,7 +1,8 @@
 Что нового?
 --------------
 
-Имя компилятора теперь RefalABc.
+Имя компилятора теперь refalabc (refalabc_dbg)
+и имя библиотеки librefalab.a (librefalab_dbg.a).
 
 Добавлена новая опция компилятора - -a,[options] -
 передача опций options в GNU Assembler as.
