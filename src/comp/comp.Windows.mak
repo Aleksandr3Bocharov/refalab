@@ -7,7 +7,7 @@
 #############################################################################
 # comp.Windows.mak
 # Makefile for building of the compiler from RefalAB language 
-# result - bin\RefalABc executable module
+# result - bin\refalabc executable module
 # Version for Windows
 #############################################################################
 
@@ -42,7 +42,7 @@ OBJECTS = \
     $(S)\cs.o \
     $(S)\refal.o
 
-TARGET = RefalABc
+TARGET = refalabc
 
 ####### Implicit rules
 

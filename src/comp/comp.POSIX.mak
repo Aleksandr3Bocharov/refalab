@@ -7,7 +7,7 @@
 #############################################################################
 # comp.POSIX.mak
 # Makefile for building of the compiler from RefalAB language 
-# result - bin/RefalABc executable module
+# result - bin/refalabc executable module
 # Version for POSIX
 #############################################################################
 
@@ -42,7 +42,7 @@ OBJECTS = \
     $(S)/cs.o \
     $(S)/refal.o
 
-TARGET = RefalABc
+TARGET = refalabc
 
 ####### Implicit rules
 

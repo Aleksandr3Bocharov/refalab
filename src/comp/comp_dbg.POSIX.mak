@@ -7,7 +7,7 @@
 #############################################################################
 # comp_dbg.POSIX.mak
 # Makefile for building of the compiler from RefalAB language (debug mode)
-# result - bin/RefalABc_dbg executable module
+# result - bin/refalabc_dbg executable module
 # Version for POSIX
 #############################################################################
 
@@ -42,7 +42,7 @@ OBJECTS = \
     $(S)/cs.o \
     $(S)/refal.o
 
-TARGET = RefalABc_dbg
+TARGET = refalabc_dbg
 
 ####### Implicit rules
 
