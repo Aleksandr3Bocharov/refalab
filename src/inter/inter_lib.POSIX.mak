@@ -6,8 +6,8 @@
 
 #############################################################################
 # inter_lib.POSIX.mak
-# Makefile for interpreter library (libRefalAB.a) creation
-# result - lib/libRefalAB.a library
+# Makefile for interpreter library (librefalab.a) creation
+# result - lib/librefalab.a library
 # Version for POSIX
 #############################################################################
 
@@ -21,7 +21,7 @@ AR = ar
 REFXCV = src/inter/refxcv
 REFEXT = src/inter/refxext
 REFPLATFORM = src/inter/refxplatformposix
-REFLIB = lib/libRefalAB.a
+REFLIB = lib/librefalab.a
 S = src/inter
 
 ####### Files

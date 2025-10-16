@@ -6,8 +6,8 @@
 
 #############################################################################
 # inter_lib.Windows.mak
-# Makefile for interpreter library (libRefalAB.a) creation
-# result - lib\libRefalAB.a library
+# Makefile for interpreter library (librefalab.a) creation
+# result - lib\librefalab.a library
 # Version for Windows
 #############################################################################
 
@@ -21,7 +21,7 @@ AR = ar
 REFXCV = src\inter\refxcv.bat
 REFEXT = src\inter\refxext.bat
 REFPLATFORM = src\inter\refxplatformwin.bat
-REFLIB = lib\libRefalAB.a
+REFLIB = lib\librefalab.a
 S = src\inter
 
 ####### Files

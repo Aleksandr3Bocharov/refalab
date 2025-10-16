@@ -6,8 +6,8 @@
 
 #############################################################################
 # inter_lib_dbg.Windows.mak
-# Makefile for interpreter library (libRefalAB_dbg.a) (debug mode) creation
-# result - lib\libRefalAB_dbg.a library
+# Makefile for interpreter library (librefalab_dbg.a) (debug mode) creation
+# result - lib\librefalab_dbg.a library
 # Version for Windows
 #############################################################################
 
@@ -21,7 +21,7 @@ AR = ar
 REFXCV = src\inter\refxcv.bat
 REFEXT = src\inter\refxext.bat
 REFPLATFORM = src\inter\refxplatformwin.bat
-REFLIB = lib\libRefalAB_dbg.a
+REFLIB = lib\librefalab_dbg.a
 S = src\inter
 
 ####### Files
