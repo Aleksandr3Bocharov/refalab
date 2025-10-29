@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-14
+# 2025-10-29
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -19,8 +19,9 @@ CC = clang
 CFLAGS = -pipe -Wall -O2 -Dmdebug -DPOSIX
 AR = ar
 REFXCV = src/inter/refxcv
-REFEXT = src/inter/refxext
-REFPLATFORM = src/inter/refxplatformposix
+REFXEXT = src/inter/refxext
+REFXHOF = src/inter/refxhof
+REFXPLATFORM = src/inter/refxplatformposix
 REFLIB = lib/librefalab_dbg.a
 S = src/inter
 
@@ -52,6 +53,7 @@ OBJECTS = \
     $(S)/xext.o \
     $(S)/xfio.o \
     $(S)/xgcd.o \
+    $(S)/xhof.o \
     $(S)/xio.o \
     $(S)/xjak.o \
     $(S)/xmo.o \
@@ -65,8 +67,9 @@ OBJECTS = \
 
 .ref.o: 
 	$(REFXCV)  
-	$(REFEXT) 
-	$(REFPLATFORM)
+	$(REFXEXT)
+	$(REFXHOF)
+	$(REFXPLATFORM)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
