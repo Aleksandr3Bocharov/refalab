@@ -22,7 +22,7 @@ EXT START
     ENTRY True, False, NULL, Begin, End, Cur
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
     ENTRY Max_Number, Get_Max_Number, Is_Max_Number
-    EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError 
+    EXTRN FoldL, FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError 
     EXTRN Add, Sub, P1, Arg, LRel
     EMPTY True, False, NULL, Begin, End, Cur
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
