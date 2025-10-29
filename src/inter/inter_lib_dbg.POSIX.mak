@@ -34,7 +34,6 @@ SOURCES = \
     $(S)/xar.c \
     $(S)/xcf.c \
     $(S)/xfio.c \
-    $(S)/xgcd.c \
     $(S)/xio.c \
     $(S)/xjak.c \
     $(S)/xmo.c \
@@ -52,7 +51,6 @@ OBJECTS = \
     $(S)/xcv.o \
     $(S)/xext.o \
     $(S)/xfio.o \
-    $(S)/xgcd.o \
     $(S)/xhof.o \
     $(S)/xio.o \
     $(S)/xjak.o \
@@ -95,8 +93,6 @@ $(S)/xcf.o: $(S)/xcf.c
 $(S)/xcoden.o: $(S)/xcoden.c
 
 $(S)/xfio.o: $(S)/xfio.c
-
-$(S)/xgcd.o: $(S)/xgcd.c
 
 $(S)/xio.o: $(S)/xio.c
 
