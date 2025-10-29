@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-28
+* 2025-10-29
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -13,7 +13,6 @@
 
 EXT START
 
-    ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
     ENTRY Numbers_Files, EOF
     ENTRY Load_File, Save_File, Append_File
     ENTRY Load_FBytes, Save_FBytes, Append_FBytes
@@ -41,62 +40,6 @@ Max_Number +
     S   4294967295
 
     IMPL
-
-* <Apply W.Closure E.Arg> == E.Res
-* W.Closure ::= S(F).Fn | (W.Closure E.Bounded)
-Apply
-    S(F).Fn E.Argument +
-        = < S.Fn E.Argument>
-    (W.Closure E.Bounded) E.Argument +
-        = <Apply W.Closure E.Bounded E.Argument>
-
-* <Map W.Closure W.Item*> == E.Item_Res*
-* <Apply W.Closure W.Item> == E.Item_Res
-Map W.Fn W.Next E.Tail +
-        = <Apply W.Fn W.Next> <Map W.Fn E.Tail>
-    W._ =
-
-* <FoldL W.Closure W.Accum W.Item*> == W.Accum′
-* <Apply W.Closure W.Accum W.Item> == W.Accum′
-* W.Accum′ ::= W.Accum
-FoldL
-    W.Fn W.Acc W.Next E.Tail +
-        = <FoldL W.Fn <Apply W.Fn W.Acc W.Next> E.Tail>
-    W.Fn W.Acc +
-        = W.Acc
-
-* <FoldR W.Closure W.Item* W.Accum> == W.Accum′
-* <Apply W.Closure W.Item W.Accum> == W.Accum′
-* W.Accum′ ::= W.Accum
-FoldR
-    W.Fn E.Head W.Prev W.Acc +
-        = <FoldR W.Fn E.Head <Apply W.Fn W.Prev W.Acc>>
-    W.Fn W.Acc+
-        = W.Acc
-
-* <Map_Accumulator W.Closure W.Accum W.Item*> == W.Accum′ E.Item_Res*
-* <Apply W.Closure W.Accum W.Item> == W.Accum′ E.Item_Res
-* W.Accum′ ::= W.Accum
-Map_Accumulator
-    W.Fn W.Acc E.Tail +
-        = <Map_Accumulator_Aux W.Fn W.Acc () E.Tail>
-  
-Map_Accumulator_Aux
-    W.Fn W.Acc (E.Scanned) W.Next E.Tail +
-        = <Map_Accumulator_Aux W.Fn +
-            <Map_Accumulator_Add_Scanned <Apply W.Fn W.Acc W.Next> (E.Scanned)> +
-            E.Tail>
-    W.Fn W.Acc (E.Scanned) +
-        = W.Acc E.Scanned
-  
-Map_Accumulator_Add_Scanned 
-    W.Acc E.Step_Scanned (E.Scanned) +
-        = W.Acc (E.Scanned E.Step_Scanned)
-
-* <Del_Accumulator W.Accum E.Any> == E.Any′
-Del_Accumulator
-    W._ E.Any +
-        = E.Any
 
 * <Load_File S(:Numbers_Files:).Handle E(O).FileName> == V.Out
 * V.Out ::= V(O).Open_Error &NULL | E.Lines S(:EOF:).EOF E(O).Close_Error
