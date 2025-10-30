@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-10-29
+* 2025-10-30
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -16,15 +16,14 @@ EXT START
     ENTRY Numbers_Files, EOF
     ENTRY Load_File, Save_File, Append_File
     ENTRY Load_FBytes, Save_FBytes, Append_FBytes
-    ENTRY Inc, Dec, ArgList
+    ENTRY ArgList
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR  
     ENTRY QSort, Min, Max, Exist, Set, Empty, Type, Is_Type
     ENTRY True, False, NULL, Begin, End, Cur
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
-    ENTRY Max_Number, Get_Max_Number, Is_Max_Number
     EXTRN FoldL
     EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError 
-    EXTRN Add, Sub, P1, Arg, LRel
+    EXTRN P1, Arg, LRel
     EMPTY True, False, NULL, Begin, End, Cur
     EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
 
@@ -36,9 +35,6 @@ EOF +
 
 White_Spaces +
     S   ' \n\t\v\f\r'
-
-Max_Number +
-    S   4294967295
 
     IMPL
 
@@ -135,20 +131,6 @@ Append_FBytes
         = <FOpen 'ab' S.Handle E.FileName> +
         <Write_FBytes <FWrite S.Handle E.Bytes>> +
         <FClose S.Handle>
-
-* <Inc E.Number*> == E.Number1
-* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* E.Number1 ::= '-'? S(N).Number+
-Inc
-    E.Number +
-        = <Add (E.Number) 1>
-
-* <Dec E.Number*> == E.Number1
-* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* E.Number1 ::= '-'? S(N).Number+
-Dec
-    E.Number +
-        = <Sub (E.Number) 1>
 
 * <ArgList> == (S(O).Arg+)*
 ArgList
@@ -322,15 +304,5 @@ Is_Type
         = &False
     &OtherT E._ +
         = &True
-
-* <Get_Max_Number> == 4294967295
-Get_Max_Number
-        = 4294967295
-
-* <Is_Max_Number S.Any> == &True | &False
-Is_Max_Number
-    S(:Max_Number:)._ +
-        = &True
-    S._ = &False
 
     END

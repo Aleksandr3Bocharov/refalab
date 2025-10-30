@@ -1,0 +1,49 @@
+* Copyright 2025 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2025-10-30
+* https://github.com/Aleksandr3Bocharov/refalab
+
+*====================================================================
+* Рефал-функции библиотеки РефалАБ.
+* Спецификаторы библиотеки РефалАБ.
+*====================================================================
+
+AR2 START
+
+    ENTRY Inc, Dec
+    ENTRY Max_Number, Get_Max_Number, Is_Max_Number
+    EXTRN Add, Sub
+    EXTRN True, False
+
+Max_Number +
+    S   4294967295
+
+    IMPL
+
+* <Inc E.Number*> == E.Number1
+* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
+* E.Number1 ::= '-'? S(N).Number+
+Inc
+    E.Number +
+        = <Add (E.Number) 1>
+
+* <Dec E.Number*> == E.Number1
+* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
+* E.Number1 ::= '-'? S(N).Number+
+Dec
+    E.Number +
+        = <Sub (E.Number) 1>
+    
+* <Get_Max_Number> == 4294967295
+Get_Max_Number
+        = 4294967295
+
+* <Is_Max_Number S.Any> == &True | &False
+Is_Max_Number
+    S(:Max_Number:)._ +
+        = &True
+    S._ = &False
+
+    END
