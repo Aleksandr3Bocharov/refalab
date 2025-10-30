@@ -1,0 +1,16 @@
+#!/bin/sh 
+
+# Copyright 2025 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2025-10-30
+# https://github.com/Aleksandr3Bocharov/refalab
+
+# *******************************************************************
+# refxar2
+# special script
+# compile xar2.ref from refal to object file
+# result: xar2.o  
+# *******************************************************************
+
+bin/refalabc src/inter/xar2 -a,"-o src/inter/xar2.o" > src/inter/xar2.log
