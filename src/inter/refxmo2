@@ -3,14 +3,14 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-14
+# 2025-10-30
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
-# refxcv
+# refxmo2
 # special script
-# compile xcv.ref from refal to object file
-# result: xcv.o  
+# compile xmo2.ref from refal to object file
+# result: xmo2.o  
 # *******************************************************************
 
-bin/refalabc src/inter/xcv -a,"-o src/inter/xcv.o" > src/inter/xcv.log
+bin/refalabc src/inter/xmo2 -a,"-o src/inter/xmo2.o" > src/inter/xmo2.log

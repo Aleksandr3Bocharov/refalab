@@ -2,14 +2,14 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-09-14
+* 2025-10-30
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
 * Рефал-функции библиотеки РефалАБ.
 *====================================================================
 
-CV  START
+MO2 START
 
     ENTRY Cvb, Cvd
     EXTRN Numb, Symb, Add, Mul, Dr, DrN

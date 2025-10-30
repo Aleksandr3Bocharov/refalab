@@ -19,9 +19,9 @@ CC = clang
 CFLAGS = -pipe -Wall -O2 -Dmdebug -DPOSIX
 AR = ar
 REFXAR2 = src/inter/refxar2
-REFXCV = src/inter/refxcv
 REFXEXT = src/inter/refxext
 REFXHOF = src/inter/refxhof
+REFXMO2 = src/inter/refxmo2
 REFXPLATFORM = src/inter/refxplatformposix
 REFLIB = lib/librefalab_dbg.a
 S = src/inter
@@ -57,6 +57,7 @@ OBJECTS = \
     $(S)/xio.o \
     $(S)/xjak.o \
     $(S)/xmo.o \
+    $(S)/xmo2.o \
     $(S)/xplatform.o \
     $(S)/xrand.o \
     $(S)/xsys.o \
@@ -67,9 +68,9 @@ OBJECTS = \
 
 .ref.o:
 	$(REFXAR2)
-	$(REFXCV)
 	$(REFXEXT)
 	$(REFXHOF)
+	$(REFXMO2)
 	$(REFXPLATFORM)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ 
