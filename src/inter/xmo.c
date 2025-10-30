@@ -1,12 +1,12 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2025-10-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
 //                 General MO:
-//     p1, m1, numb, symb, first, last,
+//     numb, symb, first, last,
 //     lengr, lengw, multe, delf, lrel,
 //     chr, ord, upper, lower, step
 //------------------------------------------
@@ -19,48 +19,6 @@
 #include <stdbool.h>
 #include "refalab.h"
 #include "rfintf.h"
-
-static void p1_(void)
-{
-    do
-    {
-        T_LINKCB *p = refal.preva->next;
-        if (p->next != refal.nexta || p->tag != TAGN)
-            break;
-        uint32_t l = gcoden(p) + 1;
-        if (l == 0)
-            break;
-        pcoden(p, l);
-        rftpl(refal.prevr, refal.preva, refal.nexta);
-        return;
-    } while (false);
-    refal.upshot = 2;
-    return;
-}
-char p1_0[] = {Z2 'P', '1', (char)2};
-G_L_B uint8_t refalab_p1 = '\122';
-void (*p1_1)(void) = p1_;
-
-static void m1_(void)
-{
-    do
-    {
-        T_LINKCB *p = refal.preva->next;
-        if (p->next != refal.nexta || p->tag != TAGN)
-            break;
-        uint32_t l = gcoden(p) - 1;
-        if (l == MAX_NUMBER)
-            break;
-        pcoden(p, l);
-        rftpl(refal.prevr, refal.preva, refal.nexta);
-        return;
-    } while (false);
-    refal.upshot = 2;
-    return;
-}
-char m1_0[] = {Z2 'M', '1', (char)2};
-G_L_B uint8_t refalab_m1 = '\122';
-void (*m1_1)(void) = m1_;
 
 static void numb_(void)
 {

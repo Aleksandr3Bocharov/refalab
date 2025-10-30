@@ -1,13 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-29
+// 2025-10-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
 //              Multi-digits MO:
-//       add, sub, mul, dr, div
-//       addn, subn, muln, drn, divn, gcd, nrel
+//       add, sub, mul, dr, div,
+//       addn, subn, muln, drn, divn,
+//       gcd, p1, m1, nrel
 //------------------------------------------
 
 #include <stddef.h>
@@ -1213,6 +1214,48 @@ static void gcd_(void)
 char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
+
+static void p1_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        uint32_t l = gcoden(p) + 1;
+        if (l == 0)
+            break;
+        pcoden(p, l);
+        rftpl(refal.prevr, refal.preva, refal.nexta);
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char p1_0[] = {Z2 'P', '1', (char)2};
+G_L_B uint8_t refalab_p1 = '\122';
+void (*p1_1)(void) = p1_;
+
+static void m1_(void)
+{
+    do
+    {
+        T_LINKCB *p = refal.preva->next;
+        if (p->next != refal.nexta || p->tag != TAGN)
+            break;
+        uint32_t l = gcoden(p) - 1;
+        if (l == MAX_NUMBER)
+            break;
+        pcoden(p, l);
+        rftpl(refal.prevr, refal.preva, refal.nexta);
+        return;
+    } while (false);
+    refal.upshot = 2;
+    return;
+}
+char m1_0[] = {Z2 'M', '1', (char)2};
+G_L_B uint8_t refalab_m1 = '\122';
+void (*m1_1)(void) = m1_;
 
 static void nrel_(void)
 {
