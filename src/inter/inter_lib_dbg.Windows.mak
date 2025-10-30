@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-29
+# 2025-10-30
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -18,6 +18,7 @@
 CC = clang
 CFLAGS = -pipe -Wall -O2 -Dmdebug
 AR = ar
+REFXAR2 = src\inter\refxar2.bat
 REFXCV = src\inter\refxcv.bat
 REFXEXT = src\inter\refxext.bat
 REFXHOF = src\inter\refxhof.bat
@@ -47,6 +48,7 @@ OBJECTS = \
     $(S)\rfintf.o \
     $(S)\rfrun.o \
     $(S)\xar.o \
+    $(S)\xar2.o \
     $(S)\xcf.o \
     $(S)\xcv.o \
     $(S)\xext.o \
@@ -63,7 +65,8 @@ OBJECTS = \
 
 ####### Implicit rules
 
-.ref.o: 
+.ref.o:
+	$(REFXAR2)
 	$(REFXCV)
 	$(REFXEXT)
 	$(REFXHOF) 
