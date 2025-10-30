@@ -5,7 +5,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
-//              Multi-digits MO:
+//              Ariphmetics MO:
 //       add, sub, mul, dr, div,
 //       addn, subn, muln, drn, divn,
 //       gcd, p1, m1, nrel

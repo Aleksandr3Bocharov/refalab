@@ -5,7 +5,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
-//                 General MO:
+//                 Lexical MO:
 //     numb, symb, first, last,
 //     lengr, lengw, multe, delf, lrel,
 //     chr, ord, upper, lower, step
