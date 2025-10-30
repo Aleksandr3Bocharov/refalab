@@ -50,7 +50,6 @@ OBJECTS = \
     $(S)/xar.o \
     $(S)/xar2.o \
     $(S)/xcf.o \
-    $(S)/xcv.o \
     $(S)/xext.o \
     $(S)/xfio.o \
     $(S)/xhof.o \
