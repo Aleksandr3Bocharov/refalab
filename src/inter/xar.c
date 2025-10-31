@@ -1,14 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-30
+// 2025-10-31
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
 //              Ariphmetics MO:
 //       add, sub, mul, dr, div,
 //       addn, subn, muln, drn, divn,
-//       gcd, p1, m1, nrel
+//       gcd, p1, m1
 //------------------------------------------
 
 #include <stddef.h>
@@ -1256,39 +1256,5 @@ static void m1_(void)
 char m1_0[] = {Z2 'M', '1', (char)2};
 G_L_B uint8_t refalab_m1 = '\122';
 void (*m1_1)(void) = m1_;
-
-static void nrel_(void)
-{
-    if (!dajarg())
-    {
-        refal.upshot = 2;
-        return;
-    }
-    char c;
-    if (Xdl == 0 && Ydl == 0)
-        c = '=';
-    else
-    {
-        if (Xzn == Yzn && xmy() == 2)
-            c = '=';
-        else
-        {
-            if ((Xzn == '-' && Yzn == '+') ||
-                (Xzn == '-' && Yzn == '-' && xmy() == 0) ||
-                (Xzn == '+' && Yzn == '+' && xmy() == 1))
-                c = '<';
-            else
-                c = '>';
-        }
-    }
-    refal.preva->tag = TAGO;
-    refal.preva->info.codep = NULL;
-    refal.preva->info.infoc = c;
-    rftpl(refal.prevr, refal.preva->prev, refal.nexta);
-    return;
-}
-char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};
-G_L_B uint8_t refalab_nrel = '\122';
-void (*nrel_1)(void) = nrel_;
 
 //-------------------- end of file  XAR.C ----------------
