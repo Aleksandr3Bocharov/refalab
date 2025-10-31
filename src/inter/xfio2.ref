@@ -1,0 +1,123 @@
+* Copyright 2025 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2025-10-31
+* https://github.com/Aleksandr3Bocharov/refalab
+
+*====================================================================
+* Рефал-функции библиотеки РефалАБ.
+* Спецификаторы библиотеки РефалАБ.
+*====================================================================
+
+FIO2 +
+    START
+
+    ENTRY Numbers_Files, EOF
+    ENTRY Load_File, Save_File, Append_File
+    ENTRY Load_FBytes, Save_FBytes, Append_FBytes
+    EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError
+
+Numbers_Files +
+    S   0 1 2 3 4 5 6 7 8 9
+
+EOF +
+    S   &FEOF &FError
+
+    IMPL
+
+* <Load_File S(:Numbers_Files:).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error &NULL | E.Lines S(:EOF:).EOF E(O).Close_Error
+* E.Lines ::= (E(O).Line)*
+Load_File
+    S.Handle E.FileName +
+        = <FOpen 'r' S.Handle E.FileName> +
+        <Load_File_Aux S.Handle <FGetS S.Handle>> +
+        <FClose S.Handle>
+
+Load_File_Aux
+    E._ &NULL +
+        =
+    S._ S(:EOF:).EOF +
+        = S.EOF
+    S._ E.Line S(:EOF:).EOF +
+        = (E.Line) S.EOF
+    S.Handle E.Line +
+        = (E.Line) <Load_File_Aux S.Handle <FGetS S.Handle>>
+
+* <Save_File S(:Numbers_Files:).Handle (E(O).FileName) E.Lines> == E.Out
+* E.Lines ::= (E(O).Line)*
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
+Save_File
+    S.Handle (E.FileName) E.Lines +
+        = <Check_Lines E.Lines> <FOpen 'w' S.Handle E.FileName> +
+        <Write_Bracket_Lines S.Handle E.Lines> +
+        <FClose S.Handle>
+
+Check_Lines
+        =
+    (E(O).Line) E.Rest_Lines +
+        = <Check_Lines E.Rest_Lines>
+
+Write_Bracket_Lines
+    S._ =
+    S.Handle (E.Line) E.Rest_Lines +
+        = <Write_Bracket_Lines_Aux <FPutS S.Handle E.Line '\n'> S.Handle E.Rest_Lines>
+
+Write_Bracket_Lines_Aux
+    &NULL E._ +
+        =
+    S(:EOF:).EOF E._ +
+        = S.EOF
+    E._ = <Write_Bracket_Lines E._>
+
+* <Append_File S(:Numbers_Files:).Handle (E(O).FileName) E.Lines> == E.Out
+* E.Lines ::= (E(O).Line)*
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
+Append_File
+    S.Handle (E.FileName) E.Lines +
+        = <Check_Lines E.Lines> <FOpen 'a' S.Handle E.FileName> +
+        <Write_Bracket_Lines S.Handle E.Lines> +
+        <FClose S.Handle>
+
+* <Load_FBytes S(:Numbers_Files:).Handle E(O).FileName> == V.Out
+* V.Out ::= V(O).Open_Error &NULL | E.Bytes S(:EOF:).EOF E(O).Close_Error
+* E.Bytes ::= S(N).Byte*
+Load_FBytes
+    S.Handle E.FileName +
+        = <FOpen 'rb' S.Handle E.FileName> +
+        <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>> +
+        <FClose S.Handle>
+  
+Load_FBytes_Aux
+    E._ &NULL +
+        =
+    S._ E.Bytes S(:EOF:).EOF +
+        = E.Bytes S.EOF
+    S.Handle E.Bytes +
+        = E.Bytes <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>>
+
+* <Save_FBytes S(:Numbers_Files:).Handle (E(O).FileName) E.Bytes> == E.Out
+* E.Bytes ::= S(ON).Byte*
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
+Save_FBytes
+    S.Handle (E.FileName) E(ON).Bytes +
+        = <FOpen 'wb' S.Handle E.FileName> +
+        <Write_FBytes <FWrite S.Handle E.Bytes>> +
+        <FClose S.Handle>
+
+Write_FBytes
+    &NULL +
+        =
+    E._ = E._
+
+* <Append_FBytes S(:Numbers_Files:).Handle (E(O).FileName) E.Bytes> == E.Out
+* E.Bytes ::= S(ON).Byte*
+* E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
+Append_FBytes
+    S.Handle (E.FileName) E(ON).Bytes +
+        = <FOpen 'ab' S.Handle E.FileName> +
+        <Write_FBytes <FWrite S.Handle E.Bytes>> +
+        <FClose S.Handle>
+
+    END
