@@ -1,0 +1,16 @@
+#!/bin/sh 
+
+# Copyright 2025 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2025-10-31
+# https://github.com/Aleksandr3Bocharov/refalab
+
+# *******************************************************************
+# refxfio2
+# special script
+# compile xfio2.ref from refal to object file
+# result: xfio2.o  
+# *******************************************************************
+
+bin/refalabc src/inter/xfio2 -a,"-o src/inter/xfio2.o" > src/inter/xfio2.log
