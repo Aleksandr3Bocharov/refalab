@@ -7,7 +7,7 @@ rem 2025-10-14
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
-rem refplatform.bat
+rem refxplatformwin.bat
 rem special script
 rem compile xplatformwin.ref from refal to object file
 rem result: xplatform.o  

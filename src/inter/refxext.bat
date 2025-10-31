@@ -7,7 +7,7 @@ rem 2025-10-14
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
-rem refext.bat
+rem refxext.bat
 rem special script
 rem compile xext.ref from refal to object file
 rem result: xext.o  
