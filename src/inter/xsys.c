@@ -1,12 +1,13 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2025-10-31
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XSYS.C --------------------
 //                 MO: arg, system, exit, get_env,
-//                     change_dir, get_working_dir
+//                     change_dir, get_working_dir,
+//                     step
 //--------------------------------------------------
 
 #include <stdio.h>
@@ -191,5 +192,22 @@ static void get_current_dir_(void)
 char get_current_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N', 'T', '_', 'D', 'I', 'R', (char)15};
 G_L_B uint8_t refalab_get_current_dir = '\122';
 void (*get_current_dir_1)(void) = get_current_dir_;
+
+static void step_(void)
+{
+    if (refal.preva->next != refal.nexta)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    refal.preva->tag = TAGN;
+    refal.preva->info.codep = NULL;
+    pcoden(refal.preva, refal.currst->step);
+    rftpl(refal.prevr, refal.nextr, refal.nexta);
+    return;
+}
+char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
+G_L_B uint8_t refalab_step = '\122';
+void (*step_1)(void) = step_;
 
 //----------  end of file XSYS.C  ---------------

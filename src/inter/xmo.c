@@ -1,14 +1,14 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-30
+// 2025-10-31
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
 //                 Lexical MO:
 //     numb, symb, first, last,
 //     lengr, lengw, multe, delf, lrel,
-//     chr, ord, upper, lower, step
+//     chr, ord, upper, lower
 //------------------------------------------
 
 #include <stdio.h>
@@ -461,22 +461,5 @@ static void lower_(void)
 char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_lower = '\122';
 void (*lower_1)(void) = lower_;
-
-static void step_(void)
-{
-    if (refal.preva->next != refal.nexta)
-    {
-        refal.upshot = 2;
-        return;
-    }
-    refal.preva->tag = TAGN;
-    refal.preva->info.codep = NULL;
-    pcoden(refal.preva, refal.currst->step);
-    rftpl(refal.prevr, refal.nextr, refal.nexta);
-    return;
-}
-char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
-G_L_B uint8_t refalab_step = '\122';
-void (*step_1)(void) = step_;
 
 //-------------------- end of file  XMO.C ----------------
