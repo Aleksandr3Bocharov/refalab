@@ -17,6 +17,7 @@ FIO2 +
     ENTRY Load_File, Save_File, Append_File
     ENTRY Load_FBytes, Save_FBytes, Append_FBytes
     EXTRN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError
+    EXTRN NULL
 
 Numbers_Files +
     S   0 1 2 3 4 5 6 7 8 9

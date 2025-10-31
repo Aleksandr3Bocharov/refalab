@@ -21,6 +21,7 @@ AR = ar
 REFXAR2 = src/inter/refxar2
 REFXCOMP2 = src/inter/refxcomp2
 REFXEXT = src/inter/refxext
+REFXFIO2 = src/inter/refxfio2
 REFXHOF = src/inter/refxhof
 REFXMO2 = src/inter/refxmo2
 REFXPLATFORM = src/inter/refxplatformposix
@@ -56,6 +57,7 @@ OBJECTS = \
     $(S)/xcomp2.o \
     $(S)/xext.o \
     $(S)/xfio.o \
+    $(S)/xfio2.o \
     $(S)/xhof.o \
     $(S)/xio.o \
     $(S)/xjak.o \
@@ -73,6 +75,7 @@ OBJECTS = \
 	$(REFXAR2)
 	$(REFXCOMP2)
 	$(REFXEXT)
+	$(REFXFIO2)
 	$(REFXHOF)
 	$(REFXMO2)
 	$(REFXPLATFORM)
