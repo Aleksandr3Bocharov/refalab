@@ -1,0 +1,69 @@
+* Copyright 2025 Aleksandr Bocharov
+* Distributed under the Boost Software License, Version 1.0.
+* See accompanying file LICENSE_1_0.txt
+* or copy at http://www.boost.org/LICENSE_1_0.txt
+* 2025-10-31
+* https://github.com/Aleksandr3Bocharov/refalab
+
+*====================================================================
+* Рефал-функции библиотеки РефалАБ.
+*====================================================================
+
+COMP2 +
+    START
+
+    ENTRY QSort, Min, Max
+    EXTRN FoldL, LRel
+
+    IMPL
+
+* <QSort E.Any> == E.Sort_Any
+QSort
+        =
+    W.Pivot +
+        = W.Pivot
+    W.Pivot E.Items +
+        = <QSort_Aux <FoldL &DoQSort (() (W.Pivot) ()) E.Items>>
+
+QSort_Aux
+    ((E.Less) (E.Equal) (E.Greater)) +
+        = <QSort E.Less> E.Equal <QSort E.Greater>
+
+DoQSort
+    ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next +
+        = <DoQSort_Aux <LRel (W.Next) W.Pivot> +
+            ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next>
+
+DoQSort_Aux
+    '<' ((E.Less) E._) W.Next +
+        = ((E.Less W.Next) E._)
+    '=' ((E.Less) (E.Equal) (E.Greater)) W.Next +
+        = ((E.Less) (E.Equal W.Next) (E.Greater))
+    '>' (E._ (E.Greater)) W.Next +
+        = (E._ (E.Greater W.Next))
+
+* <Min W.Min+> == W.Min
+Min W.X W.Y +
+        = <Min_Aux <LRel (W.X) W.Y> W.X W.Y>
+    W.First E.Tail +
+        = <FoldL &Min W.First E.Tail>
+
+Min_Aux
+    '<' W.X E._ +
+        = W.X
+    E._ W.Y +
+        = W.Y
+
+* <Max W.Max+> == W.Max
+Max W.X W.Y +
+        = <Max_Aux <LRel (W.X) W.Y> W.X W.Y>
+    W.First E.Tail +
+        = <FoldL &Max W.First E.Tail>
+
+Max_Aux
+    '>' W.X E._ +
+        = W.X
+    E._ W.Y +
+        = W.Y
+
+    END
