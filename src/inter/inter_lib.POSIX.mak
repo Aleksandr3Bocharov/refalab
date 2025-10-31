@@ -19,6 +19,7 @@ CC = clang
 CFLAGS = -pipe -Wall -O2 -DPOSIX
 AR = ar
 REFXAR2 = src/inter/refxar2
+REFXCOMP2 = src/inter/refxcomp2
 REFXEXT = src/inter/refxext
 REFXHOF = src/inter/refxhof
 REFXMO2 = src/inter/refxmo2
@@ -52,6 +53,7 @@ OBJECTS = \
     $(S)/xar2.o \
     $(S)/xcf.o \
     $(S)/xcomp.o \
+    $(S)/xcomp2.o \
     $(S)/xext.o \
     $(S)/xfio.o \
     $(S)/xhof.o \
@@ -69,6 +71,7 @@ OBJECTS = \
 
 .ref.o:
 	$(REFXAR2)
+	$(REFXCOMP2)
 	$(REFXEXT)
 	$(REFXHOF)
 	$(REFXMO2)
