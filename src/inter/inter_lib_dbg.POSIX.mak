@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-31
+# 2025-11-01
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -42,6 +42,7 @@ SOURCES = \
     $(S)/xjak.c \
     $(S)/xmo.c \
     $(S)/xrand.c \
+    $(S)/xstor.c \
     $(S)/xsys.c \
     $(S)/xtime.c \
     $(S)/xtry.c 	
@@ -65,6 +66,7 @@ OBJECTS = \
     $(S)/xmo2.o \
     $(S)/xplatform.o \
     $(S)/xrand.o \
+    $(S)/xstor.o \
     $(S)/xsys.o \
     $(S)/xtime.o \
     $(S)/xtry.o
@@ -112,6 +114,8 @@ $(S)/xjak.o: $(S)/xjak.c
 $(S)/xmo.o: $(S)/xmo.c
 
 $(S)/xrand.o: $(S)/xrand.c
+
+$(S)/xstor.o: $(S)/xstor.c
 
 $(S)/xsys.o: $(S)/xsys.c
 
