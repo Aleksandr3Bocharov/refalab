@@ -37,6 +37,7 @@ SOURCES = \
     $(S)\xar.c \
     $(S)\xcf.c \
     $(S)\xcomp.c \
+    $(S)\xdelf.c \
     $(S)\xfio.c \
     $(S)\xio.c \
     $(S)\xjak.c \
@@ -56,6 +57,7 @@ OBJECTS = \
     $(S)\xcf.o \
     $(S)\xcomp.o \
     $(S)\xcomp2.o \
+    $(S)\xdelf.o \
     $(S)\xext.o \
     $(S)\xfio.o \
     $(S)\xfio2.o \
@@ -104,6 +106,8 @@ $(S)\xar.o: $(S)\xar.c
 $(S)\xcf.o: $(S)\xcf.c
 
 $(S)\xcomp.o: $(S)\xcomp.c
+
+$(S)\xdelf.o: $(S)\xdelf.c
 
 $(S)\xfio.o: $(S)\xfio.c
 
