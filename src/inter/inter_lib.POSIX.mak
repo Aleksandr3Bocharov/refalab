@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-11-01
+# 2025-11-03
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -25,6 +25,7 @@ REFXFIO2 = src/inter/refxfio2
 REFXHOF = src/inter/refxhof
 REFXMO2 = src/inter/refxmo2
 REFXPLATFORM = src/inter/refxplatformposix
+REFXSYS2 = src/inter/refxsys2
 REFLIB = lib/librefalab.a
 S = src/inter
 
@@ -70,6 +71,7 @@ OBJECTS = \
     $(S)/xrand.o \
     $(S)/xstor.o \
     $(S)/xsys.o \
+    $(S)/xsys2.o \
     $(S)/xtime.o \
     $(S)/xtry.o
     
@@ -83,6 +85,7 @@ OBJECTS = \
 	$(REFXHOF)
 	$(REFXMO2)
 	$(REFXPLATFORM)
+	$(REFXSYS2)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
