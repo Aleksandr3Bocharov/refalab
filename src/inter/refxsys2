@@ -1,0 +1,16 @@
+#!/bin/sh 
+
+# Copyright 2025 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2025-11-03
+# https://github.com/Aleksandr3Bocharov/refalab
+
+# *******************************************************************
+# refxsys2
+# special script
+# compile xsys2.ref from refal to object file
+# result: xsys2.o  
+# *******************************************************************
+
+bin/refalabc src/inter/xsys2 -a,"-o src/inter/xsys2.o" > src/inter/xsys2.log
