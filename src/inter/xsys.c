@@ -6,7 +6,7 @@
 
 //-----------  file  --  XSYS.C --------------------
 //                 MO: arg, system, exit, get_env,
-//                     change_dir, get_working_dir,
+//                     change_dir, get_current_dir,
 //                     step
 //--------------------------------------------------
 
