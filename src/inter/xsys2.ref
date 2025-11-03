@@ -6,12 +6,28 @@
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
-* Пустые функции библиотеки РефалАБ.
+* Рефал-функции библиотеки РефалАБ.
 *====================================================================
 
 EXT START
 
-    ENTRY True, False, NULL, Begin, End, Cur
-    EMPTY True, False, NULL, Begin, End, Cur
+    ENTRY ArgList
+    EXTRN P1, Arg
+
+    IMPL
+
+* <ArgList> == (S(O).Arg+)*
+ArgList
+        = <ArgList_Aux 1>
+
+ArgList_Aux
+    S.Next +
+        = <SwArgList_Aux <P1 S.Next> <Arg S.Next>>
+
+SwArgList_Aux
+    S.Next +
+        =
+    S.Next E.Arg +
+        = (E.Arg) <ArgList_Aux S.Next>
 
     END
