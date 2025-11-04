@@ -11,7 +11,7 @@
 
 EXT START
 
-    ENTRY NULL, Begin, End, Cur
-    EMPTY NULL, Begin, End, Cur
+    ENTRY True, False
+    EMPTY True, False
 
     END
