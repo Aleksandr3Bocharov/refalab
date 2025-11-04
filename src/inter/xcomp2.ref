@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-10-31
+* 2025-11-05
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -12,29 +12,29 @@
 COMP2 +
     START
 
-    ENTRY QSort, Min, Max
+    ENTRY QSortW, MinW, MaxW
     EXTRN FoldL, LRel
 
     IMPL
 
-* <QSort E.Any> == E.Sort_Any
-QSort
+* <QSortW E.Any> == E.Sort_Any
+QSortW
         =
     W.Pivot +
         = W.Pivot
     W.Pivot E.Items +
-        = <QSort_Aux <FoldL &DoQSort (() (W.Pivot) ()) E.Items>>
+        = <QSortW_Aux <FoldL &DoQSortW (() (W.Pivot) ()) E.Items>>
 
-QSort_Aux
+QSortW_Aux
     ((E.Less) (E.Equal) (E.Greater)) +
-        = <QSort E.Less> E.Equal <QSort E.Greater>
+        = <QSortW E.Less> E.Equal <QSortW E.Greater>
 
-DoQSort
+DoQSortW
     ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next +
-        = <DoQSort_Aux <LRel (W.Next) W.Pivot> +
+        = <DoQSortW_Aux <LRel (W.Next) W.Pivot> +
             ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next>
 
-DoQSort_Aux
+DoQSortW_Aux
     '<' ((E.Less) E._) W.Next +
         = ((E.Less W.Next) E._)
     '=' ((E.Less) (E.Equal) (E.Greater)) W.Next +
@@ -42,25 +42,25 @@ DoQSort_Aux
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
-* <Min W.Min+> == W.Min
-Min W.X W.Y +
-        = <Min_Aux <LRel (W.X) W.Y> W.X W.Y>
+* <MinW W.Min+> == W.Min
+MinW W.X W.Y +
+        = <MinW_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
-        = <FoldL &Min W.First E.Tail>
+        = <FoldL &MinW W.First E.Tail>
 
-Min_Aux
+MinW_Aux
     '<' W.X E._ +
         = W.X
     E._ W.Y +
         = W.Y
 
-* <Max W.Max+> == W.Max
-Max W.X W.Y +
-        = <Max_Aux <LRel (W.X) W.Y> W.X W.Y>
+* <MaxW W.Max+> == W.Max
+MaxW W.X W.Y +
+        = <MaxW_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
-        = <FoldL &Max W.First E.Tail>
+        = <FoldL &MaxW W.First E.Tail>
 
-Max_Aux
+MaxW_Aux
     '>' W.X E._ +
         = W.X
     E._ W.Y +
