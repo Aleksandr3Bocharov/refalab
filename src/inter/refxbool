@@ -1,0 +1,16 @@
+#!/bin/sh 
+
+# Copyright 2025 Aleksandr Bocharov
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
+# 2025-11-05
+# https://github.com/Aleksandr3Bocharov/refalab
+
+# *******************************************************************
+# refxbool
+# special script
+# compile xbool.ref from refal to object file
+# result: xbool.o  
+# *******************************************************************
+
+bin/refalabc src/inter/xbool -a,"-o src/inter/xbool.o" > src/inter/xbool.log
