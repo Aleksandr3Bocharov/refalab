@@ -12,8 +12,9 @@
 COMP2 +
     START
 
+    ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
-    EXTRN FoldL, LRel
+    EXTRN FoldL, NRel, LRel
 
     IMPL
 
@@ -42,8 +43,24 @@ DoQSortW_Aux
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
+* <MinN (E.Min)+> == V.Min
+MinN
+    W.First E.Tail +
+        = <FoldL &DoMinN W.First E.Tail>
+
+DoMinN
+    W.X (E.Y) +
+        = <DoMinN_Aux <NRel W.X E.Y>>
+
+DoMinN_Aux
+    '<' W.X E._ +
+        = W.X
+    S._ W.__ E.Y +
+        = (E.Y)
+
 * <MinW W.Min+> == W.Min
-MinW W.X W.Y +
+MinW
+    W.X W.Y +
         = <MinW_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
         = <FoldL &MinW W.First E.Tail>
@@ -55,7 +72,8 @@ MinW_Aux
         = W.Y
 
 * <MaxW W.Max+> == W.Max
-MaxW W.X W.Y +
+MaxW
+    W.X W.Y +
         = <MaxW_Aux <LRel (W.X) W.Y> W.X W.Y>
     W.First E.Tail +
         = <FoldL &MaxW W.First E.Tail>
