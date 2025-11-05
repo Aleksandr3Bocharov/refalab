@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-10-29
+* 2025-11-05
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -11,7 +11,7 @@
 
 HOF START
 
-    ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator, Del_Accumulator
+    ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator
 
     IMPL
 
@@ -65,10 +65,5 @@ Map_Accumulator_Aux
 Map_Accumulator_Add_Scanned 
     W.Acc E.Step_Scanned (E.Scanned) +
         = W.Acc (E.Scanned E.Step_Scanned)
-
-* <Del_Accumulator W.Accum E.Any> == E.Any′
-Del_Accumulator
-    W._ E.Any +
-        = E.Any
 
     END

@@ -12,7 +12,7 @@
 COMP2 +
     START
 
-    ENTRY QSortN, MinN, MaxN
+    ENTRY MinN
     ENTRY QSortW, MinW, MaxW
     EXTRN FoldL, NRel, LRel
 
