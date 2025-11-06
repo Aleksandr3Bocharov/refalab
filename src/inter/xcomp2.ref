@@ -58,12 +58,12 @@ DoMinN_Aux
     S._ W.__ E.Y +
         = (E.Y)
 
-* <MinW W.Min+> == W.Min
+* <MinW W.First V.Tail> == W.Min
 MinW
     W.X W.Y +
         = <MinW_Aux <LRel (W.X) W.Y> W.X W.Y>
-    W.First E.Tail +
-        = <FoldL &MinW W.First E.Tail>
+    W.First V.Tail +
+        = <FoldL &MinW W.First V.Tail>
 
 MinW_Aux
     '<' W.X E._ +
@@ -71,12 +71,12 @@ MinW_Aux
     E._ W.Y +
         = W.Y
 
-* <MaxW W.Max+> == W.Max
+* <MaxW W.First V.Tail> == W.Max
 MaxW
     W.X W.Y +
         = <MaxW_Aux <LRel (W.X) W.Y> W.X W.Y>
-    W.First E.Tail +
-        = <FoldL &MaxW W.First E.Tail>
+    W.First V.Tail +
+        = <FoldL &MaxW W.First V.Tail>
 
 MaxW_Aux
     '>' W.X E._ +
