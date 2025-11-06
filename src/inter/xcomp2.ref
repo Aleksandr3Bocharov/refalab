@@ -14,7 +14,7 @@ COMP2 +
 
     ENTRY MinN
     ENTRY QSortW, MinW, MaxW
-    EXTRN FoldL, NRel, LRel
+    EXTRN UnBrackets, FoldL, NRel, LRel
 
     IMPL
 
@@ -46,7 +46,7 @@ DoQSortW_Aux
 * <MinN (E.Min)+> == V.Min
 MinN
     W.First E.Tail +
-        = <FoldL &DoMinN W.First E.Tail>
+        = <UnBrackets <FoldL &DoMinN W.First E.Tail>>
 
 DoMinN
     W.X (E.Y) +
