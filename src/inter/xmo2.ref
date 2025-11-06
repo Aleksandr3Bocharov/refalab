@@ -15,7 +15,7 @@ MO2 START
 
     ENTRY Cvb, Cvd
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR
-    ENTRY Exist, Set, Empty, Type, Is_Type, Del_FirstW
+    ENTRY Exist, Set, Empty, Type, Is_Type, Del_FirstW, Del_LastW
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
     EXTRN Numb, Symb, Add, Mul, DrN
     EXTRN True, False
@@ -179,6 +179,11 @@ Is_Type
 * <Del_FirstW W.W E.Any> == E.Any
 Del_FirstW
     W._ E.Any +
+        = E.Any
+
+* <Del_LastW E.Any W.W> == E.Any
+Del_LastW
+    E.Any W._ +
         = E.Any
 
     END
