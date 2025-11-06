@@ -43,10 +43,10 @@ DoQSortW_Aux
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
-* <MinN (E.Min)+> == V.Min
+* <MinN (E.First) (E.Number)+> == E.Min
 MinN
-    W.First E.Tail +
-        = <UnBrackets <FoldL &DoMinN W.First E.Tail>>
+    W.First V.Tail +
+        = <UnBrackets <FoldL &DoMinN W.First V.Tail>>
 
 DoMinN
     W.X (E.Y) +
