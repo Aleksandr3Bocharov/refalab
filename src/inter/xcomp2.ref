@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-05
+* 2025-11-07
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -14,7 +14,7 @@ COMP2 +
 
     ENTRY MinN
     ENTRY QSortW, MinW, MaxW
-    EXTRN UnBrackets, FoldL, NRel, LRel
+    EXTRN NNorm, UnBrackets, FoldL, NRel, LRel
 
     IMPL
 
@@ -43,10 +43,10 @@ DoQSortW_Aux
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
-* <MinN (E.First) (E.Number)+> == E.Min
+* <MinN (E.First) (E.Number)+> == V.Min
 MinN
     W.First V.Tail +
-        = <UnBrackets <FoldL &DoMinN W.First V.Tail>>
+        = <NNorm <UnBrackets <FoldL &DoMinN W.First V.Tail>>>
 
 DoMinN
     W.X (E.Y) +
