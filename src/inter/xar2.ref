@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-10-30
+* 2025-11-07
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -14,6 +14,7 @@ AR2 START
 
     ENTRY Inc, Dec
     ENTRY Max_Number, Get_Max_Number, Is_Max_Number
+    ENTRY NNorm
     EXTRN Add, Sub
     EXTRN True, False
 
@@ -45,5 +46,17 @@ Is_Max_Number
     S(:Max_Number:)._ +
         = &True
     S._ = &False
+
+* <NNorm E.Number> = V.NormNumber
+NNorm
+        = 0
+    '-' V(0).Zeros +
+        = 0
+    R '-' E(0).Zeros V(N).Number +
+        = '-' V(N).Number
+    R '+' E(0).Zeros V(N).Number +
+        = V(N).Number
+    R E(0).Zeros V(N).Number +
+        = V(N).Number
 
     END
