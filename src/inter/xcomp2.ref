@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-07
+* 2025-11-10
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -12,11 +12,41 @@
 COMP2 +
     START
 
-    ENTRY MinN
+    ENTRY MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, UnBrackets, FoldL, NRel, LRel
 
     IMPL
+
+* <MinN (E.First) (E.Number)+> == V.Min
+MinN
+    W.First V.Tail +
+        = <NNorm <UnBrackets <FoldL &DoMinN W.First V.Tail>>>
+
+DoMinN
+    W.X (E.Y) +
+        = <DoMinN_Aux <NRel W.X E.Y>>
+
+DoMinN_Aux
+    '<' W.X E._ +
+        = W.X
+    S._ W.__ E.Y +
+        = (E.Y)
+
+* <MaxN (E.First) (E.Number)+> == V.Max
+MaxN
+    W.First V.Tail +
+        = <NNorm <UnBrackets <FoldL &DoMaxN W.First V.Tail>>>
+
+DoMaxN
+    W.X (E.Y) +
+        = <DoMaxN_Aux <NRel W.X E.Y>>
+
+DoMaxN_Aux
+    '>' W.X E._ +
+        = W.X
+    S._ W.__ E.Y +
+        = (E.Y)
 
 * <QSortW E.Any> == E.Sort_Any
 QSortW
@@ -42,21 +72,6 @@ DoQSortW_Aux
         = ((E.Less) (E.Equal W.Next) (E.Greater))
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
-
-* <MinN (E.First) (E.Number)+> == V.Min
-MinN
-    W.First V.Tail +
-        = <NNorm <UnBrackets <FoldL &DoMinN W.First V.Tail>>>
-
-DoMinN
-    W.X (E.Y) +
-        = <DoMinN_Aux <NRel W.X E.Y>>
-
-DoMinN_Aux
-    '<' W.X E._ +
-        = W.X
-    S._ W.__ E.Y +
-        = (E.Y)
 
 * <MinW W.First V.Tail> == W.Min
 MinW
