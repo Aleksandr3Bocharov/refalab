@@ -31,15 +31,15 @@ QSortN_Aux
         = <QSortN E.Less> E.Equal <QSortN E.Greater>
 
 DoQSortN
-    ((E.Less) ((E.Pivot) E.Equal) (E.Greater)) W.Next +
+    (W.Less ((E.Pivot) E.Equal) W.Greater) W.Next +
         = <DoQSortN_Aux <LRel W.Next E.Pivot> +
-            ((E.Less) ((E.Pivot) E.Equal) (E.Greater))>
+            (W.Less ((E.Pivot) E.Equal) W.Greater)>
 
 DoQSortN_Aux
     '<' W.Next E._ ((E.Less) E.__) +
         = ((E.Less W.Next) E.__)
-    '=' W.Next E._ ((E.Less) (E.Equal) (E.Greater)) +
-        = ((E.Less) (E.Equal W.Next) (E.Greater))
+    '=' W.Next E._ (W.Less (E.Equal) W.Greater) +
+        = (W.Less (E.Equal W.Next) W.Greater)
     '>' W.Next E._ (E.__ (E.Greater)) +
         = (E.__ (E.Greater W.Next))
 
