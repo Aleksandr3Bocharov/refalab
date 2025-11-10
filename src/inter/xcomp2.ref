@@ -32,7 +32,7 @@ QSortN_Aux
 
 DoQSortN
     (W.Less ((E.Pivot) E.Equal) W.Greater) W.Next +
-        = <DoQSortN_Aux <LRel W.Next E.Pivot> +
+        = <DoQSortN_Aux <NRel W.Next E.Pivot> +
             (W.Less ((E.Pivot) E.Equal) W.Greater)>
 
 DoQSortN_Aux
