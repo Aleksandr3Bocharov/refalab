@@ -12,11 +12,36 @@
 COMP2 +
     START
 
-    ENTRY MinN, MaxN
+    ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, UnBrackets, FoldL, NRel, LRel
 
     IMPL
+
+* <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
+QSortN
+        =
+    W.Pivot +
+        = W.Pivot
+    W.Pivot E.Items +
+        = <QSortN_Aux <FoldL &DoQSortN (() (W.Pivot) ()) E.Items>>
+
+QSortN_Aux
+    ((E.Less) (E.Equal) (E.Greater)) +
+        = <QSortN E.Less> E.Equal <QSortN E.Greater>
+
+DoQSortN
+    ((E.Less) ((E.Pivot) E.Equal) (E.Greater)) W.Next +
+        = <DoQSortN_Aux <LRel W.Next E.Pivot> +
+            ((E.Less) ((E.Pivot) E.Equal) (E.Greater))>
+
+DoQSortN_Aux
+    '<' W.Next E._ ((E.Less) E.__) +
+        = ((E.Less W.Next) E.__)
+    '=' W.Next E._ ((E.Less) (E.Equal) (E.Greater)) +
+        = ((E.Less) (E.Equal W.Next) (E.Greater))
+    '>' W.Next E._ (E.__ (E.Greater)) +
+        = (E.__ (E.Greater W.Next))
 
 * <MinN (E.First) (E.Number)+> == V.Min
 MinN
@@ -61,15 +86,15 @@ QSortW_Aux
         = <QSortW E.Less> E.Equal <QSortW E.Greater>
 
 DoQSortW
-    ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next +
+    (W.Less (W.Pivot E.Equal) W.Greater) W.Next +
         = <DoQSortW_Aux <LRel (W.Next) W.Pivot> +
-            ((E.Less) (W.Pivot E.Equal) (E.Greater)) W.Next>
+            (W.Less (W.Pivot E.Equal) W.Greater) W.Next>
 
 DoQSortW_Aux
     '<' ((E.Less) E._) W.Next +
         = ((E.Less W.Next) E._)
-    '=' ((E.Less) (E.Equal) (E.Greater)) W.Next +
-        = ((E.Less) (E.Equal W.Next) (E.Greater))
+    '=' (W.Less (E.Equal) W.Greater) W.Next +
+        = (W.Less (E.Equal W.Next) W.Greater)
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
