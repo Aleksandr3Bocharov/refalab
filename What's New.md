@@ -5,7 +5,7 @@
 MinW, MaxW.
 
 Добавлены новые рефал-функции в библиотеку РефалАБ: Del_LastW,
-UnBrackets, NNorm, MinN.
+UnBrackets, NNorm, MinN, MaxN.
 
 Рефал-функции QSort, Min, Max, Del_Accumulator из библиотеки РефалАБ
 переименованы соответственно в QSortW, MinW, MaxW, Del_FirstW.
