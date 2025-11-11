@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-10
+* 2025-11-11
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -14,7 +14,7 @@ COMP2 +
 
     ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
-    EXTRN NNorm, UnBrackets, FoldL, NRel, LRel
+    EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel
 
     IMPL
 
@@ -22,7 +22,7 @@ COMP2 +
 QSortN
         =
     W.Pivot +
-        = W.Pivot
+        = (<NCheck <Unbrackets W.Pivot>>)
     W.Pivot E.Items +
         = <QSortN_Aux <FoldL &DoQSortN (() (W.Pivot) ()) E.Items>>
 
