@@ -6,7 +6,7 @@
 
 //---------------- file -- XBIT.C -----------
 //                Bitwise MO:
-//
+//      band, bor, bxor, bnot
 //-------------------------------------------
 
 #include <stddef.h>
