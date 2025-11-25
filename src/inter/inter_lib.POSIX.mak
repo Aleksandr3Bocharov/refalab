@@ -1,7 +1,7 @@
 # Copyright 2025 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-11-05
+# 2025-11-25
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -37,6 +37,7 @@ SOURCES = \
     $(S)/rfintf.c \
     $(S)/rfrun.c \
     $(S)/xar.c \
+    $(S)/xbit.c \
     $(S)/xcf.c \
     $(S)/xcomp.c \
     $(S)/xdelf.c \
@@ -56,6 +57,7 @@ OBJECTS = \
     $(S)/rfrun.o \
     $(S)/xar.o \
     $(S)/xar2.o \
+    $(S)/xbit.o \
     $(S)/xbool.o \
     $(S)/xcf.o \
     $(S)/xcomp.o \
@@ -108,6 +110,8 @@ $(S)/rfintf.o: $(S)/rfintf.c
 $(S)/rfrun.o: $(S)/rfrun.c
 
 $(S)/xar.o: $(S)/xar.c
+
+$(S)/xbit.o: $(S)/xbit.c
 
 $(S)/xcf.o: $(S)/xcf.c
 
