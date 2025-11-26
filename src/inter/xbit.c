@@ -139,6 +139,8 @@ static void oper(uint32_t o)
             obmen();
         if (Xdl == 0)
             break;
+        if (Xzn == '-' && Yzn == '+')
+            Xzn = '+';
         for (dl = 0, y = Yn; dl < Ydl - Xdl; dl++, y = y->next)
             ;
         for (x = Xn; x != Xk->next; x = x->next, y = y->next)
