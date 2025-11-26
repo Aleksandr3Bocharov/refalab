@@ -131,7 +131,28 @@ static void oper(uint32_t o)
         refal.upshot = 2;
         return;
     }
-    bool rez0 = false;  
+    bool rez0 = true;
+    switch (o)
+    {
+    case Oand:
+        if (Ydl < Xdl)
+            obmen();
+        if (Xdl == 0)
+            break;
+        for (dl = 0, y = Yn; dl < Ydl - Xdl; dl++, y = y->next)
+            ;
+        for (x = Xn; x != Xk->next; x = x->next, y = y->next)
+        {
+            pcoden(x, gcoden(x) & gcoden(y));
+            if (rez0 && gcoden(x) != 0)
+                rez0 = false;
+        }
+        break;
+    case Oor:
+        break;
+    case Oxor:
+        break;
+    }
     if (rez0)
     {
         x = refal.preva->next;
