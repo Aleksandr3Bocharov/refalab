@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-25
+// 2025-11-27
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -151,6 +151,19 @@ static void oper(uint32_t o)
         }
         break;
     case Oor:
+        if (Ydl > Xdl)
+            obmen();
+        if (Xdl == 0)
+            break;
+        rez0 = false;
+        if (Ydl == 0)
+            break;
+        if (Xzn == '+' && Yzn == '-')
+            Xzn = '-';
+        for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+            ;
+        for (y = Yn; x != Xk->next; x = x->next, y = y->next)
+            pcoden(x, gcoden(x) | gcoden(y));
         break;
     case Oxor:
         break;
