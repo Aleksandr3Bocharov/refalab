@@ -186,7 +186,6 @@ static void oper(uint32_t o)
             if (rez0 && gcoden(x) != 0)
                 rez0 = false;
         }
-        break;
     }
     if (rez0)
     {
