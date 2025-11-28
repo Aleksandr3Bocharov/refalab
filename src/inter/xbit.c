@@ -166,6 +166,26 @@ static void oper(uint32_t o)
             pcoden(x, gcoden(x) | gcoden(y));
         break;
     case Oxor:
+        if (Ydl > Xdl)
+            obmen();
+        if (Xdl == 0)
+            break;
+        if (Xdl > Ydl)
+            rez0 = false;
+        if (Ydl == 0)
+            break;
+        if (Xzn == '+' && Yzn == '-')
+            Xzn = '-';
+        else if (Xzn == '-' && Yzn == '-')
+            Xzn = '+';
+        for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+            ;
+        for (y = Yn; x != Xk->next; x = x->next, y = y->next)
+        {
+            pcoden(x, gcoden(x) ^ gcoden(y));
+            if (rez0 && gcoden(x) != 0)
+                rez0 = false;
+        }
         break;
     }
     if (rez0)
