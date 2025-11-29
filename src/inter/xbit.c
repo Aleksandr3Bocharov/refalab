@@ -207,7 +207,21 @@ static void oper(uint32_t o)
                 rez0 = false;
         }
         break;
-    case Onot:;
+    case Onot:
+        if (Xdl == 0)
+        {
+            
+        }
+        if (Xzn == '+')
+            Xzn = '-';
+        else
+            Xzn = '+';
+        for (x = Xn; x != Xk->next; x = x->next)
+        {
+            pcoden(x, ~gcoden(x));
+            if (rez0 && gcoden(x) != 0)
+                rez0 = false;
+        }
     }
     if (rez0)
     {
