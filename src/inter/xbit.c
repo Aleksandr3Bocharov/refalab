@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-27
+// 2025-11-29
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -126,10 +126,30 @@ static void obmen(void)
 
 static void oper(uint32_t o)
 {
-    if (!dajarg())
+    if (o != Onot)
     {
-        refal.upshot = 2;
-        return;
+        if (!dajarg())
+        {
+            refal.upshot = 2;
+            return;
+        }
+    }
+    else
+    {
+        x = refal.preva;
+        y = refal.nexta;
+        if (dajch())
+        {
+            Xn = nach;
+            Xk = kon;
+            Xzn = zn;
+            Xdl = dl;
+        }
+        else
+        {
+            refal.upshot = 2;
+            return;
+        }
     }
     bool rez0 = true;
     switch (o)
@@ -186,6 +206,8 @@ static void oper(uint32_t o)
             if (rez0 && gcoden(x) != 0)
                 rez0 = false;
         }
+        break;
+    case Onot:;
     }
     if (rez0)
     {
