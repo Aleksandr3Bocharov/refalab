@@ -210,7 +210,17 @@ static void oper(uint32_t o)
     case Onot:
         if (Xdl == 0)
         {
-            
+            if (refal.preva->next == refal.nexta)
+                if (!slins(refal.preva, 1))
+                    return;
+            rez0 = false;
+            Xzn = '-';
+            Xn = refal.preva->next;
+            Xk = refal.preva->next;
+            Xn->tag = TAGN;
+            Xn->info.codep = NULL;
+            pcoden(Xn, MAX_NUMBER);
+            break;
         }
         if (Xzn == '+')
             Xzn = '-';
