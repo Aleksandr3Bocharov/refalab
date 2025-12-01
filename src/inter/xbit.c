@@ -271,6 +271,39 @@ static void boper(uint32_t o)
 
 static void shoper(uint32_t o)
 {
+    do
+    {
+        bool rez0 = true;
+        switch (o)
+        {
+        case Oshl:
+            break;
+        case Oshr:;
+        }
+        if (rez0)
+        {
+            x = refal.preva->next;
+            x->tag = TAGN;
+            x->info.codep = NULL;
+            rftpl(refal.prevr, x->prev, x->next);
+            return;
+        }
+        //  wozwratim X
+        // podawim wed. nuli
+        for (x = Xn; gcoden(x) == 0; x = x->next)
+            ;
+        if (Xzn == '-')
+        {
+            x = x->prev;
+            x->tag = TAGO;
+            x->info.codep = NULL;
+            x->info.infoc = '-';
+        }
+        //  perenosim reultat
+        rftpl(refal.prevr, x->prev, Xk->next);
+        return;
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 
