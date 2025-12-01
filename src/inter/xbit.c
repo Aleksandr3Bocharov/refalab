@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-29
+// 2025-12-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -138,7 +138,7 @@ static void oper(uint32_t o)
     {
         x = refal.preva;
         y = refal.nexta;
-        if (dajch())
+        if (dajch() && dl != 0)
         {
             Xn = nach;
             Xk = kon;
@@ -208,20 +208,6 @@ static void oper(uint32_t o)
         }
         break;
     case Onot:
-        if (Xdl == 0)
-        {
-            if (refal.preva->next == refal.nexta)
-                if (!slins(refal.preva, 1))
-                    return;
-            rez0 = false;
-            Xzn = '-';
-            Xn = refal.preva->next;
-            Xk = refal.preva->next;
-            Xn->tag = TAGN;
-            Xn->info.codep = NULL;
-            pcoden(Xn, MAX_NUMBER);
-            break;
-        }
         if (Xzn == '+')
             Xzn = '-';
         else
