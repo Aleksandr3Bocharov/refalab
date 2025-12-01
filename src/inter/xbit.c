@@ -1,12 +1,12 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-29
+// 2025-12-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
 //                Bitwise MO:
-//      band, bor, bxor, bnot
+//      band, bor, bxor, bnot, shl, shr
 //-------------------------------------------
 
 #include <stddef.h>
@@ -19,28 +19,41 @@
 #define Oor 2
 #define Oxor 3
 #define Onot 4
+#define Oshl 1
+#define Oshr 2
 
-static void oper(uint32_t o);
+static void boper(uint32_t o);
+static void shoper(uint32_t o);
 
-static void band_(void) { oper(Oand); }
+static void band_(void) { boper(Oand); }
 char band_0[] = {Z4 'B', 'A', 'N', 'D', (char)4};
 G_L_B uint8_t refalab_band = '\122';
 void (*band_1)(void) = band_;
 
-static void bor_(void) { oper(Oor); }
+static void bor_(void) { boper(Oor); }
 char bor_0[] = {Z3 'B', 'O', 'R', (char)3};
 G_L_B uint8_t refalab_bor = '\122';
 void (*bor_1)(void) = bor_;
 
-static void bxor_(void) { oper(Oxor); }
+static void bxor_(void) { boper(Oxor); }
 char bxor_0[] = {Z4 'B', 'X', 'O', 'R', (char)4};
 G_L_B uint8_t refalab_bxor = '\122';
 void (*bxor_1)(void) = bxor_;
 
-static void bnot_(void) { oper(Onot); }
+static void bnot_(void) { boper(Onot); }
 char bnot_0[] = {Z4 'B', 'N', 'O', 'T', (char)4};
 G_L_B uint8_t refalab_bnot = '\122';
 void (*bnot_1)(void) = bnot_;
+
+static void shl_(void) { shoper(Oshl); }
+char shl_0[] = {Z3 'S', 'H', 'L', (char)3};
+G_L_B uint8_t refalab_shl = '\122';
+void (*shl_1)(void) = shl_;
+
+static void shr_(void) { shoper(Oshr); }
+char shr_0[] = {Z3 'S', 'H', 'R', (char)3};
+G_L_B uint8_t refalab_shr = '\122';
+void (*shr_1)(void) = shr_;
 
 static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
 static size_t dl, Xdl, Ydl;
@@ -124,7 +137,7 @@ static void obmen(void)
     return;
 }
 
-static void oper(uint32_t o)
+static void boper(uint32_t o)
 {
     if (o != Onot)
     {
@@ -254,6 +267,11 @@ static void oper(uint32_t o)
     }
     //  perenosim reultat
     rftpl(refal.prevr, x->prev, Xk->next);
+    return;
+}
+
+static void shoper(uint32_t o)
+{
     return;
 }
 
