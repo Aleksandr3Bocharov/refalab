@@ -139,134 +139,133 @@ static void obmen(void)
 
 static void boper(uint32_t o)
 {
-    if (o != Onot)
+    do
     {
-        if (!dajarg())
+        if (o != Onot)
         {
-            refal.upshot = 2;
-            return;
-        }
-    }
-    else
-    {
-        x = refal.preva;
-        y = refal.nexta;
-        if (dajch())
-        {
-            Xn = nach;
-            Xk = kon;
-            Xzn = zn;
-            Xdl = dl;
+            if (!dajarg())
+                break;
         }
         else
         {
-            refal.upshot = 2;
+            x = refal.preva;
+            y = refal.nexta;
+            if (dajch())
+            {
+                Xn = nach;
+                Xk = kon;
+                Xzn = zn;
+                Xdl = dl;
+            }
+            else
+                break;
+        }
+        bool rez0 = true;
+        switch (o)
+        {
+        case Oand:
+            if (Ydl < Xdl)
+                obmen();
+            if (Xdl == 0)
+                break;
+            if (Xzn == '-' && Yzn == '+')
+                Xzn = '+';
+            for (dl = 0, y = Yn; dl < Ydl - Xdl; dl++, y = y->next)
+                ;
+            for (x = Xn; x != Xk->next; x = x->next, y = y->next)
+            {
+                pcoden(x, gcoden(x) & gcoden(y));
+                if (rez0 && gcoden(x) != 0)
+                    rez0 = false;
+            }
+            break;
+        case Oor:
+            if (Ydl > Xdl)
+                obmen();
+            if (Xdl == 0)
+                break;
+            rez0 = false;
+            if (Ydl == 0)
+                break;
+            if (Xzn == '+' && Yzn == '-')
+                Xzn = '-';
+            for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+                ;
+            for (y = Yn; x != Xk->next; x = x->next, y = y->next)
+                pcoden(x, gcoden(x) | gcoden(y));
+            break;
+        case Oxor:
+            if (Ydl > Xdl)
+                obmen();
+            if (Xdl == 0)
+                break;
+            if (Xdl > Ydl)
+                rez0 = false;
+            if (Ydl == 0)
+                break;
+            if (Xzn == '+' && Yzn == '-')
+                Xzn = '-';
+            else if (Xzn == '-' && Yzn == '-')
+                Xzn = '+';
+            for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+                ;
+            for (y = Yn; x != Xk->next; x = x->next, y = y->next)
+            {
+                pcoden(x, gcoden(x) ^ gcoden(y));
+                if (rez0 && gcoden(x) != 0)
+                    rez0 = false;
+            }
+            break;
+        case Onot:
+            if (Xdl == 0)
+            {
+                if (refal.preva->next == refal.nexta)
+                    if (!slins(refal.preva, 1))
+                        return;
+                rez0 = false;
+                Xzn = '-';
+                Xn = refal.preva->next;
+                Xk = refal.preva->next;
+                Xn->tag = TAGN;
+                Xn->info.codep = NULL;
+                pcoden(Xn, MAX_NUMBER);
+                break;
+            }
+            if (Xzn == '+')
+                Xzn = '-';
+            else
+                Xzn = '+';
+            for (x = Xn; x != Xk->next; x = x->next)
+            {
+                pcoden(x, ~gcoden(x));
+                if (rez0 && gcoden(x) != 0)
+                    rez0 = false;
+            }
+        }
+        if (rez0)
+        {
+            x = refal.preva->next;
+            x->tag = TAGN;
+            x->info.codep = NULL;
+            rftpl(refal.prevr, x->prev, x->next);
             return;
         }
-    }
-    bool rez0 = true;
-    switch (o)
-    {
-    case Oand:
-        if (Ydl < Xdl)
-            obmen();
-        if (Xdl == 0)
-            break;
-        if (Xzn == '-' && Yzn == '+')
-            Xzn = '+';
-        for (dl = 0, y = Yn; dl < Ydl - Xdl; dl++, y = y->next)
+        //  wozwratim X
+        // podawim wed. nuli
+        for (x = Xn; gcoden(x) == 0; x = x->next)
             ;
-        for (x = Xn; x != Xk->next; x = x->next, y = y->next)
+        if (Xzn == '-')
         {
-            pcoden(x, gcoden(x) & gcoden(y));
-            if (rez0 && gcoden(x) != 0)
-                rez0 = false;
+            x = x->prev;
+            x->tag = TAGO;
+            x->info.codep = NULL;
+            x->info.infoc = '-';
         }
-        break;
-    case Oor:
-        if (Ydl > Xdl)
-            obmen();
-        if (Xdl == 0)
-            break;
-        rez0 = false;
-        if (Ydl == 0)
-            break;
-        if (Xzn == '+' && Yzn == '-')
-            Xzn = '-';
-        for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
-            ;
-        for (y = Yn; x != Xk->next; x = x->next, y = y->next)
-            pcoden(x, gcoden(x) | gcoden(y));
-        break;
-    case Oxor:
-        if (Ydl > Xdl)
-            obmen();
-        if (Xdl == 0)
-            break;
-        if (Xdl > Ydl)
-            rez0 = false;
-        if (Ydl == 0)
-            break;
-        if (Xzn == '+' && Yzn == '-')
-            Xzn = '-';
-        else if (Xzn == '-' && Yzn == '-')
-            Xzn = '+';
-        for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
-            ;
-        for (y = Yn; x != Xk->next; x = x->next, y = y->next)
-        {
-            pcoden(x, gcoden(x) ^ gcoden(y));
-            if (rez0 && gcoden(x) != 0)
-                rez0 = false;
-        }
-        break;
-    case Onot:
-        if (Xdl == 0)
-        {
-            if (refal.preva->next == refal.nexta)
-                if (!slins(refal.preva, 1))
-                    return;
-            rez0 = false;
-            Xzn = '-';
-            Xn = refal.preva->next;
-            Xk = refal.preva->next;
-            Xn->tag = TAGN;
-            Xn->info.codep = NULL;
-            pcoden(Xn, MAX_NUMBER);
-            break;
-        }
-        if (Xzn == '+')
-            Xzn = '-';
-        else
-            Xzn = '+';
-        for (x = Xn; x != Xk->next; x = x->next)
-        {
-            pcoden(x, ~gcoden(x));
-            if (rez0 && gcoden(x) != 0)
-                rez0 = false;
-        }
-    }
-    if (rez0)
-    {
-        x = refal.preva->next;
-        x->tag = TAGN;
-        x->info.codep = NULL;
-        rftpl(refal.prevr, x->prev, x->next);
+        //  perenosim reultat
+        rftpl(refal.prevr, x->prev, Xk->next);
         return;
-    }
-    //  wozwratim X
-    // podawim wed. nuli
-    for (x = Xn; gcoden(x) == 0; x = x->next)
-        ;
-    if (Xzn == '-')
-    {
-        x = x->prev;
-        x->tag = TAGO;
-        x->info.codep = NULL;
-        x->info.infoc = '-';
-    }
-    //  perenosim reultat
-    rftpl(refal.prevr, x->prev, Xk->next);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 
