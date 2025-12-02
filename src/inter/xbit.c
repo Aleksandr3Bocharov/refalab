@@ -294,8 +294,20 @@ static void shoper(uint32_t o)
         switch (o)
         {
         case Oshl:
+            if (Xdl == 0)
+                break;
+            rez0 = false;
+            if (sh == 0)
+                break;
             break;
-        case Oshr:;
+        case Oshr:
+            if (Xdl == 0)
+                break;
+            if (sh == 0)
+            {
+                rez0 = false;
+                break;
+            }
         }
         if (rez0)
         {
