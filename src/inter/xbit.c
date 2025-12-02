@@ -273,6 +273,23 @@ static void shoper(uint32_t o)
 {
     do
     {
+        x = refal.preva->next;
+        if (x->tag != TAGLB)
+            break;
+        y = x->info.codep;
+        if (dajch())
+        {
+            Xn = nach;
+            Xk = kon;
+            Xzn = zn;
+            Xdl = dl;
+        }
+        else
+            break;
+        y = y->next;
+        if (y->next != refal.nexta || y->tag != TAGN)
+            break;
+        const uint32_t sh = gcoden(y);
         bool rez0 = true;
         switch (o)
         {
