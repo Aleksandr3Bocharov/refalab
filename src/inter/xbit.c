@@ -304,11 +304,6 @@ static void shoper(uint32_t o)
             dl = sh / 32;
             if (dl >= Xdl)
                 break;
-            if (sh == 0)
-            {
-                rez0 = false;
-                break;
-            }
             if (dl != 0)
             {
                 for (x = Xk, Ydl = 0; Ydl < dl; x = x->prev, Ydl++)
@@ -318,6 +313,11 @@ static void shoper(uint32_t o)
                 Xn = y->next;
             }
             sh %= 32;
+            if (sh == 0)
+            {
+                rez0 = false;
+                break;
+            }
             if (Xn == Xk)
             {
                 pcoden(Xn, gcoden(Xn) >> sh);
