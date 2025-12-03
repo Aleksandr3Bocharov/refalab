@@ -1,7 +1,7 @@
 // Copyright 2025 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-12-01
+// 2025-12-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -318,14 +318,16 @@ static void shoper(uint32_t o)
                 rez0 = false;
                 break;
             }
-            if (Xn == Xk)
+            const uint32_t sh1 = 32 - sh;
+            for (x = Xk; x != Xn; x = x->prev)
             {
-                pcoden(Xn, gcoden(Xn) >> sh);
-                if (gcoden(Xn) != 0)
-                    rez0 = false;
-                break;
+                pcoden(x, gcoden(x) >> sh);
+                const uint32_t t = gcoden(x->prev) << sh1;
+                pcoden(x, gcoden(x) | t);
             }
-            rez0 = false;
+            pcoden(Xn, gcoden(Xn) >> sh);
+            if (Xn != Xk || gcoden(Xn) != 0)
+                rez0 = false;
         }
         if (rez0)
         {
