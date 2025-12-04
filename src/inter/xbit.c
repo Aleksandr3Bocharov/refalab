@@ -310,6 +310,19 @@ static void shoper(uint32_t o)
             rftpl(refal.nextr, Xk, refal.nexta);
             if (dl != 0)
             {
+                y = Xn;
+                for (Ydl = 0; Ydl < dl; Ydl++)
+                {
+                    Xn = Xn->prev;
+                    Xn->tag = TAGN;
+                    Xn->info.codep = NULL;
+                }
+                for (x = Xn; y != Xk->next; x = x->next, y = y->next)
+                {
+                    pcoden(x, gcoden(y));
+                    y->info.codep = NULL;
+                }
+                Yk = x->prev;
             }
             else
                 Yk = Xk;
