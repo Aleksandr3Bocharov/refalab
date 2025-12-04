@@ -290,6 +290,9 @@ static void shoper(uint32_t o)
         if (y->next != refal.nexta || y->tag != TAGN)
             break;
         uint32_t sh = gcoden(y);
+        dl = sh / 32;
+        sh %= 32;
+        const uint32_t sh1 = 32 - sh;
         bool rez0 = true;
         switch (o)
         {
@@ -297,11 +300,18 @@ static void shoper(uint32_t o)
             if (Xdl == 0)
                 break;
             rez0 = false;
+            const size_t n = dl + (sh == 0 ? 0 : 1) + (Xzn == '-' ? 1 : 0);
+            size_t e = 4;
+            for (x = Xn->prev; x->tag != TAGLB && n > e; x = x->prev, e++)
+                ;
+            if (n > e)
+                if (!slins(refal.nextr, n - e))
+                    return;
+            rftpl(refal.nextr, Xk, refal.nexta);
             if (sh == 0)
                 break;
             break;
         case Oshr:
-            dl = sh / 32;
             if (dl >= Xdl)
                 break;
             if (dl != 0)
@@ -312,13 +322,11 @@ static void shoper(uint32_t o)
                     pcoden(y, gcoden(x));
                 Xn = y->next;
             }
-            sh %= 32;
             if (sh == 0)
             {
                 rez0 = false;
                 break;
             }
-            const uint32_t sh1 = 32 - sh;
             for (x = Xk; x != Xn; x = x->prev)
             {
                 pcoden(x, gcoden(x) >> sh);
