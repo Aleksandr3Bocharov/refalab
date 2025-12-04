@@ -308,8 +308,22 @@ static void shoper(uint32_t o)
                 if (!slins(refal.nextr, n - e))
                     return;
             rftpl(refal.nextr, Xk, refal.nexta);
+            if (dl != 0)
+            {
+            }
+            else
+                Yk = Xk;
             if (sh == 0)
                 break;
+            Xn = Xn->prev;
+            Xn->tag = TAGN;
+            Xn->info.codep = NULL;
+            for (x = Xn->next; x != Yk->next; x = x->next)
+            {
+                const uint32_t t = gcoden(x) >> sh1;
+                pcoden(x->prev, gcoden(x->prev) | t);
+                pcoden(x, gcoden(x) << sh);
+            }
             break;
         case Oshr:
             if (dl >= Xdl)
