@@ -14,7 +14,7 @@ AR2 START
 
     ENTRY Inc, Dec
     ENTRY Max_Number, Get_Max_Number, Is_Max_Number
-    ENTRY NNorm, NCheck, Abs
+    ENTRY NNorm, NCheck, Abs, Neg
     EXTRN Add, Sub
     EXTRN True, False
 
@@ -23,15 +23,15 @@ Max_Number +
 
     IMPL
 
-* <Inc E.Number*> == E.Number1
+* <Inc E.Number> == V.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* E.Number1 ::= '-'? S(N).Number+
+* V.Number1 ::= '-'? S(N).Number+
 Inc E.Number +
         = <Add (E.Number) 1>
 
-* <Dec E.Number*> == E.Number1
+* <Dec E.Number> == V.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* E.Number1 ::= '-'? S(N).Number+
+* V.Number1 ::= '-'? S(N).Number+
 Dec E.Number +
         = <Sub (E.Number) 1>
 
@@ -71,5 +71,17 @@ Abs     = 0
         = V.Number
     R E(0).Zeros V(N).Number +
         = V.Number
+
+* <Neg E.Number> = V.NegNumber
+Neg R '-' E(0).Zeros V(N).Number +
+        = V.Number
+    '+' V(0).Zeros +
+        = 0
+    R '+' E(0).Zeros V(N).Number +
+        = '-' V.Number
+    E(0).Zeros +
+        = 0
+    R E(0).Zeros V(N).Number +
+        = '-' V.Number
 
     END
