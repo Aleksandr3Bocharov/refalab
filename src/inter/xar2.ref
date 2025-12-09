@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-11
+* 2025-12-09
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -14,7 +14,7 @@ AR2 START
 
     ENTRY Inc, Dec
     ENTRY Max_Number, Get_Max_Number, Is_Max_Number
-    ENTRY NNorm, NCheck
+    ENTRY NNorm, NCheck, Abs
     EXTRN Add, Sub
     EXTRN True, False
 
@@ -26,17 +26,15 @@ Max_Number +
 * <Inc E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
 * E.Number1 ::= '-'? S(N).Number+
-Inc
-    E.Number +
+Inc E.Number +
         = <Add (E.Number) 1>
 
 * <Dec E.Number*> == E.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
 * E.Number1 ::= '-'? S(N).Number+
-Dec
-    E.Number +
+Dec E.Number +
         = <Sub (E.Number) 1>
-    
+
 * <Get_Max_Number> == 4294967295
 Get_Max_Number
         = 4294967295
@@ -48,8 +46,7 @@ Is_Max_Number
     S._ = &False
 
 * <NNorm E.Number> = V.NormNumber
-NNorm
-        = 0
+NNorm   = 0
     '-' V(0).Zeros +
         = 0
     R '-' E(0).Zeros V(N).Number +
@@ -65,5 +62,14 @@ NCheck
         = S.Znak V.Number
     E(N).Number +
         = E.Number
+
+* <Abs E.Number> = V.AbsNumber
+Abs     = 0
+    R '-' E(0).Zeros V(N).Number +
+        = V.Number
+    R '+' E(0).Zeros V(N).Number +
+        = V.Number
+    R E(0).Zeros V(N).Number +
+        = V.Number
 
     END
