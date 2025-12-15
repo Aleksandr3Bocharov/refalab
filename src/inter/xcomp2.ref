@@ -12,12 +12,21 @@
 COMP2 +
     START
 
-    ENTRY QSortN, MinN, MaxN
     ENTRY LTN
+    ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
 
     IMPL
+
+* <LTN (E.N1) E.N2> = &True | &False
+LTN E._ +
+        = <LTN_Aux <NRel E._>>
+
+LTN_Aux
+    '<' E._ +
+        = &True
+    E._ = &False
 
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 QSortN
@@ -73,15 +82,6 @@ DoMaxN_Aux
         = W.X
     S._ W.__ E.Y +
         = (E.Y)
-
-* <LTN (E.N1) E.N2> = &True | &False
-LTN E._ +
-        = <LTN_Aux <NRel E._>>
-
-LTN_Aux
-    '<' E._ +
-        = &True
-    E._ = &False
 
 * <QSortW E.Any> == E.Sort_Any
 QSortW
