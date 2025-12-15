@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-11
+* 2025-12-15
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -13,8 +13,9 @@ COMP2 +
     START
 
     ENTRY QSortN, MinN, MaxN
+    ENTRY LTN
     ENTRY QSortW, MinW, MaxW
-    EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel
+    EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
 
     IMPL
 
@@ -72,6 +73,15 @@ DoMaxN_Aux
         = W.X
     S._ W.__ E.Y +
         = (E.Y)
+
+* <LTN (E.N1) E.N2> = &True | &False
+LTN E._ +
+        = <LTN_Aux <NRel E._>>
+
+LTN_Aux
+    '<' E._ +
+        = &True
+    E._ = &False
 
 * <QSortW E.Any> == E.Sort_Any
 QSortW
