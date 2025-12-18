@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-15
+* 2025-12-19
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -12,7 +12,7 @@
 COMP2 +
     START
 
-    ENTRY LTN, LEN
+    ENTRY LTN, LEN, EQN
     ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
@@ -36,6 +36,15 @@ LEN_Aux
     '>' E._ +
         = &False
     E._ = &True
+
+* <EQN (E.N1) E.N2> = &True | &False
+EQN E._ +
+        = <EQN_Aux <NRel E._>>
+
+EQN_Aux
+    '=' E._ +
+        = &True
+    E._ = &False
 
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 QSortN
