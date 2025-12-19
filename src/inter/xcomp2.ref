@@ -55,6 +55,15 @@ NEN_Aux
         = &False
     E._ = &True
 
+* <GEN (E.N1) E.N2> = &True | &False
+GEN E._ +
+        = <GEN_Aux <NRel E._>>
+
+GEN_Aux
+    '<' E._ +
+        = &False
+    E._ = &True
+
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 QSortN
         =
