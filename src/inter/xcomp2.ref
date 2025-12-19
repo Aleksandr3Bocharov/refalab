@@ -12,7 +12,7 @@
 COMP2 +
     START
 
-    ENTRY LTN, LEN, EQN, NEN
+    ENTRY LTN, LEN, EQN, NEN, GEN
     ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
