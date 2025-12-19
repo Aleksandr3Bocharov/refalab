@@ -12,7 +12,7 @@
 COMP2 +
     START
 
-    ENTRY LTN, LEN, EQN, NEN, GEN
+    ENTRY LTN, LEN, EQN, NEN, GEN, GTN
     ENTRY QSortN, MinN, MaxN
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
@@ -63,6 +63,15 @@ GEN_Aux
     '<' E._ +
         = &False
     E._ = &True
+
+* <GTN (E.N1) E.N2> = &True | &False
+GTN E._ +
+        = <GTN_Aux <NRel E._>>
+
+GTN_Aux
+    '>' E._ +
+        = &True
+    E._ = &False
 
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 QSortN
