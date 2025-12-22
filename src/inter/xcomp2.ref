@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-19
+* 2025-12-23
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -14,6 +14,7 @@ COMP2 +
 
     ENTRY LTN, LEN, EQN, NEN, GEN, GTN
     ENTRY QSortN, MinN, MaxN
+    ENTRY LTL, LEL, EQL, NEL, GEL, GTL
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
 
@@ -127,6 +128,54 @@ DoMaxN_Aux
         = W.X
     S._ W.__ E.Y +
         = (E.Y)
+
+* <LTL (E.E1) E.E2> = &True | &False
+LTL E._ +
+        = <LTL_Aux <LRel E._>>
+
+LTL_Aux
+    '<' = &True
+    E._ = &False
+
+* <LEL (E.E1) E.E2> = &True | &False
+LEL E._ +
+        = <LEL_Aux <LRel E._>>
+
+LEL_Aux
+    '>' = &False
+    E._ = &True
+
+* <EQL (E.E1) E.E2> = &True | &False
+EQL E._ +
+        = <EQL_Aux <LRel E._>>
+
+EQL_Aux
+    '=' = &True
+    E._ = &False
+
+* <NEL (E.E1) E.E2> = &True | &False
+NEL E._ +
+        = <NEL_Aux <LRel E._>>
+
+NEL_Aux
+    '=' = &False
+    E._ = &True
+
+* <GEL (E.E1) E.E2> = &True | &False
+GEL E._ +
+        = <GEL_Aux <LRel E._>>
+
+GEL_Aux
+    '<' = &False
+    E._ = &True
+
+* <GTL (E.E1) E.E2> = &True | &False
+GTL E._ +
+        = <GTL_Aux <LRel E._>>
+
+GTL_Aux
+    '>' = &True
+    E._ = &False
 
 * <QSortW E.Any> == E.Sort_Any
 QSortW
