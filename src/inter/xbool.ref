@@ -2,10 +2,11 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-05
+* 2025-12-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
+* Рефал-функции библиотеки РефалАБ.
 * Пустые функции библиотеки РефалАБ.
 * Спецификаторы библиотеки РефалАБ.
 *====================================================================
@@ -14,9 +15,18 @@ BOOL +
     START
 
     ENTRY True, False, Bool
+    ENTRY Not
     EMPTY True, False
 
 Bool +
     S   &True &False
+
+    IMPL
+
+* <Not S(&True &False).Bool> = &True | &False
+Not &True +
+        = &False
+    &False +
+        = &True
 
     END
