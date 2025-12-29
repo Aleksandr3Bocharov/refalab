@@ -6,7 +6,7 @@
 **25-11-2025**
 
 Внесены изменения в работу рефал-функций из библиотеки РефалАБ:
-MinW, MaxW.
+MinW, MaxW, MinN, MaxN.
 
 Добавлены новые рефал-функции в библиотеку РефалАБ: Abs, Minus,
 LTN, LEN, EQN, NEN, GEN, GTN, LTL, LEL, EQL, NEL, GEL, GTL,
