@@ -7,7 +7,7 @@
 
 Добавлены новые рефал-функции в библиотеку РефалАБ: Abs, Minus,
 LTN, LEN, EQN, NEN, GEN, GTN, LTL, LEL, EQL, NEL, GEL, GTL,
-Not.
+Not, And.
 
 Добавлены первичные функции в библиотеку РефалАБ: band, bor, bxor, bnot, shl, shr.
 
