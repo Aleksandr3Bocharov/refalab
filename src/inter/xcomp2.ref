@@ -99,10 +99,10 @@ DoQSortN_Aux
     '>' W.Next E._ (E.__ (E.Greater)) +
         = (E.__ (E.Greater W.Next))
 
-* <MinN (E.First) (E.Number)+> == V.Min
+* <MinN (E.First) (E.Number)*> == V.Min
 MinN
-    W.First V.Tail +
-        = <NNorm <UnBrackets <FoldL &DoMinN W.First V.Tail>>>
+    W.First E.Tail +
+        = <NNorm <UnBrackets <FoldL &DoMinN W.First E.Tail>>>
 
 DoMinN
     W.X (E.Y) +
@@ -114,10 +114,10 @@ DoMinN_Aux
     S._ W.__ E.Y +
         = (E.Y)
 
-* <MaxN (E.First) (E.Number)+> == V.Max
+* <MaxN (E.First) (E.Number)*> == V.Max
 MaxN
-    W.First V.Tail +
-        = <NNorm <UnBrackets <FoldL &DoMaxN W.First V.Tail>>>
+    W.First E.Tail +
+        = <NNorm <UnBrackets <FoldL &DoMaxN W.First E.Tail>>>
 
 DoMaxN
     W.X (E.Y) +
