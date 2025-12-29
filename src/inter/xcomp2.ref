@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-23
+* 2025-12-29
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -202,12 +202,12 @@ DoQSortW_Aux
     '>' (E._ (E.Greater)) W.Next +
         = (E._ (E.Greater W.Next))
 
-* <MinW W.First V.Tail> == W.Min
+* <MinW W.First E.Tail> == W.Min
 MinW
     W.X W.Y +
         = <MinW_Aux <LRel (W.X) W.Y> W.X W.Y>
-    W.First V.Tail +
-        = <FoldL &MinW W.First V.Tail>
+    W.First E.Tail +
+        = <FoldL &MinW W.First E.Tail>
 
 MinW_Aux
     '<' W.X E._ +
@@ -215,12 +215,12 @@ MinW_Aux
     E._ W.Y +
         = W.Y
 
-* <MaxW W.First V.Tail> == W.Max
+* <MaxW W.First E.Tail> == W.Max
 MaxW
     W.X W.Y +
         = <MaxW_Aux <LRel (W.X) W.Y> W.X W.Y>
-    W.First V.Tail +
-        = <FoldL &MaxW W.First V.Tail>
+    W.First E.Tail +
+        = <FoldL &MaxW W.First E.Tail>
 
 MaxW_Aux
     '>' W.X E._ +
