@@ -10,7 +10,7 @@ MinW, MaxW, MinN, MaxN.
 
 Добавлены новые рефал-функции в библиотеку РефалАБ: Abs, Minus,
 LTN, LEN, EQN, NEN, GEN, GTN, LTL, LEL, EQL, NEL, GEL, GTL,
-Not, And.
+Not, And, Or.
 
 Добавлены первичные функции в библиотеку РефалАБ: band, bor, bxor, bnot, shl, shr.
 
