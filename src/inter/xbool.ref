@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-29
+* 2026-01-02
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -15,7 +15,7 @@ BOOL +
     START
 
     ENTRY True, False, Bool
-    ENTRY And, Not
+    ENTRY And, Or, Not
     EMPTY True, False
 
 Bool +
@@ -38,6 +38,18 @@ And_Aux = &True
 BExp_Check
     E(:Bool: B).BExp +
         = E.BExp
+
+* <Or E(:Bool: B).BExp> = &True | &False
+Or   E(:Bool: B).BExp +
+        = <Or_Aux E.BExp>
+
+Or_Aux  = &False
+    &True E._ +
+        = &True
+    &False E.BExp +
+        = <Or_Aux E.BExp>
+    (E.Exp) E.BExp_E +
+        = <Or_Aux <BExp_Check < E.Exp>> E.BExp_E>
 
 * <Not S(:Bool:).Bool> = &True | &False
 Not &True +
