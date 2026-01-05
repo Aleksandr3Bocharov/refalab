@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-05
+* 2026-01-05
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -11,7 +11,7 @@
 
 EXT START
 
-    ENTRY NULL, Begin, End, Cur
-    EMPTY NULL, Begin, End, Cur
+    ENTRY NULL, Begin, End, Cur, Call
+    EMPTY NULL, Begin, End, Cur, Call
 
     END

@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2026-01-02
+* 2026-01-05
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -15,13 +15,38 @@ BOOL +
     START
 
     ENTRY True, False, Bool
-    ENTRY And, Or, Not
+    ENTRY If, And, Or, Not
+    EXTRN Call
     EMPTY True, False
 
 Bool +
     S   &True &False
 
     IMPL
+
+* <If (V.Cond E.Any)+ (E.Any)> = E.Any
+* V.Cond ::= &True | &False | (E.Any)
+If  E(B).CExp +
+        = <If_Aux E.CExp>
+
+If_Aux
+    (&True E.Expr) E._ W.False +
+        = <If_Aux_Get E.Expr>
+    (&False E._) (E.False) +
+        = <If_Aux_Get E.False>
+    (&False E._) E.Rest W.False +
+        = <If_Aux E.Rest W.False>
+    ((E.BExp) E.Expr) E.Rest W.False +
+        = <If_Aux (<BCheck < E.BExp>> E.Expr) E.Rest W.False>
+
+If_Aux_Get
+    (&Call E.Expr) +
+        = < E.Expr>
+    E._ = E._
+
+BCheck
+    S(:Bool:).Bool +
+        = S.Bool
 
 * <And E(:Bool: B).BExp> = &True | &False
 And E(:Bool: B).BExp +
