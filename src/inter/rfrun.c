@@ -790,7 +790,7 @@ void rfrun(T_ST *ast) // adress of current state table
             b2 = b1->info.codep;
             table_elements[number_element] = b1;
             table_elements[number_element + 1] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // LBY;
@@ -804,7 +804,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element] = b1;
             b1 = b1->info.codep;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // RB;
@@ -818,7 +818,7 @@ void rfrun(T_ST *ast) // adress of current state table
             b1 = b2->info.codep;
             table_elements[number_element] = b1;
             table_elements[number_element + 1] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // RBY;
@@ -832,7 +832,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 1] = b2;
             b2 = b2->info.codep;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // LS;
@@ -866,7 +866,7 @@ void rfrun(T_ST *ast) // adress of current state table
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // RW;
@@ -876,7 +876,7 @@ void rfrun(T_ST *ast) // adress of current state table
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // LBNIL
@@ -896,7 +896,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             table_elements[number_element] = b0;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // RBNIL;
@@ -916,7 +916,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             table_elements[number_element] = b2;
             table_elements[number_element + 1] = b0;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // LBCE;
@@ -933,7 +933,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 1] = b1;
             table_elements[number_element + 2] = b0->next;
             table_elements[number_element + 3] = b1->prev;
-            number_element = number_element + 4;
+            number_element += 4;
             i_state = ADVANCE;
             break;
             // RBCE;
@@ -950,7 +950,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 1] = b0;
             table_elements[number_element + 2] = b2->next;
             table_elements[number_element + 3] = b0->prev;
-            number_element = number_element + 4;
+            number_element += 4;
             i_state = ADVANCE;
             break;
             // NIL;
@@ -966,7 +966,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case CE:
             table_elements[number_element] = b1->next;
             table_elements[number_element + 1] = b2->prev;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // LED(N);
@@ -997,7 +997,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case LED2:
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL * 2;
             i_state = NEXTOP;
             break;
@@ -1029,7 +1029,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case RED2:
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL * 2;
             i_state = NEXTOP;
             break;
@@ -1049,7 +1049,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element] = b1->next;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // PLV;
@@ -1068,7 +1068,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b1 = b1->info.codep;
             jsp++;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // PRE;
@@ -1078,7 +1078,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element] = b2;
             table_elements[number_element + 1] = b2->prev;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // PRV;
@@ -1097,7 +1097,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b2 = b2->info.codep;
             jsp++;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             i_state = ADVANCE;
             break;
             // PLESC;
@@ -1141,7 +1141,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element + 1] = b1->prev;
             table_elements[number_element + 2] = b1;
-            number_element = number_element + 3;
+            number_element += 3;
             i_state = NEXTOP;
             break;
             // PRESC;
@@ -1185,7 +1185,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element + 2] = b2;
             table_elements[number_element] = b2->next;
-            number_element = number_element + 3;
+            number_element += 3;
             i_state = NEXTOP;
             break;
             // LESD(N);
@@ -1235,7 +1235,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = b1;
             b2 = b1->info.codep;
             table_elements[number_element + 3] = b2;
-            number_element = number_element + 4;
+            number_element += 4;
             i_state = ADVANCE;
             break;
             // PREB;
@@ -1271,7 +1271,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 3] = b2;
             b1 = b2->info.codep;
             table_elements[number_element + 2] = b1;
-            number_element = number_element + 4;
+            number_element += 4;
             i_state = ADVANCE;
             break;
             // EOE(N);
@@ -1302,7 +1302,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             table_elements[number_element + 1] = b1->prev;
             table_elements[number_element + 2] = b1;
-            number_element = number_element + 3;
+            number_element += 3;
             vpc = vpc + NMBL + SMBL;
             i_state = NEXTOP;
             break;
@@ -1322,7 +1322,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             table_elements[number_element] = b2->next;
             table_elements[number_element + 2] = b2;
-            number_element = number_element + 3;
+            number_element += 3;
             vpc = vpc + NMBL + SMBL;
             i_state = NEXTOP;
             break;
@@ -1364,7 +1364,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element] = b1->next;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1381,7 +1381,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             jsp++;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1392,7 +1392,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jsp++;
             table_elements[number_element + 1] = b2->prev;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1409,7 +1409,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             jsp++;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1427,7 +1427,7 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             b1 = b1->prev;
             table_elements[number_element + 1] = b1;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1445,7 +1445,7 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             b2 = b2->next;
             table_elements[number_element] = b2;
-            number_element = number_element + 2;
+            number_element += 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
