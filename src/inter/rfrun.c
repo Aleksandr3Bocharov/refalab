@@ -209,7 +209,7 @@ static union
 } inch;
 
 static T_LINKCB *table_elements[256]; // table of elements
-static size_t number_element;         // adress of first free string in table of elements
+static uint16_t number_element;       // adress of first free string in table of elements
 
 static T_WJS js[64]; // jump stack and planning translation stack
 static T_WJS *jsp;   // jump stack pointer
@@ -232,8 +232,8 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
-static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc);
-static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc);
+static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc);
+static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc);
 static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
@@ -1964,7 +1964,7 @@ static void link(T_LINKCB *x, T_LINKCB *y)
     return;
 }
 
-static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *anel, uint8_t **avpc)
+static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc)
 {
     jsp_->jsb1 = *ab1;
     jsp_->jsb2 = *ab2;
@@ -1973,7 +1973,7 @@ static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const size_t *ane
     return;
 }
 
-static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, size_t *anel, uint8_t **avpc)
+static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc)
 {
     *ab1 = jsp_->jsb1;
     *ab2 = jsp_->jsb2;
