@@ -208,8 +208,8 @@ static union
     uint8_t *ptr;
 } inch;
 
-static T_LINKCB *et[256]; // element table
-static size_t nel;        // adress of first free string in element table
+static T_LINKCB *table_elements[256]; // table of elements
+static size_t number_element;         // adress of first free string in table of elements
 
 static T_WJS js[64]; // jump stack and planning translation stack
 static T_WJS *jsp;   // jump stack pointer
@@ -290,10 +290,10 @@ void rfrun(T_ST *ast) // adress of current state table
             // here must be check on c-function
             // if (c) goto CFUNC;
             jsp = js;
-            et[1] = b0;
-            et[2] = b2;
-            et[3] = b1;
-            nel = 4;
+            table_elements[1] = b0;
+            table_elements[2] = b2;
+            table_elements[3] = b1;
+            number_element = 4;
             i_state = NEXTOP;
             break;
             // increase step number
@@ -308,9 +308,9 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = RCGIMP;
                 break;
             }
-            et[1] = b0;
-            et[2] = b2;
-            et[3] = b1;
+            table_elements[1] = b0;
+            table_elements[2] = b2;
+            table_elements[3] = b1;
             f = (T_LINKCB *)vpc;
             i_state = SWAPREF;
             break;
@@ -326,7 +326,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case LACK:
             ast->state = 3; // end of free memory
-            quasik.info.codep = et[2];
+            quasik.info.codep = table_elements[2];
             i_state = EXIT;
             break;
             // state remove from
@@ -602,7 +602,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // SJUMP(L);
         case SJUMP:
             memcpy(&inch.ptr, vpc + NMBL, LBLL);
-            putjs(jsp, &b1, &b2, &nel, &inch.ptr);
+            putjs(jsp, &b1, &b2, &number_element, &inch.ptr);
             jsp++;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
@@ -615,15 +615,15 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             jsp--;
-            getjs(jsp, &b1, &b2, &nel, &vpc);
+            getjs(jsp, &b1, &b2, &number_element, &vpc);
             i_state = NEXTOP;
             break;
             // SB(N,M);
         case SB:
             n = *(vpc + NMBL);
             m = *(vpc + NMBL + NMBL);
-            b1 = et[n];
-            b2 = et[m];
+            b1 = table_elements[n];
+            b2 = table_elements[m];
             vpc = vpc + 3 * NMBL;
             i_state = NEXTOP;
             break;
@@ -636,8 +636,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             vpc = vpc + NMBL + SMBL;
-            et[nel] = b1;
-            nel++;
+            table_elements[number_element] = b1;
+            number_element++;
             i_state = NEXTOP;
             break;
             // RSC(S);
@@ -649,8 +649,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             vpc = vpc + NMBL + SMBL;
-            et[nel] = b2;
-            nel++;
+            table_elements[number_element] = b2;
+            number_element++;
             i_state = NEXTOP;
             break;
             // LSCO(N);
@@ -666,8 +666,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b1;
-            nel++;
+            table_elements[number_element] = b1;
+            number_element++;
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -684,8 +684,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b2;
-            nel++;
+            table_elements[number_element] = b2;
+            number_element++;
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -693,18 +693,18 @@ void rfrun(T_ST *ast) // adress of current state table
         case LSD:
             SHB1;
             n = *(vpc + NMBL);
-            if (b1->tag != et[n]->tag)
+            if (b1->tag != table_elements[n]->tag)
             {
                 i_state = FAIL;
                 break;
             }
-            if (b1->info.codef != et[n]->info.codef)
+            if (b1->info.codef != table_elements[n]->info.codef)
             {
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b1;
-            nel++;
+            table_elements[number_element] = b1;
+            number_element++;
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -712,18 +712,18 @@ void rfrun(T_ST *ast) // adress of current state table
         case RSD:
             SHB2;
             n = *(vpc + NMBL);
-            if (b2->tag != et[n]->tag)
+            if (b2->tag != table_elements[n]->tag)
             {
                 i_state = FAIL;
                 break;
             }
-            if (b2->info.codef != et[n]->info.codef)
+            if (b2->info.codef != table_elements[n]->info.codef)
             {
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b2;
-            nel++;
+            table_elements[number_element] = b2;
+            number_element++;
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -745,8 +745,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b1;
-            nel++;
+            table_elements[number_element] = b1;
+            number_element++;
             vpc = vpc + NMBL;
             n--;
             if (n != 0)
@@ -771,8 +771,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b2;
-            nel++;
+            table_elements[number_element] = b2;
+            number_element++;
             vpc = vpc + NMBL;
             n--;
             if (n != 0)
@@ -788,9 +788,9 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             b2 = b1->info.codep;
-            et[nel] = b1;
-            et[nel + 1] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b1;
+            table_elements[number_element + 1] = b2;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // LBY;
@@ -801,10 +801,10 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b1;
+            table_elements[number_element] = b1;
             b1 = b1->info.codep;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // RB;
@@ -816,9 +816,9 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             b1 = b2->info.codep;
-            et[nel] = b1;
-            et[nel + 1] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b1;
+            table_elements[number_element + 1] = b2;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // RBY;
@@ -829,10 +829,10 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel + 1] = b2;
+            table_elements[number_element + 1] = b2;
             b2 = b2->info.codep;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // LS;
@@ -843,8 +843,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b1;
-            nel++;
+            table_elements[number_element] = b1;
+            number_element++;
             i_state = ADVANCE;
             break;
             // RS;
@@ -855,28 +855,28 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b2;
-            nel++;
+            table_elements[number_element] = b2;
+            number_element++;
             i_state = ADVANCE;
             break;
             // LW;
         case LW:
             SHB1;
-            et[nel] = b1;
+            table_elements[number_element] = b1;
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // RW;
         case RW:
             SHB2;
-            et[nel + 1] = b2;
+            table_elements[number_element + 1] = b2;
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // LBNIL
@@ -894,9 +894,9 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b0;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element] = b0;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // RBNIL;
@@ -914,9 +914,9 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            et[nel] = b2;
-            et[nel + 1] = b0;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            table_elements[number_element + 1] = b0;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // LBCE;
@@ -929,11 +929,11 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             b0 = b1;
             b1 = b1->info.codep;
-            et[nel] = b0;
-            et[nel + 1] = b1;
-            et[nel + 2] = b0->next;
-            et[nel + 3] = b1->prev;
-            nel = nel + 4;
+            table_elements[number_element] = b0;
+            table_elements[number_element + 1] = b1;
+            table_elements[number_element + 2] = b0->next;
+            table_elements[number_element + 3] = b1->prev;
+            number_element = number_element + 4;
             i_state = ADVANCE;
             break;
             // RBCE;
@@ -946,11 +946,11 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             b0 = b2;
             b2 = b2->info.codep;
-            et[nel] = b2;
-            et[nel + 1] = b0;
-            et[nel + 2] = b2->next;
-            et[nel + 3] = b0->prev;
-            nel = nel + 4;
+            table_elements[number_element] = b2;
+            table_elements[number_element + 1] = b0;
+            table_elements[number_element + 2] = b2->next;
+            table_elements[number_element + 3] = b0->prev;
+            number_element = number_element + 4;
             i_state = ADVANCE;
             break;
             // NIL;
@@ -964,20 +964,20 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // CE;
         case CE:
-            et[nel] = b1->next;
-            et[nel + 1] = b2->prev;
-            nel = nel + 2;
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 1] = b2->prev;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // LED(N);
         case LED:
             n = *(vpc + NMBL);
-            et[nel] = b1->next;
-            b0 = et[n - 1]->prev;
+            table_elements[number_element] = b1->next;
+            b0 = table_elements[n - 1]->prev;
             i_state = LED1;
             break;
         case LED1:
-            if (b0 == et[n])
+            if (b0 == table_elements[n])
             {
                 i_state = LED2;
                 break;
@@ -996,20 +996,20 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = FAIL;
             break;
         case LED2:
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             vpc = vpc + NMBL * 2;
             i_state = NEXTOP;
             break;
             // RED(N);
         case RED:
             n = *(vpc + NMBL);
-            et[nel + 1] = b2->prev;
-            b0 = et[n]->next;
+            table_elements[number_element + 1] = b2->prev;
+            b0 = table_elements[n]->next;
             i_state = RED1;
             break;
         case RED1:
-            if (b0 == et[n - 1])
+            if (b0 == table_elements[n - 1])
             {
                 i_state = RED2;
                 break;
@@ -1028,14 +1028,14 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = FAIL;
             break;
         case RED2:
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             vpc = vpc + NMBL * 2;
             i_state = NEXTOP;
             break;
             // NNIL;
         case NNIL:
-            if (et[nel - 1]->next == et[nel - 2])
+            if (table_elements[number_element - 1]->next == table_elements[number_element - 2])
             {
                 i_state = FAIL;
                 break;
@@ -1045,78 +1045,78 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLE;
         case PLE:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
             jsp++;
-            et[nel] = b1->next;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // PLV;
         case PLV:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b1->next;
-            et[nel + 1] = b1;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 1] = b1;
             i_state = NEXTOP;
             break;
             // LE;
         case LE:
-            b1 = et[nel + 1];
+            b1 = table_elements[number_element + 1];
             SHB1;
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
             jsp++;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // PRE;
         case PRE:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
             jsp++;
-            et[nel] = b2;
-            et[nel + 1] = b2->prev;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            table_elements[number_element + 1] = b2->prev;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // PRV;
         case PRV:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b2;
-            et[nel + 1] = b2->prev;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b2;
+            table_elements[number_element + 1] = b2->prev;
             i_state = NEXTOP;
             break;
             // RE;
         case RE:
-            b2 = et[nel];
+            b2 = table_elements[number_element];
             SHB2;
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
             jsp++;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             i_state = ADVANCE;
             break;
             // PLESC;
         case PLESC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b1->next;
-            et[nel + 2] = b1;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 2] = b1;
             i_state = NEXTOP;
             break;
             // PLVSC;
         case PLVSC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b1->next;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b1->next;
             SHB1;
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
-            et[nel + 2] = b1;
+            table_elements[number_element + 2] = b1;
             i_state = NEXTOP;
             break;
             // LESC(S);
@@ -1126,7 +1126,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LESC0;
             break;
         case LESC0:
-            b1 = et[nel + 2];
+            b1 = table_elements[number_element + 2];
             i_state = LESC1;
             break;
         case LESC1:
@@ -1139,28 +1139,28 @@ void rfrun(T_ST *ast) // adress of current state table
             if (memcmp(vpca, &b1->tag, SMBL) != 0)
                 break;
             jsp++;
-            et[nel + 1] = b1->prev;
-            et[nel + 2] = b1;
-            nel = nel + 3;
+            table_elements[number_element + 1] = b1->prev;
+            table_elements[number_element + 2] = b1;
+            number_element = number_element + 3;
             i_state = NEXTOP;
             break;
             // PRESC;
         case PRESC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel + 1] = b2->prev;
-            et[nel + 2] = b2;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element + 1] = b2->prev;
+            table_elements[number_element + 2] = b2;
             i_state = NEXTOP;
             break;
             // PRVSC;
         case PRVSC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel + 1] = b2->prev;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element + 1] = b2->prev;
             SHB2;
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
-            et[nel + 2] = b2;
+            table_elements[number_element + 2] = b2;
             i_state = NEXTOP;
             break;
             // RESC(S);
@@ -1170,7 +1170,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RESC0;
             break;
         case RESC0:
-            b2 = et[nel + 2];
+            b2 = table_elements[number_element + 2];
             i_state = RESC1;
             break;
         case RESC1:
@@ -1183,47 +1183,47 @@ void rfrun(T_ST *ast) // adress of current state table
             if (memcmp(vpca, &b2->tag, SMBL) != 0)
                 break;
             jsp++;
-            et[nel + 2] = b2;
-            et[nel] = b2->next;
-            nel = nel + 3;
+            table_elements[number_element + 2] = b2;
+            table_elements[number_element] = b2->next;
+            number_element = number_element + 3;
             i_state = NEXTOP;
             break;
             // LESD(N);
         case LESD:
             n = *(vpc + NMBL);
-            vpca = (uint8_t *)&et[n]->tag;
+            vpca = (uint8_t *)&table_elements[n]->tag;
             vpc = vpc + NMBL * 2;
             i_state = LESC0;
             break;
             // RESD(N);
         case RESD:
             n = *(vpc + NMBL);
-            vpca = (uint8_t *)&et[n]->tag;
+            vpca = (uint8_t *)&table_elements[n]->tag;
             vpc = vpc + NMBL * 2;
             i_state = RESC0;
             break;
             // PLEB;
         case PLEB:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b1->next;
-            et[nel + 3] = b1;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 3] = b1;
             i_state = NEXTOP;
             break;
             // PLVB;
         case PLVB:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel] = b1->next;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element] = b1->next;
             SHB1;
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
-            et[nel + 3] = b1;
+            table_elements[number_element + 3] = b1;
             i_state = NEXTOP;
             break;
             // LEB;
         case LEB:
-            b1 = et[nel + 3];
+            b1 = table_elements[number_element + 3];
             i_state = LEB1;
             break;
         case LEB1:
@@ -1231,35 +1231,35 @@ void rfrun(T_ST *ast) // adress of current state table
             if ((b1->tag & 0001) == 0)
                 break;
             jsp++;
-            et[nel + 1] = b1->prev;
-            et[nel + 2] = b1;
+            table_elements[number_element + 1] = b1->prev;
+            table_elements[number_element + 2] = b1;
             b2 = b1->info.codep;
-            et[nel + 3] = b2;
-            nel = nel + 4;
+            table_elements[number_element + 3] = b2;
+            number_element = number_element + 4;
             i_state = ADVANCE;
             break;
             // PREB;
         case PREB:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel + 1] = b2->prev;
-            et[nel + 2] = b2;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element + 1] = b2->prev;
+            table_elements[number_element + 2] = b2;
             i_state = NEXTOP;
             break;
             // PRVB;
         case PRVB:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
-            et[nel + 1] = b2->prev;
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
+            table_elements[number_element + 1] = b2->prev;
             SHB2;
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
-            et[nel + 2] = b2;
+            table_elements[number_element + 2] = b2;
             i_state = NEXTOP;
             break;
             //  REB;
         case REB:
-            b2 = et[nel + 2];
+            b2 = table_elements[number_element + 2];
             i_state = REB1;
             break;
         case REB1:
@@ -1267,11 +1267,11 @@ void rfrun(T_ST *ast) // adress of current state table
             if ((b2->tag & 0001) == 0)
                 break;
             jsp++;
-            et[nel] = b2->next;
-            et[nel + 3] = b2;
+            table_elements[number_element] = b2->next;
+            table_elements[number_element + 3] = b2;
             b1 = b2->info.codep;
-            et[nel + 2] = b1;
-            nel = nel + 4;
+            table_elements[number_element + 2] = b1;
+            number_element = number_element + 4;
             i_state = ADVANCE;
             break;
             // EOE(N);
@@ -1288,7 +1288,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LSRCH(S);
         case LSRCH:
-            et[nel] = b1->next;
+            table_elements[number_element] = b1->next;
             i_state = LSRCH1;
             break;
         case LSRCH1:
@@ -1300,15 +1300,15 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (memcmp(vpc + NMBL, &b1->tag, SMBL) != 0)
                 break;
-            et[nel + 1] = b1->prev;
-            et[nel + 2] = b1;
-            nel = nel + 3;
+            table_elements[number_element + 1] = b1->prev;
+            table_elements[number_element + 2] = b1;
+            number_element = number_element + 3;
             vpc = vpc + NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // RSRCH(S);
         case RSRCH:
-            et[nel + 1] = b2->prev;
+            table_elements[number_element + 1] = b2->prev;
             i_state = RSRCH1;
             break;
         case RSRCH1:
@@ -1320,15 +1320,15 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (memcmp(vpc + NMBL, &b2->tag, SMBL) != 0)
                 break;
-            et[nel] = b2->next;
-            et[nel + 2] = b2;
-            nel = nel + 3;
+            table_elements[number_element] = b2->next;
+            table_elements[number_element + 2] = b2;
+            number_element = number_element + 3;
             vpc = vpc + NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // WSPC(L);
         case WSPC:
-            if (!spc((T_SPCS *)(jsp + 1), vpc, et[nel - 1]))
+            if (!spc((T_SPCS *)(jsp + 1), vpc, table_elements[number_element - 1]))
             {
                 i_state = FAIL;
                 break;
@@ -1338,9 +1338,9 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // ESPC(L);
         case ESPC:
-            b0 = et[nel - 2]->prev;
+            b0 = table_elements[number_element - 2]->prev;
             bool fail = false;
-            while (b0 != et[nel - 1])
+            while (b0 != table_elements[number_element - 1])
             {
                 b0 = b0->next;
                 if ((b0->tag & 0001) != 0)
@@ -1360,17 +1360,17 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLESPC;
         case PLESPC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
             jsp++;
-            et[nel] = b1->next;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element] = b1->next;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // LESPC(L);
         case LESPC:
-            b1 = et[nel + 1];
+            b1 = table_elements[number_element + 1];
             SHB1;
             if ((b1->tag & 0001) != 0)
                 b1 = b1->info.codep;
@@ -1380,25 +1380,25 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             jsp++;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // PRESPC;
         case PRESPC:
             vpc = vpc + NMBL;
-            putjs(jsp, &b1, &b2, &nel, &vpc);
+            putjs(jsp, &b1, &b2, &number_element, &vpc);
             jsp++;
-            et[nel + 1] = b2->prev;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b2->prev;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // RESPC(L);
         case RESPC:
-            b2 = et[nel];
+            b2 = table_elements[number_element];
             SHB2;
             if ((b2->tag & 0001) != 0)
                 b2 = b2->info.codep;
@@ -1408,14 +1408,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             jsp++;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // LMAX(L);
         case LMAX:
-            et[nel] = b1->next;
+            table_elements[number_element] = b1->next;
             b1 = b1->next;
             while (b1 != b2)
             {
@@ -1426,14 +1426,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 b1 = b1->next;
             };
             b1 = b1->prev;
-            et[nel + 1] = b1;
-            nel = nel + 2;
+            table_elements[number_element + 1] = b1;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // RMAX(L);
         case RMAX:
-            et[nel + 1] = b2->prev;
+            table_elements[number_element + 1] = b2->prev;
             b2 = b2->prev;
             while (b2 != b1)
             {
@@ -1444,8 +1444,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 b2 = b2->prev;
             };
             b2 = b2->next;
-            et[nel] = b2;
-            nel = nel + 2;
+            table_elements[number_element] = b2;
+            number_element = number_element + 2;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1539,10 +1539,10 @@ void rfrun(T_ST *ast) // adress of current state table
             // ACT(N);
         case ACT:
             n = *(vpc + NMBL);
-            lastk->info.codep = et[n];
+            lastk->info.codep = table_elements[n];
             lastk->tag = TAGK;
-            lastk = et[n]->info.codep;
-            et[n]->tag = TAGD;
+            lastk = table_elements[n]->info.codep;
+            table_elements[n]->tag = TAGD;
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1550,7 +1550,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case MULS:
             n = *(vpc + NMBL);
             SHF;
-            memcpy(&f->tag, &et[n]->tag, SMBL);
+            memcpy(&f->tag, &table_elements[n]->tag, SMBL);
             vpc = vpc + NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1558,9 +1558,9 @@ void rfrun(T_ST *ast) // adress of current state table
         case MULE:
             n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
-            f0 = et[n - 1]->prev;
+            f0 = table_elements[n - 1]->prev;
             lack = false;
-            while (f0 != et[n])
+            while (f0 != table_elements[n])
             {
                 f0 = f0->next;
                 f = f->next;
@@ -1601,12 +1601,12 @@ void rfrun(T_ST *ast) // adress of current state table
             n = *(vpc + NMBL);
             m = *(vpc + NMBL + NMBL);
             vpc = vpc + NMBL * 3;
-            if (et[m]->next == et[n])
+            if (table_elements[m]->next == table_elements[n])
             {
                 i_state = NEXTOP;
                 break;
             }
-            putts(tsp, &f, &et[n], &et[m]);
+            putts(tsp, &f, &table_elements[n], &table_elements[m]);
             tsp++;
             i_state = NEXTOP;
             break;
@@ -1616,12 +1616,12 @@ void rfrun(T_ST *ast) // adress of current state table
         case TPLV:
             n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
-            if (et[n]->next == et[n - 1])
+            if (table_elements[n]->next == table_elements[n - 1])
             {
                 i_state = NEXTOP;
                 break;
             }
-            putts(tsp, &f, &et[n - 1], &et[n]);
+            putts(tsp, &f, &table_elements[n - 1], &table_elements[n]);
             tsp++;
             i_state = NEXTOP;
             break;
@@ -1629,13 +1629,13 @@ void rfrun(T_ST *ast) // adress of current state table
         case TPLS:
             n = *(vpc + NMBL);
             vpc = vpc + NMBL + NMBL;
-            putts(tsp, &f, &et[n], &et[n]);
+            putts(tsp, &f, &table_elements[n], &table_elements[n]);
             tsp++;
             i_state = NEXTOP;
             break;
             // EOS;
         case EOS:
-            lastk->info.codep = et[1]->info.codep;
+            lastk->info.codep = table_elements[1]->info.codep;
             lastk->tag = TAGK;
             // item adress followed by result
             T_LINKCB *nextr = f->next;
@@ -1652,16 +1652,16 @@ void rfrun(T_ST *ast) // adress of current state table
             // include replace result
             // INSRES:
             if (flhead->next == nextr)
-                link(et[1]->prev, et[2]->next);
+                link(table_elements[1]->prev, table_elements[2]->next);
             else
             {
-                link(nextr->prev, et[2]->next);
-                link(et[1]->prev, flhead->next);
+                link(nextr->prev, table_elements[2]->next);
+                link(table_elements[1]->prev, flhead->next);
             };
             //  delete < and >
             // DELKD:
-            link(et[2], nextr);
-            link(flhead, et[1]);
+            link(table_elements[2], nextr);
+            link(flhead, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // SWAP;
@@ -1681,24 +1681,24 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = SWAPREF;
             break;
         case SWAPREF:
-            quasik.info.codep = et[1]->info.codep;
+            quasik.info.codep = table_elements[1]->info.codep;
             if (f->next != f)
             {
-                link(f->prev, et[2]->next);
-                link(et[1]->prev, f->next);
+                link(f->prev, table_elements[2]->next);
+                link(table_elements[1]->prev, f->next);
             }
             else
-                link(et[1]->prev, et[2]->next);
-            if (et[3]->next != et[2])
+                link(table_elements[1]->prev, table_elements[2]->next);
+            if (table_elements[3]->next != table_elements[2])
             {
-                link(et[2]->prev, f);
-                link(f, et[3]->next);
-                link(et[3], et[2]);
+                link(table_elements[2]->prev, f);
+                link(f, table_elements[3]->next);
+                link(table_elements[3], table_elements[2]);
             }
             else
                 link(f, f);
-            link(et[2], flhead->next);
-            link(flhead, et[1]);
+            link(table_elements[2], flhead->next);
+            link(flhead, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // BLF(L);
