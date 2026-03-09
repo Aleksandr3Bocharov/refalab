@@ -182,7 +182,7 @@ static T_LINKTI funcptr; // work pointer
 
 static size_t n, n1, n2;        // left part element pointers
 static size_t ind, ie;          // element index
-static uint32_t number_element; // current number of element
+static uint16_t number_element; // current number of element
 static uint32_t e_level;        // counter of the longing levels
 static bool not_nil;            // working variables
 static size_t nh;               // current whole number
