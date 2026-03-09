@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-23
+// 2026-03-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -180,18 +180,18 @@ static struct
 static T_LINKTI xncode;  // work structure
 static T_LINKTI funcptr; // work pointer
 
-static size_t n, n1, n2;     // left part element pointers
-static size_t ind, ie;       // element index
-static uint32_t nel;         // current element number
-static uint32_t e_level;     // counter of the longing levels
-static bool not_nil;         // working variables
-static size_t nh;            // current whole number
-static size_t kol_per;       // subprogram of search in variable table
-                             // table pointer
-static size_t nh_x, nh_y;    // hole numbers (under enter in brackets)
-static uint32_t lrbxy;       // stoped bracket flag
-static size_t lastb, lastb1; // variables for brackets linkage
-static size_t kol_lit;       // counter of the symbol number
+static size_t n, n1, n2;        // left part element pointers
+static size_t ind, ie;          // element index
+static uint32_t number_element; // current number of element
+static uint32_t e_level;        // counter of the longing levels
+static bool not_nil;            // working variables
+static size_t nh;               // current whole number
+static size_t kol_per;          // subprogram of search in variable table
+                                // table pointer
+static size_t nh_x, nh_y;       // hole numbers (under enter in brackets)
+static uint32_t lrbxy;          // stoped bracket flag
+static size_t lastb, lastb1;    // variables for brackets linkage
+static size_t kol_lit;          // counter of the symbol number
 static uint32_t diff_e_level;
 static uint32_t kol_skob[513]; // stack for counting of the brackets balance
 static size_t ur_skob;
@@ -219,7 +219,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
     kol_per = 0;
     n = 0;
     lastb = 0;
-    nel = 0;
+    number_element = 0;
     T_STATES state = GET_LPE;
     while (true)
         switch (state)
@@ -283,12 +283,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE1:
             // constant symbol
-            nel++;
+            number_element++;
             state = NEXT_LPE;
             break;
         case LPE2:
             // left bracket
-            nel++;
+            number_element++;
             x[n].pair = lastb;
             lastb = n;
             state = NEXT_LPE;
@@ -302,7 +302,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             }
             else
             {
-                nel++;
+                number_element++;
                 lastb1 = x[lastb].pair;
                 x[lastb].pair = n;
                 x[n].pair = lastb;
@@ -326,7 +326,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 pch303();
                 n--;
             }
-            nel++;
+            number_element++;
             state = NEXT_LPE;
             break;
         case LPE5:
@@ -345,7 +345,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 pch303();
                 n--;
             }
-            nel += 2;
+            number_element += 2;
             state = NEXT_LPE;
             break;
         case LPE6:
@@ -361,7 +361,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 pch303();
                 n--;
             };
-            nel += 2;
+            number_element += 2;
             state = NEXT_LPE;
             break;
         case LPE7:
@@ -393,7 +393,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             return;
         case NEXT_LPE:
             // end of element processing
-            if (nel <= 252)
+            if (number_element <= 252)
             {
                 state = GET_LPE;
                 break;
@@ -412,7 +412,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             fndef(lbl, lblleng);
             n1 = 0;
             n2 = n;
-            nel = 4;
+            number_element = 4;
             x[n1].q = 3;
             x[n1].p = x[n1].q;
             x[n2].q = 2;
@@ -494,9 +494,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LTXT3:
             n++;
             jbyte(x[n].code.info.infoc[0]);
-            x[n].q = nel;
+            x[n].q = number_element;
             x[n].p = x[n].q;
-            nel++;
+            number_element++;
             kol_lit--;
             if (kol_lit == 0)
             {
@@ -538,9 +538,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = LBCE;
             break;
         case LBCE:
-            nel += 2;
+            number_element += 2;
             jbyte(n_lbce);
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
             v[ind].rem--;
@@ -548,24 +548,24 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
-            x[n].p = nel;
-            x[n].q = nel + 1;
-            nel += 2;
-            x[n1].q = nel - 4;
+            x[n].p = number_element;
+            x[n].q = number_element + 1;
+            number_element += 2;
+            x[n1].q = number_element - 4;
             x[n1].p = x[n1].q;
             n1 += 2;
-            x[n1].q = nel - 3;
+            x[n1].q = number_element - 3;
             x[n1].p = x[n1].q;
             state = RCGL;
             break;
         case LBNIL:
             jbyte(n_lbnil);
-            x[n1].q = nel;
+            x[n1].q = number_element;
             x[n1].p = x[n1].q;
             n1 = n;
-            x[n1].q = nel + 1;
+            x[n1].q = number_element + 1;
             x[n1].p = x[n1].q;
-            nel += 2;
+            number_element += 2;
             state = RCGL;
             break;
         case GEN_LB:
@@ -593,11 +593,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             nh = nh_x;
             h[nh_y].n1 = n2;
             h[nh_y].n2 = n;
-            x[n1].q = nel;
+            x[n1].q = number_element;
             x[n1].p = x[n1].q;
-            x[n2].q = nel + 1;
+            x[n2].q = number_element + 1;
             x[n2].p = x[n2].q;
-            nel += 2;
+            number_element += 2;
             state = HSCH;
             break;
         case LSW3:
@@ -611,7 +611,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             else
             {
                 jbyte(n_ls);
-                v[ind]._q = nel;
+                v[ind]._q = number_element;
             };
             state = LSMD;
             break;
@@ -624,9 +624,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = L1;
             break;
         case L1:
-            x[n].q = nel;
+            x[n].q = number_element;
             x[n].p = x[n].q;
-            nel++;
+            number_element++;
             n1 = n;
             state = RCGL;
             break;
@@ -639,7 +639,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             jbyte(n_lw);
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
             v[ind].rem--;
@@ -660,9 +660,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = L2;
             break;
         case L2:
-            x[n].p = nel;
-            x[n].q = nel + 1;
-            nel += 2;
+            x[n].p = number_element;
+            x[n].q = number_element + 1;
+            number_element += 2;
             n1 = n;
             state = RCGL;
             break;
@@ -753,9 +753,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RTXT3:
             n--;
             jbyte(x[n].code.info.infoc[0]);
-            x[n].q = nel;
+            x[n].q = number_element;
             x[n].p = x[n].q;
-            nel++;
+            number_element++;
             kol_lit--;
             if (kol_lit == 0)
             {
@@ -800,9 +800,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = RBCE;
             break;
         case RBCE:
-            nel += 2;
+            number_element += 2;
             jbyte(n_rbce);
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
             v[ind].rem--;
@@ -810,24 +810,24 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 jbyte(n_nnil);
             if (x[n].spec.info.codef != NULL)
                 gopl(n_espc, x[n].spec.info.codef);
-            x[n].p = nel;
-            x[n].q = nel + 1;
-            nel += 2;
-            x[n2].q = nel - 3;
+            x[n].p = number_element;
+            x[n].q = number_element + 1;
+            number_element += 2;
+            x[n2].q = number_element - 3;
             x[n2].p = x[n2].q;
             n2 -= 2;
-            x[n2].q = nel - 4;
+            x[n2].q = number_element - 4;
             x[n2].p = x[n2].q;
             state = RCGR;
             break;
         case RBNIL:
             jbyte(n_rbnil);
-            x[n2].q = nel + 1;
+            x[n2].q = number_element + 1;
             x[n2].p = x[n2].q;
             n2 = n;
-            x[n2].q = nel;
+            x[n2].q = number_element;
             x[n2].p = x[n2].q;
-            nel += 2;
+            number_element += 2;
             state = RCGR;
             break;
         case GEN_RB:
@@ -855,11 +855,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             nh = nh_x;
             h[nh_y].n1 = n;
             h[nh_y].n2 = n1;
-            x[n1].q = nel;
+            x[n1].q = number_element;
             x[n1].p = x[n1].q;
-            x[n2].q = nel + 1;
+            x[n2].q = number_element + 1;
             x[n2].p = x[n2].q;
-            nel += 2;
+            number_element += 2;
             state = HSCH;
             break;
         case RSW4:
@@ -870,7 +870,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             else
             {
                 jbyte(n_rs);
-                v[ind]._q = nel;
+                v[ind]._q = number_element;
             };
             state = RSMD;
             break;
@@ -883,9 +883,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = R1;
             break;
         case R1:
-            x[n].q = nel;
+            x[n].q = number_element;
             x[n].p = x[n].q;
-            nel++;
+            number_element++;
             n2 = n;
             state = RCGR;
             break;
@@ -898,7 +898,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             jbyte(n_rw);
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             x[n].next = v[ind].last;
             v[ind].last = n;
             v[ind].rem--;
@@ -919,9 +919,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = R2;
             break;
         case R2:
-            x[n].p = nel;
-            x[n].q = nel + 1;
-            nel += 2;
+            x[n].p = number_element;
+            x[n].q = number_element + 1;
+            number_element += 2;
             n2 = n;
             state = RCGR;
             break;
@@ -979,16 +979,16 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case CE2:
             ind = x[n].ind;
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             jbyte(n_ce);
             x[n].next = v[ind].last;
             v[ind].last = n;
             v[ind].rem--;
             if (x[n].v)
                 jbyte(n_nnil);
-            x[n].p = nel;
-            x[n].q = nel + 1;
-            nel += 2;
+            x[n].p = number_element;
+            x[n].q = number_element + 1;
+            number_element += 2;
             next_nh = h[nh]._next;
             h[nh]._next = h[next_nh]._next;
             h[nh].n1 = h[next_nh].n1;
@@ -1168,7 +1168,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = REM;
             break;
         case REM:
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             state = REMD;
             break;
         case OELMAX:
@@ -1184,7 +1184,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = LEM;
             break;
         case LEM:
-            v[ind]._q = nel + 1;
+            v[ind]._q = number_element + 1;
             state = LEMD;
             break;
         case OE1:
@@ -1702,13 +1702,13 @@ static bool lsg_p(void)
     n1++;
     n = n1;
     ind = x[n].ind;
-    v[ind]._q = nel + 1;
+    v[ind]._q = number_element + 1;
     x[n].next = v[ind].last;
     v[ind].last = n;
     v[ind].rem--;
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
+    x[n].p = number_element;
+    x[n].q = number_element + 1;
+    number_element += 2;
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
@@ -1746,13 +1746,13 @@ static bool rsg_p(void)
     n2--;
     n = n2;
     ind = x[n].ind;
-    v[ind]._q = nel + 1;
+    v[ind]._q = number_element + 1;
     x[n].next = v[ind].last;
     v[ind].last = n;
     v[ind].rem--;
-    x[n].p = nel;
-    x[n].q = nel + 1;
-    nel += 2;
+    x[n].p = number_element;
+    x[n].q = number_element + 1;
+    number_element += 2;
     e_level++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
