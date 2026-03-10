@@ -19,20 +19,20 @@
 
 // for unlooping:
 
-#define SHB1            \
-    left_board_hole = left_board_hole->next;      \
-    if (left_board_hole == right_board_hole)       \
-    {                   \
-        i_state = FAIL; \
-        break;          \
+#define SHB1                                 \
+    left_board_hole = left_board_hole->next; \
+    if (left_board_hole == right_board_hole) \
+    {                                        \
+        i_state = FAIL;                      \
+        break;                               \
     }
 
-#define SHB2            \
-    right_board_hole = right_board_hole->prev;      \
-    if (right_board_hole == left_board_hole)       \
-    {                   \
-        i_state = FAIL; \
-        break;          \
+#define SHB2                                   \
+    right_board_hole = right_board_hole->prev; \
+    if (right_board_hole == left_board_hole)   \
+    {                                          \
+        i_state = FAIL;                        \
+        break;                                 \
     }
 
 #define SHF             \
