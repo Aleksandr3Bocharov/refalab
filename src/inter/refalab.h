@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-09
+// 2026-03-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -38,8 +38,8 @@
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W
 
-#define NMBL sizeof(uint8_t)
-#define ZBLL sizeof(uint16_t)
+#define NMBL 1 // sizeof(uint8_t)
+#define ZBLL 2 // sizeof(uint16_t)
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
