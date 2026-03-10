@@ -48,7 +48,7 @@ typedef struct BU_
     size_t len;
     size_t tek;
     char *nam;
-    char *buf;
+    uint8_t *buf;
     FILE *fil;
 } BU;
 
@@ -132,7 +132,7 @@ static void sfop_w(const char *s, BU *b)
             min_oshex = 24;
         while (true)
         {
-            b->buf = (char *)malloc(un);
+            b->buf = (uint8_t *)malloc(un);
             if (b->buf != NULL)
             {
 #if defined mdebug
@@ -311,7 +311,7 @@ size_t jwhere(void)
     return curr_addr;
 }
 
-void jbyte(char bb)
+void jbyte(uint8_t bb)
 {
     if (sysut1.tek != sysut1.len)
     {

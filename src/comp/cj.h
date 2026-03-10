@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2026-03-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.h  -------------------
@@ -15,7 +15,7 @@
 #include "clu.h"
 
 extern void j3addr(T_U *pp);
-extern void jbyte(char bb);
+extern void jbyte(uint8_t bb);
 extern void jend(void);
 extern void jentry(T_U *pp, const char *ee, size_t ll);
 extern void jequ(T_U *pp, T_U *qq);
