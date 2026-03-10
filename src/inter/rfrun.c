@@ -186,7 +186,7 @@ typedef struct wjs
 { // jump stack structure
     T_LINKCB *jsb1;
     T_LINKCB *jsb2;
-    size_t jsnel;
+    uint16_t jsnel;
     uint8_t *jsvpc;
 } T_WJS;
 
