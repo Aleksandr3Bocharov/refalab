@@ -405,10 +405,10 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else if (pr->tag == TAGF)
         {
             putchar('\'');
-            const char *f = (char *)(pr->info.codef) - 1;
-            const uint8_t l = (uint8_t)*f;
-            f -= l;
-            for (size_t k = 1; k <= l; k++, f++)
+            const uint8_t *lp = pr->info.codef - 1;
+            const uint8_t l = *lp;
+            const char *f = (char *)lp - l;
+            for (uint8_t k = 1; k <= l; k++, f++)
                 putchar(toupper(*f));
             putchar('\'');
         }
@@ -447,10 +447,10 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             printf("%u", gcoden(pr));
         else if (pr->tag == TAGF)
         {
-            const char *f = (char *)(pr->info.codef) - 1;
-            const uint8_t l = (uint8_t)*f;
-            f -= l;
-            for (size_t k = 1; k <= l; k++, f++)
+            const uint8_t *lp = pr->info.codef - 1;
+            const uint8_t l = *lp;
+            const char *f = (char *)lp - l;
+            for (uint8_t k = 1; k <= l; k++, f++)
                 putchar(toupper(*f));
         }
         else if (pr->tag == TAGR)
@@ -508,10 +508,10 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (pr->tag == TAGF)
             {
                 putchar('&');
-                const char *f = (char *)(pr->info.codef) - 1;
-                const uint8_t l = (uint8_t)*f;
-                f -= l;
-                for (size_t k = 1; k <= l; k++, f++)
+                const uint8_t *lp = pr->info.codef - 1;
+                const uint8_t l = *lp;
+                const char *f = (char *)lp - l;
+                for (uint8_t k = 1; k <= l; k++, f++)
                     putchar(toupper(*f));
                 if (pr->next->tag == TAGN)
                     putchar(' ');
