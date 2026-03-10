@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-07-14
+// 2026-03-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCF.C ---------------
@@ -29,25 +29,19 @@ static void ftochar_(void)
         refal.upshot = 2;
         return;
     }
-    const char *u = (char *)(p->info.codef) - 1;
-    union
-    {
-        char b[2];
-        uint16_t w;
-    } d;
-    d.b[0] = *u;
-    d.b[1] = '\0'; // d.w - dlina
-    u -= d.w;
+    const uint8_t *lp = p->info.codef - 1;
+    const uint8_t l = *lp;
+    const char *u = (char *)lp - l;
     p = refal.prevr;
-    if (!lrqlk(d.w))
+    if (!lrqlk(l))
         if (!lincrm())
         {
             rfdel(refal.prevr, refal.nextr);
             refal.upshot = 3;
             return;
         }
-    lins(p, d.w);
-    for (size_t i = 0; i < d.w; i++)
+    lins(p, l);
+    for (uint8_t i = 0; i < l; i++)
     {
         p = p->next;
         p->tag = TAGO;
