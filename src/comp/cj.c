@@ -55,7 +55,7 @@ typedef struct BU_
 static BU sysut1 = {0, 0, NULL, NULL, NULL};
 static BU sysut2 = {0, 0, NULL, NULL, NULL};
 
-static uint8_t b;
+static uint8_t byte;
 
 static T_ENT *q, *r;
 static T_EXT *qx, *rx;
@@ -237,7 +237,7 @@ static void sfwr2(void)
     } // while
 } // sfwr2
 
-static void sfrd1(void *c, size_t n)
+static void sfrd1(uint8_t *c, size_t n)
 {
     while (true)
     {
@@ -438,7 +438,7 @@ static void write_asm(int put, FILE *f)
 void jend(void)
 {
     zakon();
-    b = 0;
+    byte = 0;
     // heading generating
     write_asm(fputs(".data\n", syslin), syslin);
     char bufs[81];
@@ -456,14 +456,14 @@ void jend(void)
             delta = rl.delta;
             for (k = 0; k < delta; k++)
             {
-                sfrd1(&b, 1);
+                sfrd1(&byte, 1);
                 if (k % 60 == 0)
                 {
                     if (k != 0)
                         write_asm(fputc('\n', syslin), syslin);
                     write_asm(fputs("\t.byte\t", syslin), syslin);
                 }
-                sprintf(bufs, "%d", b);
+                sprintf(bufs, "%d", byte);
                 write_asm(fputs(bufs, syslin), syslin);
                 if (k % 60 != 59 && k != (size_t)(delta - 1))
                     write_asm(fputc(',', syslin), syslin);
