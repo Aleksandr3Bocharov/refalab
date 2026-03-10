@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-14
+// 2026-03-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -55,11 +55,7 @@ typedef struct BU_
 static BU sysut1 = {0, 0, NULL, NULL, NULL};
 static BU sysut2 = {0, 0, NULL, NULL, NULL};
 
-static union
-{
-    char b[2];
-    uint16_t w;
-} d;
+static uint8_t b;
 
 static T_ENT *q, *r;
 static T_EXT *qx, *rx;
@@ -241,7 +237,7 @@ static void sfwr2(void)
     } // while
 } // sfwr2
 
-static void sfrd1(char *c, size_t n)
+static void sfrd1(void *c, size_t n)
 {
     while (true)
     {
@@ -442,7 +438,7 @@ static void write_asm(int put, FILE *f)
 void jend(void)
 {
     zakon();
-    d.w = 0;
+    b = 0;
     // heading generating
     write_asm(fputs(".data\n", syslin), syslin);
     char bufs[81];
@@ -460,14 +456,14 @@ void jend(void)
             delta = rl.delta;
             for (k = 0; k < delta; k++)
             {
-                sfrd1(&d.b[0], 1);
+                sfrd1(&b, 1);
                 if (k % 60 == 0)
                 {
                     if (k != 0)
                         write_asm(fputc('\n', syslin), syslin);
                     write_asm(fputs("\t.byte\t", syslin), syslin);
                 }
-                sprintf(bufs, "%d", d.w);
+                sprintf(bufs, "%d", b);
                 write_asm(fputs(bufs, syslin), syslin);
                 if (k % 60 != 59 && k != (size_t)(delta - 1))
                     write_asm(fputc(',', syslin), syslin);
