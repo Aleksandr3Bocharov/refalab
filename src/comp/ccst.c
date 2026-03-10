@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-09
+// 2026-03-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -206,7 +206,7 @@ static void pch303(void);
 static void pch406(void);
 static bool lsg_p(void);
 static bool rsg_p(void);
-static void gpev(char op1, char op2);
+static void gpev(uint8_t op1, uint8_t op2);
 static bool ortgn(size_t on1, size_t on2);
 
 // read left part
@@ -493,7 +493,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LTXT3:
             n++;
-            jbyte(x[n].code.info.infoc[0]);
+            jbyte((uint8_t)x[n].code.info.infoc[0]);
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
@@ -752,7 +752,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RTXT3:
             n--;
-            jbyte(x[n].code.info.infoc[0]);
+            jbyte((uint8_t)x[n].code.info.infoc[0]);
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
@@ -1458,7 +1458,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             {
                 gopn(n_text, (char)kol_lit);
                 for (k = 1; k <= kol_lit; k++)
-                    jbyte(buf_lit[k]);
+                    jbyte((uint8_t)buf_lit[k]);
             };
             state = SW_RPE;
             break;
@@ -1812,7 +1812,7 @@ static bool ortgn(size_t on1, size_t on2)
     return res;
 }
 
-static void gpev(char op1, char op2)
+static void gpev(uint8_t op1, uint8_t op2)
 {
     if (not_nil)
         jbyte(op2);
