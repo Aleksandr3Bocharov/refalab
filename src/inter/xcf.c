@@ -113,16 +113,13 @@ static void chartof_(void)
     ++i;
     u[i] = 2; // HEOT
     uint8_t *j = (uint8_t *)(u + i);
-    union
-    {
-        char b[2];
-        uint16_t w;
-    } d;
-    d.b[1] = '\0';
+    uint8_t l;
+    const uint8_t *lp;
     for (size_t k = 0; k < func_n; k++)
     {
-        d.b[0] = *((char *)func_f[k] - 1);
-        if (i == (size_t)d.w + 1 && strncmp(u, (char *)func_f[k] - (d.w + 1), d.w) == 0)
+        lp = func_f[k] - 1;
+        l = *lp;
+        if (i == (size_t)l + 1 && strncmp(u, (char *)lp - l, l) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
