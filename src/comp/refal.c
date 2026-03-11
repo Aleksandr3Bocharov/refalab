@@ -50,19 +50,19 @@
         }                                      \
     }
 
-#define ns_b '\006'
-#define ns_cll '\000'
-#define ns_d '\013'
-#define ns_f '\007'
-#define ns_l '\014'
-#define ns_n '\010'
-#define ns_ng '\002'
-#define ns_ngw '\003'
-#define ns_o '\012'
-#define ns_r '\011'
-#define ns_s '\005'
-#define ns_sc '\004'
-#define ns_w '\001'
+#define ns_b 0006
+#define ns_cll 0000
+#define ns_d 0013
+#define ns_f 0007
+#define ns_l 0014
+#define ns_n 0010
+#define ns_ng 0002
+#define ns_ngw 0003
+#define ns_o 0012
+#define ns_r 0011
+#define ns_s 0005
+#define ns_sc 0004
+#define ns_w 0001
 
 #if defined POSIX
 #define MAX_PATHFILENAME 4096
