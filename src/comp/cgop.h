@@ -24,10 +24,10 @@ typedef struct linkti
     } info;
 } T_LINKTI;
 
-extern void gopl(char k, const uint8_t *l);
-extern void gopn(char k, char n);
-extern void gopnm(char k, char n, char m);
-extern void gops(char k, const T_LINKTI *code);
+extern void gopl(uint8_t k, const uint8_t *l);
+extern void gopn(uint8_t k, uint8_t n);
+extern void gopnm(uint8_t k, uint8_t n, uint8_t m);
+extern void gops(uint8_t k, const T_LINKTI *code);
 extern void gsymbol(const T_LINKTI *code);
 
 #endif
