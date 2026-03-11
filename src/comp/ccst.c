@@ -488,7 +488,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             n = n1;
-            gopn(n_ltxt, (char)kol_lit);
+            gopn(n_ltxt, (uint8_t)kol_lit);
             state = LTXT3;
             break;
         case LTXT3:
@@ -506,7 +506,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LSCO:
             n = n1 + 1;
-            gopn(n_lsco, x[n].code.info.infoc);
+            gopn(n_lsco, (uint8_t)x[n].code.info.infoc);
             state = L1;
             break;
         case LSW2:
@@ -607,7 +607,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //    s-variable
             ind = x[n].ind;
             if (v[ind].last != 0)
-                gopn(n_lsd, (char)v[ind]._q);
+                gopn(n_lsd, (uint8_t)v[ind]._q);
             else
             {
                 jbyte(n_ls);
@@ -648,7 +648,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = L2;
             break;
         case LED:
-            gopn(n_led, (char)v[ind]._q);
+            gopn(n_led, (uint8_t)v[ind]._q);
             state = LEMD;
             break;
         case LEMD:
@@ -747,7 +747,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             n = n2;
-            gopn(n_rtxt, (char)kol_lit);
+            gopn(n_rtxt, (uint8_t)kol_lit);
             state = RTXT3;
             break;
         case RTXT3:
@@ -765,7 +765,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RSCO:
             n = n2 - 1;
-            gopn(n_rsco, x[n].code.info.infoc);
+            gopn(n_rsco, (uint8_t)x[n].code.info.infoc);
             state = R1;
             break;
         case RSW2:
@@ -866,7 +866,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //     s_variable
             ind = x[n].ind;
             if (v[ind].last != 0)
-                gopn(n_rsd, (char)v[ind]._q);
+                gopn(n_rsd, (uint8_t)v[ind]._q);
             else
             {
                 jbyte(n_rs);
@@ -907,7 +907,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = R2;
             break;
         case RED:
-            gopn(n_red, (char)v[ind]._q);
+            gopn(n_red, (uint8_t)v[ind]._q);
             state = REMD;
             break;
         case REMD:
@@ -1102,7 +1102,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 if (diff_e_level == 1)
                     jbyte(n_eoei);
                 else
-                    gopn(n_eoe, (char)diff_e_level);
+                    gopn(n_eoe, (uint8_t)diff_e_level);
                 e_level = x[n].e_level;
                 x[n].eoemrk = false;
                 x[n].e_level = 0;
@@ -1271,7 +1271,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             gpev(n_plesc, n_plvsc);
-            gopn(n_lesd, (char)v[ind]._q);
+            gopn(n_lesd, (uint8_t)v[ind]._q);
             state = LSMD;
             break;
         case LESW5:
@@ -1360,7 +1360,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             gpev(n_presc, n_prvsc);
-            gopn(n_resd, (char)v[ind]._q);
+            gopn(n_resd, (uint8_t)v[ind]._q);
             state = RSMD;
             break;
         case RESW5:
@@ -1453,10 +1453,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             if (kol_lit < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
                 break;
             if (kol_lit == 1)
-                gopn(n_nso, buf_lit[1]);
+                gopn(n_nso, (uint8_t)buf_lit[1]);
             else
             {
-                gopn(n_text, (char)kol_lit);
+                gopn(n_text, (uint8_t)kol_lit);
                 for (k = 1; k <= kol_lit; k++)
                     jbyte((uint8_t)buf_lit[k]);
             };
@@ -1500,7 +1500,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 pch406();
                 break;
             case 1:
-                gopn(n_muls, (char)v[ind]._q);
+                gopn(n_muls, (uint8_t)v[ind]._q);
                 break;
             default:
                 pch303();
@@ -1518,10 +1518,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             case 2:
                 n = v[ind].last;
                 if (n == 0)
-                    gopn(n_mule, (char)v[ind]._q);
+                    gopn(n_mule, (uint8_t)v[ind]._q);
                 else
                 {
-                    gopn(n_tplv, (char)x[n].q);
+                    gopn(n_tplv, (uint8_t)x[n].q);
                     v[ind].last = x[n].next;
                 };
                 break;
@@ -1539,13 +1539,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             {
                 n = v[ind].last;
                 if (n == 0)
-                    gopn(n_mule, (char)v[ind]._q);
+                    gopn(n_mule, (uint8_t)v[ind]._q);
                 else
                 {
                     if (v[ind]._v)
-                        gopn(n_tplv, (char)x[n].q);
+                        gopn(n_tplv, (uint8_t)x[n].q);
                     else
-                        gopn(n_tple, (char)x[n].q);
+                        gopn(n_tple, (uint8_t)x[n].q);
                     v[ind].last = x[n].next;
                 };
             }
@@ -1658,7 +1658,7 @@ static void gen_bsb(void)
         };
         return;
     };
-    gopnm(n_sb1b2, (char)x[n1].q, (char)x[n2].p);
+    gopnm(n_sb1b2, (uint8_t)x[n1].q, (uint8_t)x[n2].p);
     return;
 }
 
