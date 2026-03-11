@@ -16,8 +16,8 @@
 
 typedef struct _TAG
 {
-    char b1;
-    char b2;
+    uint8_t b1;
+    uint8_t b2;
 } T_TAG;
 
 void gopn(char k, char n)
@@ -52,7 +52,7 @@ void gsymbol(const T_LINKTI *code)
         j3addr((T_U *)(void *)code->info.codef);
         return;
     };
-    const char *r = (char *)&(code->info.codef);
+    const uint8_t *r = (uint8_t *)&(code->info.codef);
     if (code->tag == TAGO)
     {
         jbyte(*r);
