@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-09
+// 2026-03-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -1055,7 +1055,7 @@ void scan(void)
             scn_state = PROD;
             break;
         case PROD:
-            scn_e.code.info.infoc[0] = c[m];
+            scn_e.code.info.infoc = c[m];
             scn_e.t = 1;
             scn_state = SCNGCR;
             break;
@@ -1335,7 +1335,7 @@ static bool specif(char tail)
             {
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc[0] = '\'';
+                code.info.infoc = '\'';
                 gsymbol(&code);
             }
             sp_state = SPCGC;
@@ -1403,7 +1403,7 @@ static bool specif(char tail)
                     }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc[0] = c[m];
+                code.info.infoc = c[m];
                 gsymbol(&code);
             }
             EH_ROMA0;

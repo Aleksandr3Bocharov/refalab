@@ -58,7 +58,7 @@ void gsymbol(const T_LINKTI *code)
         jbyte(*r);
         jbyte(*(r + 1));
         for (size_t i = 2; i < LBLL; i++)
-            jbyte('\0');
+            jbyte(0);
     }
     else
     {

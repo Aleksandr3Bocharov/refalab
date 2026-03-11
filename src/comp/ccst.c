@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-03-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -493,7 +493,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LTXT3:
             n++;
-            jbyte((uint8_t)x[n].code.info.infoc[0]);
+            jbyte((uint8_t)x[n].code.info.infoc);
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
@@ -506,7 +506,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LSCO:
             n = n1 + 1;
-            gopn(n_lsco, x[n].code.info.infoc[0]);
+            gopn(n_lsco, x[n].code.info.infoc);
             state = L1;
             break;
         case LSW2:
@@ -752,7 +752,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RTXT3:
             n--;
-            jbyte((uint8_t)x[n].code.info.infoc[0]);
+            jbyte((uint8_t)x[n].code.info.infoc);
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
@@ -765,7 +765,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RSCO:
             n = n2 - 1;
-            gopn(n_rsco, x[n].code.info.infoc[0]);
+            gopn(n_rsco, x[n].code.info.infoc);
             state = R1;
             break;
         case RSW2:
@@ -1448,7 +1448,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case TEXT1:
             kol_lit++;
-            buf_lit[kol_lit] = scn_e.code.info.infoc[0];
+            buf_lit[kol_lit] = scn_e.code.info.infoc;
             scan();
             if (kol_lit < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
                 break;

@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-03-18
+// 2026-03-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------------file----CGOP.H--------------------
@@ -18,7 +18,7 @@ typedef struct linkti
     uint16_t tag;
     union
     {
-        char infoc[2];
+        char infoc;
         uint32_t coden;
         uint8_t *codef;
     } info;
