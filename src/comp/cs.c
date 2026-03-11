@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2026-03-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -270,7 +270,7 @@ static void fnhead(const char *idp, size_t lid)
             const char *idpm = scn_.modname_var;
             l0 = scn_.modnmlen;
             for (k0 = 0; k0 < l0; k0++)
-                jbyte(*(idpm + k0));
+                jbyte((uint8_t)*(idpm + k0));
             jbyte(':');
             ll = k0 + 1;
         }
@@ -278,11 +278,11 @@ static void fnhead(const char *idp, size_t lid)
             ll = 0;
         l0 = lid;
         for (k0 = 0; k0 < l0; k0++)
-            jbyte(*(idp + k0));
-        jbyte((char)(255 < ll + l0 ? 255 : ll + l0));
+            jbyte((uint8_t)*(idp + k0));
+        jbyte((uint8_t)(255 < ll + l0 ? 255 : ll + l0));
     }
     else
-        jbyte('\0');
+        jbyte(0);
     return;
 }
 
