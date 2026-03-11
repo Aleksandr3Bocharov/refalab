@@ -207,7 +207,7 @@ static void il(void (*prog)(const char *, size_t));
 static void equ(void);
 static void pchzkl(void);
 static void pchk(void);
-static void gsp(char n);
+static void gsp(uint8_t n);
 static bool specif(char tail);
 static bool get_id(char id[MAX_ID_LEN], size_t *lid);
 static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid);
@@ -1128,7 +1128,7 @@ void scan(void)
         }
 }
 
-static void gsp(char n)
+static void gsp(uint8_t n)
 {
     if (left_part)
         jbyte(n);
