@@ -50,6 +50,20 @@
         }                                      \
     }
 
+#define ns_b '\006'
+#define ns_cll '\000'
+#define ns_d '\013'
+#define ns_f '\007'
+#define ns_l '\014'
+#define ns_n '\010'
+#define ns_ng '\002'
+#define ns_ngw '\003'
+#define ns_o '\012'
+#define ns_r '\011'
+#define ns_s '\005'
+#define ns_sc '\004'
+#define ns_w '\001'
+
 #if defined POSIX
 #define MAX_PATHFILENAME 4096
 #else
@@ -169,19 +183,6 @@ static const char *card_cut = card;
 static uint32_t cdnumb; // card number
 static bool dir;        // L,R - flag
 static uint32_t kolosh;
-static const char ns_b = '\6';
-static const char ns_cll = '\0';
-static const char ns_d = '\13';
-static const char ns_f = '\7';
-static const char ns_l = '\14';
-static const char ns_n = '\10';
-static const char ns_ng = '\2';
-static const char ns_ngw = '\3';
-static const char ns_o = '\12';
-static const char ns_r = '\11';
-static const char ns_s = '\5';
-static const char ns_sc = '\4';
-static const char ns_w = '\1';
 static char strg_c[CUT + 6];
 static char *c = strg_c + 6;
 static char class_cut[CUT + 6];
@@ -1091,7 +1092,7 @@ void scan(void)
                 {
                     *(sarr + scode) = (char *)(void *)genlbl();
                     jlabel((T_U *)(void *)*(sarr + scode));
-                    gsp((char)(scode + 7));
+                    gsp((uint8_t)(scode + 7));
                     gsp(ns_ngw);
                 };
                 scn_e.spec.info.codef = (uint8_t *)*(sarr + scode);
