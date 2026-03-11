@@ -56,17 +56,16 @@ void gsymbol(const T_LINKTI *code)
     if (code->tag == TAGO)
     {
         jbyte(*r);
-        jbyte(*(r + 1));
-        for (size_t i = 2; i < LBLL; i++)
+        for (size_t i = 1; i < LBLL; i++)
             jbyte(0);
     }
     else
     {
         size_t i = 0;
-        for (; i < sizeof(uint32_t); i++)
+        for (; i < 4; i++)
             jbyte(*(r + i));
         for (; i < LBLL; i++)
-            jbyte('\0');
+            jbyte(0);
     }
     return;
 }
