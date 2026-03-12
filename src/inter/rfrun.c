@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-03-12
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -698,7 +698,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.codef != table_elements[n]->info.codef)
+            if (left_board_hole->info.codep != table_elements[n]->info.codep)
             {
                 i_state = FAIL;
                 break;
@@ -717,7 +717,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.codef != table_elements[n]->info.codef)
+            if (right_board_hole->info.codep != table_elements[n]->info.codep)
             {
                 i_state = FAIL;
                 break;
