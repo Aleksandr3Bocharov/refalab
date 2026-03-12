@@ -989,7 +989,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.codef == b0->info.codef)
+            if (left_board_hole->info.codep == b0->info.codep)
                 break;
             if ((left_board_hole->tag & 0001) != 0)
                 break;
@@ -1021,7 +1021,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.codef == b0->info.codef)
+            if (right_board_hole->info.codep == b0->info.codep)
                 break;
             if ((right_board_hole->tag & 0001) != 0)
                 break;
