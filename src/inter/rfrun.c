@@ -191,7 +191,7 @@ typedef struct w_jump_stack
     T_LINKCB *left_board_hole;
     T_LINKCB *right_board_hole;
     uint16_t number_element;
-    uint8_t *vpc;
+    uint8_t *virtual_program_counter;
 } T_W_JUMP_STACK;
 
 typedef struct ts
@@ -207,27 +207,24 @@ typedef struct spcs
     uint8_t *svpc;
 } T_SPCS;
 
-static union
-{ // structure for pointer aligning
-    uint8_t *ptr;
-} inch;
+uint8_t *inch_ptr;
 
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_W_JUMP_STACK js[64]; // jump stack and planning translation stack
-static T_W_JUMP_STACK *jsp;   // jump stack pointer
+static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning translation stack
+static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
 
 // definition of work variables and pointers
-static uint8_t opc;     // current statement code
-static uint8_t *vpc;    // virtual program counter
-static T_LINKCB *lastk; // last acted sign-k adress
-static T_LINKCB *lastb; // last generated left bracket
+static uint8_t operation_program_code; // current statement code
+static uint8_t *virtual_program_counter;                   // virtual program counter
+static T_LINKCB *lastk;                // last acted sign-k adress
+static T_LINKCB *lastb;                // last generated left bracket
 static T_LINKCB *b0, *left_board_hole, *right_board_hole;
 static T_LINKCB *f0, *f1, *f;
-static const uint8_t *vpca; // additional vpc
+static const uint8_t *vpca; // additional virtual program counter
 static uint8_t i, n, m;
 
 static void (*fptr)(void);
@@ -285,7 +282,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             b0 = right_board_hole->info.codep;
             left_board_hole = b0->next;
-            vpc = left_board_hole->info.codef;
+            virtual_program_counter = left_board_hole->info.codef;
             if (left_board_hole->tag != TAGF)
             {
                 i_state = REF;
@@ -293,7 +290,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             // here must be check on c-function
             // if (c) goto CFUNC;
-            jsp = js;
+            jump_stack_pointer = jump_stack;
             table_elements[1] = b0;
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
@@ -315,7 +312,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[1] = b0;
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
-            f = (T_LINKCB *)vpc;
+            f = (T_LINKCB *)virtual_program_counter;
             i_state = SWAPREF;
             break;
             // interpreter exits
@@ -346,13 +343,13 @@ void rfrun(T_ST *ast) // adress of current state table
             free(savecr);
             return;
         case NEXTOP:
-            opc = *vpc;
+            operation_program_code = *virtual_program_counter;
 #if defined mdebug
             fprintf(stderr, " Switcher");
-            fprintf(stderr, " code8=%o\t(D=%d,H=%x)\n", opc, opc, opc);
+            fprintf(stderr, " code8=%o\t(D=%d,H=%x)\n", operation_program_code, operation_program_code, operation_program_code);
 #endif
             // operation switcher
-            switch (opc)
+            switch (operation_program_code)
             {
             case 0000:
                 i_state = ADVANCE;
@@ -600,26 +597,26 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // select next statement assembly language
         case ADVANCE:
-            vpc = vpc + NMBL;
+            virtual_program_counter += NMBL;
             i_state = NEXTOP;
             break;
             // SJUMP(L);
         case SJUMP:
-            memcpy(&inch.ptr, vpc + NMBL, LBLL);
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &inch.ptr);
-            jsp++;
+            memcpy(&inch_ptr, vpc + NMBL, LBLL);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &inch_ptr);
+            jump_stack_pointer++;
             vpc = vpc + NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // FAIL;
         case FAIL:
-            if (jsp == js)
+            if (jump_stack_pointer == jump_stack)
             {
                 i_state = RCGIMP;
                 break;
             }
-            jsp--;
-            getjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            jump_stack_pointer--;
+            getjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             i_state = NEXTOP;
             break;
             // SB(N,M);
@@ -1049,8 +1046,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLE;
         case PLE:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
-            jsp++;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
@@ -1059,7 +1056,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLV;
         case PLV:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             i_state = NEXTOP;
@@ -1070,7 +1067,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB1;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             i_state = ADVANCE;
@@ -1078,8 +1075,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRE;
         case PRE:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
-            jsp++;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
             number_element += 2;
@@ -1088,7 +1085,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRV;
         case PRV:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
             i_state = NEXTOP;
@@ -1099,7 +1096,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB2;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             i_state = ADVANCE;
@@ -1107,7 +1104,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLESC;
         case PLESC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 2] = left_board_hole;
             i_state = NEXTOP;
@@ -1115,7 +1112,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLVSC;
         case PLVSC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1142,7 +1139,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (memcmp(vpca, &left_board_hole->tag, SMBL) != 0)
                 break;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole->prev;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
@@ -1151,7 +1148,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRESC;
         case PRESC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1159,7 +1156,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRVSC;
         case PRVSC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1186,7 +1183,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (memcmp(vpca, &right_board_hole->tag, SMBL) != 0)
                 break;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element + 2] = right_board_hole;
             table_elements[number_element] = right_board_hole->next;
             number_element += 3;
@@ -1209,7 +1206,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLEB;
         case PLEB:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 3] = left_board_hole;
             i_state = NEXTOP;
@@ -1217,7 +1214,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLVB;
         case PLVB:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1234,7 +1231,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB1;
             if (NBRA(left_board_hole))
                 break;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole->prev;
             table_elements[number_element + 2] = left_board_hole;
             right_board_hole = left_board_hole->info.codep;
@@ -1245,7 +1242,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PREB;
         case PREB:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1253,7 +1250,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRVB;
         case PRVB:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1270,7 +1267,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB2;
             if (NBRA(right_board_hole))
                 break;
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element] = right_board_hole->next;
             table_elements[number_element + 3] = right_board_hole;
             left_board_hole = right_board_hole->info.codep;
@@ -1281,13 +1278,13 @@ void rfrun(T_ST *ast) // adress of current state table
             // EOE(N);
         case EOE:
             n = *(vpc + NMBL);
-            jsp = jsp - n;
+            jump_stack_pointer -= n;
             vpc = vpc + 2 * NMBL;
             i_state = NEXTOP;
             break;
             // EOEI;
         case EOEI:
-            jsp--;
+            jump_stack_pointer--;
             i_state = ADVANCE;
             break;
             // LSRCH(S);
@@ -1332,7 +1329,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // WSPC(L);
         case WSPC:
-            if (!spc((T_SPCS *)(jsp + 1), vpc, table_elements[number_element - 1]))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, table_elements[number_element - 1]))
             {
                 i_state = FAIL;
                 break;
@@ -1349,7 +1346,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b0 = b0->next;
                 if (BRA(b0))
                     b0 = b0->info.codep;
-                if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, b0))
                 {
                     i_state = FAIL;
                     fail = true;
@@ -1364,8 +1361,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLESPC;
         case PLESPC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
-            jsp++;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
@@ -1378,12 +1375,12 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB1;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jsp + 1), vpc, left_board_hole))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, left_board_hole))
             {
                 i_state = FAIL;
                 break;
             }
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             vpc = vpc + NMBL + LBLL;
@@ -1392,8 +1389,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRESPC;
         case PRESPC:
             vpc = vpc + NMBL;
-            putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
-            jsp++;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            jump_stack_pointer++;
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
@@ -1406,12 +1403,12 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB2;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jsp + 1), vpc, right_board_hole))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, right_board_hole))
             {
                 i_state = FAIL;
                 break;
             }
-            jsp++;
+            jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             vpc = vpc + NMBL + LBLL;
@@ -1423,7 +1420,7 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = left_board_hole->next;
             while (left_board_hole != right_board_hole)
             {
-                if (!spc((T_SPCS *)(jsp + 1), vpc, left_board_hole))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, left_board_hole))
                     break;
                 if (BRA(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
@@ -1441,7 +1438,7 @@ void rfrun(T_ST *ast) // adress of current state table
             right_board_hole = right_board_hole->prev;
             while (right_board_hole != left_board_hole)
             {
-                if (!spc((T_SPCS *)(jsp + 1), vpc, right_board_hole))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, right_board_hole))
                     break;
                 if (BRA(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
@@ -1458,7 +1455,7 @@ void rfrun(T_ST *ast) // adress of current state table
             f = flhead;
             lastk = &quasik;
             lastb = NULL;
-            tsp = (T_TS *)js;
+            tsp = (T_TS *)jump_stack;
             i_state = ADVANCE;
             break;
             // NS(S);
@@ -1645,7 +1642,7 @@ void rfrun(T_ST *ast) // adress of current state table
             T_LINKCB *nextr = f->next;
             // execute planned transplantation
             // EOS1:
-            while (tsp != (T_TS *)js)
+            while (tsp != (T_TS *)jump_stack)
             {
                 tsp = tsp - 1;
                 getts(tsp, &f, &f0, &f1);
