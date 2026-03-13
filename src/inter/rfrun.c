@@ -218,13 +218,13 @@ static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 static T_TS *tsp; // translation stack pointer
 
 // definition of work variables and pointers
-static uint8_t operation_program_code; // current statement code
-static uint8_t *virtual_program_counter;                   // virtual program counter
-static T_LINKCB *lastk;                // last acted sign-k adress
-static T_LINKCB *lastb;                // last generated left bracket
+static uint8_t operation_program_code;   // current statement code
+static uint8_t *virtual_program_counter; // virtual program counter
+static T_LINKCB *lastk;                  // last acted sign-k adress
+static T_LINKCB *lastb;                  // last generated left bracket
 static T_LINKCB *b0, *left_board_hole, *right_board_hole;
 static T_LINKCB *f0, *f1, *f;
-static const uint8_t *vpca; // additional virtual program counter
+static const uint8_t *virtual_program_counter2; // additional virtual program counter
 static uint8_t i, n, m;
 
 static void (*fptr)(void);
@@ -602,10 +602,10 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // SJUMP(L);
         case SJUMP:
-            memcpy(&inch_ptr, vpc + NMBL, LBLL);
+            memcpy(&inch_ptr, virtual_program_counter + NMBL, LBLL);
             putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &inch_ptr);
             jump_stack_pointer++;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // FAIL;
@@ -616,27 +616,27 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             jump_stack_pointer--;
-            getjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            getjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             i_state = NEXTOP;
             break;
             // SB(N,M);
         case SB:
-            n = *(vpc + NMBL);
-            m = *(vpc + NMBL + NMBL);
+            n = *(virtual_program_counter + NMBL);
+            m = *(virtual_program_counter + NMBL + NMBL);
             left_board_hole = table_elements[n];
             right_board_hole = table_elements[m];
-            vpc = vpc + 3 * NMBL;
+            virtual_program_counter += 3 * NMBL;
             i_state = NEXTOP;
             break;
             // LSC(S);
         case LSC:
             SHB1;
-            if (memcmp(vpc + NMBL, &left_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter + NMBL, &left_board_hole->tag, SMBL) != 0)
             {
                 i_state = FAIL;
                 break;
             }
-            vpc = vpc + NMBL + SMBL;
+            virtual_program_counter += NMBL + SMBL;
             table_elements[number_element] = left_board_hole;
             number_element++;
             i_state = NEXTOP;
@@ -644,12 +644,12 @@ void rfrun(T_ST *ast) // adress of current state table
             // RSC(S);
         case RSC:
             SHB2;
-            if (memcmp(vpc + NMBL, &right_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter + NMBL, &right_board_hole->tag, SMBL) != 0)
             {
                 i_state = FAIL;
                 break;
             }
-            vpc = vpc + NMBL + SMBL;
+            virtual_program_counter += NMBL + SMBL;
             table_elements[number_element] = right_board_hole;
             number_element++;
             i_state = NEXTOP;
@@ -662,14 +662,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.infoc != (char)*(vpc + NMBL))
+            if (left_board_hole->info.infoc != (char)*(virtual_program_counter + NMBL))
             {
                 i_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // RSCO(N);
@@ -680,20 +680,20 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.infoc != (char)*(vpc + NMBL))
+            if (right_board_hole->info.infoc != (char)*(virtual_program_counter + NMBL))
             {
                 i_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // LSD(N);
         case LSD:
             SHB1;
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             if (left_board_hole->tag != table_elements[n]->tag)
             {
                 i_state = FAIL;
@@ -706,13 +706,13 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // RSD(N);
         case RSD:
             SHB2;
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             if (right_board_hole->tag != table_elements[n]->tag)
             {
                 i_state = FAIL;
@@ -725,13 +725,13 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // LTXT(N,S1,...,SN);
         case LTXT:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             i_state = LTXT1;
             break;
         case LTXT1:
@@ -741,14 +741,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.infoc != (char)*vpc)
+            if (left_board_hole->info.infoc != (char)*virtual_program_counter)
             {
                 i_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
-            vpc = vpc + NMBL;
+            virtual_program_counter += NMBL;
             n--;
             if (n != 0)
                 break;
@@ -756,8 +756,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RTXT(N,S1,...,SN);
         case RTXT:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             i_state = RTXT1;
             break;
         case RTXT1:
@@ -767,14 +767,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.infoc != (char)*vpc)
+            if (right_board_hole->info.infoc != (char)*virtual_program_counter)
             {
                 i_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
-            vpc = vpc + NMBL;
+            virtual_program_counter += NMBL;
             n--;
             if (n != 0)
                 break;
@@ -972,7 +972,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LED(N);
         case LED:
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             table_elements[number_element] = left_board_hole->next;
             b0 = table_elements[n - 1]->prev;
             i_state = LED1;
@@ -999,12 +999,12 @@ void rfrun(T_ST *ast) // adress of current state table
         case LED2:
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL * 2;
+            virtual_program_counter += NMBL * 2;
             i_state = NEXTOP;
             break;
             // RED(N);
         case RED:
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             table_elements[number_element + 1] = right_board_hole->prev;
             b0 = table_elements[n]->next;
             i_state = RED1;
@@ -1031,7 +1031,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case RED2:
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL * 2;
+            virtual_program_counter += NMBL * 2;
             i_state = NEXTOP;
             break;
             // NNIL;
@@ -1045,8 +1045,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PLE;
         case PLE:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
@@ -1055,8 +1055,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PLV;
         case PLV:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             i_state = NEXTOP;
@@ -1074,8 +1074,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PRE;
         case PRE:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
@@ -1084,8 +1084,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PRV;
         case PRV:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
             i_state = NEXTOP;
@@ -1103,16 +1103,16 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PLESC;
         case PLESC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 2] = left_board_hole;
             i_state = NEXTOP;
             break;
             // PLVSC;
         case PLVSC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1122,8 +1122,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LESC(S);
         case LESC:
-            vpc = vpc + NMBL + SMBL;
-            vpca = vpc - SMBL;
+            virtual_program_counter += NMBL + SMBL;
+            virtual_program_counter2 = virtual_program_counter - SMBL;
             i_state = LESC0;
             break;
         case LESC0:
@@ -1137,7 +1137,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 left_board_hole = left_board_hole->info.codep;
                 break;
             }
-            if (memcmp(vpca, &left_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter2, &left_board_hole->tag, SMBL) != 0)
                 break;
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole->prev;
@@ -1147,16 +1147,16 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PRESC;
         case PRESC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
             break;
             // PRVSC;
         case PRVSC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1166,8 +1166,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RESC(S);
         case RESC:
-            vpc = vpc + NMBL + SMBL;
-            vpca = vpc - SMBL;
+            virtual_program_counter += NMBL + SMBL;
+            virtual_program_counter2 = virtual_program_counter - SMBL;
             i_state = RESC0;
             break;
         case RESC0:
@@ -1181,7 +1181,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 right_board_hole = right_board_hole->info.codep;
                 break;
             }
-            if (memcmp(vpca, &right_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter2, &right_board_hole->tag, SMBL) != 0)
                 break;
             jump_stack_pointer++;
             table_elements[number_element + 2] = right_board_hole;
@@ -1191,30 +1191,30 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LESD(N);
         case LESD:
-            n = *(vpc + NMBL);
-            vpca = (uint8_t *)&table_elements[n]->tag;
-            vpc = vpc + NMBL * 2;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter2 = (uint8_t *)&table_elements[n]->tag;
+            virtual_program_counter += NMBL * 2;
             i_state = LESC0;
             break;
             // RESD(N);
         case RESD:
-            n = *(vpc + NMBL);
-            vpca = (uint8_t *)&table_elements[n]->tag;
-            vpc = vpc + NMBL * 2;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter2 = (uint8_t *)&table_elements[n]->tag;
+            virtual_program_counter += NMBL * 2;
             i_state = RESC0;
             break;
             // PLEB;
         case PLEB:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 3] = left_board_hole;
             i_state = NEXTOP;
             break;
             // PLVB;
         case PLVB:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1241,16 +1241,16 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // PREB;
         case PREB:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
             break;
             // PRVB;
         case PRVB:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1277,9 +1277,9 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // EOE(N);
         case EOE:
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             jump_stack_pointer -= n;
-            vpc = vpc + 2 * NMBL;
+            virtual_program_counter += 2 * NMBL;
             i_state = NEXTOP;
             break;
             // EOEI;
@@ -1299,12 +1299,12 @@ void rfrun(T_ST *ast) // adress of current state table
                 left_board_hole = left_board_hole->info.codep;
                 break;
             };
-            if (memcmp(vpc + NMBL, &left_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter + NMBL, &left_board_hole->tag, SMBL) != 0)
                 break;
             table_elements[number_element + 1] = left_board_hole->prev;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
-            vpc = vpc + NMBL + SMBL;
+            virtual_program_counter += NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // RSRCH(S);
@@ -1319,22 +1319,22 @@ void rfrun(T_ST *ast) // adress of current state table
                 right_board_hole = right_board_hole->info.codep;
                 break;
             };
-            if (memcmp(vpc + NMBL, &right_board_hole->tag, SMBL) != 0)
+            if (memcmp(virtual_program_counter + NMBL, &right_board_hole->tag, SMBL) != 0)
                 break;
             table_elements[number_element] = right_board_hole->next;
             table_elements[number_element + 2] = right_board_hole;
             number_element += 3;
-            vpc = vpc + NMBL + SMBL;
+            virtual_program_counter += NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // WSPC(L);
         case WSPC:
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, table_elements[number_element - 1]))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, table_elements[number_element - 1]))
             {
                 i_state = FAIL;
                 break;
             }
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // ESPC(L);
@@ -1346,7 +1346,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b0 = b0->next;
                 if (BRA(b0))
                     b0 = b0->info.codep;
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, b0))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, b0))
                 {
                     i_state = FAIL;
                     fail = true;
@@ -1355,18 +1355,18 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (fail)
                 break;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // PLESPC;
         case PLESPC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // LESPC(L);
@@ -1375,7 +1375,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB1;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, left_board_hole))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -1383,18 +1383,18 @@ void rfrun(T_ST *ast) // adress of current state table
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // PRESPC;
         case PRESPC:
-            vpc = vpc + NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &vpc);
+            virtual_program_counter += NMBL;
+            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // RESPC(L);
@@ -1403,7 +1403,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB2;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, right_board_hole))
+            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -1411,7 +1411,7 @@ void rfrun(T_ST *ast) // adress of current state table
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // LMAX(L);
@@ -1420,7 +1420,7 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = left_board_hole->next;
             while (left_board_hole != right_board_hole)
             {
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, left_board_hole))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, left_board_hole))
                     break;
                 if (BRA(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
@@ -1429,7 +1429,7 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = left_board_hole->prev;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // RMAX(L);
@@ -1438,7 +1438,7 @@ void rfrun(T_ST *ast) // adress of current state table
             right_board_hole = right_board_hole->prev;
             while (right_board_hole != left_board_hole)
             {
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), vpc, right_board_hole))
+                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, right_board_hole))
                     break;
                 if (BRA(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
@@ -1447,7 +1447,7 @@ void rfrun(T_ST *ast) // adress of current state table
             right_board_hole = right_board_hole->next;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // EOR;
@@ -1461,8 +1461,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // NS(S);
         case NS:
             SHF;
-            memcpy(&f->tag, vpc + NMBL, SMBL);
-            vpc = vpc + NMBL + SMBL;
+            memcpy(&f->tag, virtual_program_counter + NMBL, SMBL);
+            virtual_program_counter += NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // NSO(N);
@@ -1470,14 +1470,14 @@ void rfrun(T_ST *ast) // adress of current state table
             SHF;
             f->tag = TAGO;
             f->info.codep = NULL;
-            f->info.infoc = (char)*(vpc + 1);
-            vpc = vpc + NMBL + NMBL;
+            f->info.infoc = (char)*(virtual_program_counter + 1);
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // TEXT(N,S1,S2,...,SN);
         case TEXT:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             bool lack = false;
             for (i = 1; i <= n; i++)
             {
@@ -1490,8 +1490,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 }
                 f->tag = TAGO;
                 f->info.codep = NULL;
-                f->info.infoc = (char)*vpc;
-                vpc = vpc + NMBL;
+                f->info.infoc = (char)*virtual_program_counter;
+                virtual_program_counter += NMBL;
             };
             if (lack)
                 break;
@@ -1539,26 +1539,26 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // ACT(N);
         case ACT:
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             lastk->info.codep = table_elements[n];
             lastk->tag = TAGK;
             lastk = table_elements[n]->info.codep;
             table_elements[n]->tag = TAGD;
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // MULS;
         case MULS:
-            n = *(vpc + NMBL);
+            n = *(virtual_program_counter + NMBL);
             SHF;
             memcpy(&f->tag, &table_elements[n]->tag, SMBL);
-            vpc = vpc + NMBL + NMBL;
+            virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
             // MULE(N);
         case MULE:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             f0 = table_elements[n - 1]->prev;
             lack = false;
             while (f0 != table_elements[n])
@@ -1599,9 +1599,9 @@ void rfrun(T_ST *ast) // adress of current state table
             // TPLM(N,M);
         case TPL:
         case TPLM:
-            n = *(vpc + NMBL);
-            m = *(vpc + NMBL + NMBL);
-            vpc = vpc + NMBL * 3;
+            n = *(virtual_program_counter + NMBL);
+            m = *(virtual_program_counter + NMBL + NMBL);
+            virtual_program_counter += NMBL * 3;
             if (table_elements[m]->next == table_elements[n])
             {
                 i_state = NEXTOP;
@@ -1615,8 +1615,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // TPLV(N);
         case TPLE:
         case TPLV:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             if (table_elements[n]->next == table_elements[n - 1])
             {
                 i_state = NEXTOP;
@@ -1628,8 +1628,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // TPLS(N); (= TPLM(N,N);)
         case TPLS:
-            n = *(vpc + NMBL);
-            vpc = vpc + NMBL + NMBL;
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             putts(tsp, &f, &table_elements[n], &table_elements[n]);
             tsp++;
             i_state = NEXTOP;
@@ -1668,8 +1668,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // SWAP;
             //  static box head is after operator code
         case SWAP:
-            vpc = vpc + NMBL;
-            f = (T_LINKCB *)vpc;
+            virtual_program_counter += NMBL;
+            f = (T_LINKCB *)virtual_program_counter;
             if (f->prev != NULL)
             {
                 i_state = SWAPREF;
@@ -1708,14 +1708,14 @@ void rfrun(T_ST *ast) // adress of current state table
             f->info.codep = lastb;
             lastb = f;
             SHF;
-            memcpy(&f->info.codef, vpc + NMBL, LBLL);
+            memcpy(&f->info.codef, virtual_program_counter + NMBL, LBLL);
             f->tag = TAGF;
-            vpc = vpc + NMBL + LBLL;
+            virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
             // C-refal-function execution
         case CFUNC:
-            memcpy(&fptr, vpc + NMBL + Z_0, LBLL);
+            memcpy(&fptr, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
             refal.prevr = b0->prev;
             refal.nextr = b0;
@@ -1970,7 +1970,7 @@ static void putjs(T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const ui
     jsp_->left_board_hole = *ab1;
     jsp_->right_board_hole = *ab2;
     jsp_->number_element = *anel;
-    jsp_->vpc = *avpc;
+    jsp_->virtual_program_counter = *avpc;
     return;
 }
 
@@ -1979,7 +1979,7 @@ static void getjs(const T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, ui
     *ab1 = jsp_->left_board_hole;
     *ab2 = jsp_->right_board_hole;
     *anel = jsp_->number_element;
-    *avpc = jsp_->vpc;
+    *avpc = jsp_->virtual_program_counter;
     return;
 }
 
