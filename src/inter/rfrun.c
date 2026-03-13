@@ -47,6 +47,18 @@
 
 #define NBRA(b) (b->tag & 0001) == 0
 
+#define PUTJS(ab1, ab2, anel, avpc)            \
+    jump_stack_pointer->left_board_hole = ab1;  \
+    jump_stack_pointer->right_board_hole = ab2; \
+    jump_stack_pointer->number_element = anel;  \
+    jump_stack_pointer->virtual_program_counter = avpc
+
+#define GETJS(ab1, ab2, anel, avpc)            \
+    ab1 = jump_stack_pointer->left_board_hole;  \
+    ab2 = jump_stack_pointer->right_board_hole; \
+    anel = jump_stack_pointer->number_element;  \
+    avpc = jump_stack_pointer->virtual_program_counter
+
 typedef enum i_states
 {
     START,
@@ -233,8 +245,6 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
-static void putjs(T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc);
-static void getjs(const T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc);
 static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
@@ -603,7 +613,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // SJUMP(L);
         case SJUMP:
             memcpy(&inch_ptr, virtual_program_counter + NMBL, LBLL);
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &inch_ptr);
+            PUTJS(left_board_hole, right_board_hole, number_element, inch_ptr);
             jump_stack_pointer++;
             virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
@@ -616,7 +626,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             jump_stack_pointer--;
-            getjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            GETJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             i_state = NEXTOP;
             break;
             // SB(N,M);
@@ -1046,7 +1056,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLE;
         case PLE:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
@@ -1056,7 +1066,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLV;
         case PLV:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             i_state = NEXTOP;
@@ -1075,7 +1085,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRE;
         case PRE:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
@@ -1085,7 +1095,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRV;
         case PRV:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
             i_state = NEXTOP;
@@ -1104,7 +1114,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLESC;
         case PLESC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 2] = left_board_hole;
             i_state = NEXTOP;
@@ -1112,7 +1122,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLVSC;
         case PLVSC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1148,7 +1158,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRESC;
         case PRESC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1156,7 +1166,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRVSC;
         case PRVSC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1206,7 +1216,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLEB;
         case PLEB:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 3] = left_board_hole;
             i_state = NEXTOP;
@@ -1214,7 +1224,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLVB;
         case PLVB:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
             if (BRA(left_board_hole))
@@ -1242,7 +1252,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PREB;
         case PREB:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1250,7 +1260,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRVB;
         case PRVB:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
             if (BRA(right_board_hole))
@@ -1361,7 +1371,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PLESPC;
         case PLESPC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
@@ -1389,7 +1399,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // PRESPC;
         case PRESPC:
             virtual_program_counter += NMBL;
-            putjs(jump_stack_pointer, &left_board_hole, &right_board_hole, &number_element, &virtual_program_counter);
+            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element] = right_board_hole;
@@ -1962,24 +1972,6 @@ static void link(T_LINKCB *x, T_LINKCB *y)
 {
     x->next = y;
     y->prev = x;
-    return;
-}
-
-static void putjs(T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc)
-{
-    jsp_->left_board_hole = *ab1;
-    jsp_->right_board_hole = *ab2;
-    jsp_->number_element = *anel;
-    jsp_->virtual_program_counter = *avpc;
-    return;
-}
-
-static void getjs(const T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc)
-{
-    *ab1 = jsp_->left_board_hole;
-    *ab2 = jsp_->right_board_hole;
-    *anel = jsp_->number_element;
-    *avpc = jsp_->virtual_program_counter;
     return;
 }
 
