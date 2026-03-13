@@ -186,13 +186,13 @@ typedef struct sav_
     T_ST *currst_;
 } T_SAV;
 
-typedef struct wjs
+typedef struct w_jump_stack
 { // jump stack structure
-    T_LINKCB *jsb1;
-    T_LINKCB *jsb2;
-    uint16_t jsnel;
-    uint8_t *jsvpc;
-} T_WJS;
+    T_LINKCB *left_board_hole;
+    T_LINKCB *right_board_hole;
+    uint16_t number_element;
+    uint8_t *vpc;
+} T_W_JUMP_STACK;
 
 typedef struct ts
 { // translation stack structure
@@ -215,8 +215,8 @@ static union
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_WJS js[64]; // jump stack and planning translation stack
-static T_WJS *jsp;   // jump stack pointer
+static T_W_JUMP_STACK js[64]; // jump stack and planning translation stack
+static T_W_JUMP_STACK *jsp;   // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
 
@@ -236,8 +236,8 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
-static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc);
-static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc);
+static void putjs(T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc);
+static void getjs(const T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc);
 static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
@@ -1968,21 +1968,21 @@ static void link(T_LINKCB *x, T_LINKCB *y)
     return;
 }
 
-static void putjs(T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc)
+static void putjs(T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, const uint16_t *anel, uint8_t **avpc)
 {
-    jsp_->jsb1 = *ab1;
-    jsp_->jsb2 = *ab2;
-    jsp_->jsnel = *anel;
-    jsp_->jsvpc = *avpc;
+    jsp_->left_board_hole = *ab1;
+    jsp_->right_board_hole = *ab2;
+    jsp_->number_element = *anel;
+    jsp_->vpc = *avpc;
     return;
 }
 
-static void getjs(const T_WJS *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc)
+static void getjs(const T_W_JUMP_STACK *jsp_, T_LINKCB **ab1, T_LINKCB **ab2, uint16_t *anel, uint8_t **avpc)
 {
-    *ab1 = jsp_->jsb1;
-    *ab2 = jsp_->jsb2;
-    *anel = jsp_->jsnel;
-    *avpc = jsp_->jsvpc;
+    *ab1 = jsp_->left_board_hole;
+    *ab2 = jsp_->right_board_hole;
+    *anel = jsp_->number_element;
+    *avpc = jsp_->vpc;
     return;
 }
 
