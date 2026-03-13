@@ -43,6 +43,10 @@
         break;          \
     }
 
+#define BRA(b) (b->tag & 0001) != 0
+
+#define NBRA(b) (b->tag & 0001) == 0
+
 typedef enum i_states
 {
     START,
@@ -782,7 +786,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LB;
         case LB:
             SHB1;
-            if ((left_board_hole->tag & 0001) == 0)
+            if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -796,7 +800,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LBY;
         case LBY:
             SHB1;
-            if ((left_board_hole->tag & 0001) == 0)
+            if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -810,7 +814,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RB;
         case RB:
             SHB2;
-            if ((right_board_hole->tag & 0001) == 0)
+            if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -824,7 +828,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RBY;
         case RBY:
             SHB2;
-            if ((right_board_hole->tag & 0001) == 0)
+            if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -838,7 +842,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LS;
         case LS:
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -850,7 +854,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RS;
         case RS:
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -863,7 +867,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case LW:
             SHB1;
             table_elements[number_element] = left_board_hole;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
@@ -873,7 +877,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case RW:
             SHB2;
             table_elements[number_element + 1] = right_board_hole;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
@@ -882,7 +886,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LBNIL
         case LBNIL:
             SHB1;
-            if ((left_board_hole->tag & 0001) == 0)
+            if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -902,7 +906,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RBNIL;
         case RBNIL:
             SHB2;
-            if ((right_board_hole->tag & 0001) == 0)
+            if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -922,7 +926,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LBCE;
         case LBCE:
             SHB1;
-            if ((left_board_hole->tag & 0001) == 0)
+            if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -939,7 +943,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RBCE;
         case RBCE:
             SHB2;
-            if ((right_board_hole->tag & 0001) == 0)
+            if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -991,7 +995,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (left_board_hole->info.codep == b0->info.codep)
                 break;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 break;
             i_state = FAIL;
             break;
@@ -1023,7 +1027,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (right_board_hole->info.codep == b0->info.codep)
                 break;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 break;
             i_state = FAIL;
             break;
@@ -1064,7 +1068,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case LE:
             left_board_hole = table_elements[number_element + 1];
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             jsp++;
             table_elements[number_element + 1] = left_board_hole;
@@ -1093,7 +1097,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case RE:
             right_board_hole = table_elements[number_element];
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             jsp++;
             table_elements[number_element] = right_board_hole;
@@ -1114,7 +1118,7 @@ void rfrun(T_ST *ast) // adress of current state table
             putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 2] = left_board_hole;
             i_state = NEXTOP;
@@ -1131,8 +1135,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case LESC1:
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
-            { // if(BRA(B1))
+            if (BRA(left_board_hole))
+            {
                 left_board_hole = left_board_hole->info.codep;
                 break;
             }
@@ -1158,7 +1162,7 @@ void rfrun(T_ST *ast) // adress of current state table
             putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1175,8 +1179,8 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case RESC1:
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
-            { // if(BRA(B2))
+            if (BRA(right_board_hole))
+            {
                 right_board_hole = right_board_hole->info.codep;
                 break;
             }
@@ -1216,7 +1220,7 @@ void rfrun(T_ST *ast) // adress of current state table
             putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element] = left_board_hole->next;
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = left_board_hole;
             i_state = NEXTOP;
@@ -1228,7 +1232,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case LEB1:
             SHB1;
-            if ((left_board_hole->tag & 0001) == 0)
+            if (NBRA(left_board_hole))
                 break;
             jsp++;
             table_elements[number_element + 1] = left_board_hole->prev;
@@ -1252,7 +1256,7 @@ void rfrun(T_ST *ast) // adress of current state table
             putjs(jsp, &left_board_hole, &right_board_hole, &number_element, &vpc);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
             i_state = NEXTOP;
@@ -1264,7 +1268,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case REB1:
             SHB2;
-            if ((right_board_hole->tag & 0001) == 0)
+            if (NBRA(right_board_hole))
                 break;
             jsp++;
             table_elements[number_element] = right_board_hole->next;
@@ -1293,7 +1297,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case LSRCH1:
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
             {
                 left_board_hole = left_board_hole->info.codep;
                 break;
@@ -1313,7 +1317,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
         case RSRCH1:
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
             {
                 right_board_hole = right_board_hole->info.codep;
                 break;
@@ -1343,7 +1347,7 @@ void rfrun(T_ST *ast) // adress of current state table
             while (b0 != table_elements[number_element - 1])
             {
                 b0 = b0->next;
-                if ((b0->tag & 0001) != 0)
+                if (BRA(b0))
                     b0 = b0->info.codep;
                 if (!spc((T_SPCS *)(jsp + 1), vpc, b0))
                 {
@@ -1372,7 +1376,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case LESPC:
             left_board_hole = table_elements[number_element + 1];
             SHB1;
-            if ((left_board_hole->tag & 0001) != 0)
+            if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             if (!spc((T_SPCS *)(jsp + 1), vpc, left_board_hole))
             {
@@ -1400,7 +1404,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case RESPC:
             right_board_hole = table_elements[number_element];
             SHB2;
-            if ((right_board_hole->tag & 0001) != 0)
+            if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             if (!spc((T_SPCS *)(jsp + 1), vpc, right_board_hole))
             {
@@ -1421,7 +1425,7 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, left_board_hole))
                     break;
-                if ((left_board_hole->tag & 0001) != 0)
+                if (BRA(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
                 left_board_hole = left_board_hole->next;
             };
@@ -1439,7 +1443,7 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 if (!spc((T_SPCS *)(jsp + 1), vpc, right_board_hole))
                     break;
-                if ((right_board_hole->tag & 0001) != 0)
+                if (BRA(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
                 right_board_hole = right_board_hole->prev;
             };
@@ -1570,7 +1574,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     lack = true;
                     break;
                 }
-                if ((f0->tag & 0001) != 0)
+                if (BRA(f0))
                 {
                     if (f0->tag != TAGRB)
                     {
@@ -1867,7 +1871,7 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b)
             sp_state = SPCNXT;
             break;
         case SPCS:
-            if ((b->tag & 0001) == 0)
+            if (NBRA(b))
             {
                 sp_state = SPCRET;
                 break;
@@ -1875,7 +1879,7 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b)
             sp_state = SPCNXT;
             break;
         case SPCB:
-            if ((b->tag & 0001) != 0)
+            if (BRA(b))
             {
                 sp_state = SPCRET;
                 break;
