@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.C ------------------
@@ -414,7 +414,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         }
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
-        else if ((pr->tag & 0001) != 0)
+        else if (BRA(pr))
             rfabe("rfpex: unknown bracket type");
         else
             printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
@@ -455,7 +455,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         }
         else if (pr->tag == TAGR)
             printf("%%%p", (void *)pr->info.codep);
-        else if ((pr->tag & 0001) != 0)
+        else if (BRA(pr))
             rfabe("rfpexs: unknown bracket type");
         else
             printf("%x,%p", pr->tag, (void *)pr->info.codep);
@@ -518,7 +518,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             }
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
-            else if ((pr->tag & 0001) != 0)
+            else if (BRA(pr))
                 rfabe("rfpexm: unknown bracket type");
             else
                 printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
