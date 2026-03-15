@@ -43,10 +43,6 @@
         break;          \
     }
 
-#define BRA(b) (b->tag & 0001) != 0
-
-#define NBRA(b) (b->tag & 0001) == 0
-
 #define PUTJS(ab1, ab2, anel, avpc)            \
     jump_stack_pointer->left_board_hole = ab1;  \
     jump_stack_pointer->right_board_hole = ab2; \
