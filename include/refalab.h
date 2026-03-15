@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -39,6 +39,8 @@
 #define G_L_B
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W
+#define BRA(b) (b->tag & 0001) != 0
+#define NBRA(b) (b->tag & 0001) == 0
 
 #define NMBL 1 // sizeof(uint8_t)
 #define ZBLL 2 // sizeof(uint16_t)
