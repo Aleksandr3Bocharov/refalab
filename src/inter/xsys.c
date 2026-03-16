@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-31
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XSYS.C --------------------
@@ -69,13 +69,13 @@ static void system_(void)
             if (!slins(p, 1))
                 return;
         p->tag = TAGO;
-        p->info.codep = NULL;
+        p->info.code = NULL;
         p->info.infoc = '-';
         p = p->next;
         sys_64 = -sys_64;
     }
     p->tag = TAGN;
-    p->info.codep = NULL;
+    p->info.code = NULL;
     pcoden(p, (uint32_t)sys_64);
     rftpl(refal.prevr, refal.nextr, p->next);
     return;
@@ -201,7 +201,7 @@ static void step_(void)
         return;
     }
     refal.preva->tag = TAGN;
-    refal.preva->info.codep = NULL;
+    refal.preva->info.code = NULL;
     pcoden(refal.preva, refal.currst->step);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;

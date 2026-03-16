@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XTRY.C --------------
@@ -49,7 +49,7 @@ static void try_(void)
     }
     T_LINKCB *pk = s_st->view->next;
     T_LINKCB *pd = pk->next;
-    pk->info.codep = NULL;
+    pk->info.code = NULL;
     pk->tag = TAGK;
     pd->info.codep = pk;
     pd->tag = TAGD;

@@ -69,6 +69,7 @@ typedef struct linkcb_
         uint32_t coden;
         struct linkcb_ *codep;
         uint8_t *codef;
+        void *code;
     } info;
 } T_LINKCB;
 

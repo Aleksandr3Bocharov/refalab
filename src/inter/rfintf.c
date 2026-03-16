@@ -115,7 +115,7 @@ bool lins(T_LINKCB *p, size_t l)
         if (q1 == refal.flhead)
             return false;
         q1->tag = TAGO;
-        q1->info.codep = NULL;
+        q1->info.code = NULL;
     }
     T_LINKCB *r = q1->next;
     T_LINKCB *q = refal.flhead->next;
@@ -175,7 +175,7 @@ void rfinit(void)
     phd->prev = phd;
     phd->next = phd;
     phd->tag = TAGO;
-    phd->info.codep = NULL;
+    phd->info.code = NULL;
     p->arg.argc = gargc;
     p->arg.argv = gargv;
     p->tm.mode = options.tmon;
@@ -417,7 +417,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else if (BRA(pr))
             rfabe("rfpex: unknown bracket type");
         else
-            printf("'%x,%p'", pr->tag, (void *)pr->info.codep);
+            printf("'%x,%p'", pr->tag, pr->info.code);
     }
     if (nl)
         printf("\n");
@@ -458,7 +458,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         else if (BRA(pr))
             rfabe("rfpexs: unknown bracket type");
         else
-            printf("%x,%p", pr->tag, (void *)pr->info.codep);
+            printf("%x,%p", pr->tag, pr->info.code);
     }
     if (nl)
         printf("\n");
@@ -521,7 +521,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (BRA(pr))
                 rfabe("rfpexm: unknown bracket type");
             else
-                printf("/%x,%p/", pr->tag, (void *)pr->info.codep);
+                printf("/%x,%p/", pr->tag, pr->info.code);
         }
     }
     if (fr)
@@ -574,7 +574,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
             break;
         default:
             f->tag = f0->tag;
-            f->info.codep = f0->info.codep;
+            f->info.code = f0->info.code;
         }
         f0 = f0->next;
     }
@@ -708,7 +708,7 @@ static bool lgcl(void)
             else
             { // remove box
                 was_coll = true;
-                p1->info.codep = q->info.codep;
+                p1->info.code = q->info.code;
                 p1->tag = q->tag;
                 r = q->prev;
                 T_LINKCB *flhead1 = refal.flhead->next;
@@ -738,7 +738,7 @@ static void rflist(T_LINKCB *par, size_t n)
         p->next = q;
         q->prev = p;
         q->tag = TAGO;
-        q->info.codep = NULL;
+        q->info.code = NULL;
         p = q;
         q++;
     }
@@ -755,7 +755,7 @@ T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
     {
         if (x->tag != y->tag)
             return NULL;
-        if (x->info.codep != y->info.codep)
+        if (x->info.code != y->info.code)
             if (x->tag != TAGLB && x->tag != TAGRB)
                 return NULL;
         x = x->next;
@@ -772,7 +772,7 @@ T_LINKCB *rfrstr(const char *str, T_LINKCB *p)
     {
         p = p->next;
         p->tag = TAGO;
-        p->info.codep = NULL;
+        p->info.code = NULL;
         p->info.infoc = *(str + i);
     }
     return p;

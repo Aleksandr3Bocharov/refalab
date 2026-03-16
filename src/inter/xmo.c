@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-01
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
@@ -71,7 +71,7 @@ static void numb_(void)
         pz = pp;
     }
     pp->tag = TAGN;
-    pp->info.codep = NULL;
+    pp->info.code = NULL;
     pcoden(pp, (uint32_t)atoll(str));
     rftpl(refal.prevr, pz->prev, pp->next);
     return;
@@ -129,7 +129,7 @@ static void symb_(void)
     for (i = 0, p = pp; i < j; i++, p = p->next)
     {
         p->tag = TAGO;
-        p->info.codep = NULL;
+        p->info.code = NULL;
         p->info.infoc = str[i];
     }
     rftpl(refal.prevr, pz->prev, p);
@@ -154,7 +154,7 @@ static void first_(void)
         p = p->next;
         if (p == refal.nexta)
         {
-            pn->info.codep = NULL;
+            pn->info.code = NULL;
             pn->info.infoc = '*';
             pn->tag = TAGO;
             rftpl(refal.prevr, refal.preva, refal.nexta);
@@ -192,7 +192,7 @@ static void last_(void)
         if (p == pn)
         {
             pn->tag = TAGO;
-            pn->info.codep = NULL;
+            pn->info.code = NULL;
             pn->info.infoc = '*';
             rftpl(refal.prevr, pn, refal.nexta);
             p = refal.nextr->prev;
@@ -227,7 +227,7 @@ static void lengr_(void)
         p = p->next;
     }
     refal.preva->tag = TAGN;
-    refal.preva->info.codep = NULL;
+    refal.preva->info.code = NULL;
     pcoden(refal.preva, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
@@ -248,7 +248,7 @@ static void lengw_(void)
         p = p->next;
     }
     refal.preva->tag = TAGN;
-    refal.preva->info.codep = NULL;
+    refal.preva->info.code = NULL;
     pcoden(refal.preva, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
@@ -293,7 +293,7 @@ static void multe_(void)
         {
             q = q->next;
             q->tag = p->tag;
-            q->info.codep = p->info.codep;
+            q->info.code = p->info.code;
         }
     }
     return;
@@ -311,7 +311,7 @@ static void chr_(void)
         {
             p->tag = TAGO;
             const char c = (char)gcoden(p);
-            p->info.codep = NULL;
+            p->info.code = NULL;
             p->info.infoc = c;
         }
         p = p->next;

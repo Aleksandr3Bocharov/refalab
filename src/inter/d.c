@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-23
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -332,12 +332,12 @@ void rfdbg(T_ST *s_st)
             curr_step1 = curr_step;
             prevk1 = prevk;
             nextd1 = nextd;
-            if (pk->info.codep == NULL)
+            if (pk->info.code == NULL)
                 dot1 = NULL;
             else
             {
                 dot1 = pk->info.codep;
-                pk->info.codep = NULL;
+                pk->info.code = NULL;
             }
             dbg_state = DBG_ALREADY;
             break;
@@ -357,12 +357,12 @@ void rfdbg(T_ST *s_st)
                 curr_step2 = curr_step;
                 prevk2 = prevk;
                 nextd2 = nextd;
-                if (pk->info.codep == NULL)
+                if (pk->info.code == NULL)
                     dot2 = NULL;
                 else
                 {
                     dot2 = pk->info.codep;
-                    pk->info.codep = NULL;
+                    pk->info.code = NULL;
                 }
                 // compute call entirely
                 bool quit = false;
@@ -556,12 +556,12 @@ static void dbtry(T_ST *ss_st)
             curr_step1 = curr_step;
             prevk1 = prevk;
             nextd1 = nextd;
-            if (pk->info.codep == NULL)
+            if (pk->info.code == NULL)
                 dot1 = NULL;
             else
             {
                 dot1 = pk->info.codep;
-                pk->info.codep = NULL;
+                pk->info.code = NULL;
             }
             db_state = DB_ALREADY;
             break;
@@ -581,12 +581,12 @@ static void dbtry(T_ST *ss_st)
                 curr_step2 = curr_step;
                 prevk2 = prevk;
                 nextd2 = nextd;
-                if (pk->info.codep == NULL)
+                if (pk->info.code == NULL)
                     dot2 = NULL;
                 else
                 {
                     dot2 = pk->info.codep;
-                    pk->info.codep = NULL;
+                    pk->info.code = NULL;
                 }
                 // compute call entirely
                 bool quit = false;

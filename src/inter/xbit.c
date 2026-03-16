@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-12-03
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -227,7 +227,7 @@ static void boper(uint32_t o)
                 Xn = refal.preva->next;
                 Xk = refal.preva->next;
                 Xn->tag = TAGN;
-                Xn->info.codep = NULL;
+                Xn->info.code = NULL;
                 pcoden(Xn, MAX_NUMBER);
                 break;
             }
@@ -246,7 +246,7 @@ static void boper(uint32_t o)
         {
             x = refal.preva->next;
             x->tag = TAGN;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             rftpl(refal.prevr, x->prev, x->next);
             return;
         }
@@ -258,7 +258,7 @@ static void boper(uint32_t o)
         {
             x = x->prev;
             x->tag = TAGO;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat
@@ -315,12 +315,12 @@ static void shoper(uint32_t o)
                 {
                     Xn = Xn->prev;
                     Xn->tag = TAGN;
-                    Xn->info.codep = NULL;
+                    Xn->info.code = NULL;
                 }
                 for (x = Xn; y != Xk->next; x = x->next, y = y->next)
                 {
                     pcoden(x, gcoden(y));
-                    y->info.codep = NULL;
+                    y->info.code = NULL;
                 }
                 Yk = x->prev;
             }
@@ -330,7 +330,7 @@ static void shoper(uint32_t o)
                 break;
             Xn = Xn->prev;
             Xn->tag = TAGN;
-            Xn->info.codep = NULL;
+            Xn->info.code = NULL;
             for (x = Xn->next; x != Yk->next; x = x->next)
             {
                 const uint32_t t = gcoden(x) >> sh1;
@@ -368,7 +368,7 @@ static void shoper(uint32_t o)
         {
             x = refal.preva->next;
             x->tag = TAGN;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             rftpl(refal.prevr, x->prev, x->next);
             return;
         }
@@ -380,7 +380,7 @@ static void shoper(uint32_t o)
         {
             x = x->prev;
             x->tag = TAGO;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat

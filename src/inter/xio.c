@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-08-03
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XIO.C ------------
@@ -25,7 +25,7 @@ static void card_(void)
         if  (!slins(p, 1))
             return;
         p = p->next;
-        p->info.codep = NULL;
+        p->info.code = NULL;
         if (c == EOF)
         {
             p->tag = TAGN;

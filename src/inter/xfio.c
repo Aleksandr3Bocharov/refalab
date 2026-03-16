@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XFIO.C ---------------
@@ -180,7 +180,7 @@ static void fgets_(void)
             if (!slins(p, 1))
                 return;
             p = p->next;
-            p->info.codep = NULL;
+            p->info.code = NULL;
             if (rfreof(c, f, p))
                 return;
             p->tag = TAGO;
@@ -329,7 +329,7 @@ static void fprint_(void)
                 rfabe("fprint: unknown bracket type");
             else
             {
-                sprintf(s, "'%x,%p'", p->tag, (void *)p->info.codep);
+                sprintf(s, "'%x,%p'", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
             if (rfreof(pcc, f, refal.preva))
@@ -417,7 +417,7 @@ static void fprints_(void)
                 rfabe("fprints: unknown bracket type");
             else
             {
-                sprintf(s, "%x,%p", p->tag, (void *)p->info.codep);
+                sprintf(s, "%x,%p", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
             if (rfreof(pcc, f, refal.preva))
@@ -530,7 +530,7 @@ static void fprintm_(void)
                 else
                 {
                     char sp[512];
-                    sprintf(sp, "/%x,%p/", p->tag, (void *)p->info.codep);
+                    sprintf(sp, "/%x,%p/", p->tag, p->info.code);
                     strcat(s, sp);
                 }
                 pcc = fputs(s, f);
@@ -586,7 +586,7 @@ static void fread_(void)
         for (; count > 0; count--)
         {
             p = p->next;
-            p->info.codep = NULL;
+            p->info.code = NULL;
             const int c = getc(f);
             if (rfreof(c, f, p))
             {

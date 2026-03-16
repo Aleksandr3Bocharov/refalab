@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-31
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCOMP.C ---------------
@@ -120,7 +120,7 @@ static void nrel_(void)
         }
     }
     refal.preva->tag = TAGO;
-    refal.preva->info.codep = NULL;
+    refal.preva->info.code = NULL;
     refal.preva->info.infoc = c;
     rftpl(refal.prevr, refal.preva->prev, refal.nexta);
     return;
@@ -154,9 +154,9 @@ static void lrel_(void)
             c = '>';
         else if (p->tag < q->tag)
             c = '<';
-        else if ((size_t)p->info.codep > (size_t)q->info.codep)
+        else if ((size_t)p->info.code > (size_t)q->info.code)
             c = '>';
-        else if ((size_t)p->info.codep < (size_t)q->info.codep)
+        else if ((size_t)p->info.code < (size_t)q->info.code)
             c = '<';
     if (c == '=')
     {
@@ -167,7 +167,7 @@ static void lrel_(void)
     }
     p = refal.preva->next;
     p->tag = TAGO;
-    p->info.codep = NULL;
+    p->info.code = NULL;
     p->info.infoc = c;
     q = p->next;
     rftpl(refal.prevr, refal.preva, q);

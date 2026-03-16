@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCF.C ---------------
@@ -45,7 +45,7 @@ static void ftochar_(void)
     {
         p = p->next;
         p->tag = TAGO;
-        p->info.codep = NULL;
+        p->info.code = NULL;
         p->info.infoc = *(u + i);
     }
     return;

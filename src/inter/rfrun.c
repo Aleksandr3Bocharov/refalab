@@ -705,7 +705,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.codep != table_elements[n]->info.codep)
+            if (left_board_hole->info.code != table_elements[n]->info.code)
             {
                 i_state = FAIL;
                 break;
@@ -724,7 +724,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.codep != table_elements[n]->info.codep)
+            if (right_board_hole->info.code != table_elements[n]->info.code)
             {
                 i_state = FAIL;
                 break;
@@ -996,7 +996,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (left_board_hole->info.codep == b0->info.codep)
+            if (left_board_hole->info.code == b0->info.code)
                 break;
             if (BRA(left_board_hole))
                 break;
@@ -1028,7 +1028,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = FAIL;
                 break;
             }
-            if (right_board_hole->info.codep == b0->info.codep)
+            if (right_board_hole->info.code == b0->info.code)
                 break;
             if (BRA(right_board_hole))
                 break;
@@ -1475,7 +1475,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case NSO:
             SHF;
             f->tag = TAGO;
-            f->info.codep = NULL;
+            f->info.code = NULL;
             f->info.infoc = (char)*(virtual_program_counter + 1);
             virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
@@ -1495,7 +1495,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     break;
                 }
                 f->tag = TAGO;
-                f->info.codep = NULL;
+                f->info.code = NULL;
                 f->info.infoc = (char)*virtual_program_counter;
                 virtual_program_counter += NMBL;
             };

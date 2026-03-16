@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-31
+// 2026-03-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -263,7 +263,7 @@ static void oper(uint32_t o, uint32_t prn)
                 //  X  dlinnee  Y  (ili =)
                 Xn = Xn->prev; //  pripisywaem  0
                 Xn->tag = TAGN;
-                Xn->info.codep = NULL;
+                Xn->info.code = NULL;
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
@@ -295,7 +295,7 @@ static void oper(uint32_t o, uint32_t prn)
                     obmen();   //  menjaem x i y
                 Xn = Xn->prev; //  pripisywaem 0
                 Xn->tag = TAGN;
-                Xn->info.codep = NULL;
+                Xn->info.code = NULL;
                 peren = 0;
                 for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
                 {
@@ -338,14 +338,14 @@ static void oper(uint32_t o, uint32_t prn)
         for (x = p; x != r->next; x = x->next)
         {
             x->tag = TAGN;
-            x->info.codep = NULL;
+            x->info.code = NULL;
         } //  zanulen rezultat
         if (Xdl < Ydl)
             obmen();
         //  dobawim 0 k X dlja summir. s perenosom
         Xn = Xn->prev;
         Xn->tag = TAGN;
-        Xn->info.codep = NULL;
+        Xn->info.code = NULL;
         T_LINKCB *f;
         int64_t c;
         for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
@@ -437,7 +437,7 @@ static void oper(uint32_t o, uint32_t prn)
             {
                 Xn = Xn->prev;
                 Xn->tag = TAGO;
-                Xn->info.codep = NULL;
+                Xn->info.code = NULL;
                 Xn->info.infoc = '-';
             }
             Xn = Xn->prev;
@@ -450,7 +450,7 @@ static void oper(uint32_t o, uint32_t prn)
             {
                 Xn = Xn->prev;
                 Xn->tag = TAGN;
-                Xn->info.codep = NULL;
+                Xn->info.code = NULL;
             }
             rftpl(refal.prevr, Xn->prev, Xk->next);
             return;
@@ -477,14 +477,14 @@ static void oper(uint32_t o, uint32_t prn)
         nach = r;
         Xn = Xn->prev;
         Xn->tag = TAGN;
-        Xn->info.codep = NULL;
+        Xn->info.code = NULL;
         Xdl++;
         size_t i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
             ;
         y = Yn->prev;
         y->tag = TAGN;
-        y->info.codep = NULL;
+        y->info.code = NULL;
         size_t n = 0;
         if (Ydl != 0)
         { // wozmovna normalizacija
@@ -595,7 +595,7 @@ static void oper(uint32_t o, uint32_t prn)
                     } while (peren != 0);
             }
             r->tag = TAGN;
-            r->info.codep = NULL;
+            r->info.code = NULL;
             pcoden(r, (uint32_t)c);
             r = r->next;
             x = x->next;
@@ -624,7 +624,7 @@ static void oper(uint32_t o, uint32_t prn)
             if (Xzn != Yzn)
             {
                 x->tag = TAGO;
-                x->info.codep = NULL;
+                x->info.code = NULL;
                 x->info.infoc = '-';
             }
             else
@@ -637,7 +637,7 @@ static void oper(uint32_t o, uint32_t prn)
         {
             x = x->prev;
             x->tag = TAGO;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             x->info.infoc = '-';
         }
         if ((prn & 1) == 0 || Xn != Xk || gcoden(Xn) != 0)
@@ -661,7 +661,7 @@ static void oper(uint32_t o, uint32_t prn)
             return; // dlja n-operacij
         x = refal.preva->next;
         x->tag = TAGN;
-        x->info.codep = NULL;
+        x->info.code = NULL;
         rftpl(refal.prevr, x->prev, x->next);
         return;
     }
@@ -677,7 +677,7 @@ static void oper(uint32_t o, uint32_t prn)
         {
             x = x->prev;
             x->tag = TAGO;
-            x->info.codep = NULL;
+            x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat
@@ -696,14 +696,14 @@ static void oper(uint32_t o, uint32_t prn)
     if (Xzn != Yzn)
     {
         x->tag = TAGO;
-        x->info.codep = NULL;
+        x->info.code = NULL;
         x->info.infoc = '-';
         x = x->next;
     }
     if (b != 0 || (prn & 1) == 0)
     { // div/dr
         x->tag = TAGN;
-        x->info.codep = NULL;
+        x->info.code = NULL;
         pcoden(x, (uint32_t)b);
         x = x->next;
     }
@@ -712,14 +712,14 @@ static void oper(uint32_t o, uint32_t prn)
         if (Xzn != '+')
         {
             y->tag = TAGO;
-            y->info.codep = NULL;
+            y->info.code = NULL;
             y->info.infoc = '-';
             y = y->next;
         }
     if (a != 0 || (prn & 1) == 0)
     { // div/dr
         y->tag = TAGN;
-        y->info.codep = NULL;
+        y->info.code = NULL;
         pcoden(y, (uint32_t)a);
         y = y->next;
     }
@@ -901,13 +901,13 @@ static void gcd_(void)
                 if (v1 != 0)
                 {
                     pr->tag = TAGN;
-                    pr->info.codep = NULL;
+                    pr->info.code = NULL;
                     pcoden(pr, (uint32_t)v1);
                     pr = pr->next;
                     A &= MAX_NUMBER;
                 }
                 pr->tag = TAGN;
-                pr->info.codep = NULL;
+                pr->info.code = NULL;
                 pcoden(pr, (uint32_t)A);
                 pr = pr->next;
                 rftpl(refal.prevr, refal.preva, pr);
@@ -975,7 +975,7 @@ static void gcd_(void)
             {
                 hd[1] = hd[1]->prev;
                 hd[1]->tag = TAGN;
-                hd[1]->info.codep = NULL;
+                hd[1]->info.code = NULL;
                 l[1]++;
             }
             p[0] = tl[0];
@@ -1043,14 +1043,14 @@ static void gcd_(void)
             //  delenie mnogih  cifr
             hd[0] = hd[0]->prev;
             hd[0]->tag = TAGN;
-            hd[0]->info.codep = NULL;
+            hd[0]->info.code = NULL;
             l[0]++;
             T_LINKCB *px;
             for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
                 ;
             T_LINKCB *py = hd[1]->prev;
             py->tag = TAGN;
-            py->info.codep = NULL;
+            py->info.code = NULL;
             size_t n = 0;
             int64_t b;
             if (l[1] != 0)
