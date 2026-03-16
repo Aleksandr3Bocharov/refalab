@@ -43,13 +43,13 @@
         break;          \
     }
 
-#define PUTJS(ab1, ab2, anel, avpc)            \
+#define PUTJS(ab1, ab2, anel, avpc)             \
     jump_stack_pointer->left_board_hole = ab1;  \
     jump_stack_pointer->right_board_hole = ab2; \
     jump_stack_pointer->number_element = anel;  \
     jump_stack_pointer->virtual_program_counter = avpc
 
-#define GETJS(ab1, ab2, anel, avpc)            \
+#define GETJS(ab1, ab2, anel, avpc)             \
     ab1 = jump_stack_pointer->left_board_hole;  \
     ab2 = jump_stack_pointer->right_board_hole; \
     anel = jump_stack_pointer->number_element;  \
@@ -209,11 +209,11 @@ typedef struct ts
     T_LINKCB *ts2;
 } T_TS;
 
-typedef struct spcs
+typedef struct specifier_stack
 {
-    bool spls;
-    uint8_t *svpc;
-} T_SPCS;
+    bool stack_plus;
+    uint8_t *stack_virtual_private_code;
+} T_SPECIFIER_STACK;
 
 uint8_t *inch_ptr;
 
@@ -224,6 +224,8 @@ static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning translatio
 static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
 static T_TS *tsp; // translation stack pointer
+
+static T_SPECIFIER_STACK specifier_stack[64]; // specifier stack
 
 // definition of work variables and pointers
 static uint8_t operation_program_code;   // current statement code
@@ -237,7 +239,7 @@ static uint8_t i, n, m;
 
 static void (*fptr)(void);
 
-static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b);
+static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
@@ -1335,7 +1337,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // WSPC(L);
         case WSPC:
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, table_elements[number_element - 1]))
+            if (!spc(virtual_program_counter, table_elements[number_element - 1]))
             {
                 i_state = FAIL;
                 break;
@@ -1352,7 +1354,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 b0 = b0->next;
                 if (BRA(b0))
                     b0 = b0->info.codep;
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, b0))
+                if (!spc(virtual_program_counter, b0))
                 {
                     i_state = FAIL;
                     fail = true;
@@ -1381,7 +1383,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB1;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, left_board_hole))
+            if (!spc(virtual_program_counter, left_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -1409,7 +1411,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHB2;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
-            if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, right_board_hole))
+            if (!spc(virtual_program_counter, right_board_hole))
             {
                 i_state = FAIL;
                 break;
@@ -1426,7 +1428,7 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = left_board_hole->next;
             while (left_board_hole != right_board_hole)
             {
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, left_board_hole))
+                if (!spc(virtual_program_counter, left_board_hole))
                     break;
                 if (BRA(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
@@ -1444,7 +1446,7 @@ void rfrun(T_ST *ast) // adress of current state table
             right_board_hole = right_board_hole->prev;
             while (right_board_hole != left_board_hole)
             {
-                if (!spc((T_SPCS *)(jump_stack_pointer + 1), virtual_program_counter, right_board_hole))
+                if (!spc(virtual_program_counter, right_board_hole))
                     break;
                 if (BRA(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
@@ -1767,42 +1769,42 @@ void rfrun(T_ST *ast) // adress of current state table
         }
 }
 
-static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b)
+static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
 // specifier interpreter
 {
     // spcs-pointer
-    T_SPCS *spcsp = pspcsp;
-    uint8_t *spcvpc; // virtual specifier counter
-    memcpy(&spcvpc, vpc_ + NMBL, LBLL);
-    uint8_t spcopc;
+    T_SPECIFIER_STACK *specifier_stack_pointer = specifier_stack;
+    uint8_t *specifier_virtual_program_counter; // virtual specifier counter
+    memcpy(&specifier_virtual_program_counter, virtual_program_counter_ + NMBL, LBLL);
+    uint8_t specifier_oeration_program_code;
     // positiveness feature of specifier element
-    bool spcpls = true;
+    bool specifier_plus = true;
     T_SP_STATES sp_state = SPCNXT;
     while (true)
         switch (sp_state)
         {
         // return from specifier element if "YES"
         case SPCRET:
-            if (spcsp == pspcsp)
-                return spcpls;
-            spcsp--;
+            if (specifier_stack_pointer == specifier_stack)
+                return specifier_plus;
+            specifier_stack_pointer--;
             // work variable
-            const bool spcwrk = spcpls;
-            spcpls = spcsp->spls;
-            spcvpc = spcsp->svpc;
-            if (spcwrk)
+            const bool specifier_work = specifier_plus;
+            specifier_plus = specifier_stack_pointer->stack_plus;
+            specifier_virtual_program_counter = specifier_stack_pointer->stack_virtual_private_code;
+            if (specifier_work)
                 break;
-            spcvpc = spcvpc + LBLL;
+            specifier_virtual_program_counter += LBLL;
             sp_state = SPCNXT;
             break;
         // return from specifier element if "NO"
         case SPCNXT:
             // specifier code
-            spcopc = *spcvpc;
-            spcvpc = spcvpc + NMBL;
+            specifier_oeration_program_code = *specifier_virtual_program_counter;
+            specifier_virtual_program_counter += NMBL;
             // switch
             // SPCOP
-            switch (spcopc)
+            switch (specifier_oeration_program_code)
             {
             case 0000:
                 sp_state = SPCCLL;
@@ -1846,31 +1848,31 @@ static bool spc(T_SPCS *pspcsp, const uint8_t *vpc_, const T_LINKCB *b)
             break;
             // SPCCLL(L);
         case SPCCLL:
-            spcsp->spls = spcpls;
-            spcsp->svpc = spcvpc;
-            memcpy(&spcvpc, spcvpc, LBLL);
-            spcsp++;
-            spcpls = true;
+            specifier_stack_pointer->stack_plus = specifier_plus;
+            specifier_stack_pointer->stack_virtual_private_code = specifier_virtual_program_counter;
+            memcpy(&specifier_virtual_program_counter, specifier_virtual_program_counter, LBLL);
+            specifier_stack_pointer++;
+            specifier_plus = true;
             sp_state = SPCNXT;
             break;
         case SPCW:
             sp_state = SPCRET;
             break;
         case SPCNG:
-            spcpls = !spcpls;
+            specifier_plus = !specifier_plus;
             sp_state = SPCNXT;
             break;
         case SPCNGW:
-            spcpls = !spcpls;
+            specifier_plus = !specifier_plus;
             sp_state = SPCRET;
             break;
         case SPCSC:
-            if (memcmp(spcvpc, &b->tag, SMBL) == 0)
+            if (memcmp(specifier_virtual_program_counter, &b->tag, SMBL) == 0)
             {
                 sp_state = SPCRET;
                 break;
             }
-            spcvpc = spcvpc + SMBL;
+            specifier_virtual_program_counter += SMBL;
             sp_state = SPCNXT;
             break;
         case SPCS:
