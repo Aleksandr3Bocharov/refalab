@@ -202,12 +202,12 @@ typedef struct w_jump_stack
     uint8_t *virtual_program_counter;
 } T_W_JUMP_STACK;
 
-typedef struct ts
+typedef struct transplantation_stack
 { // translation stack structure
-    T_LINKCB *ts0;
-    T_LINKCB *ts1;
-    T_LINKCB *ts2;
-} T_TS;
+    T_LINKCB *transplantation_stack0;
+    T_LINKCB *transplantation_stack1;
+    T_LINKCB *transplantation_stack2;
+} T_TRANSPLANTATION_STACK;
 
 typedef struct specifier_stack
 {
@@ -223,7 +223,7 @@ static uint16_t number_element;       // adress of first free string in table of
 static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning translation stack
 static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
-static T_TS *tsp; // translation stack pointer
+static T_TRANSPLANTATION_STACK *transplantation_stack_pointer; // transplantation stack pointer
 
 static T_SPECIFIER_STACK specifier_stack[64]; // specifier stack
 
@@ -243,8 +243,8 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 static void link(T_LINKCB *x, T_LINKCB *y);
-static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
-static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
+static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
+static void getts(const T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 void rfrun(T_ST *ast) // adress of current state table
 {
@@ -1463,7 +1463,7 @@ void rfrun(T_ST *ast) // adress of current state table
             f = flhead;
             lastk = &quasik;
             lastb = NULL;
-            tsp = (T_TS *)jump_stack;
+            transplantation_stack_pointer = (T_TRANSPLANTATION_STACK *)jump_stack;
             i_state = ADVANCE;
             break;
             // NS(S);
@@ -1615,8 +1615,8 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = NEXTOP;
                 break;
             }
-            putts(tsp, &f, &table_elements[n], &table_elements[m]);
-            tsp++;
+            putts(transplantation_stack_pointer, &f, &table_elements[n], &table_elements[m]);
+            transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
             // TPLE(N); (= TPL(N-1,N);)
@@ -1630,16 +1630,16 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = NEXTOP;
                 break;
             }
-            putts(tsp, &f, &table_elements[n - 1], &table_elements[n]);
-            tsp++;
+            putts(transplantation_stack_pointer, &f, &table_elements[n - 1], &table_elements[n]);
+            transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
             // TPLS(N); (= TPLM(N,N);)
         case TPLS:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            putts(tsp, &f, &table_elements[n], &table_elements[n]);
-            tsp++;
+            putts(transplantation_stack_pointer, &f, &table_elements[n], &table_elements[n]);
+            transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
             // EOS;
@@ -1650,10 +1650,10 @@ void rfrun(T_ST *ast) // adress of current state table
             T_LINKCB *nextr = f->next;
             // execute planned transplantation
             // EOS1:
-            while (tsp != (T_TS *)jump_stack)
+            while (transplantation_stack_pointer != (T_TRANSPLANTATION_STACK *)jump_stack)
             {
-                tsp = tsp - 1;
-                getts(tsp, &f, &f0, &f1);
+                transplantation_stack_pointer--;
+                getts(transplantation_stack_pointer, &f, &f0, &f1);
                 link(f0->prev, f1->next);
                 link(f1, f->next);
                 link(f, f0);
@@ -1973,19 +1973,19 @@ static void link(T_LINKCB *x, T_LINKCB *y)
     return;
 }
 
-static void putts(T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
-    tsp_->ts0 = *ax;
-    tsp_->ts1 = *ay;
-    tsp_->ts2 = *az;
+    transplantation_stack_pointer_->transplantation_stack0 = *ax;
+    transplantation_stack_pointer_->transplantation_stack1 = *ay;
+    transplantation_stack_pointer_->transplantation_stack2 = *az;
     return;
 }
 
-static void getts(const T_TS *tsp_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
+static void getts(const T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
 {
-    *ax = tsp_->ts0;
-    *ay = tsp_->ts1;
-    *az = tsp_->ts2;
+    *ax = transplantation_stack_pointer_->transplantation_stack0;
+    *ay = transplantation_stack_pointer_->transplantation_stack1;
+    *az = transplantation_stack_pointer_->transplantation_stack2;
     return;
 }
 
