@@ -238,7 +238,7 @@ static T_LINKCB *temp_link_pointer, *temp_link_free_memory_pointer, *current_lin
 static const uint8_t *virtual_program_counter2; // additional virtual program counter
 static uint8_t i, n, m;
 
-static void (*fptr)(void);
+static void (*function_pointer)(void);
 
 static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
@@ -1724,14 +1724,14 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // C-refal-function execution
         case CFUNC:
-            memcpy(&fptr, virtual_program_counter + NMBL + Z_0, LBLL);
+            memcpy(&function_pointer, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
             refal.prevr = temp_board_hole->prev;
             refal.nextr = temp_board_hole;
             refal.preva = left_board_hole;
             refal.nexta = right_board_hole;
             //        call  C - function
-            (*fptr)();
+            (*function_pointer)();
             switch (refal.upshot)
             {
             case 1:
