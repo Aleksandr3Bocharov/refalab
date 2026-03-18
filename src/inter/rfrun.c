@@ -220,7 +220,7 @@ uint8_t *inch_ptr;
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning transplantation stack
+static T_W_JUMP_STACK jump_stack[64];      // jump stack
 static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
 static T_TRANSPLANTATION_STACK *transplantation_stack_pointer; // transplantation stack pointer
