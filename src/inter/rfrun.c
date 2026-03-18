@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-12
+// 2026-03-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -203,7 +203,7 @@ typedef struct w_jump_stack
 } T_W_JUMP_STACK;
 
 typedef struct transplantation_stack
-{ // translation stack structure
+{ // transplantation stack structure
     T_LINKCB *transplantation_stack0;
     T_LINKCB *transplantation_stack1;
     T_LINKCB *transplantation_stack2;
@@ -220,7 +220,7 @@ uint8_t *inch_ptr;
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning translation stack
+static T_W_JUMP_STACK jump_stack[64];      // jump stack and planning transplantation stack
 static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
 static T_TRANSPLANTATION_STACK *transplantation_stack_pointer; // transplantation stack pointer
