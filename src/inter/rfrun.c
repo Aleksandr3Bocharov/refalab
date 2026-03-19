@@ -19,7 +19,7 @@
 
 // for unlooping:
 
-#define SHB1                                 \
+#define SHIFT_LEFT_BOARD_HOLE                \
     left_board_hole = left_board_hole->next; \
     if (left_board_hole == right_board_hole) \
     {                                        \
@@ -27,7 +27,7 @@
         break;                               \
     }
 
-#define SHB2                                   \
+#define SHIFT_RIGHT_BOARD_HOLE                 \
     right_board_hole = right_board_hole->prev; \
     if (right_board_hole == left_board_hole)   \
     {                                          \
@@ -35,12 +35,12 @@
         break;                                 \
     }
 
-#define SHF                                                                        \
-    current_linkcb_free_memory_pointer = current_linkcb_free_memory_pointer->next; \
-    if (current_linkcb_free_memory_pointer == free_memory_list_head_pointer)       \
-    {                                                                              \
-        i_state = LACK;                                                            \
-        break;                                                                     \
+#define SHIFT_CURRENT_LINKCB_FREE_MEMORY                           \
+    current_linkcb_free_memory = current_linkcb_free_memory->next; \
+    if (current_linkcb_free_memory == free_memory_list_head)       \
+    {                                                              \
+        i_state = LACK;                                            \
+        break;                                                     \
     }
 
 #define LINK(x, y) \
@@ -238,7 +238,7 @@ static uint8_t *virtual_program_counter; // virtual program counter
 static T_LINKCB *last_acted_k;           // last acted '<' adress
 static T_LINKCB *last_gen_left_bracket;  // last generated left bracket
 static T_LINKCB *temp_board_hole, *left_board_hole, *right_board_hole;
-static T_LINKCB *temp_linkcb_pointer, *temp_linkcb_free_memory_pointer, *current_linkcb_free_memory_pointer;
+static T_LINKCB *temp_linkcb, *temp_linkcb_free_memory, *current_linkcb_free_memory;
 static const uint8_t *virtual_program_counter2; // additional virtual program counter
 static uint8_t i, n, m;
 
@@ -274,7 +274,7 @@ void rfrun(T_ST *ast) // adress of current state table
     T_LINKCB quasik; // quasi-sign '<'
     quasik.info.codep = ast->dot;
     // adress of free memory list head
-    T_LINKCB *free_memory_list_head_pointer = refal.flhead;
+    T_LINKCB *free_memory_list_head = refal.flhead;
     T_I_STATES i_state = START;
     while (true)
         switch (i_state)
@@ -324,7 +324,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[1] = temp_board_hole;
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
-            current_linkcb_free_memory_pointer = (T_LINKCB *)virtual_program_counter;
+            current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
             i_state = SWAPREF;
             break;
             // interpreter exits
@@ -642,7 +642,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LSC(S);
         case LSC:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (memcmp(virtual_program_counter + NMBL, &left_board_hole->tag, SMBL) != 0)
             {
                 i_state = FAIL;
@@ -655,7 +655,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RSC(S);
         case RSC:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (memcmp(virtual_program_counter + NMBL, &right_board_hole->tag, SMBL) != 0)
             {
                 i_state = FAIL;
@@ -668,7 +668,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LSCO(N);
         case LSCO:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != TAGO)
             {
                 i_state = FAIL;
@@ -686,7 +686,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RSCO(N);
         case RSCO:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != TAGO)
             {
                 i_state = FAIL;
@@ -704,7 +704,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LSD(N);
         case LSD:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             n = *(virtual_program_counter + NMBL);
             if (left_board_hole->tag != table_elements[n]->tag)
             {
@@ -723,7 +723,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RSD(N);
         case RSD:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             n = *(virtual_program_counter + NMBL);
             if (right_board_hole->tag != table_elements[n]->tag)
             {
@@ -747,7 +747,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LTXT1;
             break;
         case LTXT1:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != TAGO)
             {
                 i_state = FAIL;
@@ -773,7 +773,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RTXT1;
             break;
         case RTXT1:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != TAGO)
             {
                 i_state = FAIL;
@@ -794,7 +794,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LB;
         case LB:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
@@ -808,7 +808,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBY;
         case LBY:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
@@ -822,7 +822,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RB;
         case RB:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
@@ -836,7 +836,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBY;
         case RBY:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
@@ -850,7 +850,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LS;
         case LS:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
             {
                 i_state = FAIL;
@@ -862,7 +862,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RS;
         case RS:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
             {
                 i_state = FAIL;
@@ -874,7 +874,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LW;
         case LW:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             table_elements[number_element] = left_board_hole;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
@@ -884,7 +884,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RW;
         case RW:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             table_elements[number_element + 1] = right_board_hole;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
@@ -894,7 +894,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBNIL
         case LBNIL:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
@@ -914,7 +914,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBNIL;
         case RBNIL:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
@@ -934,7 +934,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // LBCE;
         case LBCE:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
                 i_state = FAIL;
@@ -951,7 +951,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RBCE;
         case RBCE:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
                 i_state = FAIL;
@@ -996,7 +996,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             temp_board_hole = temp_board_hole->next;
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != temp_board_hole->tag)
             {
                 i_state = FAIL;
@@ -1028,7 +1028,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             }
             temp_board_hole = temp_board_hole->prev;
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != temp_board_hole->tag)
             {
                 i_state = FAIL;
@@ -1076,7 +1076,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LE;
         case LE:
             left_board_hole = table_elements[number_element + 1];
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             jump_stack_pointer++;
@@ -1105,7 +1105,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RE;
         case RE:
             right_board_hole = table_elements[number_element];
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             jump_stack_pointer++;
@@ -1126,7 +1126,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 2] = left_board_hole;
@@ -1143,7 +1143,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LESC1;
             break;
         case LESC1:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
             {
                 left_board_hole = left_board_hole->info.codep;
@@ -1170,7 +1170,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
@@ -1187,7 +1187,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RESC1;
             break;
         case RESC1:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
             {
                 right_board_hole = right_board_hole->info.codep;
@@ -1228,7 +1228,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = left_board_hole;
@@ -1240,7 +1240,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LEB1;
             break;
         case LEB1:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
                 break;
             jump_stack_pointer++;
@@ -1264,7 +1264,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
@@ -1276,7 +1276,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = REB1;
             break;
         case REB1:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
                 break;
             jump_stack_pointer++;
@@ -1305,7 +1305,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = LSRCH1;
             break;
         case LSRCH1:
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
             {
                 left_board_hole = left_board_hole->info.codep;
@@ -1325,7 +1325,7 @@ void rfrun(T_ST *ast) // adress of current state table
             i_state = RSRCH1;
             break;
         case RSRCH1:
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
             {
                 right_board_hole = right_board_hole->info.codep;
@@ -1384,7 +1384,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // LESPC(L);
         case LESPC:
             left_board_hole = table_elements[number_element + 1];
-            SHB1;
+            SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             if (!spc(virtual_program_counter, left_board_hole))
@@ -1412,7 +1412,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RESPC(L);
         case RESPC:
             right_board_hole = table_elements[number_element];
-            SHB2;
+            SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             if (!spc(virtual_program_counter, right_board_hole))
@@ -1464,7 +1464,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // EOR;
         case EOR:
-            current_linkcb_free_memory_pointer = free_memory_list_head_pointer;
+            current_linkcb_free_memory = free_memory_list_head;
             last_acted_k = &quasik;
             last_gen_left_bracket = NULL;
             transplantation_stack_pointer = transplantation_stack;
@@ -1472,17 +1472,17 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // NS(S);
         case NS:
-            SHF;
-            memcpy(&current_linkcb_free_memory_pointer->tag, virtual_program_counter + NMBL, SMBL);
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            memcpy(&current_linkcb_free_memory->tag, virtual_program_counter + NMBL, SMBL);
             virtual_program_counter += NMBL + SMBL;
             i_state = NEXTOP;
             break;
             // NSO(N);
         case NSO:
-            SHF;
-            current_linkcb_free_memory_pointer->tag = TAGO;
-            current_linkcb_free_memory_pointer->info.code = NULL;
-            current_linkcb_free_memory_pointer->info.infoc = (char)*(virtual_program_counter + 1);
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            current_linkcb_free_memory->tag = TAGO;
+            current_linkcb_free_memory->info.code = NULL;
+            current_linkcb_free_memory->info.infoc = (char)*(virtual_program_counter + 1);
             virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1493,16 +1493,16 @@ void rfrun(T_ST *ast) // adress of current state table
             bool lack = false;
             for (i = 1; i <= n; i++)
             {
-                current_linkcb_free_memory_pointer = current_linkcb_free_memory_pointer->next;
-                if (current_linkcb_free_memory_pointer == free_memory_list_head_pointer)
+                current_linkcb_free_memory = current_linkcb_free_memory->next;
+                if (current_linkcb_free_memory == free_memory_list_head)
                 {
                     i_state = LACK;
                     lack = true;
                     break;
                 }
-                current_linkcb_free_memory_pointer->tag = TAGO;
-                current_linkcb_free_memory_pointer->info.code = NULL;
-                current_linkcb_free_memory_pointer->info.infoc = (char)*virtual_program_counter;
+                current_linkcb_free_memory->tag = TAGO;
+                current_linkcb_free_memory->info.code = NULL;
+                current_linkcb_free_memory->info.infoc = (char)*virtual_program_counter;
                 virtual_program_counter += NMBL;
             };
             if (lack)
@@ -1511,39 +1511,39 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // BL;
         case BL:
-            SHF;
-            current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-            last_gen_left_bracket = current_linkcb_free_memory_pointer;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+            last_gen_left_bracket = current_linkcb_free_memory;
             i_state = ADVANCE;
             break;
             // BR;
         case BR:
-            SHF;
-            current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-            temp_linkcb_free_memory_pointer = last_gen_left_bracket->info.codep;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+            temp_linkcb_free_memory = last_gen_left_bracket->info.codep;
             last_gen_left_bracket->tag = TAGLB;
-            last_gen_left_bracket->info.codep = current_linkcb_free_memory_pointer;
-            current_linkcb_free_memory_pointer->tag = TAGRB;
-            last_gen_left_bracket = temp_linkcb_free_memory_pointer;
+            last_gen_left_bracket->info.codep = current_linkcb_free_memory;
+            current_linkcb_free_memory->tag = TAGRB;
+            last_gen_left_bracket = temp_linkcb_free_memory;
             i_state = ADVANCE;
             break;
             // BLR;
         case BLR:
-            SHF;
-            temp_linkcb_free_memory_pointer = current_linkcb_free_memory_pointer;
-            SHF;
-            temp_linkcb_free_memory_pointer->info.codep = current_linkcb_free_memory_pointer;
-            current_linkcb_free_memory_pointer->info.codep = temp_linkcb_free_memory_pointer;
-            temp_linkcb_free_memory_pointer->tag = TAGLB;
-            current_linkcb_free_memory_pointer->tag = TAGRB;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            temp_linkcb_free_memory = current_linkcb_free_memory;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            temp_linkcb_free_memory->info.codep = current_linkcb_free_memory;
+            current_linkcb_free_memory->info.codep = temp_linkcb_free_memory;
+            temp_linkcb_free_memory->tag = TAGLB;
+            current_linkcb_free_memory->tag = TAGRB;
             i_state = ADVANCE;
             break;
             // BRACT;
         case BRACT:
-            SHF;
-            current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-            current_linkcb_free_memory_pointer->tag = TAGD;
-            last_acted_k->info.codep = current_linkcb_free_memory_pointer;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+            current_linkcb_free_memory->tag = TAGD;
+            last_acted_k->info.codep = current_linkcb_free_memory;
             last_acted_k->tag = TAGK;
             last_acted_k = last_gen_left_bracket;
             last_gen_left_bracket = last_gen_left_bracket->info.codep;
@@ -1562,8 +1562,8 @@ void rfrun(T_ST *ast) // adress of current state table
             // MULS;
         case MULS:
             n = *(virtual_program_counter + NMBL);
-            SHF;
-            memcpy(&current_linkcb_free_memory_pointer->tag, &table_elements[n]->tag, SMBL);
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            memcpy(&current_linkcb_free_memory->tag, &table_elements[n]->tag, SMBL);
             virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
@@ -1571,37 +1571,37 @@ void rfrun(T_ST *ast) // adress of current state table
         case MULE:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            temp_linkcb_pointer = table_elements[n - 1]->prev;
+            temp_linkcb = table_elements[n - 1]->prev;
             lack = false;
-            while (temp_linkcb_pointer != table_elements[n])
+            while (temp_linkcb != table_elements[n])
             {
-                temp_linkcb_pointer = temp_linkcb_pointer->next;
-                current_linkcb_free_memory_pointer = current_linkcb_free_memory_pointer->next;
-                if (current_linkcb_free_memory_pointer == free_memory_list_head_pointer)
+                temp_linkcb = temp_linkcb->next;
+                current_linkcb_free_memory = current_linkcb_free_memory->next;
+                if (current_linkcb_free_memory == free_memory_list_head)
                 {
                     i_state = LACK;
                     lack = true;
                     break;
                 }
-                if (BRA(temp_linkcb_pointer))
+                if (BRA(temp_linkcb))
                 {
-                    if (temp_linkcb_pointer->tag != TAGRB)
+                    if (temp_linkcb->tag != TAGRB)
                     {
-                        current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-                        last_gen_left_bracket = current_linkcb_free_memory_pointer;
+                        current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+                        last_gen_left_bracket = current_linkcb_free_memory;
                     }
                     else
                     {
-                        current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-                        current_linkcb_free_memory_pointer->tag = TAGRB;
-                        temp_linkcb_free_memory_pointer = last_gen_left_bracket->info.codep;
-                        last_gen_left_bracket->info.codep = current_linkcb_free_memory_pointer;
+                        current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+                        current_linkcb_free_memory->tag = TAGRB;
+                        temp_linkcb_free_memory = last_gen_left_bracket->info.codep;
+                        last_gen_left_bracket->info.codep = current_linkcb_free_memory;
                         last_gen_left_bracket->tag = TAGLB;
-                        last_gen_left_bracket = temp_linkcb_free_memory_pointer;
+                        last_gen_left_bracket = temp_linkcb_free_memory;
                     };
                 }
                 else
-                    memcpy(&current_linkcb_free_memory_pointer->tag, &temp_linkcb_pointer->tag, SMBL);
+                    memcpy(&current_linkcb_free_memory->tag, &temp_linkcb->tag, SMBL);
             };
             if (lack)
                 break;
@@ -1619,7 +1619,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = NEXTOP;
                 break;
             }
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory_pointer, &table_elements[n], &table_elements[m]);
+            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[m]);
             transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
@@ -1634,7 +1634,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = NEXTOP;
                 break;
             }
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory_pointer, &table_elements[n - 1], &table_elements[n]);
+            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n - 1], &table_elements[n]);
             transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
@@ -1642,7 +1642,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case TPLS:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory_pointer, &table_elements[n], &table_elements[n]);
+            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[n]);
             transplantation_stack_pointer++;
             i_state = NEXTOP;
             break;
@@ -1651,56 +1651,56 @@ void rfrun(T_ST *ast) // adress of current state table
             last_acted_k->info.codep = table_elements[1]->info.codep;
             last_acted_k->tag = TAGK;
             // item adress followed by result
-            T_LINKCB *nextr = current_linkcb_free_memory_pointer->next;
+            T_LINKCB *nextr = current_linkcb_free_memory->next;
             // execute planned transplantation
             // EOS1:
             while (transplantation_stack_pointer != transplantation_stack)
             {
                 transplantation_stack_pointer--;
-                getts(transplantation_stack_pointer, &current_linkcb_free_memory_pointer, &temp_linkcb_pointer, &temp_linkcb_free_memory_pointer);
-                LINK(temp_linkcb_pointer->prev, temp_linkcb_free_memory_pointer->next);
-                LINK(temp_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer->next);
-                LINK(current_linkcb_free_memory_pointer, temp_linkcb_pointer);
+                getts(transplantation_stack_pointer, &current_linkcb_free_memory, &temp_linkcb, &temp_linkcb_free_memory);
+                LINK(temp_linkcb->prev, temp_linkcb_free_memory->next);
+                LINK(temp_linkcb_free_memory, current_linkcb_free_memory->next);
+                LINK(current_linkcb_free_memory, temp_linkcb);
             }
             // include replace result
             // INSRES:
-            if (free_memory_list_head_pointer->next == nextr)
+            if (free_memory_list_head->next == nextr)
             {
                 LINK(table_elements[1]->prev, table_elements[2]->next);
             }
             else
             {
                 LINK(nextr->prev, table_elements[2]->next);
-                LINK(table_elements[1]->prev, free_memory_list_head_pointer->next);
+                LINK(table_elements[1]->prev, free_memory_list_head->next);
             };
             //  delete < and >
             // DELKD:
             LINK(table_elements[2], nextr);
-            LINK(free_memory_list_head_pointer, table_elements[1]);
+            LINK(free_memory_list_head, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // SWAP;
             //  static box head is after operator code
         case SWAP:
             virtual_program_counter += NMBL;
-            current_linkcb_free_memory_pointer = (T_LINKCB *)virtual_program_counter;
-            if (current_linkcb_free_memory_pointer->prev != NULL)
+            current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
+            if (current_linkcb_free_memory->prev != NULL)
             {
                 i_state = SWAPREF;
                 break;
             }
-            LINK(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
-            current_linkcb_free_memory_pointer->info.codep = refal.svar;
-            current_linkcb_free_memory_pointer->tag = TAGO;
-            refal.svar = current_linkcb_free_memory_pointer;
+            LINK(current_linkcb_free_memory, current_linkcb_free_memory);
+            current_linkcb_free_memory->info.codep = refal.svar;
+            current_linkcb_free_memory->tag = TAGO;
+            refal.svar = current_linkcb_free_memory;
             i_state = SWAPREF;
             break;
         case SWAPREF:
             quasik.info.codep = table_elements[1]->info.codep;
-            if (current_linkcb_free_memory_pointer->next != current_linkcb_free_memory_pointer)
+            if (current_linkcb_free_memory->next != current_linkcb_free_memory)
             {
-                LINK(current_linkcb_free_memory_pointer->prev, table_elements[2]->next);
-                LINK(table_elements[1]->prev, current_linkcb_free_memory_pointer->next);
+                LINK(current_linkcb_free_memory->prev, table_elements[2]->next);
+                LINK(table_elements[1]->prev, current_linkcb_free_memory->next);
             }
             else
             {
@@ -1708,26 +1708,26 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             if (table_elements[3]->next != table_elements[2])
             {
-                LINK(table_elements[2]->prev, current_linkcb_free_memory_pointer);
-                LINK(current_linkcb_free_memory_pointer, table_elements[3]->next);
+                LINK(table_elements[2]->prev, current_linkcb_free_memory);
+                LINK(current_linkcb_free_memory, table_elements[3]->next);
                 LINK(table_elements[3], table_elements[2]);
             }
             else
             {
-                LINK(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
+                LINK(current_linkcb_free_memory, current_linkcb_free_memory);
             }
-            LINK(table_elements[2], free_memory_list_head_pointer->next);
-            LINK(free_memory_list_head_pointer, table_elements[1]);
+            LINK(table_elements[2], free_memory_list_head->next);
+            LINK(free_memory_list_head, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // BLF(L);
         case BLF:
-            SHF;
-            current_linkcb_free_memory_pointer->info.codep = last_gen_left_bracket;
-            last_gen_left_bracket = current_linkcb_free_memory_pointer;
-            SHF;
-            memcpy(&current_linkcb_free_memory_pointer->info.codef, virtual_program_counter + NMBL, LBLL);
-            current_linkcb_free_memory_pointer->tag = TAGF;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            current_linkcb_free_memory->info.codep = last_gen_left_bracket;
+            last_gen_left_bracket = current_linkcb_free_memory;
+            SHIFT_CURRENT_LINKCB_FREE_MEMORY;
+            memcpy(&current_linkcb_free_memory->info.codef, virtual_program_counter + NMBL, LBLL);
+            current_linkcb_free_memory->tag = TAGF;
             virtual_program_counter += NMBL + LBLL;
             i_state = NEXTOP;
             break;
@@ -1761,8 +1761,8 @@ void rfrun(T_ST *ast) // adress of current state table
         case CFDONE:
             quasik.info.codep = refal.nextr->info.codep;
             LINK(refal.nextr->prev, refal.nexta->next);
-            LINK(refal.nexta, free_memory_list_head_pointer->next);
-            LINK(free_memory_list_head_pointer, refal.nextr);
+            LINK(refal.nexta, free_memory_list_head->next);
+            LINK(free_memory_list_head, refal.nextr);
             i_state = ADVSTEP;
             break;
             //        return from C - function
@@ -1770,8 +1770,8 @@ void rfrun(T_ST *ast) // adress of current state table
         case CFLACK:
             if (refal.prevr->next != refal.nextr)
             {
-                LINK(refal.nextr->prev, free_memory_list_head_pointer->next);
-                LINK(free_memory_list_head_pointer, refal.prevr->next);
+                LINK(refal.nextr->prev, free_memory_list_head->next);
+                LINK(free_memory_list_head, refal.prevr->next);
                 LINK(refal.prevr, refal.nextr);
             }
             ast->state = 3;
