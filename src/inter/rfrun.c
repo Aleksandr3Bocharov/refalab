@@ -43,6 +43,10 @@
         break;                                                                     \
     }
 
+#define LINK(x, y) \
+    x->next = y;   \
+    y->prev = x
+
 #define PUTJS(ab1, ab2, anel, avpc)             \
     jump_stack_pointer->left_board_hole = ab1;  \
     jump_stack_pointer->right_board_hole = ab2; \
@@ -243,7 +247,6 @@ static void (*function_c_pointer)(void);
 static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
-static void link(T_LINKCB *x, T_LINKCB *y);
 static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 static void getts(const T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
@@ -1655,23 +1658,25 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 transplantation_stack_pointer--;
                 getts(transplantation_stack_pointer, &current_linkcb_free_memory_pointer, &temp_linkcb_pointer, &temp_linkcb_free_memory_pointer);
-                link(temp_linkcb_pointer->prev, temp_linkcb_free_memory_pointer->next);
-                link(temp_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer->next);
-                link(current_linkcb_free_memory_pointer, temp_linkcb_pointer);
+                LINK(temp_linkcb_pointer->prev, temp_linkcb_free_memory_pointer->next);
+                LINK(temp_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer->next);
+                LINK(current_linkcb_free_memory_pointer, temp_linkcb_pointer);
             }
             // include replace result
             // INSRES:
             if (free_memory_list_head_pointer->next == nextr)
-                link(table_elements[1]->prev, table_elements[2]->next);
+            {
+                LINK(table_elements[1]->prev, table_elements[2]->next);
+            }
             else
             {
-                link(nextr->prev, table_elements[2]->next);
-                link(table_elements[1]->prev, free_memory_list_head_pointer->next);
+                LINK(nextr->prev, table_elements[2]->next);
+                LINK(table_elements[1]->prev, free_memory_list_head_pointer->next);
             };
             //  delete < and >
             // DELKD:
-            link(table_elements[2], nextr);
-            link(free_memory_list_head_pointer, table_elements[1]);
+            LINK(table_elements[2], nextr);
+            LINK(free_memory_list_head_pointer, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // SWAP;
@@ -1684,7 +1689,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 i_state = SWAPREF;
                 break;
             }
-            link(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
+            LINK(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
             current_linkcb_free_memory_pointer->info.codep = refal.svar;
             current_linkcb_free_memory_pointer->tag = TAGO;
             refal.svar = current_linkcb_free_memory_pointer;
@@ -1694,21 +1699,25 @@ void rfrun(T_ST *ast) // adress of current state table
             quasik.info.codep = table_elements[1]->info.codep;
             if (current_linkcb_free_memory_pointer->next != current_linkcb_free_memory_pointer)
             {
-                link(current_linkcb_free_memory_pointer->prev, table_elements[2]->next);
-                link(table_elements[1]->prev, current_linkcb_free_memory_pointer->next);
+                LINK(current_linkcb_free_memory_pointer->prev, table_elements[2]->next);
+                LINK(table_elements[1]->prev, current_linkcb_free_memory_pointer->next);
             }
             else
-                link(table_elements[1]->prev, table_elements[2]->next);
+            {
+                LINK(table_elements[1]->prev, table_elements[2]->next);
+            }
             if (table_elements[3]->next != table_elements[2])
             {
-                link(table_elements[2]->prev, current_linkcb_free_memory_pointer);
-                link(current_linkcb_free_memory_pointer, table_elements[3]->next);
-                link(table_elements[3], table_elements[2]);
+                LINK(table_elements[2]->prev, current_linkcb_free_memory_pointer);
+                LINK(current_linkcb_free_memory_pointer, table_elements[3]->next);
+                LINK(table_elements[3], table_elements[2]);
             }
             else
-                link(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
-            link(table_elements[2], free_memory_list_head_pointer->next);
-            link(free_memory_list_head_pointer, table_elements[1]);
+            {
+                LINK(current_linkcb_free_memory_pointer, current_linkcb_free_memory_pointer);
+            }
+            LINK(table_elements[2], free_memory_list_head_pointer->next);
+            LINK(free_memory_list_head_pointer, table_elements[1]);
             i_state = ADVSTEP;
             break;
             // BLF(L);
@@ -1751,9 +1760,9 @@ void rfrun(T_ST *ast) // adress of current state table
             //          step is done
         case CFDONE:
             quasik.info.codep = refal.nextr->info.codep;
-            link(refal.nextr->prev, refal.nexta->next);
-            link(refal.nexta, free_memory_list_head_pointer->next);
-            link(free_memory_list_head_pointer, refal.nextr);
+            LINK(refal.nextr->prev, refal.nexta->next);
+            LINK(refal.nexta, free_memory_list_head_pointer->next);
+            LINK(free_memory_list_head_pointer, refal.nextr);
             i_state = ADVSTEP;
             break;
             //        return from C - function
@@ -1761,9 +1770,9 @@ void rfrun(T_ST *ast) // adress of current state table
         case CFLACK:
             if (refal.prevr->next != refal.nextr)
             {
-                link(refal.nextr->prev, free_memory_list_head_pointer->next);
-                link(free_memory_list_head_pointer, refal.prevr->next);
-                link(refal.prevr, refal.nextr);
+                LINK(refal.nextr->prev, free_memory_list_head_pointer->next);
+                LINK(free_memory_list_head_pointer, refal.prevr->next);
+                LINK(refal.prevr, refal.nextr);
             }
             ast->state = 3;
             i_state = EXIT;
@@ -1965,13 +1974,6 @@ static bool digit(char s)
     if (s >= '0' && s <= '9')
         return true;
     return false;
-}
-
-static void link(T_LINKCB *x, T_LINKCB *y)
-{
-    x->next = y;
-    y->prev = x;
-    return;
 }
 
 static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
