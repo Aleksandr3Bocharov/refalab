@@ -1482,7 +1482,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHIFT_CURRENT_LINKCB_FREE_MEMORY;
             current_linkcb_free_memory->tag = TAGO;
             current_linkcb_free_memory->info.code = NULL;
-            current_linkcb_free_memory->info.infoc = (char)*(virtual_program_counter + 1);
+            current_linkcb_free_memory->info.infoc = (char)*(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
             i_state = NEXTOP;
             break;
