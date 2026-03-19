@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-11
+// 2026-03-19
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.H  ---------------
@@ -83,7 +83,6 @@
 #define n_br 0102
 #define n_blr 0103
 #define n_bract 0104
-#define n_act 0105
 #define n_muls 0106
 #define n_mule 0107
 #define n_tpl 0110
