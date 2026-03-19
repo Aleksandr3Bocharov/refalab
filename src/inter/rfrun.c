@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-18
+// 2026-03-19
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -152,7 +152,6 @@ typedef enum i_states
     BR,
     BLR,
     BRACT,
-    ACT,
     MULS,
     MULE,
     TPL,
@@ -569,9 +568,6 @@ void rfrun(T_ST *ast) // adress of current state table
                 break;
             case 0104:
                 i_state = BRACT;
-                break;
-            case 0105:
-                i_state = ACT;
                 break;
             case 0106:
                 i_state = MULS;
@@ -1548,16 +1544,6 @@ void rfrun(T_ST *ast) // adress of current state table
             last_acted_k = last_gen_left_bracket;
             last_gen_left_bracket = last_gen_left_bracket->info.codep;
             i_state = ADVANCE;
-            break;
-            // ACT(N);
-        case ACT:
-            n = *(virtual_program_counter + NMBL);
-            last_acted_k->info.codep = table_elements[n];
-            last_acted_k->tag = TAGK;
-            last_acted_k = table_elements[n]->info.codep;
-            table_elements[n]->tag = TAGD;
-            virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
             break;
             // MULS;
         case MULS:
