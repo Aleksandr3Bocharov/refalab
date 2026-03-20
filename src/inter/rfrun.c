@@ -23,7 +23,7 @@
     left_board_hole = left_board_hole->next; \
     if (left_board_hole == right_board_hole) \
     {                                        \
-        interpretator_state = FAIL;                      \
+        interpretator_state = FAIL;          \
         break;                               \
     }
 
@@ -31,7 +31,7 @@
     right_board_hole = right_board_hole->prev; \
     if (right_board_hole == left_board_hole)   \
     {                                          \
-        interpretator_state = FAIL;                        \
+        interpretator_state = FAIL;            \
         break;                                 \
     }
 
@@ -39,7 +39,7 @@
     current_linkcb_free_memory = current_linkcb_free_memory->next; \
     if (current_linkcb_free_memory == free_memory_list_head)       \
     {                                                              \
-        interpretator_state = LACK;                                            \
+        interpretator_state = LACK;                                \
         break;                                                     \
     }
 
@@ -59,12 +59,12 @@
     anel = jump_stack_pointer->number_element;  \
     avpc = jump_stack_pointer->virtual_program_counter
 
-#define PUT_TRANSPLANTATION_STACK(az, ax, ay)                    \
+#define PUT_TRANSPLANTATION_STACK(az, ax, ay)                   \
     transplantation_stack_pointer->transplantation_stack0 = az; \
     transplantation_stack_pointer->transplantation_stack1 = ax; \
     transplantation_stack_pointer->transplantation_stack2 = ay
 
-#define GET_TRANSPLANTATION_STACK(az, ax, ay)                    \
+#define GET_TRANSPLANTATION_STACK(az, ax, ay)                   \
     az = transplantation_stack_pointer->transplantation_stack0; \
     ax = transplantation_stack_pointer->transplantation_stack1; \
     ay = transplantation_stack_pointer->transplantation_stack2
@@ -1602,9 +1602,7 @@ void rfrun(T_ST *ast) // adress of current state table
             interpretator_state = NEXTOP;
             break;
             // TPL(N,M);
-            // TPLM(N,M);
         case TPL:
-        case TPLM:
             n = *(virtual_program_counter + NMBL);
             m = *(virtual_program_counter + NMBL + NMBL);
             virtual_program_counter += NMBL * 3;
@@ -1617,10 +1615,17 @@ void rfrun(T_ST *ast) // adress of current state table
             transplantation_stack_pointer++;
             interpretator_state = NEXTOP;
             break;
+            // TPLM(N,M);
+        case TPLM:
+            n = *(virtual_program_counter + NMBL);
+            m = *(virtual_program_counter + NMBL + NMBL);
+            virtual_program_counter += NMBL * 3;
+            PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n], table_elements[m]);
+            transplantation_stack_pointer++;
+            interpretator_state = NEXTOP;
+            break;
             // TPLE(N); (= TPL(N-1,N);)
-            // TPLV(N);
         case TPLE:
-        case TPLV:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
             if (table_elements[n]->next == table_elements[n - 1])
@@ -1628,6 +1633,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 interpretator_state = NEXTOP;
                 break;
             }
+            PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n - 1], table_elements[n]);
+            transplantation_stack_pointer++;
+            interpretator_state = NEXTOP;
+            break;
+            // TPLV(N); (= TPLM(N-1,N);)
+        case TPLV:
+            n = *(virtual_program_counter + NMBL);
+            virtual_program_counter += NMBL + NMBL;
             PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n - 1], table_elements[n]);
             transplantation_stack_pointer++;
             interpretator_state = NEXTOP;
