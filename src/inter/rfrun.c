@@ -23,7 +23,7 @@
     left_board_hole = left_board_hole->next; \
     if (left_board_hole == right_board_hole) \
     {                                        \
-        i_state = FAIL;                      \
+        interpretator_state = FAIL;                      \
         break;                               \
     }
 
@@ -31,7 +31,7 @@
     right_board_hole = right_board_hole->prev; \
     if (right_board_hole == left_board_hole)   \
     {                                          \
-        i_state = FAIL;                        \
+        interpretator_state = FAIL;                        \
         break;                                 \
     }
 
@@ -39,7 +39,7 @@
     current_linkcb_free_memory = current_linkcb_free_memory->next; \
     if (current_linkcb_free_memory == free_memory_list_head)       \
     {                                                              \
-        i_state = LACK;                                            \
+        interpretator_state = LACK;                                            \
         break;                                                     \
     }
 
@@ -47,19 +47,29 @@
     x->next = y;   \
     y->prev = x
 
-#define PUTJS(ab1, ab2, anel, avpc)             \
+#define PUT_JUMP_STACK(ab1, ab2, anel, avpc)    \
     jump_stack_pointer->left_board_hole = ab1;  \
     jump_stack_pointer->right_board_hole = ab2; \
     jump_stack_pointer->number_element = anel;  \
     jump_stack_pointer->virtual_program_counter = avpc
 
-#define GETJS(ab1, ab2, anel, avpc)             \
+#define GET_JUMP_STACK(ab1, ab2, anel, avpc)    \
     ab1 = jump_stack_pointer->left_board_hole;  \
     ab2 = jump_stack_pointer->right_board_hole; \
     anel = jump_stack_pointer->number_element;  \
     avpc = jump_stack_pointer->virtual_program_counter
 
-typedef enum i_states
+#define PUT_TRANSPLANTATION_STACK(az, ax, ay)                    \
+    transplantation_stack_pointer->transplantation_stack0 = *az; \
+    transplantation_stack_pointer->transplantation_stack1 = *ax; \
+    transplantation_stack_pointer->transplantation_stack2 = *ay
+
+#define GET_TRANSPLANTATION_STACK(az, ax, ay)                    \
+    *az = transplantation_stack_pointer->transplantation_stack0; \
+    *ax = transplantation_stack_pointer->transplantation_stack1; \
+    *ay = transplantation_stack_pointer->transplantation_stack2
+
+typedef enum intepretator_states
 {
     START,
     ADVSTEP,
@@ -166,9 +176,9 @@ typedef enum i_states
     CFUNC,
     CFDONE,
     CFLACK
-} T_I_STATES;
+} T_INTERPRETATOR_STATES;
 
-typedef enum sp_states
+typedef enum specifier_states
 {
     SPCRET,
     SPCNXT,
@@ -185,7 +195,7 @@ typedef enum sp_states
     SPCD,
     SPCO,
     SPCL
-} T_SP_STATES;
+} T_SPECIFIER_STATES;
 
 typedef struct sav_
 { // save area for var-part of refal-block
@@ -246,8 +256,6 @@ static void (*function_c_pointer)(void);
 static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
-static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
-static void getts(const T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az);
 
 void rfrun(T_ST *ast) // adress of current state table
 {
@@ -274,21 +282,21 @@ void rfrun(T_ST *ast) // adress of current state table
     quasik.info.codep = ast->dot;
     // adress of free memory list head
     T_LINKCB *free_memory_list_head = refal.flhead;
-    T_I_STATES i_state = START;
+    T_INTERPRETATOR_STATES interpretator_state = START;
     while (true)
-        switch (i_state)
+        switch (interpretator_state)
         {
             // start of next step
         case START:
             if (ast->step >= ast->stop)
             {
-                i_state = DONE;
+                interpretator_state = DONE;
                 break;
             }
             right_board_hole = quasik.info.codep;
             if (right_board_hole == NULL)
             {
-                i_state = DONE;
+                interpretator_state = DONE;
                 break;
             }
             temp_board_hole = right_board_hole->info.codep;
@@ -296,7 +304,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter = left_board_hole->info.codef;
             if (left_board_hole->tag != TAGF)
             {
-                i_state = REF;
+                interpretator_state = REF;
                 break;
             }
             // here must be check on c-function
@@ -306,40 +314,40 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
             number_element = 4;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // increase step number
         case ADVSTEP:
             ast->step++;
-            i_state = START;
+            interpretator_state = START;
             break;
             // symbol - reference execution
         case REF:
             if (left_board_hole->tag != TAGR)
             {
-                i_state = RCGIMP;
+                interpretator_state = RCGIMP;
                 break;
             }
             table_elements[1] = temp_board_hole;
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
-            i_state = SWAPREF;
+            interpretator_state = SWAPREF;
             break;
             // interpreter exits
             // store state
         case DONE:
             ast->state = 1; // normal end
-            i_state = EXIT;
+            interpretator_state = EXIT;
             break;
         case RCGIMP:
             ast->state = 2; // recognition impossible
-            i_state = EXIT;
+            interpretator_state = EXIT;
             break;
         case LACK:
             ast->state = 3; // end of free memory
             quasik.info.codep = table_elements[2];
-            i_state = EXIT;
+            interpretator_state = EXIT;
             break;
             // state remove from
         case EXIT:
@@ -363,269 +371,269 @@ void rfrun(T_ST *ast) // adress of current state table
             switch (operation_program_code)
             {
             case 0000:
-                i_state = ADVANCE;
+                interpretator_state = ADVANCE;
                 break;
             case 0001:
-                i_state = SJUMP;
+                interpretator_state = SJUMP;
                 break;
             case 0002:
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             case 0003:
-                i_state = SB;
+                interpretator_state = SB;
                 break;
             case 0004:
-                i_state = LSC;
+                interpretator_state = LSC;
                 break;
             case 0005:
-                i_state = RSC;
+                interpretator_state = RSC;
                 break;
             case 0006:
-                i_state = LSCO;
+                interpretator_state = LSCO;
                 break;
             case 0007:
-                i_state = RSCO;
+                interpretator_state = RSCO;
                 break;
             case 0010:
-                i_state = LSD;
+                interpretator_state = LSD;
                 break;
             case 0011:
-                i_state = RSD;
+                interpretator_state = RSD;
                 break;
             case 0012:
-                i_state = LTXT;
+                interpretator_state = LTXT;
                 break;
             case 0013:
-                i_state = RTXT;
+                interpretator_state = RTXT;
                 break;
             case 0014:
-                i_state = LB;
+                interpretator_state = LB;
                 break;
             case 0015:
-                i_state = LBY;
+                interpretator_state = LBY;
                 break;
             case 0016:
-                i_state = RB;
+                interpretator_state = RB;
                 break;
             case 0017:
-                i_state = RBY;
+                interpretator_state = RBY;
                 break;
             case 0020:
-                i_state = LS;
+                interpretator_state = LS;
                 break;
             case 0021:
-                i_state = RS;
+                interpretator_state = RS;
                 break;
             case 0022:
-                i_state = LW;
+                interpretator_state = LW;
                 break;
             case 0023:
-                i_state = RW;
+                interpretator_state = RW;
                 break;
             case 0024:
-                i_state = LBNIL;
+                interpretator_state = LBNIL;
                 break;
             case 0025:
-                i_state = RBNIL;
+                interpretator_state = RBNIL;
                 break;
             case 0026:
-                i_state = LBCE;
+                interpretator_state = LBCE;
                 break;
             case 0027:
-                i_state = RBCE;
+                interpretator_state = RBCE;
                 break;
             case 0030:
-                i_state = NIL;
+                interpretator_state = NIL;
                 break;
             case 0031:
-                i_state = CE;
+                interpretator_state = CE;
                 break;
             case 0032:
-                i_state = LED;
+                interpretator_state = LED;
                 break;
             case 0033:
-                i_state = RED;
+                interpretator_state = RED;
                 break;
             case 0034:
-                i_state = NNIL;
+                interpretator_state = NNIL;
                 break;
             case 0035:
-                i_state = PLE;
+                interpretator_state = PLE;
                 break;
             case 0036:
-                i_state = PLV;
+                interpretator_state = PLV;
                 break;
             case 0037:
-                i_state = LE;
+                interpretator_state = LE;
                 break;
             case 0040:
-                i_state = PRE;
+                interpretator_state = PRE;
                 break;
             case 0041:
-                i_state = PRV;
+                interpretator_state = PRV;
                 break;
             case 0042:
-                i_state = RE;
+                interpretator_state = RE;
                 break;
             case 0043:
-                i_state = PLESC;
+                interpretator_state = PLESC;
                 break;
             case 0044:
-                i_state = PLVSC;
+                interpretator_state = PLVSC;
                 break;
             case 0045:
-                i_state = LESC;
+                interpretator_state = LESC;
                 break;
             case 0046:
-                i_state = PRESC;
+                interpretator_state = PRESC;
                 break;
             case 0047:
-                i_state = PRVSC;
+                interpretator_state = PRVSC;
                 break;
             case 0050:
-                i_state = RESC;
+                interpretator_state = RESC;
                 break;
             case 0051:
-                i_state = LESD;
+                interpretator_state = LESD;
                 break;
             case 0052:
-                i_state = RESD;
+                interpretator_state = RESD;
                 break;
             case 0053:
-                i_state = PLEB;
+                interpretator_state = PLEB;
                 break;
             case 0054:
-                i_state = PLVB;
+                interpretator_state = PLVB;
                 break;
             case 0055:
-                i_state = LEB;
+                interpretator_state = LEB;
                 break;
             case 0056:
-                i_state = PREB;
+                interpretator_state = PREB;
                 break;
             case 0057:
-                i_state = PRVB;
+                interpretator_state = PRVB;
                 break;
             case 0060:
-                i_state = REB;
+                interpretator_state = REB;
                 break;
             case 0061:
-                i_state = EOE;
+                interpretator_state = EOE;
                 break;
             case 0062:
-                i_state = EOEI;
+                interpretator_state = EOEI;
                 break;
             case 0063:
-                i_state = LSRCH;
+                interpretator_state = LSRCH;
                 break;
             case 0064:
-                i_state = RSRCH;
+                interpretator_state = RSRCH;
                 break;
             case 0065:
-                i_state = WSPC;
+                interpretator_state = WSPC;
                 break;
             case 0066:
-                i_state = ESPC;
+                interpretator_state = ESPC;
                 break;
             case 0067:
-                i_state = PLESPC;
+                interpretator_state = PLESPC;
                 break;
             case 0070:
-                i_state = LESPC;
+                interpretator_state = LESPC;
                 break;
             case 0071:
-                i_state = PRESPC;
+                interpretator_state = PRESPC;
                 break;
             case 0072:
-                i_state = RESPC;
+                interpretator_state = RESPC;
                 break;
             case 0073:
-                i_state = LMAX;
+                interpretator_state = LMAX;
                 break;
             case 0074:
-                i_state = RMAX;
+                interpretator_state = RMAX;
                 break;
             case 0075:
-                i_state = EOR;
+                interpretator_state = EOR;
                 break;
             case 0076:
-                i_state = NS;
+                interpretator_state = NS;
                 break;
             case 0077:
-                i_state = NSO;
+                interpretator_state = NSO;
                 break;
             case 0100:
-                i_state = TEXT;
+                interpretator_state = TEXT;
                 break;
             case 0101:
-                i_state = BL;
+                interpretator_state = BL;
                 break;
             case 0102:
-                i_state = BR;
+                interpretator_state = BR;
                 break;
             case 0103:
-                i_state = BLR;
+                interpretator_state = BLR;
                 break;
             case 0104:
-                i_state = BRACT;
+                interpretator_state = BRACT;
                 break;
             case 0106:
-                i_state = MULS;
+                interpretator_state = MULS;
                 break;
             case 0107:
-                i_state = MULE;
+                interpretator_state = MULE;
                 break;
             case 0110:
-                i_state = TPL;
+                interpretator_state = TPL;
                 break;
             case 0111:
-                i_state = TPLM;
+                interpretator_state = TPLM;
                 break;
             case 0112:
-                i_state = TPLE;
+                interpretator_state = TPLE;
                 break;
             case 0113:
-                i_state = TPLV;
+                interpretator_state = TPLV;
                 break;
             case 0114:
-                i_state = TPLS;
+                interpretator_state = TPLS;
                 break;
             case 0115:
-                i_state = EOS;
+                interpretator_state = EOS;
                 break;
             case 0116:
-                i_state = SWAP;
+                interpretator_state = SWAP;
                 break;
             case 0117:
-                i_state = BLF;
+                interpretator_state = BLF;
                 break;
             case 0122:
-                i_state = CFUNC;
+                interpretator_state = CFUNC;
             };
             break;
             // select next statement assembly language
         case ADVANCE:
             virtual_program_counter += NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // SJUMP(L);
         case SJUMP:
             memcpy(&inch_ptr, virtual_program_counter + NMBL, LBLL);
-            PUTJS(left_board_hole, right_board_hole, number_element, inch_ptr);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, inch_ptr);
             jump_stack_pointer++;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // FAIL;
         case FAIL:
             if (jump_stack_pointer == jump_stack)
             {
-                i_state = RCGIMP;
+                interpretator_state = RCGIMP;
                 break;
             }
             jump_stack_pointer--;
-            GETJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
-            i_state = NEXTOP;
+            GET_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            interpretator_state = NEXTOP;
             break;
             // SB(N,M);
         case SB:
@@ -634,69 +642,69 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = table_elements[n];
             right_board_hole = table_elements[m];
             virtual_program_counter += 3 * NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LSC(S);
         case LSC:
             SHIFT_LEFT_BOARD_HOLE;
             if (memcmp(virtual_program_counter + NMBL, &left_board_hole->tag, SMBL) != 0)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             virtual_program_counter += NMBL + SMBL;
             table_elements[number_element] = left_board_hole;
             number_element++;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RSC(S);
         case RSC:
             SHIFT_RIGHT_BOARD_HOLE;
             if (memcmp(virtual_program_counter + NMBL, &right_board_hole->tag, SMBL) != 0)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             virtual_program_counter += NMBL + SMBL;
             table_elements[number_element] = right_board_hole;
             number_element++;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LSCO(N);
         case LSCO:
             SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != TAGO)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (left_board_hole->info.infoc != (char)*(virtual_program_counter + NMBL))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RSCO(N);
         case RSCO:
             SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != TAGO)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (right_board_hole->info.infoc != (char)*(virtual_program_counter + NMBL))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LSD(N);
         case LSD:
@@ -704,18 +712,18 @@ void rfrun(T_ST *ast) // adress of current state table
             n = *(virtual_program_counter + NMBL);
             if (left_board_hole->tag != table_elements[n]->tag)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (left_board_hole->info.code != table_elements[n]->info.code)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RSD(N);
         case RSD:
@@ -723,35 +731,35 @@ void rfrun(T_ST *ast) // adress of current state table
             n = *(virtual_program_counter + NMBL);
             if (right_board_hole->tag != table_elements[n]->tag)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (right_board_hole->info.code != table_elements[n]->info.code)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LTXT(N,S1,...,SN);
         case LTXT:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            i_state = LTXT1;
+            interpretator_state = LTXT1;
             break;
         case LTXT1:
             SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != TAGO)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (left_board_hole->info.infoc != (char)*virtual_program_counter)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
@@ -760,24 +768,24 @@ void rfrun(T_ST *ast) // adress of current state table
             n--;
             if (n != 0)
                 break;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RTXT(N,S1,...,SN);
         case RTXT:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            i_state = RTXT1;
+            interpretator_state = RTXT1;
             break;
         case RTXT1:
             SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != TAGO)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (right_board_hole->info.infoc != (char)*virtual_program_counter)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
@@ -786,87 +794,87 @@ void rfrun(T_ST *ast) // adress of current state table
             n--;
             if (n != 0)
                 break;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LB;
         case LB:
             SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             right_board_hole = left_board_hole->info.codep;
             table_elements[number_element] = left_board_hole;
             table_elements[number_element + 1] = right_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LBY;
         case LBY:
             SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RB;
         case RB:
             SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             left_board_hole = right_board_hole->info.codep;
             table_elements[number_element] = left_board_hole;
             table_elements[number_element + 1] = right_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RBY;
         case RBY:
             SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element + 1] = right_board_hole;
             right_board_hole = right_board_hole->info.codep;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LS;
         case LS:
             SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = left_board_hole;
             number_element++;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RS;
         case RS:
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             number_element++;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LW;
         case LW:
@@ -876,7 +884,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RW;
         case RW:
@@ -886,54 +894,54 @@ void rfrun(T_ST *ast) // adress of current state table
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LBNIL
         case LBNIL:
             SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             temp_board_hole = left_board_hole;
             left_board_hole = left_board_hole->info.codep;
             if (temp_board_hole->next != left_board_hole)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = temp_board_hole;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RBNIL;
         case RBNIL:
             SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             temp_board_hole = right_board_hole;
             right_board_hole = right_board_hole->info.codep;
             if (right_board_hole->next != temp_board_hole)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = temp_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LBCE;
         case LBCE:
             SHIFT_LEFT_BOARD_HOLE;
             if (NBRA(left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             temp_board_hole = left_board_hole;
@@ -943,14 +951,14 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = temp_board_hole->next;
             table_elements[number_element + 3] = left_board_hole->prev;
             number_element += 4;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // RBCE;
         case RBCE:
             SHIFT_RIGHT_BOARD_HOLE;
             if (NBRA(right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             temp_board_hole = right_board_hole;
@@ -960,114 +968,114 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = right_board_hole->next;
             table_elements[number_element + 3] = temp_board_hole->prev;
             number_element += 4;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // NIL;
         case NIL:
             if (left_board_hole->next != right_board_hole)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // CE;
         case CE:
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = right_board_hole->prev;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LED(N);
         case LED:
             n = *(virtual_program_counter + NMBL);
             table_elements[number_element] = left_board_hole->next;
             temp_board_hole = table_elements[n - 1]->prev;
-            i_state = LED1;
+            interpretator_state = LED1;
             break;
         case LED1:
             if (temp_board_hole == table_elements[n])
             {
-                i_state = LED2;
+                interpretator_state = LED2;
                 break;
             }
             temp_board_hole = temp_board_hole->next;
             SHIFT_LEFT_BOARD_HOLE;
             if (left_board_hole->tag != temp_board_hole->tag)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (left_board_hole->info.code == temp_board_hole->info.code)
                 break;
             if (BRA(left_board_hole))
                 break;
-            i_state = FAIL;
+            interpretator_state = FAIL;
             break;
         case LED2:
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL * 2;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RED(N);
         case RED:
             n = *(virtual_program_counter + NMBL);
             table_elements[number_element + 1] = right_board_hole->prev;
             temp_board_hole = table_elements[n]->next;
-            i_state = RED1;
+            interpretator_state = RED1;
             break;
         case RED1:
             if (temp_board_hole == table_elements[n - 1])
             {
-                i_state = RED2;
+                interpretator_state = RED2;
                 break;
             }
             temp_board_hole = temp_board_hole->prev;
             SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != temp_board_hole->tag)
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             if (right_board_hole->info.code == temp_board_hole->info.code)
                 break;
             if (BRA(right_board_hole))
                 break;
-            i_state = FAIL;
+            interpretator_state = FAIL;
             break;
         case RED2:
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL * 2;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // NNIL;
         case NNIL:
             if (table_elements[number_element - 1]->next == table_elements[number_element - 2])
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PLE;
         case PLE:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PLV;
         case PLV:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LE;
         case LE:
@@ -1078,25 +1086,25 @@ void rfrun(T_ST *ast) // adress of current state table
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PRE;
         case PRE:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PRV;
         case PRV:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = right_board_hole->prev;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RE;
         case RE:
@@ -1107,36 +1115,36 @@ void rfrun(T_ST *ast) // adress of current state table
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PLESC;
         case PLESC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 2] = left_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PLVSC;
         case PLVSC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 2] = left_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LESC(S);
         case LESC:
             virtual_program_counter += NMBL + SMBL;
             virtual_program_counter2 = virtual_program_counter - SMBL;
-            i_state = LESC0;
+            interpretator_state = LESC0;
             break;
         case LESC0:
             left_board_hole = table_elements[number_element + 2];
-            i_state = LESC1;
+            interpretator_state = LESC1;
             break;
         case LESC1:
             SHIFT_LEFT_BOARD_HOLE;
@@ -1151,36 +1159,36 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 1] = left_board_hole->prev;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PRESC;
         case PRESC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PRVSC;
         case PRVSC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RESC(S);
         case RESC:
             virtual_program_counter += NMBL + SMBL;
             virtual_program_counter2 = virtual_program_counter - SMBL;
-            i_state = RESC0;
+            interpretator_state = RESC0;
             break;
         case RESC0:
             right_board_hole = table_elements[number_element + 2];
-            i_state = RESC1;
+            interpretator_state = RESC1;
             break;
         case RESC1:
             SHIFT_RIGHT_BOARD_HOLE;
@@ -1195,45 +1203,45 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = right_board_hole;
             table_elements[number_element] = right_board_hole->next;
             number_element += 3;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LESD(N);
         case LESD:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter2 = (uint8_t *)&table_elements[n]->tag;
             virtual_program_counter += NMBL * 2;
-            i_state = LESC0;
+            interpretator_state = LESC0;
             break;
             // RESD(N);
         case RESD:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter2 = (uint8_t *)&table_elements[n]->tag;
             virtual_program_counter += NMBL * 2;
-            i_state = RESC0;
+            interpretator_state = RESC0;
             break;
             // PLEB;
         case PLEB:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 3] = left_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PLVB;
         case PLVB:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHIFT_LEFT_BOARD_HOLE;
             if (BRA(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = left_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LEB;
         case LEB:
             left_board_hole = table_elements[number_element + 3];
-            i_state = LEB1;
+            interpretator_state = LEB1;
             break;
         case LEB1:
             SHIFT_LEFT_BOARD_HOLE;
@@ -1245,31 +1253,31 @@ void rfrun(T_ST *ast) // adress of current state table
             right_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = right_board_hole;
             number_element += 4;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // PREB;
         case PREB:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element + 2] = right_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PRVB;
         case PRVB:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->prev;
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             //  REB;
         case REB:
             right_board_hole = table_elements[number_element + 2];
-            i_state = REB1;
+            interpretator_state = REB1;
             break;
         case REB1:
             SHIFT_RIGHT_BOARD_HOLE;
@@ -1281,24 +1289,24 @@ void rfrun(T_ST *ast) // adress of current state table
             left_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 4;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // EOE(N);
         case EOE:
             n = *(virtual_program_counter + NMBL);
             jump_stack_pointer -= n;
             virtual_program_counter += 2 * NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // EOEI;
         case EOEI:
             jump_stack_pointer--;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // LSRCH(S);
         case LSRCH:
             table_elements[number_element] = left_board_hole->next;
-            i_state = LSRCH1;
+            interpretator_state = LSRCH1;
             break;
         case LSRCH1:
             SHIFT_LEFT_BOARD_HOLE;
@@ -1313,12 +1321,12 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
             virtual_program_counter += NMBL + SMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RSRCH(S);
         case RSRCH:
             table_elements[number_element + 1] = right_board_hole->prev;
-            i_state = RSRCH1;
+            interpretator_state = RSRCH1;
             break;
         case RSRCH1:
             SHIFT_RIGHT_BOARD_HOLE;
@@ -1333,17 +1341,17 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 2] = right_board_hole;
             number_element += 3;
             virtual_program_counter += NMBL + SMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // WSPC(L);
         case WSPC:
             if (!spc(virtual_program_counter, table_elements[number_element - 1]))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // ESPC(L);
         case ESPC:
@@ -1356,7 +1364,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     temp_board_hole = temp_board_hole->info.codep;
                 if (!spc(virtual_program_counter, temp_board_hole))
                 {
-                    i_state = FAIL;
+                    interpretator_state = FAIL;
                     fail = true;
                     break;
                 }
@@ -1364,18 +1372,18 @@ void rfrun(T_ST *ast) // adress of current state table
             if (fail)
                 break;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PLESPC;
         case PLESPC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = left_board_hole->next;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LESPC(L);
         case LESPC:
@@ -1385,25 +1393,25 @@ void rfrun(T_ST *ast) // adress of current state table
                 left_board_hole = left_board_hole->info.codep;
             if (!spc(virtual_program_counter, left_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // PRESPC;
         case PRESPC:
             virtual_program_counter += NMBL;
-            PUTJS(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+            PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element + 1] = right_board_hole->prev;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RESPC(L);
         case RESPC:
@@ -1413,14 +1421,14 @@ void rfrun(T_ST *ast) // adress of current state table
                 right_board_hole = right_board_hole->info.codep;
             if (!spc(virtual_program_counter, right_board_hole))
             {
-                i_state = FAIL;
+                interpretator_state = FAIL;
                 break;
             }
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // LMAX(L);
         case LMAX:
@@ -1438,7 +1446,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // RMAX(L);
         case RMAX:
@@ -1456,7 +1464,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // EOR;
         case EOR:
@@ -1464,14 +1472,14 @@ void rfrun(T_ST *ast) // adress of current state table
             last_acted_k = &quasik;
             last_gen_left_bracket = NULL;
             transplantation_stack_pointer = transplantation_stack;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // NS(S);
         case NS:
             SHIFT_CURRENT_LINKCB_FREE_MEMORY;
             memcpy(&current_linkcb_free_memory->tag, virtual_program_counter + NMBL, SMBL);
             virtual_program_counter += NMBL + SMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // NSO(N);
         case NSO:
@@ -1480,7 +1488,7 @@ void rfrun(T_ST *ast) // adress of current state table
             current_linkcb_free_memory->info.code = NULL;
             current_linkcb_free_memory->info.infoc = (char)*(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // TEXT(N,S1,S2,...,SN);
         case TEXT:
@@ -1492,7 +1500,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 current_linkcb_free_memory = current_linkcb_free_memory->next;
                 if (current_linkcb_free_memory == free_memory_list_head)
                 {
-                    i_state = LACK;
+                    interpretator_state = LACK;
                     lack = true;
                     break;
                 }
@@ -1503,14 +1511,14 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (lack)
                 break;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // BL;
         case BL:
             SHIFT_CURRENT_LINKCB_FREE_MEMORY;
             current_linkcb_free_memory->info.codep = last_gen_left_bracket;
             last_gen_left_bracket = current_linkcb_free_memory;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // BR;
         case BR:
@@ -1521,7 +1529,7 @@ void rfrun(T_ST *ast) // adress of current state table
             last_gen_left_bracket->info.codep = current_linkcb_free_memory;
             current_linkcb_free_memory->tag = TAGRB;
             last_gen_left_bracket = temp_linkcb_free_memory;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // BLR;
         case BLR:
@@ -1532,7 +1540,7 @@ void rfrun(T_ST *ast) // adress of current state table
             current_linkcb_free_memory->info.codep = temp_linkcb_free_memory;
             temp_linkcb_free_memory->tag = TAGLB;
             current_linkcb_free_memory->tag = TAGRB;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // BRACT;
         case BRACT:
@@ -1543,7 +1551,7 @@ void rfrun(T_ST *ast) // adress of current state table
             last_acted_k->tag = TAGK;
             last_acted_k = last_gen_left_bracket;
             last_gen_left_bracket = last_gen_left_bracket->info.codep;
-            i_state = ADVANCE;
+            interpretator_state = ADVANCE;
             break;
             // MULS;
         case MULS:
@@ -1551,7 +1559,7 @@ void rfrun(T_ST *ast) // adress of current state table
             SHIFT_CURRENT_LINKCB_FREE_MEMORY;
             memcpy(&current_linkcb_free_memory->tag, &table_elements[n]->tag, SMBL);
             virtual_program_counter += NMBL + NMBL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // MULE(N);
         case MULE:
@@ -1565,7 +1573,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 current_linkcb_free_memory = current_linkcb_free_memory->next;
                 if (current_linkcb_free_memory == free_memory_list_head)
                 {
-                    i_state = LACK;
+                    interpretator_state = LACK;
                     lack = true;
                     break;
                 }
@@ -1591,7 +1599,7 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (lack)
                 break;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // TPL(N,M);
             // TPLM(N,M);
@@ -1602,12 +1610,12 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL * 3;
             if (table_elements[m]->next == table_elements[n])
             {
-                i_state = NEXTOP;
+                interpretator_state = NEXTOP;
                 break;
             }
             putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[m]);
             transplantation_stack_pointer++;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // TPLE(N); (= TPL(N-1,N);)
             // TPLV(N);
@@ -1617,12 +1625,12 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL + NMBL;
             if (table_elements[n]->next == table_elements[n - 1])
             {
-                i_state = NEXTOP;
+                interpretator_state = NEXTOP;
                 break;
             }
             putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n - 1], &table_elements[n]);
             transplantation_stack_pointer++;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // TPLS(N); (= TPLM(N,N);)
         case TPLS:
@@ -1630,7 +1638,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL + NMBL;
             putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[n]);
             transplantation_stack_pointer++;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // EOS;
         case EOS:
@@ -1663,7 +1671,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // DELKD:
             LINK(table_elements[2], nextr);
             LINK(free_memory_list_head, table_elements[1]);
-            i_state = ADVSTEP;
+            interpretator_state = ADVSTEP;
             break;
             // SWAP;
             //  static box head is after operator code
@@ -1672,14 +1680,14 @@ void rfrun(T_ST *ast) // adress of current state table
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
             if (current_linkcb_free_memory->prev != NULL)
             {
-                i_state = SWAPREF;
+                interpretator_state = SWAPREF;
                 break;
             }
             LINK(current_linkcb_free_memory, current_linkcb_free_memory);
             current_linkcb_free_memory->info.codep = refal.svar;
             current_linkcb_free_memory->tag = TAGO;
             refal.svar = current_linkcb_free_memory;
-            i_state = SWAPREF;
+            interpretator_state = SWAPREF;
             break;
         case SWAPREF:
             quasik.info.codep = table_elements[1]->info.codep;
@@ -1704,7 +1712,7 @@ void rfrun(T_ST *ast) // adress of current state table
             }
             LINK(table_elements[2], free_memory_list_head->next);
             LINK(free_memory_list_head, table_elements[1]);
-            i_state = ADVSTEP;
+            interpretator_state = ADVSTEP;
             break;
             // BLF(L);
         case BLF:
@@ -1715,7 +1723,7 @@ void rfrun(T_ST *ast) // adress of current state table
             memcpy(&current_linkcb_free_memory->info.codef, virtual_program_counter + NMBL, LBLL);
             current_linkcb_free_memory->tag = TAGF;
             virtual_program_counter += NMBL + LBLL;
-            i_state = NEXTOP;
+            interpretator_state = NEXTOP;
             break;
             // C-refal-function execution
         case CFUNC:
@@ -1730,16 +1738,16 @@ void rfrun(T_ST *ast) // adress of current state table
             switch (refal.upshot)
             {
             case 1:
-                i_state = CFDONE;
+                interpretator_state = CFDONE;
                 break;
             case 2:
-                i_state = RCGIMP;
+                interpretator_state = RCGIMP;
                 break;
             case 3:
-                i_state = CFLACK;
+                interpretator_state = CFLACK;
                 break;
             default:
-                i_state = CFDONE;
+                interpretator_state = CFDONE;
             }
             break;
             //        return from C - function
@@ -1749,7 +1757,7 @@ void rfrun(T_ST *ast) // adress of current state table
             LINK(refal.nextr->prev, refal.nexta->next);
             LINK(refal.nexta, free_memory_list_head->next);
             LINK(free_memory_list_head, refal.nextr);
-            i_state = ADVSTEP;
+            interpretator_state = ADVSTEP;
             break;
             //        return from C - function
             //     free memory exhausted
@@ -1761,7 +1769,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 LINK(refal.prevr, refal.nextr);
             }
             ast->state = 3;
-            i_state = EXIT;
+            interpretator_state = EXIT;
         }
 }
 
@@ -1960,22 +1968,6 @@ static bool digit(char s)
     if (s >= '0' && s <= '9')
         return true;
     return false;
-}
-
-static void putts(T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
-{
-    transplantation_stack_pointer_->transplantation_stack0 = *ax;
-    transplantation_stack_pointer_->transplantation_stack1 = *ay;
-    transplantation_stack_pointer_->transplantation_stack2 = *az;
-    return;
-}
-
-static void getts(const T_TRANSPLANTATION_STACK *transplantation_stack_pointer_, T_LINKCB **ax, T_LINKCB **ay, T_LINKCB **az)
-{
-    *ax = transplantation_stack_pointer_->transplantation_stack0;
-    *ay = transplantation_stack_pointer_->transplantation_stack1;
-    *az = transplantation_stack_pointer_->transplantation_stack2;
-    return;
 }
 
 //------------ end of file RFRUN.C ----------
