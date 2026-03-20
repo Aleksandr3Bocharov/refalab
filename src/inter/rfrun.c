@@ -60,14 +60,14 @@
     avpc = jump_stack_pointer->virtual_program_counter
 
 #define PUT_TRANSPLANTATION_STACK(az, ax, ay)                    \
-    transplantation_stack_pointer->transplantation_stack0 = *az; \
-    transplantation_stack_pointer->transplantation_stack1 = *ax; \
-    transplantation_stack_pointer->transplantation_stack2 = *ay
+    transplantation_stack_pointer->transplantation_stack0 = az; \
+    transplantation_stack_pointer->transplantation_stack1 = ax; \
+    transplantation_stack_pointer->transplantation_stack2 = ay
 
 #define GET_TRANSPLANTATION_STACK(az, ax, ay)                    \
-    *az = transplantation_stack_pointer->transplantation_stack0; \
-    *ax = transplantation_stack_pointer->transplantation_stack1; \
-    *ay = transplantation_stack_pointer->transplantation_stack2
+    az = transplantation_stack_pointer->transplantation_stack0; \
+    ax = transplantation_stack_pointer->transplantation_stack1; \
+    ay = transplantation_stack_pointer->transplantation_stack2
 
 typedef enum intepretator_states
 {
@@ -1613,7 +1613,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 interpretator_state = NEXTOP;
                 break;
             }
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[m]);
+            PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n], table_elements[m]);
             transplantation_stack_pointer++;
             interpretator_state = NEXTOP;
             break;
@@ -1628,7 +1628,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 interpretator_state = NEXTOP;
                 break;
             }
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n - 1], &table_elements[n]);
+            PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n - 1], table_elements[n]);
             transplantation_stack_pointer++;
             interpretator_state = NEXTOP;
             break;
@@ -1636,7 +1636,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case TPLS:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            putts(transplantation_stack_pointer, &current_linkcb_free_memory, &table_elements[n], &table_elements[n]);
+            PUT_TRANSPLANTATION_STACK(current_linkcb_free_memory, table_elements[n], table_elements[n]);
             transplantation_stack_pointer++;
             interpretator_state = NEXTOP;
             break;
@@ -1651,7 +1651,7 @@ void rfrun(T_ST *ast) // adress of current state table
             while (transplantation_stack_pointer != transplantation_stack)
             {
                 transplantation_stack_pointer--;
-                getts(transplantation_stack_pointer, &current_linkcb_free_memory, &temp_linkcb, &temp_linkcb_free_memory);
+                GET_TRANSPLANTATION_STACK(current_linkcb_free_memory, temp_linkcb, temp_linkcb_free_memory);
                 LINK(temp_linkcb->prev, temp_linkcb_free_memory->next);
                 LINK(temp_linkcb_free_memory, current_linkcb_free_memory->next);
                 LINK(current_linkcb_free_memory, temp_linkcb);
@@ -1783,9 +1783,9 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
     uint8_t specifier_oeration_program_code;
     // positiveness feature of specifier element
     bool specifier_plus = true;
-    T_SP_STATES sp_state = SPCNXT;
+    T_SPECIFIER_STATES specifier_state = SPCNXT;
     while (true)
-        switch (sp_state)
+        switch (specifier_state)
         {
         // return from specifier element if "YES"
         case SPCRET:
@@ -1799,7 +1799,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             if (specifier_work)
                 break;
             specifier_virtual_program_counter += LBLL;
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         // return from specifier element if "NO"
         case SPCNXT:
@@ -1811,43 +1811,43 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             switch (specifier_oeration_program_code)
             {
             case 0000:
-                sp_state = SPCCLL;
+                specifier_state = SPCCLL;
                 break;
             case 0001:
-                sp_state = SPCW;
+                specifier_state = SPCW;
                 break;
             case 0002:
-                sp_state = SPCNG;
+                specifier_state = SPCNG;
                 break;
             case 0003:
-                sp_state = SPCNGW;
+                specifier_state = SPCNGW;
                 break;
             case 0004:
-                sp_state = SPCSC;
+                specifier_state = SPCSC;
                 break;
             case 0005:
-                sp_state = SPCS;
+                specifier_state = SPCS;
                 break;
             case 0006:
-                sp_state = SPCB;
+                specifier_state = SPCB;
                 break;
             case 0007:
-                sp_state = SPCF;
+                specifier_state = SPCF;
                 break;
             case 0010:
-                sp_state = SPCN;
+                specifier_state = SPCN;
                 break;
             case 0011:
-                sp_state = SPCR;
+                specifier_state = SPCR;
                 break;
             case 0012:
-                sp_state = SPCO;
+                specifier_state = SPCO;
                 break;
             case 0013:
-                sp_state = SPCD;
+                specifier_state = SPCD;
                 break;
             case 0014:
-                sp_state = SPCL;
+                specifier_state = SPCL;
             }
             break;
             // SPCCLL(L);
@@ -1857,101 +1857,101 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             memcpy(&specifier_virtual_program_counter, specifier_virtual_program_counter, LBLL);
             specifier_stack_pointer++;
             specifier_plus = true;
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCW:
-            sp_state = SPCRET;
+            specifier_state = SPCRET;
             break;
         case SPCNG:
             specifier_plus = !specifier_plus;
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCNGW:
             specifier_plus = !specifier_plus;
-            sp_state = SPCRET;
+            specifier_state = SPCRET;
             break;
         case SPCSC:
             if (memcmp(specifier_virtual_program_counter, &b->tag, SMBL) == 0)
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
             specifier_virtual_program_counter += SMBL;
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCS:
             if (NBRA(b))
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCB:
             if (BRA(b))
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCF:
             if (b->tag == TAGF)
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCN:
             if (b->tag == TAGN)
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCR:
             if (b->tag == TAGR)
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCO:
             if (b->tag == TAGO)
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCD:
             if (b->tag != TAGO)
             {
-                sp_state = SPCNXT;
+                specifier_state = SPCNXT;
                 break;
             }
             if (digit(b->info.infoc))
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
             break;
         case SPCL:
             if (b->tag != TAGO)
             {
-                sp_state = SPCNXT;
+                specifier_state = SPCNXT;
                 break;
             }
             if (letter(b->info.infoc))
             {
-                sp_state = SPCRET;
+                specifier_state = SPCRET;
                 break;
             }
-            sp_state = SPCNXT;
+            specifier_state = SPCNXT;
         }
 } //             end      spc
 
