@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-20
+// 2026-03-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -233,10 +233,10 @@ uint8_t *inch_ptr;
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_W_JUMP_STACK jump_stack[64];      // jump stack
+static T_W_JUMP_STACK jump_stack[128];     // jump stack
 static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
-static T_TRANSPLANTATION_STACK transplantation_stack[64];      // transplantation stack
+static T_TRANSPLANTATION_STACK transplantation_stack[256];     // transplantation stack
 static T_TRANSPLANTATION_STACK *transplantation_stack_pointer; // transplantation stack pointer
 
 static T_SPECIFIER_STACK specifier_stack[64]; // specifier stack
