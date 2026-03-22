@@ -173,9 +173,9 @@ static struct
 // hole list
 static struct
 {
-    size_t _next;
-    size_t n1, n2;
-} hole_list[256];
+    uint8_t next_hole_number;
+    uint8_t left_board_number, right_board_number;
+} hole_list[130];
 
 static T_LINKTI xncode;  // work structure
 static T_LINKTI funcptr; // work pointer
@@ -417,9 +417,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n1].p = x[n1].q;
             x[n2].q = 2;
             x[n2].p = x[n2].q;
-            hole_list[28]._next = 0;
+            hole_list[128].next_hole_number = 0;
             current_hole_mumber = 1;
-            hole_list[1]._next = 28;
+            hole_list[1].next_hole_number = 128;
             free_segment_number_hole_list = 2;
             e_level = 0;
             if (dir)
@@ -584,15 +584,15 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 hole_number_x = free_segment_number_hole_list;
                 hole_number_y = current_hole_mumber;
             };
-            hole_list[free_segment_number_hole_list]._next = hole_list[current_hole_mumber]._next;
-            hole_list[current_hole_mumber]._next = free_segment_number_hole_list;
+            hole_list[free_segment_number_hole_list].next_hole_number = hole_list[current_hole_mumber].next_hole_number;
+            hole_list[current_hole_mumber].next_hole_number = free_segment_number_hole_list;
             free_segment_number_hole_list++;
             n1 = n;
             n = n2;
             n2 = x[n1].pair;
             current_hole_mumber = hole_number_x;
-            hole_list[hole_number_y].n1 = n2;
-            hole_list[hole_number_y].n2 = n;
+            hole_list[hole_number_y].left_board_number = n2;
+            hole_list[hole_number_y].right_board_number = n;
             x[n1].q = number_element;
             x[n1].p = x[n1].q;
             x[n2].q = number_element + 1;
@@ -846,15 +846,15 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 hole_number_x = free_segment_number_hole_list;
                 hole_number_y = current_hole_mumber;
             };
-            hole_list[free_segment_number_hole_list]._next = hole_list[current_hole_mumber]._next;
-            hole_list[current_hole_mumber]._next = free_segment_number_hole_list;
+            hole_list[free_segment_number_hole_list].next_hole_number = hole_list[current_hole_mumber].next_hole_number;
+            hole_list[current_hole_mumber].next_hole_number = free_segment_number_hole_list;
             free_segment_number_hole_list++;
             n2 = n;
             n = n1;
             n1 = x[n2].pair;
             current_hole_mumber = hole_number_x;
-            hole_list[hole_number_y].n1 = n;
-            hole_list[hole_number_y].n2 = n1;
+            hole_list[hole_number_y].left_board_number = n;
+            hole_list[hole_number_y].right_board_number = n1;
             x[n1].q = number_element;
             x[n1].p = x[n1].q;
             x[n2].q = number_element + 1;
@@ -948,10 +948,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case NIL:
             //     empty hole
             jbyte(n_nil);
-            next_hole_number = hole_list[current_hole_mumber]._next;
-            hole_list[current_hole_mumber]._next = hole_list[next_hole_number]._next;
-            hole_list[current_hole_mumber].n1 = hole_list[next_hole_number].n1;
-            hole_list[current_hole_mumber].n2 = hole_list[next_hole_number].n2;
+            next_hole_number = hole_list[current_hole_mumber].next_hole_number;
+            hole_list[current_hole_mumber].next_hole_number = hole_list[next_hole_number].next_hole_number;
+            hole_list[current_hole_mumber].left_board_number = hole_list[next_hole_number].left_board_number;
+            hole_list[current_hole_mumber].right_board_number = hole_list[next_hole_number].right_board_number;
             current_hole_mumber = next_hole_number;
             state = IMPASSE;
             break;
@@ -989,10 +989,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n].p = number_element;
             x[n].q = number_element + 1;
             number_element += 2;
-            next_hole_number = hole_list[current_hole_mumber]._next;
-            hole_list[current_hole_mumber]._next = hole_list[next_hole_number]._next;
-            hole_list[current_hole_mumber].n1 = hole_list[next_hole_number].n1;
-            hole_list[current_hole_mumber].n2 = hole_list[next_hole_number].n2;
+            next_hole_number = hole_list[current_hole_mumber].next_hole_number;
+            hole_list[current_hole_mumber].next_hole_number = hole_list[next_hole_number].next_hole_number;
+            hole_list[current_hole_mumber].left_board_number = hole_list[next_hole_number].left_board_number;
+            hole_list[current_hole_mumber].right_board_number = hole_list[next_hole_number].right_board_number;
             current_hole_mumber = next_hole_number;
             state = IMPASSE;
             break;
@@ -1010,10 +1010,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
         //          If it not exist than project
         //          e-variable from first hole.
         case HSCH:
-            hole_list[current_hole_mumber].n1 = n1;
-            hole_list[current_hole_mumber].n2 = n2;
+            hole_list[current_hole_mumber].left_board_number = n1;
+            hole_list[current_hole_mumber].right_board_number = n2;
             current_hole_mumber = 1;
-            if (hole_list[current_hole_mumber]._next == 0)
+            if (hole_list[current_hole_mumber].next_hole_number == 0)
             {
                 state = RCGFIN;
                 break;
@@ -1021,8 +1021,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = NHOLE;
             break;
         case NHOLE:
-            n1 = hole_list[current_hole_mumber].n1;
-            n2 = hole_list[current_hole_mumber].n2;
+            n1 = hole_list[current_hole_mumber].left_board_number;
+            n2 = hole_list[current_hole_mumber].right_board_number;
             n = n1 + 1;
             if (n == n2)
             {
@@ -1067,8 +1067,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = NHOLE1;
             break;
         case NHOLE1:
-            current_hole_mumber = hole_list[current_hole_mumber]._next;
-            if (hole_list[current_hole_mumber]._next == 0)
+            current_hole_mumber = hole_list[current_hole_mumber].next_hole_number;
+            if (hole_list[current_hole_mumber].next_hole_number == 0)
             {
                 state = OE;
                 break;
@@ -1088,8 +1088,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
         //  opened e_variable processing
         case OE:
             current_hole_mumber = 1;
-            n1 = hole_list[current_hole_mumber].n1;
-            n2 = hole_list[current_hole_mumber].n2;
+            n1 = hole_list[current_hole_mumber].left_board_number;
+            n2 = hole_list[current_hole_mumber].right_board_number;
             gen_bsb();
             if (dir)
                 n = n1 + 1;
