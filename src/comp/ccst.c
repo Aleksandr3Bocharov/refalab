@@ -185,14 +185,14 @@ static size_t ind, ie;          // element index
 static uint16_t number_element; // current number of element
 static uint32_t e_level;        // counter of the longing levels
 static bool not_nil;            // working variables
-static size_t kol_per;          // subprogram of search in variable table
+static uint8_t variables_count; // subprogram of search in variable table
                                 // table pointer
-static uint32_t lrbxy;          // stoped bracket flag
 static size_t lastb, lastb1;    // variables for brackets linkage
-static size_t kol_lit;          // counter of the symbol number
 static uint32_t diff_e_level;
 static uint32_t kol_skob[513]; // stack for counting of the brackets balance
 static size_t ur_skob;
+static uint32_t lrbxy;   // stoped bracket flag
+static uint8_t kol_lit;  // counter of the symbol number
 static char buf_lit[81]; // buffer for generating of the "text" statement
 static size_t k;
 static uint8_t current_hole_mumber;           // current hole number
@@ -216,7 +216,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
 // lbl;   sentence label
 // lblleng; sentence label length
 {
-    kol_per = 0;
+    variables_count = 0;
     n = 0;
     lastb = 0;
     number_element = 0;
@@ -1613,10 +1613,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
 
 static void isk_v(void)
 {
-    for (ind = 1; ind <= kol_per; ind++)
+    for (ind = 1; ind <= variables_count; ind++)
         if (v[ind].si_leng == scn_e.si_leng && strncmp(v[ind].si, scn_e.si, v[ind].si_leng) == 0)
             return;
-    ind = ++kol_per;
+    ind = ++variables_count;
     strncpy(v[ind].si, scn_e.si, scn_e.si_leng);
     v[ind].si_leng = scn_e.si_leng;
     v[ind]._t = 0;
