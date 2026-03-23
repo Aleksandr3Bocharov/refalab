@@ -185,13 +185,13 @@ static size_t ind, ie;          // element index
 static uint16_t number_element; // current number of element
 static uint32_t e_level;        // counter of the longing levels
 static uint32_t diff_e_level;
-static bool not_nil;            // working variables
-static uint8_t variables_count; // subprogram of search in variable table
-                                // table pointer
-static size_t lastb, lastb1;    // variables for brackets linkage
-static uint32_t kol_skob[513]; // stack for counting of the brackets balance
-static size_t ur_skob;
-static uint32_t lrbxy;                        // stoped bracket flag
+static bool not_nil;                 // working variables
+static uint8_t variables_count;      // subprogram of search in variable table
+                                     // table pointer
+static size_t lastb, lastb1;         // variables for brackets linkage
+static uint32_t brackets_count[513]; // stack for counting of the brackets balance
+static uint16_t brackets_k_level;
+static uint8_t stoped_bracket_flag;           // stoped bracket flag
 static uint8_t symbols_count;                 // counter of the symbol number
 static char symbols_buffer[81];               // buffer for generating of the "text" statement
 static uint8_t current_hole_mumber;           // current hole number
@@ -569,7 +569,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case GEN_LB:
             n = n1;
-            lrbxy = 1;
+            stoped_bracket_flag = 1;
             state = LB1;
             break;
         case LB1:
@@ -831,7 +831,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case GEN_RB:
             n = n2;
-            lrbxy = 2;
+            stoped_bracket_flag = 2;
             state = RB1;
             break;
         case RB1:
@@ -1000,7 +1000,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         //          on hard element here or
         //          hole ended here
         case IMPASSE:
-            lrbxy = 0;
+            stoped_bracket_flag = 0;
             hole_number_x = current_hole_mumber;
             state = HSCH;
             break;
@@ -1255,7 +1255,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //   ei ( . . . ) . . .
             gpev(n_pleb, n_plvb);
             jbyte(n_leb);
-            lrbxy = 0;
+            stoped_bracket_flag = 0;
             state = LB1;
             break;
         case LESW3:
@@ -1347,7 +1347,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             // . . .  ( . . .  ) ei
             gpev(n_preb, n_prvb);
             jbyte(n_reb);
-            lrbxy = 0;
+            stoped_bracket_flag = 0;
             state = RB1;
             break;
         case RESW4:
@@ -1378,8 +1378,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             //--------------------------------------------
             //         right part compilation
             //--------------------------------------------
-            ur_skob = 1;
-            kol_skob[ur_skob] = 0;
+            brackets_k_level = 1;
+            brackets_count[brackets_k_level] = 0;
             state = GET_RPE;
             break;
         //  read next element of right part
@@ -1470,7 +1470,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = GET_RPE;
                 break;
             }
-            kol_skob[ur_skob]++;
+            brackets_count[brackets_k_level]++;
             if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
             {
                 funcptr.info.codef = scn_e.code.info.codef;
@@ -1484,10 +1484,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RPE3:
             // right bracket
             jbyte(n_br);
-            if (kol_skob[ur_skob] == 0)
+            if (brackets_count[brackets_k_level] == 0)
                 pchosh("402 too many ')' in right part");
             else
-                kol_skob[ur_skob]--;
+                brackets_count[brackets_k_level]--;
             state = GET_RPE;
             break;
         case RPE4:
@@ -1554,13 +1554,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE7:
             // sign '<'
-            if (ur_skob > 511)
+            if (brackets_k_level > 511)
             {
                 pchosh("407 including of the signs '<' > 511");
                 state = RP_OSH300;
                 break;
             }
-            kol_skob[++ur_skob] = 0;
+            brackets_count[++brackets_k_level] = 0;
             scan();
             if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
             {
@@ -1575,14 +1575,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE8:
             // sign '>'
-            if (ur_skob == 1)
+            if (brackets_k_level == 1)
                 pchosh("404 too many sign '>' in right part");
             else
             {
-                if (kol_skob[ur_skob] != 0)
+                if (brackets_count[brackets_k_level] != 0)
                     pchosh("401 too many '(' in right part");
                 jbyte(n_bract);
-                ur_skob--;
+                brackets_k_level--;
             };
             state = GET_RPE;
             break;
@@ -1594,9 +1594,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RPE10:
             // sentence end
             jbyte(n_eos);
-            if (ur_skob != 1)
+            if (brackets_k_level != 1)
                 pchosh("403 too many signs '<' in right part");
-            if (kol_skob[ur_skob] != 0)
+            if (brackets_count[brackets_k_level] != 0)
                 pchosh("401 too many '(' in right part");
             return;
         case RP_OSH300:
@@ -1628,7 +1628,7 @@ static void isk_v(void)
 //   generation of stoped brackets and setting boards
 static void gen_bsb(void)
 {
-    switch (lrbxy)
+    switch (stoped_bracket_flag)
     {
     case 0: // no stoped brackets
         if (current_hole_mumber != hole_number_x)
