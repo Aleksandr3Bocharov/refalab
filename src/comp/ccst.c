@@ -157,7 +157,7 @@ static struct
     T_LINKTI spec;
     bool v;
     bool eoemrk;
-    uint32_t e_level;
+    uint8_t jump_stack_pointer;
 } x[100];
 
 static struct
@@ -180,11 +180,10 @@ static struct
 static T_LINKTI xncode;  // work structure
 static T_LINKTI funcptr; // work pointer
 
-static size_t n, n1, n2;        // left part element pointers
-static size_t ind, ie;          // element index
-static uint16_t number_element; // current number of element
-static uint32_t e_level;        // counter of the longing levels
-static uint32_t diff_e_level;
+static size_t n, n1, n2;                        // left part element pointers
+static size_t ind, ie;                          // element index
+static uint16_t number_element;                 // current number of element
+static uint8_t jump_stack_pointer;              // counter of the longing levels
 static bool not_nil;                            // working variables
 static uint8_t variables_count;                 // subprogram of search in variable table
                                                 // table pointer
@@ -236,7 +235,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n].next = 0;
             x[n].pair = 0;
             x[n].eoemrk = false;
-            x[n].e_level = 0;
+            x[n].jump_stack_pointer = 0;
             switch (scn_e.t)
             {
             case 0:
@@ -420,7 +419,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             current_hole_mumber = 1;
             hole_list[1].next_hole_number = 128;
             free_segment_number_hole_list = 2;
-            e_level = 0;
+            jump_stack_pointer = 0;
             if (dir)
             {
                 state = RCGL;
@@ -1097,14 +1096,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             ind = x[n].ind;
             if (x[n].eoemrk)
             {
-                diff_e_level = e_level - x[n].e_level;
-                if (diff_e_level == 1)
+                const uint8_t diff = jump_stack_pointer - x[n].jump_stack_pointer;
+                if (diff == 1)
                     jbyte(n_eoei);
                 else
-                    gopn(n_eoe, (uint8_t)diff_e_level);
-                e_level = x[n].e_level;
+                    gopn(n_eoe, diff);
+                jump_stack_pointer = x[n].jump_stack_pointer;
                 x[n].eoemrk = false;
-                x[n].e_level = 0;
+                x[n].jump_stack_pointer = 0;
             };
             if (n1 + 2 == n2)
             {
@@ -1239,8 +1238,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             if (!not_nil && x[n].eoemrk)
             {
                 x[n].eoemrk = false;
-                x[n].e_level = 0;
-                e_level--;
+                x[n].jump_stack_pointer = 0;
+                jump_stack_pointer--;
                 gops(n_lsrch, &xncode);
             }
             else
@@ -1328,8 +1327,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             if (!not_nil && x[n].eoemrk)
             {
                 x[n].eoemrk = false;
-                x[n].e_level = 0;
-                e_level--;
+                x[n].jump_stack_pointer = 0;
+                jump_stack_pointer--;
                 gops(n_rsrch, &xncode);
             }
             else
@@ -1693,7 +1692,7 @@ static bool lsg_p(void)
             if (!ortgn(n1, n))
                 break;
             x[n].eoemrk = true;
-            x[n].e_level = e_level;
+            x[n].jump_stack_pointer = jump_stack_pointer;
             break;
         }
         n = x[n].pair;
@@ -1708,7 +1707,7 @@ static bool lsg_p(void)
     x[n].p = number_element;
     x[n].q = number_element + 1;
     number_element += 2;
-    e_level++;
+    jump_stack_pointer++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
         return true;
@@ -1737,7 +1736,7 @@ static bool rsg_p(void)
             if (!ortgn(n, n2))
                 break;
             x[n].eoemrk = true;
-            x[n].e_level = e_level;
+            x[n].jump_stack_pointer = jump_stack_pointer;
             break;
         }
         n = x[n].pair;
@@ -1752,7 +1751,7 @@ static bool rsg_p(void)
     x[n].p = number_element;
     x[n].q = number_element + 1;
     number_element += 2;
-    e_level++;
+    jump_stack_pointer++;
     not_nil = x[n].v;
     if (x[n].spec.info.codef == NULL)
         return true;
