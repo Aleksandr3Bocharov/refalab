@@ -184,11 +184,11 @@ static size_t n, n1, n2;        // left part element pointers
 static size_t ind, ie;          // element index
 static uint16_t number_element; // current number of element
 static uint32_t e_level;        // counter of the longing levels
+static uint32_t diff_e_level;
 static bool not_nil;            // working variables
 static uint8_t variables_count; // subprogram of search in variable table
                                 // table pointer
 static size_t lastb, lastb1;    // variables for brackets linkage
-static uint32_t diff_e_level;
 static uint32_t kol_skob[513]; // stack for counting of the brackets balance
 static size_t ur_skob;
 static uint32_t lrbxy;                        // stoped bracket flag
