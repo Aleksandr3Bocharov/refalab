@@ -149,21 +149,21 @@ typedef enum states
 
 static struct
 { // left part buffer elements
-    uint32_t p, q, t;
+    uint8_t p, q, t;
     uint8_t variable_index;
     T_LINKTI code;
-    size_t next;
-    size_t pair;
+    uint8_t next;
+    uint8_t pair;
     T_LINKTI spec;
     bool v;
     bool eoemrk;
     uint8_t jump_stack_pointer;
-} left_elements[256];
+} left_part_elements[256];
 
 static struct
 { // variable table elements
-    size_t last;
-    uint32_t _t, _q;
+    uint8_t last;
+    uint8_t _t, _q;
     uint32_t rem;
     char si[MAX_ID_LEN];
     size_t si_leng;
@@ -226,16 +226,16 @@ void cst(bool dir, char *lbl, size_t lblleng)
             // read left part element
             n++;
             scan();
-            left_elements[n].t = scn_e.t;
-            left_elements[n].code.tag = scn_e.code.tag;
-            left_elements[n].code.info.codef = scn_e.code.info.codef;
-            left_elements[n].spec.tag = scn_e.spec.tag;
-            left_elements[n].spec.info.codef = scn_e.spec.info.codef;
-            left_elements[n].v = scn_e.v;
-            left_elements[n].next = 0;
-            left_elements[n].pair = 0;
-            left_elements[n].eoemrk = false;
-            left_elements[n].jump_stack_pointer = 0;
+            left_part_elements[n].t = scn_e.t;
+            left_part_elements[n].code.tag = scn_e.code.tag;
+            left_part_elements[n].code.info.codef = scn_e.code.info.codef;
+            left_part_elements[n].spec.tag = scn_e.spec.tag;
+            left_part_elements[n].spec.info.codef = scn_e.spec.info.codef;
+            left_part_elements[n].v = scn_e.v;
+            left_part_elements[n].next = 0;
+            left_part_elements[n].pair = 0;
+            left_part_elements[n].eoemrk = false;
+            left_part_elements[n].jump_stack_pointer = 0;
             switch (scn_e.t)
             {
             case 0:
@@ -287,7 +287,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE2:
             // left bracket
             number_element++;
-            left_elements[n].pair = last_bracket;
+            left_part_elements[n].pair = last_bracket;
             last_bracket = n;
             state = NEXT_LPE;
             break;
@@ -301,9 +301,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             else
             {
                 number_element++;
-                temp_last_bracket = left_elements[last_bracket].pair;
-                left_elements[last_bracket].pair = n;
-                left_elements[n].pair = last_bracket;
+                temp_last_bracket = left_part_elements[last_bracket].pair;
+                left_part_elements[last_bracket].pair = n;
+                left_part_elements[n].pair = last_bracket;
                 last_bracket = temp_last_bracket;
             }
             state = NEXT_LPE;
@@ -311,7 +311,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE4:
             // s-varyable
             isk_v();
-            left_elements[n].variable_index = variable_index;
+            left_part_elements[n].variable_index = variable_index;
             switch (variables[variable_index]._t)
             {
             case 0:
@@ -330,7 +330,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE5:
             // w-varyable
             isk_v();
-            left_elements[n].variable_index = variable_index;
+            left_part_elements[n].variable_index = variable_index;
             switch (variables[variable_index]._t)
             {
             case 0:
@@ -349,7 +349,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE6:
             // e- or v-varyable
             isk_v();
-            left_elements[n].variable_index = variable_index;
+            left_part_elements[n].variable_index = variable_index;
             if (variables[variable_index]._t == 0) // yet is't faced
                 variables[variable_index]._t = 3;
             else if (variables[variable_index]._t == 3 && variables[variable_index]._v == scn_e.v)
@@ -411,10 +411,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             n1 = 0;
             n2 = n;
             number_element = 4;
-            left_elements[n1].q = 3;
-            left_elements[n1].p = left_elements[n1].q;
-            left_elements[n2].q = 2;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n1].q = 3;
+            left_part_elements[n1].p = left_part_elements[n1].q;
+            left_part_elements[n2].q = 2;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             hole_list[128].next_hole_number = 0;
             current_hole_mumber = 1;
             hole_list[1].next_hole_number = 128;
@@ -435,7 +435,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = NIL;
                 break;
             }
-            switch (left_elements[n].t)
+            switch (left_part_elements[n].t)
             {
             case 1:
                 state = LSW1;
@@ -458,12 +458,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LSW1:
             //        constant symbol
-            if (left_elements[n].code.tag == TAGO)
+            if (left_part_elements[n].code.tag == TAGO)
             {
                 state = LTXT;
                 break;
             }
-            gops(n_lsc, &left_elements[n].code);
+            gops(n_lsc, &left_part_elements[n].code);
             state = L1;
             break;
         case LTXT:
@@ -472,7 +472,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LTXT1:
             n++;
-            if (n == n2 || left_elements[n].t != t_sc || left_elements[n].code.tag != TAGO)
+            if (n == n2 || left_part_elements[n].t != t_sc || left_part_elements[n].code.tag != TAGO)
             {
                 state = LTXT2;
                 break;
@@ -491,9 +491,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LTXT3:
             n++;
-            jbyte((uint8_t)left_elements[n].code.info.infoc);
-            left_elements[n].q = number_element;
-            left_elements[n].p = left_elements[n].q;
+            jbyte((uint8_t)left_part_elements[n].code.info.infoc);
+            left_part_elements[n].q = number_element;
+            left_part_elements[n].p = left_part_elements[n].q;
             number_element++;
             symbols_count--;
             if (symbols_count == 0)
@@ -504,13 +504,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LSCO:
             n = n1 + 1;
-            gopn(n_lsco, (uint8_t)left_elements[n].code.info.infoc);
+            gopn(n_lsco, (uint8_t)left_part_elements[n].code.info.infoc);
             state = L1;
             break;
         case LSW2:
             //  left bracket
             n1 = n;
-            n = left_elements[n1].pair;
+            n = left_part_elements[n1].pair;
             if (n1 + 1 == n)
             {
                 state = LBNIL;
@@ -522,12 +522,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             n = n1 + 1;
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
             {
                 state = GEN_LB;
                 break;
             }
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = GEN_LB;
@@ -539,30 +539,30 @@ void cst(bool dir, char *lbl, size_t lblleng)
             number_element += 2;
             jbyte(n_lbce);
             variables[variable_index]._q = number_element + 1;
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].v)
+            if (left_part_elements[n].v)
                 jbyte(n_nnil);
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_espc, left_elements[n].spec.info.codef);
-            left_elements[n].p = number_element;
-            left_elements[n].q = number_element + 1;
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_espc, left_part_elements[n].spec.info.codef);
+            left_part_elements[n].p = number_element;
+            left_part_elements[n].q = number_element + 1;
             number_element += 2;
-            left_elements[n1].q = number_element - 4;
-            left_elements[n1].p = left_elements[n1].q;
+            left_part_elements[n1].q = number_element - 4;
+            left_part_elements[n1].p = left_part_elements[n1].q;
             n1 += 2;
-            left_elements[n1].q = number_element - 3;
-            left_elements[n1].p = left_elements[n1].q;
+            left_part_elements[n1].q = number_element - 3;
+            left_part_elements[n1].p = left_part_elements[n1].q;
             state = RCGL;
             break;
         case LBNIL:
             jbyte(n_lbnil);
-            left_elements[n1].q = number_element;
-            left_elements[n1].p = left_elements[n1].q;
+            left_part_elements[n1].q = number_element;
+            left_part_elements[n1].p = left_part_elements[n1].q;
             n1 = n;
-            left_elements[n1].q = number_element + 1;
-            left_elements[n1].p = left_elements[n1].q;
+            left_part_elements[n1].q = number_element + 1;
+            left_part_elements[n1].p = left_part_elements[n1].q;
             number_element += 2;
             state = RCGL;
             break;
@@ -587,14 +587,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             free_segment_number_hole_list++;
             n1 = n;
             n = n2;
-            n2 = left_elements[n1].pair;
+            n2 = left_part_elements[n1].pair;
             current_hole_mumber = hole_number_x;
             hole_list[hole_number_y].left_board_number = n2;
             hole_list[hole_number_y].right_board_number = n;
-            left_elements[n1].q = number_element;
-            left_elements[n1].p = left_elements[n1].q;
-            left_elements[n2].q = number_element + 1;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n1].q = number_element;
+            left_part_elements[n1].p = left_part_elements[n1].q;
+            left_part_elements[n2].q = number_element + 1;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             number_element += 2;
             state = HSCH;
             break;
@@ -603,7 +603,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LSW4:
             //    s-variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
                 gopn(n_lsd, (uint8_t)variables[variable_index]._q);
             else
@@ -614,23 +614,23 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = LSMD;
             break;
         case LSMD:
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             (variables[variable_index].rem)--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_wspc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_wspc, left_part_elements[n].spec.info.codef);
             state = L1;
             break;
         case L1:
-            left_elements[n].q = number_element;
-            left_elements[n].p = left_elements[n].q;
+            left_part_elements[n].q = number_element;
+            left_part_elements[n].p = left_part_elements[n].q;
             number_element++;
             n1 = n;
             state = RCGL;
             break;
         case LSW5:
             //   w-variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = LED;
@@ -638,11 +638,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             }
             jbyte(n_lw);
             variables[variable_index]._q = number_element + 1;
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_wspc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_wspc, left_part_elements[n].spec.info.codef);
             state = L2;
             break;
         case LED:
@@ -650,23 +650,23 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = LEMD;
             break;
         case LEMD:
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_espc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_espc, left_part_elements[n].spec.info.codef);
             state = L2;
             break;
         case L2:
-            left_elements[n].p = number_element;
-            left_elements[n].q = number_element + 1;
+            left_part_elements[n].p = number_element;
+            left_part_elements[n].q = number_element + 1;
             number_element += 2;
             n1 = n;
             state = RCGL;
             break;
         case LSW6:
             //   e-variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = LED;
@@ -694,7 +694,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = NIL;
                 break;
             }
-            switch (left_elements[n].t)
+            switch (left_part_elements[n].t)
             {
             case 1:
                 state = RSW1;
@@ -717,12 +717,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RSW1:
             //   constant symbol
-            if (left_elements[n].code.tag == TAGO)
+            if (left_part_elements[n].code.tag == TAGO)
             {
                 state = RTXT;
                 break;
             }
-            gops(n_rsc, &left_elements[n].code);
+            gops(n_rsc, &left_part_elements[n].code);
             state = R1;
             break;
         case RTXT:
@@ -731,7 +731,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RTXT1:
             n--;
-            if (n == n1 || left_elements[n].t != t_sc || left_elements[n].code.tag != TAGO)
+            if (n == n1 || left_part_elements[n].t != t_sc || left_part_elements[n].code.tag != TAGO)
             {
                 state = RTXT2;
                 break;
@@ -750,9 +750,9 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RTXT3:
             n--;
-            jbyte((uint8_t)left_elements[n].code.info.infoc);
-            left_elements[n].q = number_element;
-            left_elements[n].p = left_elements[n].q;
+            jbyte((uint8_t)left_part_elements[n].code.info.infoc);
+            left_part_elements[n].q = number_element;
+            left_part_elements[n].p = left_part_elements[n].q;
             number_element++;
             symbols_count--;
             if (symbols_count == 0)
@@ -763,7 +763,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RSCO:
             n = n2 - 1;
-            gopn(n_rsco, (uint8_t)left_elements[n].code.info.infoc);
+            gopn(n_rsco, (uint8_t)left_part_elements[n].code.info.infoc);
             state = R1;
             break;
         case RSW2:
@@ -772,7 +772,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case RSW3:
             //     right bracket
             n2 = n;
-            n = left_elements[n2].pair;
+            n = left_part_elements[n2].pair;
             if (n + 1 == n2)
             {
                 state = RBNIL;
@@ -784,12 +784,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             n = n2 - 1;
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
             {
                 state = GEN_RB;
                 break;
             }
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = GEN_RB;
@@ -801,30 +801,30 @@ void cst(bool dir, char *lbl, size_t lblleng)
             number_element += 2;
             jbyte(n_rbce);
             variables[variable_index]._q = number_element + 1;
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].v)
+            if (left_part_elements[n].v)
                 jbyte(n_nnil);
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_espc, left_elements[n].spec.info.codef);
-            left_elements[n].p = number_element;
-            left_elements[n].q = number_element + 1;
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_espc, left_part_elements[n].spec.info.codef);
+            left_part_elements[n].p = number_element;
+            left_part_elements[n].q = number_element + 1;
             number_element += 2;
-            left_elements[n2].q = number_element - 3;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n2].q = number_element - 3;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             n2 -= 2;
-            left_elements[n2].q = number_element - 4;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n2].q = number_element - 4;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             state = RCGR;
             break;
         case RBNIL:
             jbyte(n_rbnil);
-            left_elements[n2].q = number_element + 1;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n2].q = number_element + 1;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             n2 = n;
-            left_elements[n2].q = number_element;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n2].q = number_element;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             number_element += 2;
             state = RCGR;
             break;
@@ -849,20 +849,20 @@ void cst(bool dir, char *lbl, size_t lblleng)
             free_segment_number_hole_list++;
             n2 = n;
             n = n1;
-            n1 = left_elements[n2].pair;
+            n1 = left_part_elements[n2].pair;
             current_hole_mumber = hole_number_x;
             hole_list[hole_number_y].left_board_number = n;
             hole_list[hole_number_y].right_board_number = n1;
-            left_elements[n1].q = number_element;
-            left_elements[n1].p = left_elements[n1].q;
-            left_elements[n2].q = number_element + 1;
-            left_elements[n2].p = left_elements[n2].q;
+            left_part_elements[n1].q = number_element;
+            left_part_elements[n1].p = left_part_elements[n1].q;
+            left_part_elements[n2].q = number_element + 1;
+            left_part_elements[n2].p = left_part_elements[n2].q;
             number_element += 2;
             state = HSCH;
             break;
         case RSW4:
             //     s_variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
                 gopn(n_rsd, (uint8_t)variables[variable_index]._q);
             else
@@ -873,23 +873,23 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = RSMD;
             break;
         case RSMD:
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_wspc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_wspc, left_part_elements[n].spec.info.codef);
             state = R1;
             break;
         case R1:
-            left_elements[n].q = number_element;
-            left_elements[n].p = left_elements[n].q;
+            left_part_elements[n].q = number_element;
+            left_part_elements[n].p = left_part_elements[n].q;
             number_element++;
             n2 = n;
             state = RCGR;
             break;
         case RSW5:
             //    w_variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = RED;
@@ -897,11 +897,11 @@ void cst(bool dir, char *lbl, size_t lblleng)
             }
             jbyte(n_rw);
             variables[variable_index]._q = number_element + 1;
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_wspc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_wspc, left_part_elements[n].spec.info.codef);
             state = R2;
             break;
         case RED:
@@ -909,23 +909,23 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = REMD;
             break;
         case REMD:
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].spec.info.codef != NULL)
-                gopl(n_espc, left_elements[n].spec.info.codef);
+            if (left_part_elements[n].spec.info.codef != NULL)
+                gopl(n_espc, left_part_elements[n].spec.info.codef);
             state = R2;
             break;
         case R2:
-            left_elements[n].p = number_element;
-            left_elements[n].q = number_element + 1;
+            left_part_elements[n].p = number_element;
+            left_part_elements[n].q = number_element + 1;
             number_element += 2;
             n2 = n;
             state = RCGR;
             break;
         case RSW6:
             //    e-variable
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = RED;
@@ -955,7 +955,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case CE:
             //   closed including
-            if (left_elements[n].eoemrk)
+            if (left_part_elements[n].eoemrk)
             {
                 state = IMPASSE;
                 break;
@@ -963,7 +963,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = CE1;
             break;
         case CE1:
-            if (left_elements[n].spec.info.codef == NULL)
+            if (left_part_elements[n].spec.info.codef == NULL)
             {
                 state = CE2;
                 break;
@@ -976,16 +976,16 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = RMAX;
             break;
         case CE2:
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             variables[variable_index]._q = number_element + 1;
             jbyte(n_ce);
-            left_elements[n].next = variables[variable_index].last;
+            left_part_elements[n].next = variables[variable_index].last;
             variables[variable_index].last = n;
             variables[variable_index].rem--;
-            if (left_elements[n].v)
+            if (left_part_elements[n].v)
                 jbyte(n_nnil);
-            left_elements[n].p = number_element;
-            left_elements[n].q = number_element + 1;
+            left_part_elements[n].p = number_element;
+            left_part_elements[n].q = number_element + 1;
             number_element += 2;
             next_hole_number = hole_list[current_hole_mumber].next_hole_number;
             hole_list[current_hole_mumber].next_hole_number = hole_list[next_hole_number].next_hole_number;
@@ -1028,12 +1028,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = NIL;
                 break;
             }
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
             {
                 state = RIGID;
                 break;
             }
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = RIGID;
@@ -1051,12 +1051,12 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             n = n2 - 1;
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
             {
                 state = RIGID;
                 break;
             }
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0)
             {
                 state = RIGID;
@@ -1093,17 +1093,17 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 n = n1 + 1;
             else
                 n = n2 - 1;
-            variable_index = left_elements[n].variable_index;
-            if (left_elements[n].eoemrk)
+            variable_index = left_part_elements[n].variable_index;
+            if (left_part_elements[n].eoemrk)
             {
-                const uint8_t diff = jump_stack_pointer - left_elements[n].jump_stack_pointer;
+                const uint8_t diff = jump_stack_pointer - left_part_elements[n].jump_stack_pointer;
                 if (diff == 1)
                     jbyte(n_eoei);
                 else
                     gopn(n_eoe, diff);
-                jump_stack_pointer = left_elements[n].jump_stack_pointer;
-                left_elements[n].eoemrk = false;
-                left_elements[n].jump_stack_pointer = 0;
+                jump_stack_pointer = left_part_elements[n].jump_stack_pointer;
+                left_part_elements[n].eoemrk = false;
+                left_part_elements[n].jump_stack_pointer = 0;
             };
             if (n1 + 2 == n2)
             {
@@ -1114,7 +1114,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 n = n2 - 1;
             else
                 n = n1 + 1;
-            if (left_elements[n].spec.info.codef == NULL)
+            if (left_part_elements[n].spec.info.codef == NULL)
             {
                 state = OE1;
                 break;
@@ -1122,7 +1122,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = OE0;
             break;
         case OE0:
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last != 0 || variables[variable_index].rem != 1)
             {
                 state = OE1;
@@ -1146,7 +1146,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                     break;
                 }
             };
-            if (left_elements[n].t != t_e || left_elements[n].v)
+            if (left_part_elements[n].t != t_e || left_part_elements[n].v)
             {
                 state = OE1;
                 break;
@@ -1155,14 +1155,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case OERMAX:
             n = n2 - 1;
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             state = RMAX;
             break;
         case RMAX:
-            gopl(n_rmax, left_elements[n].spec.info.codef);
-            if (left_elements[n].v)
+            gopl(n_rmax, left_part_elements[n].spec.info.codef);
+            if (left_part_elements[n].v)
                 jbyte(n_nnil);
-            left_elements[n].spec.info.codef = NULL;
+            left_part_elements[n].spec.info.codef = NULL;
             state = REM;
             break;
         case REM:
@@ -1171,14 +1171,14 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case OELMAX:
             n = n1 + 1;
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             state = LMAX;
             break;
         case LMAX:
-            gopl(n_lmax, left_elements[n].spec.info.codef);
-            if (left_elements[n].v)
+            gopl(n_lmax, left_part_elements[n].spec.info.codef);
+            if (left_part_elements[n].v)
                 jbyte(n_nnil);
-            left_elements[n].spec.info.codef = NULL;
+            left_part_elements[n].spec.info.codef = NULL;
             state = LEM;
             break;
         case LEM:
@@ -1195,7 +1195,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LOE:
             n = n1 + 1;
-            temp_variable_index = left_elements[n].variable_index;
+            temp_variable_index = left_part_elements[n].variable_index;
             state = LSG;
             break;
         //         attempt to extract left support group
@@ -1209,7 +1209,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LE_CASE:
             n = n1 + 1;
-            switch (left_elements[n].t)
+            switch (left_part_elements[n].t)
             {
             case 1:
                 state = LESW1;
@@ -1232,13 +1232,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LESW1:
             //  ei 'a' . . .
-            xncode.tag = left_elements[n].code.tag;
-            xncode.info.codef = left_elements[n].code.info.codef;
+            xncode.tag = left_part_elements[n].code.tag;
+            xncode.info.codef = left_part_elements[n].code.info.codef;
             n++;
-            if (!not_nil && left_elements[n].eoemrk)
+            if (!not_nil && left_part_elements[n].eoemrk)
             {
-                left_elements[n].eoemrk = false;
-                left_elements[n].jump_stack_pointer = 0;
+                left_part_elements[n].eoemrk = false;
+                left_part_elements[n].jump_stack_pointer = 0;
                 jump_stack_pointer--;
                 gops(n_lsrch, &xncode);
             }
@@ -1262,7 +1262,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LESW4:
             //  ei sj . . .
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last == 0)
             {
                 state = LE;
@@ -1284,7 +1284,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case ROE:
             n = n2 - 1;
-            temp_variable_index = left_elements[n].variable_index;
+            temp_variable_index = left_part_elements[n].variable_index;
             state = RSG;
             break;
         //                 attempt to extract right support group
@@ -1298,7 +1298,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RE_CASE:
             n = n2 - 1;
-            switch (left_elements[n].t)
+            switch (left_part_elements[n].t)
             {
             case 1:
                 state = RESW1;
@@ -1321,13 +1321,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RESW1:
             //    . . .  'a' ei
-            xncode.tag = left_elements[n].code.tag;
-            xncode.info.codef = left_elements[n].code.info.codef;
+            xncode.tag = left_part_elements[n].code.tag;
+            xncode.info.codef = left_part_elements[n].code.info.codef;
             n--;
-            if (!not_nil && left_elements[n].eoemrk)
+            if (!not_nil && left_part_elements[n].eoemrk)
             {
-                left_elements[n].eoemrk = false;
-                left_elements[n].jump_stack_pointer = 0;
+                left_part_elements[n].eoemrk = false;
+                left_part_elements[n].jump_stack_pointer = 0;
                 jump_stack_pointer--;
                 gops(n_rsrch, &xncode);
             }
@@ -1351,7 +1351,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RESW4:
             //  . . . sj ei
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variables[variable_index].last == 0)
             {
                 state = RE;
@@ -1519,8 +1519,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
                     gopn(n_mule, (uint8_t)variables[variable_index]._q);
                 else
                 {
-                    gopn(n_tplv, (uint8_t)left_elements[n].q);
-                    variables[variable_index].last = left_elements[n].next;
+                    gopn(n_tplv, (uint8_t)left_part_elements[n].q);
+                    variables[variable_index].last = left_part_elements[n].next;
                 };
                 break;
             default:
@@ -1541,10 +1541,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 else
                 {
                     if (variables[variable_index]._v)
-                        gopn(n_tplv, (uint8_t)left_elements[n].q);
+                        gopn(n_tplv, (uint8_t)left_part_elements[n].q);
                     else
-                        gopn(n_tple, (uint8_t)left_elements[n].q);
-                    variables[variable_index].last = left_elements[n].next;
+                        gopn(n_tple, (uint8_t)left_part_elements[n].q);
+                    variables[variable_index].last = left_part_elements[n].next;
                 };
             }
             else
@@ -1656,7 +1656,7 @@ static void gen_bsb(void)
         };
         return;
     };
-    gopnm(n_sb1b2, (uint8_t)left_elements[n1].q, (uint8_t)left_elements[n2].p);
+    gopnm(n_sb1b2, (uint8_t)left_part_elements[n1].q, (uint8_t)left_part_elements[n2].p);
     return;
 }
 
@@ -1680,39 +1680,39 @@ static bool lsg_p(void)
         n++;
         if (n == n2)
             break;
-        if (left_elements[n].t != t_lb)
+        if (left_part_elements[n].t != t_lb)
         {
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
                 continue;
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last != 0)
                 continue;
-            if (left_elements[n].spec.info.codef != NULL || variables[variable_index].rem != 1)
+            if (left_part_elements[n].spec.info.codef != NULL || variables[variable_index].rem != 1)
                 break;
             if (!ortgn(n1, n))
                 break;
-            left_elements[n].eoemrk = true;
-            left_elements[n].jump_stack_pointer = jump_stack_pointer;
+            left_part_elements[n].eoemrk = true;
+            left_part_elements[n].jump_stack_pointer = jump_stack_pointer;
             break;
         }
-        n = left_elements[n].pair;
+        n = left_part_elements[n].pair;
     }
     n1++;
     n = n1;
-    variable_index = left_elements[n].variable_index;
+    variable_index = left_part_elements[n].variable_index;
     variables[variable_index]._q = number_element + 1;
-    left_elements[n].next = variables[variable_index].last;
+    left_part_elements[n].next = variables[variable_index].last;
     variables[variable_index].last = n;
     variables[variable_index].rem--;
-    left_elements[n].p = number_element;
-    left_elements[n].q = number_element + 1;
+    left_part_elements[n].p = number_element;
+    left_part_elements[n].q = number_element + 1;
     number_element += 2;
     jump_stack_pointer++;
-    not_nil = left_elements[n].v;
-    if (left_elements[n].spec.info.codef == NULL)
+    not_nil = left_part_elements[n].v;
+    if (left_part_elements[n].spec.info.codef == NULL)
         return true;
     gpev(n_plespc, n_plv);
-    gopl(n_lespc, left_elements[n].spec.info.codef);
+    gopl(n_lespc, left_part_elements[n].spec.info.codef);
     return false;
 }
 
@@ -1724,39 +1724,39 @@ static bool rsg_p(void)
         n--;
         if (n == n1)
             break;
-        if (left_elements[n].t != t_rb)
+        if (left_part_elements[n].t != t_rb)
         {
-            if (left_elements[n].t != t_e)
+            if (left_part_elements[n].t != t_e)
                 continue;
-            variable_index = left_elements[n].variable_index;
+            variable_index = left_part_elements[n].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last != 0)
                 continue;
-            if (left_elements[n].spec.info.codef != NULL || variables[variable_index].rem != 1)
+            if (left_part_elements[n].spec.info.codef != NULL || variables[variable_index].rem != 1)
                 break;
             if (!ortgn(n, n2))
                 break;
-            left_elements[n].eoemrk = true;
-            left_elements[n].jump_stack_pointer = jump_stack_pointer;
+            left_part_elements[n].eoemrk = true;
+            left_part_elements[n].jump_stack_pointer = jump_stack_pointer;
             break;
         }
-        n = left_elements[n].pair;
+        n = left_part_elements[n].pair;
     }
     n2--;
     n = n2;
-    variable_index = left_elements[n].variable_index;
+    variable_index = left_part_elements[n].variable_index;
     variables[variable_index]._q = number_element + 1;
-    left_elements[n].next = variables[variable_index].last;
+    left_part_elements[n].next = variables[variable_index].last;
     variables[variable_index].last = n;
     variables[variable_index].rem--;
-    left_elements[n].p = number_element;
-    left_elements[n].q = number_element + 1;
+    left_part_elements[n].p = number_element;
+    left_part_elements[n].q = number_element + 1;
     number_element += 2;
     jump_stack_pointer++;
-    not_nil = left_elements[n].v;
-    if (left_elements[n].spec.info.codef == NULL)
+    not_nil = left_part_elements[n].v;
+    if (left_part_elements[n].spec.info.codef == NULL)
         return true;
     gpev(n_prespc, n_prv);
-    gopl(n_respc, left_elements[n].spec.info.codef);
+    gopl(n_respc, left_part_elements[n].spec.info.codef);
     return false;
 }
 
@@ -1770,9 +1770,9 @@ static bool ortgn(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_elements[on].t <= 3)
+        if (left_part_elements[on].t <= 3)
             continue;
-        i = left_elements[on].variable_index;
+        i = left_part_elements[on].variable_index;
         if (variables[i].last != 0)
             continue;
         variables[i].rem--;
@@ -1784,9 +1784,9 @@ static bool ortgn(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_elements[on].t <= 3)
+        if (left_part_elements[on].t <= 3)
             continue;
-        i = left_elements[on].variable_index;
+        i = left_part_elements[on].variable_index;
         if (variables[i].last != 0)
             continue;
         if (variables[i].rem == 0)
@@ -1800,9 +1800,9 @@ static bool ortgn(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_elements[on].t <= 3)
+        if (left_part_elements[on].t <= 3)
             continue;
-        i = left_elements[on].variable_index;
+        i = left_part_elements[on].variable_index;
         if (variables[i].last != 0)
             continue;
         variables[i].rem++;
