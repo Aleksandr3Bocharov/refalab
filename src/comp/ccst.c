@@ -185,13 +185,13 @@ static size_t ind, ie;          // element index
 static uint16_t number_element; // current number of element
 static uint32_t e_level;        // counter of the longing levels
 static uint32_t diff_e_level;
-static bool not_nil;                 // working variables
-static uint8_t variables_count;      // subprogram of search in variable table
-                                     // table pointer
-static size_t lastb, lastb1;         // variables for brackets linkage
-static uint32_t brackets_count[513]; // stack for counting of the brackets balance
+static bool not_nil;                            // working variables
+static uint8_t variables_count;                 // subprogram of search in variable table
+                                                // table pointer
+static uint8_t last_bracket, temp_last_bracket; // variables for brackets linkage
+static uint8_t stoped_bracket_flag;             // stoped bracket flag
+static uint32_t brackets_count[513];            // stack for counting of the brackets balance
 static uint16_t brackets_k_level;
-static uint8_t stoped_bracket_flag;           // stoped bracket flag
 static uint8_t symbols_count;                 // counter of the symbol number
 static char symbols_buffer[81];               // buffer for generating of the "text" statement
 static uint8_t current_hole_mumber;           // current hole number
@@ -217,7 +217,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
 {
     variables_count = 0;
     n = 0;
-    lastb = 0;
+    last_bracket = 0;
     number_element = 0;
     T_STATES state = GET_LPE;
     while (true)
@@ -288,13 +288,13 @@ void cst(bool dir, char *lbl, size_t lblleng)
         case LPE2:
             // left bracket
             number_element++;
-            x[n].pair = lastb;
-            lastb = n;
+            x[n].pair = last_bracket;
+            last_bracket = n;
             state = NEXT_LPE;
             break;
         case LPE3:
             // right bracket
-            if (lastb == 0)
+            if (last_bracket == 0)
             {
                 pchosh("302 too many ')' in left part");
                 n--;
@@ -302,10 +302,10 @@ void cst(bool dir, char *lbl, size_t lblleng)
             else
             {
                 number_element++;
-                lastb1 = x[lastb].pair;
-                x[lastb].pair = n;
-                x[n].pair = lastb;
-                lastb = lastb1;
+                temp_last_bracket = x[last_bracket].pair;
+                x[last_bracket].pair = n;
+                x[n].pair = last_bracket;
+                last_bracket = temp_last_bracket;
             }
             state = NEXT_LPE;
             break;
@@ -377,7 +377,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE9:
             // left part end
-            if (lastb == 0)
+            if (last_bracket == 0)
             {
                 state = RCG;
                 break;
