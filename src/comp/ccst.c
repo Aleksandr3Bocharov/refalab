@@ -191,10 +191,9 @@ static size_t lastb, lastb1;    // variables for brackets linkage
 static uint32_t diff_e_level;
 static uint32_t kol_skob[513]; // stack for counting of the brackets balance
 static size_t ur_skob;
-static uint32_t lrbxy;   // stoped bracket flag
-static uint8_t kol_lit;  // counter of the symbol number
-static char buf_lit[81]; // buffer for generating of the "text" statement
-static size_t k;
+static uint32_t lrbxy;                        // stoped bracket flag
+static uint8_t symbols_count;                 // counter of the symbol number
+static char symbols_buffer[81];               // buffer for generating of the "text" statement
 static uint8_t current_hole_mumber;           // current hole number
 static uint8_t free_segment_number_hole_list; // free segment number in the hole  list
 static uint8_t next_hole_number;              // next hole number
@@ -469,7 +468,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = L1;
             break;
         case LTXT:
-            kol_lit = 1;
+            symbols_count = 1;
             state = LTXT1;
             break;
         case LTXT1:
@@ -479,16 +478,16 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = LTXT2;
                 break;
             }
-            kol_lit++;
+            symbols_count++;
             break;
         case LTXT2:
-            if (kol_lit == 1)
+            if (symbols_count == 1)
             {
                 state = LSCO;
                 break;
             }
             n = n1;
-            gopn(n_ltxt, (uint8_t)kol_lit);
+            gopn(n_ltxt, symbols_count);
             state = LTXT3;
             break;
         case LTXT3:
@@ -497,8 +496,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
-            kol_lit--;
-            if (kol_lit == 0)
+            symbols_count--;
+            if (symbols_count == 0)
             {
                 n1 = n;
                 state = RCGL;
@@ -728,7 +727,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = R1;
             break;
         case RTXT:
-            kol_lit = 1;
+            symbols_count = 1;
             state = RTXT1;
             break;
         case RTXT1:
@@ -738,16 +737,16 @@ void cst(bool dir, char *lbl, size_t lblleng)
                 state = RTXT2;
                 break;
             }
-            kol_lit++;
+            symbols_count++;
             break;
         case RTXT2:
-            if (kol_lit == 1)
+            if (symbols_count == 1)
             {
                 state = RSCO;
                 break;
             }
             n = n2;
-            gopn(n_rtxt, (uint8_t)kol_lit);
+            gopn(n_rtxt, symbols_count);
             state = RTXT3;
             break;
         case RTXT3:
@@ -756,8 +755,8 @@ void cst(bool dir, char *lbl, size_t lblleng)
             x[n].q = number_element;
             x[n].p = x[n].q;
             number_element++;
-            kol_lit--;
-            if (kol_lit == 0)
+            symbols_count--;
+            if (symbols_count == 0)
             {
                 n2 = n;
                 state = RCGR;
@@ -1443,22 +1442,22 @@ void cst(bool dir, char *lbl, size_t lblleng)
             state = GET_RPE;
             break;
         case TEXT:
-            kol_lit = 0;
+            symbols_count = 0;
             state = TEXT1;
             break;
         case TEXT1:
-            kol_lit++;
-            buf_lit[kol_lit] = scn_e.code.info.infoc;
+            symbols_count++;
+            symbols_buffer[symbols_count] = scn_e.code.info.infoc;
             scan();
-            if (kol_lit < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
+            if (symbols_count < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
                 break;
-            if (kol_lit == 1)
-                gopn(n_nso, (uint8_t)buf_lit[1]);
+            if (symbols_count == 1)
+                gopn(n_nso, (uint8_t)symbols_buffer[1]);
             else
             {
-                gopn(n_text, (uint8_t)kol_lit);
-                for (k = 1; k <= kol_lit; k++)
-                    jbyte((uint8_t)buf_lit[k]);
+                gopn(n_text, symbols_count);
+                for (uint8_t k = 1; k <= symbols_count; k++)
+                    jbyte((uint8_t)symbols_buffer[k]);
             };
             state = SW_RPE;
             break;
