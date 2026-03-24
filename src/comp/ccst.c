@@ -149,7 +149,8 @@ typedef enum states
 
 static struct
 { // left part buffer elements
-    uint8_t left_number_element, right_number_element, type;
+    uint16_t left_number_element, right_number_element;
+    uint8_t type;
     uint8_t variable_index;
     T_LINKTI code;
     uint8_t next_variable;
@@ -163,10 +164,11 @@ static struct
 static struct
 { // variable table elements
     uint8_t last_left_part_element;
-    uint8_t type, main_right_number_element;
+    uint8_t type;
+    uint16_t main_right_number_element;
     uint32_t rem;
     char identificator[MAX_ID_LEN];
-    size_t identificator_length;
+    uint8_t identificator_length;
     bool v_variable;
 } variables[256];
 
@@ -605,7 +607,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             //    s-variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variables[variable_index].last_left_part_element != 0)
-                gopn(n_lsd, variables[variable_index].main_right_number_element);
+                gopn(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
                 jbyte(n_ls);
@@ -646,7 +648,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = L2;
             break;
         case LED:
-            gopn(n_led, variables[variable_index].main_right_number_element);
+            gopn(n_led, (uint8_t)variables[variable_index].main_right_number_element);
             state = LEMD;
             break;
         case LEMD:
@@ -864,7 +866,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             //     s_variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variables[variable_index].last_left_part_element != 0)
-                gopn(n_rsd, variables[variable_index].main_right_number_element);
+                gopn(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
                 jbyte(n_rs);
@@ -905,7 +907,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = R2;
             break;
         case RED:
-            gopn(n_red, variables[variable_index].main_right_number_element);
+            gopn(n_red, (uint8_t)variables[variable_index].main_right_number_element);
             state = REMD;
             break;
         case REMD:
@@ -1269,7 +1271,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             gpev(n_plesc, n_plvsc);
-            gopn(n_lesd, variables[variable_index].main_right_number_element);
+            gopn(n_lesd, (uint8_t)variables[variable_index].main_right_number_element);
             state = LSMD;
             break;
         case LESW5:
@@ -1358,7 +1360,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             gpev(n_presc, n_prvsc);
-            gopn(n_resd, variables[variable_index].main_right_number_element);
+            gopn(n_resd, (uint8_t)variables[variable_index].main_right_number_element);
             state = RSMD;
             break;
         case RESW5:
@@ -1498,7 +1500,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 pch406();
                 break;
             case 1:
-                gopn(n_muls, variables[variable_index].main_right_number_element);
+                gopn(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
                 break;
             default:
                 pch303();
@@ -1516,7 +1518,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             case 2:
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
-                    gopn(n_mule, variables[variable_index].main_right_number_element);
+                    gopn(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
                 else
                 {
                     gopn(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
@@ -1537,7 +1539,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             {
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
-                    gopn(n_mule, variables[variable_index].main_right_number_element);
+                    gopn(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
                 else
                 {
                     if (variables[variable_index].v_variable)
