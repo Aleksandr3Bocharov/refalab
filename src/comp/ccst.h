@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-19
+// 2026-03-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.H  ---------------
@@ -94,6 +94,6 @@
 #define n_swap 0116
 #define n_blf 0117
 
-extern void cst(bool dir, char *lbl, size_t lblleng);
+extern void compile_sentence(bool dir, char *lbl, size_t lblleng);
 
 #endif

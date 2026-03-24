@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-11
+// 2026-03-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
                     pchosh("021 l-directive not in the impl-section");
                 dir = true;
                 trprev();
-                cst(dir, stmlbl, lbl_leng);
+                compile_sentence(dir, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
@@ -407,7 +407,7 @@ int main(int argc, char *argv[])
                     pchosh("022 r-directive not in the impl-section");
                 dir = false;
                 trprev();
-                cst(dir, stmlbl, lbl_leng);
+                compile_sentence(dir, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "start", 5) == 0)
             {
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
                 m = fixm; // return to left
                 dir = true;
                 trprev();
-                cst(dir, stmlbl, lbl_leng);
+                compile_sentence(dir, stmlbl, lbl_leng);
             }
             if (!_eoj)
             {

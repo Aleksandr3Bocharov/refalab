@@ -198,18 +198,18 @@ static uint8_t free_segment_hole_list; // free segment number in the hole  list
 static uint8_t next_hole;              // next hole number
 static uint8_t hole_x, hole_y;         // hole numbers (under enter in brackets)
 
-static void isk_v(void);
-static void gen_bsb(void);
+static void search_variable(void);
+static void generate_boards_stoping_brackets(void);
 static void pch303(void);
 static void pch406(void);
 static bool lsg_p(void);
 static bool rsg_p(void);
 static void gpev(uint8_t op1, uint8_t op2);
-static bool ortgn(uint8_t on1, uint8_t on2);
+static bool ortogonality(uint8_t on1, uint8_t on2);
 
 // read left part
 // and full array X
-void cst(bool dir, char *lbl, size_t lblleng)
+void compile_sentence(bool dir, char *lbl, size_t lblleng)
 // dir;     matching feature :left to right or otherwise
 // lbl;   sentence label
 // lblleng; sentence label length
@@ -310,7 +310,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE4:
             // s-varyable
-            isk_v();
+            search_variable();
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
@@ -329,7 +329,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE5:
             // w-varyable
-            isk_v();
+            search_variable();
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
@@ -348,7 +348,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE6:
             // e- or v-varyable
-            isk_v();
+            search_variable();
             left_part_elements[current_left_part_element].variable_index = variable_index;
             if (variables[variable_index].type == 0) // yet is't faced
                 variables[variable_index].type = 3;
@@ -1024,7 +1024,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             current_left_part_element = current_left_board + 1;
             if (current_left_part_element == current_right_board)
             {
-                gen_bsb();
+                generate_boards_stoping_brackets();
                 state = NIL;
                 break;
             }
@@ -1046,7 +1046,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
                     state = NHOLE1;
                     break;
                 }
-                gen_bsb();
+                generate_boards_stoping_brackets();
                 state = CE1;
                 break;
             }
@@ -1075,7 +1075,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RIGID:
             //  hard element on the both hole boards
-            gen_bsb();
+            generate_boards_stoping_brackets();
             if (dir)
             {
                 state = RCGL;
@@ -1088,7 +1088,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             current_hole = 1;
             current_left_board = hole_list[current_hole].left_board;
             current_right_board = hole_list[current_hole].right_board;
-            gen_bsb();
+            generate_boards_stoping_brackets();
             if (dir)
                 current_left_part_element = current_left_board + 1;
             else
@@ -1491,7 +1491,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE4:
             // s - varyable
-            isk_v();
+            search_variable();
             switch (variables[variable_index].type)
             {
             case 0:
@@ -1507,7 +1507,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE5:
             // w - varyable
-            isk_v();
+            search_variable();
             switch (variables[variable_index].type)
             {
             case 0:
@@ -1530,7 +1530,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE6:
             // e- or v-varyable
-            isk_v();
+            search_variable();
             if (variables[variable_index].type == 0)
                 pch406();
             else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scn_e.v)
@@ -1609,7 +1609,7 @@ void cst(bool dir, char *lbl, size_t lblleng)
         }
 }
 
-static void isk_v(void)
+static void search_variable(void)
 {
     for (variable_index = 1; variable_index <= variables_count; variable_index++)
         if (variables[variable_index].identificator_length == scn_e.si_leng && strncmp(variables[variable_index].identificator, scn_e.si, variables[variable_index].identificator_length) == 0)
@@ -1625,7 +1625,7 @@ static void isk_v(void)
 }
 
 //   generation of stoped brackets and setting boards
-static void gen_bsb(void)
+static void generate_boards_stoping_brackets(void)
 {
     switch (stoped_bracket_flag)
     {
@@ -1689,7 +1689,7 @@ static bool lsg_p(void)
                 continue;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].rem != 1)
                 break;
-            if (!ortgn(current_left_board, current_left_part_element))
+            if (!ortogonality(current_left_board, current_left_part_element))
                 break;
             left_part_elements[current_left_part_element].eoe_mark = true;
             left_part_elements[current_left_part_element].jump_stack_pointer = jump_stack_pointer;
@@ -1733,7 +1733,7 @@ static bool rsg_p(void)
                 continue;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].rem != 1)
                 break;
-            if (!ortgn(current_left_part_element, current_right_board))
+            if (!ortogonality(current_left_part_element, current_right_board))
                 break;
             left_part_elements[current_left_part_element].eoe_mark = true;
             left_part_elements[current_left_part_element].jump_stack_pointer = jump_stack_pointer;
@@ -1761,7 +1761,7 @@ static bool rsg_p(void)
 }
 
 //    check ortogonality of this sentence against left part
-static bool ortgn(uint8_t on1, uint8_t on2)
+static bool ortogonality(uint8_t on1, uint8_t on2)
 {
     uint8_t on = on1;
     uint8_t i;
