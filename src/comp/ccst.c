@@ -1500,7 +1500,14 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 pch406();
                 break;
             case 1:
-                gopn(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
+                current_left_part_element = variables[variable_index].last_left_part_element;
+                if (current_left_part_element == 0)
+                    gopn(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
+                else
+                {
+                    gopn(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                    variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
+                };
                 break;
             default:
                 pch303();
