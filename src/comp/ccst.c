@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-23
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -167,8 +167,8 @@ static struct
     uint8_t type;
     uint16_t main_right_number_element;
     uint32_t rem;
-    char identificator[MAX_ID_LEN];
-    uint8_t identificator_length;
+    char identifier[MAX_ID_LEN];
+    uint8_t identifier_length;
     bool v_variable;
 } variables[256];
 
@@ -1621,11 +1621,11 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
 static void search_variable(void)
 {
     for (variable_index = 1; variable_index <= variables_count; variable_index++)
-        if (variables[variable_index].identificator_length == scn_e.si_leng && strncmp(variables[variable_index].identificator, scn_e.si, variables[variable_index].identificator_length) == 0)
+        if (variables[variable_index].identifier_length == scn_e.si_leng && strncmp(variables[variable_index].identifier, scn_e.si, variables[variable_index].identifier_length) == 0)
             return;
     variable_index = ++variables_count;
-    strncpy(variables[variable_index].identificator, scn_e.si, scn_e.si_leng);
-    variables[variable_index].identificator_length = scn_e.si_leng;
+    strncpy(variables[variable_index].identifier, scn_e.si, scn_e.si_leng);
+    variables[variable_index].identifier_length = scn_e.si_leng;
     variables[variable_index].type = 0;
     variables[variable_index].rem = 1;
     variables[variable_index].last_left_part_element = 0;
@@ -1671,13 +1671,13 @@ static void generate_boards_stoping_brackets(void)
 
 static void pch303(void)
 {
-    pchose("303 differents for variable ", variables[variable_index].identificator, variables[variable_index].identificator_length);
+    pchose("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
 static void pch406(void)
 {
-    pchose("406 in left part missing variable ", variables[variable_index].identificator, variables[variable_index].identificator_length);
+    pchose("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
