@@ -20,29 +20,29 @@ typedef struct _TAG
     uint8_t byte2;
 } T_TAG;
 
-void gopn(uint8_t k, uint8_t n)
+void generate_operator_n(uint8_t operator, uint8_t n)
 {
-    jbyte(k);
+    jbyte(operator);
     jbyte(n);
     return;
 }
 
-void gopnm(uint8_t k, uint8_t n, uint8_t m)
+void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
 {
-    jbyte(k);
+    jbyte(operator);
     jbyte(n);
     jbyte(m);
     return;
 }
 
-void gopl(uint8_t k, const uint8_t *l)
+void generate_operator_l(uint8_t operator, const uint8_t *l)
 {
-    jbyte(k);
+    jbyte(operator);
     j3addr((T_U *)(void *)l);
     return;
 }
 
-void gsymbol(const T_LINKTI *code)
+void generate_symbol(const T_LINKTI *code)
 {
     const T_TAG *code_tag = (T_TAG *)&(code->tag);
     jbyte(code_tag->byte1);
@@ -70,10 +70,10 @@ void gsymbol(const T_LINKTI *code)
     return;
 }
 
-void gops(uint8_t k, const T_LINKTI *code)
+void generate_operator_s(uint8_t operator, const T_LINKTI *code)
 {
-    jbyte(k);
-    gsymbol(code);
+    jbyte(operator);
+    generate_symbol(code);
     return;
 }
 

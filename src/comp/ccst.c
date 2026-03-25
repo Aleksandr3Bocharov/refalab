@@ -202,11 +202,11 @@ static uint8_t hole_x, hole_y;         // hole numbers (under enter in brackets)
 
 static void search_variable(void);
 static void generate_boards_stoping_brackets(void);
-static void pch303(void);
-static void pch406(void);
+static void print_error_303(void);
+static void print_error_406(void);
 static bool lsg_p(void);
 static bool rsg_p(void);
-static void gpev(uint8_t op1, uint8_t op2);
+static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v);
 static bool ortogonality(uint8_t on1, uint8_t on2);
 
 // read left part
@@ -323,7 +323,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
-                pch303();
+                print_error_303();
                 current_left_part_element--;
             }
             number_element++;
@@ -342,7 +342,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
-                pch303();
+                print_error_303();
                 current_left_part_element--;
             }
             number_element += 2;
@@ -358,7 +358,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 ++variables[variable_index].rem;
             else // invalid type pointer
             {
-                pch303();
+                print_error_303();
                 current_left_part_element--;
             };
             number_element += 2;
@@ -465,7 +465,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = LTXT;
                 break;
             }
-            gops(n_lsc, &left_part_elements[current_left_part_element].code);
+            generate_operator_s(n_lsc, &left_part_elements[current_left_part_element].code);
             state = L1;
             break;
         case LTXT:
@@ -488,7 +488,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             current_left_part_element = current_left_board;
-            gopn(n_ltxt, symbols_count);
+            generate_operator_n(n_ltxt, symbols_count);
             state = LTXT3;
             break;
         case LTXT3:
@@ -506,7 +506,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case LSCO:
             current_left_part_element = current_left_board + 1;
-            gopn(n_lsco, (uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            generate_operator_n(n_lsco, (uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             state = L1;
             break;
         case LSW2:
@@ -547,7 +547,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             if (left_part_elements[current_left_part_element].v_variable)
                 jbyte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
             left_part_elements[current_left_part_element].right_number_element = number_element + 1;
             number_element += 2;
@@ -607,7 +607,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             //    s-variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variables[variable_index].last_left_part_element != 0)
-                gopn(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
+                generate_operator_n(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
                 jbyte(n_ls);
@@ -620,7 +620,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L1;
             break;
         case L1:
@@ -644,11 +644,11 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L2;
             break;
         case LED:
-            gopn(n_led, (uint8_t)variables[variable_index].main_right_number_element);
+            generate_operator_n(n_led, (uint8_t)variables[variable_index].main_right_number_element);
             state = LEMD;
             break;
         case LEMD:
@@ -656,7 +656,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L2;
             break;
         case L2:
@@ -724,7 +724,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = RTXT;
                 break;
             }
-            gops(n_rsc, &left_part_elements[current_left_part_element].code);
+            generate_operator_s(n_rsc, &left_part_elements[current_left_part_element].code);
             state = R1;
             break;
         case RTXT:
@@ -747,7 +747,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 break;
             }
             current_left_part_element = current_right_board;
-            gopn(n_rtxt, symbols_count);
+            generate_operator_n(n_rtxt, symbols_count);
             state = RTXT3;
             break;
         case RTXT3:
@@ -765,7 +765,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case RSCO:
             current_left_part_element = current_right_board - 1;
-            gopn(n_rsco, (uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            generate_operator_n(n_rsco, (uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             state = R1;
             break;
         case RSW2:
@@ -809,7 +809,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             if (left_part_elements[current_left_part_element].v_variable)
                 jbyte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
             left_part_elements[current_left_part_element].right_number_element = number_element + 1;
             number_element += 2;
@@ -866,7 +866,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             //     s_variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variables[variable_index].last_left_part_element != 0)
-                gopn(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
+                generate_operator_n(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
                 jbyte(n_rs);
@@ -879,7 +879,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R1;
             break;
         case R1:
@@ -903,11 +903,11 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R2;
             break;
         case RED:
-            gopn(n_red, (uint8_t)variables[variable_index].main_right_number_element);
+            generate_operator_n(n_red, (uint8_t)variables[variable_index].main_right_number_element);
             state = REMD;
             break;
         case REMD:
@@ -915,7 +915,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
-                gopl(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
+                generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R2;
             break;
         case R2:
@@ -1102,7 +1102,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 if (diff == 1)
                     jbyte(n_eoei);
                 else
-                    gopn(n_eoe, diff);
+                    generate_operator_n(n_eoe, diff);
                 jump_stack_pointer = left_part_elements[current_left_part_element].jump_stack_pointer;
                 left_part_elements[current_left_part_element].eoe_mark = false;
                 left_part_elements[current_left_part_element].jump_stack_pointer = 0;
@@ -1161,7 +1161,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = RMAX;
             break;
         case RMAX:
-            gopl(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
+            generate_operator_l(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
                 jbyte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
@@ -1177,7 +1177,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = LMAX;
             break;
         case LMAX:
-            gopl(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
+            generate_operator_l(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
                 jbyte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
@@ -1242,19 +1242,19 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 left_part_elements[current_left_part_element].eoe_mark = false;
                 left_part_elements[current_left_part_element].jump_stack_pointer = 0;
                 jump_stack_pointer--;
-                gops(n_lsrch, &xncode);
+                generate_operator_s(n_lsrch, &xncode);
             }
             else
             {
-                gpev(n_plesc, n_plvsc);
-                gops(n_lesc, &xncode);
+                generate_operator_e_v(n_plesc, n_plvsc);
+                generate_operator_s(n_lesc, &xncode);
             };
             current_left_part_element--;
             state = L1;
             break;
         case LESW2:
             //   ei ( . . . ) . . .
-            gpev(n_pleb, n_plvb);
+            generate_operator_e_v(n_pleb, n_plvb);
             jbyte(n_leb);
             stoped_bracket_flag = 0;
             state = LB1;
@@ -1270,8 +1270,8 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = LE;
                 break;
             }
-            gpev(n_plesc, n_plvsc);
-            gopn(n_lesd, (uint8_t)variables[variable_index].main_right_number_element);
+            generate_operator_e_v(n_plesc, n_plvsc);
+            generate_operator_n(n_lesd, (uint8_t)variables[variable_index].main_right_number_element);
             state = LSMD;
             break;
         case LESW5:
@@ -1280,7 +1280,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = LE;
             break;
         case LE:
-            gpev(n_ple, n_plv);
+            generate_operator_e_v(n_ple, n_plv);
             jbyte(n_le);
             state = RCGL;
             break;
@@ -1331,12 +1331,12 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 left_part_elements[current_left_part_element].eoe_mark = false;
                 left_part_elements[current_left_part_element].jump_stack_pointer = 0;
                 jump_stack_pointer--;
-                gops(n_rsrch, &xncode);
+                generate_operator_s(n_rsrch, &xncode);
             }
             else
             {
-                gpev(n_presc, n_prvsc);
-                gops(n_resc, &xncode);
+                generate_operator_e_v(n_presc, n_prvsc);
+                generate_operator_s(n_resc, &xncode);
             };
             current_left_part_element++;
             state = R1;
@@ -1346,7 +1346,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case RESW3:
             // . . .  ( . . .  ) ei
-            gpev(n_preb, n_prvb);
+            generate_operator_e_v(n_preb, n_prvb);
             jbyte(n_reb);
             stoped_bracket_flag = 0;
             state = RB1;
@@ -1359,8 +1359,8 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = RE;
                 break;
             }
-            gpev(n_presc, n_prvsc);
-            gopn(n_resd, (uint8_t)variables[variable_index].main_right_number_element);
+            generate_operator_e_v(n_presc, n_prvsc);
+            generate_operator_n(n_resd, (uint8_t)variables[variable_index].main_right_number_element);
             state = RSMD;
             break;
         case RESW5:
@@ -1369,7 +1369,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = RE;
             break;
         case RE:
-            gpev(n_pre, n_prv);
+            generate_operator_e_v(n_pre, n_prv);
             jbyte(n_re);
             state = RCGR;
             break;
@@ -1439,7 +1439,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = TEXT;
                 break;
             }
-            gops(n_ns, &scn_e.code);
+            generate_operator_s(n_ns, &scn_e.code);
             state = GET_RPE;
             break;
         case TEXT:
@@ -1453,10 +1453,10 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             if (symbols_count < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
                 break;
             if (symbols_count == 1)
-                gopn(n_nso, (uint8_t)symbols_buffer[1]);
+                generate_operator_n(n_nso, (uint8_t)symbols_buffer[1]);
             else
             {
-                gopn(n_text, symbols_count);
+                generate_operator_n(n_text, symbols_count);
                 for (uint8_t k = 1; k <= symbols_count; k++)
                     jbyte((uint8_t)symbols_buffer[k]);
             };
@@ -1475,7 +1475,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
             {
                 function_pointer.info.codef = scn_e.code.info.codef;
-                gopl(n_blf, function_pointer.info.codef);
+                generate_operator_l(n_blf, function_pointer.info.codef);
                 state = GET_RPE;
                 break;
             }
@@ -1497,20 +1497,20 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             switch (variables[variable_index].type)
             {
             case 0:
-                pch406();
+                print_error_406();
                 break;
             case 1:
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
-                    gopn(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
+                    generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
                 else
                 {
-                    gopn(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                    generate_operator_n(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
                     variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
                 };
                 break;
             default:
-                pch303();
+                print_error_303();
             };
             state = GET_RPE;
             break;
@@ -1520,20 +1520,20 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             switch (variables[variable_index].type)
             {
             case 0:
-                pch406();
+                print_error_406();
                 break;
             case 2:
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
-                    gopn(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
+                    generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
                 else
                 {
-                    gopn(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                    generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
                     variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
                 };
                 break;
             default:
-                pch303();
+                print_error_303();
             };
             state = GET_RPE;
             break;
@@ -1541,23 +1541,23 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             // e- or v-varyable
             search_variable();
             if (variables[variable_index].type == 0)
-                pch406();
+                print_error_406();
             else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scn_e.v)
             {
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
-                    gopn(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
+                    generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
                 else
                 {
                     if (variables[variable_index].v_variable)
-                        gopn(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                        generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
                     else
-                        gopn(n_tple, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                        generate_operator_n(n_tple, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
                     variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
                 };
             }
             else
-                pch303();
+                print_error_303();
             state = GET_RPE;
             break;
         case RPE7:
@@ -1574,7 +1574,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             {
                 function_pointer.info.codef = scn_e.code.info.codef;
                 function_pointer.tag = TAGO;
-                gopl(n_blf, function_pointer.info.codef);
+                generate_operator_l(n_blf, function_pointer.info.codef);
                 state = GET_RPE;
                 break;
             }
@@ -1665,17 +1665,17 @@ static void generate_boards_stoping_brackets(void)
         };
         return;
     };
-    gopnm(n_sb1b2, (uint8_t)left_part_elements[current_left_board].right_number_element, (uint8_t)left_part_elements[current_right_board].left_number_element);
+    generate_operator_n_m(n_sb1b2, (uint8_t)left_part_elements[current_left_board].right_number_element, (uint8_t)left_part_elements[current_right_board].left_number_element);
     return;
 }
 
-static void pch303(void)
+static void print_error_303(void)
 {
     print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
-static void pch406(void)
+static void print_error_406(void)
 {
     print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
@@ -1720,8 +1720,8 @@ static bool lsg_p(void)
     not_nil = left_part_elements[current_left_part_element].v_variable;
     if (left_part_elements[current_left_part_element].specifier.info.codef == NULL)
         return true;
-    gpev(n_plespc, n_plv);
-    gopl(n_lespc, left_part_elements[current_left_part_element].specifier.info.codef);
+    generate_operator_e_v(n_plespc, n_plv);
+    generate_operator_l(n_lespc, left_part_elements[current_left_part_element].specifier.info.codef);
     return false;
 }
 
@@ -1764,8 +1764,8 @@ static bool rsg_p(void)
     not_nil = left_part_elements[current_left_part_element].v_variable;
     if (left_part_elements[current_left_part_element].specifier.info.codef == NULL)
         return true;
-    gpev(n_prespc, n_prv);
-    gopl(n_respc, left_part_elements[current_left_part_element].specifier.info.codef);
+    generate_operator_e_v(n_prespc, n_prv);
+    generate_operator_l(n_respc, left_part_elements[current_left_part_element].specifier.info.codef);
     return false;
 }
 
@@ -1819,12 +1819,12 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
     return res;
 }
 
-static void gpev(uint8_t op1, uint8_t op2)
+static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
-        jbyte(op2);
+        jbyte(operator_e);
     else
-        jbyte(op1);
+        jbyte(operator_v);
 }
 
 //----------  end of file CCST.C  -------------------

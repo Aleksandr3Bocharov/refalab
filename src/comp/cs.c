@@ -97,7 +97,7 @@ void fndef(const char *idp, size_t lid)
             fnhead(idp, lid);
             p->def = scn_.nomkar;
             jlabel(p);
-            gopl(n_sjump, (uint8_t *)next_stm);
+            generate_operator_l(n_sjump, (uint8_t *)next_stm);
         }
     }
     else
@@ -107,7 +107,7 @@ void fndef(const char *idp, size_t lid)
         else
             p500();
         next_stm = alloc_lbl();
-        gopl(n_sjump, (uint8_t *)next_stm);
+        generate_operator_l(n_sjump, (uint8_t *)next_stm);
     };
     return;
 }

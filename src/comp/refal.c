@@ -1296,7 +1296,7 @@ static bool specif(char tail)
             }
             gsp(ns_sc);
             if (left_part)
-                gsymbol(&code);
+                generate_symbol(&code);
             sp_state = SPCBLO;
             break;
         case SPCSP:
@@ -1337,7 +1337,7 @@ static bool specif(char tail)
                 code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc = '\'';
-                gsymbol(&code);
+                generate_symbol(&code);
             }
             sp_state = SPCGC;
             break;
@@ -1405,7 +1405,7 @@ static bool specif(char tail)
                 code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc = c[m];
-                gsymbol(&code);
+                generate_symbol(&code);
             }
             EH_ROMA0;
             if (m == CUT - 1)
