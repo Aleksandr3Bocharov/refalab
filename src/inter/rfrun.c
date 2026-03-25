@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-21
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -60,14 +60,14 @@
     avpc = jump_stack_pointer->virtual_program_counter
 
 #define PUT_TRANSPLANTATION_STACK(az, ax, ay)                   \
-    transplantation_stack_pointer->transplantation_stack0 = az; \
-    transplantation_stack_pointer->transplantation_stack1 = ax; \
-    transplantation_stack_pointer->transplantation_stack2 = ay
+    transplantation_stack_pointer->transplantation_where = az; \
+    transplantation_stack_pointer->transplantation_from = ax; \
+    transplantation_stack_pointer->transplantation_to = ay
 
 #define GET_TRANSPLANTATION_STACK(az, ax, ay)                   \
-    az = transplantation_stack_pointer->transplantation_stack0; \
-    ax = transplantation_stack_pointer->transplantation_stack1; \
-    ay = transplantation_stack_pointer->transplantation_stack2
+    az = transplantation_stack_pointer->transplantation_where; \
+    ax = transplantation_stack_pointer->transplantation_from; \
+    ay = transplantation_stack_pointer->transplantation_to
 
 typedef enum intepretator_states
 {
@@ -217,9 +217,9 @@ typedef struct w_jump_stack
 
 typedef struct transplantation_stack
 { // transplantation stack structure
-    T_LINKCB *transplantation_stack0;
-    T_LINKCB *transplantation_stack1;
-    T_LINKCB *transplantation_stack2;
+    T_LINKCB *transplantation_where;
+    T_LINKCB *transplantation_from;
+    T_LINKCB *transplantation_to;
 } T_TRANSPLANTATION_STACK;
 
 typedef struct specifier_stack
