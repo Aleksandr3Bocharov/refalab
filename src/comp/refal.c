@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-23
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
             s_init();
             if (strncasecmp(stmkey, "start", 5) != 0)
             {
-                pchosh("001 START-directive missing");
+                print_error_string("001 START-directive missing");
                 scn_.modnmlen = 0;
                 jstart();
                 mod_state = KEYS;
@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
             if (strncasecmp(stmkey, "impl", 4) == 0)
             {
                 if (impl == true)
-                    pchosh("011 impl-directive in the impl-section");
+                    print_error_string("011 impl-directive in the impl-section");
                 if (lbl_leng != 0)
                     pch130();
                 else
@@ -396,7 +396,7 @@ int main(int argc, char *argv[])
             else if (strncasecmp(stmkey, "l ", 2) == 0)
             {
                 if (impl == false)
-                    pchosh("021 l-directive not in the impl-section");
+                    print_error_string("021 l-directive not in the impl-section");
                 dir = true;
                 trprev();
                 compile_sentence(dir, stmlbl, lbl_leng);
@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
             else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
                 if (impl == false)
-                    pchosh("022 r-directive not in the impl-section");
+                    print_error_string("022 r-directive not in the impl-section");
                 dir = false;
                 trprev();
                 compile_sentence(dir, stmlbl, lbl_leng);
@@ -412,9 +412,9 @@ int main(int argc, char *argv[])
             else if (strncasecmp(stmkey, "start", 5) == 0)
             {
                 if (impl == true)
-                    pchosh("012 start-directive in the impl-section");
+                    print_error_string("012 start-directive in the impl-section");
                 else
-                    pchosh("002 too many start-directive");
+                    print_error_string("002 too many start-directive");
                 blout();
                 if (m != CUT - 1 || c[m] != ' ')
                     pch130();
@@ -437,38 +437,38 @@ int main(int argc, char *argv[])
             else if (strncasecmp(stmkey, "entry", 5) == 0)
             {
                 if (impl == true)
-                    pchosh("013 entry-directive in the impl-section");
+                    print_error_string("013 entry-directive in the impl-section");
                 ilm(sentry);
             }
             else if (strncasecmp(stmkey, "extrn", 5) == 0)
             {
                 if (impl == true)
-                    pchosh("014 extrn-directive in the impl-section");
+                    print_error_string("014 extrn-directive in the impl-section");
                 ilm(sextrn);
             }
             else if (strncasecmp(stmkey, "empty", 5) == 0)
             {
                 if (impl == true)
-                    pchosh("015 empty-directive in the impl-section");
+                    print_error_string("015 empty-directive in the impl-section");
                 il(sempty);
             }
             else if (strncasecmp(stmkey, "swap", 4) == 0)
             {
                 if (impl == true)
-                    pchosh("016 swap-directive in the impl-section");
+                    print_error_string("016 swap-directive in the impl-section");
                 il(sswap);
             }
             else if (strncasecmp(stmkey, "s ", 2) == 0)
             {
                 if (impl == true)
-                    pchosh("017 s-directive in the impl-section");
+                    print_error_string("017 s-directive in the impl-section");
                 spdef(stmlbl, lbl_leng);
                 specif(' ');
             }
             else if (strncasecmp(stmkey, "equ", 3) == 0)
             {
                 if (impl == true)
-                    pchosh("018 equ-directive in the impl-section");
+                    print_error_string("018 equ-directive in the impl-section");
                 equ();
             }
             else if (stmkey[0] == ' ')
@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
                 if (lbl_leng != 0)
                 {
                     if (impl == false)
-                        pchosh("023 function not in the impl-section");
+                        print_error_string("023 function not in the impl-section");
                     strncpy(prevlb, stmlbl, lbl_leng);
                     prevlb[lbl_leng] = '\0';
                 }
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
             else
             {
                 if (impl == false)
-                    pchosh("021 l-directive not in the impl-section");
+                    print_error_string("021 l-directive not in the impl-section");
                 m = fixm; // return to left
                 dir = true;
                 trprev();
@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
             mod_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
-            pchosh("003 end-directive missing");
+            print_error_string("003 end-directive missing");
             kolosh++;
             mod_state = END_STATEMENT;
             break;
@@ -679,7 +679,7 @@ static void lblkey(bool pr)
                 lbl_leng = 0;
             else if (!get_id(stmlbl, &lbl_leng))
             {
-                pchosh("120 the first symbol is not letter or underscore or blank");
+                print_error_string("120 the first symbol is not letter or underscore or blank");
                 continue;
             }
             break;
@@ -822,7 +822,7 @@ void scan(void)
                 scn_state = LSCN;
                 break;
             default:
-                pchosa("100 illegal symbol", c[m]);
+                print_error_string_symbol("100 illegal symbol", c[m]);
                 scn_state = SCNERR;
             }
             break;
@@ -1101,23 +1101,23 @@ void scan(void)
             scn_state = SCNVD;
             break;
         case OSH101:
-            pchosh("101 default of left apostroph");
+            print_error_string("101 default of left apostroph");
             scn_state = SCNERR;
             break;
         case OSH102:
-            pchosh("102 sign '.' followed by no letter or underscore");
+            print_error_string("102 sign '.' followed by no letter or underscore");
             scn_state = SCNERR;
             break;
         case OSH103:
-            pchosh("103 sign '.' expected");
+            print_error_string("103 sign '.' expected");
             scn_state = SCNERR;
             break;
         case SOSH203:
-            pchosh("203 sign ':' followed by no letter or underscore");
+            print_error_string("203 sign ':' followed by no letter or underscore");
             scn_state = SCNERR;
             break;
         case SOSH204:
-            pchosh("204 default last ':' within specifier");
+            print_error_string("204 default last ':' within specifier");
             scn_state = SCNERR;
             break;
         case SCNGCR:
@@ -1218,14 +1218,14 @@ static bool specif(char tail)
                 sp_state = SPCED;
                 break;
             default:
-                pchosa("201 within specifier invalid symbol ", c[m]);
+                print_error_string_symbol("201 within specifier invalid symbol ", c[m]);
                 sp_state = OSH200;
             }
             break;
         case SPCFF:
             gsp(ns_ngw);
             if (neg)
-                pchosh("207 within specifier default ')' ");
+                print_error_string("207 within specifier default ')' ");
             if (tail == ')')
             {
                 sp_state = OSH206;
@@ -1307,7 +1307,7 @@ static bool specif(char tail)
                 break;
             }
             if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_ID_LEN || stmlbl[lid] == ' '))
-                pchosh("209 specifier is defined through itself");
+                print_error_string("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
             if (left_part)
@@ -1467,30 +1467,30 @@ static bool specif(char tail)
             sp_state = SPCBLO;
             break;
         case OSH200:
-            pchosh("200 specifier is't scaned");
+            print_error_string("200 specifier is't scaned");
             return false;
         case OSH202:
-            pchosh("202 specifier has too many '(' ");
+            print_error_string("202 specifier has too many '(' ");
             sp_state = OSH200;
             break;
         case OSH203:
-            pchosh("203 sign ':' followed by no letter or underscore within specifier ");
+            print_error_string("203 sign ':' followed by no letter or underscore within specifier ");
             sp_state = OSH200;
             break;
         case OSH204:
-            pchosh("204 within specifier default last :");
+            print_error_string("204 within specifier default last :");
             sp_state = OSH200;
             break;
         case OSH205:
-            pchosh("205 within specifier default last apostroph");
+            print_error_string("205 within specifier default last apostroph");
             sp_state = OSH200;
             break;
         case OSH206:
-            pchosh("206 default ')'in the specifier end ");
+            print_error_string("206 default ')'in the specifier end ");
             sp_state = OSH200;
             break;
         case OSH208:
-            pchosh("208 within specifier too many )");
+            print_error_string("208 within specifier too many )");
             sp_state = OSH200;
         }
 }
@@ -1634,7 +1634,7 @@ static void equ(void)
 
 static void pch130(void)
 {
-    pchosh("130 invalid record format");
+    print_error_string("130 invalid record format");
     return;
 }
 
@@ -1679,13 +1679,13 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
             }
             char osh111[64];
             sprintf(osh111, "111 symbol-number > %lld", MAX_NUMBER);
-            pchosh(osh111);
+            print_error_string(osh111);
             break;
         }
         EH_ROMA0;
         if (!get_id(id, lid))
         {
-            pchosh("112 unknown type of the multiple symbol");
+            print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
         code->info.codef = (uint8_t *)fnref(id, *lid);
@@ -1717,7 +1717,7 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
     {
         char osh113[64];
         sprintf(osh113, "113 identifier length > %d", MAX_ID_LEN);
-        pchosh(osh113);
+        print_error_string(osh113);
     }
     return true;
 }
@@ -1745,7 +1745,7 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     {
         char osh114[64];
         sprintf(osh114, "114 external identifier length > %d", MAX_EXT_ID_LEN);
-        pchosh(osh114);
+        print_error_string(osh114);
     }
     return true;
 }

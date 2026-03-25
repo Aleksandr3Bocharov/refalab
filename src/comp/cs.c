@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-11
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -36,19 +36,19 @@ static void fnhead(const char *idp, size_t lid);
 
 static void p504(const char *idp, size_t lid)
 {
-    pchosj("504 label", idp, lid, " is already defined");
+    print_error_three_strings("504 label", idp, lid, " is already defined");
     return;
 }
 
 static void p505(const char *idp, size_t lid)
 {
-    pchosj("505 label", idp, lid, " is yet not defined");
+    print_error_three_strings("505 label", idp, lid, " is yet not defined");
     return;
 }
 
 static void p500(void)
 {
-    pchosh("500 no statement label");
+    print_error_string("500 no statement label");
     return;
 }
 
@@ -256,7 +256,7 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
         jequ(p0, p1);
     }
     else
-        pchosh("501 both labels already defined ");
+        print_error_string("501 both labels already defined ");
     return;
 }
 
@@ -292,11 +292,11 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
     while ((q->mode & '\300') == '\300')
         q = q->info.infop;
     if ((pp->mode & '\300') == '\000')
-        pchosj("512 label", pp->id, pp->l, " not defined");
+        print_error_three_strings("512 label", pp->id, pp->l, " not defined");
     if ((pp->mode & '\040') == '\040' && (pp->mode & '\300') == '\200')
-        pchosj("511 label", pp->id, pp->l, " both extern and entry");
+        print_error_three_strings("511 label", pp->id, pp->l, " both extern and entry");
     if ((q->mode & '\300') == '\300')
-        pchosj("502 label", pp->id, pp->l, " boht specifier and function");
+        print_error_three_strings("502 label", pp->id, pp->l, " boht specifier and function");
     return;
 }
 

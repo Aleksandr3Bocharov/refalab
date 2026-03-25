@@ -297,7 +297,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             // right bracket
             if (last_bracket == 0)
             {
-                pchosh("302 too many ')' in left part");
+                print_error_string("302 too many ')' in left part");
                 current_left_part_element--;
             }
             else
@@ -366,13 +366,13 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case LPE7:
             // sign '<'
-            pchosh("306 sign '<' in left part");
+            print_error_string("306 sign '<' in left part");
             current_left_part_element--;
             state = NEXT_LPE;
             break;
         case LPE8:
             // sign '>'
-            pchosh("307 sign '>' in left part");
+            print_error_string("307 sign '>' in left part");
             current_left_part_element--;
             state = NEXT_LPE;
             break;
@@ -383,12 +383,12 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = RCG;
                 break;
             }
-            pchosh("301 too many '(' in left part");
+            print_error_string("301 too many '(' in left part");
             state = OSH300;
             break;
         case LPE10:
             // sentence end
-            pchosh("304 under left part default sign '=' ");
+            print_error_string("304 under left part default sign '=' ");
             fndef(lbl, lblleng);
             return;
         case NEXT_LPE:
@@ -398,7 +398,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = GET_LPE;
                 break;
             }
-            pchosh("305 very large left part");
+            print_error_string("305 very large left part");
             state = OSH300;
             break;
         case OSH300:
@@ -1486,7 +1486,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             // right bracket
             jbyte(n_br);
             if (brackets_count[brackets_k_level] == 0)
-                pchosh("402 too many ')' in right part");
+                print_error_string("402 too many ')' in right part");
             else
                 brackets_count[brackets_k_level]--;
             state = GET_RPE;
@@ -1564,7 +1564,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             // sign '<'
             if (brackets_k_level > 511)
             {
-                pchosh("407 including of the signs '<' > 511");
+                print_error_string("407 including of the signs '<' > 511");
                 state = RP_OSH300;
                 break;
             }
@@ -1584,11 +1584,11 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
         case RPE8:
             // sign '>'
             if (brackets_k_level == 1)
-                pchosh("404 too many sign '>' in right part");
+                print_error_string("404 too many sign '>' in right part");
             else
             {
                 if (brackets_count[brackets_k_level] != 0)
-                    pchosh("401 too many '(' in right part");
+                    print_error_string("401 too many '(' in right part");
                 jbyte(n_bract);
                 brackets_k_level--;
             };
@@ -1596,19 +1596,19 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE9:
             // sign '=' in right part
-            pchosh("405 sign '=' in right part");
+            print_error_string("405 sign '=' in right part");
             state = GET_RPE;
             break;
         case RPE10:
             // sentence end
             jbyte(n_eos);
             if (brackets_k_level != 1)
-                pchosh("403 too many signs '<' in right part");
+                print_error_string("403 too many signs '<' in right part");
             if (brackets_count[brackets_k_level] != 0)
-                pchosh("401 too many '(' in right part");
+                print_error_string("401 too many '(' in right part");
             return;
         case RP_OSH300:
-            pchosh("300 sentence is't scanned");
+            print_error_string("300 sentence is't scanned");
             return;
         //                      place of compiler's error
         case ERROR:
@@ -1671,13 +1671,13 @@ static void generate_boards_stoping_brackets(void)
 
 static void pch303(void)
 {
-    pchose("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
+    print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
 static void pch406(void)
 {
-    pchose("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
+    print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
