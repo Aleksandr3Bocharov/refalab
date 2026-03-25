@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-04-23
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CERR.C  --------------- 
@@ -13,52 +13,52 @@
 #include "cerr.h"
 #include "refal.h"
 
-void pchosh(const char *s)
+void print_error_string(const char *error_string)
 {
     oshibka();
-    char tmp[255];
-    sprintf(tmp, "***** %s\n", s);
+    char tmp[256];
+    sprintf(tmp, "***** %s\n", error_string);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
     return;
 }
 
-void pchose(const char *s, const char *t, size_t lt)
+void print_error_two_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length)
 {
     oshibka();
-    char tmp1[255];
-    for (size_t i = 0; i < lt; i++)
-        tmp1[i] = *(t + i);
-    tmp1[lt] = '\0';
+    char tmp1[256];
+    for (uint8_t i = 0; i < error2_string_length; i++)
+        tmp1[i] = *(error2_string + i);
+    tmp1[error2_string_length] = '\0';
     char tmp[512];
-    sprintf(tmp, "***** %s %s\n", s, tmp1);
+    sprintf(tmp, "***** %s %s\n", error_string, tmp1);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
     return;
 }
 
-void pchosj(const char *s, const char *sid, size_t lsid, const char *s1)
+void print_error_three_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length, const char *error3_string)
 {
     oshibka();
-    char tmp1[255];
-    for (size_t i = 0; i < lsid; i++)
-        tmp1[i] = *(sid + i);
-    tmp1[lsid] = '\0';
+    char tmp1[256];
+    for (uint8_t i = 0; i < error2_string_length; i++)
+        tmp1[i] = *(error2_string + i);
+    tmp1[error2_string_length] = '\0';
     char tmp[512];
-    sprintf(tmp, "***** %s %s %s\n", s, tmp1, s1);
+    sprintf(tmp, "***** %s %s %s\n", error_string, tmp1, error3_string);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
     return;
 }
 
-void pchosa(const char *s, const char c)
+void print_error_string_symbol(const char *error_string, const char symbol)
 {
     oshibka();
-    char tmp[255];
-    sprintf(tmp, "***** %s %c\n", s, c);
+    char tmp[256];
+    sprintf(tmp, "***** %s %c\n", error_string, symbol);
     if (sysprint != NULL)
         fputs(tmp, sysprint);
     fputs(tmp, systerm);
