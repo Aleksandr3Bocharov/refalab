@@ -15,7 +15,7 @@
 
 void print_error_string(const char *error_string)
 {
-    oshibka();
+    processing_error();
     char tmp[256];
     sprintf(tmp, "***** %s\n", error_string);
     if (file_source_listing != NULL)
@@ -26,7 +26,7 @@ void print_error_string(const char *error_string)
 
 void print_error_two_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length)
 {
-    oshibka();
+    processing_error();
     char tmp1[256];
     for (uint8_t i = 0; i < error2_string_length; i++)
         tmp1[i] = *(error2_string + i);
@@ -41,7 +41,7 @@ void print_error_two_strings(const char *error_string, const char *error2_string
 
 void print_error_three_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length, const char *error3_string)
 {
-    oshibka();
+    processing_error();
     char tmp1[256];
     for (uint8_t i = 0; i < error2_string_length; i++)
         tmp1[i] = *(error2_string + i);
@@ -56,7 +56,7 @@ void print_error_three_strings(const char *error_string, const char *error2_stri
 
 void print_error_string_symbol(const char *error_string, const char symbol)
 {
-    oshibka();
+    processing_error();
     char tmp[256];
     sprintf(tmp, "***** %s %c\n", error_string, symbol);
     if (file_source_listing != NULL)

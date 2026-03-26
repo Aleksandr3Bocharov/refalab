@@ -156,7 +156,7 @@ T_OPTIONS options;
 
 T_SCANNER scanner;
 
-T_SCANNING_ELEMENT scanning_element;
+T_SENTENCE_ELEMENT current_sentence_element;
 
 static struct
 {
@@ -721,17 +721,17 @@ static void lblkey(bool pr)
     return;
 }
 
-void scan(void)
+void scan_sentence_element(void)
 {
     static char id[MAX_IDENTIFIER_LENGTH];
     static size_t id_leng;
     static const uint8_t *p;
     static size_t scode;
-    scanning_element.code.tag = TAGO;
-    scanning_element.code.info.codef = NULL;
-    scanning_element.v_variable = false;
-    scanning_element.specifier.tag = TAGO;
-    scanning_element.specifier.info.codef = NULL;
+    current_sentence_element.code.tag = TAGO;
+    current_sentence_element.code.info.codef = NULL;
+    current_sentence_element.v_variable = false;
+    current_sentence_element.specifier.tag = TAGO;
+    current_sentence_element.specifier.info.codef = NULL;
     T_SCN_STATES scn_state = STATE0;
     if (scn_station)
         scn_state = STATE1;
@@ -824,11 +824,11 @@ void scan(void)
             }
             break;
         case SCNERR:
-            scanning_element.type = 0;
+            current_sentence_element.type = 0;
             scn_state = SCNRET;
             break;
         case SCNSC:
-            if (get_csmb(&scanning_element.code, id, &id_leng))
+            if (get_csmb(&current_sentence_element.code, id, &id_leng))
             {
                 scn_state = EGO;
                 break;
@@ -836,31 +836,31 @@ void scan(void)
             scn_state = SCNERR;
             break;
         case EGO:
-            scanning_element.type = 1;
+            current_sentence_element.type = 1;
             scn_state = SCNRET;
             break;
         case SCNL:
-            scanning_element.type = 2;
+            current_sentence_element.type = 2;
             scn_state = SCNGCR;
             break;
         case SCNR:
-            scanning_element.type = 3;
+            current_sentence_element.type = 3;
             scn_state = SCNGCR;
             break;
         case SCNS:
-            scanning_element.type = 4;
+            current_sentence_element.type = 4;
             scn_state = SCNV;
             break;
         case SCNW:
-            scanning_element.type = 5;
+            current_sentence_element.type = 5;
             scn_state = SCNV;
             break;
         case SCNVV:
-            scanning_element.v_variable = true;
+            current_sentence_element.v_variable = true;
             scn_state = SCNE;
             break;
         case SCNE:
-            scanning_element.type = 6;
+            current_sentence_element.type = 6;
             scn_state = SCNV;
             break;
         case SCNV:
@@ -870,8 +870,8 @@ void scan(void)
                 EH_ROMA;
                 if (left_part)
                 {
-                    scanning_element.specifier.info.codef = (uint8_t *)genlbl();
-                    p = scanning_element.specifier.info.codef;
+                    current_sentence_element.specifier.info.codef = (uint8_t *)genlbl();
+                    p = current_sentence_element.specifier.info.codef;
                     jlabel((T_U *)(void *)p);
                 }
                 if (specif(')'))
@@ -892,7 +892,7 @@ void scan(void)
                     break;
                 }
                 if (left_part)
-                    scanning_element.specifier.info.codef = (uint8_t *)spref(id, id_leng, ')');
+                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(id, id_leng, ')');
                 if (c[m] == ':')
                 {
                     EH_ROMA else
@@ -919,12 +919,12 @@ void scan(void)
                 scn_state = OSH102;
                 break;
             }
-            strncpy(scanning_element.identifier, id, id_leng);
-            scanning_element.identifier_length = id_leng;
+            strncpy(current_sentence_element.identifier, id, id_leng);
+            current_sentence_element.identifier_length = id_leng;
             scn_state = SCNRET;
             break;
         case SCNKK:
-            scanning_element.type = 7;
+            current_sentence_element.type = 7;
             if (c[m + 1] != ' ')
             {
                 c[m - 1] = '&';
@@ -943,16 +943,16 @@ void scan(void)
             scn_state = SCNGCR;
             break;
         case SCNP:
-            scanning_element.type = 8;
+            current_sentence_element.type = 8;
             scn_state = SCNGCR;
             break;
         case SCNEOL:
-            scanning_element.type = 9;
+            current_sentence_element.type = 9;
             left_part = false;
             scn_state = SCNGCR;
             break;
         case SCNEOS:
-            scanning_element.type = 10;
+            current_sentence_element.type = 10;
             scn_state = SCNRET;
             break;
         case SCNA:
@@ -991,8 +991,8 @@ void scan(void)
             scn_state = STATE0;
             break;
         case SCNCHR:
-            scanning_element.code.tag = TAGO;
-            scanning_element.code.info.codef = NULL;
+            current_sentence_element.code.tag = TAGO;
+            current_sentence_element.code.info.codef = NULL;
             if (c[m] == '\\')
                 // control symbols
                 switch (c[++m])
@@ -1053,8 +1053,8 @@ void scan(void)
             scn_state = PROD;
             break;
         case PROD:
-            scanning_element.code.info.infoc = c[m];
-            scanning_element.type = 1;
+            current_sentence_element.code.info.infoc = c[m];
+            current_sentence_element.type = 1;
             scn_state = SCNGCR;
             break;
         case FSCN:
@@ -1082,7 +1082,7 @@ void scan(void)
             scn_state = SABBR;
             break;
         case SABBR:
-            scanning_element.type = 4;
+            current_sentence_element.type = 4;
             if (left_part)
             {
                 if (*(sarr + scode) == NULL)
@@ -1092,7 +1092,7 @@ void scan(void)
                     gsp((uint8_t)(scode + 7));
                     gsp(ns_ngw);
                 };
-                scanning_element.specifier.info.codef = (uint8_t *)*(sarr + scode);
+                current_sentence_element.specifier.info.codef = (uint8_t *)*(sarr + scode);
             };
             EH_ROMA;
             scn_state = SCNVD;
@@ -1791,7 +1791,7 @@ static void pchzkl(void)
     return;
 }
 
-void oshibka(void)
+void processing_error(void)
 {
     pchk();
     pchk_t();
