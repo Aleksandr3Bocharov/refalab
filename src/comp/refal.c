@@ -164,9 +164,9 @@ FILE *assembler_source; // for assem
 static struct
 {
     bool was_cut;
-    bool uzhe_krt;
-    bool was_err;
-    bool uzhekrt_t;
+    bool was_card_print_file_source_listing;
+    bool was_error;
+    bool was_card_print_terminal;
 } flags;
 
 // Aleksandr Bocharov   // compiler version
@@ -326,7 +326,7 @@ int main(int argc, char *argv[])
         printf("Can't open %s\n", parm);
         exit(8);
     }
-    flags.was_err = false;
+    flags.was_error = false;
     cdnumb = 0;
     scanner.carriage_number = 0;
     bool impl = false;
@@ -504,7 +504,7 @@ int main(int argc, char *argv[])
             s_end();
             if (kolosh != 0)
             {
-                flags.was_err = true;
+                flags.was_error = true;
                 mod_length = 0;
             }
             else
@@ -522,7 +522,7 @@ int main(int argc, char *argv[])
                 fclose(file_source_listing);
             mod_length = jwhere();
             fclose(assembler_source);
-            if (mod_length == 0 || flags.was_err)
+            if (mod_length == 0 || flags.was_error)
                 unlink(parm);
             else if (!options.assembler_source_only)
             {
@@ -541,7 +541,7 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
             }
-            if (flags.was_err)
+            if (flags.was_error)
                 exit(1);
             else
                 exit(0);
@@ -641,8 +641,8 @@ static void rdcard(void)
         translate(card_cut, class);
         ++scanner.carriage_number;
         ++cdnumb;
-        flags.uzhe_krt = false;
-        flags.uzhekrt_t = false;
+        flags.was_card_print_file_source_listing = false;
+        flags.was_card_print_terminal = false;
         if (options.source_listing)
             pchk();
         if (!flags.was_cut && komm())
@@ -1494,9 +1494,9 @@ static bool specif(char tail)
 
 static void pchk(void)
 { // writing of card into file source listing
-    if (!flags.uzhe_krt && file_source_listing != NULL)
+    if (!flags.was_card_print_file_source_listing && file_source_listing != NULL)
     {
-        flags.uzhe_krt = true;
+        flags.was_card_print_file_source_listing = true;
         card[CUT] = '\0';
         if (!_eoj)
         {
@@ -1518,9 +1518,9 @@ static void pchk(void)
 
 static void pchk_t(void)
 { // card writing into terminal
-    if (!flags.uzhekrt_t)
+    if (!flags.was_card_print_terminal)
     {
-        flags.uzhekrt_t = true;
+        flags.was_card_print_terminal = true;
         card[CUT] = '\0';
         if (!_eoj)
         {
