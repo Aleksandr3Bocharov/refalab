@@ -228,17 +228,17 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             // read left part element
             current_left_part_element++;
             scan();
-            left_part_elements[current_left_part_element].type = scn_e.t;
-            left_part_elements[current_left_part_element].code.tag = scn_e.code.tag;
-            left_part_elements[current_left_part_element].code.info.codef = scn_e.code.info.codef;
-            left_part_elements[current_left_part_element].specifier.tag = scn_e.spec.tag;
-            left_part_elements[current_left_part_element].specifier.info.codef = scn_e.spec.info.codef;
-            left_part_elements[current_left_part_element].v_variable = scn_e.v;
+            left_part_elements[current_left_part_element].type = scanning_element.t;
+            left_part_elements[current_left_part_element].code.tag = scanning_element.code.tag;
+            left_part_elements[current_left_part_element].code.info.codef = scanning_element.code.info.codef;
+            left_part_elements[current_left_part_element].specifier.tag = scanning_element.spec.tag;
+            left_part_elements[current_left_part_element].specifier.info.codef = scanning_element.spec.info.codef;
+            left_part_elements[current_left_part_element].v_variable = scanning_element.v;
             left_part_elements[current_left_part_element].next_variable = 0;
             left_part_elements[current_left_part_element].pair_bracket = 0;
             left_part_elements[current_left_part_element].eoe_mark = false;
             left_part_elements[current_left_part_element].jump_stack_pointer = 0;
-            switch (scn_e.t)
+            switch (scanning_element.t)
             {
             case 0:
                 state = LPE0;
@@ -354,7 +354,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             left_part_elements[current_left_part_element].variable_index = variable_index;
             if (variables[variable_index].type == 0) // yet is't faced
                 variables[variable_index].type = 3;
-            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scn_e.v)
+            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scanning_element.v)
                 ++variables[variable_index].rem;
             else // invalid type pointer
             {
@@ -1389,7 +1389,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = SW_RPE;
             break;
         case SW_RPE:
-            switch (scn_e.t)
+            switch (scanning_element.t)
             {
             case 0:
                 state = RPE0;
@@ -1434,12 +1434,12 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case RPE1:
             // symbol-constant
-            if (scn_e.code.tag == TAGO)
+            if (scanning_element.code.tag == TAGO)
             {
                 state = TEXT;
                 break;
             }
-            generate_operator_s(n_ns, &scn_e.code);
+            generate_operator_s(n_ns, &scanning_element.code);
             state = GET_RPE;
             break;
         case TEXT:
@@ -1448,9 +1448,9 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             break;
         case TEXT1:
             symbols_count++;
-            symbols_buffer[symbols_count] = scn_e.code.info.infoc;
+            symbols_buffer[symbols_count] = scanning_element.code.info.infoc;
             scan();
-            if (symbols_count < 80 && scn_e.t == t_sc && scn_e.code.tag == TAGO)
+            if (symbols_count < 80 && scanning_element.t == t_sc && scanning_element.code.tag == TAGO)
                 break;
             if (symbols_count == 1)
                 generate_operator_n(n_nso, (uint8_t)symbols_buffer[1]);
@@ -1465,16 +1465,16 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
         case RPE2:
             // left bracket
             scan();
-            if (scn_e.t == t_rb)
+            if (scanning_element.t == t_rb)
             {
                 jbyte(n_blr);
                 state = GET_RPE;
                 break;
             }
             brackets_count[brackets_k_level]++;
-            if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
+            if (scanning_element.t == t_sc && scanning_element.code.tag == TAGF)
             {
-                function_pointer.info.codef = scn_e.code.info.codef;
+                function_pointer.info.codef = scanning_element.code.info.codef;
                 generate_operator_l(n_blf, function_pointer.info.codef);
                 state = GET_RPE;
                 break;
@@ -1542,7 +1542,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             search_variable();
             if (variables[variable_index].type == 0)
                 print_error_406();
-            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scn_e.v)
+            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == scanning_element.v)
             {
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
@@ -1570,9 +1570,9 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             }
             brackets_count[++brackets_k_level] = 0;
             scan();
-            if (scn_e.t == t_sc && scn_e.code.tag == TAGF)
+            if (scanning_element.t == t_sc && scanning_element.code.tag == TAGF)
             {
-                function_pointer.info.codef = scn_e.code.info.codef;
+                function_pointer.info.codef = scanning_element.code.info.codef;
                 function_pointer.tag = TAGO;
                 generate_operator_l(n_blf, function_pointer.info.codef);
                 state = GET_RPE;
@@ -1621,15 +1621,15 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
 static void search_variable(void)
 {
     for (variable_index = 1; variable_index <= variables_count; variable_index++)
-        if (variables[variable_index].identifier_length == scn_e.si_leng && strncmp(variables[variable_index].identifier, scn_e.si, variables[variable_index].identifier_length) == 0)
+        if (variables[variable_index].identifier_length == scanning_element.si_leng && strncmp(variables[variable_index].identifier, scanning_element.si, variables[variable_index].identifier_length) == 0)
             return;
     variable_index = ++variables_count;
-    strncpy(variables[variable_index].identifier, scn_e.si, scn_e.si_leng);
-    variables[variable_index].identifier_length = scn_e.si_leng;
+    strncpy(variables[variable_index].identifier, scanning_element.si, scanning_element.si_leng);
+    variables[variable_index].identifier_length = scanning_element.si_leng;
     variables[variable_index].type = 0;
     variables[variable_index].rem = 1;
     variables[variable_index].last_left_part_element = 0;
-    variables[variable_index].v_variable = scn_e.v;
+    variables[variable_index].v_variable = scanning_element.v;
     return;
 }
 

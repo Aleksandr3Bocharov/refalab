@@ -39,7 +39,7 @@ typedef struct scanner
 
 extern T_SCANNER scanner;
 
-typedef struct scn_e_
+typedef struct scanning_element
 {                                   // current statement element
     uint32_t t;                     //    element type
     char si[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
@@ -47,9 +47,9 @@ typedef struct scn_e_
     bool v;
     T_LINKTI code;
     T_LINKTI spec;
-} T_SCN_E;
+} T_SCANNING_ELEMENT;
 
-extern T_SCN_E scn_e;
+extern T_SCANNING_ELEMENT scanning_element;
 
 extern FILE *sysprint, *systerm;
 extern FILE *syslin; // for assem
