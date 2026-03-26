@@ -732,9 +732,9 @@ void scan(void)
     static size_t scode;
     scanning_element.code.tag = TAGO;
     scanning_element.code.info.codef = NULL;
-    scanning_element.v = false;
-    scanning_element.spec.tag = TAGO;
-    scanning_element.spec.info.codef = NULL;
+    scanning_element.v_variable = false;
+    scanning_element.specifier.tag = TAGO;
+    scanning_element.specifier.info.codef = NULL;
     T_SCN_STATES scn_state = STATE0;
     if (scn_station)
         scn_state = STATE1;
@@ -827,7 +827,7 @@ void scan(void)
             }
             break;
         case SCNERR:
-            scanning_element.t = 0;
+            scanning_element.type = 0;
             scn_state = SCNRET;
             break;
         case SCNSC:
@@ -839,31 +839,31 @@ void scan(void)
             scn_state = SCNERR;
             break;
         case EGO:
-            scanning_element.t = 1;
+            scanning_element.type = 1;
             scn_state = SCNRET;
             break;
         case SCNL:
-            scanning_element.t = 2;
+            scanning_element.type = 2;
             scn_state = SCNGCR;
             break;
         case SCNR:
-            scanning_element.t = 3;
+            scanning_element.type = 3;
             scn_state = SCNGCR;
             break;
         case SCNS:
-            scanning_element.t = 4;
+            scanning_element.type = 4;
             scn_state = SCNV;
             break;
         case SCNW:
-            scanning_element.t = 5;
+            scanning_element.type = 5;
             scn_state = SCNV;
             break;
         case SCNVV:
-            scanning_element.v = true;
+            scanning_element.v_variable = true;
             scn_state = SCNE;
             break;
         case SCNE:
-            scanning_element.t = 6;
+            scanning_element.type = 6;
             scn_state = SCNV;
             break;
         case SCNV:
@@ -873,8 +873,8 @@ void scan(void)
                 EH_ROMA;
                 if (left_part)
                 {
-                    scanning_element.spec.info.codef = (uint8_t *)genlbl();
-                    p = scanning_element.spec.info.codef;
+                    scanning_element.specifier.info.codef = (uint8_t *)genlbl();
+                    p = scanning_element.specifier.info.codef;
                     jlabel((T_U *)(void *)p);
                 }
                 if (specif(')'))
@@ -895,7 +895,7 @@ void scan(void)
                     break;
                 }
                 if (left_part)
-                    scanning_element.spec.info.codef = (uint8_t *)spref(id, id_leng, ')');
+                    scanning_element.specifier.info.codef = (uint8_t *)spref(id, id_leng, ')');
                 if (c[m] == ':')
                 {
                     EH_ROMA else
@@ -922,12 +922,12 @@ void scan(void)
                 scn_state = OSH102;
                 break;
             }
-            strncpy(scanning_element.si, id, id_leng);
-            scanning_element.si_leng = id_leng;
+            strncpy(scanning_element.identifier, id, id_leng);
+            scanning_element.identifier_length = id_leng;
             scn_state = SCNRET;
             break;
         case SCNKK:
-            scanning_element.t = 7;
+            scanning_element.type = 7;
             if (c[m + 1] != ' ')
             {
                 c[m - 1] = '&';
@@ -946,16 +946,16 @@ void scan(void)
             scn_state = SCNGCR;
             break;
         case SCNP:
-            scanning_element.t = 8;
+            scanning_element.type = 8;
             scn_state = SCNGCR;
             break;
         case SCNEOL:
-            scanning_element.t = 9;
+            scanning_element.type = 9;
             left_part = false;
             scn_state = SCNGCR;
             break;
         case SCNEOS:
-            scanning_element.t = 10;
+            scanning_element.type = 10;
             scn_state = SCNRET;
             break;
         case SCNA:
@@ -1057,7 +1057,7 @@ void scan(void)
             break;
         case PROD:
             scanning_element.code.info.infoc = c[m];
-            scanning_element.t = 1;
+            scanning_element.type = 1;
             scn_state = SCNGCR;
             break;
         case FSCN:
@@ -1085,7 +1085,7 @@ void scan(void)
             scn_state = SABBR;
             break;
         case SABBR:
-            scanning_element.t = 4;
+            scanning_element.type = 4;
             if (left_part)
             {
                 if (*(sarr + scode) == NULL)
@@ -1095,7 +1095,7 @@ void scan(void)
                     gsp((uint8_t)(scode + 7));
                     gsp(ns_ngw);
                 };
-                scanning_element.spec.info.codef = (uint8_t *)*(sarr + scode);
+                scanning_element.specifier.info.codef = (uint8_t *)*(sarr + scode);
             };
             EH_ROMA;
             scn_state = SCNVD;

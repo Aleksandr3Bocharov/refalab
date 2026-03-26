@@ -41,12 +41,12 @@ extern T_SCANNER scanner;
 
 typedef struct scanning_element
 {                                   // current statement element
-    uint32_t t;                     //    element type
-    char si[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
-    size_t si_leng;                 // variable identifier length
-    bool v;
+    uint8_t type;                     //    element type
+    char identifier[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
+    uint8_t identifier_length;                 // variable identifier length
+    bool v_variable;
     T_LINKTI code;
-    T_LINKTI spec;
+    T_LINKTI specifier;
 } T_SCANNING_ELEMENT;
 
 extern T_SCANNING_ELEMENT scanning_element;
