@@ -11,6 +11,7 @@
 #ifndef REFAL_H
 #define REFAL_H
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -51,7 +52,7 @@ typedef struct scanning_element
 
 extern T_SCANNING_ELEMENT scanning_element;
 
-extern FILE *sysprint, *systerm;
+extern FILE *sysprint, *terminal;
 extern FILE *assembler_source; // for assem
 
 extern uint32_t module_number;

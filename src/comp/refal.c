@@ -166,7 +166,7 @@ static struct
     bool uzhekrt_t;
 } flags;
 
-FILE *sysprint, *systerm;
+FILE *sysprint, *terminal;
 FILE *assembler_source; // for assem
 
 uint32_t module_number;
@@ -243,7 +243,7 @@ static void GET_time(void)
 
 int main(int argc, char *argv[])
 {
-    systerm = NULL;
+    terminal = NULL;
     module_number = 0;
     printf("\n");
     printf("%s", vers_i);
@@ -281,7 +281,7 @@ int main(int argc, char *argv[])
         printf("Can't open %s\n", parm);
         exit(1);
     };
-    systerm = stdout;
+    terminal = stdout;
     sysprint = NULL;
 
     SET_time();
@@ -1528,7 +1528,7 @@ static void pchk_t(void)
         {
             char tmpstr[CUT + 28];
             sprintf(tmpstr, "%4d %s\n", cdnumb, card);
-            fputs(tmpstr, systerm);
+            fputs(tmpstr, terminal);
         }
     }
     return;
@@ -1778,7 +1778,7 @@ static void pchzkl(void)
             "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
     if (options.source_listing)
         fputs(pr_line, sysprint);
-    fputs(pr_line, systerm);
+    fputs(pr_line, terminal);
     cdnumb = 0;
     if (kolosh != 0)
         sprintf(pr_line,
@@ -1788,7 +1788,7 @@ static void pchzkl(void)
                 "                       obj_length(bytes) = %zu\n", mod_length);
     if (options.source_listing)
         fputs(pr_line, sysprint);
-    fputs(pr_line, systerm);
+    fputs(pr_line, terminal);
     GET_time();
     return;
 }
