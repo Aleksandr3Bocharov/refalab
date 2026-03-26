@@ -442,7 +442,7 @@ void jend(void)
     // heading generating
     write_asm(fputs(".data\n", assembler_source), assembler_source);
     char bufs[81];
-    sprintf(bufs, "_d%d$:\n", module_number);
+    sprintf(bufs, "_d%d$:\n", scanner.module_number);
     write_asm(fputs(bufs, assembler_source), assembler_source);
     //  empty module test
     if (mod_length != 0)
@@ -478,9 +478,9 @@ void jend(void)
                 {
                     //    nonexternal label
                     if (LBLL == 4)
-                        sprintf(bufs, "\t.long\t_d%d$+%zu\n", module_number, p->info.infon);
+                        sprintf(bufs, "\t.long\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
                     else
-                        sprintf(bufs, "\t.quad\t_d%d$+%zu\n", module_number, p->info.infon);
+                        sprintf(bufs, "\t.quad\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
                     write_asm(fputs(bufs, assembler_source), assembler_source);
                 }
                 else
@@ -547,12 +547,12 @@ void jend(void)
                 pp = pp->info.infop;
 #if defined POSIX
             // begin name without underlining _
-            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", module_number, pp->info.infon);
+            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
 #else // Windows
             if (LBLL == 4)
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_refalab_", module_number, pp->info.infon);
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, pp->info.infon);
             else
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", module_number, pp->info.infon);
+                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
 #endif
             write_asm(fputs(bufs, assembler_source), assembler_source);
             for (size_t i = 0; i < q->le; i++)

@@ -169,8 +169,6 @@ static struct
 FILE *sysprint, *terminal;
 FILE *assembler_source; // for assem
 
-uint32_t module_number;
-
 // Aleksandr Bocharov   // compiler version
 static const char *vers_i = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
 
@@ -244,7 +242,7 @@ static void GET_time(void)
 int main(int argc, char *argv[])
 {
     terminal = NULL;
-    module_number = 0;
+    scanner.module_number = 0;
     printf("\n");
     printf("%s", vers_i);
     if (argc < 2)
@@ -338,7 +336,7 @@ int main(int argc, char *argv[])
         {
         case START_OF_MODULE:
             kolosh = 0;
-            module_number++;
+            scanner.module_number++;
             flags.was_cut = false;
             _eoj = false;
             card[CUT + 8] = '\n';

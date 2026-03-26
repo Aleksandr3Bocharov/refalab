@@ -35,7 +35,8 @@ typedef struct scanner
 { // the table for corresponding with scanner
     uint32_t carriage_number;
     char module_name[MAX_IDENTIFIER_LENGTH]; // module name
-    size_t module_name_length;               // module name length
+    uint8_t module_name_length;              // module name length
+    uint32_t module_number;
 } T_SCANNER;
 
 extern T_SCANNER scanner;
@@ -54,8 +55,6 @@ extern T_SCANNING_ELEMENT scanning_element;
 
 extern FILE *sysprint, *terminal;
 extern FILE *assembler_source; // for assem
-
-extern uint32_t module_number;
 
 extern void oshibka(void);
 extern void scan(void);
