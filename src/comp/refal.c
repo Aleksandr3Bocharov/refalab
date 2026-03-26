@@ -170,7 +170,7 @@ FILE *sysprint, *systerm;
 FILE *syslin; // for assem
 FILE *systxt; // for module names
 
-uint32_t nommod;
+uint32_t module_number;
 
 // Aleksandr Bocharov   // compiler version
 static const char *vers_i = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
@@ -245,7 +245,7 @@ static void GET_time(void)
 int main(int argc, char *argv[])
 {
     systerm = NULL;
-    nommod = 0;
+    module_number = 0;
     printf("\n");
     printf("%s", vers_i);
     if (argc < 2)
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
         {
         case START_OF_MODULE:
             kolosh = 0;
-            nommod++;
+            module_number++;
             flags.was_cut = false;
             _eoj = false;
             card[CUT + 8] = '\n';

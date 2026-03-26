@@ -40,10 +40,10 @@ typedef struct scanner
 extern T_SCANNER scanner;
 
 typedef struct scanning_element
-{                                   // current statement element
-    uint8_t type;                     //    element type
+{                                           // current statement element
+    uint8_t type;                           //    element type
     char identifier[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
-    uint8_t identifier_length;                 // variable identifier length
+    uint8_t identifier_length;              // variable identifier length
     bool v_variable;
     T_LINKTI code;
     T_LINKTI specifier;
@@ -55,7 +55,7 @@ extern FILE *sysprint, *systerm;
 extern FILE *syslin; // for assem
 extern FILE *systxt; // for module names
 
-extern uint32_t nommod;
+extern uint32_t module_number;
 
 extern void oshibka(void);
 extern void scan(void);
