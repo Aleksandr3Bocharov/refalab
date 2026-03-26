@@ -166,7 +166,7 @@ static struct
     bool uzhekrt_t;
 } flags;
 
-FILE *sysprint, *terminal;
+FILE *file_source_listing, *terminal;
 FILE *assembler_source; // for assem
 
 // Aleksandr Bocharov   // compiler version
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
         exit(1);
     };
     terminal = stdout;
-    sysprint = NULL;
+    file_source_listing = NULL;
 
     SET_time();
 
@@ -311,8 +311,8 @@ int main(int argc, char *argv[])
     {
         strcpy(parm, argv[1]);
         strcat(parm, ".lst");
-        sysprint = fopen(parm, "w");
-        if (sysprint == NULL)
+        file_source_listing = fopen(parm, "w");
+        if (file_source_listing == NULL)
         {
             printf("Can't open %s\n", parm);
             exit(8);
@@ -519,7 +519,7 @@ int main(int argc, char *argv[])
         case END_OF_SYSIN:
             fclose(sysin);
             if (options.source_listing)
-                fclose(sysprint);
+                fclose(file_source_listing);
             mod_length = jwhere();
             fclose(assembler_source);
             if (mod_length == 0 || flags.was_err)
@@ -1493,8 +1493,8 @@ static bool specif(char tail)
 }
 
 static void pchk(void)
-{ // writing of card into sysprint
-    if (!flags.uzhe_krt && sysprint != NULL)
+{ // writing of card into file source listing
+    if (!flags.uzhe_krt && file_source_listing != NULL)
     {
         flags.uzhe_krt = true;
         card[CUT] = '\0';
@@ -1510,14 +1510,14 @@ static void pchk(void)
             tmpstr[i] = '\n';
             i++;
             tmpstr[i] = '\0';
-            fputs(tmpstr, sysprint);
+            fputs(tmpstr, file_source_listing);
         }
     }
     return;
 }
 
 static void pchk_t(void)
-{ // card writing into systerm
+{ // card writing into terminal
     if (!flags.uzhekrt_t)
     {
         flags.uzhekrt_t = true;
@@ -1775,7 +1775,7 @@ static void pchzkl(void)
     sprintf(pr_line,
             "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
     if (options.source_listing)
-        fputs(pr_line, sysprint);
+        fputs(pr_line, file_source_listing);
     fputs(pr_line, terminal);
     cdnumb = 0;
     if (kolosh != 0)
@@ -1785,7 +1785,7 @@ static void pchzkl(void)
         sprintf(pr_line,
                 "                       obj_length(bytes) = %zu\n", mod_length);
     if (options.source_listing)
-        fputs(pr_line, sysprint);
+        fputs(pr_line, file_source_listing);
     fputs(pr_line, terminal);
     GET_time();
     return;

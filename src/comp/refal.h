@@ -53,7 +53,7 @@ typedef struct scanning_element
 
 extern T_SCANNING_ELEMENT scanning_element;
 
-extern FILE *sysprint, *terminal;
+extern FILE *file_source_listing, *terminal;
 extern FILE *assembler_source; // for assem
 
 extern void oshibka(void);

@@ -18,8 +18,8 @@ void print_error_string(const char *error_string)
     oshibka();
     char tmp[256];
     sprintf(tmp, "***** %s\n", error_string);
-    if (sysprint != NULL)
-        fputs(tmp, sysprint);
+    if (file_source_listing != NULL)
+        fputs(tmp, file_source_listing);
     fputs(tmp, terminal);
     return;
 }
@@ -33,8 +33,8 @@ void print_error_two_strings(const char *error_string, const char *error2_string
     tmp1[error2_string_length] = '\0';
     char tmp[512];
     sprintf(tmp, "***** %s %s\n", error_string, tmp1);
-    if (sysprint != NULL)
-        fputs(tmp, sysprint);
+    if (file_source_listing != NULL)
+        fputs(tmp, file_source_listing);
     fputs(tmp, terminal);
     return;
 }
@@ -48,8 +48,8 @@ void print_error_three_strings(const char *error_string, const char *error2_stri
     tmp1[error2_string_length] = '\0';
     char tmp[512];
     sprintf(tmp, "***** %s %s %s\n", error_string, tmp1, error3_string);
-    if (sysprint != NULL)
-        fputs(tmp, sysprint);
+    if (file_source_listing != NULL)
+        fputs(tmp, file_source_listing);
     fputs(tmp, terminal);
     return;
 }
@@ -59,8 +59,8 @@ void print_error_string_symbol(const char *error_string, const char symbol)
     oshibka();
     char tmp[256];
     sprintf(tmp, "***** %s %c\n", error_string, symbol);
-    if (sysprint != NULL)
-        fputs(tmp, sysprint);
+    if (file_source_listing != NULL)
+        fputs(tmp, file_source_listing);
     fputs(tmp, terminal);
     return;
 }
