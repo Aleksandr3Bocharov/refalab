@@ -52,7 +52,7 @@ typedef struct scanning_element
 extern T_SCANNING_ELEMENT scanning_element;
 
 extern FILE *sysprint, *systerm;
-extern FILE *syslin; // for assem
+extern FILE *assembler_source; // for assem
 
 extern uint32_t module_number;
 

@@ -167,7 +167,7 @@ static struct
 } flags;
 
 FILE *sysprint, *systerm;
-FILE *syslin; // for assem
+FILE *assembler_source; // for assem
 
 uint32_t module_number;
 
@@ -322,8 +322,8 @@ int main(int argc, char *argv[])
     }
     strcpy(parm, argv[1]);
     strcat(parm, ".s");
-    syslin = fopen(parm, "w");
-    if (syslin == NULL)
+    assembler_source = fopen(parm, "w");
+    if (assembler_source == NULL)
     {
         printf("Can't open %s\n", parm);
         exit(8);
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
             if (options.source_listing)
                 fclose(sysprint);
             mod_length = jwhere();
-            fclose(syslin);
+            fclose(assembler_source);
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
             else if (!options.assembler_source_only)
