@@ -190,12 +190,12 @@ static char *class = class_cut + 6;
 static bool scn_station; // scanner station - in(1),out(0) literal chain
 static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
-static char stmlbl[MAX_ID_LEN];
+static char stmlbl[MAX_IDENTIFIER_LENGTH];
 static size_t lbl_leng;
-static char prevlb[MAX_ID_LEN + 1];
+static char prevlb[MAX_IDENTIFIER_LENGTH + 1];
 static char stmkey[6];
 static size_t fixm;                   // start sentence position
-static char mod_name[MAX_ID_LEN + 1]; // module name
+static char mod_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
 static size_t mod_length;             // module length
 static bool _eoj;                     // "sysin" end flag
 
@@ -210,9 +210,9 @@ static void pchzkl(void);
 static void pchk(void);
 static void gsp(uint8_t n);
 static bool specif(char tail);
-static bool get_id(char id[MAX_ID_LEN], size_t *lid);
-static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid);
-static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid);
+static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid);
+static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid);
+static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC t0;
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
             card[CUT + 8] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
-            memset(mod_name, '\0', MAX_ID_LEN + 1);
+            memset(mod_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
             for (i = 0; i < 7; ++i)
                 sarr[i] = NULL;
             // "start" - directive work
@@ -726,7 +726,7 @@ static void lblkey(bool pr)
 
 void scan(void)
 {
-    static char id[MAX_ID_LEN];
+    static char id[MAX_IDENTIFIER_LENGTH];
     static size_t id_leng;
     static const uint8_t *p;
     static size_t scode;
@@ -1139,7 +1139,7 @@ static void gsp(uint8_t n)
 static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
-    char id[MAX_ID_LEN];
+    char id[MAX_IDENTIFIER_LENGTH];
     size_t lid;
     T_LINKTI code;
     T_SP_STATES sp_state = SPCBLO;
@@ -1306,7 +1306,7 @@ static bool specif(char tail)
                 sp_state = OSH203;
                 break;
             }
-            if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_ID_LEN || stmlbl[lid] == ' '))
+            if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || stmlbl[lid] == ' '))
                 print_error_string("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
@@ -1545,7 +1545,7 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
     blout();
     while (true)
     {
-        char id[MAX_ID_LEN];
+        char id[MAX_IDENTIFIER_LENGTH];
         size_t lid;
         if (!get_id(id, &lid))
             break;
@@ -1576,11 +1576,11 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
     blout();
     while (true)
     {
-        char id[MAX_ID_LEN];
+        char id[MAX_IDENTIFIER_LENGTH];
         size_t lid;
         if (!get_id(id, &lid))
             break;
-        char ide[MAX_EXT_ID_LEN];
+        char ide[MAX_EXTERN_IDENTIFIER_LENGTH];
         size_t lide;
         if (c[m] == '(')
         {
@@ -1594,7 +1594,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
         }
         else
         {
-            lide = lid > MAX_EXT_ID_LEN ? MAX_EXT_ID_LEN : lid;
+            lide = lid > MAX_EXTERN_IDENTIFIER_LENGTH ? MAX_EXTERN_IDENTIFIER_LENGTH : lid;
             strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
@@ -1617,7 +1617,7 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
 static void equ(void)
 { // treatement of directives having 'EQU' type
     blout();
-    char id[MAX_ID_LEN];
+    char id[MAX_IDENTIFIER_LENGTH];
     size_t lid;
     do
     {
@@ -1638,7 +1638,7 @@ static void pch130(void)
     return;
 }
 
-static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // procedure read multiple symbol
+static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
@@ -1694,13 +1694,13 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_ID_LEN], size_t *lid) // proced
     return true;
 }
 
-static bool get_id(char id[MAX_ID_LEN], size_t *lid)
+static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid)
 { // read identifier
-    memset(id, ' ', MAX_ID_LEN);
+    memset(id, ' ', MAX_IDENTIFIER_LENGTH);
     if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
-    for (*lid = 1; *lid < MAX_ID_LEN; (*lid)++)
+    for (*lid = 1; *lid < MAX_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
@@ -1716,19 +1716,19 @@ static bool get_id(char id[MAX_ID_LEN], size_t *lid)
     if (i > 1)
     {
         char osh113[64];
-        sprintf(osh113, "113 identifier length > %d", MAX_ID_LEN);
+        sprintf(osh113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
         print_error_string(osh113);
     }
     return true;
 }
 
 // read external identifier
-static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
+static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
 {
     if (class[m] != 'L' && c[m] != '_')
         return false;
     id[0] = (char)toupper(c[m]);
-    for (*lid = 1; *lid < MAX_EXT_ID_LEN; (*lid)++)
+    for (*lid = 1; *lid < MAX_EXTERN_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
         if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
@@ -1744,7 +1744,7 @@ static bool get_idm(char id[MAX_EXT_ID_LEN], size_t *lid)
     if (i > 1)
     {
         char osh114[64];
-        sprintf(osh114, "114 external identifier length > %d", MAX_EXT_ID_LEN);
+        sprintf(osh114, "114 external identifier length > %d", MAX_EXTERN_IDENTIFIER_LENGTH);
         print_error_string(osh114);
     }
     return true;

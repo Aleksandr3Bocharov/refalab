@@ -167,7 +167,7 @@ static struct
     uint8_t type;
     uint16_t main_right_number_element;
     uint32_t rem;
-    char identifier[MAX_ID_LEN];
+    char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t identifier_length;
     bool v_variable;
 } variables[256];
