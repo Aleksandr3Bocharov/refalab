@@ -95,7 +95,7 @@ void fndef(const char *idp, size_t lid)
         else
         {
             fnhead(idp, lid);
-            p->def = scn_.nomkar;
+            p->def = scanner.carriage_number;
             jlabel(p);
             generate_operator_l(n_sjump, (uint8_t *)next_stm);
         }
@@ -138,7 +138,7 @@ void sempty(const char *idp, size_t lid)
     else
     {
         fnhead(idp, lid);
-        p->def = scn_.nomkar;
+        p->def = scanner.carriage_number;
         jlabel(p);
         jbyte(n_fail);
     }
@@ -156,7 +156,7 @@ void sswap(const char *idp, size_t lid)
         size_t j0 = jwhere();
         size_t l0;
         if (options.full_name)
-            l0 = 255 > scn_.modnmlen + lid + 1 ? scn_.modnmlen + lid + 1 : 255;
+            l0 = 255 > scanner.module_name_length + lid + 1 ? scanner.module_name_length + lid + 1 : 255;
         else
             l0 = lid;
         j0 = (j0 + l0 + 2) % 8;
@@ -165,7 +165,7 @@ void sswap(const char *idp, size_t lid)
         for (size_t k0 = 1; k0 <= j0; k0++)
             jbyte(' ');
         fnhead(idp, lid);
-        p->def = scn_.nomkar;
+        p->def = scanner.carriage_number;
         jlabel(p);
         jbyte(n_swap);
         const size_t kk = SMBL + LBLL * 2;
@@ -191,7 +191,7 @@ void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
         p504(idp, lidp);
     else
     {
-        p->def = scn_.nomkar;
+        p->def = scanner.carriage_number;
         jextrn(p, ide, lide);
     }
     return;
@@ -225,7 +225,7 @@ void spdef(const char *idp, size_t lid)
             p504(idp, lid);
         else
         {
-            p->def = scn_.nomkar;
+            p->def = scanner.carriage_number;
             jlabel(p);
         }
     }
@@ -246,13 +246,13 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     if ((p1->mode & '\300') == '\000')
     {
         p0->type |= p1->type;
-        p1->def = scn_.nomkar;
+        p1->def = scanner.carriage_number;
         jequ(p1, p0);
     }
     else if ((p0->mode & '\300') == '\000')
     {
         p1->type |= p0->type;
-        p0->def = scn_.nomkar;
+        p0->def = scanner.carriage_number;
         jequ(p0, p1);
     }
     else
@@ -267,8 +267,8 @@ static void fnhead(const char *idp, size_t lid)
         size_t k0, l0, ll;
         if (options.full_name)
         {
-            const char *idpm = scn_.modname_var;
-            l0 = scn_.modnmlen;
+            const char *idpm = scanner.module_name;
+            l0 = scanner.module_name_length;
             for (k0 = 0; k0 < l0; k0++)
                 jbyte((uint8_t)*(idpm + k0));
             jbyte(':');

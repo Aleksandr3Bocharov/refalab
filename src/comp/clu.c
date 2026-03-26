@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-10-03
+// 2026-03-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------------  file  --  CLU.C  -------------------
@@ -42,7 +42,7 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     p->ref.next = NULL;
     for (size_t m = 1; m <= 5; m++)
         p->ref.numb[m] = 0;
-    p->ref.numb[0] = scn_.nomkar;
+    p->ref.numb[0] = scanner.carriage_number;
     p->def = 0;
     char *q = calloc(1, lid);
 #if defined mdebug
@@ -86,12 +86,12 @@ T_U *lookup(const char *idp, size_t lid)
                     size_t k = 5;
                     while (q1->numb[k] == 0)
                         k--;
-                    if (q1->numb[k] != scn_.nomkar)
+                    if (q1->numb[k] != scanner.carriage_number)
                     {
                         // include number to list
                         if (q1->numb[5] == 0)
                             // it's free field in current item
-                            q1->numb[k + 1] = scn_.nomkar;
+                            q1->numb[k + 1] = scanner.carriage_number;
                         else
                         { // create new item
                             T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
@@ -105,7 +105,7 @@ T_U *lookup(const char *idp, size_t lid)
                             r1->next = NULL;
                             for (k = 0; k <= 5; k++)
                                 r1->numb[k] = 0;
-                            r1->numb[0] = scn_.nomkar;
+                            r1->numb[0] = scanner.carriage_number;
                         };
                     }
                     while ((p->mode & '\300') == '\300')

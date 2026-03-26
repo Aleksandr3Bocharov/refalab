@@ -30,20 +30,20 @@ typedef struct options_
 
 extern T_OPTIONS options;
 
-typedef struct scn_
+typedef struct scanner
 { // the table for corresponding with scanner
-    uint32_t nomkar;
-    char modname_var[MAX_IDENTIFIER_LENGTH]; // module name
-    size_t modnmlen;              // module name length
-} T_SCN;
+    uint32_t carriage_number;
+    char module_name[MAX_IDENTIFIER_LENGTH]; // module name
+    size_t module_name_length;               // module name length
+} T_SCANNER;
 
-extern T_SCN scn_;
+extern T_SCANNER scanner;
 
 typedef struct scn_e_
-{                        // current statement element
-    uint32_t t;          //    element type
+{                                   // current statement element
+    uint32_t t;                     //    element type
     char si[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
-    size_t si_leng;      // variable identifier length
+    size_t si_leng;                 // variable identifier length
     bool v;
     T_LINKTI code;
     T_LINKTI spec;
