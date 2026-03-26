@@ -155,7 +155,7 @@ void sswap(const char *idp, size_t lid)
     { //  align box head on the 8-byte board
         size_t j0 = jwhere();
         size_t l0;
-        if (options.extname)
+        if (options.full_name)
             l0 = 255 > scn_.modnmlen + lid + 1 ? scn_.modnmlen + lid + 1 : 255;
         else
             l0 = lid;
@@ -265,7 +265,7 @@ static void fnhead(const char *idp, size_t lid)
     if (options.names)
     {
         size_t k0, l0, ll;
-        if (options.extname)
+        if (options.full_name)
         {
             const char *idpm = scn_.modname_var;
             l0 = scn_.modnmlen;

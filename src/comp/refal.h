@@ -19,16 +19,16 @@
 #define MAX_IDENTIFIER_LENGTH 40
 #define MAX_EXTERN_IDENTIFIER_LENGTH 32
 
-typedef struct opt_
+typedef struct options_
 { // compiling   options
-    bool source;
-    bool extname;
+    bool source_listing;
+    bool full_name;
     bool names;
-    bool asmb;
-    char a[8192];
-} T_OPT;
+    bool assembler_source_only;
+    char assembler_options[8192];
+} T_OPTIONS;
 
-extern T_OPT options;
+extern T_OPTIONS options;
 
 typedef struct scn_
 { // the table for corresponding with scanner

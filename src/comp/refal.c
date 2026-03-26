@@ -152,7 +152,7 @@ typedef enum sp_states
     OSH208
 } T_SP_STATES;
 
-T_OPT options;
+T_OPTIONS options;
 
 T_SCN scn_;
 
@@ -287,30 +287,30 @@ int main(int argc, char *argv[])
 
     SET_time();
 
-    options.source = true;
-    options.extname = false;
+    options.source_listing = true;
+    options.full_name = false;
     options.names = true;
-    options.asmb = false;
-    options.a[0] = '\0';
-    options.a[8191] = '\0';
+    options.assembler_source_only = false;
+    options.assembler_options[0] = '\0';
+    options.assembler_options[8191] = '\0';
     for (size_t j = 2; j < (size_t)argc; ++j)
         if (strcmp(argv[j], "-nn") == 0)
             options.names = false;
         else if (strcmp(argv[j], "-ns") == 0)
-            options.source = false;
+            options.source_listing = false;
         else if (strcmp(argv[j], "-fn") == 0)
-            options.extname = true;
+            options.full_name = true;
         else if (strcmp(argv[j], "-as") == 0)
-            options.asmb = true;
+            options.assembler_source_only = true;
         else if (strncmp(argv[j], "-a,", 3) == 0)
-            strncpy(options.a, &argv[j][3], 8191);
+            strncpy(options.assembler_options, &argv[j][3], 8191);
         else
         {
             printf("Unknown option: %s\n", argv[j]);
             printf("Options may be: -nn, -ns, -fn, -as, -a,[options]\n");
             exit(1);
         }
-    if (options.source)
+    if (options.source_listing)
     {
         strcpy(parm, argv[1]);
         strcat(parm, ".lst");
@@ -521,16 +521,16 @@ int main(int argc, char *argv[])
             break;
         case END_OF_SYSIN:
             fclose(sysin);
-            if (options.source)
+            if (options.source_listing)
                 fclose(sysprint);
             mod_length = jwhere();
             fclose(syslin);
             if (mod_length == 0 || flags.was_err)
                 unlink(parm);
-            else if (!options.asmb)
+            else if (!options.assembler_source_only)
             {
                 char cas[3 + 8191 + 1 + MAX_PATHFILENAME - 2 + 1];
-                sprintf(cas, "as %s %s", options.a, parm);
+                sprintf(cas, "as %s %s", options.assembler_options, parm);
                 int res = system(cas);
 #if defined POSIX
                 if (WIFEXITED(res) != 0)
@@ -646,7 +646,7 @@ static void rdcard(void)
         ++cdnumb;
         flags.uzhe_krt = false;
         flags.uzhekrt_t = false;
-        if (options.source)
+        if (options.source_listing)
             pchk();
         if (!flags.was_cut && komm())
             continue;
@@ -1777,7 +1777,7 @@ static void pchzkl(void)
     char pr_line[180];
     sprintf(pr_line,
             "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
-    if (options.source)
+    if (options.source_listing)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
     cdnumb = 0;
@@ -1787,7 +1787,7 @@ static void pchzkl(void)
     else
         sprintf(pr_line,
                 "                       obj_length(bytes) = %zu\n", mod_length);
-    if (options.source)
+    if (options.source_listing)
         fputs(pr_line, sysprint);
     fputs(pr_line, systerm);
     GET_time();
