@@ -170,7 +170,7 @@ static struct
 } flags;
 
 // Aleksandr Bocharov   // compiler version
-static const char *vers_i = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
+static const char *version = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
 
 static FILE *sysin;
 static size_t m;           // current symbol number
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
     terminal = NULL;
     scanner.module_number = 0;
     printf("\n");
-    printf("%s", vers_i);
+    printf("%s", version);
     if (argc < 2)
     {
         printf("\n");
