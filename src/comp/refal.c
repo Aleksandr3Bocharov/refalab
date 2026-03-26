@@ -154,7 +154,7 @@ typedef enum sp_states
 
 T_OPTIONS options;
 
-T_SCN scn_;
+T_SCANNER scanner;
 
 T_SCN_E scn_e;
 
@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
     }
     flags.was_err = false;
     cdnumb = 0;
-    scn_.nomkar = 0;
+    scanner.carriage_number = 0;
     bool impl = false;
     T_MOD_STATES mod_state = START_OF_MODULE;
     while (true)
@@ -359,14 +359,14 @@ int main(int argc, char *argv[])
             if (strncasecmp(stmkey, "start", 5) != 0)
             {
                 print_error_string("001 START-directive missing");
-                scn_.modnmlen = 0;
+                scanner.module_name_length = 0;
                 jstart();
                 mod_state = KEYS;
                 break;
             }
             strncpy(mod_name, stmlbl, lbl_leng);
-            strncpy(scn_.modname_var, stmlbl, lbl_leng);
-            scn_.modnmlen = lbl_leng;
+            strncpy(scanner.module_name, stmlbl, lbl_leng);
+            scanner.module_name_length = lbl_leng;
             jstart();
             blout();
             if (m != CUT - 1 || c[m] != ' ')
@@ -642,7 +642,7 @@ static void rdcard(void)
         rdline(card);
         strncpy(c, card_cut, CUT);
         translate(card_cut, class);
-        ++scn_.nomkar;
+        ++scanner.carriage_number;
         ++cdnumb;
         flags.uzhe_krt = false;
         flags.uzhekrt_t = false;
