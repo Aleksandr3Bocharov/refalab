@@ -70,7 +70,7 @@
 #define MAX_PATHFILENAME 260
 #endif
 
-typedef enum mod_states
+typedef enum module_states
 {
     START_OF_MODULE,
     NEXT_STM,
@@ -78,9 +78,9 @@ typedef enum mod_states
     END_IS_MISSING,
     END_STATEMENT,
     END_OF_SYSIN
-} T_MOD_STATES;
+} T_MODULE_STATES;
 
-typedef enum scn_states
+typedef enum scanner_states
 {
     STATE0,
     SCNERR,
@@ -117,9 +117,9 @@ typedef enum scn_states
     SOSH204,
     SCNGCR,
     SCNRET
-} T_SCN_STATES;
+} T_SCANNER_STATES;
 
-typedef enum sp_states
+typedef enum specifier_states
 {
     SPCBLO,
     SPCPRC,
@@ -150,13 +150,16 @@ typedef enum sp_states
     OSH205,
     OSH206,
     OSH208
-} T_SP_STATES;
+} T_SPECIFIER_STATES;
 
 T_OPTIONS options;
 
 T_SCANNER scanner;
 
 T_SENTENCE_ELEMENT current_sentence_element;
+
+FILE *file_source_listing, *terminal;
+FILE *assembler_source; // for assem
 
 static struct
 {
@@ -165,9 +168,6 @@ static struct
     bool was_err;
     bool uzhekrt_t;
 } flags;
-
-FILE *file_source_listing, *terminal;
-FILE *assembler_source; // for assem
 
 // Aleksandr Bocharov   // compiler version
 static const char *vers_i = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
@@ -330,9 +330,9 @@ int main(int argc, char *argv[])
     cdnumb = 0;
     scanner.carriage_number = 0;
     bool impl = false;
-    T_MOD_STATES mod_state = START_OF_MODULE;
+    T_MODULE_STATES module_state = START_OF_MODULE;
     while (true)
-        switch (mod_state)
+        switch (module_state)
         {
         case START_OF_MODULE:
             kolosh = 0;
@@ -349,7 +349,7 @@ int main(int argc, char *argv[])
             lblkey(false);
             if (_eoj)
             {
-                mod_state = END_OF_SYSIN;
+                module_state = END_OF_SYSIN;
                 break;
             }
             s_init();
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
                 jstart();
-                mod_state = KEYS;
+                module_state = KEYS;
                 break;
             }
             strncpy(mod_name, stmlbl, lbl_leng);
@@ -368,12 +368,12 @@ int main(int argc, char *argv[])
             blout();
             if (m != CUT - 1 || c[m] != ' ')
                 pch130();
-            mod_state = NEXT_STM;
+            module_state = NEXT_STM;
             break;
         case NEXT_STM:
             // read of next sentence
             lblkey(false);
-            mod_state = KEYS;
+            module_state = KEYS;
             break;
         case KEYS:
             if (strncasecmp(stmkey, "impl", 4) == 0)
@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
                     if (m != CUT - 1 || c[m] != ' ')
                         pch130();
                 }
-                mod_state = END_STATEMENT;
+                module_state = END_STATEMENT;
                 break;
             }
             else if (strncasecmp(stmkey, "entry", 5) == 0)
@@ -490,15 +490,15 @@ int main(int argc, char *argv[])
             }
             if (!_eoj)
             {
-                mod_state = NEXT_STM;
+                module_state = NEXT_STM;
                 break;
             }
-            mod_state = END_IS_MISSING;
+            module_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
             print_error_string("003 end-directive missing");
             kolosh++;
-            mod_state = END_STATEMENT;
+            module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
             s_end();
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
             }
             s_term();
             pchzkl();
-            mod_state = END_OF_SYSIN;
+            module_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
             fclose(sysin);
@@ -732,11 +732,11 @@ void scan_sentence_element(void)
     current_sentence_element.v_variable = false;
     current_sentence_element.specifier.tag = TAGO;
     current_sentence_element.specifier.info.codef = NULL;
-    T_SCN_STATES scn_state = STATE0;
+    T_SCANNER_STATES scanner_state = STATE0;
     if (scn_station)
-        scn_state = STATE1;
+        scanner_state = STATE1;
     while (true)
-        switch (scn_state)
+        switch (scanner_state)
         {
         case STATE0:
             // among elements
@@ -754,114 +754,114 @@ void scan_sentence_element(void)
             case '7':
             case '8':
             case '9':
-                scn_state = SCNSC;
+                scanner_state = SCNSC;
                 break;
             case '(':
-                scn_state = SCNL;
+                scanner_state = SCNL;
                 break;
             case ')':
-                scn_state = SCNR;
+                scanner_state = SCNR;
                 break;
             case 's':
             case 'S':
-                scn_state = SCNS;
+                scanner_state = SCNS;
                 break;
             case 'w':
             case 'W':
-                scn_state = SCNW;
+                scanner_state = SCNW;
                 break;
             case 'v':
             case 'V':
-                scn_state = SCNVV;
+                scanner_state = SCNVV;
                 break;
             case 'e':
             case 'E':
-                scn_state = SCNE;
+                scanner_state = SCNE;
                 break;
             case '<':
-                scn_state = SCNKK;
+                scanner_state = SCNKK;
                 break;
             case '>':
-                scn_state = SCNP;
+                scanner_state = SCNP;
                 break;
             case '=':
-                scn_state = SCNEOL;
+                scanner_state = SCNEOL;
                 break;
             case ' ':
             case '\t':
-                scn_state = SCNEOS;
+                scanner_state = SCNEOS;
                 break;
             case '\'':
-                scn_state = SCNA;
+                scanner_state = SCNA;
                 break;
             case 'f':
             case 'F':
-                scn_state = FSCN;
+                scanner_state = FSCN;
                 break;
             case 'n':
             case 'N':
-                scn_state = NSCN;
+                scanner_state = NSCN;
                 break;
             case 'r':
             case 'R':
-                scn_state = RSCN;
+                scanner_state = RSCN;
                 break;
             case 'o':
             case 'O':
-                scn_state = OSCN;
+                scanner_state = OSCN;
                 break;
             case 'd':
             case 'D':
-                scn_state = DSCN;
+                scanner_state = DSCN;
                 break;
             case 'l':
             case 'L':
-                scn_state = LSCN;
+                scanner_state = LSCN;
                 break;
             default:
                 print_error_string_symbol("100 illegal symbol", c[m]);
-                scn_state = SCNERR;
+                scanner_state = SCNERR;
             }
             break;
         case SCNERR:
             current_sentence_element.type = 0;
-            scn_state = SCNRET;
+            scanner_state = SCNRET;
             break;
         case SCNSC:
             if (get_csmb(&current_sentence_element.code, id, &id_leng))
             {
-                scn_state = EGO;
+                scanner_state = EGO;
                 break;
             }
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case EGO:
             current_sentence_element.type = 1;
-            scn_state = SCNRET;
+            scanner_state = SCNRET;
             break;
         case SCNL:
             current_sentence_element.type = 2;
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case SCNR:
             current_sentence_element.type = 3;
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case SCNS:
             current_sentence_element.type = 4;
-            scn_state = SCNV;
+            scanner_state = SCNV;
             break;
         case SCNW:
             current_sentence_element.type = 5;
-            scn_state = SCNV;
+            scanner_state = SCNV;
             break;
         case SCNVV:
             current_sentence_element.v_variable = true;
-            scn_state = SCNE;
+            scanner_state = SCNE;
             break;
         case SCNE:
             current_sentence_element.type = 6;
-            scn_state = SCNV;
+            scanner_state = SCNV;
             break;
         case SCNV:
             EH_ROMA;
@@ -878,7 +878,7 @@ void scan_sentence_element(void)
                 {
                     EH_ROMA else
                     {
-                        scn_state = SCNERR;
+                        scanner_state = SCNERR;
                         break;
                     }
                 }
@@ -888,7 +888,7 @@ void scan_sentence_element(void)
                 EH_ROMA;
                 if (!get_id(id, &id_leng))
                 {
-                    scn_state = SOSH203;
+                    scanner_state = SOSH203;
                     break;
                 }
                 if (left_part)
@@ -897,31 +897,31 @@ void scan_sentence_element(void)
                 {
                     EH_ROMA else
                     {
-                        scn_state = SOSH204;
+                        scanner_state = SOSH204;
                         break;
                     }
                 }
             }
-            scn_state = SCNVD;
+            scanner_state = SCNVD;
             break;
         case SCNVD:
             if (c[m] != '.')
             {
-                scn_state = OSH103;
+                scanner_state = OSH103;
                 break;
             }
             EH_ROMA;
-            scn_state = SCNVI;
+            scanner_state = SCNVI;
             break;
         case SCNVI:
             if (!get_id(id, &id_leng))
             {
-                scn_state = OSH102;
+                scanner_state = OSH102;
                 break;
             }
             strncpy(current_sentence_element.identifier, id, id_leng);
             current_sentence_element.identifier_length = id_leng;
-            scn_state = SCNRET;
+            scanner_state = SCNRET;
             break;
         case SCNKK:
             current_sentence_element.type = 7;
@@ -940,55 +940,55 @@ void scan_sentence_element(void)
                 class[m + i - 1] = '*';
                 m -= 2;
             }
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case SCNP:
             current_sentence_element.type = 8;
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case SCNEOL:
             current_sentence_element.type = 9;
             left_part = false;
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case SCNEOS:
             current_sentence_element.type = 10;
-            scn_state = SCNRET;
+            scanner_state = SCNRET;
             break;
         case SCNA:
             EH_ROMA;
             if (m == CUT - 1)
             {
-                scn_state = OSH101;
+                scanner_state = OSH101;
                 break;
             }
             if (c[m] == '\'')
             {
-                scn_state = SCNCHR;
+                scanner_state = SCNCHR;
                 break;
             }
             scn_station = true;
-            scn_state = SCNCHR;
+            scanner_state = SCNCHR;
             break;
         case STATE1: // within letter chain
             if (m == CUT - 1)
             {
-                scn_state = OSH101;
+                scanner_state = OSH101;
                 break;
             }
             if (c[m] != '\'')
             {
-                scn_state = SCNCHR;
+                scanner_state = SCNCHR;
                 break;
             }
             EH_ROMA;
             if (c[m] == '\'')
             {
-                scn_state = SCNCHR;
+                scanner_state = SCNCHR;
                 break;
             }
             scn_station = false;
-            scn_state = STATE0;
+            scanner_state = STATE0;
             break;
         case SCNCHR:
             current_sentence_element.code.tag = TAGO;
@@ -1050,36 +1050,36 @@ void scan_sentence_element(void)
                     else
                         m--;
                 }
-            scn_state = PROD;
+            scanner_state = PROD;
             break;
         case PROD:
             current_sentence_element.code.info.infoc = c[m];
             current_sentence_element.type = 1;
-            scn_state = SCNGCR;
+            scanner_state = SCNGCR;
             break;
         case FSCN:
             scode = 0;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case NSCN:
             scode = 1;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case RSCN:
             scode = 2;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case OSCN:
             scode = 3;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case DSCN:
             scode = 4;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case LSCN:
             scode = 5;
-            scn_state = SABBR;
+            scanner_state = SABBR;
             break;
         case SABBR:
             current_sentence_element.type = 4;
@@ -1095,31 +1095,31 @@ void scan_sentence_element(void)
                 current_sentence_element.specifier.info.codef = (uint8_t *)*(sarr + scode);
             };
             EH_ROMA;
-            scn_state = SCNVD;
+            scanner_state = SCNVD;
             break;
         case OSH101:
             print_error_string("101 default of left apostroph");
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case OSH102:
             print_error_string("102 sign '.' followed by no letter or underscore");
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case OSH103:
             print_error_string("103 sign '.' expected");
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case SOSH203:
             print_error_string("203 sign ':' followed by no letter or underscore");
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case SOSH204:
             print_error_string("204 default last ':' within specifier");
-            scn_state = SCNERR;
+            scanner_state = SCNERR;
             break;
         case SCNGCR:
             EH_ROMA;
-            scn_state = SCNRET;
+            scanner_state = SCNRET;
             break;
         case SCNRET:
             return;
@@ -1139,25 +1139,25 @@ static bool specif(char tail)
     char id[MAX_IDENTIFIER_LENGTH];
     size_t lid;
     T_LINKTI code;
-    T_SP_STATES sp_state = SPCBLO;
+    T_SPECIFIER_STATES specifier_state = SPCBLO;
     while (true)
-        switch (sp_state)
+        switch (specifier_state)
         {
         case SPCBLO:
             blout();
-            sp_state = SPCPRC;
+            specifier_state = SPCPRC;
             break;
         case SPCPRC:
             switch (c[m])
             {
             case ' ':
-                sp_state = SPCFF;
+                specifier_state = SPCFF;
                 break;
             case '(':
-                sp_state = SPCL;
+                specifier_state = SPCL;
                 break;
             case ')':
-                sp_state = SPCR;
+                specifier_state = SPCR;
                 break;
             case '&':
             case '0':
@@ -1170,53 +1170,53 @@ static bool specif(char tail)
             case '7':
             case '8':
             case '9':
-                sp_state = SPCESC;
+                specifier_state = SPCESC;
                 break;
             case ':':
-                sp_state = SPCSP;
+                specifier_state = SPCSP;
                 break;
             case '\'':
-                sp_state = SPCA;
+                specifier_state = SPCA;
                 break;
             case 's':
             case 'S':
-                sp_state = SPCES;
+                specifier_state = SPCES;
                 break;
             case 'b':
             case 'B':
-                sp_state = SPCEB;
+                specifier_state = SPCEB;
                 break;
             case 'w':
             case 'W':
-                sp_state = SPCEW;
+                specifier_state = SPCEW;
                 break;
             case 'f':
             case 'F':
-                sp_state = SPCEF;
+                specifier_state = SPCEF;
                 break;
             case 'n':
             case 'N':
-                sp_state = SPCEN;
+                specifier_state = SPCEN;
                 break;
             case 'r':
             case 'R':
-                sp_state = SPCER;
+                specifier_state = SPCER;
                 break;
             case 'o':
             case 'O':
-                sp_state = SPCEO;
+                specifier_state = SPCEO;
                 break;
             case 'l':
             case 'L':
-                sp_state = SPCEL;
+                specifier_state = SPCEL;
                 break;
             case 'd':
             case 'D':
-                sp_state = SPCED;
+                specifier_state = SPCED;
                 break;
             default:
                 print_error_string_symbol("201 within specifier invalid symbol ", c[m]);
-                sp_state = OSH200;
+                specifier_state = OSH200;
             }
             break;
         case SPCFF:
@@ -1225,62 +1225,62 @@ static bool specif(char tail)
                 print_error_string("207 within specifier default ')' ");
             if (tail == ')')
             {
-                sp_state = OSH206;
+                specifier_state = OSH206;
                 break;
             }
             return true;
         case SPCL:
             if (neg)
             {
-                sp_state = OSH202;
+                specifier_state = OSH202;
                 break;
             }
             neg = true;
             gsp(ns_ng);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCR:
             if (!neg)
             {
-                sp_state = SPCR1;
+                specifier_state = SPCR1;
                 break;
             }
             EH_ROMA0;
             blout();
             if (c[m] == '(')
             {
-                sp_state = SPCGC;
+                specifier_state = SPCGC;
                 break;
             }
             if (c[m] == ')')
             {
-                sp_state = SPCR1;
+                specifier_state = SPCR1;
                 break;
             }
             if (c[m] == ' ')
             {
-                sp_state = SPCR2;
+                specifier_state = SPCR2;
                 break;
             }
             neg = false;
             gsp(ns_ng);
-            sp_state = SPCPRC;
+            specifier_state = SPCPRC;
             break;
         case SPCR1:
             if (tail == ')')
             {
-                sp_state = SPCR3;
+                specifier_state = SPCR3;
                 break;
             }
-            sp_state = OSH208;
+            specifier_state = OSH208;
             break;
         case SPCR2:
             if (tail != ')')
             {
-                sp_state = SPCR3;
+                specifier_state = SPCR3;
                 break;
             }
-            sp_state = OSH206;
+            specifier_state = OSH206;
             break;
         case SPCR3:
             gsp(ns_ngw);
@@ -1288,19 +1288,19 @@ static bool specif(char tail)
         case SPCESC:
             if (!get_csmb(&code, id, &lid))
             {
-                sp_state = OSH200;
+                specifier_state = OSH200;
                 break;
             }
             gsp(ns_sc);
             if (left_part)
                 generate_symbol(&code);
-            sp_state = SPCBLO;
+            specifier_state = SPCBLO;
             break;
         case SPCSP:
             EH_ROMA0;
             if (!get_id(id, &lid))
             {
-                sp_state = OSH203;
+                specifier_state = OSH203;
                 break;
             }
             if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || stmlbl[lid] == ' '))
@@ -1311,21 +1311,21 @@ static bool specif(char tail)
                 j3addr(p);
             if (c[m] == ':')
             {
-                sp_state = SPCGC;
+                specifier_state = SPCGC;
                 break;
             }
-            sp_state = OSH204;
+            specifier_state = OSH204;
             break;
         case SPCA:
             EH_ROMA0;
             if (m == CUT - 1)
             {
-                sp_state = OSH205;
+                specifier_state = OSH205;
                 break;
             }
             if (c[m] != '\'')
             {
-                sp_state = SPCA1;
+                specifier_state = SPCA1;
                 break;
             }
             gsp(ns_sc);
@@ -1336,7 +1336,7 @@ static bool specif(char tail)
                 code.info.infoc = '\'';
                 generate_symbol(&code);
             }
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCA1:
             gsp(ns_sc);
@@ -1407,88 +1407,88 @@ static bool specif(char tail)
             EH_ROMA0;
             if (m == CUT - 1)
             {
-                sp_state = OSH205;
+                specifier_state = OSH205;
                 break;
             }
             if (c[m] != '\'')
             {
-                sp_state = SPCA1;
+                specifier_state = SPCA1;
                 break;
             }
             EH_ROMA0;
             if (c[m] == '\'')
             {
-                sp_state = SPCA1;
+                specifier_state = SPCA1;
                 break;
             }
-            sp_state = SPCBLO;
+            specifier_state = SPCBLO;
             break;
         case SPCES:
             gsp(ns_s);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEB:
             gsp(ns_b);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEW:
             gsp(ns_w);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEF:
             gsp(ns_f);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEN:
             gsp(ns_n);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCER:
             gsp(ns_r);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEO:
             gsp(ns_o);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCEL:
             gsp(ns_l);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCED:
             gsp(ns_d);
-            sp_state = SPCGC;
+            specifier_state = SPCGC;
             break;
         case SPCGC:
             EH_ROMA0;
-            sp_state = SPCBLO;
+            specifier_state = SPCBLO;
             break;
         case OSH200:
             print_error_string("200 specifier is't scaned");
             return false;
         case OSH202:
             print_error_string("202 specifier has too many '(' ");
-            sp_state = OSH200;
+            specifier_state = OSH200;
             break;
         case OSH203:
             print_error_string("203 sign ':' followed by no letter or underscore within specifier ");
-            sp_state = OSH200;
+            specifier_state = OSH200;
             break;
         case OSH204:
             print_error_string("204 within specifier default last :");
-            sp_state = OSH200;
+            specifier_state = OSH200;
             break;
         case OSH205:
             print_error_string("205 within specifier default last apostroph");
-            sp_state = OSH200;
+            specifier_state = OSH200;
             break;
         case OSH206:
             print_error_string("206 default ')'in the specifier end ");
-            sp_state = OSH200;
+            specifier_state = OSH200;
             break;
         case OSH208:
             print_error_string("208 within specifier too many )");
-            sp_state = OSH200;
+            specifier_state = OSH200;
         }
 }
 
