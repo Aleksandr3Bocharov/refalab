@@ -53,7 +53,6 @@ extern T_SCANNING_ELEMENT scanning_element;
 
 extern FILE *sysprint, *systerm;
 extern FILE *syslin; // for assem
-extern FILE *systxt; // for module names
 
 extern uint32_t module_number;
 

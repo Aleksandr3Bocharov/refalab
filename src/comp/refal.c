@@ -168,7 +168,6 @@ static struct
 
 FILE *sysprint, *systerm;
 FILE *syslin; // for assem
-FILE *systxt; // for module names
 
 uint32_t module_number;
 
