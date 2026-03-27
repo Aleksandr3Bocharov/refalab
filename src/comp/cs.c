@@ -34,13 +34,13 @@ static T_I_LBL *next_stm = NULL; // next statement label
 static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
 
-static void p504(const char *idp, size_t lid)
+static void p504(const char *idp, uint8_t lid)
 {
     print_error_three_strings("504 label", idp, lid, " is already defined");
     return;
 }
 
-static void p505(const char *idp, size_t lid)
+static void p505(const char *idp, uint8_t lid)
 {
     print_error_three_strings("505 label", idp, lid, " is yet not defined");
     return;
