@@ -26,28 +26,28 @@
 
 #define CUT 88
 
-#define EH_ROMA                                \
-    if (m != CUT - 1)                          \
-    {                                          \
-        m++;                                   \
-        if (m == CUT - 1 && c[CUT - 1] != ' ') \
-        {                                      \
-            rdcard();                          \
-            if (_eoj)                          \
-                return;                        \
-        }                                      \
+#define EH_ROMA                                                    \
+    if (current_symbol_number != CUT - 1)                          \
+    {                                                              \
+        current_symbol_number++;                                   \
+        if (current_symbol_number == CUT - 1 && c[CUT - 1] != ' ') \
+        {                                                          \
+            rdcard();                                              \
+            if (flags.end_refalab_source)                          \
+                return;                                            \
+        }                                                          \
     }
 
-#define EH_ROMA0                               \
-    if (m != CUT - 1)                          \
-    {                                          \
-        m++;                                   \
-        if (m == CUT - 1 && c[CUT - 1] != ' ') \
-        {                                      \
-            rdcard();                          \
-            if (_eoj)                          \
-                return false;                  \
-        }                                      \
+#define EH_ROMA0                                                   \
+    if (current_symbol_number != CUT - 1)                          \
+    {                                                              \
+        current_symbol_number++;                                   \
+        if (current_symbol_number == CUT - 1 && c[CUT - 1] != ' ') \
+        {                                                          \
+            rdcard();                                              \
+            if (flags.end_refalab_source)                          \
+                return false;                                      \
+        }                                                          \
     }
 
 #define ns_b 0006
@@ -167,34 +167,34 @@ static struct
     bool was_card_print_file_source_listing;
     bool was_error;
     bool was_card_print_terminal;
+    bool empty_card;        // flag for empty card
+    bool compile_direction; // L,R - flag
+    bool scanner_station;   // scanner station - in(1),out(0) literal chain
+    bool left_part_sentence;
+    bool end_refalab_source; // "refalab_source" end flag
 } flags;
 
 // Aleksandr Bocharov   // compiler version
 static const char *version = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
 
 static FILE *refalab_source;
-static size_t m;           // current symbol number
-static bool empcard;       // flags for empty card
-static char card[CUT + 9]; // card buffer (input)
+static uint8_t current_symbol_number; // current symbol number
+static char card[CUT + 9];            // card buffer (input)
 static const char *card_cut = card;
-static uint32_t cdnumb; // card number
-static bool dir;        // L,R - flag
-static uint32_t kolosh;
+static uint32_t card_number; // card number
+static uint32_t errors_number;
 static char strg_c[CUT + 6];
 static char *c = strg_c + 6;
 static char class_cut[CUT + 6];
 static char *class = class_cut + 6;
-static bool scn_station; // scanner station - in(1),out(0) literal chain
-static bool left_part;
 static char *sarr[7]; // abbreviated specifier table
 static char stmlbl[MAX_IDENTIFIER_LENGTH];
 static size_t lbl_leng;
 static char prevlb[MAX_IDENTIFIER_LENGTH + 1];
 static char stmkey[6];
-static size_t fixm;                   // start sentence position
+static size_t fixm;                              // start sentence position
 static char mod_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
-static size_t mod_length;             // module length
-static bool _eoj;                     // "sysin" end flag
+static size_t mod_length;                        // module length
 
 static void lblkey(bool pr);
 static void pch130(void);
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
         exit(8);
     }
     flags.was_error = false;
-    cdnumb = 0;
+    card_number = 0;
     scanner.carriage_number = 0;
     bool impl = false;
     T_MODULE_STATES module_state = START_OF_MODULE;
@@ -335,10 +335,10 @@ int main(int argc, char *argv[])
         switch (module_state)
         {
         case START_OF_MODULE:
-            kolosh = 0;
+            errors_number = 0;
             scanner.module_number++;
             flags.was_cut = false;
-            _eoj = false;
+            flags.end_refalab_source = false;
             card[CUT + 8] = '\n';
             prevlb[0] = '\0';
             mod_length = 0;
@@ -347,7 +347,7 @@ int main(int argc, char *argv[])
                 sarr[i] = NULL;
             // "start" - directive work
             lblkey(false);
-            if (_eoj)
+            if (flags.end_refalab_source)
             {
                 module_state = END_OF_SYSIN;
                 break;
@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
             scanner.module_name_length = lbl_leng;
             jstart();
             blout();
-            if (m != CUT - 1 || c[m] != ' ')
+            if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
                 pch130();
             module_state = NEXT_STM;
             break;
@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     blout();
-                    if (m != CUT - 1 || c[m] != ' ')
+                    if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
                         pch130();
                 };
                 impl = true;
@@ -394,17 +394,17 @@ int main(int argc, char *argv[])
             {
                 if (impl == false)
                     print_error_string("021 l-directive not in the impl-section");
-                dir = true;
+                flags.compile_direction = true;
                 trprev();
-                compile_sentence(dir, stmlbl, lbl_leng);
+                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "r ", 2) == 0)
             {
                 if (impl == false)
                     print_error_string("022 r-directive not in the impl-section");
-                dir = false;
+                flags.compile_direction = false;
                 trprev();
-                compile_sentence(dir, stmlbl, lbl_leng);
+                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
             }
             else if (strncasecmp(stmkey, "start", 5) == 0)
             {
@@ -413,7 +413,7 @@ int main(int argc, char *argv[])
                 else
                     print_error_string("002 too many start-directive");
                 blout();
-                if (m != CUT - 1 || c[m] != ' ')
+                if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
                     pch130();
             }
             else if (strncasecmp(stmkey, "end", 3) == 0)
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     blout();
-                    if (m != CUT - 1 || c[m] != ' ')
+                    if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
                         pch130();
                 }
                 module_state = END_STATEMENT;
@@ -483,12 +483,12 @@ int main(int argc, char *argv[])
             {
                 if (impl == false)
                     print_error_string("021 l-directive not in the impl-section");
-                m = fixm; // return to left
-                dir = true;
+                current_symbol_number = fixm; // return to left
+                flags.compile_direction = true;
                 trprev();
-                compile_sentence(dir, stmlbl, lbl_leng);
+                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
             }
-            if (!_eoj)
+            if (!flags.end_refalab_source)
             {
                 module_state = NEXT_STM;
                 break;
@@ -497,12 +497,12 @@ int main(int argc, char *argv[])
             break;
         case END_IS_MISSING:
             print_error_string("003 end-directive missing");
-            kolosh++;
+            errors_number++;
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
             s_end();
-            if (kolosh != 0)
+            if (errors_number != 0)
             {
                 flags.was_error = true;
                 mod_length = 0;
@@ -565,7 +565,7 @@ static void trprev(void)
 
 static void rdline(char *s)
 { // read CUT + 8 symbols from sysin
-    empcard = true;
+    flags.empty_card = true;
     size_t i;
     int cs = getc(refalab_source);
     for (i = 0; cs != '\n' && cs != EOF && i < CUT + 8; i++)
@@ -582,12 +582,12 @@ static void rdline(char *s)
         else
         {
             *(s + i) = (char)cs;
-            empcard = false;
+            flags.empty_card = false;
         };
         cs = getc(refalab_source);
     }
     if (cs == EOF && i == 0)
-        _eoj = true;
+        flags.end_refalab_source = true;
     for (; i < CUT + 8; i++)
         *(s + i) = ' ';
     return;
@@ -640,16 +640,16 @@ static void rdcard(void)
         strncpy(c, card_cut, CUT);
         translate(card_cut, class);
         ++scanner.carriage_number;
-        ++cdnumb;
+        ++card_number;
         flags.was_card_print_file_source_listing = false;
         flags.was_card_print_terminal = false;
         if (options.source_listing)
             pchk();
         if (!flags.was_cut && komm())
             continue;
-        if (empcard)
+        if (flags.empty_card)
         {
-            if (_eoj)
+            if (flags.end_refalab_source)
                 return;
             continue;
         }
@@ -661,7 +661,7 @@ static void rdcard(void)
         flags.was_cut = false;
     if (*(c + CUT - 1) != ' ')
         *(c + CUT - 1) = '+'; //!!!
-    m = 0;
+    current_symbol_number = 0;
     return;
 }
 
@@ -685,20 +685,20 @@ static void lblkey(bool pr)
     memset(stmkey, ' ', 6);
     do
     {
-        if (c[m] == ' ')
+        if (c[current_symbol_number] == ' ')
             break;
-        fixm = m;
+        fixm = current_symbol_number;
         size_t l = 0;
-        while (c[m] != ' ')
+        while (c[current_symbol_number] != ' ')
         {
-            if (m == CUT - 1)
+            if (current_symbol_number == CUT - 1)
             {
                 const size_t delta = CUT - 1 - fixm;
                 const int32_t fixm1 = (int32_t)(0 - delta);
-                for (m = 0; m != delta; m++)
+                for (current_symbol_number = 0; current_symbol_number != delta; current_symbol_number++)
                 {
-                    c[fixm1 + (int32_t)m] = c[fixm + m];
-                    class[fixm1 + (int32_t)m] = class[fixm + m];
+                    c[fixm1 + (int32_t)current_symbol_number] = c[fixm + current_symbol_number];
+                    class[fixm1 + (int32_t)current_symbol_number] = class[fixm + current_symbol_number];
                 }
                 rdcard();
                 fixm = (size_t)fixm1;
@@ -707,17 +707,17 @@ static void lblkey(bool pr)
             }
             if (l == 6)
             {
-                m = fixm;
+                current_symbol_number = fixm;
                 stmkey[0] = 'l';
                 break;
             }
-            stmkey[l] = c[m];
+            stmkey[l] = c[current_symbol_number];
             l++;
-            m++;
+            current_symbol_number++;
         }
     } while (false);
-    scn_station = false;
-    left_part = true;
+    flags.scanner_station = false;
+    flags.left_part_sentence = true;
     return;
 }
 
@@ -733,7 +733,7 @@ void scan_sentence_element(void)
     current_sentence_element.specifier.tag = TAGO;
     current_sentence_element.specifier.info.codef = NULL;
     T_SCANNER_STATES scanner_state = STATE0;
-    if (scn_station)
+    if (flags.scanner_station)
         scanner_state = STATE1;
     while (true)
         switch (scanner_state)
@@ -741,7 +741,7 @@ void scan_sentence_element(void)
         case STATE0:
             // among elements
             blout();
-            switch (c[m])
+            switch (c[current_symbol_number])
             {
             case '&':
             case '0':
@@ -819,7 +819,7 @@ void scan_sentence_element(void)
                 scanner_state = LSCN;
                 break;
             default:
-                print_error_string_symbol("100 illegal symbol", c[m]);
+                print_error_string_symbol("100 illegal symbol", c[current_symbol_number]);
                 scanner_state = SCNERR;
             }
             break;
@@ -865,10 +865,10 @@ void scan_sentence_element(void)
             break;
         case SCNV:
             EH_ROMA;
-            if (c[m] == '(')
+            if (c[current_symbol_number] == '(')
             {
                 EH_ROMA;
-                if (left_part)
+                if (flags.left_part_sentence)
                 {
                     current_sentence_element.specifier.info.codef = (uint8_t *)genlbl();
                     p = current_sentence_element.specifier.info.codef;
@@ -883,7 +883,7 @@ void scan_sentence_element(void)
                     }
                 }
             }
-            else if (c[m] == ':')
+            else if (c[current_symbol_number] == ':')
             {
                 EH_ROMA;
                 if (!get_id(id, &id_leng))
@@ -891,9 +891,9 @@ void scan_sentence_element(void)
                     scanner_state = SOSH203;
                     break;
                 }
-                if (left_part)
+                if (flags.left_part_sentence)
                     current_sentence_element.specifier.info.codef = (uint8_t *)spref(id, id_leng, ')');
-                if (c[m] == ':')
+                if (c[current_symbol_number] == ':')
                 {
                     EH_ROMA else
                     {
@@ -905,7 +905,7 @@ void scan_sentence_element(void)
             scanner_state = SCNVD;
             break;
         case SCNVD:
-            if (c[m] != '.')
+            if (c[current_symbol_number] != '.')
             {
                 scanner_state = OSH103;
                 break;
@@ -925,20 +925,20 @@ void scan_sentence_element(void)
             break;
         case SCNKK:
             current_sentence_element.type = 7;
-            if (c[m + 1] != ' ')
+            if (c[current_symbol_number + 1] != ' ')
             {
-                c[m - 1] = '&';
+                c[current_symbol_number - 1] = '&';
                 size_t i;
                 for (i = 1;
-                     class[m + i] == 'L' || c[m + i] == '_' || class[m + i] == 'D';
+                     class[current_symbol_number + i] == 'L' || c[current_symbol_number + i] == '_' || class[current_symbol_number + i] == 'D';
                      i++)
                 {
-                    c[m + i - 1] = c[m + i];
-                    class[m + i - 1] = class[m + i];
+                    c[current_symbol_number + i - 1] = c[current_symbol_number + i];
+                    class[current_symbol_number + i - 1] = class[current_symbol_number + i];
                 }
-                c[m + i - 1] = ' ';
-                class[m + i - 1] = '*';
-                m -= 2;
+                c[current_symbol_number + i - 1] = ' ';
+                class[current_symbol_number + i - 1] = '*';
+                current_symbol_number -= 2;
             }
             scanner_state = SCNGCR;
             break;
@@ -948,7 +948,7 @@ void scan_sentence_element(void)
             break;
         case SCNEOL:
             current_sentence_element.type = 9;
-            left_part = false;
+            flags.left_part_sentence = false;
             scanner_state = SCNGCR;
             break;
         case SCNEOS:
@@ -957,103 +957,103 @@ void scan_sentence_element(void)
             break;
         case SCNA:
             EH_ROMA;
-            if (m == CUT - 1)
+            if (current_symbol_number == CUT - 1)
             {
                 scanner_state = OSH101;
                 break;
             }
-            if (c[m] == '\'')
+            if (c[current_symbol_number] == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
             }
-            scn_station = true;
+            flags.scanner_station = true;
             scanner_state = SCNCHR;
             break;
         case STATE1: // within letter chain
-            if (m == CUT - 1)
+            if (current_symbol_number == CUT - 1)
             {
                 scanner_state = OSH101;
                 break;
             }
-            if (c[m] != '\'')
+            if (c[current_symbol_number] != '\'')
             {
                 scanner_state = SCNCHR;
                 break;
             }
             EH_ROMA;
-            if (c[m] == '\'')
+            if (c[current_symbol_number] == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
             }
-            scn_station = false;
+            flags.scanner_station = false;
             scanner_state = STATE0;
             break;
         case SCNCHR:
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
-            if (c[m] == '\\')
+            if (c[current_symbol_number] == '\\')
                 // control symbols
-                switch (c[++m])
+                switch (c[++current_symbol_number])
                 {
                 case '\\':
                     break;
                 case 'n':
-                    c[m] = '\012';
+                    c[current_symbol_number] = '\012';
                     break;
                 case 't':
-                    c[m] = '\011';
+                    c[current_symbol_number] = '\011';
                     break;
                 case 'v':
-                    c[m] = '\013';
+                    c[current_symbol_number] = '\013';
                     break;
                 case 'r':
-                    c[m] = '\015';
+                    c[current_symbol_number] = '\015';
                     break;
                 case 'f':
-                    c[m] = '\014';
+                    c[current_symbol_number] = '\014';
                     break;
                 case '0':
-                    if (c[m + 1] >= '0' && c[m + 1] <= '7')
+                    if (c[current_symbol_number + 1] >= '0' && c[current_symbol_number + 1] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 1; i < 3; i++)
-                            if (c[m + i] >= '0' && c[m + i] <= '7')
-                                j = j * 8 + (uint32_t)(c[m + i] - '0');
+                            if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
+                                j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
                             else
                             {
-                                m--;
+                                current_symbol_number--;
                                 break;
                             }
-                        m += 2;
-                        c[m] = (char)(j & 255);
+                        current_symbol_number += 2;
+                        c[current_symbol_number] = (char)(j & 255);
                     }
                     else
-                        c[m] = '\0';
+                        c[current_symbol_number] = '\0';
                     break;
                 default:
-                    if (c[m] >= '0' && c[m] <= '7')
+                    if (c[current_symbol_number] >= '0' && c[current_symbol_number] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 0; i < 3; i++)
-                            if (c[m + i] >= '0' && c[m + i] <= '7')
-                                j = j * 8 + (uint32_t)(c[m + i] - '0');
+                            if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
+                                j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
                             else
                             {
-                                m--;
+                                current_symbol_number--;
                                 break;
                             }
-                        m += 2;
-                        c[m] = (char)(j & 255);
+                        current_symbol_number += 2;
+                        c[current_symbol_number] = (char)(j & 255);
                     }
                     else
-                        m--;
+                        current_symbol_number--;
                 }
             scanner_state = PROD;
             break;
         case PROD:
-            current_sentence_element.code.info.infoc = c[m];
+            current_sentence_element.code.info.infoc = c[current_symbol_number];
             current_sentence_element.type = 1;
             scanner_state = SCNGCR;
             break;
@@ -1083,7 +1083,7 @@ void scan_sentence_element(void)
             break;
         case SABBR:
             current_sentence_element.type = 4;
-            if (left_part)
+            if (flags.left_part_sentence)
             {
                 if (*(sarr + scode) == NULL)
                 {
@@ -1128,7 +1128,7 @@ void scan_sentence_element(void)
 
 static void gsp(uint8_t n)
 {
-    if (left_part)
+    if (flags.left_part_sentence)
         jbyte(n);
     return;
 }
@@ -1148,7 +1148,7 @@ static bool specif(char tail)
             specifier_state = SPCPRC;
             break;
         case SPCPRC:
-            switch (c[m])
+            switch (c[current_symbol_number])
             {
             case ' ':
                 specifier_state = SPCFF;
@@ -1215,7 +1215,7 @@ static bool specif(char tail)
                 specifier_state = SPCED;
                 break;
             default:
-                print_error_string_symbol("201 within specifier invalid symbol ", c[m]);
+                print_error_string_symbol("201 within specifier invalid symbol ", c[current_symbol_number]);
                 specifier_state = OSH200;
             }
             break;
@@ -1247,17 +1247,17 @@ static bool specif(char tail)
             }
             EH_ROMA0;
             blout();
-            if (c[m] == '(')
+            if (c[current_symbol_number] == '(')
             {
                 specifier_state = SPCGC;
                 break;
             }
-            if (c[m] == ')')
+            if (c[current_symbol_number] == ')')
             {
                 specifier_state = SPCR1;
                 break;
             }
-            if (c[m] == ' ')
+            if (c[current_symbol_number] == ' ')
             {
                 specifier_state = SPCR2;
                 break;
@@ -1292,7 +1292,7 @@ static bool specif(char tail)
                 break;
             }
             gsp(ns_sc);
-            if (left_part)
+            if (flags.left_part_sentence)
                 generate_symbol(&code);
             specifier_state = SPCBLO;
             break;
@@ -1307,9 +1307,9 @@ static bool specif(char tail)
                 print_error_string("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
-            if (left_part)
+            if (flags.left_part_sentence)
                 j3addr(p);
-            if (c[m] == ':')
+            if (c[current_symbol_number] == ':')
             {
                 specifier_state = SPCGC;
                 break;
@@ -1318,18 +1318,18 @@ static bool specif(char tail)
             break;
         case SPCA:
             EH_ROMA0;
-            if (m == CUT - 1)
+            if (current_symbol_number == CUT - 1)
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (c[m] != '\'')
+            if (c[current_symbol_number] != '\'')
             {
                 specifier_state = SPCA1;
                 break;
             }
             gsp(ns_sc);
-            if (left_part)
+            if (flags.left_part_sentence)
             {
                 code.tag = TAGO;
                 code.info.codef = NULL;
@@ -1340,83 +1340,83 @@ static bool specif(char tail)
             break;
         case SPCA1:
             gsp(ns_sc);
-            if (left_part)
+            if (flags.left_part_sentence)
             {
-                if (c[m] == '\\')
+                if (c[current_symbol_number] == '\\')
                     // control symbols ---------------
-                    switch (c[++m])
+                    switch (c[++current_symbol_number])
                     {
                     case '\\':
                         break;
                     case 'n':
-                        c[m] = '\012';
+                        c[current_symbol_number] = '\012';
                         break;
                     case 't':
-                        c[m] = '\011';
+                        c[current_symbol_number] = '\011';
                         break;
                     case 'v':
-                        c[m] = '\013';
+                        c[current_symbol_number] = '\013';
                         break;
                     case 'r':
-                        c[m] = '\015';
+                        c[current_symbol_number] = '\015';
                         break;
                     case 'f':
-                        c[m] = '\014';
+                        c[current_symbol_number] = '\014';
                         break;
                     case '0':
-                        if (c[m + 1] >= '0' && c[m + 1] <= '7')
+                        if (c[current_symbol_number + 1] >= '0' && c[current_symbol_number + 1] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 1; i < 3; i++)
-                                if (c[m + i] >= '0' && c[m + i] <= '7')
-                                    j = j * 8 + (uint32_t)(c[m + i] - '0');
+                                if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
+                                    j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
                                 else
                                 {
-                                    m--;
+                                    current_symbol_number--;
                                     break;
                                 }
-                            m += 2;
-                            c[m] = (char)(j & 255);
+                            current_symbol_number += 2;
+                            c[current_symbol_number] = (char)(j & 255);
                         }
                         else
-                            c[m] = '\0';
+                            c[current_symbol_number] = '\0';
                         break;
                     default:
-                        if (c[m] >= '0' && c[m] <= '7')
+                        if (c[current_symbol_number] >= '0' && c[current_symbol_number] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 0; i < 3; i++)
-                                if (c[m + i] >= '0' && c[m + i] <= '7')
-                                    j = j * 8 + (uint32_t)(c[m + i] - '0');
+                                if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
+                                    j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
                                 else
                                 {
-                                    m--;
+                                    current_symbol_number--;
                                     break;
                                 }
-                            m += 2;
-                            c[m] = (char)(j & 255);
+                            current_symbol_number += 2;
+                            c[current_symbol_number] = (char)(j & 255);
                         }
                         else
-                            m--;
+                            current_symbol_number--;
                     }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc = c[m];
+                code.info.infoc = c[current_symbol_number];
                 generate_symbol(&code);
             }
             EH_ROMA0;
-            if (m == CUT - 1)
+            if (current_symbol_number == CUT - 1)
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (c[m] != '\'')
+            if (c[current_symbol_number] != '\'')
             {
                 specifier_state = SPCA1;
                 break;
             }
             EH_ROMA0;
-            if (c[m] == '\'')
+            if (c[current_symbol_number] == '\'')
             {
                 specifier_state = SPCA1;
                 break;
@@ -1498,10 +1498,10 @@ static void pchk(void)
     {
         flags.was_card_print_file_source_listing = true;
         card[CUT] = '\0';
-        if (!_eoj)
+        if (!flags.end_refalab_source)
         {
             char tmpstr[CUT + 28];
-            sprintf(tmpstr, "%4d %s", cdnumb, card);
+            sprintf(tmpstr, "%4d %s", card_number, card);
             size_t i;
             for (i = CUT + 4; i > 4; i--)
                 if (tmpstr[i] != ' ')
@@ -1522,10 +1522,10 @@ static void pchk_t(void)
     {
         flags.was_card_print_terminal = true;
         card[CUT] = '\0';
-        if (!_eoj)
+        if (!flags.end_refalab_source)
         {
             char tmpstr[CUT + 28];
-            sprintf(tmpstr, "%4d %s\n", cdnumb, card);
+            sprintf(tmpstr, "%4d %s\n", card_number, card);
             fputs(tmpstr, terminal);
         }
     }
@@ -1548,12 +1548,12 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
             break;
         (*prog)(id, lid);
         blout();
-        if (m == CUT - 1 && c[m] == ' ')
+        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
             return;
-        if (c[m] == ',')
+        if (c[current_symbol_number] == ',')
         {
             EH_ROMA;
-            if (c[m] == ' ')
+            if (c[current_symbol_number] == ' ')
                 blout();
             continue;
         }
@@ -1579,13 +1579,13 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             break;
         char ide[MAX_EXTERN_IDENTIFIER_LENGTH];
         size_t lide;
-        if (c[m] == '(')
+        if (c[current_symbol_number] == '(')
         {
             EH_ROMA;
             if (!get_idm(ide, &lide))
                 break;
             (*prog)(id, lid, ide, lide);
-            if (c[m] != ')')
+            if (c[current_symbol_number] != ')')
                 break;
             EH_ROMA;
         }
@@ -1596,12 +1596,12 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             (*prog)(id, lid, ide, lide);
         }
         blout();
-        if (m == CUT - 1 && c[m] == ' ')
+        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
             return;
-        if (c[m] == ',')
+        if (c[current_symbol_number] == ',')
         {
             EH_ROMA;
-            if (c[m] == ' ')
+            if (c[current_symbol_number] == ' ')
                 blout();
             continue;
         }
@@ -1622,7 +1622,7 @@ static void equ(void)
             break;
         sequ(stmlbl, lbl_leng, id, lid);
         blout();
-        if (m == CUT - 1 && c[m] == ' ')
+        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
             return;
     } while (false);
     pch130();
@@ -1641,17 +1641,17 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
     code->info.codef = NULL;
     do
     {
-        if (class[m] == 'D')
+        if (class[current_symbol_number] == 'D')
         {
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            int64_t k = c[m] - '0';
+            int64_t k = c[current_symbol_number] - '0';
             bool csmbend = false;
             while (true)
             {
                 EH_ROMA0;
-                if (class[m] != 'D')
+                if (class[current_symbol_number] != 'D')
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
@@ -1659,7 +1659,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
                     csmbend = true;
                     break;
                 }
-                const int64_t l = c[m] - '0';
+                const int64_t l = c[current_symbol_number] - '0';
                 k = k * 10 + l;
                 if (k <= MAX_NUMBER)
                     continue;
@@ -1670,7 +1670,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
             while (true)
             {
                 EH_ROMA0;
-                if (class[m] == 'D')
+                if (class[current_symbol_number] == 'D')
                     continue;
                 break;
             }
@@ -1694,18 +1694,18 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
 static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid)
 { // read identifier
     memset(id, ' ', MAX_IDENTIFIER_LENGTH);
-    if (class[m] != 'L' && c[m] != '_')
+    if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(c[m]);
+    id[0] = (char)toupper(c[current_symbol_number]);
     for (*lid = 1; *lid < MAX_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
-        if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
+        if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_' && class[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(c[m]);
+        id[*lid] = (char)toupper(c[current_symbol_number]);
     }
     size_t i = 0;
-    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
+    while (class[current_symbol_number] == 'L' || class[current_symbol_number] == 'D' || c[current_symbol_number] == '_')
     {
         EH_ROMA0;
         i++;
@@ -1722,18 +1722,18 @@ static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid)
 // read external identifier
 static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
 {
-    if (class[m] != 'L' && c[m] != '_')
+    if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(c[m]);
+    id[0] = (char)toupper(c[current_symbol_number]);
     for (*lid = 1; *lid < MAX_EXTERN_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
-        if (class[m] != 'L' && c[m] != '_' && class[m] != 'D')
+        if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_' && class[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(c[m]);
+        id[*lid] = (char)toupper(c[current_symbol_number]);
     }
     size_t i = 0;
-    while (class[m] == 'L' || class[m] == 'D' || c[m] == '_')
+    while (class[current_symbol_number] == 'L' || class[current_symbol_number] == 'D' || c[current_symbol_number] == '_')
     {
         EH_ROMA0;
         i++;
@@ -1747,21 +1747,21 @@ static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
     return true;
 }
 
-//********************************************************************
+//*******************************************************************************************************************************************************
 //                  missing blanks
-//       before call: (m = CUT - 1) !! (m != CUT - 1)
-//  under call:((m=CUT - 1)&&(c[m]=' '))!!((m!=CUT - 1)&&(c[m]!=' '))
-//********************************************************************
+//       before call: (current_symbol_number = CUT - 1) !! (current_symbol_number != CUT - 1)
+//  under call:((current_symbol_number=CUT - 1)&&(c[current_symbol_number]=' '))!!((current_symbol_number!=CUT - 1)&&(c[current_symbol_number]!=' '))
+//*******************************************************************************************************************************************************
 static void blout(void)
 {
     while (true)
     {
-        while (m != CUT - 1 && c[m] == ' ')
-            m++;
-        if (c[m] == '+')
+        while (current_symbol_number != CUT - 1 && c[current_symbol_number] == ' ')
+            current_symbol_number++;
+        if (c[current_symbol_number] == '+')
         {
             rdcard();
-            if (_eoj)
+            if (flags.end_refalab_source)
                 return;
             continue;
         }
@@ -1773,14 +1773,14 @@ static void pchzkl(void)
 { // print conclusion
     char pr_line[180];
     sprintf(pr_line,
-            "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
+            "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, card_number);
     if (options.source_listing)
         fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
-    cdnumb = 0;
-    if (kolosh != 0)
+    card_number = 0;
+    if (errors_number != 0)
         sprintf(pr_line,
-                "errors   = %-3d         obj_length(bytes) = %zu\n", kolosh, mod_length);
+                "errors   = %-3d         obj_length(bytes) = %zu\n", errors_number, mod_length);
     else
         sprintf(pr_line,
                 "                       obj_length(bytes) = %zu\n", mod_length);
@@ -1795,7 +1795,7 @@ void processing_error(void)
 {
     pchk();
     pchk_t();
-    kolosh++;
+    errors_number++;
     return;
 }
 
