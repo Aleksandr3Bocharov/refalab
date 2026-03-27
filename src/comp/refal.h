@@ -53,7 +53,7 @@ typedef struct sentence_element
 
 extern T_SENTENCE_ELEMENT current_sentence_element;
 
-extern FILE *file_source_listing, *terminal;
+extern FILE *refalab_source_listing, *terminal;
 extern FILE *assembler_source; // for assem
 
 extern void processing_error(void);

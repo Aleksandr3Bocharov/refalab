@@ -158,7 +158,7 @@ T_SCANNER scanner;
 
 T_SENTENCE_ELEMENT current_sentence_element;
 
-FILE *file_source_listing, *terminal;
+FILE *refalab_source_listing, *terminal;
 FILE *assembler_source; // for assem
 
 static struct
@@ -172,7 +172,7 @@ static struct
 // Aleksandr Bocharov   // compiler version
 static const char *version = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
 
-static FILE *sysin;
+static FILE *refalab_source;
 static size_t m;           // current symbol number
 static bool empcard;       // flags for empty card
 static char card[CUT + 9]; // card buffer (input)
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
         exit(1);
     };
     terminal = stdout;
-    file_source_listing = NULL;
+    refalab_source_listing = NULL;
 
     SET_time();
 
@@ -311,8 +311,8 @@ int main(int argc, char *argv[])
     {
         strcpy(parm, argv[1]);
         strcat(parm, ".lst");
-        file_source_listing = fopen(parm, "w");
-        if (file_source_listing == NULL)
+        refalab_source_listing = fopen(parm, "w");
+        if (refalab_source_listing == NULL)
         {
             printf("Can't open %s\n", parm);
             exit(8);
@@ -519,7 +519,7 @@ int main(int argc, char *argv[])
         case END_OF_SYSIN:
             fclose(sysin);
             if (options.source_listing)
-                fclose(file_source_listing);
+                fclose(refalab_source_listing);
             mod_length = jwhere();
             fclose(assembler_source);
             if (mod_length == 0 || flags.was_error)
@@ -1494,7 +1494,7 @@ static bool specif(char tail)
 
 static void pchk(void)
 { // writing of card into file source listing
-    if (!flags.was_card_print_file_source_listing && file_source_listing != NULL)
+    if (!flags.was_card_print_file_source_listing && refalab_source_listing != NULL)
     {
         flags.was_card_print_file_source_listing = true;
         card[CUT] = '\0';
@@ -1510,7 +1510,7 @@ static void pchk(void)
             tmpstr[i] = '\n';
             i++;
             tmpstr[i] = '\0';
-            fputs(tmpstr, file_source_listing);
+            fputs(tmpstr, refalab_source_listing);
         }
     }
     return;
@@ -1775,7 +1775,7 @@ static void pchzkl(void)
     sprintf(pr_line,
             "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, cdnumb);
     if (options.source_listing)
-        fputs(pr_line, file_source_listing);
+        fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
     cdnumb = 0;
     if (kolosh != 0)
@@ -1785,7 +1785,7 @@ static void pchzkl(void)
         sprintf(pr_line,
                 "                       obj_length(bytes) = %zu\n", mod_length);
     if (options.source_listing)
-        fputs(pr_line, file_source_listing);
+        fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
     GET_time();
     return;
