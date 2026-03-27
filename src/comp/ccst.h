@@ -94,6 +94,6 @@
 #define n_swap 0116
 #define n_blf 0117
 
-extern void compile_sentence(bool dir, char *lbl, size_t lblleng);
+extern void compile_sentence(bool direction, char *label, uint8_t label_length);
 
 #endif

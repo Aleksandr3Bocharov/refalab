@@ -211,10 +211,10 @@ static bool ortogonality(uint8_t on1, uint8_t on2);
 
 // read left part
 // and full array X
-void compile_sentence(bool dir, char *lbl, size_t lblleng)
-// dir;     matching feature :left to right or otherwise
-// lbl;   sentence label
-// lblleng; sentence label length
+void compile_sentence(bool direction, char *label, uint8_t label_length)
+// direction;     matching feature :left to right or otherwise
+// label;   sentence label
+// label_length; sentence label length
 {
     variables_count = 0;
     current_left_part_element = 0;
@@ -389,7 +389,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
         case LPE10:
             // sentence end
             print_error_string("304 under left part default sign '=' ");
-            fndef(lbl, lblleng);
+            fndef(label, label_length);
             return;
         case NEXT_LPE:
             // end of element processing
@@ -402,14 +402,14 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = OSH300;
             break;
         case OSH300:
-            fndef(lbl, lblleng);
+            fndef(label, label_length);
             state = RP_OSH300;
             break;
         //--------------------------------------------
         //         left part compilation
         //--------------------------------------------
         case RCG:
-            fndef(lbl, lblleng);
+            fndef(label, label_length);
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;
@@ -422,7 +422,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             hole_list[1].next_hole = 128;
             free_segment_hole_list = 2;
             jump_stack_pointer = 0;
-            if (dir)
+            if (direction)
             {
                 state = RCGL;
                 break;
@@ -574,7 +574,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = LB1;
             break;
         case LB1:
-            if (dir)
+            if (direction)
             {
                 hole_x = current_hole;
                 hole_y = free_segment_hole_list;
@@ -674,7 +674,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = LED;
                 break;
             }
-            if (dir)
+            if (direction)
             {
                 state = RCGR;
                 break;
@@ -836,7 +836,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = RB1;
             break;
         case RB1:
-            if (!dir)
+            if (!direction)
             {
                 hole_x = current_hole;
                 hole_y = free_segment_hole_list;
@@ -933,7 +933,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = RED;
                 break;
             }
-            if (!dir)
+            if (!direction)
             {
                 state = RCGL;
                 break;
@@ -970,7 +970,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = CE2;
                 break;
             }
-            if (dir)
+            if (direction)
             {
                 state = LMAX;
                 break;
@@ -1078,7 +1078,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
         case RIGID:
             //  hard element on the both hole boards
             generate_boards_stoping_brackets();
-            if (dir)
+            if (direction)
             {
                 state = RCGL;
                 break;
@@ -1091,7 +1091,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             current_left_board = hole_list[current_hole].left_board;
             current_right_board = hole_list[current_hole].right_board;
             generate_boards_stoping_brackets();
-            if (dir)
+            if (direction)
                 current_left_part_element = current_left_board + 1;
             else
                 current_left_part_element = current_right_board - 1;
@@ -1112,7 +1112,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = CE1;
                 break;
             }
-            if (dir)
+            if (direction)
                 current_left_part_element = current_right_board - 1;
             else
                 current_left_part_element = current_left_board + 1;
@@ -1130,7 +1130,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
                 state = OE1;
                 break;
             }
-            if (dir)
+            if (direction)
             {
                 current_left_part_element--;
                 if (current_left_part_element == current_left_board)
@@ -1188,7 +1188,7 @@ void compile_sentence(bool dir, char *lbl, size_t lblleng)
             state = LEMD;
             break;
         case OE1:
-            if (dir)
+            if (direction)
             {
                 state = LOE;
                 break;
