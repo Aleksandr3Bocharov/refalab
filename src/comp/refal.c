@@ -273,8 +273,8 @@ int main(int argc, char *argv[])
     strcpy(parm, argv[1]);
     strcat(parm, ".ref");
     printf("\n%s:\n", parm);
-    sysin = fopen(parm, "r");
-    if (sysin == NULL)
+    refalab_source = fopen(parm, "r");
+    if (refalab_source == NULL)
     {
         printf("Can't open %s\n", parm);
         exit(1);
@@ -517,7 +517,7 @@ int main(int argc, char *argv[])
             module_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
-            fclose(sysin);
+            fclose(refalab_source);
             if (options.source_listing)
                 fclose(refalab_source_listing);
             mod_length = jwhere();
@@ -567,7 +567,7 @@ static void rdline(char *s)
 { // read CUT + 8 symbols from sysin
     empcard = true;
     size_t i;
-    int cs = getc(sysin);
+    int cs = getc(refalab_source);
     for (i = 0; cs != '\n' && cs != EOF && i < CUT + 8; i++)
     {
         if (cs == '\t')
@@ -584,7 +584,7 @@ static void rdline(char *s)
             *(s + i) = (char)cs;
             empcard = false;
         };
-        cs = getc(sysin);
+        cs = getc(refalab_source);
     }
     if (cs == EOF && i == 0)
         _eoj = true;
@@ -1493,7 +1493,7 @@ static bool specif(char tail)
 }
 
 static void pchk(void)
-{ // writing of card into file source listing
+{ // writing of card into refalab source listing
     if (!flags.was_card_print_file_source_listing && refalab_source_listing != NULL)
     {
         flags.was_card_print_file_source_listing = true;
