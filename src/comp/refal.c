@@ -190,7 +190,7 @@ static char string_symbols[CUT + 6];
 static char *symbols = string_symbols + 6;
 static char class_symbols_cut[CUT + 6];
 static char *class_symbols = class_symbols_cut + 6;
-static char *specifier_abbreviated[7]; // abbreviated specifier table
+static uint8_t *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t label_length;
 static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
@@ -205,10 +205,10 @@ static void previous_label_to_statement_label(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t));
 static void equ(void);
-static void pchzkl(void);
-static void pchk(void);
-static void gsp(uint8_t n);
-static bool specif(char tail);
+static void print_conclusion(void);
+static void print_card_refalab_source_listing(void);
+static void generate_specifier(uint8_t n);
+static bool compile_specifer(char tail);
 static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
 static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid);
 static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
@@ -462,7 +462,7 @@ int main(int argc, char *argv[])
                 if (impl == true)
                     print_error_string("017 s-directive in the impl-section");
                 spdef(statement_label, label_length);
-                specif(' ');
+                compile_specifer(' ');
             }
             else if (strncasecmp(statement_key, "equ", 3) == 0)
             {
@@ -515,7 +515,7 @@ int main(int argc, char *argv[])
                 module_length = jwhere();
             }
             s_term();
-            pchzkl();
+            print_conclusion();
             module_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
@@ -646,7 +646,7 @@ static void rdcard(void)
         flags.was_card_print_file_source_listing = false;
         flags.was_card_print_terminal = false;
         if (options.source_listing)
-            pchk();
+            print_card_refalab_source_listing();
         if (!flags.was_cut && komm())
             continue;
         if (flags.empty_card)
@@ -876,7 +876,7 @@ void scan_sentence_element(void)
                     p = current_sentence_element.specifier.info.codef;
                     jlabel((T_U *)(void *)p);
                 }
-                if (specif(')'))
+                if (compile_specifer(')'))
                 {
                     EH_ROMA else
                     {
@@ -1089,12 +1089,12 @@ void scan_sentence_element(void)
             {
                 if (*(specifier_abbreviated + scode) == NULL)
                 {
-                    *(specifier_abbreviated + scode) = (char *)(void *)genlbl();
+                    *(specifier_abbreviated + scode) = (uint8_t *)(void *)genlbl();
                     jlabel((T_U *)(void *)*(specifier_abbreviated + scode));
-                    gsp((uint8_t)(scode + 7));
-                    gsp(ns_ngw);
+                    generate_specifier((uint8_t)(scode + 7));
+                    generate_specifier(ns_ngw);
                 };
-                current_sentence_element.specifier.info.codef = (uint8_t *)*(specifier_abbreviated + scode);
+                current_sentence_element.specifier.info.codef = *(specifier_abbreviated + scode);
             };
             EH_ROMA;
             scanner_state = SCNVD;
@@ -1128,14 +1128,14 @@ void scan_sentence_element(void)
         }
 }
 
-static void gsp(uint8_t n)
+static void generate_specifier(uint8_t n)
 {
     if (flags.left_part_sentence)
         jbyte(n);
     return;
 }
 
-static bool specif(char tail)
+static bool compile_specifer(char tail)
 { // specifier compiler
     bool neg = false;
     char id[MAX_IDENTIFIER_LENGTH];
@@ -1222,7 +1222,7 @@ static bool specif(char tail)
             }
             break;
         case SPCFF:
-            gsp(ns_ngw);
+            generate_specifier(ns_ngw);
             if (neg)
                 print_error_string("207 within specifier default ')' ");
             if (tail == ')')
@@ -1238,7 +1238,7 @@ static bool specif(char tail)
                 break;
             }
             neg = true;
-            gsp(ns_ng);
+            generate_specifier(ns_ng);
             specifier_state = SPCGC;
             break;
         case SPCR:
@@ -1265,7 +1265,7 @@ static bool specif(char tail)
                 break;
             }
             neg = false;
-            gsp(ns_ng);
+            generate_specifier(ns_ng);
             specifier_state = SPCPRC;
             break;
         case SPCR1:
@@ -1285,7 +1285,7 @@ static bool specif(char tail)
             specifier_state = OSH206;
             break;
         case SPCR3:
-            gsp(ns_ngw);
+            generate_specifier(ns_ngw);
             return true;
         case SPCESC:
             if (!get_csmb(&code, id, &lid))
@@ -1293,7 +1293,7 @@ static bool specif(char tail)
                 specifier_state = OSH200;
                 break;
             }
-            gsp(ns_sc);
+            generate_specifier(ns_sc);
             if (flags.left_part_sentence)
                 generate_symbol(&code);
             specifier_state = SPCBLO;
@@ -1308,7 +1308,7 @@ static bool specif(char tail)
             if (strncmp(statement_label, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || statement_label[lid] == ' '))
                 print_error_string("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
-            gsp(ns_cll);
+            generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 j3addr(p);
             if (symbols[current_symbol_number] == ':')
@@ -1330,7 +1330,7 @@ static bool specif(char tail)
                 specifier_state = SPCA1;
                 break;
             }
-            gsp(ns_sc);
+            generate_specifier(ns_sc);
             if (flags.left_part_sentence)
             {
                 code.tag = TAGO;
@@ -1341,7 +1341,7 @@ static bool specif(char tail)
             specifier_state = SPCGC;
             break;
         case SPCA1:
-            gsp(ns_sc);
+            generate_specifier(ns_sc);
             if (flags.left_part_sentence)
             {
                 if (symbols[current_symbol_number] == '\\')
@@ -1426,39 +1426,39 @@ static bool specif(char tail)
             specifier_state = SPCBLO;
             break;
         case SPCES:
-            gsp(ns_s);
+            generate_specifier(ns_s);
             specifier_state = SPCGC;
             break;
         case SPCEB:
-            gsp(ns_b);
+            generate_specifier(ns_b);
             specifier_state = SPCGC;
             break;
         case SPCEW:
-            gsp(ns_w);
+            generate_specifier(ns_w);
             specifier_state = SPCGC;
             break;
         case SPCEF:
-            gsp(ns_f);
+            generate_specifier(ns_f);
             specifier_state = SPCGC;
             break;
         case SPCEN:
-            gsp(ns_n);
+            generate_specifier(ns_n);
             specifier_state = SPCGC;
             break;
         case SPCER:
-            gsp(ns_r);
+            generate_specifier(ns_r);
             specifier_state = SPCGC;
             break;
         case SPCEO:
-            gsp(ns_o);
+            generate_specifier(ns_o);
             specifier_state = SPCGC;
             break;
         case SPCEL:
-            gsp(ns_l);
+            generate_specifier(ns_l);
             specifier_state = SPCGC;
             break;
         case SPCED:
-            gsp(ns_d);
+            generate_specifier(ns_d);
             specifier_state = SPCGC;
             break;
         case SPCGC:
@@ -1494,7 +1494,7 @@ static bool specif(char tail)
         }
 }
 
-static void pchk(void)
+static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
     if (!flags.was_card_print_file_source_listing && refalab_source_listing != NULL)
     {
@@ -1518,7 +1518,7 @@ static void pchk(void)
     return;
 }
 
-static void pchk_t(void)
+static void print_card_terminal(void)
 { // card writing into terminal
     if (!flags.was_card_print_terminal)
     {
@@ -1765,7 +1765,7 @@ static void blanks_out(void)
     }
 }
 
-static void pchzkl(void)
+static void print_conclusion(void)
 { // print conclusion
     char pr_line[180];
     sprintf(pr_line,
@@ -1776,10 +1776,10 @@ static void pchzkl(void)
     card_number = 0;
     if (errors_number != 0)
         sprintf(pr_line,
-                "errors   = %-3d         obj_length(bytes) = %zu\n", errors_number, module_length);
+                "errors   = %-3d         module_length(bytes) = %zu\n", errors_number, module_length);
     else
         sprintf(pr_line,
-                "                       obj_length(bytes) = %zu\n", module_length);
+                "                       module_length(bytes) = %zu\n", module_length);
     if (options.source_listing)
         fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
@@ -1789,8 +1789,8 @@ static void pchzkl(void)
 
 void processing_error(void)
 {
-    pchk();
-    pchk_t();
+    print_card_refalab_source_listing();
+    print_card_terminal();
     errors_number++;
     return;
 }
