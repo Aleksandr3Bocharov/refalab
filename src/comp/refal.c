@@ -26,29 +26,32 @@
 
 #define CUT 88
 
-#define EH_ROMA                                                    \
-    if (current_symbol_number != CUT - 1)                          \
-    {                                                              \
-        current_symbol_number++;                                   \
-        if (current_symbol_number == CUT - 1 && c[CUT - 1] != ' ') \
-        {                                                          \
-            rdcard();                                              \
-            if (flags.end_refalab_source)                          \
-                return;                                            \
-        }                                                          \
+#define EH_ROMA                                                          \
+    if (current_symbol_number != CUT - 1)                                \
+    {                                                                    \
+        current_symbol_number++;                                         \
+        if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
+        {                                                                \
+            rdcard();                                                    \
+            if (flags.end_refalab_source)                                \
+                return;                                                  \
+        }                                                                \
     }
 
-#define EH_ROMA0                                                   \
-    if (current_symbol_number != CUT - 1)                          \
-    {                                                              \
-        current_symbol_number++;                                   \
-        if (current_symbol_number == CUT - 1 && c[CUT - 1] != ' ') \
-        {                                                          \
-            rdcard();                                              \
-            if (flags.end_refalab_source)                          \
-                return false;                                      \
-        }                                                          \
+#define EH_ROMA0                                                         \
+    if (current_symbol_number != CUT - 1)                                \
+    {                                                                    \
+        current_symbol_number++;                                         \
+        if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
+        {                                                                \
+            rdcard();                                                    \
+            if (flags.end_refalab_source)                                \
+                return false;                                            \
+        }                                                                \
     }
+
+#define PRINT_ERROR_130 \
+    print_error_string("130 invalid record format")
 
 #define ns_b 0006
 #define ns_cll 0000
@@ -183,23 +186,22 @@ static char card[CUT + 9];            // card buffer (input)
 static const char *card_cut = card;
 static uint32_t card_number; // card number
 static uint32_t errors_number;
-static char strg_c[CUT + 6];
-static char *c = strg_c + 6;
-static char class_cut[CUT + 6];
-static char *class = class_cut + 6;
-static char *sarr[7]; // abbreviated specifier table
-static char stmlbl[MAX_IDENTIFIER_LENGTH];
-static size_t lbl_leng;
-static char prevlb[MAX_IDENTIFIER_LENGTH + 1];
-static char stmkey[6];
-static size_t fixm;                              // start sentence position
-static char mod_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
-static size_t mod_length;                        // module length
+static char string_symbols[CUT + 6];
+static char *symbols = string_symbols + 6;
+static char class_symbols_cut[CUT + 6];
+static char *class_symbols = class_symbols_cut + 6;
+static char *specifier_abbreviated[7]; // abbreviated specifier table
+static char statement_label[MAX_IDENTIFIER_LENGTH];
+static uint8_t label_length;
+static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
+static char statement_key[6];
+static uint8_t fix_current_symbol_number;           // start sentence position
+static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
+static size_t module_length;                        // module length
 
-static void lblkey(bool pr);
-static void pch130(void);
-static void blout(void);
-static void trprev(void);
+static void label_key(bool previous);
+static void blanks_out(void);
+static void previous_label_to_statement_label(void);
 static void ilm(void (*prog)(const char *, size_t, const char *, size_t));
 static void il(void (*prog)(const char *, size_t));
 static void equ(void);
@@ -207,9 +209,9 @@ static void pchzkl(void);
 static void pchk(void);
 static void gsp(uint8_t n);
 static bool specif(char tail);
-static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid);
+static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
 static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid);
-static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid);
+static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC t0;
@@ -340,20 +342,20 @@ int main(int argc, char *argv[])
             flags.was_cut = false;
             flags.end_refalab_source = false;
             card[CUT + 8] = '\n';
-            prevlb[0] = '\0';
-            mod_length = 0;
-            memset(mod_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
+            previous_label[0] = '\0';
+            module_length = 0;
+            memset(module_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
             for (i = 0; i < 7; ++i)
-                sarr[i] = NULL;
+                specifier_abbreviated[i] = NULL;
             // "start" - directive work
-            lblkey(false);
+            label_key(false);
             if (flags.end_refalab_source)
             {
                 module_state = END_OF_SYSIN;
                 break;
             }
             s_init();
-            if (strncasecmp(stmkey, "start", 5) != 0)
+            if (strncasecmp(statement_key, "start", 5) != 0)
             {
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
@@ -361,132 +363,132 @@ int main(int argc, char *argv[])
                 module_state = KEYS;
                 break;
             }
-            strncpy(mod_name, stmlbl, lbl_leng);
-            strncpy(scanner.module_name, stmlbl, lbl_leng);
-            scanner.module_name_length = lbl_leng;
+            strncpy(module_name, statement_label, label_length);
+            strncpy(scanner.module_name, statement_label, label_length);
+            scanner.module_name_length = label_length;
             jstart();
-            blout();
-            if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
-                pch130();
+            blanks_out();
+            if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+                PRINT_ERROR_130;
             module_state = NEXT_STM;
             break;
         case NEXT_STM:
             // read of next sentence
-            lblkey(false);
+            label_key(false);
             module_state = KEYS;
             break;
         case KEYS:
-            if (strncasecmp(stmkey, "impl", 4) == 0)
+            if (strncasecmp(statement_key, "impl", 4) == 0)
             {
                 if (impl == true)
                     print_error_string("011 impl-directive in the impl-section");
-                if (lbl_leng != 0)
-                    pch130();
+                if (label_length != 0)
+                    PRINT_ERROR_130;
                 else
                 {
-                    blout();
-                    if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
-                        pch130();
+                    blanks_out();
+                    if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+                        PRINT_ERROR_130;
                 };
                 impl = true;
             }
-            else if (strncasecmp(stmkey, "l ", 2) == 0)
+            else if (strncasecmp(statement_key, "l ", 2) == 0)
             {
                 if (impl == false)
                     print_error_string("021 l-directive not in the impl-section");
                 flags.compile_direction = true;
-                trprev();
-                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
+                previous_label_to_statement_label();
+                compile_sentence(flags.compile_direction, statement_label, label_length);
             }
-            else if (strncasecmp(stmkey, "r ", 2) == 0)
+            else if (strncasecmp(statement_key, "r ", 2) == 0)
             {
                 if (impl == false)
                     print_error_string("022 r-directive not in the impl-section");
                 flags.compile_direction = false;
-                trprev();
-                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
+                previous_label_to_statement_label();
+                compile_sentence(flags.compile_direction, statement_label, label_length);
             }
-            else if (strncasecmp(stmkey, "start", 5) == 0)
+            else if (strncasecmp(statement_key, "start", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("012 start-directive in the impl-section");
                 else
                     print_error_string("002 too many start-directive");
-                blout();
-                if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
-                    pch130();
+                blanks_out();
+                if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+                    PRINT_ERROR_130;
             }
-            else if (strncasecmp(stmkey, "end", 3) == 0)
+            else if (strncasecmp(statement_key, "end", 3) == 0)
             {
-                if (prevlb[0] != '\0')
-                    sempty(prevlb, strlen(prevlb));
-                if (lbl_leng != 0)
-                    pch130();
+                if (previous_label[0] != '\0')
+                    sempty(previous_label, strlen(previous_label));
+                if (label_length != 0)
+                    PRINT_ERROR_130;
                 else
                 {
-                    blout();
-                    if (current_symbol_number != CUT - 1 || c[current_symbol_number] != ' ')
-                        pch130();
+                    blanks_out();
+                    if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+                        PRINT_ERROR_130;
                 }
                 module_state = END_STATEMENT;
                 break;
             }
-            else if (strncasecmp(stmkey, "entry", 5) == 0)
+            else if (strncasecmp(statement_key, "entry", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("013 entry-directive in the impl-section");
                 ilm(sentry);
             }
-            else if (strncasecmp(stmkey, "extrn", 5) == 0)
+            else if (strncasecmp(statement_key, "extrn", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("014 extrn-directive in the impl-section");
                 ilm(sextrn);
             }
-            else if (strncasecmp(stmkey, "empty", 5) == 0)
+            else if (strncasecmp(statement_key, "empty", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("015 empty-directive in the impl-section");
                 il(sempty);
             }
-            else if (strncasecmp(stmkey, "swap", 4) == 0)
+            else if (strncasecmp(statement_key, "swap", 4) == 0)
             {
                 if (impl == true)
                     print_error_string("016 swap-directive in the impl-section");
                 il(sswap);
             }
-            else if (strncasecmp(stmkey, "s ", 2) == 0)
+            else if (strncasecmp(statement_key, "s ", 2) == 0)
             {
                 if (impl == true)
                     print_error_string("017 s-directive in the impl-section");
-                spdef(stmlbl, lbl_leng);
+                spdef(statement_label, label_length);
                 specif(' ');
             }
-            else if (strncasecmp(stmkey, "equ", 3) == 0)
+            else if (strncasecmp(statement_key, "equ", 3) == 0)
             {
                 if (impl == true)
                     print_error_string("018 equ-directive in the impl-section");
                 equ();
             }
-            else if (stmkey[0] == ' ')
+            else if (statement_key[0] == ' ')
             {
-                trprev();
-                if (lbl_leng != 0)
+                previous_label_to_statement_label();
+                if (label_length != 0)
                 {
                     if (impl == false)
                         print_error_string("023 function not in the impl-section");
-                    strncpy(prevlb, stmlbl, lbl_leng);
-                    prevlb[lbl_leng] = '\0';
+                    strncpy(previous_label, statement_label, label_length);
+                    previous_label[label_length] = '\0';
                 }
             }
             else
             {
                 if (impl == false)
                     print_error_string("021 l-directive not in the impl-section");
-                current_symbol_number = fixm; // return to left
+                current_symbol_number = fix_current_symbol_number; // return to left
                 flags.compile_direction = true;
-                trprev();
-                compile_sentence(flags.compile_direction, stmlbl, lbl_leng);
+                previous_label_to_statement_label();
+                compile_sentence(flags.compile_direction, statement_label, label_length);
             }
             if (!flags.end_refalab_source)
             {
@@ -505,12 +507,12 @@ int main(int argc, char *argv[])
             if (errors_number != 0)
             {
                 flags.was_error = true;
-                mod_length = 0;
+                module_length = 0;
             }
             else
             {
                 jend();
-                mod_length = jwhere();
+                module_length = jwhere();
             }
             s_term();
             pchzkl();
@@ -520,9 +522,9 @@ int main(int argc, char *argv[])
             fclose(refalab_source);
             if (options.source_listing)
                 fclose(refalab_source_listing);
-            mod_length = jwhere();
+            module_length = jwhere();
             fclose(assembler_source);
-            if (mod_length == 0 || flags.was_error)
+            if (module_length == 0 || flags.was_error)
                 unlink(parm);
             else if (!options.assembler_source_only)
             {
@@ -549,17 +551,17 @@ int main(int argc, char *argv[])
         }
 } // main program  end
 
-static void trprev(void)
+static void previous_label_to_statement_label(void)
 { // perenos poslednej pustoj metki w tekuschuju
-    size_t n = strlen(prevlb);
-    if (n != 0 && lbl_leng == 0)
+    uint8_t n = (uint8_t)strlen(previous_label);
+    if (n != 0 && label_length == 0)
     {
-        strncpy(stmlbl, prevlb, n);
-        lbl_leng = n;
+        strncpy(statement_label, previous_label, n);
+        label_length = n;
     }
     else if (n != 0)
-        sempty(prevlb, n);
-    prevlb[0] = '\0';
+        sempty(previous_label, n);
+    previous_label[0] = '\0';
     return;
 }
 
@@ -624,7 +626,7 @@ static void translate(const char *str, char *class1)
 static bool komm(void)
 {
     const char *k;
-    for (k = c; *k == ' ' || *k == '\t'; k++)
+    for (k = symbols; *k == ' ' || *k == '\t'; k++)
         ;
     if (*k == '*')
         return true;
@@ -637,8 +639,8 @@ static void rdcard(void)
     while (true)
     {
         rdline(card);
-        strncpy(c, card_cut, CUT);
-        translate(card_cut, class);
+        strncpy(symbols, card_cut, CUT);
+        translate(card_cut, class_symbols);
         ++scanner.carriage_number;
         ++card_number;
         flags.was_card_print_file_source_listing = false;
@@ -655,63 +657,63 @@ static void rdcard(void)
         }
         break;
     }
-    if (*(c + CUT - 1) != ' ')
+    if (*(symbols + CUT - 1) != ' ')
         flags.was_cut = true;
     else
         flags.was_cut = false;
-    if (*(c + CUT - 1) != ' ')
-        *(c + CUT - 1) = '+'; //!!!
+    if (*(symbols + CUT - 1) != ' ')
+        *(symbols + CUT - 1) = '+'; //!!!
     current_symbol_number = 0;
     return;
 }
 
 //    directive label and keyword extraction
-static void lblkey(bool pr)
+static void label_key(bool previous)
 {
-    if (!pr)
+    if (!previous)
         while (true)
         {
             rdcard();
-            if (c[0] == ' ')
-                lbl_leng = 0;
-            else if (!get_id(stmlbl, &lbl_leng))
+            if (symbols[0] == ' ')
+                label_length = 0;
+            else if (!get_id(statement_label, &label_length))
             {
                 print_error_string("120 the first symbol is not letter or underscore or blank");
                 continue;
             }
             break;
         }
-    blout();
-    memset(stmkey, ' ', 6);
+    blanks_out();
+    memset(statement_key, ' ', 6);
     do
     {
-        if (c[current_symbol_number] == ' ')
+        if (symbols[current_symbol_number] == ' ')
             break;
-        fixm = current_symbol_number;
+        fix_current_symbol_number = current_symbol_number;
         size_t l = 0;
-        while (c[current_symbol_number] != ' ')
+        while (symbols[current_symbol_number] != ' ')
         {
             if (current_symbol_number == CUT - 1)
             {
-                const size_t delta = CUT - 1 - fixm;
+                const size_t delta = CUT - 1 - fix_current_symbol_number;
                 const int32_t fixm1 = (int32_t)(0 - delta);
                 for (current_symbol_number = 0; current_symbol_number != delta; current_symbol_number++)
                 {
-                    c[fixm1 + (int32_t)current_symbol_number] = c[fixm + current_symbol_number];
-                    class[fixm1 + (int32_t)current_symbol_number] = class[fixm + current_symbol_number];
+                    symbols[fixm1 + (int32_t)current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
+                    class_symbols[fixm1 + (int32_t)current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
                 }
                 rdcard();
-                fixm = (size_t)fixm1;
-                if (c[0] == ' ')
+                fix_current_symbol_number = (uint8_t)fixm1;
+                if (symbols[0] == ' ')
                     break;
             }
             if (l == 6)
             {
-                current_symbol_number = fixm;
-                stmkey[0] = 'l';
+                current_symbol_number = fix_current_symbol_number;
+                statement_key[0] = 'l';
                 break;
             }
-            stmkey[l] = c[current_symbol_number];
+            statement_key[l] = symbols[current_symbol_number];
             l++;
             current_symbol_number++;
         }
@@ -724,7 +726,7 @@ static void lblkey(bool pr)
 void scan_sentence_element(void)
 {
     static char id[MAX_IDENTIFIER_LENGTH];
-    static size_t id_leng;
+    static uint8_t identifier_length;
     static const uint8_t *p;
     static size_t scode;
     current_sentence_element.code.tag = TAGO;
@@ -740,8 +742,8 @@ void scan_sentence_element(void)
         {
         case STATE0:
             // among elements
-            blout();
-            switch (c[current_symbol_number])
+            blanks_out();
+            switch (symbols[current_symbol_number])
             {
             case '&':
             case '0':
@@ -819,7 +821,7 @@ void scan_sentence_element(void)
                 scanner_state = LSCN;
                 break;
             default:
-                print_error_string_symbol("100 illegal symbol", c[current_symbol_number]);
+                print_error_string_symbol("100 illegal symbol", symbols[current_symbol_number]);
                 scanner_state = SCNERR;
             }
             break;
@@ -828,7 +830,7 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            if (get_csmb(&current_sentence_element.code, id, &id_leng))
+            if (get_csmb(&current_sentence_element.code, id, &identifier_length))
             {
                 scanner_state = EGO;
                 break;
@@ -865,7 +867,7 @@ void scan_sentence_element(void)
             break;
         case SCNV:
             EH_ROMA;
-            if (c[current_symbol_number] == '(')
+            if (symbols[current_symbol_number] == '(')
             {
                 EH_ROMA;
                 if (flags.left_part_sentence)
@@ -883,17 +885,17 @@ void scan_sentence_element(void)
                     }
                 }
             }
-            else if (c[current_symbol_number] == ':')
+            else if (symbols[current_symbol_number] == ':')
             {
                 EH_ROMA;
-                if (!get_id(id, &id_leng))
+                if (!get_id(id, &identifier_length))
                 {
                     scanner_state = SOSH203;
                     break;
                 }
                 if (flags.left_part_sentence)
-                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(id, id_leng, ')');
-                if (c[current_symbol_number] == ':')
+                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(id, identifier_length, ')');
+                if (symbols[current_symbol_number] == ':')
                 {
                     EH_ROMA else
                     {
@@ -905,7 +907,7 @@ void scan_sentence_element(void)
             scanner_state = SCNVD;
             break;
         case SCNVD:
-            if (c[current_symbol_number] != '.')
+            if (symbols[current_symbol_number] != '.')
             {
                 scanner_state = OSH103;
                 break;
@@ -914,30 +916,30 @@ void scan_sentence_element(void)
             scanner_state = SCNVI;
             break;
         case SCNVI:
-            if (!get_id(id, &id_leng))
+            if (!get_id(id, &identifier_length))
             {
                 scanner_state = OSH102;
                 break;
             }
-            strncpy(current_sentence_element.identifier, id, id_leng);
-            current_sentence_element.identifier_length = id_leng;
+            strncpy(current_sentence_element.identifier, id, identifier_length);
+            current_sentence_element.identifier_length = identifier_length;
             scanner_state = SCNRET;
             break;
         case SCNKK:
             current_sentence_element.type = 7;
-            if (c[current_symbol_number + 1] != ' ')
+            if (symbols[current_symbol_number + 1] != ' ')
             {
-                c[current_symbol_number - 1] = '&';
+                symbols[current_symbol_number - 1] = '&';
                 size_t i;
                 for (i = 1;
-                     class[current_symbol_number + i] == 'L' || c[current_symbol_number + i] == '_' || class[current_symbol_number + i] == 'D';
+                     class_symbols[current_symbol_number + i] == 'L' || symbols[current_symbol_number + i] == '_' || class_symbols[current_symbol_number + i] == 'D';
                      i++)
                 {
-                    c[current_symbol_number + i - 1] = c[current_symbol_number + i];
-                    class[current_symbol_number + i - 1] = class[current_symbol_number + i];
+                    symbols[current_symbol_number + i - 1] = symbols[current_symbol_number + i];
+                    class_symbols[current_symbol_number + i - 1] = class_symbols[current_symbol_number + i];
                 }
-                c[current_symbol_number + i - 1] = ' ';
-                class[current_symbol_number + i - 1] = '*';
+                symbols[current_symbol_number + i - 1] = ' ';
+                class_symbols[current_symbol_number + i - 1] = '*';
                 current_symbol_number -= 2;
             }
             scanner_state = SCNGCR;
@@ -962,7 +964,7 @@ void scan_sentence_element(void)
                 scanner_state = OSH101;
                 break;
             }
-            if (c[current_symbol_number] == '\'')
+            if (symbols[current_symbol_number] == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
@@ -976,13 +978,13 @@ void scan_sentence_element(void)
                 scanner_state = OSH101;
                 break;
             }
-            if (c[current_symbol_number] != '\'')
+            if (symbols[current_symbol_number] != '\'')
             {
                 scanner_state = SCNCHR;
                 break;
             }
             EH_ROMA;
-            if (c[current_symbol_number] == '\'')
+            if (symbols[current_symbol_number] == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
@@ -993,59 +995,59 @@ void scan_sentence_element(void)
         case SCNCHR:
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
-            if (c[current_symbol_number] == '\\')
+            if (symbols[current_symbol_number] == '\\')
                 // control symbols
-                switch (c[++current_symbol_number])
+                switch (symbols[++current_symbol_number])
                 {
                 case '\\':
                     break;
                 case 'n':
-                    c[current_symbol_number] = '\012';
+                    symbols[current_symbol_number] = '\012';
                     break;
                 case 't':
-                    c[current_symbol_number] = '\011';
+                    symbols[current_symbol_number] = '\011';
                     break;
                 case 'v':
-                    c[current_symbol_number] = '\013';
+                    symbols[current_symbol_number] = '\013';
                     break;
                 case 'r':
-                    c[current_symbol_number] = '\015';
+                    symbols[current_symbol_number] = '\015';
                     break;
                 case 'f':
-                    c[current_symbol_number] = '\014';
+                    symbols[current_symbol_number] = '\014';
                     break;
                 case '0':
-                    if (c[current_symbol_number + 1] >= '0' && c[current_symbol_number + 1] <= '7')
+                    if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 1; i < 3; i++)
-                            if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
-                                j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
+                            if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
+                                j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                             else
                             {
                                 current_symbol_number--;
                                 break;
                             }
                         current_symbol_number += 2;
-                        c[current_symbol_number] = (char)(j & 255);
+                        symbols[current_symbol_number] = (char)(j & 255);
                     }
                     else
-                        c[current_symbol_number] = '\0';
+                        symbols[current_symbol_number] = '\0';
                     break;
                 default:
-                    if (c[current_symbol_number] >= '0' && c[current_symbol_number] <= '7')
+                    if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
                     {
                         uint32_t j = 0;
                         for (size_t i = 0; i < 3; i++)
-                            if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
-                                j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
+                            if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
+                                j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                             else
                             {
                                 current_symbol_number--;
                                 break;
                             }
                         current_symbol_number += 2;
-                        c[current_symbol_number] = (char)(j & 255);
+                        symbols[current_symbol_number] = (char)(j & 255);
                     }
                     else
                         current_symbol_number--;
@@ -1053,7 +1055,7 @@ void scan_sentence_element(void)
             scanner_state = PROD;
             break;
         case PROD:
-            current_sentence_element.code.info.infoc = c[current_symbol_number];
+            current_sentence_element.code.info.infoc = symbols[current_symbol_number];
             current_sentence_element.type = 1;
             scanner_state = SCNGCR;
             break;
@@ -1085,14 +1087,14 @@ void scan_sentence_element(void)
             current_sentence_element.type = 4;
             if (flags.left_part_sentence)
             {
-                if (*(sarr + scode) == NULL)
+                if (*(specifier_abbreviated + scode) == NULL)
                 {
-                    *(sarr + scode) = (char *)(void *)genlbl();
-                    jlabel((T_U *)(void *)*(sarr + scode));
+                    *(specifier_abbreviated + scode) = (char *)(void *)genlbl();
+                    jlabel((T_U *)(void *)*(specifier_abbreviated + scode));
                     gsp((uint8_t)(scode + 7));
                     gsp(ns_ngw);
                 };
-                current_sentence_element.specifier.info.codef = (uint8_t *)*(sarr + scode);
+                current_sentence_element.specifier.info.codef = (uint8_t *)*(specifier_abbreviated + scode);
             };
             EH_ROMA;
             scanner_state = SCNVD;
@@ -1137,18 +1139,18 @@ static bool specif(char tail)
 { // specifier compiler
     bool neg = false;
     char id[MAX_IDENTIFIER_LENGTH];
-    size_t lid;
+    uint8_t lid;
     T_LINKTI code;
     T_SPECIFIER_STATES specifier_state = SPCBLO;
     while (true)
         switch (specifier_state)
         {
         case SPCBLO:
-            blout();
+            blanks_out();
             specifier_state = SPCPRC;
             break;
         case SPCPRC:
-            switch (c[current_symbol_number])
+            switch (symbols[current_symbol_number])
             {
             case ' ':
                 specifier_state = SPCFF;
@@ -1215,7 +1217,7 @@ static bool specif(char tail)
                 specifier_state = SPCED;
                 break;
             default:
-                print_error_string_symbol("201 within specifier invalid symbol ", c[current_symbol_number]);
+                print_error_string_symbol("201 within specifier invalid symbol ", symbols[current_symbol_number]);
                 specifier_state = OSH200;
             }
             break;
@@ -1246,18 +1248,18 @@ static bool specif(char tail)
                 break;
             }
             EH_ROMA0;
-            blout();
-            if (c[current_symbol_number] == '(')
+            blanks_out();
+            if (symbols[current_symbol_number] == '(')
             {
                 specifier_state = SPCGC;
                 break;
             }
-            if (c[current_symbol_number] == ')')
+            if (symbols[current_symbol_number] == ')')
             {
                 specifier_state = SPCR1;
                 break;
             }
-            if (c[current_symbol_number] == ' ')
+            if (symbols[current_symbol_number] == ' ')
             {
                 specifier_state = SPCR2;
                 break;
@@ -1303,13 +1305,13 @@ static bool specif(char tail)
                 specifier_state = OSH203;
                 break;
             }
-            if (strncmp(stmlbl, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || stmlbl[lid] == ' '))
+            if (strncmp(statement_label, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || statement_label[lid] == ' '))
                 print_error_string("209 specifier is defined through itself");
             T_U *p = spref(id, lid, tail);
             gsp(ns_cll);
             if (flags.left_part_sentence)
                 j3addr(p);
-            if (c[current_symbol_number] == ':')
+            if (symbols[current_symbol_number] == ':')
             {
                 specifier_state = SPCGC;
                 break;
@@ -1323,7 +1325,7 @@ static bool specif(char tail)
                 specifier_state = OSH205;
                 break;
             }
-            if (c[current_symbol_number] != '\'')
+            if (symbols[current_symbol_number] != '\'')
             {
                 specifier_state = SPCA1;
                 break;
@@ -1342,66 +1344,66 @@ static bool specif(char tail)
             gsp(ns_sc);
             if (flags.left_part_sentence)
             {
-                if (c[current_symbol_number] == '\\')
+                if (symbols[current_symbol_number] == '\\')
                     // control symbols ---------------
-                    switch (c[++current_symbol_number])
+                    switch (symbols[++current_symbol_number])
                     {
                     case '\\':
                         break;
                     case 'n':
-                        c[current_symbol_number] = '\012';
+                        symbols[current_symbol_number] = '\012';
                         break;
                     case 't':
-                        c[current_symbol_number] = '\011';
+                        symbols[current_symbol_number] = '\011';
                         break;
                     case 'v':
-                        c[current_symbol_number] = '\013';
+                        symbols[current_symbol_number] = '\013';
                         break;
                     case 'r':
-                        c[current_symbol_number] = '\015';
+                        symbols[current_symbol_number] = '\015';
                         break;
                     case 'f':
-                        c[current_symbol_number] = '\014';
+                        symbols[current_symbol_number] = '\014';
                         break;
                     case '0':
-                        if (c[current_symbol_number + 1] >= '0' && c[current_symbol_number + 1] <= '7')
+                        if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 1; i < 3; i++)
-                                if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
-                                    j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
+                                if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
+                                    j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                                 else
                                 {
                                     current_symbol_number--;
                                     break;
                                 }
                             current_symbol_number += 2;
-                            c[current_symbol_number] = (char)(j & 255);
+                            symbols[current_symbol_number] = (char)(j & 255);
                         }
                         else
-                            c[current_symbol_number] = '\0';
+                            symbols[current_symbol_number] = '\0';
                         break;
                     default:
-                        if (c[current_symbol_number] >= '0' && c[current_symbol_number] <= '7')
+                        if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
                         {
                             uint32_t j = 0;
                             for (size_t i = 0; i < 3; i++)
-                                if (c[current_symbol_number + i] >= '0' && c[current_symbol_number + i] <= '7')
-                                    j = j * 8 + (uint32_t)(c[current_symbol_number + i] - '0');
+                                if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
+                                    j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                                 else
                                 {
                                     current_symbol_number--;
                                     break;
                                 }
                             current_symbol_number += 2;
-                            c[current_symbol_number] = (char)(j & 255);
+                            symbols[current_symbol_number] = (char)(j & 255);
                         }
                         else
                             current_symbol_number--;
                     }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc = c[current_symbol_number];
+                code.info.infoc = symbols[current_symbol_number];
                 generate_symbol(&code);
             }
             EH_ROMA0;
@@ -1410,13 +1412,13 @@ static bool specif(char tail)
                 specifier_state = OSH205;
                 break;
             }
-            if (c[current_symbol_number] != '\'')
+            if (symbols[current_symbol_number] != '\'')
             {
                 specifier_state = SPCA1;
                 break;
             }
             EH_ROMA0;
-            if (c[current_symbol_number] == '\'')
+            if (symbols[current_symbol_number] == '\'')
             {
                 specifier_state = SPCA1;
                 break;
@@ -1534,58 +1536,58 @@ static void pchk_t(void)
 
 static void il(void (*prog)(const char *, size_t)) // treatment of directives having 'EMPTY' type
 {
-    if (lbl_leng != 0)
+    if (label_length != 0)
     {
-        pch130();
+        PRINT_ERROR_130;
         return;
     }
-    blout();
+    blanks_out();
     while (true)
     {
         char id[MAX_IDENTIFIER_LENGTH];
-        size_t lid;
+        uint8_t lid;
         if (!get_id(id, &lid))
             break;
         (*prog)(id, lid);
-        blout();
-        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
+        blanks_out();
+        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
-        if (c[current_symbol_number] == ',')
+        if (symbols[current_symbol_number] == ',')
         {
             EH_ROMA;
-            if (c[current_symbol_number] == ' ')
-                blout();
+            if (symbols[current_symbol_number] == ' ')
+                blanks_out();
             continue;
         }
         break;
     }
-    pch130();
+    PRINT_ERROR_130;
     return;
 }
 
 static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // treatment of directives having 'ENTRY' type
 {
-    if (lbl_leng != 0)
+    if (label_length != 0)
     {
-        pch130();
+        PRINT_ERROR_130;
         return;
     }
-    blout();
+    blanks_out();
     while (true)
     {
         char id[MAX_IDENTIFIER_LENGTH];
-        size_t lid;
+        uint8_t lid;
         if (!get_id(id, &lid))
             break;
         char ide[MAX_EXTERN_IDENTIFIER_LENGTH];
         size_t lide;
-        if (c[current_symbol_number] == '(')
+        if (symbols[current_symbol_number] == '(')
         {
             EH_ROMA;
             if (!get_idm(ide, &lide))
                 break;
             (*prog)(id, lid, ide, lide);
-            if (c[current_symbol_number] != ')')
+            if (symbols[current_symbol_number] != ')')
                 break;
             EH_ROMA;
         }
@@ -1595,63 +1597,57 @@ static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // tre
             strncpy(ide, id, lide);
             (*prog)(id, lid, ide, lide);
         }
-        blout();
-        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
+        blanks_out();
+        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
-        if (c[current_symbol_number] == ',')
+        if (symbols[current_symbol_number] == ',')
         {
             EH_ROMA;
-            if (c[current_symbol_number] == ' ')
-                blout();
+            if (symbols[current_symbol_number] == ' ')
+                blanks_out();
             continue;
         }
         break;
     }
-    pch130();
+    PRINT_ERROR_130;
     return;
 }
 
 static void equ(void)
 { // treatement of directives having 'EQU' type
-    blout();
+    blanks_out();
     char id[MAX_IDENTIFIER_LENGTH];
-    size_t lid;
+    uint8_t lid;
     do
     {
         if (!get_id(id, &lid))
             break;
-        sequ(stmlbl, lbl_leng, id, lid);
-        blout();
-        if (current_symbol_number == CUT - 1 && c[current_symbol_number] == ' ')
+        sequ(statement_label, label_length, id, lid);
+        blanks_out();
+        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
     } while (false);
-    pch130();
+    PRINT_ERROR_130;
     return;
 }
 
-static void pch130(void)
-{
-    print_error_string("130 invalid record format");
-    return;
-}
-
-static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid) // procedure read multiple symbol
+static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
     do
     {
-        if (class[current_symbol_number] == 'D')
+        if (class_symbols[current_symbol_number] == 'D')
         {
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            int64_t k = c[current_symbol_number] - '0';
+            int64_t k = symbols[current_symbol_number] - '0';
             bool csmbend = false;
             while (true)
             {
                 EH_ROMA0;
-                if (class[current_symbol_number] != 'D')
+                if (class_symbols[current_symbol_number] != 'D')
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
@@ -1659,7 +1655,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
                     csmbend = true;
                     break;
                 }
-                const int64_t l = c[current_symbol_number] - '0';
+                const int64_t l = symbols[current_symbol_number] - '0';
                 k = k * 10 + l;
                 if (k <= MAX_NUMBER)
                     continue;
@@ -1670,7 +1666,7 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
             while (true)
             {
                 EH_ROMA0;
-                if (class[current_symbol_number] == 'D')
+                if (class_symbols[current_symbol_number] == 'D')
                     continue;
                 break;
             }
@@ -1691,21 +1687,21 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], size_t *lid
     return true;
 }
 
-static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid)
+static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid)
 { // read identifier
     memset(id, ' ', MAX_IDENTIFIER_LENGTH);
-    if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_')
+    if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(c[current_symbol_number]);
+    id[0] = (char)toupper(symbols[current_symbol_number]);
     for (*lid = 1; *lid < MAX_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
-        if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_' && class[current_symbol_number] != 'D')
+        if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(c[current_symbol_number]);
+        id[*lid] = (char)toupper(symbols[current_symbol_number]);
     }
     size_t i = 0;
-    while (class[current_symbol_number] == 'L' || class[current_symbol_number] == 'D' || c[current_symbol_number] == '_')
+    while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
     {
         EH_ROMA0;
         i++;
@@ -1722,18 +1718,18 @@ static bool get_id(char id[MAX_IDENTIFIER_LENGTH], size_t *lid)
 // read external identifier
 static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
 {
-    if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_')
+    if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(c[current_symbol_number]);
+    id[0] = (char)toupper(symbols[current_symbol_number]);
     for (*lid = 1; *lid < MAX_EXTERN_IDENTIFIER_LENGTH; (*lid)++)
     {
         EH_ROMA0;
-        if (class[current_symbol_number] != 'L' && c[current_symbol_number] != '_' && class[current_symbol_number] != 'D')
+        if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(c[current_symbol_number]);
+        id[*lid] = (char)toupper(symbols[current_symbol_number]);
     }
     size_t i = 0;
-    while (class[current_symbol_number] == 'L' || class[current_symbol_number] == 'D' || c[current_symbol_number] == '_')
+    while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
     {
         EH_ROMA0;
         i++;
@@ -1747,18 +1743,18 @@ static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
     return true;
 }
 
-//*******************************************************************************************************************************************************
+//*****************************************************************************************************************************************************************
 //                  missing blanks
 //       before call: (current_symbol_number = CUT - 1) !! (current_symbol_number != CUT - 1)
-//  under call:((current_symbol_number=CUT - 1)&&(c[current_symbol_number]=' '))!!((current_symbol_number!=CUT - 1)&&(c[current_symbol_number]!=' '))
-//*******************************************************************************************************************************************************
-static void blout(void)
+//  under call:((current_symbol_number=CUT - 1)&&(symbols[current_symbol_number]=' '))!!((current_symbol_number!=CUT - 1)&&(symbols[current_symbol_number]!=' '))
+//*****************************************************************************************************************************************************************
+static void blanks_out(void)
 {
     while (true)
     {
-        while (current_symbol_number != CUT - 1 && c[current_symbol_number] == ' ')
+        while (current_symbol_number != CUT - 1 && symbols[current_symbol_number] == ' ')
             current_symbol_number++;
-        if (c[current_symbol_number] == '+')
+        if (symbols[current_symbol_number] == '+')
         {
             rdcard();
             if (flags.end_refalab_source)
@@ -1773,17 +1769,17 @@ static void pchzkl(void)
 { // print conclusion
     char pr_line[180];
     sprintf(pr_line,
-            "mod_name = %-40s    mod_length(lines) = %d\n", mod_name, card_number);
+            "module_name = %-40s    module_length(lines) = %d\n", module_name, card_number);
     if (options.source_listing)
         fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
     card_number = 0;
     if (errors_number != 0)
         sprintf(pr_line,
-                "errors   = %-3d         obj_length(bytes) = %zu\n", errors_number, mod_length);
+                "errors   = %-3d         obj_length(bytes) = %zu\n", errors_number, module_length);
     else
         sprintf(pr_line,
-                "                       obj_length(bytes) = %zu\n", mod_length);
+                "                       obj_length(bytes) = %zu\n", module_length);
     if (options.source_listing)
         fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);

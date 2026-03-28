@@ -21,6 +21,12 @@
 #include "cj.h"
 #include "refal.h"
 
+#define PRINT_ERROR_303 \
+    print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
+
+#define PRINT_ERROR_406 \
+    print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
+
 #define t_sc 1
 #define t_lb 2
 #define t_rb 3
@@ -202,8 +208,6 @@ static uint8_t hole_x, hole_y;         // hole numbers (under enter in brackets)
 
 static void search_variable(void);
 static void generate_boards_stoping_brackets(void);
-static void print_error_303(void);
-static void print_error_406(void);
 static bool lsg_p(void);
 static bool rsg_p(void);
 static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v);
@@ -323,7 +327,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
-                print_error_303();
+                PRINT_ERROR_303;
                 current_left_part_element--;
             }
             number_element++;
@@ -342,7 +346,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
-                print_error_303();
+                PRINT_ERROR_303;
                 current_left_part_element--;
             }
             number_element += 2;
@@ -358,7 +362,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 ++variables[variable_index].rem;
             else // invalid type pointer
             {
-                print_error_303();
+                PRINT_ERROR_303;
                 current_left_part_element--;
             };
             number_element += 2;
@@ -1497,7 +1501,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             switch (variables[variable_index].type)
             {
             case 0:
-                print_error_406();
+                PRINT_ERROR_406;
                 break;
             case 1:
                 current_left_part_element = variables[variable_index].last_left_part_element;
@@ -1510,7 +1514,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 };
                 break;
             default:
-                print_error_303();
+                PRINT_ERROR_303;
             };
             state = GET_RPE;
             break;
@@ -1520,7 +1524,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             switch (variables[variable_index].type)
             {
             case 0:
-                print_error_406();
+                PRINT_ERROR_406;
                 break;
             case 2:
                 current_left_part_element = variables[variable_index].last_left_part_element;
@@ -1533,7 +1537,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 };
                 break;
             default:
-                print_error_303();
+                PRINT_ERROR_303;
             };
             state = GET_RPE;
             break;
@@ -1541,7 +1545,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             // e- or v-varyable
             search_variable();
             if (variables[variable_index].type == 0)
-                print_error_406();
+                PRINT_ERROR_406;
             else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == current_sentence_element.v_variable)
             {
                 current_left_part_element = variables[variable_index].last_left_part_element;
@@ -1557,7 +1561,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 };
             }
             else
-                print_error_303();
+                PRINT_ERROR_303;
             state = GET_RPE;
             break;
         case RPE7:
@@ -1666,18 +1670,6 @@ static void generate_boards_stoping_brackets(void)
         return;
     };
     generate_operator_n_m(n_sb1b2, (uint8_t)left_part_elements[current_left_board].right_number_element, (uint8_t)left_part_elements[current_right_board].left_number_element);
-    return;
-}
-
-static void print_error_303(void)
-{
-    print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
-    return;
-}
-
-static void print_error_406(void)
-{
-    print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length);
     return;
 }
 
