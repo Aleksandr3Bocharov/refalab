@@ -202,8 +202,8 @@ static size_t module_length;                        // module length
 static void label_key(bool previous);
 static void blanks_out(void);
 static void previous_label_to_statement_label(void);
-static void ilm(void (*prog)(const char *, size_t, const char *, size_t));
-static void il(void (*prog)(const char *, size_t));
+static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t));
+static void il(void (*prog)(const char *, uint8_t));
 static void equ(void);
 static void pchzkl(void);
 static void pchk(void);
@@ -1534,7 +1534,7 @@ static void pchk_t(void)
     return;
 }
 
-static void il(void (*prog)(const char *, size_t)) // treatment of directives having 'EMPTY' type
+static void il(void (*prog)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
     if (label_length != 0)
     {
@@ -1565,7 +1565,7 @@ static void il(void (*prog)(const char *, size_t)) // treatment of directives ha
     return;
 }
 
-static void ilm(void (*prog)(const char *, size_t, const char *, size_t)) // treatment of directives having 'ENTRY' type
+static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
     if (label_length != 0)
     {

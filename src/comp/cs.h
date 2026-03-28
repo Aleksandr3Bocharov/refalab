@@ -1,7 +1,7 @@
-// Copyright 2024 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2024-10-19
+// 2025-03-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.H  ---------------
@@ -31,11 +31,11 @@ extern void spdef(const char *idp, size_t lid);
 extern T_U *fnref(const char *idp, size_t lid);
 extern T_U *spref(const char *idp, size_t lid, char d);
 
-extern void sempty(const char *idp, size_t lid);
-extern void sentry(const char *idp, size_t lidp, const char *ide, size_t lide);
+extern void sempty(const char *idp, uint8_t lid);
+extern void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);
 extern void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0);
-extern void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide);
-extern void sswap(const char *idp, size_t lid);
+extern void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);
+extern void sswap(const char *idp, uint8_t lid);
 
 extern void s_init(void);
 extern void s_term(void);

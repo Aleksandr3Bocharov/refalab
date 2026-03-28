@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-03-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -129,7 +129,7 @@ static void func_end(void)
     return;
 }
 
-void sempty(const char *idp, size_t lid)
+void sempty(const char *idp, uint8_t lid)
 {
     T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
@@ -145,7 +145,7 @@ void sempty(const char *idp, size_t lid)
     return;
 }
 
-void sswap(const char *idp, size_t lid)
+void sswap(const char *idp, uint8_t lid)
 {
     T_U *p = lookup(idp, lid);
     p->type = p->type | '\100';
@@ -175,14 +175,14 @@ void sswap(const char *idp, size_t lid)
     return;
 }
 
-void sentry(const char *idp, size_t lidp, const char *ide, size_t lide)
+void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 {
     T_U *p = lookup(idp, lidp);
     jentry(p, ide, lide);
     return;
 }
 
-void sextrn(const char *idp, size_t lidp, const char *ide, size_t lide)
+void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 // idp internal name
 // ide external name
 {
