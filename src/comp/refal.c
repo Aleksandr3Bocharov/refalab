@@ -202,8 +202,8 @@ static size_t module_length;                        // module length
 static void label_key(bool previous);
 static void blanks_out(void);
 static void previous_label_to_statement_label(void);
-static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t));
-static void il(void (*prog)(const char *, uint8_t));
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
+static void handle_identifiers(void (*handler)(const char *, uint8_t));
 static void equ(void);
 static void pchzkl(void);
 static void pchk(void);
@@ -437,25 +437,25 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("013 entry-directive in the impl-section");
-                ilm(sentry);
+                handle_identifiers_extern(sentry);
             }
             else if (strncasecmp(statement_key, "extrn", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("014 extrn-directive in the impl-section");
-                ilm(sextrn);
+                handle_identifiers_extern(sextrn);
             }
             else if (strncasecmp(statement_key, "empty", 5) == 0)
             {
                 if (impl == true)
                     print_error_string("015 empty-directive in the impl-section");
-                il(sempty);
+                handle_identifiers(sempty);
             }
             else if (strncasecmp(statement_key, "swap", 4) == 0)
             {
                 if (impl == true)
                     print_error_string("016 swap-directive in the impl-section");
-                il(sswap);
+                handle_identifiers(sswap);
             }
             else if (strncasecmp(statement_key, "s ", 2) == 0)
             {
@@ -1534,7 +1534,7 @@ static void pchk_t(void)
     return;
 }
 
-static void il(void (*prog)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
+static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
     if (label_length != 0)
     {
@@ -1548,7 +1548,7 @@ static void il(void (*prog)(const char *, uint8_t)) // treatment of directives h
         uint8_t lid;
         if (!get_id(id, &lid))
             break;
-        (*prog)(id, lid);
+        (*handler)(id, lid);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
@@ -1565,7 +1565,7 @@ static void il(void (*prog)(const char *, uint8_t)) // treatment of directives h
     return;
 }
 
-static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
     if (label_length != 0)
     {
@@ -1586,7 +1586,7 @@ static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t)) // t
             EH_ROMA;
             if (!get_idm(ide, &lide))
                 break;
-            (*prog)(id, lid, ide, lide);
+            (*handler)(id, lid, ide, lide);
             if (symbols[current_symbol_number] != ')')
                 break;
             EH_ROMA;
@@ -1595,7 +1595,7 @@ static void ilm(void (*prog)(const char *, uint8_t, const char *, uint8_t)) // t
         {
             lide = lid > MAX_EXTERN_IDENTIFIER_LENGTH ? MAX_EXTERN_IDENTIFIER_LENGTH : lid;
             strncpy(ide, id, lide);
-            (*prog)(id, lid, ide, lide);
+            (*handler)(id, lid, ide, lide);
         }
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
