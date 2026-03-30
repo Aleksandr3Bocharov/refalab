@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-03-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -209,9 +209,9 @@ static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
-static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
-static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid);
-static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid);
+static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
+static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH], uint8_t *identifier_length);
+static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC t0;
@@ -676,7 +676,7 @@ static void label_key(bool previous)
             rdcard();
             if (symbols[0] == ' ')
                 label_length = 0;
-            else if (!get_id(statement_label, &label_length))
+            else if (!get_identifier(statement_label, &label_length))
             {
                 print_error_string("120 the first symbol is not letter or underscore or blank");
                 continue;
@@ -830,7 +830,7 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            if (get_csmb(&current_sentence_element.code, id, &identifier_length))
+            if (get_multuple_symbol(&current_sentence_element.code, id, &identifier_length))
             {
                 scanner_state = EGO;
                 break;
@@ -888,7 +888,7 @@ void scan_sentence_element(void)
             else if (symbols[current_symbol_number] == ':')
             {
                 EH_ROMA;
-                if (!get_id(id, &identifier_length))
+                if (!get_identifier(id, &identifier_length))
                 {
                     scanner_state = SOSH203;
                     break;
@@ -916,7 +916,7 @@ void scan_sentence_element(void)
             scanner_state = SCNVI;
             break;
         case SCNVI:
-            if (!get_id(id, &identifier_length))
+            if (!get_identifier(id, &identifier_length))
             {
                 scanner_state = OSH102;
                 break;
@@ -1288,7 +1288,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            if (!get_csmb(&code, id, &lid))
+            if (!get_multuple_symbol(&code, id, &lid))
             {
                 specifier_state = OSH200;
                 break;
@@ -1300,7 +1300,7 @@ static bool compile_specifer(char tail)
             break;
         case SPCSP:
             EH_ROMA0;
-            if (!get_id(id, &lid))
+            if (!get_identifier(id, &lid))
             {
                 specifier_state = OSH203;
                 break;
@@ -1546,7 +1546,7 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
     {
         char id[MAX_IDENTIFIER_LENGTH];
         uint8_t lid;
-        if (!get_id(id, &lid))
+        if (!get_identifier(id, &lid))
             break;
         (*handler)(id, lid);
         blanks_out();
@@ -1577,14 +1577,14 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
     {
         char id[MAX_IDENTIFIER_LENGTH];
         uint8_t lid;
-        if (!get_id(id, &lid))
+        if (!get_identifier(id, &lid))
             break;
         char ide[MAX_EXTERN_IDENTIFIER_LENGTH];
-        size_t lide;
+        uint8_t lide;
         if (symbols[current_symbol_number] == '(')
         {
             EH_ROMA;
-            if (!get_idm(ide, &lide))
+            if (!get_identifier_extern(ide, &lide))
                 break;
             (*handler)(id, lid, ide, lide);
             if (symbols[current_symbol_number] != ')')
@@ -1620,7 +1620,7 @@ static void equ(void)
     uint8_t lid;
     do
     {
-        if (!get_id(id, &lid))
+        if (!get_identifier(id, &lid))
             break;
         sequ(statement_label, label_length, id, lid);
         blanks_out();
@@ -1631,7 +1631,7 @@ static void equ(void)
     return;
 }
 
-static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid) // procedure read multiple symbol
+static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
@@ -1676,29 +1676,29 @@ static bool get_csmb(T_LINKTI *code, char id[MAX_IDENTIFIER_LENGTH], uint8_t *li
             break;
         }
         EH_ROMA0;
-        if (!get_id(id, lid))
+        if (!get_identifier(identifier, identifier_length))
         {
             print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
-        code->info.codef = (uint8_t *)fnref(id, *lid);
+        code->info.codef = (uint8_t *)fnref(identifier, *identifier_length);
         code->tag = TAGF;
     } while (false);
     return true;
 }
 
-static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid)
+static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length)
 { // read identifier
-    memset(id, ' ', MAX_IDENTIFIER_LENGTH);
+    memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(symbols[current_symbol_number]);
-    for (*lid = 1; *lid < MAX_IDENTIFIER_LENGTH; (*lid)++)
+    identifier[0] = (char)toupper(symbols[current_symbol_number]);
+    for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
         if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
     }
     size_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
@@ -1716,17 +1716,17 @@ static bool get_id(char id[MAX_IDENTIFIER_LENGTH], uint8_t *lid)
 }
 
 // read external identifier
-static bool get_idm(char id[MAX_EXTERN_IDENTIFIER_LENGTH], size_t *lid)
+static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH], uint8_t *identifier_length)
 {
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    id[0] = (char)toupper(symbols[current_symbol_number]);
-    for (*lid = 1; *lid < MAX_EXTERN_IDENTIFIER_LENGTH; (*lid)++)
+    identifier[0] = (char)toupper(symbols[current_symbol_number]);
+    for (*identifier_length = 1; *identifier_length < MAX_EXTERN_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
         if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        id[*lid] = (char)toupper(symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
     }
     size_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
