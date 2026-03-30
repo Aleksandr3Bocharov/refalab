@@ -211,7 +211,7 @@ static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
 static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
 static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH], uint8_t *identifier_length);
-static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
+static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC time_begin;
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
             else if (strncasecmp(statement_key, "end", 3) == 0)
             {
                 if (previous_label[0] != '\0')
-                    sempty(previous_label, strlen(previous_label));
+                    sempty(previous_label, (uint8_t)strlen(previous_label));
                 if (label_length != 0)
                     PRINT_ERROR_130;
                 else
@@ -576,7 +576,7 @@ static void read_line(char *line)
             const uint8_t k = 8 - (i & 7);
             for (uint8_t j = 0; j < k; j++)
                 *(line + i + j) = ' ';
-            i += k - 1;
+            i += (uint8_t)(k - 1);
         }
         else if (symbol_refalab_source < ' ' && symbol_refalab_source > '\0')
             *(line + i) = ' ';
@@ -594,12 +594,12 @@ static void read_line(char *line)
     return;
 }
 
-static void classificate_card(const char *card, char *classes)
+static void classificate_string(const char *string, char *classes)
 { // L,D,* - classification procedure
     for (uint8_t i = 0; i < CUT; ++i)
     {
         *(classes + i) = '*';
-        const int j = *(card + i);
+        const int j = *(string + i);
         if (j > 47)
             if (j < 58)
             {
@@ -639,7 +639,7 @@ static void read_card(void)
     {
         read_line(card);
         strncpy(symbols, card_cut, CUT);
-        classificate_card(card_cut, class_symbols);
+        classificate_string(card_cut, class_symbols);
         ++scanner.carriage_number;
         ++card_number;
         flags.was_card_print_file_source_listing = false;
@@ -726,7 +726,7 @@ void scan_sentence_element(void)
 {
     char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t identifier_length;
-    uint8_t specifier_code;
+    uint8_t specifier_code = 0;
     current_sentence_element.code.tag = TAGO;
     current_sentence_element.code.info.codef = NULL;
     current_sentence_element.v_variable = false;
@@ -828,7 +828,7 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            if (get_multuple_symbol(&current_sentence_element.code, identifier, &identifier_length))
+            if (get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length))
             {
                 scanner_state = EGO;
                 break;
@@ -1134,7 +1134,7 @@ static void generate_specifier(uint8_t n)
 
 static bool compile_specifer(char tail)
 { // specifier compiler
-    bool neg = false;
+    bool negative = false;
     char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t identifier_length;
     T_LINKTI code;
@@ -1220,7 +1220,7 @@ static bool compile_specifer(char tail)
             break;
         case SPCFF:
             generate_specifier(ns_ngw);
-            if (neg)
+            if (negative)
                 print_error_string("207 within specifier default ')' ");
             if (tail == ')')
             {
@@ -1229,17 +1229,17 @@ static bool compile_specifer(char tail)
             }
             return true;
         case SPCL:
-            if (neg)
+            if (negative)
             {
                 specifier_state = OSH202;
                 break;
             }
-            neg = true;
+            negative = true;
             generate_specifier(ns_ng);
             specifier_state = SPCGC;
             break;
         case SPCR:
-            if (!neg)
+            if (!negative)
             {
                 specifier_state = SPCR1;
                 break;
@@ -1261,7 +1261,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCR2;
                 break;
             }
-            neg = false;
+            negative = false;
             generate_specifier(ns_ng);
             specifier_state = SPCPRC;
             break;
@@ -1285,7 +1285,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            if (!get_multuple_symbol(&code, identifier, &identifier_length))
+            if (!get_multiple_symbol(&code, identifier, &identifier_length))
             {
                 specifier_state = OSH200;
                 break;
@@ -1366,7 +1366,7 @@ static bool compile_specifer(char tail)
                         if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
                         {
                             uint32_t j = 0;
-                            for (size_t i = 1; i < 3; i++)
+                            for (uint8_t i = 1; i < 3; i++)
                                 if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
                                     j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                                 else
@@ -1384,7 +1384,7 @@ static bool compile_specifer(char tail)
                         if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
                         {
                             uint32_t j = 0;
-                            for (size_t i = 0; i < 3; i++)
+                            for (uint8_t i = 0; i < 3; i++)
                                 if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
                                     j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                                 else
@@ -1628,7 +1628,7 @@ static void equ(void)
     return;
 }
 
-static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length) // procedure read multiple symbol
+static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
