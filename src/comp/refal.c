@@ -210,7 +210,7 @@ static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
 static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
-static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH], uint8_t *identifier_length);
+static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH], uint8_t *identifier_length);
 static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
 
 typedef struct timespec T_TIMESPEC;
@@ -724,10 +724,10 @@ static void label_key(bool previous)
 
 void scan_sentence_element(void)
 {
-    static char id[MAX_IDENTIFIER_LENGTH];
+    static char identifier[MAX_IDENTIFIER_LENGTH];
     static uint8_t identifier_length;
     static const uint8_t *p;
-    static size_t scode;
+    static uint8_t specifier_code;
     current_sentence_element.code.tag = TAGO;
     current_sentence_element.code.info.codef = NULL;
     current_sentence_element.v_variable = false;
@@ -829,7 +829,7 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            if (get_multuple_symbol(&current_sentence_element.code, id, &identifier_length))
+            if (get_multuple_symbol(&current_sentence_element.code, identifier, &identifier_length))
             {
                 scanner_state = EGO;
                 break;
@@ -887,13 +887,13 @@ void scan_sentence_element(void)
             else if (symbols[current_symbol_number] == ':')
             {
                 EH_ROMA;
-                if (!get_identifier(id, &identifier_length))
+                if (!get_identifier(identifier, &identifier_length))
                 {
                     scanner_state = SOSH203;
                     break;
                 }
                 if (flags.left_part_sentence)
-                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(id, identifier_length, ')');
+                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(identifier, identifier_length, ')');
                 if (symbols[current_symbol_number] == ':')
                 {
                     EH_ROMA else
@@ -915,12 +915,12 @@ void scan_sentence_element(void)
             scanner_state = SCNVI;
             break;
         case SCNVI:
-            if (!get_identifier(id, &identifier_length))
+            if (!get_identifier(identifier, &identifier_length))
             {
                 scanner_state = OSH102;
                 break;
             }
-            strncpy(current_sentence_element.identifier, id, identifier_length);
+            strncpy(current_sentence_element.identifier, identifier, identifier_length);
             current_sentence_element.identifier_length = identifier_length;
             scanner_state = SCNRET;
             break;
@@ -1059,41 +1059,41 @@ void scan_sentence_element(void)
             scanner_state = SCNGCR;
             break;
         case FSCN:
-            scode = 0;
+            specifier_code = 0;
             scanner_state = SABBR;
             break;
         case NSCN:
-            scode = 1;
+            specifier_code = 1;
             scanner_state = SABBR;
             break;
         case RSCN:
-            scode = 2;
+            specifier_code = 2;
             scanner_state = SABBR;
             break;
         case OSCN:
-            scode = 3;
+            specifier_code = 3;
             scanner_state = SABBR;
             break;
         case DSCN:
-            scode = 4;
+            specifier_code = 4;
             scanner_state = SABBR;
             break;
         case LSCN:
-            scode = 5;
+            specifier_code = 5;
             scanner_state = SABBR;
             break;
         case SABBR:
             current_sentence_element.type = 4;
             if (flags.left_part_sentence)
             {
-                if (*(specifier_abbreviated + scode) == NULL)
+                if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
-                    *(specifier_abbreviated + scode) = (uint8_t *)(void *)genlbl();
-                    jlabel((T_U *)(void *)*(specifier_abbreviated + scode));
-                    generate_specifier((uint8_t)(scode + 7));
+                    *(specifier_abbreviated + specifier_code) = (uint8_t *)(void *)genlbl();
+                    jlabel((T_U *)(void *)*(specifier_abbreviated + specifier_code));
+                    generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);
                 };
-                current_sentence_element.specifier.info.codef = *(specifier_abbreviated + scode);
+                current_sentence_element.specifier.info.codef = *(specifier_abbreviated + specifier_code);
             };
             EH_ROMA;
             scanner_state = SCNVD;
@@ -1137,7 +1137,7 @@ static void generate_specifier(uint8_t n)
 static bool compile_specifer(char tail)
 { // specifier compiler
     bool neg = false;
-    char id[MAX_IDENTIFIER_LENGTH];
+    char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t lid;
     T_LINKTI code;
     T_SPECIFIER_STATES specifier_state = SPCBLO;
@@ -1287,7 +1287,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            if (!get_multuple_symbol(&code, id, &lid))
+            if (!get_multuple_symbol(&code, identifier, &lid))
             {
                 specifier_state = OSH200;
                 break;
@@ -1299,14 +1299,14 @@ static bool compile_specifer(char tail)
             break;
         case SPCSP:
             EH_ROMA0;
-            if (!get_identifier(id, &lid))
+            if (!get_identifier(identifier, &lid))
             {
                 specifier_state = OSH203;
                 break;
             }
-            if (strncmp(statement_label, id, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || statement_label[lid] == ' '))
+            if (strncmp(statement_label, identifier, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || statement_label[lid] == ' '))
                 print_error_string("209 specifier is defined through itself");
-            T_U *p = spref(id, lid, tail);
+            T_U *p = spref(identifier, lid, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 j3addr(p);
@@ -1543,11 +1543,11 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
     blanks_out();
     while (true)
     {
-        char id[MAX_IDENTIFIER_LENGTH];
+        char identifier[MAX_IDENTIFIER_LENGTH];
         uint8_t lid;
-        if (!get_identifier(id, &lid))
+        if (!get_identifier(identifier, &lid))
             break;
-        (*handler)(id, lid);
+        (*handler)(identifier, lid);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
@@ -1574,27 +1574,27 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
     blanks_out();
     while (true)
     {
-        char id[MAX_IDENTIFIER_LENGTH];
+        char identifier[MAX_IDENTIFIER_LENGTH];
         uint8_t lid;
-        if (!get_identifier(id, &lid))
+        if (!get_identifier(identifier, &lid))
             break;
-        char ide[MAX_EXTERN_IDENTIFIER_LENGTH];
+        char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
         uint8_t lide;
         if (symbols[current_symbol_number] == '(')
         {
             EH_ROMA;
-            if (!get_identifier_extern(ide, &lide))
+            if (!get_identifier_extern(identifier_extern, &lide))
                 break;
-            (*handler)(id, lid, ide, lide);
+            (*handler)(identifier, lid, identifier_extern, lide);
             if (symbols[current_symbol_number] != ')')
                 break;
             EH_ROMA;
         }
         else
         {
-            lide = lid > MAX_EXTERN_IDENTIFIER_LENGTH ? MAX_EXTERN_IDENTIFIER_LENGTH : lid;
-            strncpy(ide, id, lide);
-            (*handler)(id, lid, ide, lide);
+            lide = lid > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : lid;
+            strncpy(identifier_extern, identifier, lide);
+            (*handler)(identifier, lid, identifier_extern, lide);
         }
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
@@ -1615,13 +1615,13 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
 static void equ(void)
 { // treatement of directives having 'EQU' type
     blanks_out();
-    char id[MAX_IDENTIFIER_LENGTH];
+    char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t lid;
     do
     {
-        if (!get_identifier(id, &lid))
+        if (!get_identifier(identifier, &lid))
             break;
-        sequ(statement_label, label_length, id, lid);
+        sequ(statement_label, label_length, identifier, lid);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
@@ -1715,12 +1715,12 @@ static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *iden
 }
 
 // read external identifier
-static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH], uint8_t *identifier_length)
+static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH], uint8_t *identifier_length)
 {
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
     identifier[0] = (char)toupper(symbols[current_symbol_number]);
-    for (*identifier_length = 1; *identifier_length < MAX_EXTERN_IDENTIFIER_LENGTH; (*identifier_length)++)
+    for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
         if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
@@ -1736,7 +1736,7 @@ static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH],
     if (i > 1)
     {
         char osh114[64];
-        sprintf(osh114, "114 external identifier length > %d", MAX_EXTERN_IDENTIFIER_LENGTH);
+        sprintf(osh114, "114 external identifier length > %d", MAX_IDENTIFIER_EXTERN_LENGTH);
         print_error_string(osh114);
     }
     return true;

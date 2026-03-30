@@ -25,7 +25,7 @@ typedef struct ent
 { // entry table element
     struct ent *next;
     T_U *p;
-    char e[MAX_EXTERN_IDENTIFIER_LENGTH];
+    char e[MAX_IDENTIFIER_EXTERN_LENGTH];
     size_t le;
 } T_ENT;
 
@@ -33,7 +33,7 @@ typedef struct ext
 { // external pointer table element
     struct ext *next;
     T_U *p;
-    char e[MAX_EXTERN_IDENTIFIER_LENGTH];
+    char e[MAX_IDENTIFIER_EXTERN_LENGTH];
     size_t le;
 } T_EXT;
 
@@ -372,7 +372,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     last_ent = r;
     r->p = pp;
     r->next = NULL;
-    r->le = MAX_EXTERN_IDENTIFIER_LENGTH < ll ? MAX_EXTERN_IDENTIFIER_LENGTH : ll;
+    r->le = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
     strncpy(r->e, ee, r->le);
     pp->mode |= '\040';
     return;
@@ -392,7 +392,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     last_ext = rx;
     rx->p = pp;
     rx->next = NULL;
-    rx->le = MAX_EXTERN_IDENTIFIER_LENGTH < ll ? MAX_EXTERN_IDENTIFIER_LENGTH : ll;
+    rx->le = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
     strncpy(rx->e, ee, rx->le);
     pp->mode |= '\220';
     n_ext++;

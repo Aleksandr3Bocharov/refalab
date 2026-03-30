@@ -18,7 +18,7 @@
 #include "cgop.h"
 
 #define MAX_IDENTIFIER_LENGTH 40
-#define MAX_EXTERN_IDENTIFIER_LENGTH 32
+#define MAX_IDENTIFIER_EXTERN_LENGTH 32
 
 typedef struct options_
 { // compiling   options
