@@ -192,7 +192,7 @@ static char class_symbols_cut[CUT + 6];
 static char *class_symbols = class_symbols_cut + 6;
 static uint8_t *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
-static uint8_t label_length;
+static uint8_t statement_label_length;
 static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
 static char statement_key[6];
 static uint8_t fix_current_symbol_number;           // start sentence position
@@ -362,9 +362,9 @@ int main(int argc, char *argv[])
                 module_state = KEYS;
                 break;
             }
-            strncpy(module_name, statement_label, label_length);
-            strncpy(scanner.module_name, statement_label, label_length);
-            scanner.module_name_length = label_length;
+            strncpy(module_name, statement_label, statement_label_length);
+            strncpy(scanner.module_name, statement_label, statement_label_length);
+            scanner.module_name_length = statement_label_length;
             jstart();
             blanks_out();
             if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("011 impl-directive in the impl-section");
-                if (label_length != 0)
+                if (statement_label_length != 0)
                     PRINT_ERROR_130;
                 else
                 {
@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
                     print_error_string("021 l-directive not in the impl-section");
                 flags.compile_direction = true;
                 previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, label_length);
+                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
             }
             else if (strncasecmp(statement_key, "r ", 2) == 0)
             {
@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
                     print_error_string("022 r-directive not in the impl-section");
                 flags.compile_direction = false;
                 previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, label_length);
+                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
             }
             else if (strncasecmp(statement_key, "start", 5) == 0)
             {
@@ -421,7 +421,7 @@ int main(int argc, char *argv[])
             {
                 if (previous_label[0] != '\0')
                     sempty(previous_label, (uint8_t)strlen(previous_label));
-                if (label_length != 0)
+                if (statement_label_length != 0)
                     PRINT_ERROR_130;
                 else
                 {
@@ -460,7 +460,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("017 s-directive in the impl-section");
-                spdef(statement_label, label_length);
+                spdef(statement_label, statement_label_length);
                 compile_specifer(' ');
             }
             else if (strncasecmp(statement_key, "equ", 3) == 0)
@@ -472,12 +472,12 @@ int main(int argc, char *argv[])
             else if (statement_key[0] == ' ')
             {
                 previous_label_to_statement_label();
-                if (label_length != 0)
+                if (statement_label_length != 0)
                 {
                     if (impl == false)
                         print_error_string("023 function not in the impl-section");
-                    strncpy(previous_label, statement_label, label_length);
-                    previous_label[label_length] = '\0';
+                    strncpy(previous_label, statement_label, statement_label_length);
+                    previous_label[statement_label_length] = '\0';
                 }
             }
             else
@@ -487,7 +487,7 @@ int main(int argc, char *argv[])
                 current_symbol_number = fix_current_symbol_number; // return to left
                 flags.compile_direction = true;
                 previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, label_length);
+                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
             }
             if (!flags.end_refalab_source)
             {
@@ -553,10 +553,10 @@ int main(int argc, char *argv[])
 static void previous_label_to_statement_label(void)
 { // perenos poslednej pustoj metki w tekuschuju
     uint8_t previous_label_length = (uint8_t)strlen(previous_label);
-    if (previous_label_length != 0 && label_length == 0)
+    if (previous_label_length != 0 && statement_label_length == 0)
     {
         strncpy(statement_label, previous_label, previous_label_length);
-        label_length = previous_label_length;
+        statement_label_length = previous_label_length;
     }
     else if (previous_label_length != 0)
         sempty(previous_label, previous_label_length);
@@ -674,8 +674,8 @@ static void label_key(bool previous)
         {
             read_card();
             if (symbols[0] == ' ')
-                label_length = 0;
-            else if (!get_identifier(statement_label, &label_length))
+                statement_label_length = 0;
+            else if (!get_identifier(statement_label, &statement_label_length))
             {
                 print_error_string("120 the first symbol is not letter or underscore or blank");
                 continue;
@@ -1499,17 +1499,17 @@ static void print_card_refalab_source_listing(void)
         card[CUT] = '\0';
         if (!flags.end_refalab_source)
         {
-            char tmpstr[CUT + 28];
-            sprintf(tmpstr, "%4d %s", card_number, card);
-            size_t i;
+            char temp_string[CUT + 28];
+            sprintf(temp_string, "%4d %s", card_number, card);
+            uint8_t i;
             for (i = CUT + 4; i > 4; i--)
-                if (tmpstr[i] != ' ')
+                if (temp_string[i] != ' ')
                     break;
             i++;
-            tmpstr[i] = '\n';
+            temp_string[i] = '\n';
             i++;
-            tmpstr[i] = '\0';
-            fputs(tmpstr, refalab_source_listing);
+            temp_string[i] = '\0';
+            fputs(temp_string, refalab_source_listing);
         }
     }
     return;
@@ -1523,9 +1523,9 @@ static void print_card_terminal(void)
         card[CUT] = '\0';
         if (!flags.end_refalab_source)
         {
-            char tmpstr[CUT + 28];
-            sprintf(tmpstr, "%4d %s\n", card_number, card);
-            fputs(tmpstr, terminal);
+            char temp_string[CUT + 28];
+            sprintf(temp_string, "%4d %s\n", card_number, card);
+            fputs(temp_string, terminal);
         }
     }
     return;
@@ -1533,7 +1533,7 @@ static void print_card_terminal(void)
 
 static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
-    if (label_length != 0)
+    if (statement_label_length != 0)
     {
         PRINT_ERROR_130;
         return;
@@ -1564,7 +1564,7 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
 
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
-    if (label_length != 0)
+    if (statement_label_length != 0)
     {
         PRINT_ERROR_130;
         return;
@@ -1619,7 +1619,7 @@ static void equ(void)
     {
         if (!get_identifier(identifier, &identifier_length))
             break;
-        sequ(statement_label, label_length, identifier, identifier_length);
+        sequ(statement_label, statement_label_length, identifier, identifier_length);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
@@ -1639,8 +1639,8 @@ static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_L
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            int64_t k = symbols[current_symbol_number] - '0';
-            bool csmbend = false;
+            int64_t number = symbols[current_symbol_number] - '0';
+            bool multiple_symbol_end = false;
             while (true)
             {
                 EH_ROMA0;
@@ -1648,17 +1648,17 @@ static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_L
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
-                    code->info.coden = (uint32_t)k;
-                    csmbend = true;
+                    code->info.coden = (uint32_t)number;
+                    multiple_symbol_end = true;
                     break;
                 }
-                const int64_t l = symbols[current_symbol_number] - '0';
-                k = k * 10 + l;
-                if (k <= MAX_NUMBER)
+                const int64_t remainder = symbols[current_symbol_number] - '0';
+                number = number * 10 + remainder;
+                if (number <= MAX_NUMBER)
                     continue;
                 break;
             }
-            if (csmbend)
+            if (multiple_symbol_end)
                 break;
             while (true)
             {
@@ -1667,9 +1667,9 @@ static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_L
                     continue;
                 break;
             }
-            char osh111[64];
-            sprintf(osh111, "111 symbol-number > %lld", MAX_NUMBER);
-            print_error_string(osh111);
+            char error_111[64];
+            sprintf(error_111, "111 symbol-number > %lld", MAX_NUMBER);
+            print_error_string(error_111);
             break;
         }
         EH_ROMA0;
@@ -1697,7 +1697,7 @@ static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *iden
             return true;
         identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
     }
-    size_t i = 0;
+    uint32_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
     {
         EH_ROMA0;
@@ -1705,9 +1705,9 @@ static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *iden
     }
     if (i > 1)
     {
-        char osh113[64];
-        sprintf(osh113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
-        print_error_string(osh113);
+        char errror_113[64];
+        sprintf(errror_113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
+        print_error_string(errror_113);
     }
     return true;
 }
@@ -1725,7 +1725,7 @@ static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH],
             return true;
         identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
     }
-    size_t i = 0;
+    uint32_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
     {
         EH_ROMA0;
@@ -1733,9 +1733,9 @@ static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH],
     }
     if (i > 1)
     {
-        char osh114[64];
-        sprintf(osh114, "114 external identifier length > %d", MAX_IDENTIFIER_EXTERN_LENGTH);
-        print_error_string(osh114);
+        char error_114[64];
+        sprintf(error_114, "114 external identifier length > %d", MAX_IDENTIFIER_EXTERN_LENGTH);
+        print_error_string(error_114);
     }
     return true;
 }
@@ -1764,22 +1764,22 @@ static void blanks_out(void)
 
 static void print_conclusion(void)
 { // print conclusion
-    char pr_line[180];
-    sprintf(pr_line,
+    char print_line[180];
+    sprintf(print_line,
             "module_name = %-40s    module_length(lines) = %d\n", module_name, card_number);
     if (options.source_listing)
-        fputs(pr_line, refalab_source_listing);
-    fputs(pr_line, terminal);
+        fputs(print_line, refalab_source_listing);
+    fputs(print_line, terminal);
     card_number = 0;
     if (errors_number != 0)
-        sprintf(pr_line,
+        sprintf(print_line,
                 "errors   = %-3d         module_obj_length(bytes) = %zu\n", errors_number, module_length);
     else
-        sprintf(pr_line,
+        sprintf(print_line,
                 "                       module_obj_length(bytes) = %zu\n", module_length);
     if (options.source_listing)
-        fputs(pr_line, refalab_source_listing);
-    fputs(pr_line, terminal);
+        fputs(print_line, refalab_source_listing);
+    fputs(print_line, terminal);
     GET_time();
     return;
 }
