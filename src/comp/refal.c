@@ -724,10 +724,9 @@ static void label_key(bool previous)
 
 void scan_sentence_element(void)
 {
-    static char identifier[MAX_IDENTIFIER_LENGTH];
-    static uint8_t identifier_length;
-    static const uint8_t *p;
-    static uint8_t specifier_code;
+    char identifier[MAX_IDENTIFIER_LENGTH];
+    uint8_t identifier_length;
+    uint8_t specifier_code;
     current_sentence_element.code.tag = TAGO;
     current_sentence_element.code.info.codef = NULL;
     current_sentence_element.v_variable = false;
@@ -872,8 +871,7 @@ void scan_sentence_element(void)
                 if (flags.left_part_sentence)
                 {
                     current_sentence_element.specifier.info.codef = (uint8_t *)genlbl();
-                    p = current_sentence_element.specifier.info.codef;
-                    jlabel((T_U *)(void *)p);
+                    jlabel((T_U *)(void *)current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
                 {
@@ -929,7 +927,7 @@ void scan_sentence_element(void)
             if (symbols[current_symbol_number + 1] != ' ')
             {
                 symbols[current_symbol_number - 1] = '&';
-                size_t i;
+                uint8_t i;
                 for (i = 1;
                      class_symbols[current_symbol_number + i] == 'L' || symbols[current_symbol_number + i] == '_' || class_symbols[current_symbol_number + i] == 'D';
                      i++)
@@ -1019,7 +1017,7 @@ void scan_sentence_element(void)
                     if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
                     {
                         uint32_t j = 0;
-                        for (size_t i = 1; i < 3; i++)
+                        for (uint8_t i = 1; i < 3; i++)
                             if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
                                 j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                             else
@@ -1037,7 +1035,7 @@ void scan_sentence_element(void)
                     if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
                     {
                         uint32_t j = 0;
-                        for (size_t i = 0; i < 3; i++)
+                        for (uint8_t i = 0; i < 3; i++)
                             if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
                                 j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
                             else
@@ -1138,7 +1136,7 @@ static bool compile_specifer(char tail)
 { // specifier compiler
     bool neg = false;
     char identifier[MAX_IDENTIFIER_LENGTH];
-    uint8_t lid;
+    uint8_t identifier_length;
     T_LINKTI code;
     T_SPECIFIER_STATES specifier_state = SPCBLO;
     while (true)
@@ -1287,7 +1285,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            if (!get_multuple_symbol(&code, identifier, &lid))
+            if (!get_multuple_symbol(&code, identifier, &identifier_length))
             {
                 specifier_state = OSH200;
                 break;
@@ -1299,14 +1297,14 @@ static bool compile_specifer(char tail)
             break;
         case SPCSP:
             EH_ROMA0;
-            if (!get_identifier(identifier, &lid))
+            if (!get_identifier(identifier, &identifier_length))
             {
                 specifier_state = OSH203;
                 break;
             }
-            if (strncmp(statement_label, identifier, lid) == 0 && (lid == MAX_IDENTIFIER_LENGTH || statement_label[lid] == ' '))
+            if (strncmp(statement_label, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || statement_label[identifier_length] == ' '))
                 print_error_string("209 specifier is defined through itself");
-            T_U *p = spref(identifier, lid, tail);
+            T_U *p = spref(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 j3addr(p);
@@ -1544,10 +1542,10 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
     while (true)
     {
         char identifier[MAX_IDENTIFIER_LENGTH];
-        uint8_t lid;
-        if (!get_identifier(identifier, &lid))
+        uint8_t identifier_length;
+        if (!get_identifier(identifier, &identifier_length))
             break;
-        (*handler)(identifier, lid);
+        (*handler)(identifier, identifier_length);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
@@ -1575,26 +1573,26 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
     while (true)
     {
         char identifier[MAX_IDENTIFIER_LENGTH];
-        uint8_t lid;
-        if (!get_identifier(identifier, &lid))
+        uint8_t identifier_length;
+        if (!get_identifier(identifier, &identifier_length))
             break;
         char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
-        uint8_t lide;
+        uint8_t identifier_extern_length;
         if (symbols[current_symbol_number] == '(')
         {
             EH_ROMA;
-            if (!get_identifier_extern(identifier_extern, &lide))
+            if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
-            (*handler)(identifier, lid, identifier_extern, lide);
+            (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
             if (symbols[current_symbol_number] != ')')
                 break;
             EH_ROMA;
         }
         else
         {
-            lide = lid > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : lid;
-            strncpy(identifier_extern, identifier, lide);
-            (*handler)(identifier, lid, identifier_extern, lide);
+            identifier_extern_length = identifier_length > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : identifier_length;
+            strncpy(identifier_extern, identifier, identifier_extern_length);
+            (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
         }
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
@@ -1616,12 +1614,12 @@ static void equ(void)
 { // treatement of directives having 'EQU' type
     blanks_out();
     char identifier[MAX_IDENTIFIER_LENGTH];
-    uint8_t lid;
+    uint8_t identifier_length;
     do
     {
-        if (!get_identifier(identifier, &lid))
+        if (!get_identifier(identifier, &identifier_length))
             break;
-        sequ(statement_label, label_length, identifier, lid);
+        sequ(statement_label, label_length, identifier, identifier_length);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;
