@@ -1776,10 +1776,10 @@ static void print_conclusion(void)
     card_number = 0;
     if (errors_number != 0)
         sprintf(pr_line,
-                "errors   = %-3d         module_length(bytes) = %zu\n", errors_number, module_length);
+                "errors   = %-3d         module_obj_length(bytes) = %zu\n", errors_number, module_length);
     else
         sprintf(pr_line,
-                "                       module_length(bytes) = %zu\n", module_length);
+                "                       module_obj_length(bytes) = %zu\n", module_length);
     if (options.source_listing)
         fputs(pr_line, refalab_source_listing);
     fputs(pr_line, terminal);
