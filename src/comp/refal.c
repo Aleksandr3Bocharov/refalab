@@ -32,7 +32,7 @@
         current_symbol_number++;                                         \
         if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
         {                                                                \
-            rdcard();                                                    \
+            read_card();                                                    \
             if (flags.end_refalab_source)                                \
                 return;                                                  \
         }                                                                \
@@ -44,7 +44,7 @@
         current_symbol_number++;                                         \
         if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
         {                                                                \
-            rdcard();                                                    \
+            read_card();                                                    \
             if (flags.end_refalab_source)                                \
                 return false;                                            \
         }                                                                \
@@ -552,101 +552,101 @@ int main(int argc, char *argv[])
 
 static void previous_label_to_statement_label(void)
 { // perenos poslednej pustoj metki w tekuschuju
-    uint8_t n = (uint8_t)strlen(previous_label);
-    if (n != 0 && label_length == 0)
+    uint8_t previous_label_length = (uint8_t)strlen(previous_label);
+    if (previous_label_length != 0 && label_length == 0)
     {
-        strncpy(statement_label, previous_label, n);
-        label_length = n;
+        strncpy(statement_label, previous_label, previous_label_length);
+        label_length = previous_label_length;
     }
-    else if (n != 0)
-        sempty(previous_label, n);
+    else if (previous_label_length != 0)
+        sempty(previous_label, previous_label_length);
     previous_label[0] = '\0';
     return;
 }
 
-static void rdline(char *s)
-{ // read CUT + 8 symbols from sysin
+static void read_line(char *line)
+{ // read CUT + 8 symbols from refalab source
     flags.empty_card = true;
-    size_t i;
-    int cs = getc(refalab_source);
-    for (i = 0; cs != '\n' && cs != EOF && i < CUT + 8; i++)
+    uint8_t i;
+    int symbol_refalab_source = getc(refalab_source);
+    for (i = 0; symbol_refalab_source != '\n' && symbol_refalab_source != EOF && i < CUT + 8; i++)
     {
-        if (cs == '\t')
+        if (symbol_refalab_source == '\t')
         {
-            const size_t k = 8 - (i & 7);
-            for (size_t j = 0; j < k; j++)
-                *(s + i + j) = ' ';
+            const uint8_t k = 8 - (i & 7);
+            for (uint8_t j = 0; j < k; j++)
+                *(line + i + j) = ' ';
             i += k - 1;
         }
-        else if (cs < ' ' && cs > '\0')
-            *(s + i) = ' ';
+        else if (symbol_refalab_source < ' ' && symbol_refalab_source > '\0')
+            *(line + i) = ' ';
         else
         {
-            *(s + i) = (char)cs;
+            *(line + i) = (char)symbol_refalab_source;
             flags.empty_card = false;
         };
-        cs = getc(refalab_source);
+        symbol_refalab_source = getc(refalab_source);
     }
-    if (cs == EOF && i == 0)
+    if (symbol_refalab_source == EOF && i == 0)
         flags.end_refalab_source = true;
     for (; i < CUT + 8; i++)
-        *(s + i) = ' ';
+        *(line + i) = ' ';
     return;
 }
 
-static void translate(const char *str, char *class1)
+static void classificate_card(const char *card, char *classes)
 { // L,D,* - classification procedure
-    for (size_t i = 0; i < CUT; ++i)
+    for (uint8_t i = 0; i < CUT; ++i)
     {
-        *(class1 + i) = '*';
-        const int j = *(str + i);
+        *(classes + i) = '*';
+        const int j = *(card + i);
         if (j > 47)
             if (j < 58)
             {
-                *(class1 + i) = 'D';
+                *(classes + i) = 'D';
                 continue;
             };
         if (j > 64)
             if (j < 91)
             {
-                *(class1 + i) = 'L';
+                *(classes + i) = 'L';
                 continue;
             };
         if (j > 96)
             if (j < 123)
             {
-                *(class1 + i) = 'L';
+                *(classes + i) = 'L';
                 continue;
             };
     }
     return;
 }
 
-static bool komm(void)
+static bool comment(void)
 {
-    const char *k;
-    for (k = symbols; *k == ' ' || *k == '\t'; k++)
+    const char *comment_symbol;
+    for (comment_symbol = symbols; *comment_symbol == ' ' || *comment_symbol == '\t'; comment_symbol++)
         ;
-    if (*k == '*')
+    if (*comment_symbol == '*')
         return true;
     else
         return false;
 }
 
-static void rdcard(void)
+static void read_card(void)
 { // read card procedure
     while (true)
     {
-        rdline(card);
+        read_line(card);
         strncpy(symbols, card_cut, CUT);
-        translate(card_cut, class_symbols);
+        classificate_card(card_cut, class_symbols);
         ++scanner.carriage_number;
         ++card_number;
         flags.was_card_print_file_source_listing = false;
         flags.was_card_print_terminal = false;
         if (options.source_listing)
             print_card_refalab_source_listing();
-        if (!flags.was_cut && komm())
+        if (!flags.was_cut && comment())
             continue;
         if (flags.empty_card)
         {
@@ -672,7 +672,7 @@ static void label_key(bool previous)
     if (!previous)
         while (true)
         {
-            rdcard();
+            read_card();
             if (symbols[0] == ' ')
                 label_length = 0;
             else if (!get_identifier(statement_label, &label_length))
@@ -689,31 +689,31 @@ static void label_key(bool previous)
         if (symbols[current_symbol_number] == ' ')
             break;
         fix_current_symbol_number = current_symbol_number;
-        size_t l = 0;
+        uint8_t statement_key_length = 0;
         while (symbols[current_symbol_number] != ' ')
         {
             if (current_symbol_number == CUT - 1)
             {
-                const size_t delta = CUT - 1 - fix_current_symbol_number;
-                const int32_t fixm1 = (int32_t)(0 - delta);
+                const uint8_t delta = CUT - 1 - fix_current_symbol_number;
+                const int8_t temp_fix_current_symbol_number = (int8_t)(0 - delta);
                 for (current_symbol_number = 0; current_symbol_number != delta; current_symbol_number++)
                 {
-                    symbols[fixm1 + (int32_t)current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
-                    class_symbols[fixm1 + (int32_t)current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
+                    symbols[temp_fix_current_symbol_number + (int8_t)current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
+                    class_symbols[temp_fix_current_symbol_number + (int8_t)current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
                 }
-                rdcard();
-                fix_current_symbol_number = (uint8_t)fixm1;
+                read_card();
+                fix_current_symbol_number = (uint8_t)temp_fix_current_symbol_number;
                 if (symbols[0] == ' ')
                     break;
             }
-            if (l == 6)
+            if (statement_key_length == 6)
             {
                 current_symbol_number = fix_current_symbol_number;
                 statement_key[0] = 'l';
                 break;
             }
-            statement_key[l] = symbols[current_symbol_number];
-            l++;
+            statement_key[statement_key_length] = symbols[current_symbol_number];
+            statement_key_length++;
             current_symbol_number++;
         }
     } while (false);
@@ -1755,7 +1755,7 @@ static void blanks_out(void)
             current_symbol_number++;
         if (symbols[current_symbol_number] == '+')
         {
-            rdcard();
+            read_card();
             if (flags.end_refalab_source)
                 return;
             continue;
