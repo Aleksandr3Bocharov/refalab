@@ -214,30 +214,30 @@ static bool get_identifier_extern(char identifier[MAX_EXTERN_IDENTIFIER_LENGTH],
 static bool get_multuple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
 
 typedef struct timespec T_TIMESPEC;
-static T_TIMESPEC t0;
+static T_TIMESPEC time_begin;
 
 static void SET_time(void)
 {
-    timespec_get(&t0, TIME_UTC);
+    timespec_get(&time_begin, TIME_UTC);
     return;
 }
 
 static void GET_time(void)
 {
-    T_TIMESPEC t1;
-    timespec_get(&t1, TIME_UTC);
-    long int in = t1.tv_nsec - t0.tv_nsec;
-    long long int is = (long long int)difftime(t1.tv_sec, t0.tv_sec);
-    if (in < 0)
+    T_TIMESPEC time_end;
+    timespec_get(&time_end, TIME_UTC);
+    long int nanoseconds = time_end.tv_nsec - time_begin.tv_nsec;
+    long long int seconds = (long long int)difftime(time_end.tv_sec, time_begin.tv_sec);
+    if (nanoseconds < 0)
     {
-        in += 1000000000;
-        is--;
+        nanoseconds += 1000000000;
+        seconds--;
     }
-    long long int im = is / 60;
-    is %= 60;
-    char s[64];
-    sprintf(s, "%02lld:%02lld.%09ld", im, is, in);
-    printf("                       elapsed time      = %s\n", s);
+    long long int minutes = seconds / 60;
+    seconds %= 60;
+    char string_time[64];
+    sprintf(string_time, "%02lld:%02lld.%09ld", minutes, seconds, nanoseconds);
+    printf("                       elapsed time      = %s\n", string_time);
     return;
 }
 
@@ -270,15 +270,14 @@ int main(int argc, char *argv[])
         printf("\nSource file name too long\n");
         exit(1);
     }
-    char parm[MAX_PATHFILENAME + 1];
-    size_t i;
-    strcpy(parm, argv[1]);
-    strcat(parm, ".ref");
-    printf("\n%s:\n", parm);
-    refalab_source = fopen(parm, "r");
+    char filename[MAX_PATHFILENAME + 1];
+    strcpy(filename, argv[1]);
+    strcat(filename, ".ref");
+    printf("\n%s:\n", filename);
+    refalab_source = fopen(filename, "r");
     if (refalab_source == NULL)
     {
-        printf("Can't open %s\n", parm);
+        printf("Can't open %s\n", filename);
         exit(1);
     };
     terminal = stdout;
@@ -292,7 +291,7 @@ int main(int argc, char *argv[])
     options.assembler_source_only = false;
     options.assembler_options[0] = '\0';
     options.assembler_options[8191] = '\0';
-    for (size_t j = 2; j < (size_t)argc; ++j)
+    for (int j = 2; j < argc; ++j)
         if (strcmp(argv[j], "-nn") == 0)
             options.names = false;
         else if (strcmp(argv[j], "-ns") == 0)
@@ -311,21 +310,21 @@ int main(int argc, char *argv[])
         }
     if (options.source_listing)
     {
-        strcpy(parm, argv[1]);
-        strcat(parm, ".lst");
-        refalab_source_listing = fopen(parm, "w");
+        strcpy(filename, argv[1]);
+        strcat(filename, ".lst");
+        refalab_source_listing = fopen(filename, "w");
         if (refalab_source_listing == NULL)
         {
-            printf("Can't open %s\n", parm);
+            printf("Can't open %s\n", filename);
             exit(8);
         }
     }
-    strcpy(parm, argv[1]);
-    strcat(parm, ".s");
-    assembler_source = fopen(parm, "w");
+    strcpy(filename, argv[1]);
+    strcat(filename, ".s");
+    assembler_source = fopen(filename, "w");
     if (assembler_source == NULL)
     {
-        printf("Can't open %s\n", parm);
+        printf("Can't open %s\n", filename);
         exit(8);
     }
     flags.was_error = false;
@@ -345,7 +344,7 @@ int main(int argc, char *argv[])
             previous_label[0] = '\0';
             module_length = 0;
             memset(module_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
-            for (i = 0; i < 7; ++i)
+            for (uint8_t i = 0; i < 7; ++i)
                 specifier_abbreviated[i] = NULL;
             // "start" - directive work
             label_key(false);
@@ -525,19 +524,19 @@ int main(int argc, char *argv[])
             module_length = jwhere();
             fclose(assembler_source);
             if (module_length == 0 || flags.was_error)
-                unlink(parm);
+                unlink(filename);
             else if (!options.assembler_source_only)
             {
-                char cas[3 + 8191 + 1 + MAX_PATHFILENAME - 2 + 1];
-                sprintf(cas, "as %s %s", options.assembler_options, parm);
-                int res = system(cas);
+                char string_assembler[3 + 8191 + 1 + MAX_PATHFILENAME - 2 + 1];
+                sprintf(string_assembler, "as %s %s", options.assembler_options, filename);
+                int result_as = system(string_assembler);
 #if defined POSIX
-                if (WIFEXITED(res) != 0)
-                    res = WEXITSTATUS(res);
+                if (WIFEXITED(result_as) != 0)
+                    result_as = WEXITSTATUS(result_as);
                 else
-                    res = -1;
+                    result_as = -1;
 #endif
-                if (res != 0)
+                if (result_as != 0)
                 {
                     printf("Error compiling to object file\n");
                     exit(1);
