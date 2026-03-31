@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-03-31
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -21,21 +21,21 @@
 #include "refal.h"
 #include "clu.h"
 
-typedef struct ent
+typedef struct entry
 { // entry table element
-    struct ent *next;
-    T_U *p;
-    char e[MAX_IDENTIFIER_EXTERN_LENGTH];
-    size_t le;
-} T_ENT;
+    struct entry *next;
+    T_U *node;
+    char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
+    uint8_t identifier_extern_length;
+} T_ENTRY;
 
-typedef struct ext
+typedef struct extrn
 { // external pointer table element
-    struct ext *next;
-    T_U *p;
-    char e[MAX_IDENTIFIER_EXTERN_LENGTH];
-    size_t le;
-} T_EXT;
+    struct extrn *next;
+    T_U *node;
+    char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
+    size_t identifier_extern_length;
+} T_EXTRN;
 
 typedef struct rl
 {
@@ -57,8 +57,8 @@ static BU sysut2 = {0, 0, NULL, NULL, NULL};
 
 static uint8_t byte;
 
-static T_ENT *q, *r;
-static T_EXT *qx, *rx;
+static T_ENTRY *q, *r;
+static T_EXTRN *qx, *rx;
 
 /*    MODE field value:
    00 - undefined;
@@ -73,11 +73,11 @@ static T_EXT *qx, *rx;
    10 - specifier.
 */
 
-static T_ENT *first_ent;
-static T_ENT *last_ent;
+static T_ENTRY *first_ent;
+static T_ENTRY *last_ent;
 static size_t mod_length;
-static T_EXT *first_ext;
-static T_EXT *last_ext;
+static T_EXTRN *first_ext;
+static T_EXTRN *last_ext;
 static size_t curr_addr; // module generation files
 static size_t n_ext;
 static T_RL rl;
@@ -275,7 +275,7 @@ void jstart(void)
     delta = 0;
     sfop_w("sysut1.rf", &sysut1);
     sfop_w("sysut2.rf", &sysut2);
-    first_ent = (T_ENT *)malloc(sizeof(T_ENT));
+    first_ent = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_ent == NULL)
         oshex();
 #if defined mdebug
@@ -283,7 +283,7 @@ void jstart(void)
 #endif
     last_ent = first_ent;
     first_ent->next = NULL;
-    first_ext = (T_EXT *)malloc(sizeof(T_EXT));
+    first_ext = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (first_ext == NULL)
         oshex();
 #if defined mdebug
@@ -359,10 +359,11 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     while (r != last_ent)
     {
         r = r->next;
-        if (r->le == ll && strncmp(r->e, ee, ll < r->le ? ll : r->le) == 0)
+        if (r->identifier_extern_length == ll && strncmp(r->identifier_extern, ee, ll < r->identifier_extern_length ? ll : r->identifier_extern_length) == 0)
+        // !!!!! this is error
             return;
     }
-    r = (T_ENT *)malloc(sizeof(T_ENT));
+    r = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (r == NULL)
         oshex();
 #if defined mdebug
@@ -370,10 +371,10 @@ void jentry(T_U *pp, const char *ee, size_t ll)
 #endif
     last_ent->next = r;
     last_ent = r;
-    r->p = pp;
+    r->node = pp;
     r->next = NULL;
-    r->le = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(r->e, ee, r->le);
+    r->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
+    strncpy(r->identifier_extern, ee, r->identifier_extern_length);
     pp->mode |= '\040';
     return;
 } // jentry
@@ -382,7 +383,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
     //  label length
-    rx = (T_EXT *)malloc(sizeof(T_EXT));
+    rx = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (rx == NULL)
         oshex();
 #if defined mdebug
@@ -390,10 +391,10 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
 #endif
     last_ext->next = rx;
     last_ext = rx;
-    rx->p = pp;
+    rx->node = pp;
     rx->next = NULL;
-    rx->le = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(rx->e, ee, rx->le);
+    rx->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
+    strncpy(rx->identifier_extern, ee, rx->identifier_extern_length);
     pp->mode |= '\220';
     n_ext++;
     pp->info.infon = n_ext;
@@ -501,8 +502,8 @@ void jend(void)
                     qx = first_ext;
                     for (size_t i = 1; i < p->info.infon; i++)
                         qx = qx->next;
-                    for (size_t i = 0; i < qx->le; i++)
-                        write_asm(fputc(tolower(*(qx->e + i)), assembler_source), assembler_source);
+                    for (size_t i = 0; i < qx->identifier_extern_length; i++)
+                        write_asm(fputc(tolower(*(qx->identifier_extern + i)), assembler_source), assembler_source);
                     write_asm(fputs("\n", assembler_source), assembler_source);
                 }
                 continue;
@@ -523,8 +524,8 @@ void jend(void)
             else
                 write_asm(fputs("\t.extern\trefalab_", assembler_source), assembler_source);
 #endif
-            for (size_t i = 0; i < qx->le; i++)
-                write_asm(fputc(tolower(*(qx->e + i)), assembler_source), assembler_source);
+            for (size_t i = 0; i < qx->identifier_extern_length; i++)
+                write_asm(fputc(tolower(*(qx->identifier_extern + i)), assembler_source), assembler_source);
             write_asm(fputs(":byte\n", assembler_source), assembler_source);
             qx = qx->next;
         } // while
@@ -539,10 +540,10 @@ void jend(void)
                 write_asm(fputc('_', assembler_source), assembler_source);
 #endif
             write_asm(fputs("refalab_", assembler_source), assembler_source);
-            for (size_t i = 0; i < q->le; i++)
+            for (size_t i = 0; i < q->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(q->e + i)), assembler_source), assembler_source);
-            const T_U *pp = q->p;
+                write_asm(fputc(tolower(*(q->identifier_extern + i)), assembler_source), assembler_source);
+            const T_U *pp = q->node;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
 #if defined POSIX
@@ -555,9 +556,9 @@ void jend(void)
                 sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
 #endif
             write_asm(fputs(bufs, assembler_source), assembler_source);
-            for (size_t i = 0; i < q->le; i++)
+            for (size_t i = 0; i < q->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(q->e + i)), assembler_source), assembler_source);
+                write_asm(fputc(tolower(*(q->identifier_extern + i)), assembler_source), assembler_source);
             write_asm(fputc('\n', assembler_source), assembler_source);
             q = q->next;
         };
