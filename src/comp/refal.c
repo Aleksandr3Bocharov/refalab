@@ -1304,10 +1304,10 @@ static bool compile_specifer(char tail)
             }
             if (strncmp(statement_label, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || statement_label[identifier_length] == ' '))
                 print_error_string("209 specifier is defined through itself");
-            T_U *p = spref(identifier, identifier_length, tail);
+            T_U *identifier_specifier = spref(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
-                j3addr(p);
+                j3addr(identifier_specifier);
             if (symbols[current_symbol_number] == ':')
             {
                 specifier_state = SPCGC;
