@@ -43,17 +43,17 @@ typedef struct rl
     uint16_t delta;
 } T_RL;
 
-typedef struct BU_
+typedef struct bu_
 {
     size_t len;
     size_t tek;
     char *nam;
     uint8_t *buf;
     FILE *fil;
-} BU;
+} T_BU;
 
-static BU sysut1 = {0, 0, NULL, NULL, NULL};
-static BU sysut2 = {0, 0, NULL, NULL, NULL};
+static T_BU sysut1 = {0, 0, NULL, NULL, NULL};
+static T_BU sysut2 = {0, 0, NULL, NULL, NULL};
 
 static uint8_t byte;
 
@@ -91,7 +91,7 @@ static void oshex(void)
     return;
 }
 
-static void sfop_w(const char *s, BU *b)
+static void sfop_w(const char *s, T_BU *b)
 {
     if (b->nam != NULL)
     {
@@ -159,7 +159,7 @@ static void sfop_w(const char *s, BU *b)
     return;
 }
 
-static void sfop_r(BU *b)
+static void sfop_r(T_BU *b)
 {
     if (b->fil != NULL)
     {
@@ -179,7 +179,7 @@ static void sfop_r(BU *b)
     return;
 }
 
-static void sfcl(const BU *b)
+static void sfcl(const T_BU *b)
 {
     if (b->fil != NULL)
     {
@@ -193,7 +193,7 @@ static void sfcl(const BU *b)
     return;
 }
 
-static void sfclr(BU *b)
+static void sfclr(T_BU *b)
 {
     if (b->fil != NULL)
         unlink(b->nam);
