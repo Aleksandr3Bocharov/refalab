@@ -43,7 +43,7 @@ typedef struct rl
     uint16_t delta;
 } T_RL;
 
-typedef struct bu_
+typedef struct bu
 {
     size_t len;
     size_t tek;
