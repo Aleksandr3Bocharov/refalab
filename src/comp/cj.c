@@ -43,35 +43,22 @@ typedef struct relay
     uint16_t delta;
 } T_RELAY;
 
-typedef struct bu
+typedef struct file_bytes_nodes
 {
-    size_t len;
-    size_t tek;
-    char *nam;
-    uint8_t *buf;
-    FILE *fil;
-} T_BU;
+    size_t length;
+    size_t current;
+    char *name;
+    uint8_t *buffer;
+    FILE *file;
+} T_FILE_BYTES_NODES;
 
-static T_BU sysut1 = {0, 0, NULL, NULL, NULL};
-static T_BU sysut2 = {0, 0, NULL, NULL, NULL};
+static T_FILE_BYTES_NODES file_bytes = {0, 0, NULL, NULL, NULL};
+static T_FILE_BYTES_NODES file_nodes = {0, 0, NULL, NULL, NULL};
 
 static uint8_t byte;
 
 static T_ENTRY *q, *r;
 static T_EXTRN *qx, *rx;
-
-/*    MODE field value:
-   00 - undefined;
-   01 - internal,   INFO = shift against begin;
-   10 - external,   INFO = external pointer number;
-   11 - equivalent, INFO = another label pointer;
-   XX1 - entry;
-   XXX1 - still defined.
-      TYPE field value:
-   00 - unknown type;
-   01 - function;
-   10 - specifier.
-*/
 
 static T_ENTRY *first_ent;
 static T_ENTRY *last_ent;
@@ -91,7 +78,7 @@ static void oshex(void)
     return;
 }
 
-static void sfop_w(const char *s, T_BU *b)
+static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
 {
     if (b->nam != NULL)
     {
@@ -110,7 +97,7 @@ static void sfop_w(const char *s, T_BU *b)
     size_t un = 0;
     if (b->buf == NULL)
     {
-        if (b == &sysut2)
+        if (b == &file_nodes)
         {
             if (LBLL == 4)
                 un = 49152; // 8192*6
@@ -143,7 +130,7 @@ static void sfop_w(const char *s, T_BU *b)
             else
             {
                 lon = un;
-                if (b == &sysut2)
+                if (b == &file_nodes)
                     lon /= 2;
                 else
                     lon = (lon + LBLL + 4) / 2 - LBLL - 4;
@@ -159,7 +146,7 @@ static void sfop_w(const char *s, T_BU *b)
     return;
 }
 
-static void sfop_r(T_BU *b)
+static void sfop_r(T_FILE_BYTES_NODES *b)
 {
     if (b->fil != NULL)
     {
@@ -179,7 +166,7 @@ static void sfop_r(T_BU *b)
     return;
 }
 
-static void sfcl(const T_BU *b)
+static void sfcl(const T_FILE_BYTES_NODES *b)
 {
     if (b->fil != NULL)
     {
@@ -193,7 +180,7 @@ static void sfcl(const T_BU *b)
     return;
 }
 
-static void sfclr(T_BU *b)
+static void sfclr(T_FILE_BYTES_NODES *b)
 {
     if (b->fil != NULL)
         unlink(b->nam);
@@ -212,28 +199,28 @@ static void sfwr2(void)
 {
     while (true)
     {
-        const size_t ost = sysut2.len - sysut2.tek;
+        const size_t ost = file_nodes.len - file_nodes.tek;
         if (ost >= SMBL)
         {
-            memcpy(sysut2.buf + sysut2.tek, &relay, SMBL);
-            sysut2.tek += SMBL;
+            memcpy(file_nodes.buf + file_nodes.tek, &relay, SMBL);
+            file_nodes.tek += SMBL;
             return;
         }
-        if (sysut2.fil == NULL)
+        if (file_nodes.fil == NULL)
         {
-            sysut2.fil = fopen(sysut2.nam, Wbin);
-            if (sysut2.fil == NULL)
+            file_nodes.fil = fopen(file_nodes.nam, Wbin);
+            if (file_nodes.fil == NULL)
             {
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
         }
-        if (fwrite(sysut2.buf, sysut2.len, 1, sysut2.fil) == 0)
+        if (fwrite(file_nodes.buf, file_nodes.len, 1, file_nodes.fil) == 0)
         {
             printf("Write i/o error in sysut2\n");
             exit(8);
         }
-        sysut2.tek = 0;
+        file_nodes.tek = 0;
     } // while
 } // sfwr2
 
@@ -241,15 +228,15 @@ static void sfrd1(uint8_t *c, size_t n)
 {
     while (true)
     {
-        const size_t ost = sysut1.len - sysut1.tek;
+        const size_t ost = file_bytes.len - file_bytes.tek;
         if (ost >= n)
         {
-            memcpy(c, sysut1.buf + sysut1.tek, n);
-            sysut1.tek += n;
+            memcpy(c, file_bytes.buf + file_bytes.tek, n);
+            file_bytes.tek += n;
             return;
         }
-        memcpy(c, sysut1.buf + sysut1.tek, ost);
-        sysut1.tek = 0;
+        memcpy(c, file_bytes.buf + file_bytes.tek, ost);
+        file_bytes.tek = 0;
         n -= ost;
         c += ost;
     } // while
@@ -259,22 +246,22 @@ static void sfrd2(void)
 {
     while (true)
     {
-        const size_t ost = sysut2.len - sysut2.tek;
+        const size_t ost = file_nodes.len - file_nodes.tek;
         if (ost >= SMBL)
         {
-            memcpy(&relay, sysut2.buf + sysut2.tek, SMBL);
-            sysut2.tek += SMBL;
+            memcpy(&relay, file_nodes.buf + file_nodes.tek, SMBL);
+            file_nodes.tek += SMBL;
             return;
         }
-        sysut2.tek = 0;
+        file_nodes.tek = 0;
     } // while
 } // sfrd2
 
 void jstart(void)
 {
     delta = 0;
-    sfop_w("sysut1.rf", &sysut1);
-    sfop_w("sysut2.rf", &sysut2);
+    sfop_w("sysut1.rf", &file_bytes);
+    sfop_w("sysut2.rf", &file_nodes);
     first_ent = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_ent == NULL)
         oshex();
@@ -313,29 +300,29 @@ size_t jwhere(void)
 
 void jbyte(uint8_t bb)
 {
-    if (sysut1.tek != sysut1.len)
+    if (file_bytes.tek != file_bytes.len)
     {
-        *(sysut1.buf + sysut1.tek) = bb;
-        sysut1.tek++;
+        *(file_bytes.buf + file_bytes.tek) = bb;
+        file_bytes.tek++;
     }
     else
     {
-        if (sysut1.fil == NULL)
+        if (file_bytes.fil == NULL)
         {
-            sysut1.fil = fopen(sysut1.nam, Wbin);
-            if (sysut1.fil == NULL)
+            file_bytes.fil = fopen(file_bytes.nam, Wbin);
+            if (file_bytes.fil == NULL)
             {
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
         }
-        if (fwrite(sysut1.buf, sysut1.len, 1, sysut1.fil) == 0)
+        if (fwrite(file_bytes.buf, file_bytes.len, 1, file_bytes.fil) == 0)
         {
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *sysut1.buf = bb;
-        sysut1.tek = 1;
+        *file_bytes.buf = bb;
+        file_bytes.tek = 1;
     }
     delta++;
     curr_addr++;
@@ -420,8 +407,8 @@ static void zakon(void)
     relay.delta = delta;
     relay.node = NULL;
     sfwr2();
-    sfcl(&sysut1);
-    sfcl(&sysut2);
+    sfcl(&file_bytes);
+    sfcl(&file_nodes);
     mod_length = curr_addr;
     return;
 } // zakon
@@ -449,8 +436,8 @@ void jend(void)
     if (mod_length != 0)
     {
         // text generating
-        sfop_r(&sysut1);
-        sfop_r(&sysut2);
+        sfop_r(&file_bytes);
+        sfop_r(&file_nodes);
         while (true)
         {
             sfrd2();
@@ -567,8 +554,8 @@ void jend(void)
 #endif
     }
     // termination
-    sfclr(&sysut1);
-    sfclr(&sysut2);
+    sfclr(&file_bytes);
+    sfclr(&file_nodes);
     q = first_ent;
     while (q != NULL)
     {
