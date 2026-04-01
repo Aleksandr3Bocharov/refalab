@@ -34,7 +34,7 @@ typedef struct extrn
     struct extrn *next;
     T_U *node;
     char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
-    size_t identifier_extern_length;
+    uint8_t identifier_extern_length;
 } T_EXTRN;
 
 typedef struct relay
