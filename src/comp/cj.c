@@ -37,9 +37,9 @@ typedef struct extrn
     size_t identifier_extern_length;
 } T_EXTRN;
 
-typedef struct rl
+typedef struct 
 {
-    T_U *point;
+    T_U *node;
     uint16_t delta;
 } T_RL;
 
@@ -344,7 +344,7 @@ void jbyte(uint8_t bb)
 
 void j3addr(T_U *pp)
 {
-    rl.point = pp;
+    rl.node = pp;
     rl.delta = delta;
     delta = 0;
     sfwr2();
@@ -418,7 +418,7 @@ void jequ(T_U *pp, T_U *qq)
 static void zakon(void)
 {
     rl.delta = delta;
-    rl.point = NULL;
+    rl.node = NULL;
     sfwr2();
     sfcl(&sysut1);
     sfcl(&sysut2);
@@ -470,7 +470,7 @@ void jend(void)
                     write_asm(fputc(',', assembler_source), assembler_source);
             }
             write_asm(fputc('\n', assembler_source), assembler_source);
-            const T_U *p = rl.point;
+            const T_U *p = rl.node;
             if (p != NULL)
             {
                 while ((p->mode & '\300') == '\300')
