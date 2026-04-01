@@ -37,7 +37,7 @@ typedef struct extrn
     size_t identifier_extern_length;
 } T_EXTRN;
 
-typedef struct 
+typedef struct rl 
 {
     T_U *node;
     uint16_t delta;
