@@ -68,7 +68,6 @@ static T_EXTRN *last_ext;
 static size_t curr_addr; // module generation files
 static size_t n_ext;
 static T_RELAY relay;
-static size_t k;
 static uint16_t delta;
 
 static void oshex(void)
@@ -442,7 +441,7 @@ void jend(void)
         {
             sfrd2();
             delta = relay.delta;
-            for (k = 0; k < delta; k++)
+            for (uint16_t k = 0; k < delta; k++)
             {
                 sfrd1(&byte, 1);
                 if (k % 60 == 0)
@@ -453,7 +452,7 @@ void jend(void)
                 }
                 sprintf(bufs, "%d", byte);
                 write_asm(fputs(bufs, assembler_source), assembler_source);
-                if (k % 60 != 59 && k != (size_t)(delta - 1))
+                if (k % 60 != 59 && k != delta - 1)
                     write_asm(fputc(',', assembler_source), assembler_source);
             }
             write_asm(fputc('\n', assembler_source), assembler_source);
