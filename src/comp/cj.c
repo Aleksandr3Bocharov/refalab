@@ -37,11 +37,11 @@ typedef struct extrn
     size_t identifier_extern_length;
 } T_EXTRN;
 
-typedef struct rl 
+typedef struct relay
 {
     T_U *node;
     uint16_t delta;
-} T_RL;
+} T_RELAY;
 
 typedef struct bu
 {
@@ -80,7 +80,7 @@ static T_EXTRN *first_ext;
 static T_EXTRN *last_ext;
 static size_t curr_addr; // module generation files
 static size_t n_ext;
-static T_RL rl;
+static T_RELAY relay;
 static size_t k;
 static uint16_t delta;
 
@@ -215,7 +215,7 @@ static void sfwr2(void)
         const size_t ost = sysut2.len - sysut2.tek;
         if (ost >= SMBL)
         {
-            memcpy(sysut2.buf + sysut2.tek, &rl, SMBL);
+            memcpy(sysut2.buf + sysut2.tek, &relay, SMBL);
             sysut2.tek += SMBL;
             return;
         }
@@ -262,7 +262,7 @@ static void sfrd2(void)
         const size_t ost = sysut2.len - sysut2.tek;
         if (ost >= SMBL)
         {
-            memcpy(&rl, sysut2.buf + sysut2.tek, SMBL);
+            memcpy(&relay, sysut2.buf + sysut2.tek, SMBL);
             sysut2.tek += SMBL;
             return;
         }
@@ -344,8 +344,8 @@ void jbyte(uint8_t bb)
 
 void j3addr(T_U *pp)
 {
-    rl.node = pp;
-    rl.delta = delta;
+    relay.node = pp;
+    relay.delta = delta;
     delta = 0;
     sfwr2();
     curr_addr += LBLL;
@@ -417,8 +417,8 @@ void jequ(T_U *pp, T_U *qq)
 
 static void zakon(void)
 {
-    rl.delta = delta;
-    rl.node = NULL;
+    relay.delta = delta;
+    relay.node = NULL;
     sfwr2();
     sfcl(&sysut1);
     sfcl(&sysut2);
@@ -454,7 +454,7 @@ void jend(void)
         while (true)
         {
             sfrd2();
-            delta = rl.delta;
+            delta = relay.delta;
             for (k = 0; k < delta; k++)
             {
                 sfrd1(&byte, 1);
@@ -470,7 +470,7 @@ void jend(void)
                     write_asm(fputc(',', assembler_source), assembler_source);
             }
             write_asm(fputc('\n', assembler_source), assembler_source);
-            const T_U *p = rl.node;
+            const T_U *p = relay.node;
             if (p != NULL)
             {
                 while ((p->mode & '\300') == '\300')
