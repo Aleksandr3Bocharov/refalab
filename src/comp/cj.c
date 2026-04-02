@@ -164,7 +164,7 @@ static void stream_bytes_nodes_open_read(T_STREAM_BYTES_NODES *stream_bytes_node
     return;
 }
 
-static void sfcl(const T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_close(const T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     if (stream_bytes_nodes->file != NULL)
     {
@@ -178,27 +178,27 @@ static void sfcl(const T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
-static void sfclr(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     if (stream_bytes_nodes->file != NULL)
         unlink(stream_bytes_nodes->file_name);
     free(stream_bytes_nodes->file_name);
     free(stream_bytes_nodes->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(sfclr) stream_bytes_nodes->file_name(c 0)=%p\n", (void *)stream_bytes_nodes->file_name);
-    fprintf(stderr, "            stream_bytes_nodes->buffer(c 0)=%p\n", (void *)stream_bytes_nodes->buffer);
+    fprintf(stderr, "free(cj)    stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
+    fprintf(stderr, "            stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
     stream_bytes_nodes->file_name = NULL;
     stream_bytes_nodes->buffer = NULL;
     return;
 }
 
-static void sfwr2(void)
+static void stream_nodes_write(void)
 {
     while (true)
     {
-        const size_t ost = stream_nodes.length - stream_nodes.current;
-        if (ost >= SMBL)
+        const size_t residual = stream_nodes.length - stream_nodes.current;
+        if (residual >= SMBL)
         {
             memcpy(stream_nodes.buffer + stream_nodes.current, &relay, SMBL);
             stream_nodes.current += SMBL;
@@ -220,32 +220,32 @@ static void sfwr2(void)
         }
         stream_nodes.current = 0;
     } // while
-} // sfwr2
+} // stream_nodes_write
 
-static void sfrd1(uint8_t *c, size_t n)
+static void stream_bytes_read(uint8_t *buffer, size_t count)
 {
     while (true)
     {
-        const size_t ost = stream_bytes.length - stream_bytes.current;
-        if (ost >= n)
+        const size_t residual = stream_bytes.length - stream_bytes.current;
+        if (residual >= count)
         {
-            memcpy(c, stream_bytes.buffer + stream_bytes.current, n);
-            stream_bytes.current += n;
+            memcpy(buffer, stream_bytes.buffer + stream_bytes.current, count);
+            stream_bytes.current += count;
             return;
         }
-        memcpy(c, stream_bytes.buffer + stream_bytes.current, ost);
+        memcpy(buffer, stream_bytes.buffer + stream_bytes.current, residual);
         stream_bytes.current = 0;
-        n -= ost;
-        c += ost;
+        count -= residual;
+        buffer += residual;
     } // while
-} // sfrd1
+} // stream_bytes_read
 
-static void sfrd2(void)
+static void stream_nodes_read(void)
 {
     while (true)
     {
-        const size_t ost = stream_nodes.length - stream_nodes.current;
-        if (ost >= SMBL)
+        const size_t residual = stream_nodes.length - stream_nodes.current;
+        if (residual >= SMBL)
         {
             memcpy(&relay, stream_nodes.buffer + stream_nodes.current, SMBL);
             stream_nodes.current += SMBL;
@@ -253,7 +253,7 @@ static void sfrd2(void)
         }
         stream_nodes.current = 0;
     } // while
-} // sfrd2
+} // stream_nodes_read
 
 void jstart(void)
 {
@@ -332,7 +332,7 @@ void j3addr(T_U *pp)
     relay.node = pp;
     relay.delta = delta;
     delta = 0;
-    sfwr2();
+    stream_nodes_write();
     current_address += LBLL;
     return;
 }
@@ -400,36 +400,36 @@ void jequ(T_U *pp, T_U *qq)
     return;
 }
 
-static void zakon(void)
+static void ending(void)
 {
     relay.delta = delta;
     relay.node = NULL;
-    sfwr2();
-    sfcl(&stream_bytes);
-    sfcl(&stream_nodes);
+    stream_nodes_write();
+    stream_bytes_nodes_close(&stream_bytes);
+    stream_bytes_nodes_close(&stream_nodes);
     module_length = current_address;
     return;
-} // zakon
+} // ending
 
-static void write_asm(int put, FILE *f)
+static void write_assembler_source(int put_result)
 {
-    if (put == EOF)
-        if (feof(f) != 0 || ferror(f) != 0)
+    if (put_result == EOF)
+        if (feof(assembler_source) != 0 || ferror(assembler_source) != 0)
         {
-            printf("Write i/o error in asm file\n");
+            printf("Write i/o error in assembler source file\n");
             exit(8);
         }
 }
 
 void jend(void)
 {
-    zakon();
+    ending();
     byte = 0;
     // heading generating
-    write_asm(fputs(".data\n", assembler_source), assembler_source);
+    write_assembler_source(fputs(".data\n", assembler_source));
     char bufs[81];
     sprintf(bufs, "_d%d$:\n", scanner.module_number);
-    write_asm(fputs(bufs, assembler_source), assembler_source);
+    write_assembler_source(fputs(bufs, assembler_source));
     //  empty module test
     if (module_length != 0)
     {
@@ -438,23 +438,23 @@ void jend(void)
         stream_bytes_nodes_open_read(&stream_nodes);
         while (true)
         {
-            sfrd2();
+            stream_nodes_read();
             delta = relay.delta;
             for (uint16_t k = 0; k < delta; k++)
             {
-                sfrd1(&byte, 1);
+                stream_bytes_read(&byte, 1);
                 if (k % 60 == 0)
                 {
                     if (k != 0)
-                        write_asm(fputc('\n', assembler_source), assembler_source);
-                    write_asm(fputs("\t.byte\t", assembler_source), assembler_source);
+                        write_assembler_source(fputc('\n', assembler_source));
+                    write_assembler_source(fputs("\t.byte\t", assembler_source));
                 }
                 sprintf(bufs, "%d", byte);
-                write_asm(fputs(bufs, assembler_source), assembler_source);
+                write_assembler_source(fputs(bufs, assembler_source));
                 if (k % 60 != 59 && k != delta - 1)
-                    write_asm(fputc(',', assembler_source), assembler_source);
+                    write_assembler_source(fputc(',', assembler_source));
             }
-            write_asm(fputc('\n', assembler_source), assembler_source);
+            write_assembler_source(fputc('\n', assembler_source));
             const T_U *p = relay.node;
             if (p != NULL)
             {
@@ -467,7 +467,7 @@ void jend(void)
                         sprintf(bufs, "\t.long\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
                     else
                         sprintf(bufs, "\t.quad\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
-                    write_asm(fputs(bufs, assembler_source), assembler_source);
+                    write_assembler_source(fputs(bufs, assembler_source));
                 }
                 else
                 {
@@ -475,21 +475,21 @@ void jend(void)
 #if defined POSIX
                     // begin name without underlining _
                     if (LBLL == 4)
-                        write_asm(fputs("\t.long\trefalab_", assembler_source), assembler_source);
+                        write_assembler_source(fputs("\t.long\trefalab_", assembler_source));
                     else
-                        write_asm(fputs("\t.quad\trefalab_", assembler_source), assembler_source);
+                        write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
 #else // Windows - with underlining _ in x86
                     if (LBLL == 4)
-                        write_asm(fputs("\t.long\t_refalab_", assembler_source), assembler_source);
+                        write_assembler_source(fputs("\t.long\t_refalab_", assembler_source));
                     else
-                        write_asm(fputs("\t.quad\trefalab_", assembler_source), assembler_source);
+                        write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
 #endif
                     extrn = first_extrn;
                     for (size_t i = 1; i < p->info.infon; i++)
                         extrn = extrn->next;
                     for (size_t i = 0; i < extrn->identifier_extern_length; i++)
-                        write_asm(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source), assembler_source);
-                    write_asm(fputs("\n", assembler_source), assembler_source);
+                        write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
+                    write_assembler_source(fputs("\n", assembler_source));
                 }
                 continue;
             } // if
@@ -502,19 +502,19 @@ void jend(void)
 //
 #if defined POSIX
             // begin name without underlining _
-            write_asm(fputs("\t.extern\trefalab_", assembler_source), assembler_source);
+            write_assembler_source(fputs("\t.extern\trefalab_", assembler_source));
 #else // Windows
             if (LBLL == 4)
-                write_asm(fputs("\t.extern\t_refalab_", assembler_source), assembler_source);
+                write_assembler_source(fputs("\t.extern\t_refalab_", assembler_source));
             else
-                write_asm(fputs("\t.extern\trefalab_", assembler_source), assembler_source);
+                write_assembler_source(fputs("\t.extern\trefalab_", assembler_source));
 #endif
             for (size_t i = 0; i < extrn->identifier_extern_length; i++)
-                write_asm(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source), assembler_source);
-            write_asm(fputs(":byte\n", assembler_source), assembler_source);
+                write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
+            write_assembler_source(fputs(":byte\n", assembler_source));
             extrn = extrn->next;
         } // while
-        write_asm(fputs(".data\n", assembler_source), assembler_source);
+        write_assembler_source(fputs(".data\n", assembler_source));
         // entry label generating
         entry = first_entry->next;
         while (entry != NULL)
@@ -522,12 +522,12 @@ void jend(void)
 #if !defined POSIX
             // begin name with underlining _ in x86
             if (LBLL == 4)
-                write_asm(fputc('_', assembler_source), assembler_source);
+                write_assembler_source(fputc('_', assembler_source));
 #endif
-            write_asm(fputs("refalab_", assembler_source), assembler_source);
+            write_assembler_source(fputs("refalab_", assembler_source));
             for (size_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(entry->identifier_extern + i)), assembler_source), assembler_source);
+                write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
             const T_U *pp = entry->node;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
@@ -540,20 +540,20 @@ void jend(void)
             else
                 sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
 #endif
-            write_asm(fputs(bufs, assembler_source), assembler_source);
+            write_assembler_source(fputs(bufs, assembler_source));
             for (size_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(entry->identifier_extern + i)), assembler_source), assembler_source);
-            write_asm(fputc('\n', assembler_source), assembler_source);
+                write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
+            write_assembler_source(fputc('\n', assembler_source));
             entry = entry->next;
         };
 #if defined POSIX
-        write_asm(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", assembler_source), assembler_source);
+        write_assembler_source(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", assembler_source));
 #endif
     }
     // termination
-    sfclr(&stream_bytes);
-    sfclr(&stream_nodes);
+    stream_bytes_nodes_clear(&stream_bytes);
+    stream_bytes_nodes_clear(&stream_nodes);
     entry = first_entry;
     while (entry != NULL)
     {
