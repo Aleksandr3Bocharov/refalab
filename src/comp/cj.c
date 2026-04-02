@@ -57,16 +57,16 @@ static T_FILE_BYTES_NODES file_nodes = {0, 0, NULL, NULL, NULL};
 
 static uint8_t byte;
 
-static T_ENTRY *q, *r;
-static T_EXTRN *qx, *rx;
+static T_ENTRY *entry, *entry2;
+static T_EXTRN *extrn, *extrn2;
 
-static T_ENTRY *first_ent;
-static T_ENTRY *last_ent;
-static size_t mod_length;
-static T_EXTRN *first_ext;
-static T_EXTRN *last_ext;
-static size_t curr_addr; // module generation files
-static size_t n_ext;
+static T_ENTRY *first_entry;
+static T_ENTRY *last_entry;
+static size_t module_length;
+static T_EXTRN *first_extrn;
+static T_EXTRN *last_extrn;
+static size_t current_address; // module generation files
+static size_t extrn_count;
 static T_RELAY relay;
 static uint16_t delta;
 
@@ -79,22 +79,22 @@ static void oshex(void)
 
 static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
 {
-    if (b->nam != NULL)
+    if (b->name != NULL)
     {
-        free(b->nam);
+        free(b->name);
 #if defined mdebug
-        fprintf(stderr, "free(cj) b->nam=%p\n", (void *)b->nam);
+        fprintf(stderr, "free(cj) b->name=%p\n", (void *)b->name);
 #endif
     }
-    b->nam = (char *)malloc(strlen(s) + 1);
-    if (b->nam == NULL)
+    b->name = (char *)malloc(strlen(s) + 1);
+    if (b->name == NULL)
         oshex();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): b->nam=%p\n", (void *)b->nam);
+    fprintf(stderr, "malloc(cj): b->name=%p\n", (void *)b->name);
 #endif
-    strcpy(b->nam, s);
+    strcpy(b->name, s);
     size_t un = 0;
-    if (b->buf == NULL)
+    if (b->buffer == NULL)
     {
         if (b == &file_nodes)
         {
@@ -118,11 +118,11 @@ static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
             min_oshex = 24;
         while (true)
         {
-            b->buf = (uint8_t *)malloc(un);
-            if (b->buf != NULL)
+            b->buffer = (uint8_t *)malloc(un);
+            if (b->buffer != NULL)
             {
 #if defined mdebug
-                fprintf(stderr, "malloc(cj): b->buf=%p un=%zu\n", (void *)b->buf, un);
+                fprintf(stderr, "malloc(cj): b->buffer=%p un=%zu\n", (void *)b->buffer, un);
 #endif
                 break;
             }
@@ -139,58 +139,58 @@ static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
             }
         } // while
     }
-    b->tek = 0;
-    b->len = un;
-    b->fil = NULL;
+    b->current = 0;
+    b->length = un;
+    b->file = NULL;
     return;
 }
 
 static void sfop_r(T_FILE_BYTES_NODES *b)
 {
-    if (b->fil != NULL)
+    if (b->file != NULL)
     {
-        b->fil = fopen(b->nam, Rbin);
-        if (b->fil == NULL)
+        b->file = fopen(b->name, Rbin);
+        if (b->file == NULL)
         {
-            printf("Can't open for read %s\n", b->nam);
+            printf("Can't open for read %s\n", b->name);
             exit(8);
         }
-        if (fread(b->buf, b->len, 1, b->fil) == 0)
+        if (fread(b->buffer, b->length, 1, b->file) == 0)
         {
-            printf("Read i/o error in %s\n", b->nam);
+            printf("Read i/o error in %s\n", b->name);
             exit(8);
         }
     }
-    b->tek = 0;
+    b->current = 0;
     return;
 }
 
 static void sfcl(const T_FILE_BYTES_NODES *b)
 {
-    if (b->fil != NULL)
+    if (b->file != NULL)
     {
-        if (fwrite(b->buf, b->tek, 1, b->fil) == 0)
+        if (fwrite(b->buffer, b->current, 1, b->file) == 0)
         {
-            printf("Write i/o error in %s\n", b->nam);
+            printf("Write i/o error in %s\n", b->name);
             exit(8);
         }
-        fclose(b->fil);
+        fclose(b->file);
     }
     return;
 }
 
 static void sfclr(T_FILE_BYTES_NODES *b)
 {
-    if (b->fil != NULL)
-        unlink(b->nam);
-    free(b->nam);
-    free(b->buf);
+    if (b->file != NULL)
+        unlink(b->name);
+    free(b->name);
+    free(b->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(sfclr) b->nam(c 0)=%p\n", (void *)b->nam);
-    fprintf(stderr, "            b->buf(c 0)=%p\n", (void *)b->buf);
+    fprintf(stderr, "free(sfclr) b->name(c 0)=%p\n", (void *)b->name);
+    fprintf(stderr, "            b->buffer(c 0)=%p\n", (void *)b->buffer);
 #endif
-    b->nam = NULL;
-    b->buf = NULL;
+    b->name = NULL;
+    b->buffer = NULL;
     return;
 }
 
@@ -198,28 +198,28 @@ static void sfwr2(void)
 {
     while (true)
     {
-        const size_t ost = file_nodes.len - file_nodes.tek;
+        const size_t ost = file_nodes.length - file_nodes.current;
         if (ost >= SMBL)
         {
-            memcpy(file_nodes.buf + file_nodes.tek, &relay, SMBL);
-            file_nodes.tek += SMBL;
+            memcpy(file_nodes.buffer + file_nodes.current, &relay, SMBL);
+            file_nodes.current += SMBL;
             return;
         }
-        if (file_nodes.fil == NULL)
+        if (file_nodes.file == NULL)
         {
-            file_nodes.fil = fopen(file_nodes.nam, Wbin);
-            if (file_nodes.fil == NULL)
+            file_nodes.file = fopen(file_nodes.name, Wbin);
+            if (file_nodes.file == NULL)
             {
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
         }
-        if (fwrite(file_nodes.buf, file_nodes.len, 1, file_nodes.fil) == 0)
+        if (fwrite(file_nodes.buffer, file_nodes.length, 1, file_nodes.file) == 0)
         {
             printf("Write i/o error in sysut2\n");
             exit(8);
         }
-        file_nodes.tek = 0;
+        file_nodes.current = 0;
     } // while
 } // sfwr2
 
@@ -227,15 +227,15 @@ static void sfrd1(uint8_t *c, size_t n)
 {
     while (true)
     {
-        const size_t ost = file_bytes.len - file_bytes.tek;
+        const size_t ost = file_bytes.length - file_bytes.current;
         if (ost >= n)
         {
-            memcpy(c, file_bytes.buf + file_bytes.tek, n);
-            file_bytes.tek += n;
+            memcpy(c, file_bytes.buffer + file_bytes.current, n);
+            file_bytes.current += n;
             return;
         }
-        memcpy(c, file_bytes.buf + file_bytes.tek, ost);
-        file_bytes.tek = 0;
+        memcpy(c, file_bytes.buffer + file_bytes.current, ost);
+        file_bytes.current = 0;
         n -= ost;
         c += ost;
     } // while
@@ -245,14 +245,14 @@ static void sfrd2(void)
 {
     while (true)
     {
-        const size_t ost = file_nodes.len - file_nodes.tek;
+        const size_t ost = file_nodes.length - file_nodes.current;
         if (ost >= SMBL)
         {
-            memcpy(&relay, file_nodes.buf + file_nodes.tek, SMBL);
-            file_nodes.tek += SMBL;
+            memcpy(&relay, file_nodes.buffer + file_nodes.current, SMBL);
+            file_nodes.current += SMBL;
             return;
         }
-        file_nodes.tek = 0;
+        file_nodes.current = 0;
     } // while
 } // sfrd2
 
@@ -261,24 +261,24 @@ void jstart(void)
     delta = 0;
     sfop_w("sysut1.rf", &file_bytes);
     sfop_w("sysut2.rf", &file_nodes);
-    first_ent = (T_ENTRY *)malloc(sizeof(T_ENTRY));
-    if (first_ent == NULL)
+    first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
+    if (first_entry == NULL)
         oshex();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): first_ent=%p\n", (void *)first_ent);
+    fprintf(stderr, "malloc(cj): first_entry=%p\n", (void *)first_entry);
 #endif
-    last_ent = first_ent;
-    first_ent->next = NULL;
-    first_ext = (T_EXTRN *)malloc(sizeof(T_EXTRN));
-    if (first_ext == NULL)
+    last_entry = first_entry;
+    first_entry->next = NULL;
+    first_extrn = (T_EXTRN *)malloc(sizeof(T_EXTRN));
+    if (first_extrn == NULL)
         oshex();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): first_ext=%p\n", (void *)first_ext);
+    fprintf(stderr, "malloc(cj): first_extrn=%p\n", (void *)first_extrn);
 #endif
-    last_ext = first_ext;
-    first_ext->next = NULL;
-    curr_addr = 0;
-    n_ext = 1;
+    last_extrn = first_extrn;
+    first_extrn->next = NULL;
+    current_address = 0;
+    extrn_count = 1;
     return;
 } // jstart
 
@@ -289,42 +289,42 @@ size_t jwhere(void)
         max_addr = 65535;
     else
         max_addr = 98303;
-    if (curr_addr > max_addr)
+    if (current_address > max_addr)
     {
         printf("Module too long\n");
         exit(1);
     }
-    return curr_addr;
+    return current_address;
 }
 
 void jbyte(uint8_t bb)
 {
-    if (file_bytes.tek != file_bytes.len)
+    if (file_bytes.current != file_bytes.length)
     {
-        *(file_bytes.buf + file_bytes.tek) = bb;
-        file_bytes.tek++;
+        *(file_bytes.buffer + file_bytes.current) = bb;
+        file_bytes.current++;
     }
     else
     {
-        if (file_bytes.fil == NULL)
+        if (file_bytes.file == NULL)
         {
-            file_bytes.fil = fopen(file_bytes.nam, Wbin);
-            if (file_bytes.fil == NULL)
+            file_bytes.file = fopen(file_bytes.name, Wbin);
+            if (file_bytes.file == NULL)
             {
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
         }
-        if (fwrite(file_bytes.buf, file_bytes.len, 1, file_bytes.fil) == 0)
+        if (fwrite(file_bytes.buffer, file_bytes.length, 1, file_bytes.file) == 0)
         {
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *file_bytes.buf = bb;
-        file_bytes.tek = 1;
+        *file_bytes.buffer = bb;
+        file_bytes.current = 1;
     }
     delta++;
-    curr_addr++;
+    current_address++;
     return;
 } // jbyte
 
@@ -334,33 +334,33 @@ void j3addr(T_U *pp)
     relay.delta = delta;
     delta = 0;
     sfwr2();
-    curr_addr += LBLL;
+    current_address += LBLL;
     return;
 }
 
 void jentry(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
-    r = first_ent;
-    while (r != last_ent)
+    entry2 = first_entry;
+    while (entry2 != last_entry)
     {
-        r = r->next;
-        if (r->identifier_extern_length == ll && strncmp(r->identifier_extern, ee, ll < r->identifier_extern_length ? ll : r->identifier_extern_length) == 0)
+        entry2 = entry2->next;
+        if (entry2->identifier_extern_length == ll && strncmp(entry2->identifier_extern, ee, ll < entry2->identifier_extern_length ? ll : entry2->identifier_extern_length) == 0)
         // !!!!! this is error
             return;
     }
-    r = (T_ENTRY *)malloc(sizeof(T_ENTRY));
-    if (r == NULL)
+    entry2 = (T_ENTRY *)malloc(sizeof(T_ENTRY));
+    if (entry2 == NULL)
         oshex();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): r(ent)=%p\n", (void *)r);
+    fprintf(stderr, "malloc(cj): entry2()=%p\n", (void *)entry2);
 #endif
-    last_ent->next = r;
-    last_ent = r;
-    r->node = pp;
-    r->next = NULL;
-    r->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(r->identifier_extern, ee, r->identifier_extern_length);
+    last_entry->next = entry2;
+    last_entry = entry2;
+    entry2->node = pp;
+    entry2->next = NULL;
+    entry2->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
+    strncpy(entry2->identifier_extern, ee, entry2->identifier_extern_length);
     pp->mode |= '\040';
     return;
 } // jentry
@@ -369,28 +369,28 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
 // ee label
 {
     //  label length
-    rx = (T_EXTRN *)malloc(sizeof(T_EXTRN));
-    if (rx == NULL)
+    extrn2 = (T_EXTRN *)malloc(sizeof(T_EXTRN));
+    if (extrn2 == NULL)
         oshex();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): rx(ext)=%p\n", (void *)rx);
+    fprintf(stderr, "malloc(cj): extrn2=%p\n", (void *)extrn2);
 #endif
-    last_ext->next = rx;
-    last_ext = rx;
-    rx->node = pp;
-    rx->next = NULL;
-    rx->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(rx->identifier_extern, ee, rx->identifier_extern_length);
+    last_extrn->next = extrn2;
+    last_extrn = extrn2;
+    extrn2->node = pp;
+    extrn2->next = NULL;
+    extrn2->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
+    strncpy(extrn2->identifier_extern, ee, extrn2->identifier_extern_length);
     pp->mode |= '\220';
-    n_ext++;
-    pp->info.infon = n_ext;
+    extrn_count++;
+    pp->info.infon = extrn_count;
     return;
 } // jextrn
 
 void jlabel(T_U *pp)
 {
     pp->mode |= '\120';
-    pp->info.infon = curr_addr;
+    pp->info.infon = current_address;
     return;
 }
 
@@ -408,7 +408,7 @@ static void zakon(void)
     sfwr2();
     sfcl(&file_bytes);
     sfcl(&file_nodes);
-    mod_length = curr_addr;
+    module_length = current_address;
     return;
 } // zakon
 
@@ -432,7 +432,7 @@ void jend(void)
     sprintf(bufs, "_d%d$:\n", scanner.module_number);
     write_asm(fputs(bufs, assembler_source), assembler_source);
     //  empty module test
-    if (mod_length != 0)
+    if (module_length != 0)
     {
         // text generating
         sfop_r(&file_bytes);
@@ -485,11 +485,11 @@ void jend(void)
                     else
                         write_asm(fputs("\t.quad\trefalab_", assembler_source), assembler_source);
 #endif
-                    qx = first_ext;
+                    extrn = first_extrn;
                     for (size_t i = 1; i < p->info.infon; i++)
-                        qx = qx->next;
-                    for (size_t i = 0; i < qx->identifier_extern_length; i++)
-                        write_asm(fputc(tolower(*(qx->identifier_extern + i)), assembler_source), assembler_source);
+                        extrn = extrn->next;
+                    for (size_t i = 0; i < extrn->identifier_extern_length; i++)
+                        write_asm(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source), assembler_source);
                     write_asm(fputs("\n", assembler_source), assembler_source);
                 }
                 continue;
@@ -497,8 +497,8 @@ void jend(void)
             break;
         }
         //   external label generating
-        qx = first_ext->next;
-        while (qx != NULL)
+        extrn = first_extrn->next;
+        while (extrn != NULL)
         {
 //
 #if defined POSIX
@@ -510,15 +510,15 @@ void jend(void)
             else
                 write_asm(fputs("\t.extern\trefalab_", assembler_source), assembler_source);
 #endif
-            for (size_t i = 0; i < qx->identifier_extern_length; i++)
-                write_asm(fputc(tolower(*(qx->identifier_extern + i)), assembler_source), assembler_source);
+            for (size_t i = 0; i < extrn->identifier_extern_length; i++)
+                write_asm(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source), assembler_source);
             write_asm(fputs(":byte\n", assembler_source), assembler_source);
-            qx = qx->next;
+            extrn = extrn->next;
         } // while
         write_asm(fputs(".data\n", assembler_source), assembler_source);
         // entry label generating
-        q = first_ent->next;
-        while (q != NULL)
+        entry = first_entry->next;
+        while (entry != NULL)
         {
 #if !defined POSIX
             // begin name with underlining _ in x86
@@ -526,10 +526,10 @@ void jend(void)
                 write_asm(fputc('_', assembler_source), assembler_source);
 #endif
             write_asm(fputs("refalab_", assembler_source), assembler_source);
-            for (size_t i = 0; i < q->identifier_extern_length; i++)
+            for (size_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(q->identifier_extern + i)), assembler_source), assembler_source);
-            const T_U *pp = q->node;
+                write_asm(fputc(tolower(*(entry->identifier_extern + i)), assembler_source), assembler_source);
+            const T_U *pp = entry->node;
             while ((pp->mode & '\300') == '\300')
                 pp = pp->info.infop;
 #if defined POSIX
@@ -542,11 +542,11 @@ void jend(void)
                 sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
 #endif
             write_asm(fputs(bufs, assembler_source), assembler_source);
-            for (size_t i = 0; i < q->identifier_extern_length; i++)
+            for (size_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
-                write_asm(fputc(tolower(*(q->identifier_extern + i)), assembler_source), assembler_source);
+                write_asm(fputc(tolower(*(entry->identifier_extern + i)), assembler_source), assembler_source);
             write_asm(fputc('\n', assembler_source), assembler_source);
-            q = q->next;
+            entry = entry->next;
         };
 #if defined POSIX
         write_asm(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", assembler_source), assembler_source);
@@ -555,25 +555,25 @@ void jend(void)
     // termination
     sfclr(&file_bytes);
     sfclr(&file_nodes);
-    q = first_ent;
-    while (q != NULL)
+    entry = first_entry;
+    while (entry != NULL)
     {
-        r = q->next;
+        entry2 = entry->next;
 #if defined mdebug
-        fprintf(stderr, "free(cj) q=%p\n", (void *)q);
+        fprintf(stderr, "free(cj) entry=%p\n", (void *)entry);
 #endif
-        free(q);
-        q = r;
+        free(entry);
+        entry = entry2;
     }
-    qx = first_ext;
-    while (qx != NULL)
+    extrn = first_extrn;
+    while (extrn != NULL)
     {
-        rx = qx->next;
+        extrn2 = extrn->next;
 #if defined mdebug
-        fprintf(stderr, "free(cj) qx=%p\n", (void *)qx);
+        fprintf(stderr, "free(cj) extrn=%p\n", (void *)extrn);
 #endif
-        free(qx);
-        qx = rx;
+        free(extrn);
+        extrn = extrn2;
     }
     return;
 } // jend
