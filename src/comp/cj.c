@@ -43,17 +43,17 @@ typedef struct relay
     uint16_t delta;
 } T_RELAY;
 
-typedef struct file_bytes_nodes
+typedef struct stream_bytes_nodes
 {
     size_t length;
     size_t current;
-    char *name;
+    char *file_name;
     uint8_t *buffer;
     FILE *file;
-} T_FILE_BYTES_NODES;
+} T_STREAM_BYTES_NODES;
 
-static T_FILE_BYTES_NODES file_bytes = {0, 0, NULL, NULL, NULL};
-static T_FILE_BYTES_NODES file_nodes = {0, 0, NULL, NULL, NULL};
+static T_STREAM_BYTES_NODES stream_bytes = {0, 0, NULL, NULL, NULL};
+static T_STREAM_BYTES_NODES stream_nodes = {0, 0, NULL, NULL, NULL};
 
 static uint8_t byte;
 
@@ -77,27 +77,27 @@ static void error_no_memory(void)
     return;
 }
 
-static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *file_bytes_nodes)
+static void file_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (file_bytes_nodes->name != NULL)
+    if (stream_bytes_nodes->file_name != NULL)
     {
-        free(file_bytes_nodes->name);
+        free(stream_bytes_nodes->file_name);
 #if defined mdebug
-        fprintf(stderr, "free(cj) file_bytes_nodes->name=%p\n", (void *)file_bytes_nodes->name);
+        fprintf(stderr, "free(cj) stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
 #endif
     }
-    file_bytes_nodes->name = (char *)malloc(strlen(name) + 1);
-    if (file_bytes_nodes->name == NULL)
+    stream_bytes_nodes->file_name = (char *)malloc(strlen(file_name) + 1);
+    if (stream_bytes_nodes->file_name == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): file_bytes_nodes->name=%p\n", (void *)file_bytes_nodes->name);
+    fprintf(stderr, "malloc(cj): stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
 #endif
-    strcpy(file_bytes_nodes->name, name);
+    strcpy(stream_bytes_nodes->file_name, file_name);
     size_t file_bytes_nodes_length = 0;
-    if (file_bytes_nodes->buffer == NULL)
+    if (stream_bytes_nodes->buffer == NULL)
     {
         size_t max_file_bytes_nodes_length;
-        if (file_bytes_nodes == &file_nodes)
+        if (stream_bytes_nodes == &stream_nodes)
         {
             if (LBLL == 4)
                 max_file_bytes_nodes_length = 49152; // 8192*6
@@ -119,17 +119,17 @@ static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *fi
             min_file_bytes_nodes_length= 24;
         while (true)
         {
-            file_bytes_nodes->buffer = (uint8_t *)malloc(file_bytes_nodes_length);
-            if (file_bytes_nodes->buffer != NULL)
+            stream_bytes_nodes->buffer = (uint8_t *)malloc(file_bytes_nodes_length);
+            if (stream_bytes_nodes->buffer != NULL)
             {
 #if defined mdebug
-                fprintf(stderr, "malloc(cj): file_bytes_nodes->buffer=%p file_bytes_nodes_length=%zu\n", (void *)file_bytes_nodes->buffer, file_bytes_nodes_length);
+                fprintf(stderr, "malloc(cj): stream_bytes_nodes->buffer=%p file_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, file_bytes_nodes_length);
 #endif
                 break;
             }
             else
             {
-                if (file_bytes_nodes == &file_nodes)
+                if (stream_bytes_nodes == &stream_nodes)
                     file_bytes_nodes_length /= 2;
                 else
                     file_bytes_nodes_length = (file_bytes_nodes_length + LBLL + 4) / 2 - LBLL - 4;
@@ -138,58 +138,58 @@ static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *fi
             }
         } // while
     }
-    file_bytes_nodes->current = 0;
-    file_bytes_nodes->length = file_bytes_nodes_length;
-    file_bytes_nodes->file = NULL;
+    stream_bytes_nodes->current = 0;
+    stream_bytes_nodes->length = file_bytes_nodes_length;
+    stream_bytes_nodes->file = NULL;
     return;
 }
 
-static void sfop_r(T_FILE_BYTES_NODES *file_bytes_nodes)
+static void sfop_r(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (file_bytes_nodes->file != NULL)
+    if (stream_bytes_nodes->file != NULL)
     {
-        file_bytes_nodes->file = fopen(file_bytes_nodes->name, Rbin);
-        if (file_bytes_nodes->file == NULL)
+        stream_bytes_nodes->file = fopen(stream_bytes_nodes->file_name, Rbin);
+        if (stream_bytes_nodes->file == NULL)
         {
-            printf("Can't open for read %s\n", file_bytes_nodes->name);
+            printf("Can't open for read %s\n", stream_bytes_nodes->file_name);
             exit(8);
         }
-        if (fread(file_bytes_nodes->buffer, file_bytes_nodes->length, 1, file_bytes_nodes->file) == 0)
+        if (fread(stream_bytes_nodes->buffer, stream_bytes_nodes->length, 1, stream_bytes_nodes->file) == 0)
         {
-            printf("Read i/o error in %s\n", file_bytes_nodes->name);
+            printf("Read i/o error in %s\n", stream_bytes_nodes->file_name);
             exit(8);
         }
     }
-    file_bytes_nodes->current = 0;
+    stream_bytes_nodes->current = 0;
     return;
 }
 
-static void sfcl(const T_FILE_BYTES_NODES *file_bytes_nodes)
+static void sfcl(const T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (file_bytes_nodes->file != NULL)
+    if (stream_bytes_nodes->file != NULL)
     {
-        if (fwrite(file_bytes_nodes->buffer, file_bytes_nodes->current, 1, file_bytes_nodes->file) == 0)
+        if (fwrite(stream_bytes_nodes->buffer, stream_bytes_nodes->current, 1, stream_bytes_nodes->file) == 0)
         {
-            printf("Write i/o error in %s\n", file_bytes_nodes->name);
+            printf("Write i/o error in %s\n", stream_bytes_nodes->file_name);
             exit(8);
         }
-        fclose(file_bytes_nodes->file);
+        fclose(stream_bytes_nodes->file);
     }
     return;
 }
 
-static void sfclr(T_FILE_BYTES_NODES *file_bytes_nodes)
+static void sfclr(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (file_bytes_nodes->file != NULL)
-        unlink(file_bytes_nodes->name);
-    free(file_bytes_nodes->name);
-    free(file_bytes_nodes->buffer);
+    if (stream_bytes_nodes->file != NULL)
+        unlink(stream_bytes_nodes->file_name);
+    free(stream_bytes_nodes->file_name);
+    free(stream_bytes_nodes->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(sfclr) file_bytes_nodes->name(c 0)=%p\n", (void *)file_bytes_nodes->name);
-    fprintf(stderr, "            file_bytes_nodes->buffer(c 0)=%p\n", (void *)file_bytes_nodes->buffer);
+    fprintf(stderr, "free(sfclr) stream_bytes_nodes->file_name(c 0)=%p\n", (void *)stream_bytes_nodes->file_name);
+    fprintf(stderr, "            stream_bytes_nodes->buffer(c 0)=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
-    file_bytes_nodes->name = NULL;
-    file_bytes_nodes->buffer = NULL;
+    stream_bytes_nodes->file_name = NULL;
+    stream_bytes_nodes->buffer = NULL;
     return;
 }
 
@@ -197,28 +197,28 @@ static void sfwr2(void)
 {
     while (true)
     {
-        const size_t ost = file_nodes.length - file_nodes.current;
+        const size_t ost = stream_nodes.length - stream_nodes.current;
         if (ost >= SMBL)
         {
-            memcpy(file_nodes.buffer + file_nodes.current, &relay, SMBL);
-            file_nodes.current += SMBL;
+            memcpy(stream_nodes.buffer + stream_nodes.current, &relay, SMBL);
+            stream_nodes.current += SMBL;
             return;
         }
-        if (file_nodes.file == NULL)
+        if (stream_nodes.file == NULL)
         {
-            file_nodes.file = fopen(file_nodes.name, Wbin);
-            if (file_nodes.file == NULL)
+            stream_nodes.file = fopen(stream_nodes.file_name, Wbin);
+            if (stream_nodes.file == NULL)
             {
                 printf("Can't open for write sysut2\n");
                 exit(8);
             }
         }
-        if (fwrite(file_nodes.buffer, file_nodes.length, 1, file_nodes.file) == 0)
+        if (fwrite(stream_nodes.buffer, stream_nodes.length, 1, stream_nodes.file) == 0)
         {
             printf("Write i/o error in sysut2\n");
             exit(8);
         }
-        file_nodes.current = 0;
+        stream_nodes.current = 0;
     } // while
 } // sfwr2
 
@@ -226,15 +226,15 @@ static void sfrd1(uint8_t *c, size_t n)
 {
     while (true)
     {
-        const size_t ost = file_bytes.length - file_bytes.current;
+        const size_t ost = stream_bytes.length - stream_bytes.current;
         if (ost >= n)
         {
-            memcpy(c, file_bytes.buffer + file_bytes.current, n);
-            file_bytes.current += n;
+            memcpy(c, stream_bytes.buffer + stream_bytes.current, n);
+            stream_bytes.current += n;
             return;
         }
-        memcpy(c, file_bytes.buffer + file_bytes.current, ost);
-        file_bytes.current = 0;
+        memcpy(c, stream_bytes.buffer + stream_bytes.current, ost);
+        stream_bytes.current = 0;
         n -= ost;
         c += ost;
     } // while
@@ -244,22 +244,22 @@ static void sfrd2(void)
 {
     while (true)
     {
-        const size_t ost = file_nodes.length - file_nodes.current;
+        const size_t ost = stream_nodes.length - stream_nodes.current;
         if (ost >= SMBL)
         {
-            memcpy(&relay, file_nodes.buffer + file_nodes.current, SMBL);
-            file_nodes.current += SMBL;
+            memcpy(&relay, stream_nodes.buffer + stream_nodes.current, SMBL);
+            stream_nodes.current += SMBL;
             return;
         }
-        file_nodes.current = 0;
+        stream_nodes.current = 0;
     } // while
 } // sfrd2
 
 void jstart(void)
 {
     delta = 0;
-    file_bytes_nodes_open_write("sysut1.rf", &file_bytes);
-    file_bytes_nodes_open_write("sysut2.rf", &file_nodes);
+    file_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
+    file_bytes_nodes_open_write("sysut2.rf", &stream_nodes);
     first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_entry == NULL)
         error_no_memory();
@@ -298,29 +298,29 @@ size_t jwhere(void)
 
 void jbyte(uint8_t bb)
 {
-    if (file_bytes.current != file_bytes.length)
+    if (stream_bytes.current != stream_bytes.length)
     {
-        *(file_bytes.buffer + file_bytes.current) = bb;
-        file_bytes.current++;
+        *(stream_bytes.buffer + stream_bytes.current) = bb;
+        stream_bytes.current++;
     }
     else
     {
-        if (file_bytes.file == NULL)
+        if (stream_bytes.file == NULL)
         {
-            file_bytes.file = fopen(file_bytes.name, Wbin);
-            if (file_bytes.file == NULL)
+            stream_bytes.file = fopen(stream_bytes.file_name, Wbin);
+            if (stream_bytes.file == NULL)
             {
                 printf("Can't open for write sysut1\n");
                 exit(8);
             }
         }
-        if (fwrite(file_bytes.buffer, file_bytes.length, 1, file_bytes.file) == 0)
+        if (fwrite(stream_bytes.buffer, stream_bytes.length, 1, stream_bytes.file) == 0)
         {
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *file_bytes.buffer = bb;
-        file_bytes.current = 1;
+        *stream_bytes.buffer = bb;
+        stream_bytes.current = 1;
     }
     delta++;
     current_address++;
@@ -405,8 +405,8 @@ static void zakon(void)
     relay.delta = delta;
     relay.node = NULL;
     sfwr2();
-    sfcl(&file_bytes);
-    sfcl(&file_nodes);
+    sfcl(&stream_bytes);
+    sfcl(&stream_nodes);
     module_length = current_address;
     return;
 } // zakon
@@ -434,8 +434,8 @@ void jend(void)
     if (module_length != 0)
     {
         // text generating
-        sfop_r(&file_bytes);
-        sfop_r(&file_nodes);
+        sfop_r(&stream_bytes);
+        sfop_r(&stream_nodes);
         while (true)
         {
             sfrd2();
@@ -552,8 +552,8 @@ void jend(void)
 #endif
     }
     // termination
-    sfclr(&file_bytes);
-    sfclr(&file_nodes);
+    sfclr(&stream_bytes);
+    sfclr(&stream_nodes);
     entry = first_entry;
     while (entry != NULL)
     {
