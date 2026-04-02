@@ -93,53 +93,53 @@ static void file_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NO
     fprintf(stderr, "malloc(cj): stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
 #endif
     strcpy(stream_bytes_nodes->file_name, file_name);
-    size_t file_bytes_nodes_length = 0;
+    size_t stream_bytes_nodes_length = 0;
     if (stream_bytes_nodes->buffer == NULL)
     {
-        size_t max_file_bytes_nodes_length;
+        size_t max_stream_bytes_nodes_length;
         if (stream_bytes_nodes == &stream_nodes)
         {
             if (LBLL == 4)
-                max_file_bytes_nodes_length = 49152; // 8192*6
+                max_stream_bytes_nodes_length = 49152; // 8192*6
             else
-                max_file_bytes_nodes_length = 81920; // 8192*10
+                max_stream_bytes_nodes_length = 81920; // 8192*10
         }
         else
         {
             if (LBLL == 4)
-                max_file_bytes_nodes_length = 65528; // 65536-8
+                max_stream_bytes_nodes_length = 65528; // 65536-8
             else
-                max_file_bytes_nodes_length = 98292; // 98304-12
+                max_stream_bytes_nodes_length = 98292; // 98304-12
         }
-        file_bytes_nodes_length = max_file_bytes_nodes_length;
-        size_t min_file_bytes_nodes_length;
+        stream_bytes_nodes_length = max_stream_bytes_nodes_length;
+        size_t min_stream_bytes_nodes_length;
         if (LBLL == 4)
-            min_file_bytes_nodes_length = 16;
+            min_stream_bytes_nodes_length = 16;
         else
-            min_file_bytes_nodes_length= 24;
+            min_stream_bytes_nodes_length= 24;
         while (true)
         {
-            stream_bytes_nodes->buffer = (uint8_t *)malloc(file_bytes_nodes_length);
+            stream_bytes_nodes->buffer = (uint8_t *)malloc(stream_bytes_nodes_length);
             if (stream_bytes_nodes->buffer != NULL)
             {
 #if defined mdebug
-                fprintf(stderr, "malloc(cj): stream_bytes_nodes->buffer=%p file_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, file_bytes_nodes_length);
+                fprintf(stderr, "malloc(cj): stream_bytes_nodes->buffer=%p stream_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes_length);
 #endif
                 break;
             }
             else
             {
                 if (stream_bytes_nodes == &stream_nodes)
-                    file_bytes_nodes_length /= 2;
+                    stream_bytes_nodes_length /= 2;
                 else
-                    file_bytes_nodes_length = (file_bytes_nodes_length + LBLL + 4) / 2 - LBLL - 4;
-                if (file_bytes_nodes_length < min_file_bytes_nodes_length)
+                    stream_bytes_nodes_length = (stream_bytes_nodes_length + LBLL + 4) / 2 - LBLL - 4;
+                if (stream_bytes_nodes_length < min_stream_bytes_nodes_length)
                     error_no_memory();
             }
         } // while
     }
     stream_bytes_nodes->current = 0;
-    stream_bytes_nodes->length = file_bytes_nodes_length;
+    stream_bytes_nodes->length = stream_bytes_nodes_length;
     stream_bytes_nodes->file = NULL;
     return;
 }
