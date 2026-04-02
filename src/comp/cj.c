@@ -93,9 +93,10 @@ static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *fi
     fprintf(stderr, "malloc(cj): file_bytes_nodes->name=%p\n", (void *)file_bytes_nodes->name);
 #endif
     strcpy(file_bytes_nodes->name, name);
-    size_t max_file_bytes_nodes_length = 0;
+    size_t file_bytes_nodes_length = 0;
     if (file_bytes_nodes->buffer == NULL)
     {
+        size_t max_file_bytes_nodes_length;
         if (file_bytes_nodes == &file_nodes)
         {
             if (LBLL == 4)
@@ -110,37 +111,35 @@ static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *fi
             else
                 max_file_bytes_nodes_length = 98292; // 98304-12
         }
-        size_t lon;
-        size_t min_oshex;
+        file_bytes_nodes_length = max_file_bytes_nodes_length;
+        size_t min_file_bytes_nodes_length;
         if (LBLL == 4)
-            min_oshex = 16;
+            min_file_bytes_nodes_length = 16;
         else
-            min_oshex = 24;
+            min_file_bytes_nodes_length= 24;
         while (true)
         {
-            file_bytes_nodes->buffer = (uint8_t *)malloc(max_file_bytes_nodes_length);
+            file_bytes_nodes->buffer = (uint8_t *)malloc(file_bytes_nodes_length);
             if (file_bytes_nodes->buffer != NULL)
             {
 #if defined mdebug
-                fprintf(stderr, "malloc(cj): file_bytes_nodes->buffer=%p un=%zu\n", (void *)file_bytes_nodes->buffer, un);
+                fprintf(stderr, "malloc(cj): file_bytes_nodes->buffer=%p file_bytes_nodes_length=%zu\n", (void *)file_bytes_nodes->buffer, file_bytes_nodes_length);
 #endif
                 break;
             }
             else
             {
-                lon = max_file_bytes_nodes_length;
                 if (file_bytes_nodes == &file_nodes)
-                    lon /= 2;
+                    file_bytes_nodes_length /= 2;
                 else
-                    lon = (lon + LBLL + 4) / 2 - LBLL - 4;
-                max_file_bytes_nodes_length = lon;
-                if (max_file_bytes_nodes_length < min_oshex)
+                    file_bytes_nodes_length = (file_bytes_nodes_length + LBLL + 4) / 2 - LBLL - 4;
+                if (file_bytes_nodes_length < min_file_bytes_nodes_length)
                     error_no_memory();
             }
         } // while
     }
     file_bytes_nodes->current = 0;
-    file_bytes_nodes->length = max_file_bytes_nodes_length;
+    file_bytes_nodes->length = file_bytes_nodes_length;
     file_bytes_nodes->file = NULL;
     return;
 }
