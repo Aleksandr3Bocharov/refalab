@@ -62,11 +62,11 @@ static T_EXTRN *extrn, *extrn2;
 
 static T_ENTRY *first_entry;
 static T_ENTRY *last_entry;
-static size_t module_length;
 static T_EXTRN *first_extrn;
 static T_EXTRN *last_extrn;
-static size_t current_address; // module generation files
 static size_t extrn_count;
+static size_t current_address; // module generation files
+static size_t module_length;
 static T_RELAY relay;
 static uint16_t delta;
 
