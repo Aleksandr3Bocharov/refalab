@@ -77,7 +77,7 @@ static void error_no_memory(void)
     return;
 }
 
-static void file_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     if (stream_bytes_nodes->file_name != NULL)
     {
@@ -144,7 +144,7 @@ static void file_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NO
     return;
 }
 
-static void sfop_r(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_open_read(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     if (stream_bytes_nodes->file != NULL)
     {
@@ -258,8 +258,8 @@ static void sfrd2(void)
 void jstart(void)
 {
     delta = 0;
-    file_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
-    file_bytes_nodes_open_write("sysut2.rf", &stream_nodes);
+    stream_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
+    stream_bytes_nodes_open_write("sysut2.rf", &stream_nodes);
     first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_entry == NULL)
         error_no_memory();
@@ -434,8 +434,8 @@ void jend(void)
     if (module_length != 0)
     {
         // text generating
-        sfop_r(&stream_bytes);
-        sfop_r(&stream_nodes);
+        stream_bytes_nodes_open_read(&stream_bytes);
+        stream_bytes_nodes_open_read(&stream_nodes);
         while (true)
         {
             sfrd2();
