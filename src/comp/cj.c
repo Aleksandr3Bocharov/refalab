@@ -70,45 +70,45 @@ static size_t module_length;
 static T_RELAY relay;
 static uint16_t delta;
 
-static void oshex(void)
+static void error_no_memory(void)
 {
-    fputs("\nOSHEX: no memory!!!\n", stdout);
+    fputs("\nERROR: no memory!!!\n", stdout);
     exit(1);
     return;
 }
 
-static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
+static void file_bytes_nodes_open_write(const char *name, T_FILE_BYTES_NODES *file_bytes_nodes)
 {
-    if (b->name != NULL)
+    if (file_bytes_nodes->name != NULL)
     {
-        free(b->name);
+        free(file_bytes_nodes->name);
 #if defined mdebug
-        fprintf(stderr, "free(cj) b->name=%p\n", (void *)b->name);
+        fprintf(stderr, "free(cj) file_bytes_nodes->name=%p\n", (void *)file_bytes_nodes->name);
 #endif
     }
-    b->name = (char *)malloc(strlen(s) + 1);
-    if (b->name == NULL)
-        oshex();
+    file_bytes_nodes->name = (char *)malloc(strlen(name) + 1);
+    if (file_bytes_nodes->name == NULL)
+        error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): b->name=%p\n", (void *)b->name);
+    fprintf(stderr, "malloc(cj): file_bytes_nodes->name=%p\n", (void *)file_bytes_nodes->name);
 #endif
-    strcpy(b->name, s);
-    size_t un = 0;
-    if (b->buffer == NULL)
+    strcpy(file_bytes_nodes->name, name);
+    size_t max_file_bytes_nodes_length = 0;
+    if (file_bytes_nodes->buffer == NULL)
     {
-        if (b == &file_nodes)
+        if (file_bytes_nodes == &file_nodes)
         {
             if (LBLL == 4)
-                un = 49152; // 8192*6
+                max_file_bytes_nodes_length = 49152; // 8192*6
             else
-                un = 81920; // 8192*10
+                max_file_bytes_nodes_length = 81920; // 8192*10
         }
         else
         {
             if (LBLL == 4)
-                un = 65528; // 65536-8
+                max_file_bytes_nodes_length = 65528; // 65536-8
             else
-                un = 98292; // 98304-12
+                max_file_bytes_nodes_length = 98292; // 98304-12
         }
         size_t lon;
         size_t min_oshex;
@@ -118,79 +118,79 @@ static void sfop_w(const char *s, T_FILE_BYTES_NODES *b)
             min_oshex = 24;
         while (true)
         {
-            b->buffer = (uint8_t *)malloc(un);
-            if (b->buffer != NULL)
+            file_bytes_nodes->buffer = (uint8_t *)malloc(max_file_bytes_nodes_length);
+            if (file_bytes_nodes->buffer != NULL)
             {
 #if defined mdebug
-                fprintf(stderr, "malloc(cj): b->buffer=%p un=%zu\n", (void *)b->buffer, un);
+                fprintf(stderr, "malloc(cj): file_bytes_nodes->buffer=%p un=%zu\n", (void *)file_bytes_nodes->buffer, un);
 #endif
                 break;
             }
             else
             {
-                lon = un;
-                if (b == &file_nodes)
+                lon = max_file_bytes_nodes_length;
+                if (file_bytes_nodes == &file_nodes)
                     lon /= 2;
                 else
                     lon = (lon + LBLL + 4) / 2 - LBLL - 4;
-                un = lon;
-                if (un < min_oshex)
-                    oshex();
+                max_file_bytes_nodes_length = lon;
+                if (max_file_bytes_nodes_length < min_oshex)
+                    error_no_memory();
             }
         } // while
     }
-    b->current = 0;
-    b->length = un;
-    b->file = NULL;
+    file_bytes_nodes->current = 0;
+    file_bytes_nodes->length = max_file_bytes_nodes_length;
+    file_bytes_nodes->file = NULL;
     return;
 }
 
-static void sfop_r(T_FILE_BYTES_NODES *b)
+static void sfop_r(T_FILE_BYTES_NODES *file_bytes_nodes)
 {
-    if (b->file != NULL)
+    if (file_bytes_nodes->file != NULL)
     {
-        b->file = fopen(b->name, Rbin);
-        if (b->file == NULL)
+        file_bytes_nodes->file = fopen(file_bytes_nodes->name, Rbin);
+        if (file_bytes_nodes->file == NULL)
         {
-            printf("Can't open for read %s\n", b->name);
+            printf("Can't open for read %s\n", file_bytes_nodes->name);
             exit(8);
         }
-        if (fread(b->buffer, b->length, 1, b->file) == 0)
+        if (fread(file_bytes_nodes->buffer, file_bytes_nodes->length, 1, file_bytes_nodes->file) == 0)
         {
-            printf("Read i/o error in %s\n", b->name);
+            printf("Read i/o error in %s\n", file_bytes_nodes->name);
             exit(8);
         }
     }
-    b->current = 0;
+    file_bytes_nodes->current = 0;
     return;
 }
 
-static void sfcl(const T_FILE_BYTES_NODES *b)
+static void sfcl(const T_FILE_BYTES_NODES *file_bytes_nodes)
 {
-    if (b->file != NULL)
+    if (file_bytes_nodes->file != NULL)
     {
-        if (fwrite(b->buffer, b->current, 1, b->file) == 0)
+        if (fwrite(file_bytes_nodes->buffer, file_bytes_nodes->current, 1, file_bytes_nodes->file) == 0)
         {
-            printf("Write i/o error in %s\n", b->name);
+            printf("Write i/o error in %s\n", file_bytes_nodes->name);
             exit(8);
         }
-        fclose(b->file);
+        fclose(file_bytes_nodes->file);
     }
     return;
 }
 
-static void sfclr(T_FILE_BYTES_NODES *b)
+static void sfclr(T_FILE_BYTES_NODES *file_bytes_nodes)
 {
-    if (b->file != NULL)
-        unlink(b->name);
-    free(b->name);
-    free(b->buffer);
+    if (file_bytes_nodes->file != NULL)
+        unlink(file_bytes_nodes->name);
+    free(file_bytes_nodes->name);
+    free(file_bytes_nodes->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(sfclr) b->name(c 0)=%p\n", (void *)b->name);
-    fprintf(stderr, "            b->buffer(c 0)=%p\n", (void *)b->buffer);
+    fprintf(stderr, "free(sfclr) file_bytes_nodes->name(c 0)=%p\n", (void *)file_bytes_nodes->name);
+    fprintf(stderr, "            file_bytes_nodes->buffer(c 0)=%p\n", (void *)file_bytes_nodes->buffer);
 #endif
-    b->name = NULL;
-    b->buffer = NULL;
+    file_bytes_nodes->name = NULL;
+    file_bytes_nodes->buffer = NULL;
     return;
 }
 
@@ -259,11 +259,11 @@ static void sfrd2(void)
 void jstart(void)
 {
     delta = 0;
-    sfop_w("sysut1.rf", &file_bytes);
-    sfop_w("sysut2.rf", &file_nodes);
+    file_bytes_nodes_open_write("sysut1.rf", &file_bytes);
+    file_bytes_nodes_open_write("sysut2.rf", &file_nodes);
     first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_entry == NULL)
-        oshex();
+        error_no_memory();
 #if defined mdebug
     fprintf(stderr, "malloc(cj): first_entry=%p\n", (void *)first_entry);
 #endif
@@ -271,7 +271,7 @@ void jstart(void)
     first_entry->next = NULL;
     first_extrn = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (first_extrn == NULL)
-        oshex();
+        error_no_memory();
 #if defined mdebug
     fprintf(stderr, "malloc(cj): first_extrn=%p\n", (void *)first_extrn);
 #endif
@@ -351,7 +351,7 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     }
     entry2 = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (entry2 == NULL)
-        oshex();
+        error_no_memory();
 #if defined mdebug
     fprintf(stderr, "malloc(cj): entry2()=%p\n", (void *)entry2);
 #endif
@@ -371,7 +371,7 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
     //  label length
     extrn2 = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (extrn2 == NULL)
-        oshex();
+        error_no_memory();
 #if defined mdebug
     fprintf(stderr, "malloc(cj): extrn2=%p\n", (void *)extrn2);
 #endif
