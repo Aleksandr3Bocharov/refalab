@@ -13,9 +13,9 @@
 
 #include <stddef.h>
 
-extern void print_error_string_symbol(const char *error_string, const char symbol);
-extern void print_error_two_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length);
 extern void print_error_string(const char *error_string);
+extern void print_error_two_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length);
 extern void print_error_three_strings(const char *error_string, const char *error2_string, uint8_t error2_string_length, const char *error3_string);
+extern void print_error_string_symbol(const char *error_string, const char symbol);
 
 #endif

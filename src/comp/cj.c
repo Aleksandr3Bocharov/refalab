@@ -327,9 +327,9 @@ void jit_byte(uint8_t buffer_byte)
     return;
 } // jit_byte
 
-void j3addr(T_U *pp)
+void jit_address(T_U *buffer_node)
 {
-    relay.node = pp;
+    relay.node = buffer_node;
     relay.delta = delta;
     delta = 0;
     stream_nodes_write();

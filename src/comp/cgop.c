@@ -38,7 +38,7 @@ void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
 void generate_operator_l(uint8_t operator, const uint8_t *l)
 {
     jit_byte(operator);
-    j3addr((T_U *)(void *)l);
+    jit_address((T_U *)(void *)l);
     return;
 }
 
@@ -49,7 +49,7 @@ void generate_symbol(const T_LINKTI *code)
     jit_byte(code_tag->byte2);
     if (code->tag == TAGF)
     {
-        j3addr((T_U *)(void *)code->info.codef);
+        jit_address((T_U *)(void *)code->info.codef);
         return;
     };
     const uint8_t *code_info = (uint8_t *)&(code->info.codef);

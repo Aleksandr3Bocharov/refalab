@@ -1307,7 +1307,7 @@ static bool compile_specifer(char tail)
             T_U *identifier_specifier = spref(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
-                j3addr(identifier_specifier);
+                jit_address(identifier_specifier);
             if (symbols[current_symbol_number] == ':')
             {
                 specifier_state = SPCGC;
