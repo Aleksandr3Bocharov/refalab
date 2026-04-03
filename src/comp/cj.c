@@ -346,8 +346,10 @@ void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifie
     {
         entry2 = entry2->next;
         if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
-            // !!!!! this is error
+        {
+            print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined");
             return;
+        }
     }
     entry2 = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (entry2 == NULL)
