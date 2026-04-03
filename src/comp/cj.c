@@ -116,7 +116,7 @@ static void stream_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_
         if (LBLL == 4)
             min_stream_bytes_nodes_length = 16;
         else
-            min_stream_bytes_nodes_length= 24;
+            min_stream_bytes_nodes_length = 24;
         while (true)
         {
             stream_bytes_nodes->buffer = (uint8_t *)malloc(stream_bytes_nodes_length);
@@ -346,7 +346,7 @@ void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifie
     {
         entry2 = entry2->next;
         if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
-        // !!!!! this is error
+            // !!!!! this is error
             return;
     }
     entry2 = (T_ENTRY *)malloc(sizeof(T_ENTRY));
@@ -369,6 +369,17 @@ void jit_extrn(T_U *extrn_node, const char *idendifier_extern, uint8_t idendifie
 // idendifier_extern label
 {
     // idendifier_extern_length label length
+    extrn2 = first_extrn;
+    while (extrn2 != last_extrn)
+    {
+        extrn2 = extrn2->next;
+        if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        {
+            extrn_node->info.infon = extrn2->node->info.infon;
+            extrn_node->mode |= '\220';
+            return;
+        }
+    }
     extrn2 = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (extrn2 == NULL)
         error_no_memory();
