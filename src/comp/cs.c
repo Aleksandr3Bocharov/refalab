@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-28
+// 2026-04-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -153,7 +153,7 @@ void sswap(const char *idp, uint8_t lid)
         p504(idp, lid);
     else
     { //  align box head on the 8-byte board
-        size_t j0 = jwhere();
+        size_t j0 = jit_where();
         size_t l0;
         if (options.full_name)
             l0 = 255 > scanner.module_name_length + lid + 1 ? scanner.module_name_length + lid + 1 : 255;

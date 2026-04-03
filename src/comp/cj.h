@@ -22,6 +22,6 @@ extern void jequ(T_U *pp, T_U *qq);
 extern void jextrn(T_U *pp, const char *ee, size_t ll);
 extern void jlabel(T_U *pp);
 extern void jit_start(void);
-extern size_t jwhere(void);
+extern size_t jit_where(void);
 
 #endif

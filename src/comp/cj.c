@@ -279,16 +279,16 @@ void jit_start(void)
     current_address = 0;
     extrn_count = 1;
     return;
-} // jstart
+} // jit_start
 
-size_t jwhere(void)
+size_t jit_where(void)
 {
-    size_t max_addr;
+    size_t max_address;
     if (LBLL == 4)
-        max_addr = 65535;
+        max_address = 65535;
     else
-        max_addr = 98303;
-    if (current_address > max_addr)
+        max_address = 98303;
+    if (current_address > max_address)
     {
         printf("Module too long\n");
         exit(1);

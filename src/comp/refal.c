@@ -185,7 +185,7 @@ static uint8_t current_symbol_number; // current symbol number
 static char card[CUT + 9];            // card buffer (input)
 static const char *card_cut = card;
 static uint32_t card_number; // card number
-static uint32_t errors_number;
+static uint32_t errors_count;
 static char string_symbols[CUT + 6];
 static char *symbols = string_symbols + 6;
 static char class_symbols_cut[CUT + 6];
@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
         switch (module_state)
         {
         case START_OF_MODULE:
-            errors_number = 0;
+            errors_count = 0;
             scanner.module_number++;
             flags.was_cut = false;
             flags.end_refalab_source = false;
@@ -498,12 +498,12 @@ int main(int argc, char *argv[])
             break;
         case END_IS_MISSING:
             print_error_string("003 end-directive missing");
-            errors_number++;
+            errors_count++;
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
             s_end();
-            if (errors_number != 0)
+            if (errors_count != 0)
             {
                 flags.was_error = true;
                 module_length = 0;
@@ -511,7 +511,7 @@ int main(int argc, char *argv[])
             else
             {
                 jend();
-                module_length = jwhere();
+                module_length = jit_where();
             }
             s_term();
             print_conclusion();
@@ -521,7 +521,7 @@ int main(int argc, char *argv[])
             fclose(refalab_source);
             if (options.source_listing)
                 fclose(refalab_source_listing);
-            module_length = jwhere();
+            module_length = jit_where();
             fclose(assembler_source);
             if (module_length == 0 || flags.was_error)
                 unlink(filename);
@@ -1771,9 +1771,9 @@ static void print_conclusion(void)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);
     card_number = 0;
-    if (errors_number != 0)
+    if (errors_count != 0)
         sprintf(print_line,
-                "errors   = %-3d         module_obj_length(bytes) = %zu\n", errors_number, module_length);
+                "errors   = %-3d         module_obj_length(bytes) = %zu\n", errors_count, module_length);
     else
         sprintf(print_line,
                 "                       module_obj_length(bytes) = %zu\n", module_length);
@@ -1788,7 +1788,7 @@ void processing_error(void)
 {
     print_card_refalab_source_listing();
     print_card_terminal();
-    errors_number++;
+    errors_count++;
     return;
 }
 
