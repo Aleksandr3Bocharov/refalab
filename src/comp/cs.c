@@ -178,7 +178,7 @@ void sswap(const char *idp, uint8_t lid)
 void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 {
     T_U *p = lookup(idp, lidp);
-    jentry(p, ide, lide);
+    jit_entry(p, ide, lide);
     return;
 }
 

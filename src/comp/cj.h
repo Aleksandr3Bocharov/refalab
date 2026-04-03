@@ -17,7 +17,7 @@
 extern void jit_address(T_U *buffer_node);
 extern void jit_byte(uint8_t buffer_byte);
 extern void jend(void);
-extern void jentry(T_U *pp, const char *ee, size_t ll);
+extern void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifier_extern_length);
 extern void jequ(T_U *pp, T_U *qq);
 extern void jextrn(T_U *pp, const char *ee, size_t ll);
 extern void jlabel(T_U *pp);

@@ -337,14 +337,14 @@ void jit_address(T_U *buffer_node)
     return;
 }
 
-void jentry(T_U *pp, const char *ee, size_t ll)
-// ee label
+void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+// idendifier_extern label
 {
     entry2 = first_entry;
     while (entry2 != last_entry)
     {
         entry2 = entry2->next;
-        if (entry2->identifier_extern_length == ll && strncmp(entry2->identifier_extern, ee, ll < entry2->identifier_extern_length ? ll : entry2->identifier_extern_length) == 0)
+        if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         // !!!!! this is error
             return;
     }
@@ -352,17 +352,17 @@ void jentry(T_U *pp, const char *ee, size_t ll)
     if (entry2 == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): entry2()=%p\n", (void *)entry2);
+    fprintf(stderr, "malloc(cj): entry2=%p\n", (void *)entry2);
 #endif
     last_entry->next = entry2;
     last_entry = entry2;
-    entry2->node = pp;
+    entry2->node = entry_node;
     entry2->next = NULL;
-    entry2->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(entry2->identifier_extern, ee, entry2->identifier_extern_length);
-    pp->mode |= '\040';
+    entry2->identifier_extern_length = idendifier_extern_length;
+    strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
+    entry_node->mode |= '\040';
     return;
-} // jentry
+} // jit_entry
 
 void jextrn(T_U *pp, const char *ee, size_t ll)
 // ee label
