@@ -192,7 +192,7 @@ void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
     else
     {
         p->def = scanner.carriage_number;
-        jextrn(p, ide, lide);
+        jit_extrn(p, ide, lide);
     }
     return;
 }

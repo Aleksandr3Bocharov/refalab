@@ -340,6 +340,7 @@ void jit_address(T_U *buffer_node)
 void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
+    // idendifier_extern_length label length
     entry2 = first_entry;
     while (entry2 != last_entry)
     {
@@ -364,10 +365,10 @@ void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifie
     return;
 } // jit_entry
 
-void jextrn(T_U *pp, const char *ee, size_t ll)
-// ee label
+void jit_extrn(T_U *extrn_node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+// idendifier_extern label
 {
-    //  label length
+    // idendifier_extern_length label length
     extrn2 = (T_EXTRN *)malloc(sizeof(T_EXTRN));
     if (extrn2 == NULL)
         error_no_memory();
@@ -376,15 +377,15 @@ void jextrn(T_U *pp, const char *ee, size_t ll)
 #endif
     last_extrn->next = extrn2;
     last_extrn = extrn2;
-    extrn2->node = pp;
+    extrn2->node = extrn_node;
     extrn2->next = NULL;
-    extrn2->identifier_extern_length = MAX_IDENTIFIER_EXTERN_LENGTH < ll ? MAX_IDENTIFIER_EXTERN_LENGTH : ll;
-    strncpy(extrn2->identifier_extern, ee, extrn2->identifier_extern_length);
-    pp->mode |= '\220';
+    extrn2->identifier_extern_length = idendifier_extern_length;
+    strncpy(extrn2->identifier_extern, idendifier_extern, extrn2->identifier_extern_length);
+    extrn_node->mode |= '\220';
     extrn_count++;
-    pp->info.infon = extrn_count;
+    extrn_node->info.infon = extrn_count;
     return;
-} // jextrn
+} // jit_extrn
 
 void jlabel(T_U *pp)
 {
