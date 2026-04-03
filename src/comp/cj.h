@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-04-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.h  -------------------
@@ -21,7 +21,7 @@ extern void jentry(T_U *pp, const char *ee, size_t ll);
 extern void jequ(T_U *pp, T_U *qq);
 extern void jextrn(T_U *pp, const char *ee, size_t ll);
 extern void jlabel(T_U *pp);
-extern void jstart(void);
+extern void jit_start(void);
 extern size_t jwhere(void);
 
 #endif

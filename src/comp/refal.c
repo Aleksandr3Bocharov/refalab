@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-30
+// 2026-04-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -358,14 +358,14 @@ int main(int argc, char *argv[])
             {
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
-                jstart();
+                jit_start();
                 module_state = KEYS;
                 break;
             }
             strncpy(module_name, statement_label, statement_label_length);
             strncpy(scanner.module_name, statement_label, statement_label_length);
             scanner.module_name_length = statement_label_length;
-            jstart();
+            jit_start();
             blanks_out();
             if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
                 PRINT_ERROR_130;

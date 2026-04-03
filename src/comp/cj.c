@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-31
+// 2026-04-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -255,7 +255,7 @@ static void stream_nodes_read(void)
     } // while
 } // stream_nodes_read
 
-void jstart(void)
+void jit_start(void)
 {
     delta = 0;
     stream_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
