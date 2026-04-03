@@ -122,7 +122,7 @@ static void func_end(void)
         {
             pfail = next_stm;
             jlabel((T_U *)next_stm);
-            jbyte(n_fail);
+            jit_byte(n_fail);
         }
         next_stm = NULL;
     }
@@ -140,7 +140,7 @@ void sempty(const char *idp, uint8_t lid)
         fnhead(idp, lid);
         p->def = scanner.carriage_number;
         jlabel(p);
-        jbyte(n_fail);
+        jit_byte(n_fail);
     }
     return;
 }
@@ -163,14 +163,14 @@ void sswap(const char *idp, uint8_t lid)
         if (j0 != 0)
             j0 = 8 - j0;
         for (size_t k0 = 1; k0 <= j0; k0++)
-            jbyte(' ');
+            jit_byte(' ');
         fnhead(idp, lid);
         p->def = scanner.carriage_number;
         jlabel(p);
-        jbyte(n_swap);
+        jit_byte(n_swap);
         const size_t kk = SMBL + LBLL * 2;
         for (size_t k0 = 1; k0 <= kk; k0++)
-            jbyte('\000');
+            jit_byte('\000');
     }
     return;
 }
@@ -270,19 +270,19 @@ static void fnhead(const char *idp, size_t lid)
             const char *idpm = scanner.module_name;
             l0 = scanner.module_name_length;
             for (k0 = 0; k0 < l0; k0++)
-                jbyte((uint8_t)*(idpm + k0));
-            jbyte(':');
+                jit_byte((uint8_t)*(idpm + k0));
+            jit_byte(':');
             ll = k0 + 1;
         }
         else
             ll = 0;
         l0 = lid;
         for (k0 = 0; k0 < l0; k0++)
-            jbyte((uint8_t)*(idp + k0));
-        jbyte((uint8_t)(255 < ll + l0 ? 255 : ll + l0));
+            jit_byte((uint8_t)*(idp + k0));
+        jit_byte((uint8_t)(255 < ll + l0 ? 255 : ll + l0));
     }
     else
-        jbyte(0);
+        jit_byte(0);
     return;
 }
 

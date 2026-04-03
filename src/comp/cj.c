@@ -296,11 +296,11 @@ size_t jit_where(void)
     return current_address;
 }
 
-void jbyte(uint8_t bb)
+void jit_byte(uint8_t buffer_byte)
 {
     if (stream_bytes.current != stream_bytes.length)
     {
-        *(stream_bytes.buffer + stream_bytes.current) = bb;
+        *(stream_bytes.buffer + stream_bytes.current) = buffer_byte;
         stream_bytes.current++;
     }
     else
@@ -319,13 +319,13 @@ void jbyte(uint8_t bb)
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *stream_bytes.buffer = bb;
+        *stream_bytes.buffer = buffer_byte;
         stream_bytes.current = 1;
     }
     delta++;
     current_address++;
     return;
-} // jbyte
+} // jit_byte
 
 void j3addr(T_U *pp)
 {

@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-04-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -497,7 +497,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case LTXT3:
             current_left_part_element++;
-            jbyte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            jit_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             left_part_elements[current_left_part_element].right_number_element = number_element;
             left_part_elements[current_left_part_element].left_number_element = left_part_elements[current_left_part_element].right_number_element;
             number_element++;
@@ -543,13 +543,13 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case LBCE:
             number_element += 2;
-            jbyte(n_lbce);
+            jit_byte(n_lbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].v_variable)
-                jbyte(n_nnil);
+                jit_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -563,7 +563,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             state = RCGL;
             break;
         case LBNIL:
-            jbyte(n_lbnil);
+            jit_byte(n_lbnil);
             left_part_elements[current_left_board].right_number_element = number_element;
             left_part_elements[current_left_board].left_number_element = left_part_elements[current_left_board].right_number_element;
             current_left_board = current_left_part_element;
@@ -614,7 +614,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 generate_operator_n(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                jbyte(n_ls);
+                jit_byte(n_ls);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = LSMD;
@@ -642,7 +642,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = LED;
                 break;
             }
-            jbyte(n_lw);
+            jit_byte(n_lw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -756,7 +756,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case RTXT3:
             current_left_part_element--;
-            jbyte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            jit_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             left_part_elements[current_left_part_element].right_number_element = number_element;
             left_part_elements[current_left_part_element].left_number_element = left_part_elements[current_left_part_element].right_number_element;
             number_element++;
@@ -805,13 +805,13 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case RBCE:
             number_element += 2;
-            jbyte(n_rbce);
+            jit_byte(n_rbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].v_variable)
-                jbyte(n_nnil);
+                jit_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -825,7 +825,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             state = RCGR;
             break;
         case RBNIL:
-            jbyte(n_rbnil);
+            jit_byte(n_rbnil);
             left_part_elements[current_right_board].right_number_element = number_element + 1;
             left_part_elements[current_right_board].left_number_element = left_part_elements[current_right_board].right_number_element;
             current_right_board = current_left_part_element;
@@ -873,7 +873,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 generate_operator_n(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                jbyte(n_rs);
+                jit_byte(n_rs);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = RSMD;
@@ -901,7 +901,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = RED;
                 break;
             }
-            jbyte(n_rw);
+            jit_byte(n_rw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -951,7 +951,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case NIL:
             //     empty hole
-            jbyte(n_nil);
+            jit_byte(n_nil);
             next_hole = hole_list[current_hole].next_hole;
             hole_list[current_hole].next_hole = hole_list[next_hole].next_hole;
             hole_list[current_hole].left_board = hole_list[next_hole].left_board;
@@ -984,12 +984,12 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case CE2:
             variable_index = left_part_elements[current_left_part_element].variable_index;
             variables[variable_index].main_right_number_element = number_element + 1;
-            jbyte(n_ce);
+            jit_byte(n_ce);
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].rem--;
             if (left_part_elements[current_left_part_element].v_variable)
-                jbyte(n_nnil);
+                jit_byte(n_nnil);
             left_part_elements[current_left_part_element].left_number_element = number_element;
             left_part_elements[current_left_part_element].right_number_element = number_element + 1;
             number_element += 2;
@@ -1104,7 +1104,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             {
                 const uint8_t diff = jump_stack_pointer - left_part_elements[current_left_part_element].jump_stack_pointer;
                 if (diff == 1)
-                    jbyte(n_eoei);
+                    jit_byte(n_eoei);
                 else
                     generate_operator_n(n_eoe, diff);
                 jump_stack_pointer = left_part_elements[current_left_part_element].jump_stack_pointer;
@@ -1167,7 +1167,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case RMAX:
             generate_operator_l(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                jbyte(n_nnil);
+                jit_byte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = REM;
             break;
@@ -1183,7 +1183,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case LMAX:
             generate_operator_l(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                jbyte(n_nnil);
+                jit_byte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = LEM;
             break;
@@ -1259,7 +1259,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case LESW2:
             //   ei ( . . . ) . . .
             generate_operator_e_v(n_pleb, n_plvb);
-            jbyte(n_leb);
+            jit_byte(n_leb);
             stoped_bracket_flag = 0;
             state = LB1;
             break;
@@ -1285,7 +1285,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case LE:
             generate_operator_e_v(n_ple, n_plv);
-            jbyte(n_le);
+            jit_byte(n_le);
             state = RCGL;
             break;
         case ROE:
@@ -1351,7 +1351,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case RESW3:
             // . . .  ( . . .  ) ei
             generate_operator_e_v(n_preb, n_prvb);
-            jbyte(n_reb);
+            jit_byte(n_reb);
             stoped_bracket_flag = 0;
             state = RB1;
             break;
@@ -1374,12 +1374,12 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case RE:
             generate_operator_e_v(n_pre, n_prv);
-            jbyte(n_re);
+            jit_byte(n_re);
             state = RCGR;
             break;
         //                 identification end
         case RCGFIN:
-            jbyte(n_eor);
+            jit_byte(n_eor);
             //--------------------------------------------
             //         right part compilation
             //--------------------------------------------
@@ -1462,7 +1462,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             {
                 generate_operator_n(n_text, symbols_count);
                 for (uint8_t k = 1; k <= symbols_count; k++)
-                    jbyte((uint8_t)symbols_buffer[k]);
+                    jit_byte((uint8_t)symbols_buffer[k]);
             };
             state = SW_RPE;
             break;
@@ -1471,7 +1471,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             scan_sentence_element();
             if (current_sentence_element.type == t_rb)
             {
-                jbyte(n_blr);
+                jit_byte(n_blr);
                 state = GET_RPE;
                 break;
             }
@@ -1483,12 +1483,12 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = GET_RPE;
                 break;
             }
-            jbyte(n_bl);
+            jit_byte(n_bl);
             state = SW_RPE;
             break;
         case RPE3:
             // right bracket
-            jbyte(n_br);
+            jit_byte(n_br);
             if (brackets_count[brackets_k_level] == 0)
                 print_error_string("402 too many ')' in right part");
             else
@@ -1582,7 +1582,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = GET_RPE;
                 break;
             }
-            jbyte(n_bl);
+            jit_byte(n_bl);
             state = SW_RPE;
             break;
         case RPE8:
@@ -1593,7 +1593,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             {
                 if (brackets_count[brackets_k_level] != 0)
                     print_error_string("401 too many '(' in right part");
-                jbyte(n_bract);
+                jit_byte(n_bract);
                 brackets_k_level--;
             };
             state = GET_RPE;
@@ -1605,7 +1605,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case RPE10:
             // sentence end
-            jbyte(n_eos);
+            jit_byte(n_eos);
             if (brackets_k_level != 1)
                 print_error_string("403 too many signs '<' in right part");
             if (brackets_count[brackets_k_level] != 0)
@@ -1648,23 +1648,23 @@ static void generate_boards_stoping_brackets(void)
         return;
     case 1: // left stoped brackets
         if (current_hole == hole_x)
-            jbyte(n_lb);
+            jit_byte(n_lb);
         else if (current_hole == hole_y)
-            jbyte(n_lby);
+            jit_byte(n_lby);
         else
         {
-            jbyte(n_lb);
+            jit_byte(n_lb);
             break;
         };
         return;
     case 2: // right stoped brackets
         if (current_hole == hole_x)
-            jbyte(n_rb);
+            jit_byte(n_rb);
         else if (current_hole == hole_y)
-            jbyte(n_rby);
+            jit_byte(n_rby);
         else
         {
-            jbyte(n_rb);
+            jit_byte(n_rb);
             break;
         };
         return;
@@ -1814,9 +1814,9 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
 static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
-        jbyte(operator_e);
+        jit_byte(operator_e);
     else
-        jbyte(operator_v);
+        jit_byte(operator_v);
 }
 
 //----------  end of file CCST.C  -------------------

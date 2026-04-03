@@ -15,7 +15,7 @@
 #include "clu.h"
 
 extern void j3addr(T_U *pp);
-extern void jbyte(uint8_t bb);
+extern void jit_byte(uint8_t buffer_byte);
 extern void jend(void);
 extern void jentry(T_U *pp, const char *ee, size_t ll);
 extern void jequ(T_U *pp, T_U *qq);

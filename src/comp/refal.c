@@ -1128,7 +1128,7 @@ void scan_sentence_element(void)
 static void generate_specifier(uint8_t n)
 {
     if (flags.left_part_sentence)
-        jbyte(n);
+        jit_byte(n);
     return;
 }
 
