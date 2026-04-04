@@ -96,14 +96,14 @@ void fndef(const char *idp, size_t lid)
         {
             fnhead(idp, lid);
             p->def = scanner.carriage_number;
-            jlabel(p);
+            jit_label(p);
             generate_operator_l(n_sjump, (uint8_t *)next_stm);
         }
     }
     else
     { //  next statement in function
         if (next_stm != NULL)
-            jlabel((T_U *)next_stm);
+            jit_label((T_U *)next_stm);
         else
             p500();
         next_stm = alloc_lbl();
@@ -117,11 +117,11 @@ static void func_end(void)
     if (next_stm != NULL)
     {
         if (pfail != NULL)
-            jequ((T_U *)next_stm, (T_U *)pfail);
+            jit_equ((T_U *)next_stm, (T_U *)pfail);
         else
         {
             pfail = next_stm;
-            jlabel((T_U *)next_stm);
+            jit_label((T_U *)next_stm);
             jit_byte(n_fail);
         }
         next_stm = NULL;
@@ -139,7 +139,7 @@ void sempty(const char *idp, uint8_t lid)
     {
         fnhead(idp, lid);
         p->def = scanner.carriage_number;
-        jlabel(p);
+        jit_label(p);
         jit_byte(n_fail);
     }
     return;
@@ -166,7 +166,7 @@ void sswap(const char *idp, uint8_t lid)
             jit_byte(' ');
         fnhead(idp, lid);
         p->def = scanner.carriage_number;
-        jlabel(p);
+        jit_label(p);
         jit_byte(n_swap);
         const size_t kk = SMBL + LBLL * 2;
         for (size_t k0 = 1; k0 <= kk; k0++)
@@ -226,7 +226,7 @@ void spdef(const char *idp, size_t lid)
         else
         {
             p->def = scanner.carriage_number;
-            jlabel(p);
+            jit_label(p);
         }
     }
     return;
@@ -247,13 +247,13 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     {
         p0->type |= p1->type;
         p1->def = scanner.carriage_number;
-        jequ(p1, p0);
+        jit_equ(p1, p0);
     }
     else if ((p0->mode & '\300') == '\000')
     {
         p1->type |= p0->type;
         p0->def = scanner.carriage_number;
-        jequ(p0, p1);
+        jit_equ(p0, p1);
     }
     else
         print_error_string("501 both labels already defined ");

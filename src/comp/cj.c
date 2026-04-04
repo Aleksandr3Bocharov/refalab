@@ -398,17 +398,17 @@ void jit_extrn(T_U *node, const char *idendifier_extern, uint8_t idendifier_exte
     return;
 } // jit_extrn
 
-void jlabel(T_U *pp)
+void jit_label(T_U *node)
 {
-    pp->mode |= '\120';
-    pp->info.infon = current_address;
+    node->mode |= '\120';
+    node->info.infon = current_address;
     return;
 }
 
-void jequ(T_U *pp, T_U *qq)
+void jit_equ(T_U *equ_node, T_U *node)
 {
-    pp->info.infop = qq;
-    pp->mode |= '\320';
+    equ_node->info.infop = node;
+    equ_node->mode |= '\320';
     return;
 }
 
