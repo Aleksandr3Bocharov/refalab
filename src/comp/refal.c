@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                jend();
+                jit_end();
                 module_length = jit_where();
             }
             s_term();
@@ -871,7 +871,7 @@ void scan_sentence_element(void)
                 if (flags.left_part_sentence)
                 {
                     current_sentence_element.specifier.info.codef = (uint8_t *)genlbl();
-                    jlabel((T_U *)(void *)current_sentence_element.specifier.info.codef);
+                    jit_label((T_U *)(void *)current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
                 {
@@ -1087,7 +1087,7 @@ void scan_sentence_element(void)
                 if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
                     *(specifier_abbreviated + specifier_code) = (uint8_t *)(void *)genlbl();
-                    jlabel((T_U *)(void *)*(specifier_abbreviated + specifier_code));
+                    jit_label((T_U *)(void *)*(specifier_abbreviated + specifier_code));
                     generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);
                 };

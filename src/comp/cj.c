@@ -433,7 +433,7 @@ static void write_assembler_source(int put_result)
         }
 }
 
-void jend(void)
+void jit_end(void)
 {
     ending();
     uint8_t byte = 0;
@@ -587,6 +587,6 @@ void jend(void)
         extrn = extrn2;
     }
     return;
-} // jend
+} // jit_end
 
 //----------  end of file CJ.C  -------------------
