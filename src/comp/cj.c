@@ -439,9 +439,9 @@ void jit_end(void)
     uint8_t byte = 0;
     // heading generating
     write_assembler_source(fputs(".data\n", assembler_source));
-    char bufs[81];
-    sprintf(bufs, "_d%d$:\n", scanner.module_number);
-    write_assembler_source(fputs(bufs, assembler_source));
+    char buffer_string[81];
+    sprintf(buffer_string, "_d%d$:\n", scanner.module_number);
+    write_assembler_source(fputs(buffer_string, assembler_source));
     //  empty module test
     if (module_length != 0)
     {
@@ -461,25 +461,25 @@ void jit_end(void)
                         write_assembler_source(fputc('\n', assembler_source));
                     write_assembler_source(fputs("\t.byte\t", assembler_source));
                 }
-                sprintf(bufs, "%d", byte);
-                write_assembler_source(fputs(bufs, assembler_source));
+                sprintf(buffer_string, "%d", byte);
+                write_assembler_source(fputs(buffer_string, assembler_source));
                 if (k % 60 != 59 && k != delta - 1)
                     write_assembler_source(fputc(',', assembler_source));
             }
             write_assembler_source(fputc('\n', assembler_source));
-            const T_U *p = relay.node;
-            if (p != NULL)
+            const T_U *node = relay.node;
+            if (node != NULL)
             {
-                while ((p->mode & '\300') == '\300')
-                    p = p->info.infop;
-                if ((p->mode & '\300') != '\200')
+                while ((node->mode & '\300') == '\300')
+                    node = node->info.infop;
+                if ((node->mode & '\300') != '\200')
                 {
                     //    nonexternal label
                     if (LBLL == 4)
-                        sprintf(bufs, "\t.long\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
+                        sprintf(buffer_string, "\t.long\t_d%d$+%zu\n", scanner.module_number, node->info.infon);
                     else
-                        sprintf(bufs, "\t.quad\t_d%d$+%zu\n", scanner.module_number, p->info.infon);
-                    write_assembler_source(fputs(bufs, assembler_source));
+                        sprintf(buffer_string, "\t.quad\t_d%d$+%zu\n", scanner.module_number, node->info.infon);
+                    write_assembler_source(fputs(buffer_string, assembler_source));
                 }
                 else
                 {
@@ -497,9 +497,9 @@ void jit_end(void)
                         write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
 #endif
                     extrn = first_extrn;
-                    for (size_t i = 1; i < p->info.infon; i++)
+                    for (size_t i = 1; i < node->info.infon; i++)
                         extrn = extrn->next;
-                    for (size_t i = 0; i < extrn->identifier_extern_length; i++)
+                    for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
                         write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
                     write_assembler_source(fputs("\n", assembler_source));
                 }
@@ -521,7 +521,7 @@ void jit_end(void)
             else
                 write_assembler_source(fputs("\t.extern\trefalab_", assembler_source));
 #endif
-            for (size_t i = 0; i < extrn->identifier_extern_length; i++)
+            for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
                 write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
             write_assembler_source(fputs(":byte\n", assembler_source));
             extrn = extrn->next;
@@ -537,23 +537,23 @@ void jit_end(void)
                 write_assembler_source(fputc('_', assembler_source));
 #endif
             write_assembler_source(fputs("refalab_", assembler_source));
-            for (size_t i = 0; i < entry->identifier_extern_length; i++)
+            for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            const T_U *pp = entry->node;
-            while ((pp->mode & '\300') == '\300')
-                pp = pp->info.infop;
+            const T_U *node = entry->node;
+            while ((node->mode & '\300') == '\300')
+                node = node->info.infop;
 #if defined POSIX
             // begin name without underlining _
-            sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
+            sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, node->info.infon);
 #else // Windows
             if (LBLL == 4)
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, pp->info.infon);
+                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, node->info.infon);
             else
-                sprintf(bufs, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, pp->info.infon);
+                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, node->info.infon);
 #endif
-            write_assembler_source(fputs(bufs, assembler_source));
-            for (size_t i = 0; i < entry->identifier_extern_length; i++)
+            write_assembler_source(fputs(buffer_string, assembler_source));
+            for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
             write_assembler_source(fputc('\n', assembler_source));
