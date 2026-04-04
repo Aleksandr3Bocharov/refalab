@@ -55,8 +55,6 @@ typedef struct stream_bytes_nodes
 static T_STREAM_BYTES_NODES stream_bytes = {0, 0, NULL, NULL, NULL};
 static T_STREAM_BYTES_NODES stream_nodes = {0, 0, NULL, NULL, NULL};
 
-static uint8_t byte;
-
 static T_ENTRY *entry, *entry2;
 static T_EXTRN *extrn, *extrn2;
 
@@ -296,11 +294,11 @@ size_t jit_where(void)
     return current_address;
 }
 
-void jit_byte(uint8_t buffer_byte)
+void jit_byte(uint8_t byte)
 {
     if (stream_bytes.current != stream_bytes.length)
     {
-        *(stream_bytes.buffer + stream_bytes.current) = buffer_byte;
+        *(stream_bytes.buffer + stream_bytes.current) = byte;
         stream_bytes.current++;
     }
     else
@@ -319,7 +317,7 @@ void jit_byte(uint8_t buffer_byte)
             printf("Write i/o error in sysut1\n");
             exit(8);
         }
-        *stream_bytes.buffer = buffer_byte;
+        *stream_bytes.buffer = byte;
         stream_bytes.current = 1;
     }
     delta++;
@@ -327,9 +325,9 @@ void jit_byte(uint8_t buffer_byte)
     return;
 } // jit_byte
 
-void jit_address(T_U *buffer_node)
+void jit_address(T_U *node)
 {
-    relay.node = buffer_node;
+    relay.node = node;
     relay.delta = delta;
     delta = 0;
     stream_nodes_write();
@@ -337,7 +335,7 @@ void jit_address(T_U *buffer_node)
     return;
 }
 
-void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void jit_entry(T_U *node, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -359,15 +357,15 @@ void jit_entry(T_U *entry_node, const char *idendifier_extern, uint8_t idendifie
 #endif
     last_entry->next = entry2;
     last_entry = entry2;
-    entry2->node = entry_node;
+    entry2->node = node;
     entry2->next = NULL;
     entry2->identifier_extern_length = idendifier_extern_length;
     strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
-    entry_node->mode |= '\040';
+    node->mode |= '\040';
     return;
 } // jit_entry
 
-void jit_extrn(T_U *extrn_node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void jit_extrn(T_U *node, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -377,8 +375,8 @@ void jit_extrn(T_U *extrn_node, const char *idendifier_extern, uint8_t idendifie
         extrn2 = extrn2->next;
         if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
-            extrn_node->info.infon = extrn2->node->info.infon;
-            extrn_node->mode |= '\220';
+            node->info.infon = extrn2->node->info.infon;
+            node->mode |= '\220';
             return;
         }
     }
@@ -390,13 +388,13 @@ void jit_extrn(T_U *extrn_node, const char *idendifier_extern, uint8_t idendifie
 #endif
     last_extrn->next = extrn2;
     last_extrn = extrn2;
-    extrn2->node = extrn_node;
+    extrn2->node = node;
     extrn2->next = NULL;
     extrn2->identifier_extern_length = idendifier_extern_length;
     strncpy(extrn2->identifier_extern, idendifier_extern, extrn2->identifier_extern_length);
-    extrn_node->mode |= '\220';
+    node->mode |= '\220';
     extrn_count++;
-    extrn_node->info.infon = extrn_count;
+    node->info.infon = extrn_count;
     return;
 } // jit_extrn
 
@@ -438,7 +436,7 @@ static void write_assembler_source(int put_result)
 void jend(void)
 {
     ending();
-    byte = 0;
+    uint8_t byte = 0;
     // heading generating
     write_assembler_source(fputs(".data\n", assembler_source));
     char bufs[81];
