@@ -256,7 +256,7 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
         jit_equ(p0, p1);
     }
     else
-        print_error_string("501 both labels already defined ");
+        print_error_string("501 both labels already defined");
     return;
 }
 
@@ -294,7 +294,7 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
     if ((pp->mode & '\300') == '\000')
         print_error_three_strings("512 label", pp->id, pp->l, " not defined");
     if ((pp->mode & '\040') == '\040' && (pp->mode & '\300') == '\200')
-        print_error_three_strings("511 label", pp->id, pp->l, " both extern and entry");
+        print_error_three_strings("511 label", pp->id, pp->l, " both extrn and entry");
     if ((q->mode & '\300') == '\300')
         print_error_three_strings("502 label", pp->id, pp->l, " boht specifier and function");
     return;
