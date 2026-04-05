@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-03
+// 2026-04-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -20,6 +20,9 @@
 #include "cerr.h"
 #include "refal.h"
 #include "clu.h"
+
+#define PRINT_ERROR_604 \
+    print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined")
 
 typedef struct entry
 { // entry table element
@@ -339,13 +342,23 @@ void jit_entry(T_U *node, const char *idendifier_extern, uint8_t idendifier_exte
 // idendifier_extern label
 {
     // idendifier_extern_length label length
+    extrn2 = first_extrn;
+    while (extrn2 != last_extrn)
+    {
+        extrn2 = extrn2->next;
+        if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        {
+            PRINT_ERROR_604;
+            return;
+        }
+    }
     entry2 = first_entry;
     while (entry2 != last_entry)
     {
         entry2 = entry2->next;
         if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
-            print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined");
+            PRINT_ERROR_604;
             return;
         }
     }
@@ -369,6 +382,16 @@ void jit_extrn(T_U *node, const char *idendifier_extern, uint8_t idendifier_exte
 // idendifier_extern label
 {
     // idendifier_extern_length label length
+    entry2 = first_entry;
+    while (entry2 != last_entry)
+    {
+        entry2 = entry2->next;
+        if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        {
+            PRINT_ERROR_604;
+            return;
+        }
+    }
     extrn2 = first_extrn;
     while (extrn2 != last_extrn)
     {
