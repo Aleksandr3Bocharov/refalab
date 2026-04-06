@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-03
+// 2026-04-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -293,9 +293,9 @@ static void check_id(const T_U *pp) // check identifier attributes on confirmnes
         q = q->info.infop;
     if ((pp->mode & '\300') == '\000')
         print_error_three_strings("512 label", pp->id, pp->l, " not defined");
-    if ((pp->mode & '\040') == '\040' && (pp->mode & '\300') == '\200')
+    if ((pp->mode & '\040') == '\040' && (q->mode & '\300') == '\200')
         print_error_three_strings("511 label", pp->id, pp->l, " both extrn and entry");
-    if ((q->mode & '\300') == '\300')
+    if ((q->type & '\300') == '\300')
         print_error_three_strings("502 label", pp->id, pp->l, " boht specifier and function");
     return;
 }
