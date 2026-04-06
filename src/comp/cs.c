@@ -97,7 +97,7 @@ void fndef(const char *idp, size_t lid)
             fnhead(idp, lid);
             p->def = scanner.carriage_number;
             jit_label(p);
-            generate_operator_l(n_sjump, (uint8_t *)next_stm);
+            generate_operator_l(n_sjump, (T_U *)next_stm);
         }
     }
     else
@@ -107,7 +107,7 @@ void fndef(const char *idp, size_t lid)
         else
             p500();
         next_stm = alloc_lbl();
-        generate_operator_l(n_sjump, (uint8_t *)next_stm);
+        generate_operator_l(n_sjump, (T_U *)next_stm);
     };
     return;
 }
