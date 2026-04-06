@@ -21,11 +21,11 @@ typedef struct linkti
     {
         char infoc;
         uint32_t coden;
-        uint8_t *codef;
+        T_U *codef;
     } info;
 } T_LINKTI;
 
-extern void generate_operator_l(uint8_t operator, const T_U *l);
+extern void generate_operator_l(uint8_t operator, T_U *l);
 extern void generate_operator_n(uint8_t operator, uint8_t n);
 extern void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m);
 extern void generate_operator_s(uint8_t operator, const T_LINKTI *code);

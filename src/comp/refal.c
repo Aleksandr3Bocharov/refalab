@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-03
+// 2026-04-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -32,7 +32,7 @@
         current_symbol_number++;                                         \
         if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
         {                                                                \
-            read_card();                                                    \
+            read_card();                                                 \
             if (flags.end_refalab_source)                                \
                 return;                                                  \
         }                                                                \
@@ -44,7 +44,7 @@
         current_symbol_number++;                                         \
         if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
         {                                                                \
-            read_card();                                                    \
+            read_card();                                                 \
             if (flags.end_refalab_source)                                \
                 return false;                                            \
         }                                                                \
@@ -190,7 +190,7 @@ static char string_symbols[CUT + 6];
 static char *symbols = string_symbols + 6;
 static char class_symbols_cut[CUT + 6];
 static char *class_symbols = class_symbols_cut + 6;
-static uint8_t *specifier_abbreviated[7]; // abbreviated specifier table
+static T_U *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t statement_label_length;
 static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
@@ -870,8 +870,8 @@ void scan_sentence_element(void)
                 EH_ROMA;
                 if (flags.left_part_sentence)
                 {
-                    current_sentence_element.specifier.info.codef = (uint8_t *)genlbl();
-                    jit_label((T_U *)(void *)current_sentence_element.specifier.info.codef);
+                    current_sentence_element.specifier.info.codef = (T_U *)genlbl();
+                    jit_label(current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
                 {
@@ -891,7 +891,7 @@ void scan_sentence_element(void)
                     break;
                 }
                 if (flags.left_part_sentence)
-                    current_sentence_element.specifier.info.codef = (uint8_t *)spref(identifier, identifier_length, ')');
+                    current_sentence_element.specifier.info.codef = spref(identifier, identifier_length, ')');
                 if (symbols[current_symbol_number] == ':')
                 {
                     EH_ROMA else
@@ -1086,8 +1086,8 @@ void scan_sentence_element(void)
             {
                 if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
-                    *(specifier_abbreviated + specifier_code) = (uint8_t *)(void *)genlbl();
-                    jit_label((T_U *)(void *)*(specifier_abbreviated + specifier_code));
+                    *(specifier_abbreviated + specifier_code) = (T_U *)genlbl();
+                    jit_label(*(specifier_abbreviated + specifier_code));
                     generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);
                 };
@@ -1678,7 +1678,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_L
             print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
-        code->info.codef = (uint8_t *)fnref(identifier, *identifier_length);
+        code->info.codef = fnref(identifier, *identifier_length);
         code->tag = TAGF;
     } while (false);
     return true;
