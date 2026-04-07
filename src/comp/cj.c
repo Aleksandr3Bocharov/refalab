@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-05
+// 2026-04-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -27,7 +27,7 @@
 typedef struct entry
 { // entry table element
     struct entry *next;
-    T_U *node;
+    T_LABEL *label;
     char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
     uint8_t identifier_extern_length;
 } T_ENTRY;
@@ -35,14 +35,14 @@ typedef struct entry
 typedef struct extrn
 { // external pointer table element
     struct extrn *next;
-    T_U *node;
+    T_LABEL *label;
     char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
     uint8_t identifier_extern_length;
 } T_EXTRN;
 
 typedef struct relay
 {
-    T_U *node;
+    T_LABEL *label;
     uint16_t delta;
 } T_RELAY;
 
@@ -328,7 +328,7 @@ void jit_byte(uint8_t byte)
     return;
 } // jit_byte
 
-void jit_address(T_U *node)
+void jit_address(T_LABEL *label)
 {
     relay.node = node;
     relay.delta = delta;
@@ -338,7 +338,7 @@ void jit_address(T_U *node)
     return;
 }
 
-void jit_entry(T_U *node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -378,7 +378,7 @@ void jit_entry(T_U *node, const char *idendifier_extern, uint8_t idendifier_exte
     return;
 } // jit_entry
 
-void jit_extrn(T_U *node, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -421,14 +421,14 @@ void jit_extrn(T_U *node, const char *idendifier_extern, uint8_t idendifier_exte
     return;
 } // jit_extrn
 
-void jit_label(T_U *node)
+void jit_label(T_LABEL *label)
 {
     node->mode |= '\120';
     node->info.infon = current_address;
     return;
 }
 
-void jit_equ(T_U *equ_node, T_U *node)
+void jit_equ(T_LABEL *equ_label, T_LABEL *T_LABEL)
 {
     equ_node->info.infop = node;
     equ_node->mode |= '\320';
@@ -490,7 +490,7 @@ void jit_end(void)
                     write_assembler_source(fputc(',', assembler_source));
             }
             write_assembler_source(fputc('\n', assembler_source));
-            const T_U *node = relay.node;
+            const T_LABEL *label = relay.node;
             if (node != NULL)
             {
                 while ((node->mode & '\300') == '\300')
@@ -563,7 +563,7 @@ void jit_end(void)
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            const T_U *node = entry->node;
+            const T_LABEL *label = entry->node;
             while ((node->mode & '\300') == '\300')
                 node = node->info.infop;
 #if defined POSIX

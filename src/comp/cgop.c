@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-05
+// 2026-04-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------------file----CGOP.C--------------------
@@ -35,7 +35,7 @@ void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
     return;
 }
 
-void generate_operator_l(uint8_t operator, T_U *l)
+void generate_operator_l(uint8_t operator, T_LABEL *l)
 {
     jit_byte(operator);
     jit_address(l);

@@ -22,10 +22,10 @@ typedef struct info_label
 
 extern T_INFO_LABEL *generate_info_label(void);
 
-extern void fndef(const char *idp, size_t lid);
+extern void function_definition(const char *identifier, uint8_t identifier_length);
 extern void spdef(const char *idp, size_t lid);
-extern T_U *fnref(const char *idp, size_t lid);
-extern T_U *spref(const char *idp, size_t lid, char d);
+extern T_LABEL *fnref(const char *idp, size_t lid);
+extern T_LABEL *spref(const char *idp, size_t lid, char d);
 
 extern void sempty(const char *idp, uint8_t lid);
 extern void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);

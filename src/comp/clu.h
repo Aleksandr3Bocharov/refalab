@@ -20,12 +20,12 @@ typedef struct refw
     uint32_t numb[6];  // usage list element
 } T_REFW;
 
-typedef struct u
+typedef struct label
 {
     union
     {
         size_t infon;
-        struct u *infop;
+        struct label *infop;
     } info;
     char mode;
     // mode field :
@@ -42,8 +42,8 @@ typedef struct u
                       //              01 - function
                       //              10 - specifier
     size_t l;         // identifier length
-    struct u *i;      // left reference
-    struct u *j;      // right reference
+    struct label *i;      // left reference
+    struct label *j;      // right reference
     T_REFW *last_ref; // on the end of using list
     T_REFW ref;       // where used
     uint32_t def;     // where defined
@@ -51,11 +51,11 @@ typedef struct u
                       //                    '01'B - left kren
                       //                    '10'B - right kren
     char *id;         // identifier
-} T_U;
+} T_LABEL;
 
-extern T_U *lookup(const char *idp, size_t lid);
+extern T_LABEL *lookup(const char *idp, size_t lid);
 extern void luterm(void);
-extern void through(void (*prog)(const T_U *));
+extern void through(void (*prog)(const T_LABEL *));
 extern void uns_sto(void);
 
 #endif

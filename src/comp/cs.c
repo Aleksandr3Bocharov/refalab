@@ -74,7 +74,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
     if (identifier_length != 0)
     { // new function
         func_end();
-        T_U *p = lookup(identifier, identifier_length);
+        T_LABEL *label = lookup(identifier, identifier_length);
         next_sentence = allocate_info_label();
         p->type |= '\100';
         if ((p->mode) & '\020')
@@ -84,17 +84,17 @@ void function_definition(const char *identifier, uint8_t identifier_length)
             fnhead(identifier, identifier_length);
             p->def = scanner.carriage_number;
             jit_label(p);
-            generate_operator_l(n_sjump, (T_U *)next_sentence);
+            generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
     }
     else
     { //  next statement in function
         if (next_sentence != NULL)
-            jit_label((T_U *)next_sentence);
+            jit_label((T_LABEL *)next_sentence);
         else
             PRINT_ERROR_500;
         next_sentence = alloc_lbl();
-        generate_operator_l(n_sjump, (T_U *)next_sentence);
+        generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
     };
     return;
 }
@@ -104,11 +104,11 @@ static void func_end(void)
     if (next_sentence != NULL)
     {
         if (fail_sentence != NULL)
-            jit_equ((T_U *)next_sentence, (T_U *)fail_sentence);
+            jit_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
         else
         {
             fail_sentence = next_sentence;
-            jit_label((T_U *)next_sentence);
+            jit_label((T_LABEL *)next_sentence);
             jit_byte(n_fail);
         }
         next_sentence = NULL;
@@ -118,7 +118,7 @@ static void func_end(void)
 
 void sempty(const char *idp, uint8_t lid)
 {
-    T_U *p = lookup(idp, lid);
+    T_LABEL *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     if (p->mode & '\020')
         PRINT_ERROR_504;
@@ -134,7 +134,7 @@ void sempty(const char *idp, uint8_t lid)
 
 void sswap(const char *idp, uint8_t lid)
 {
-    T_U *p = lookup(idp, lid);
+    T_LABEL *p = lookup(idp, lid);
     p->type = p->type | '\100';
     if (p->mode & '\020')
         PRINT_ERROR_504;
@@ -164,7 +164,7 @@ void sswap(const char *idp, uint8_t lid)
 
 void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 {
-    T_U *p = lookup(idp, lidp);
+    T_LABEL *p = lookup(idp, lidp);
     jit_entry(p, ide, lide);
     return;
 }
@@ -173,7 +173,7 @@ void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 // idp internal name
 // ide external name
 {
-    T_U *p = lookup(idp, lidp);
+    T_LABEL *p = lookup(idp, lidp);
     if (p->mode & '\020')
         PRINT_ERROR_504;
     else
@@ -184,16 +184,16 @@ void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
     return;
 }
 
-T_U *fnref(const char *idp, size_t lid)
+T_LABEL *fnref(const char *idp, size_t lid)
 {
-    T_U *p = lookup(idp, lid);
+    T_LABEL *p = lookup(idp, lid);
     p->type |= '\100';
     return p;
 }
 
-T_U *spref(const char *idp, size_t lid, char d)
+T_LABEL *spref(const char *idp, size_t lid, char d)
 {
-    T_U *p = lookup(idp, lid);
+    T_LABEL *p = lookup(idp, lid);
     p->type |= '\200';
     if (d != ')' && (p->mode & '\020') != '\020')
         print_error_three_strings("505 label", idp, lid, " is yet not defined");
@@ -206,7 +206,7 @@ void spdef(const char *idp, size_t lid)
         PRINT_ERROR_500;
     else
     { // label exist
-        T_U *p = lookup(idp, lid);
+        T_LABEL *p = lookup(idp, lid);
         p->type |= '\200';
         if (p->mode & '\020')
             PRINT_ERROR_504;
@@ -221,13 +221,13 @@ void spdef(const char *idp, size_t lid)
 
 void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
 {
-    T_U *p0 = lookup(id0, lid0);
+    T_LABEL *p0 = lookup(id0, lid0);
     if (lid1 == 0)
     {
         PRINT_ERROR_500;
         return;
     }
-    T_U *p1 = lookup(id1, lid1);
+    T_LABEL *p1 = lookup(id1, lid1);
     if (p0 == p1)
         return;
     if ((p1->mode & '\300') == '\000')
@@ -273,9 +273,9 @@ static void fnhead(const char *idp, size_t lid)
     return;
 }
 
-static void check_id(const T_U *pp) // check identifier attributes on confirmness
+static void check_id(const T_LABEL *pp) // check identifier attributes on confirmness
 {
-    const T_U *q = pp;
+    const T_LABEL *q = pp;
     while ((q->mode & '\300') == '\300')
         q = q->info.infop;
     if ((pp->mode & '\300') == '\000')

@@ -16,7 +16,7 @@
 #include "clu.h"
 #include "refal.h"
 
-static T_U *korenj = NULL; // tree koren
+static T_LABEL *korenj = NULL; // tree koren
 
 void uns_sto(void)
 {
@@ -25,9 +25,9 @@ void uns_sto(void)
     return;
 }
 
-static T_U *nov_uzel(const char *idp, size_t lid)
+static T_LABEL *nov_uzel(const char *idp, size_t lid)
 {
-    T_U *p = (T_U *)calloc(1, sizeof(T_U));
+    T_LABEL *p = (T_LABEL *)calloc(1, sizeof(T_LABEL));
 #if defined mdebug
     fprintf(stderr, "calloc(clu-nov_uzel): p=%p l=%zu t=%o\n", (void *)p, p->l, p->type);
 #endif
@@ -56,10 +56,10 @@ static T_U *nov_uzel(const char *idp, size_t lid)
     return p;
 }
 
-T_U *lookup(const char *idp, size_t lid)
+T_LABEL *lookup(const char *idp, size_t lid)
 // lid identifier length
 {
-    T_U *isk_uz;
+    T_LABEL *isk_uz;
     if (korenj == NULL)
     { // empty tree
         korenj = nov_uzel(idp, lid);
@@ -69,10 +69,10 @@ T_U *lookup(const char *idp, size_t lid)
     // tree is't empty,begin push.
     // remember path in stack
     size_t tgld = 0; // current  tree depth
-    T_U *p = korenj;
-    T_U *q;
+    T_LABEL *p = korenj;
+    T_LABEL *q;
     char kren;
-    T_U *adruz[36]; // stack for tree work
+    T_LABEL *adruz[36]; // stack for tree work
     char otnuz[36];
     while (true)
     { // search step
@@ -177,7 +177,7 @@ T_U *lookup(const char *idp, size_t lid)
         q = p->j;
     else
         q = p->i;
-    T_U *verquz;
+    T_LABEL *verquz;
     if (kren == q->k)
     {
         if (kren == '\100')
@@ -196,7 +196,7 @@ T_U *lookup(const char *idp, size_t lid)
     }
     else
     { // twos turn
-        T_U *r;
+        T_LABEL *r;
         if (kren == '\100')
         {
             r = q->i;
@@ -246,12 +246,12 @@ T_U *lookup(const char *idp, size_t lid)
     return isk_uz;
 }
 
-static void traverse(const T_U *ptr, void (*prog)(const T_U *))
+static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
 {
-    const T_U *q = ptr;
+    const T_LABEL *q = ptr;
     do
     {
-        const T_U *r = q->i;
+        const T_LABEL *r = q->i;
         if (r != NULL)
             traverse(r, prog);
         (*prog)(q);
@@ -260,19 +260,19 @@ static void traverse(const T_U *ptr, void (*prog)(const T_U *))
     return;
 }
 
-void through(void (*prog)(const T_U *))
+void through(void (*prog)(const T_LABEL *))
 {
     if (korenj != NULL)
         traverse(korenj, prog);
     return;
 }
 
-static void kil_tree(T_U *p)
+static void kil_tree(T_LABEL *p)
 {
-    T_U *q = p;
+    T_LABEL *q = p;
     do
     {
-        T_U *r = q->i;
+        T_LABEL *r = q->i;
         if (r != NULL)
             kil_tree(r);
         T_REFW *r2 = q->ref.next;

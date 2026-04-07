@@ -190,7 +190,7 @@ static char string_symbols[CUT + 6];
 static char *symbols = string_symbols + 6;
 static char class_symbols_cut[CUT + 6];
 static char *class_symbols = class_symbols_cut + 6;
-static T_U *specifier_abbreviated[7]; // abbreviated specifier table
+static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t statement_label_length;
 static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
@@ -870,7 +870,7 @@ void scan_sentence_element(void)
                 EH_ROMA;
                 if (flags.left_part_sentence)
                 {
-                    current_sentence_element.specifier.info.codef = (T_U *)generate_info_label();
+                    current_sentence_element.specifier.info.codef = (T_LABEL *)generate_info_label();
                     jit_label(current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
@@ -1086,7 +1086,7 @@ void scan_sentence_element(void)
             {
                 if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
-                    *(specifier_abbreviated + specifier_code) = (T_U *)generate_info_label();
+                    *(specifier_abbreviated + specifier_code) = (T_LABEL *)generate_info_label();
                     jit_label(*(specifier_abbreviated + specifier_code));
                     generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);
@@ -1304,7 +1304,7 @@ static bool compile_specifer(char tail)
             }
             if (strncmp(statement_label, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || statement_label[identifier_length] == ' '))
                 print_error_string("209 specifier is defined through itself");
-            T_U *identifier_specifier = spref(identifier, identifier_length, tail);
+            T_LABEL *identifier_specifier = spref(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 jit_address(identifier_specifier);
