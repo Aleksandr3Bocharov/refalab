@@ -330,7 +330,7 @@ void jit_byte(uint8_t byte)
 
 void jit_address(T_LABEL *label)
 {
-    relay.node = node;
+    relay.label = label;
     relay.delta = delta;
     delta = 0;
     stream_nodes_write();
@@ -370,11 +370,11 @@ void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
 #endif
     last_entry->next = entry2;
     last_entry = entry2;
-    entry2->node = node;
+    entry2->label = label;
     entry2->next = NULL;
     entry2->identifier_extern_length = idendifier_extern_length;
     strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
-    node->mode |= '\040';
+    label->mode |= '\040';
     return;
 } // jit_entry
 
@@ -398,8 +398,8 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
         extrn2 = extrn2->next;
         if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
-            node->info.infon = extrn2->node->info.infon;
-            node->mode |= '\220';
+            label->info.infon = extrn2->label->info.infon;
+            label->mode |= '\220';
             return;
         }
     }
@@ -411,34 +411,34 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
 #endif
     last_extrn->next = extrn2;
     last_extrn = extrn2;
-    extrn2->node = node;
+    extrn2->label = label;
     extrn2->next = NULL;
     extrn2->identifier_extern_length = idendifier_extern_length;
     strncpy(extrn2->identifier_extern, idendifier_extern, extrn2->identifier_extern_length);
-    node->mode |= '\220';
+    label->mode |= '\220';
     extrn_count++;
-    node->info.infon = extrn_count;
+    label->info.infon = extrn_count;
     return;
 } // jit_extrn
 
 void jit_label(T_LABEL *label)
 {
-    node->mode |= '\120';
-    node->info.infon = current_address;
+    label->mode |= '\120';
+    label->info.infon = current_address;
     return;
 }
 
-void jit_equ(T_LABEL *equ_label, T_LABEL *T_LABEL)
+void jit_equ(T_LABEL *equ_label, T_LABEL *label)
 {
-    equ_node->info.infop = node;
-    equ_node->mode |= '\320';
+    equ_label->info.infop = label;
+    equ_label->mode |= '\320';
     return;
 }
 
 static void ending(void)
 {
     relay.delta = delta;
-    relay.node = NULL;
+    relay.label = NULL;
     stream_nodes_write();
     stream_bytes_nodes_close(&stream_bytes);
     stream_bytes_nodes_close(&stream_nodes);
@@ -490,18 +490,18 @@ void jit_end(void)
                     write_assembler_source(fputc(',', assembler_source));
             }
             write_assembler_source(fputc('\n', assembler_source));
-            const T_LABEL *label = relay.node;
-            if (node != NULL)
+            const T_LABEL *label = relay.label;
+            if (label != NULL)
             {
-                while ((node->mode & '\300') == '\300')
-                    node = node->info.infop;
-                if ((node->mode & '\300') != '\200')
+                while ((label->mode & '\300') == '\300')
+                    label = label->info.infop;
+                if ((label->mode & '\300') != '\200')
                 {
                     //    nonexternal label
                     if (LBLL == 4)
-                        sprintf(buffer_string, "\t.long\t_d%d$+%zu\n", scanner.module_number, node->info.infon);
+                        sprintf(buffer_string, "\t.long\t_d%d$+%zu\n", scanner.module_number, label->info.infon);
                     else
-                        sprintf(buffer_string, "\t.quad\t_d%d$+%zu\n", scanner.module_number, node->info.infon);
+                        sprintf(buffer_string, "\t.quad\t_d%d$+%zu\n", scanner.module_number, label->info.infon);
                     write_assembler_source(fputs(buffer_string, assembler_source));
                 }
                 else
@@ -520,7 +520,7 @@ void jit_end(void)
                         write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
 #endif
                     extrn = first_extrn;
-                    for (size_t i = 1; i < node->info.infon; i++)
+                    for (size_t i = 1; i < label->info.infon; i++)
                         extrn = extrn->next;
                     for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
                         write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
@@ -563,17 +563,17 @@ void jit_end(void)
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 // translate name to lower case
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            const T_LABEL *label = entry->node;
-            while ((node->mode & '\300') == '\300')
-                node = node->info.infop;
+            const T_LABEL *label = entry->label;
+            while ((label->mode & '\300') == '\300')
+                label = label->info.infop;
 #if defined POSIX
             // begin name without underlining _
-            sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, node->info.infon);
+            sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
 #else // Windows
             if (LBLL == 4)
-                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, node->info.infon);
+                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, label->info.infon);
             else
-                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, node->info.infon);
+                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
 #endif
             write_assembler_source(fputs(buffer_string, assembler_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)

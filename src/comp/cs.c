@@ -288,7 +288,7 @@ static void check_id(const T_LABEL *label) // check identifier attributes on con
 
 void s_end(void)
 {
-    func_end();
+    function_end();
     through(check_id);
     return;
 }

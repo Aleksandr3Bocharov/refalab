@@ -393,7 +393,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case LPE10:
             // sentence end
             print_error_string("304 under left part default sign '=' ");
-            fndef(label, label_length);
+            function_definition(label, label_length);
             return;
         case NEXT_LPE:
             // end of element processing
@@ -406,14 +406,14 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             state = OSH300;
             break;
         case OSH300:
-            fndef(label, label_length);
+            function_definition(label, label_length);
             state = RP_OSH300;
             break;
         //--------------------------------------------
         //         left part compilation
         //--------------------------------------------
         case RCG:
-            fndef(label, label_length);
+            function_definition(label, label_length);
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;
