@@ -40,49 +40,48 @@ static T_INFO_LABEL *next_sentence = NULL; // next sentence label
 static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
 
-static T_INFO_LABEL *alloc_lbl(void)
+static T_INFO_LABEL *allocate_info_label(void)
 {
-    T_ARRAY_INFO_LABELS *q;
     if (number_info_label == 15)
     {
-        q = calloc(1, sizeof(T_ARRAY_INFO_LABELS));
+        T_ARRAY_INFO_LABELS *new_array_info_labels = calloc(1, sizeof(T_ARRAY_INFO_LABELS));
 #if defined mdebug
-        fprintf(stderr, "calloc(cs)_lbl: q=%p\n", (void *)q);
+        fprintf(stderr, "calloc(cs)_lbl: new_array_info_labels=%p\n", (void *)new_array_info_labels);
 #endif
-        if (q == NULL)
+        if (new_array_info_labels == NULL)
             uns_sto();
         else
         {
-            q->next = first_array_info_labels;
-            first_array_info_labels = q;
+            new_array_info_labels->next = first_array_info_labels;
+            first_array_info_labels = new_array_info_labels;
             number_info_label = 255;
         }
     }
     ++number_info_label;
-    T_INFO_LABEL *p = &first_array_info_labels->info_labels[number_info_label];
-    p->mode = 0;
-    return p;
+    T_INFO_LABEL *info_label = &first_array_info_labels->info_labels[number_info_label];
+    info_label->mode = 0;
+    return info_label;
 }
 
 T_INFO_LABEL *generate_info_label(void)
 {
-    T_INFO_LABEL *p = alloc_lbl();
-    return p;
+    T_INFO_LABEL *info_label = allocate_info_label();
+    return info_label;
 }
 
-void fndef(const char *idp, size_t lid)
+void function_definition(const char *identifier, uint8_t identifier_length)
 {
-    if (lid != 0)
+    if (identifier_length != 0)
     { // new function
         func_end();
-        T_U *p = lookup(idp, lid);
-        next_sentence = alloc_lbl();
-        p->type = (p->type) | '\100';
+        T_U *p = lookup(identifier, identifier_length);
+        next_sentence = allocate_info_label();
+        p->type |= '\100';
         if ((p->mode) & '\020')
             PRINT_ERROR_504;
         else
         {
-            fnhead(idp, lid);
+            fnhead(identifier, identifier_length);
             p->def = scanner.carriage_number;
             jit_label(p);
             generate_operator_l(n_sjump, (T_U *)next_sentence);
