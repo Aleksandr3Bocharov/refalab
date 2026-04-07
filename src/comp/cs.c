@@ -76,24 +76,24 @@ void function_definition(const char *identifier, uint8_t identifier_length)
         func_end();
         T_LABEL *label = lookup(identifier, identifier_length);
         next_sentence = allocate_info_label();
-        p->type |= '\100';
-        if ((p->mode) & '\020')
+        label->type |= '\100';
+        if ((label->mode) & '\020')
             PRINT_ERROR_504;
         else
         {
             fnhead(identifier, identifier_length);
-            p->def = scanner.carriage_number;
-            jit_label(p);
+            label->def = scanner.carriage_number;
+            jit_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
     }
     else
-    { //  next statement in function
+    { //  next sentence in function
         if (next_sentence != NULL)
             jit_label((T_LABEL *)next_sentence);
         else
             PRINT_ERROR_500;
-        next_sentence = alloc_lbl();
+        next_sentence = allocate_info_label();
         generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
     };
     return;
