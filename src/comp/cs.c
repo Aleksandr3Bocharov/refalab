@@ -116,48 +116,47 @@ static void function_end(void)
     return;
 }
 
-void sempty(const char *idp, uint8_t lid)
+void set_empty(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *p = lookup(idp, lid);
-    p->type = (p->type) | '\100';
-    if (p->mode & '\020')
+    T_LABEL *label = lookup(identifier, identifier_length);
+    label->type |= '\100';
+    if (label->mode & '\020')
         PRINT_ERROR_504;
     else
     {
-        fnhead(idp, lid);
-        p->def = scanner.carriage_number;
-        jit_label(p);
+        fnhead(identifier, identifier_length);
+        label->def = scanner.carriage_number;
+        jit_label(label);
         jit_byte(n_fail);
     }
     return;
 }
 
-void sswap(const char *idp, uint8_t lid)
+void set_swap(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *p = lookup(idp, lid);
-    p->type = p->type | '\100';
-    if (p->mode & '\020')
+    T_LABEL *label = lookup(identifier, identifier_length);
+    label->type |= '\100';
+    if (label->mode & '\020')
         PRINT_ERROR_504;
     else
     { //  align box head on the 8-byte board
-        size_t j0 = jit_where();
-        size_t l0;
+        uint8_t name_length;
         if (options.full_name)
-            l0 = 255 > scanner.module_name_length + lid + 1 ? scanner.module_name_length + lid + 1 : 255;
+            name_length = 255 > scanner.module_name_length + identifier_length + 1 ? scanner.module_name_length + identifier_length + 1 : 255;
         else
-            l0 = lid;
-        j0 = (j0 + l0 + 2) % 8;
-        if (j0 != 0)
-            j0 = 8 - j0;
-        for (size_t k0 = 1; k0 <= j0; k0++)
+            name_length = identifier_length;
+        uint8_t align_bytes = (jit_where() + name_length + 2) % 8;
+        if (align_bytes != 0)
+            align_bytes = 8 - align_bytes;
+        for (uint8_t i = 1; i <= align_bytes; i++)
             jit_byte(' ');
-        fnhead(idp, lid);
-        p->def = scanner.carriage_number;
-        jit_label(p);
+        fnhead(identifier, identifier_length);
+        label->def = scanner.carriage_number;
+        jit_label(label);
         jit_byte(n_swap);
-        const size_t kk = SMBL + LBLL * 2;
-        for (size_t k0 = 1; k0 <= kk; k0++)
-            jit_byte('\000');
+        const uint8_t swap_length = SMBL + LBLL * 2;
+        for (uint8_t i = 1; i <= swap_length; i++)
+            jit_byte(0);
     }
     return;
 }

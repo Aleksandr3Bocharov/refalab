@@ -27,11 +27,11 @@ extern void spdef(const char *idp, size_t lid);
 extern T_LABEL *fnref(const char *idp, size_t lid);
 extern T_LABEL *spref(const char *idp, size_t lid, char d);
 
-extern void sempty(const char *idp, uint8_t lid);
+extern void set_empty(const char *identifier, uint8_t identifier_length);
 extern void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);
 extern void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0);
 extern void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);
-extern void sswap(const char *idp, uint8_t lid);
+extern void set_swap(const char *identifier, uint8_t identifier_length);
 
 extern void s_init(void);
 extern void s_term(void);

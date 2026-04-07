@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
             else if (strncasecmp(statement_key, "end", 3) == 0)
             {
                 if (previous_label[0] != '\0')
-                    sempty(previous_label, (uint8_t)strlen(previous_label));
+                    set_empty(previous_label, (uint8_t)strlen(previous_label));
                 if (statement_label_length != 0)
                     PRINT_ERROR_130;
                 else
@@ -448,13 +448,13 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("015 empty-directive in the impl-section");
-                handle_identifiers(sempty);
+                handle_identifiers(set_empty);
             }
             else if (strncasecmp(statement_key, "swap", 4) == 0)
             {
                 if (impl == true)
                     print_error_string("016 swap-directive in the impl-section");
-                handle_identifiers(sswap);
+                handle_identifiers(set_empty);
             }
             else if (strncasecmp(statement_key, "s ", 2) == 0)
             {
@@ -559,7 +559,7 @@ static void previous_label_to_statement_label(void)
         statement_label_length = previous_label_length;
     }
     else if (previous_label_length != 0)
-        sempty(previous_label, previous_label_length);
+        set_empty(previous_label, previous_label_length);
     previous_label[0] = '\0';
     return;
 }
