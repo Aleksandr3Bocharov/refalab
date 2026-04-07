@@ -37,7 +37,7 @@ static uint8_t number_info_label = 15;
 static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
 static T_INFO_LABEL *next_sentence = NULL; // next sentence label
 
-static void func_end(void);
+static void function_end(void);
 static void fnhead(const char *idp, size_t lid);
 
 static T_INFO_LABEL *allocate_info_label(void)
@@ -73,7 +73,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
 {
     if (identifier_length != 0)
     { // new function
-        func_end();
+        function_end();
         T_LABEL *label = lookup(identifier, identifier_length);
         next_sentence = allocate_info_label();
         label->type |= '\100';
@@ -99,7 +99,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
     return;
 }
 
-static void func_end(void)
+static void function_end(void)
 {
     if (next_sentence != NULL)
     {
