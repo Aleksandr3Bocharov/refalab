@@ -273,17 +273,17 @@ static void fnhead(const char *idp, size_t lid)
     return;
 }
 
-static void check_id(const T_LABEL *pp) // check identifier attributes on confirmness
+static void check_id(const T_LABEL *label) // check identifier attributes on confirmness
 {
-    const T_LABEL *q = pp;
-    while ((q->mode & '\300') == '\300')
-        q = q->info.infop;
-    if ((pp->mode & '\300') == '\000')
-        print_error_three_strings("512 label", pp->id, pp->l, " not defined");
-    if ((pp->mode & '\040') == '\040' && (q->mode & '\300') == '\200')
-        print_error_three_strings("511 label", pp->id, pp->l, " both extrn and entry");
-    if ((q->type & '\300') == '\300')
-        print_error_three_strings("502 label", pp->id, pp->l, " boht specifier and function");
+    const T_LABEL *not_equ_label = label;
+    while ((not_equ_label->mode & '\300') == '\300')
+        not_equ_label = not_equ_label->info.infop;
+    if ((label->mode & '\300') == '\000')
+        print_error_three_strings("512 label", label->id, label->l, " not defined");
+    if ((label->mode & '\040') == '\040' && (not_equ_label->mode & '\300') == '\200')
+        print_error_three_strings("511 label", label->id, label->l, " both extrn and entry");
+    if ((not_equ_label->type & '\300') == '\300')
+        print_error_three_strings("502 label", label->id, label->l, " boht specifier and function");
     return;
 }
 
