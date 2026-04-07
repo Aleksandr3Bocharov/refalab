@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-05
+// 2026-04-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -870,7 +870,7 @@ void scan_sentence_element(void)
                 EH_ROMA;
                 if (flags.left_part_sentence)
                 {
-                    current_sentence_element.specifier.info.codef = (T_U *)genlbl();
+                    current_sentence_element.specifier.info.codef = (T_U *)generate_info_label();
                     jit_label(current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
@@ -1086,7 +1086,7 @@ void scan_sentence_element(void)
             {
                 if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
-                    *(specifier_abbreviated + specifier_code) = (T_U *)genlbl();
+                    *(specifier_abbreviated + specifier_code) = (T_U *)generate_info_label();
                     jit_label(*(specifier_abbreviated + specifier_code));
                     generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);

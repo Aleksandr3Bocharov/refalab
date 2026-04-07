@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-05
+// 2026-04-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -23,13 +23,13 @@
 typedef struct arr_lbl
 {
     struct arr_lbl *nextl;
-    T_I_LBL lbl[16];
+    T_INFO_LABEL lbl[16];
 } T_ARR_LBL;
 
 static T_ARR_LBL *first_arr_lbl = NULL;
 static size_t n_lbl = 15;
-static T_I_LBL *pfail = NULL;    // statememt FAIL label
-static T_I_LBL *next_stm = NULL; // next statement label
+static T_INFO_LABEL *pfail = NULL;    // statememt FAIL label
+static T_INFO_LABEL *next_stm = NULL; // next statement label
 //  a number of statements
 static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
@@ -52,7 +52,7 @@ static void p500(void)
     return;
 }
 
-static T_I_LBL *alloc_lbl(void)
+static T_INFO_LABEL *alloc_lbl(void)
 {
     T_ARR_LBL *q;
     if (n_lbl == 15)
@@ -71,14 +71,14 @@ static T_I_LBL *alloc_lbl(void)
         }
     }
     ++n_lbl;
-    T_I_LBL *p = &first_arr_lbl->lbl[n_lbl];
-    p->model = '\000';
+    T_INFO_LABEL *p = &first_arr_lbl->lbl[n_lbl];
+    p->mode = 0;
     return p;
 }
 
-T_I_LBL *genlbl(void)
+T_INFO_LABEL *generate_info_label(void)
 {
-    T_I_LBL *p = alloc_lbl();
+    T_INFO_LABEL *p = alloc_lbl();
     return p;
 }
 
