@@ -20,44 +20,32 @@
 #include "refal.h"
 #include "ccst.h"
 
-typedef struct arr_lbl
-{
-    struct arr_lbl *nextl;
-    T_INFO_LABEL lbl[16];
-} T_ARR_LBL;
+#define PRINT_ERROR_504 \
+    print_error_three_strings("504 label", identifier, identifier_length, " is already defined")
 
-static T_ARR_LBL *first_arr_lbl = NULL;
-static size_t n_lbl = 15;
-static T_INFO_LABEL *pfail = NULL;    // statememt FAIL label
-static T_INFO_LABEL *next_stm = NULL; // next statement label
-//  a number of statements
+#define PRINT_ERROR_500 \
+    print_error_string("500 no statement label")
+
+typedef struct array_info_labels
+{
+    struct array_info_labels *next;
+    T_INFO_LABEL info_labels[16];
+} T_ARRAY_INFO_LABELS;
+
+static T_ARRAY_INFO_LABELS *first_array_info_labels = NULL;
+static uint8_t number_info_label = 15;
+static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
+static T_INFO_LABEL *next_sentence = NULL; // next sentence label
+
 static void func_end(void);
 static void fnhead(const char *idp, size_t lid);
 
-static void p504(const char *idp, uint8_t lid)
-{
-    print_error_three_strings("504 label", idp, lid, " is already defined");
-    return;
-}
-
-static void p505(const char *idp, uint8_t lid)
-{
-    print_error_three_strings("505 label", idp, lid, " is yet not defined");
-    return;
-}
-
-static void p500(void)
-{
-    print_error_string("500 no statement label");
-    return;
-}
-
 static T_INFO_LABEL *alloc_lbl(void)
 {
-    T_ARR_LBL *q;
-    if (n_lbl == 15)
+    T_ARRAY_INFO_LABELS *q;
+    if (number_info_label == 15)
     {
-        q = calloc(1, sizeof(T_ARR_LBL));
+        q = calloc(1, sizeof(T_ARRAY_INFO_LABELS));
 #if defined mdebug
         fprintf(stderr, "calloc(cs)_lbl: q=%p\n", (void *)q);
 #endif
@@ -65,13 +53,13 @@ static T_INFO_LABEL *alloc_lbl(void)
             uns_sto();
         else
         {
-            q->nextl = first_arr_lbl;
-            first_arr_lbl = q;
-            n_lbl = (size_t)-1;
+            q->next = first_array_info_labels;
+            first_array_info_labels = q;
+            number_info_label = 255;
         }
     }
-    ++n_lbl;
-    T_INFO_LABEL *p = &first_arr_lbl->lbl[n_lbl];
+    ++number_info_label;
+    T_INFO_LABEL *p = &first_array_info_labels->info_labels[number_info_label];
     p->mode = 0;
     return p;
 }
@@ -88,43 +76,43 @@ void fndef(const char *idp, size_t lid)
     { // new function
         func_end();
         T_U *p = lookup(idp, lid);
-        next_stm = alloc_lbl();
+        next_sentence = alloc_lbl();
         p->type = (p->type) | '\100';
         if ((p->mode) & '\020')
-            p504(idp, lid);
+            PRINT_ERROR_504;
         else
         {
             fnhead(idp, lid);
             p->def = scanner.carriage_number;
             jit_label(p);
-            generate_operator_l(n_sjump, (T_U *)next_stm);
+            generate_operator_l(n_sjump, (T_U *)next_sentence);
         }
     }
     else
     { //  next statement in function
-        if (next_stm != NULL)
-            jit_label((T_U *)next_stm);
+        if (next_sentence != NULL)
+            jit_label((T_U *)next_sentence);
         else
-            p500();
-        next_stm = alloc_lbl();
-        generate_operator_l(n_sjump, (T_U *)next_stm);
+            PRINT_ERROR_500;
+        next_sentence = alloc_lbl();
+        generate_operator_l(n_sjump, (T_U *)next_sentence);
     };
     return;
 }
 
 static void func_end(void)
 {
-    if (next_stm != NULL)
+    if (next_sentence != NULL)
     {
-        if (pfail != NULL)
-            jit_equ((T_U *)next_stm, (T_U *)pfail);
+        if (fail_sentence != NULL)
+            jit_equ((T_U *)next_sentence, (T_U *)fail_sentence);
         else
         {
-            pfail = next_stm;
-            jit_label((T_U *)next_stm);
+            fail_sentence = next_sentence;
+            jit_label((T_U *)next_sentence);
             jit_byte(n_fail);
         }
-        next_stm = NULL;
+        next_sentence = NULL;
     }
     return;
 }
@@ -134,7 +122,7 @@ void sempty(const char *idp, uint8_t lid)
     T_U *p = lookup(idp, lid);
     p->type = (p->type) | '\100';
     if (p->mode & '\020')
-        p504(idp, lid);
+        PRINT_ERROR_504;
     else
     {
         fnhead(idp, lid);
@@ -150,7 +138,7 @@ void sswap(const char *idp, uint8_t lid)
     T_U *p = lookup(idp, lid);
     p->type = p->type | '\100';
     if (p->mode & '\020')
-        p504(idp, lid);
+        PRINT_ERROR_504;
     else
     { //  align box head on the 8-byte board
         size_t j0 = jit_where();
@@ -188,7 +176,7 @@ void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
 {
     T_U *p = lookup(idp, lidp);
     if (p->mode & '\020')
-        p504(idp, lidp);
+        PRINT_ERROR_504;
     else
     {
         p->def = scanner.carriage_number;
@@ -209,20 +197,20 @@ T_U *spref(const char *idp, size_t lid, char d)
     T_U *p = lookup(idp, lid);
     p->type |= '\200';
     if (d != ')' && (p->mode & '\020') != '\020')
-        p505(idp, lid);
+        print_error_three_strings("505 label", idp, lid, " is yet not defined");
     return p;
 }
 
 void spdef(const char *idp, size_t lid)
 {
     if (lid == 0)
-        p500();
+        PRINT_ERROR_500;
     else
     { // label exist
         T_U *p = lookup(idp, lid);
         p->type |= '\200';
         if (p->mode & '\020')
-            p504(idp, lid);
+            PRINT_ERROR_504;
         else
         {
             p->def = scanner.carriage_number;
@@ -237,7 +225,7 @@ void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
     T_U *p0 = lookup(id0, lid0);
     if (lid1 == 0)
     {
-        p500();
+        PRINT_ERROR_500;
         return;
     }
     T_U *p1 = lookup(id1, lid1);
@@ -309,19 +297,19 @@ void s_end(void)
 
 void s_init(void)
 { // module initiation
-    first_arr_lbl = NULL;
-    n_lbl = 15;
-    pfail = NULL;
-    next_stm = NULL;
+    first_array_info_labels = NULL;
+    number_info_label = 15;
+    fail_sentence = NULL;
+    next_sentence = NULL;
     return;
 }
 
 void s_term(void)
 { // module termination
-    T_ARR_LBL *p = first_arr_lbl;
+    T_ARRAY_INFO_LABELS *p = first_array_info_labels;
     while (p != NULL)
     {
-        T_ARR_LBL *p1 = p->nextl;
+        T_ARRAY_INFO_LABELS *p1 = p->next;
 #if defined mdebug
         fprintf(stderr, "free(cs): p=%p\n", (void *)p);
 #endif
