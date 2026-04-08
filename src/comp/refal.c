@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("013 entry-directive in the impl-section");
-                handle_identifiers_extern(sentry);
+                handle_identifiers_extern(set_entry);
             }
             else if (strncasecmp(statement_key, "extrn", 5) == 0)
             {

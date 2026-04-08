@@ -161,10 +161,10 @@ void set_swap(const char *identifier, uint8_t identifier_length)
     return;
 }
 
-void sentry(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
+void set_entry(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length)
 {
-    T_LABEL *p = lookup(idp, lidp);
-    jit_entry(p, ide, lide);
+    T_LABEL *label = lookup(identifier, identifier_length);
+    jit_entry(label, identifier_extern, identifier_extern_length);
     return;
 }
 
