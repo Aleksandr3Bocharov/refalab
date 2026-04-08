@@ -1619,7 +1619,7 @@ static void equ(void)
     {
         if (!get_identifier(identifier, &identifier_length))
             break;
-        sequ(statement_label, statement_label_length, identifier, identifier_length);
+        set_equ(statement_label, statement_label_length, identifier, identifier_length);
         blanks_out();
         if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
             return;

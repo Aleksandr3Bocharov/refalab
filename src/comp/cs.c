@@ -218,28 +218,28 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
     return;
 }
 
-void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0)
+void set_equ(const char *identifier1, uint8_t identifier1_length, const char *identifier0, uint8_t identifier0_length)
 {
-    T_LABEL *p0 = lookup(id0, lid0);
-    if (lid1 == 0)
+    if (identifier1_length == 0)
     {
         PRINT_ERROR_500;
         return;
     }
-    T_LABEL *p1 = lookup(id1, lid1);
-    if (p0 == p1)
+    T_LABEL *label0 = lookup(identifier0, identifier0_length);
+    T_LABEL *label1 = lookup(identifier1, identifier1_length);
+    if (label0 == label1)
         return;
-    if ((p1->mode & '\300') == '\000')
+    if ((label1->mode & '\300') == '\000')
     {
-        p0->type |= p1->type;
-        p1->def = scanner.carriage_number;
-        jit_equ(p1, p0);
+        label0->type |= label1->type;
+        label1->def = scanner.carriage_number;
+        jit_equ(label1, label0);
     }
-    else if ((p0->mode & '\300') == '\000')
+    else if ((label0->mode & '\300') == '\000')
     {
-        p1->type |= p0->type;
-        p0->def = scanner.carriage_number;
-        jit_equ(p0, p1);
+        label1->type |= label0->type;
+        label0->def = scanner.carriage_number;
+        jit_equ(label0, label1);
     }
     else
         print_error_string("501 both labels already defined");
