@@ -38,7 +38,7 @@ static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
 static T_INFO_LABEL *next_sentence = NULL; // next sentence label
 
 static void function_end(void);
-static void fnhead(const char *idp, size_t lid);
+static void function_head(const char *identifier, uint8_t identifier_length);
 
 static T_INFO_LABEL *allocate_info_label(void)
 {
@@ -81,7 +81,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
             PRINT_ERROR_504;
         else
         {
-            fnhead(identifier, identifier_length);
+            function_head(identifier, identifier_length);
             label->def = scanner.carriage_number;
             jit_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
@@ -124,7 +124,7 @@ void set_empty(const char *identifier, uint8_t identifier_length)
         PRINT_ERROR_504;
     else
     {
-        fnhead(identifier, identifier_length);
+        function_head(identifier, identifier_length);
         label->def = scanner.carriage_number;
         jit_label(label);
         jit_byte(n_fail);
@@ -150,7 +150,7 @@ void set_swap(const char *identifier, uint8_t identifier_length)
             align_bytes = 8 - align_bytes;
         for (uint8_t i = 1; i <= align_bytes; i++)
             jit_byte(' ');
-        fnhead(identifier, identifier_length);
+        function_head(identifier, identifier_length);
         label->def = scanner.carriage_number;
         jit_label(label);
         jit_byte(n_swap);
@@ -246,33 +246,30 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, const char *id
     return;
 }
 
-static void fnhead(const char *idp, size_t lid)
+static void function_head(const char *identifier, uint8_t identifier_length)
 {
     if (options.names)
     {
-        size_t k0, l0, ll;
+        uint8_t name_length_add;
         if (options.full_name)
         {
-            const char *idpm = scanner.module_name;
-            l0 = scanner.module_name_length;
-            for (k0 = 0; k0 < l0; k0++)
-                jit_byte((uint8_t)*(idpm + k0));
+            for (uint8_t i = 0; i < scanner.module_name_length; i++)
+                jit_byte((uint8_t)*(scanner.module_name + i));
             jit_byte(':');
-            ll = k0 + 1;
+            name_length_add = 1;
         }
         else
-            ll = 0;
-        l0 = lid;
-        for (k0 = 0; k0 < l0; k0++)
-            jit_byte((uint8_t)*(idp + k0));
-        jit_byte((uint8_t)(255 < ll + l0 ? 255 : ll + l0));
+            name_length_add = 0;
+        for (uint8_t i = 0; i < identifier_length; i++)
+            jit_byte((uint8_t)*(identifier + i));
+        jit_byte(255 < scanner.module_name_length + name_length_add + identifier_length ? 255 : scanner.module_name_length + name_length_add + identifier_length);
     }
     else
         jit_byte(0);
     return;
 }
 
-static void check_id(const T_LABEL *label) // check identifier attributes on confirmness
+static void check_identifier(const T_LABEL *label) // check identifier attributes on confirmness
 {
     const T_LABEL *not_equ_label = label;
     while ((not_equ_label->mode & '\300') == '\300')
@@ -289,7 +286,7 @@ static void check_id(const T_LABEL *label) // check identifier attributes on con
 void s_end(void)
 {
     function_end();
-    through(check_id);
+    through(check_identifier);
     return;
 }
 
