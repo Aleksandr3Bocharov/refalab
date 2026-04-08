@@ -168,17 +168,17 @@ void set_entry(const char *identifier, uint8_t identifier_length, const char *id
     return;
 }
 
-void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
+void set_extrn(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length)
 // identifier internal name
 // identifier_extern external name
 {
-    T_LABEL *p = lookup(idp, lidp);
-    if (p->mode & '\020')
+    T_LABEL *label = lookup(identifier, identifier_length);
+    if (label->mode & '\020')
         PRINT_ERROR_504;
     else
     {
-        p->def = scanner.carriage_number;
-        jit_extrn(p, ide, lide);
+        label->def = scanner.carriage_number;
+        jit_extrn(label, identifier_extern, identifier_extern_length);
     }
     return;
 }

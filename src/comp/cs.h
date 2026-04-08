@@ -30,7 +30,7 @@ extern T_LABEL *spref(const char *idp, size_t lid, char d);
 extern void set_empty(const char *identifier, uint8_t identifier_length);
 extern void set_entry(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length);
 extern void sequ(const char *id1, size_t lid1, const char *id0, size_t lid0);
-extern void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide);
+extern void set_extrn(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length);
 extern void set_swap(const char *identifier, uint8_t identifier_length);
 
 extern void s_init(void);

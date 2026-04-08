@@ -442,7 +442,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("014 extrn-directive in the impl-section");
-                handle_identifiers_extern(sextrn);
+                handle_identifiers_extern(set_extrn);
             }
             else if (strncasecmp(statement_key, "empty", 5) == 0)
             {
@@ -454,7 +454,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("016 swap-directive in the impl-section");
-                handle_identifiers(set_empty);
+                handle_identifiers(set_swap);
             }
             else if (strncasecmp(statement_key, "s ", 2) == 0)
             {
