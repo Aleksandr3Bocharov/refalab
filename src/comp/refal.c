@@ -460,7 +460,7 @@ int main(int argc, char *argv[])
             {
                 if (impl == true)
                     print_error_string("017 s-directive in the impl-section");
-                spdef(statement_label, statement_label_length);
+                specifier_definition(statement_label, statement_label_length);
                 compile_specifer(' ');
             }
             else if (strncasecmp(statement_key, "equ", 3) == 0)

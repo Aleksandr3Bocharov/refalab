@@ -199,20 +199,20 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     return label;
 }
 
-void spdef(const char *idp, size_t lid)
+void specifier_definition(const char *identifier, uint8_t identifier_length)
 {
-    if (lid == 0)
+    if (identifier_length == 0)
         PRINT_ERROR_500;
     else
     { // label exist
-        T_LABEL *p = lookup(idp, lid);
-        p->type |= '\200';
-        if (p->mode & '\020')
+        T_LABEL *label = lookup(identifier, identifier_length);
+        label->type |= '\200';
+        if (label->mode & '\020')
             PRINT_ERROR_504;
         else
         {
-            p->def = scanner.carriage_number;
-            jit_label(p);
+            label->def = scanner.carriage_number;
+            jit_label(label);
         }
     }
     return;

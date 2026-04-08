@@ -23,7 +23,7 @@ typedef struct info_label
 extern T_INFO_LABEL *generate_info_label(void);
 
 extern void function_definition(const char *identifier, uint8_t identifier_length);
-extern void spdef(const char *idp, size_t lid);
+extern void specifier_definition(const char *identifier, uint8_t identifier_length);
 extern T_LABEL *function_reference(const char *identifier, uint8_t identifier_length);
 extern T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, char tail);
 
