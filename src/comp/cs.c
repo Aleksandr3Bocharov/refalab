@@ -169,8 +169,8 @@ void set_entry(const char *identifier, uint8_t identifier_length, const char *id
 }
 
 void sextrn(const char *idp, uint8_t lidp, const char *ide, uint8_t lide)
-// idp internal name
-// ide external name
+// identifier internal name
+// identifier_extern external name
 {
     T_LABEL *p = lookup(idp, lidp);
     if (p->mode & '\020')

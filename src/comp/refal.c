@@ -209,9 +209,9 @@ static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
-static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
-static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH], uint8_t *identifier_length);
-static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length);
+static bool get_identifier(char *identifier, uint8_t *identifier_length);
+static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
+static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
 
 typedef struct timespec T_TIMESPEC;
 static T_TIMESPEC time_begin;
@@ -1628,7 +1628,7 @@ static void equ(void)
     return;
 }
 
-static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length) // procedure read multiple symbol
+static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
@@ -1684,7 +1684,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char identifier[MAX_IDENTIFIER_L
     return true;
 }
 
-static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *identifier_length)
+static bool get_identifier(char *identifier, uint8_t *identifier_length)
 { // read identifier
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
@@ -1713,7 +1713,7 @@ static bool get_identifier(char identifier[MAX_IDENTIFIER_LENGTH], uint8_t *iden
 }
 
 // read external identifier
-static bool get_identifier_extern(char identifier[MAX_IDENTIFIER_EXTERN_LENGTH], uint8_t *identifier_length)
+static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
