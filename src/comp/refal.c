@@ -891,7 +891,7 @@ void scan_sentence_element(void)
                     break;
                 }
                 if (flags.left_part_sentence)
-                    current_sentence_element.specifier.info.codef = spref(identifier, identifier_length, ')');
+                    current_sentence_element.specifier.info.codef = specifier_reference(identifier, identifier_length, ')');
                 if (symbols[current_symbol_number] == ':')
                 {
                     EH_ROMA else
@@ -1304,7 +1304,7 @@ static bool compile_specifer(char tail)
             }
             if (strncmp(statement_label, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || statement_label[identifier_length] == ' '))
                 print_error_string("209 specifier is defined through itself");
-            T_LABEL *identifier_specifier = spref(identifier, identifier_length, tail);
+            T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 jit_address(identifier_specifier);

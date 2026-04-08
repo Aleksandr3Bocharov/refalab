@@ -190,13 +190,13 @@ T_LABEL *function_reference(const char *identifier, uint8_t identifier_length)
     return label;
 }
 
-T_LABEL *spref(const char *idp, size_t lid, char d)
+T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, char tail)
 {
-    T_LABEL *p = lookup(idp, lid);
-    p->type |= '\200';
-    if (d != ')' && (p->mode & '\020') != '\020')
-        print_error_three_strings("505 label", idp, lid, " is yet not defined");
-    return p;
+    T_LABEL *label = lookup(identifier, identifier_length);
+    label->type |= '\200';
+    if (tail != ')' && (label->mode & '\020') != '\020')
+        print_error_three_strings("505 label", identifier, identifier_length, " is yet not defined");
+    return label;
 }
 
 void spdef(const char *idp, size_t lid)
