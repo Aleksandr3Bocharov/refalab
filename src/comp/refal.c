@@ -1678,7 +1678,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
-        code->info.codef = fnref(identifier, *identifier_length);
+        code->info.codef = function_reference(identifier, *identifier_length);
         code->tag = TAGF;
     } while (false);
     return true;

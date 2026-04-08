@@ -183,11 +183,11 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
     return;
 }
 
-T_LABEL *fnref(const char *idp, size_t lid)
+T_LABEL *function_reference(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *p = lookup(idp, lid);
-    p->type |= '\100';
-    return p;
+    T_LABEL *label = lookup(identifier, identifier_length);
+    label->type |= '\100';
+    return label;
 }
 
 T_LABEL *spref(const char *idp, size_t lid, char d)
