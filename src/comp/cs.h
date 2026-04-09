@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-07
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.H  ---------------
@@ -33,8 +33,8 @@ extern void set_equ(const char *identifier1, uint8_t identifier1_length, const c
 extern void set_extrn(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length);
 extern void set_swap(const char *identifier, uint8_t identifier_length);
 
-extern void s_init(void);
-extern void s_term(void);
-extern void s_end(void);
+extern void module_init(void);
+extern void module_terminate(void);
+extern void module_end(void);
 
 #endif

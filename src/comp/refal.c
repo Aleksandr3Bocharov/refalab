@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-07
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -353,7 +353,7 @@ int main(int argc, char *argv[])
                 module_state = END_OF_SYSIN;
                 break;
             }
-            s_init();
+            module_init();
             if (strncasecmp(statement_key, "start", 5) != 0)
             {
                 print_error_string("001 START-directive missing");
@@ -502,7 +502,7 @@ int main(int argc, char *argv[])
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
-            s_end();
+            module_end();
             if (errors_count != 0)
             {
                 flags.was_error = true;
@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
                 jit_end();
                 module_length = jit_where();
             }
-            s_term();
+            module_terminate();
             print_conclusion();
             module_state = END_OF_SYSIN;
             break;

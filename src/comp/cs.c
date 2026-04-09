@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-07
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -283,14 +283,14 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
     return;
 }
 
-void s_end(void)
+void module_end(void)
 {
     function_end();
     through(check_identifier);
     return;
 }
 
-void s_init(void)
+void module_init(void)
 { // module initiation
     first_array_info_labels = NULL;
     number_info_label = 15;
@@ -299,17 +299,17 @@ void s_init(void)
     return;
 }
 
-void s_term(void)
+void module_terminate(void)
 { // module termination
-    T_ARRAY_INFO_LABELS *p = first_array_info_labels;
-    while (p != NULL)
+    T_ARRAY_INFO_LABELS *array_info_labels = first_array_info_labels;
+    while (array_info_labels != NULL)
     {
-        T_ARRAY_INFO_LABELS *p1 = p->next;
+        T_ARRAY_INFO_LABELS *temp_array_info_labels = array_info_labels->next;
 #if defined mdebug
-        fprintf(stderr, "free(cs): p=%p\n", (void *)p);
+        fprintf(stderr, "free(cs): array_info_labels=%p\n", (void *)array_info_labels);
 #endif
-        free(p);
-        p = p1;
+        free(array_info_labels);
+        array_info_labels = temp_array_info_labels;
     }
     luterm();
     return;
