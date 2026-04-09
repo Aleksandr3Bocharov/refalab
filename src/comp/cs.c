@@ -46,7 +46,7 @@ static T_INFO_LABEL *allocate_info_label(void)
     {
         T_ARRAY_INFO_LABELS *new_array_info_labels = calloc(1, sizeof(T_ARRAY_INFO_LABELS));
 #if defined mdebug
-        fprintf(stderr, "calloc(cs)_lbl: new_array_info_labels=%p\n", (void *)new_array_info_labels);
+        fprintf(stderr, "calloc(cs): new_array_info_labels=%p\n", (void *)new_array_info_labels);
 #endif
         if (new_array_info_labels == NULL)
             uns_sto();
