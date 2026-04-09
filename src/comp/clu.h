@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-05
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------------  file  --  CLU.H  -------------------
@@ -13,12 +13,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "refal.h"
 
-typedef struct refw
+typedef struct usage_list
 {
-    struct refw *next; // on the next usage list
-    uint32_t numb[6];  // usage list element
-} T_REFW;
+    struct usage_list *next;     // on the next usage list
+    uint32_t carriage_number[6]; // usage list element
+} T_USAGE_LIST;
 
 typedef struct label
 {
@@ -42,8 +43,8 @@ typedef struct label
                       //              01 - function
                       //              10 - specifier
     size_t l;         // identifier length
-    struct label *i;      // left reference
-    struct label *j;      // right reference
+    struct label *i;  // left reference
+    struct label *j;  // right reference
     T_REFW *last_ref; // on the end of using list
     T_REFW ref;       // where used
     uint32_t def;     // where defined
