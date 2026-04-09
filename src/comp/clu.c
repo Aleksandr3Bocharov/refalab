@@ -49,13 +49,13 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
     return p;
 }
 
-T_LABEL *lookup(const char *idp, size_t lid)
-// lid identifier length
+T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
+// identifier_length identifier length
 {
     T_LABEL *isk_uz;
     if (korenj == NULL)
     { // empty tree
-        korenj = nov_uzel(idp, lid);
+        korenj = nov_uzel(identifier, identifier_length);
         isk_uz = korenj;
         return isk_uz;
     }
@@ -71,9 +71,9 @@ T_LABEL *lookup(const char *idp, size_t lid)
     { // search step
         do
         {
-            if (strncmp(idp, p->identifier, lid < p->identifier_length ? lid : p->identifier_length) == 0)
+            if (strncmp(identifier, p->identifier, identifier_length < p->identifier_length ? identifier_length : p->identifier_length) == 0)
             {
-                if (lid == p->identifier_length)
+                if (identifier_length == p->identifier_length)
                 { // include usage number to list
                     T_USAGE_LIST *q1 = p->last_usage_list;
                     size_t k = 5;
@@ -107,14 +107,14 @@ T_LABEL *lookup(const char *idp, size_t lid)
                 }
                 else
                 {
-                    if (lid > p->identifier_length)
+                    if (identifier_length > p->identifier_length)
                         kren = '\100';
                     else
                         kren = '\200';
                     break;
                 }
             }
-            if (strncmp(idp, p->identifier, lid < p->identifier_length ? lid : p->identifier_length) > 0)
+            if (strncmp(identifier, p->identifier, identifier_length < p->identifier_length ? identifier_length : p->identifier_length) > 0)
                 kren = '\100';
             else
                 kren = '\200';
@@ -135,7 +135,7 @@ T_LABEL *lookup(const char *idp, size_t lid)
         break;
     }
     // include new node to tree
-    isk_uz = nov_uzel(idp, lid);
+    isk_uz = nov_uzel(identifier, identifier_length);
     q = isk_uz;
     if (kren == '\100')
         p->right_label = q;

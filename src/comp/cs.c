@@ -74,7 +74,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
     if (identifier_length != 0)
     { // new function
         function_end();
-        T_LABEL *label = lookup(identifier, identifier_length);
+        T_LABEL *label = lookup_label(identifier, identifier_length);
         next_sentence = allocate_info_label();
         label->type |= '\100';
         if ((label->mode) & '\020')
@@ -118,7 +118,7 @@ static void function_end(void)
 
 void set_empty(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     label->type |= '\100';
     if (label->mode & '\020')
         PRINT_ERROR_504;
@@ -134,7 +134,7 @@ void set_empty(const char *identifier, uint8_t identifier_length)
 
 void set_swap(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     label->type |= '\100';
     if (label->mode & '\020')
         PRINT_ERROR_504;
@@ -163,7 +163,7 @@ void set_swap(const char *identifier, uint8_t identifier_length)
 
 void set_entry(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length)
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     jit_entry(label, identifier_extern, identifier_extern_length);
     return;
 }
@@ -172,7 +172,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
 // identifier internal name
 // identifier_extern external name
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     if (label->mode & '\020')
         PRINT_ERROR_504;
     else
@@ -185,14 +185,14 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
 
 T_LABEL *function_reference(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     label->type |= '\100';
     return label;
 }
 
 T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, char tail)
 {
-    T_LABEL *label = lookup(identifier, identifier_length);
+    T_LABEL *label = lookup_label(identifier, identifier_length);
     label->type |= '\200';
     if (tail != ')' && (label->mode & '\020') != '\020')
         print_error_three_strings("505 label", identifier, identifier_length, " is yet not defined");
@@ -205,7 +205,7 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
         PRINT_ERROR_500;
     else
     { // label exist
-        T_LABEL *label = lookup(identifier, identifier_length);
+        T_LABEL *label = lookup_label(identifier, identifier_length);
         label->type |= '\200';
         if (label->mode & '\020')
             PRINT_ERROR_504;
@@ -225,8 +225,8 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, const char *id
         PRINT_ERROR_500;
         return;
     }
-    T_LABEL *label1 = lookup(identifier1, identifier1_length);
-    T_LABEL *label2 = lookup(identifier2, identifier2_length);
+    T_LABEL *label1 = lookup_label(identifier1, identifier1_length);
+    T_LABEL *label2 = lookup_label(identifier2, identifier2_length);
     if (label1 == label2)
         return;
     if ((label1->mode & '\300') == '\000')

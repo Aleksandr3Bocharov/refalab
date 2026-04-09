@@ -55,7 +55,7 @@ typedef struct label
 
 } T_LABEL;
 
-extern T_LABEL *lookup(const char *idp, size_t lid);
+extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length);
 extern void luterm(void);
 extern void through(void (*prog)(const T_LABEL *));
 extern void uns_sto(void);
