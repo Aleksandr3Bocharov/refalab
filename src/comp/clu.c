@@ -253,10 +253,10 @@ static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
     return;
 }
 
-void through(void (*prog)(const T_LABEL *))
+void through_labels(void (*handler)(const T_LABEL *))
 {
     if (korenj != NULL)
-        traverse(korenj, prog);
+        traverse(korenj, handler);
     return;
 }
 
@@ -290,7 +290,7 @@ static void kil_tree(T_LABEL *p)
     return;
 }
 
-void luterm(void)
+void labels_terminate(void)
 {
     if (korenj != NULL)
     {

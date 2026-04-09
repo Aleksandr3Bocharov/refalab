@@ -286,7 +286,7 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
 void module_end(void)
 {
     function_end();
-    through(check_identifier);
+    through_labels(check_identifier);
     return;
 }
 
@@ -311,7 +311,7 @@ void module_terminate(void)
         free(array_info_labels);
         array_info_labels = temp_array_info_labels;
     }
-    luterm();
+    labels_terminate();
     return;
 }
 
