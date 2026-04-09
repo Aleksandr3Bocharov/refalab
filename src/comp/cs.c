@@ -218,28 +218,28 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
     return;
 }
 
-void set_equ(const char *identifier1, uint8_t identifier1_length, const char *identifier0, uint8_t identifier0_length)
+void set_equ(const char *identifier1, uint8_t identifier1_length, const char *identifier2, uint8_t identifier2_length)
 {
     if (identifier1_length == 0)
     {
         PRINT_ERROR_500;
         return;
     }
-    T_LABEL *label0 = lookup(identifier0, identifier0_length);
     T_LABEL *label1 = lookup(identifier1, identifier1_length);
-    if (label0 == label1)
+    T_LABEL *label2 = lookup(identifier2, identifier2_length);
+    if (label1 == label2)
         return;
     if ((label1->mode & '\300') == '\000')
     {
-        label0->type |= label1->type;
+        label2->type |= label1->type;
         label1->def = scanner.carriage_number;
-        jit_equ(label1, label0);
+        jit_equ(label1, label2);
     }
-    else if ((label0->mode & '\300') == '\000')
+    else if ((label2->mode & '\300') == '\000')
     {
-        label1->type |= label0->type;
-        label0->def = scanner.carriage_number;
-        jit_equ(label0, label1);
+        label1->type |= label2->type;
+        label2->def = scanner.carriage_number;
+        jit_equ(label2, label1);
     }
     else
         print_error_string("501 both labels already defined");
