@@ -76,8 +76,8 @@ void function_definition(const char *identifier, uint8_t identifier_length)
         function_end();
         T_LABEL *label = lookup_label(identifier, identifier_length);
         next_sentence = allocate_info_label();
-        label->type |= '\100';
-        if ((label->mode) & '\020')
+        label->type |= 0100;
+        if ((label->mode) & 0020)
             PRINT_ERROR_504;
         else
         {
@@ -119,8 +119,8 @@ static void function_end(void)
 void set_empty(const char *identifier, uint8_t identifier_length)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    label->type |= '\100';
-    if (label->mode & '\020')
+    label->type |= 0100;
+    if (label->mode & 0020)
         PRINT_ERROR_504;
     else
     {
@@ -135,8 +135,8 @@ void set_empty(const char *identifier, uint8_t identifier_length)
 void set_swap(const char *identifier, uint8_t identifier_length)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    label->type |= '\100';
-    if (label->mode & '\020')
+    label->type |= 0100;
+    if (label->mode & 0020)
         PRINT_ERROR_504;
     else
     { //  align box head on the 8-byte board
@@ -173,7 +173,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
 // identifier_extern external name
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    if (label->mode & '\020')
+    if (label->mode & 0020)
         PRINT_ERROR_504;
     else
     {
@@ -186,15 +186,15 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
 T_LABEL *function_reference(const char *identifier, uint8_t identifier_length)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    label->type |= '\100';
+    label->type |= 0100;
     return label;
 }
 
 T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, char tail)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    label->type |= '\200';
-    if (tail != ')' && (label->mode & '\020') != '\020')
+    label->type |= 0200;
+    if (tail != ')' && (label->mode & 0020) != 0020)
         print_error_three_strings("505 label", identifier, identifier_length, " is yet not defined");
     return label;
 }
@@ -206,8 +206,8 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
     else
     { // label exist
         T_LABEL *label = lookup_label(identifier, identifier_length);
-        label->type |= '\200';
-        if (label->mode & '\020')
+        label->type |= 0200;
+        if (label->mode & 0020)
             PRINT_ERROR_504;
         else
         {
@@ -229,13 +229,13 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, const char *id
     T_LABEL *label2 = lookup_label(identifier2, identifier2_length);
     if (label1 == label2)
         return;
-    if ((label1->mode & '\300') == '\000')
+    if ((label1->mode & 0300) == 0)
     {
         label2->type |= label1->type;
         label1->carriage_number_defined = scanner.carriage_number;
         jit_equ(label1, label2);
     }
-    else if ((label2->mode & '\300') == '\000')
+    else if ((label2->mode & 0300) == 0)
     {
         label1->type |= label2->type;
         label2->carriage_number_defined = scanner.carriage_number;
@@ -272,13 +272,13 @@ static void function_head(const char *identifier, uint8_t identifier_length)
 static void check_identifier(const T_LABEL *label) // check identifier attributes on confirmness
 {
     const T_LABEL *not_equ_label = label;
-    while ((not_equ_label->mode & '\300') == '\300')
+    while ((not_equ_label->mode & 0300) == 0300)
         not_equ_label = not_equ_label->info.infop;
-    if ((label->mode & '\300') == '\000')
+    if ((label->mode & 0300) == 0)
         print_error_three_strings("512 label", label->identifier, label->identifier_length, " not defined");
-    if ((label->mode & '\040') == '\040' && (not_equ_label->mode & '\300') == '\200')
+    if ((label->mode & 0040) == 0040 && (not_equ_label->mode & 0300) == 0200)
         print_error_three_strings("511 label", label->identifier, label->identifier_length, " both extrn and entry");
-    if ((not_equ_label->type & '\300') == '\300')
+    if ((not_equ_label->type & 0300) == 0300)
         print_error_three_strings("502 label", label->identifier, label->identifier_length, " boht specifier and function");
     return;
 }

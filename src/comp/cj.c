@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-07
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------------  file  --  cj.C  -------------------
@@ -374,7 +374,7 @@ void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
     entry2->next = NULL;
     entry2->identifier_extern_length = idendifier_extern_length;
     strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
-    label->mode |= '\040';
+    label->mode |= 0040;
     return;
 } // jit_entry
 
@@ -399,7 +399,7 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
         if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
             label->info.infon = extrn2->label->info.infon;
-            label->mode |= '\220';
+            label->mode |= 0220;
             return;
         }
     }
@@ -415,7 +415,7 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
     extrn2->next = NULL;
     extrn2->identifier_extern_length = idendifier_extern_length;
     strncpy(extrn2->identifier_extern, idendifier_extern, extrn2->identifier_extern_length);
-    label->mode |= '\220';
+    label->mode |= 0220;
     extrn_count++;
     label->info.infon = extrn_count;
     return;
@@ -423,7 +423,7 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
 
 void jit_label(T_LABEL *label)
 {
-    label->mode |= '\120';
+    label->mode |= 0120;
     label->info.infon = current_address;
     return;
 }
@@ -431,7 +431,7 @@ void jit_label(T_LABEL *label)
 void jit_equ(T_LABEL *equ_label, T_LABEL *label)
 {
     equ_label->info.infop = label;
-    equ_label->mode |= '\320';
+    equ_label->mode |= 0320;
     return;
 }
 
@@ -493,9 +493,9 @@ void jit_end(void)
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
-                while ((label->mode & '\300') == '\300')
+                while ((label->mode & 0300) == 0300)
                     label = label->info.infop;
-                if ((label->mode & '\300') != '\200')
+                if ((label->mode & 0300) != 0200)
                 {
                     //    nonexternal label
                     if (LBLL == 4)
@@ -564,7 +564,7 @@ void jit_end(void)
                 // translate name to lower case
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
             const T_LABEL *label = entry->label;
-            while ((label->mode & '\300') == '\300')
+            while ((label->mode & 0300) == 0300)
                 label = label->info.infop;
 #if defined POSIX
             // begin name without underlining _

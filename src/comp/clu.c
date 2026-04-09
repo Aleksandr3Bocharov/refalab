@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------------  file  --  CLU.C  -------------------
@@ -35,9 +35,9 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
         error_no_memory_labels();
     p->left_label = NULL;
     p->right_label = NULL;
-    p->balance = '\000';
-    p->mode = '\000';
-    p->type = '\000';
+    p->balance = 0;
+    p->mode = 0;
+    p->type = 0;
     p->last_usage_list = &p->usage_list;
     p->usage_list.next = NULL;
     for (size_t m = 1; m <= 5; m++)
@@ -101,29 +101,29 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
                             r1->carriage_numbers[0] = scanner.carriage_number;
                         };
                     }
-                    while ((p->mode & '\300') == '\300')
+                    while ((p->mode & 0300) == 0300)
                         p = p->info.infop;
                     return p;
                 }
                 else
                 {
                     if (identifier_length > p->identifier_length)
-                        kren = '\100';
+                        kren = 0100;
                     else
-                        kren = '\200';
+                        kren = 0200;
                     break;
                 }
             }
             if (strncmp(identifier, p->identifier, identifier_length < p->identifier_length ? identifier_length : p->identifier_length) > 0)
-                kren = '\100';
+                kren = 0100;
             else
-                kren = '\200';
+                kren = 0200;
         } while (false);
         adruz[tgld] = p;
         otnuz[tgld] = kren;
         tgld++;
         // step down in tree
-        if (kren == '\100')
+        if (kren == 0100)
             q = p->right_label;
         else
             q = p->left_label;
@@ -137,7 +137,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     // include new node to tree
     isk_uz = nov_uzel(identifier, identifier_length);
     q = isk_uz;
-    if (kren == '\100')
+    if (kren == 0100)
         p->right_label = q;
     else
         p->left_label = q;
@@ -148,7 +148,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         tgld--;
         p = adruz[tgld];
         kren = p->balance;
-        if (kren == '\000')
+        if (kren == 0)
         {
             p->balance = otnuz[tgld];
             if (tgld != 0)
@@ -157,23 +157,23 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         };
         break;
     }
-    // in this point kren != '\000'
+    // in this point kren != 0
     if (kren != otnuz[tgld])
     {
-        p->balance = '\000';
+        p->balance = 0;
         return isk_uz;
     };
     // tree turn
-    // if kren = '\100' -- left turn
-    // if kren = '\200' -- right turn
-    if (kren == '\100')
+    // if kren = 0100 -- left turn
+    // if kren = 0200 -- right turn
+    if (kren == 0100)
         q = p->right_label;
     else
         q = p->left_label;
     T_LABEL *verquz;
     if (kren == q->balance)
     {
-        if (kren == '\100')
+        if (kren == 0100)
         { // once turn
             p->right_label = q->left_label;
             q->left_label = p;
@@ -183,14 +183,14 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             p->left_label = q->right_label;
             q->right_label = p;
         };
-        q->balance = '\000';
+        q->balance = 0;
         p->balance = q->balance;
         verquz = q;
     }
     else
     { // twos turn
         T_LABEL *r;
-        if (kren == '\100')
+        if (kren == 0100)
         {
             r = q->left_label;
             p->right_label = r->left_label;
@@ -206,23 +206,23 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             r->right_label = p;
             r->left_label = q;
         };
-        const char nruk = (r->balance == '\0') & '\300';
-        if (r->balance == '\000')
+        const char nruk = (r->balance == 0) & 0300;
+        if (r->balance == 0)
         {
-            p->balance = '\000';
+            p->balance = 0;
             q->balance = p->balance;
         }
         else if (nruk == kren)
         {
-            p->balance = '\000';
+            p->balance = 0;
             q->balance = nruk;
         }
         else
         {
-            q->balance = '\000';
+            q->balance = 0;
             p->balance = nruk;
         };
-        r->balance = '\000';
+        r->balance = 0;
         verquz = r;
     }; // end of twos turn
     // correct upper reference
@@ -231,7 +231,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     else
     {
         tgld--;
-        if (otnuz[tgld] == '\100')
+        if (otnuz[tgld] == 0100)
             adruz[tgld]->right_label = verquz;
         else
             adruz[tgld]->left_label = verquz;
