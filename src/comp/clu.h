@@ -17,8 +17,8 @@
 
 typedef struct usage_list
 {
-    struct usage_list *next;     // on the next usage list
-    uint32_t carriage_number[6]; // usage list element
+    struct usage_list *next;      // on the next usage list
+    uint32_t carriage_numbers[6]; // usage list element
 } T_USAGE_LIST;
 
 typedef struct label
@@ -39,19 +39,19 @@ typedef struct label
     //  xx1 - entry point;
     //  xxx1 - too many definition;
     //
-    char type;        // type field : 00 - unknown type
-                      //              01 - function
-                      //              10 - specifier
-    size_t l;         // identifier length
-    struct label *i;  // left reference
-    struct label *j;  // right reference
-    T_REFW *last_ref; // on the end of using list
-    T_REFW ref;       // where used
-    uint32_t def;     // where defined
-    char k;           // kren feature:      '00'B - kren no
-                      //                    '01'B - left kren
-                      //                    '10'B - right kren
-    char *id;         // identifier
+    char type;                     // type field : 00 - unknown type
+                                   //              01 - function
+                                   //              10 - specifier
+    size_t l;                      // identifier length
+    struct label *i;               // left reference
+    struct label *j;               // right reference
+    T_USAGE_LIST *last_usage_list; // on the end of usage list
+    T_USAGE_LIST usage_list;       // where used
+    uint32_t def;                  // where defined
+    char k;                        // kren feature:      '00'B - kren no
+                                   //                    '01'B - left kren
+                                   //                    '10'B - right kren
+    char *id;                      // identifier
 } T_LABEL;
 
 extern T_LABEL *lookup(const char *idp, size_t lid);

@@ -38,11 +38,11 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
     p->k = '\000';
     p->mode = '\000';
     p->type = '\000';
-    p->last_ref = &p->ref;
-    p->ref.next = NULL;
+    p->last_usage_list = &p->usage_list;
+    p->usage_list.next = NULL;
     for (size_t m = 1; m <= 5; m++)
-        p->ref.numb[m] = 0;
-    p->ref.numb[0] = scanner.carriage_number;
+        p->usage_list.carriage_numbers[m] = 0;
+    p->usage_list.carriage_numbers[0] = scanner.carriage_number;
     p->def = 0;
     char *q = calloc(1, lid);
 #if defined mdebug
@@ -82,30 +82,30 @@ T_LABEL *lookup(const char *idp, size_t lid)
             {
                 if (lid == p->l)
                 { // include usage number to list
-                    T_REFW *q1 = p->last_ref;
+                    T_USAGE_LIST *q1 = p->last_usage_list;
                     size_t k = 5;
-                    while (q1->numb[k] == 0)
+                    while (q1->carriage_numbers[k] == 0)
                         k--;
-                    if (q1->numb[k] != scanner.carriage_number)
+                    if (q1->carriage_numbers[k] != scanner.carriage_number)
                     {
                         // include number to list
-                        if (q1->numb[5] == 0)
+                        if (q1->carriage_numbers[5] == 0)
                             // it's free field in current item
-                            q1->numb[k + 1] = scanner.carriage_number;
+                            q1->carriage_numbers[k + 1] = scanner.carriage_number;
                         else
                         { // create new item
-                            T_REFW *r1 = (T_REFW *)calloc(1, sizeof(T_REFW));
+                            T_USAGE_LIST *r1 = (T_USAGE_LIST *)calloc(1, sizeof(T_USAGE_LIST));
 #if defined mdebug
-                            fprintf(stderr, "calloc(clu-lookup): r1=%p\n", (void *)r1);
+                            fprintf(stderr, "calloc(clu): r1=%p\n", (void *)r1);
 #endif
                             if (r1 == NULL)
                                 uns_sto();
                             q1->next = r1;
-                            p->last_ref = q1->next;
+                            p->last_usage_list = q1->next;
                             r1->next = NULL;
                             for (k = 0; k <= 5; k++)
-                                r1->numb[k] = 0;
-                            r1->numb[0] = scanner.carriage_number;
+                                r1->carriage_numbers[k] = 0;
+                            r1->carriage_numbers[0] = scanner.carriage_number;
                         };
                     }
                     while ((p->mode & '\300') == '\300')
@@ -275,10 +275,10 @@ static void kil_tree(T_LABEL *p)
         T_LABEL *r = q->i;
         if (r != NULL)
             kil_tree(r);
-        T_REFW *r2 = q->ref.next;
+        T_USAGE_LIST *r2 = q->usage_list.next;
         while (r2 != NULL)
         {
-            T_REFW *r1 = r2->next;
+            T_USAGE_LIST *r1 = r2->next;
 #if defined mdebug
             fprintf(stderr, "free(clu): r2=%p\n", (void *)r2);
 #endif
