@@ -18,7 +18,7 @@
 
 static T_LABEL *korenj = NULL; // tree koren
 
-void uns_sto(void)
+void error_no_memory_labels(void)
 {
     printf("\nNo memory for identifier table\n");
     exit(1);
@@ -32,7 +32,7 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
     fprintf(stderr, "calloc(clu): p=%p identifier_length=%u type=%o\n", (void *)p, p->identifier_length, p->type);
 #endif
     if (p == NULL)
-        uns_sto();
+        error_no_memory_labels();
     p->left_label = NULL;
     p->right_label = NULL;
     p->balance = '\000';
@@ -92,7 +92,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
                             fprintf(stderr, "calloc(clu): r1=%p\n", (void *)r1);
 #endif
                             if (r1 == NULL)
-                                uns_sto();
+                                error_no_memory_labels();
                             q1->next = r1;
                             p->last_usage_list = q1->next;
                             r1->next = NULL;

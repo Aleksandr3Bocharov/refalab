@@ -58,6 +58,6 @@ typedef struct label
 extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length);
 extern void luterm(void);
 extern void through(void (*prog)(const T_LABEL *));
-extern void uns_sto(void);
+extern void error_no_memory_labels(void);
 
 #endif

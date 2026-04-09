@@ -49,7 +49,7 @@ static T_INFO_LABEL *allocate_info_label(void)
         fprintf(stderr, "calloc(cs): new_array_info_labels=%p\n", (void *)new_array_info_labels);
 #endif
         if (new_array_info_labels == NULL)
-            uns_sto();
+            error_no_memory_labels();
         else
         {
             new_array_info_labels->next = first_array_info_labels;
