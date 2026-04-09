@@ -29,13 +29,13 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
 {
     T_LABEL *p = (T_LABEL *)calloc(1, sizeof(T_LABEL));
 #if defined mdebug
-    fprintf(stderr, "calloc(clu-nov_uzel): p=%p l=%zu t=%o\n", (void *)p, p->l, p->type);
+    fprintf(stderr, "calloc(clu): p=%p identifier_length=%u type=%o\n", (void *)p, p->identifier_length, p->type);
 #endif
     if (p == NULL)
         uns_sto();
-    p->i = NULL;
-    p->j = NULL;
-    p->k = '\000';
+    p->left_label = NULL;
+    p->right_label = NULL;
+    p->balance = '\000';
     p->mode = '\000';
     p->type = '\000';
     p->last_usage_list = &p->usage_list;
@@ -43,16 +43,9 @@ static T_LABEL *nov_uzel(const char *idp, size_t lid)
     for (size_t m = 1; m <= 5; m++)
         p->usage_list.carriage_numbers[m] = 0;
     p->usage_list.carriage_numbers[0] = scanner.carriage_number;
-    p->def = 0;
-    char *q = calloc(1, lid);
-#if defined mdebug
-    fprintf(stderr, "calloc(clu-id): q=%p l=%zu\n", (void *)q, lid);
-#endif
-    if (q == NULL)
-        uns_sto();
-    p->id = q;
-    strncpy(q, idp, lid);
-    p->l = lid;
+    p->carriage_number_defined = 0;
+    strncpy(p->identifier, idp, lid);
+    p->identifier_length = lid;
     return p;
 }
 
@@ -78,9 +71,9 @@ T_LABEL *lookup(const char *idp, size_t lid)
     { // search step
         do
         {
-            if (strncmp(idp, p->id, lid < p->l ? lid : p->l) == 0)
+            if (strncmp(idp, p->identifier, lid < p->identifier_length ? lid : p->identifier_length) == 0)
             {
-                if (lid == p->l)
+                if (lid == p->identifier_length)
                 { // include usage number to list
                     T_USAGE_LIST *q1 = p->last_usage_list;
                     size_t k = 5;
@@ -114,14 +107,14 @@ T_LABEL *lookup(const char *idp, size_t lid)
                 }
                 else
                 {
-                    if (lid > p->l)
+                    if (lid > p->identifier_length)
                         kren = '\100';
                     else
                         kren = '\200';
                     break;
                 }
             }
-            if (strncmp(idp, p->id, lid < p->l ? lid : p->l) > 0)
+            if (strncmp(idp, p->identifier, lid < p->identifier_length ? lid : p->identifier_length) > 0)
                 kren = '\100';
             else
                 kren = '\200';
@@ -131,9 +124,9 @@ T_LABEL *lookup(const char *idp, size_t lid)
         tgld++;
         // step down in tree
         if (kren == '\100')
-            q = p->j;
+            q = p->right_label;
         else
-            q = p->i;
+            q = p->left_label;
         if (q != NULL)
         {
             p = q;
@@ -145,19 +138,19 @@ T_LABEL *lookup(const char *idp, size_t lid)
     isk_uz = nov_uzel(idp, lid);
     q = isk_uz;
     if (kren == '\100')
-        p->j = q;
+        p->right_label = q;
     else
-        p->i = q;
+        p->left_label = q;
     // necessary node is new
     while (true)
     { // move up and correct
         // balance  features
         tgld--;
         p = adruz[tgld];
-        kren = p->k;
+        kren = p->balance;
         if (kren == '\000')
         {
-            p->k = otnuz[tgld];
+            p->balance = otnuz[tgld];
             if (tgld != 0)
                 continue;
             return isk_uz;
@@ -167,31 +160,31 @@ T_LABEL *lookup(const char *idp, size_t lid)
     // in this point kren != '\000'
     if (kren != otnuz[tgld])
     {
-        p->k = '\000';
+        p->balance = '\000';
         return isk_uz;
     };
     // tree turn
     // if kren = '\100' -- left turn
     // if kren = '\200' -- right turn
     if (kren == '\100')
-        q = p->j;
+        q = p->right_label;
     else
-        q = p->i;
+        q = p->left_label;
     T_LABEL *verquz;
-    if (kren == q->k)
+    if (kren == q->balance)
     {
         if (kren == '\100')
         { // once turn
-            p->j = q->i;
-            q->i = p;
+            p->right_label = q->left_label;
+            q->left_label = p;
         }
         else
         {
-            p->i = q->j;
-            q->j = p;
+            p->left_label = q->right_label;
+            q->right_label = p;
         };
-        q->k = '\000';
-        p->k = q->k;
+        q->balance = '\000';
+        p->balance = q->balance;
         verquz = q;
     }
     else
@@ -199,37 +192,37 @@ T_LABEL *lookup(const char *idp, size_t lid)
         T_LABEL *r;
         if (kren == '\100')
         {
-            r = q->i;
-            p->j = r->i;
-            q->i = r->j;
-            r->i = p;
-            r->j = q;
+            r = q->left_label;
+            p->right_label = r->left_label;
+            q->left_label = r->right_label;
+            r->left_label = p;
+            r->right_label = q;
         }
         else
         {
-            r = q->j;
-            p->i = r->j;
-            q->j = r->i;
-            r->j = p;
-            r->i = q;
+            r = q->right_label;
+            p->left_label = r->right_label;
+            q->right_label = r->left_label;
+            r->right_label = p;
+            r->left_label = q;
         };
-        const char nruk = (r->k == '\0') & '\300';
-        if (r->k == '\000')
+        const char nruk = (r->balance == '\0') & '\300';
+        if (r->balance == '\000')
         {
-            p->k = '\000';
-            q->k = p->k;
+            p->balance = '\000';
+            q->balance = p->balance;
         }
         else if (nruk == kren)
         {
-            p->k = '\000';
-            q->k = nruk;
+            p->balance = '\000';
+            q->balance = nruk;
         }
         else
         {
-            q->k = '\000';
-            p->k = nruk;
+            q->balance = '\000';
+            p->balance = nruk;
         };
-        r->k = '\000';
+        r->balance = '\000';
         verquz = r;
     }; // end of twos turn
     // correct upper reference
@@ -239,9 +232,9 @@ T_LABEL *lookup(const char *idp, size_t lid)
     {
         tgld--;
         if (otnuz[tgld] == '\100')
-            adruz[tgld]->j = verquz;
+            adruz[tgld]->right_label = verquz;
         else
-            adruz[tgld]->i = verquz;
+            adruz[tgld]->left_label = verquz;
     };
     return isk_uz;
 }
@@ -251,11 +244,11 @@ static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
     const T_LABEL *q = ptr;
     do
     {
-        const T_LABEL *r = q->i;
+        const T_LABEL *r = q->left_label;
         if (r != NULL)
             traverse(r, prog);
         (*prog)(q);
-        q = q->j;
+        q = q->right_label;
     } while (q != NULL);
     return;
 }
@@ -272,7 +265,7 @@ static void kil_tree(T_LABEL *p)
     T_LABEL *q = p;
     do
     {
-        T_LABEL *r = q->i;
+        T_LABEL *r = q->left_label;
         if (r != NULL)
             kil_tree(r);
         T_USAGE_LIST *r2 = q->usage_list.next;
@@ -285,12 +278,12 @@ static void kil_tree(T_LABEL *p)
             free(r2);
             r2 = r1;
         }
-        r = q->j;
+        r = q->right_label;
 #if defined mdebug
-        fprintf(stderr, "free(clu):id=%p\n", (void *)q->id);
+        fprintf(stderr, "free(clu): identifier=%p\n", (void *)q->identifier);
         fprintf(stderr, "           q=%p\n", (void *)q);
 #endif
-        free(q->id);
+        free(q->identifier);
         free(q);
         q = r;
     } while (q != NULL);

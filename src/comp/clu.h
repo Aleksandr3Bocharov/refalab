@@ -28,7 +28,7 @@ typedef struct label
         size_t infon;
         struct label *infop;
     } info;
-    char mode;
+    uint8_t mode;
     // mode field :
     //  00 - no defined;
     //  01 - internal; infon = offset from start
@@ -39,19 +39,20 @@ typedef struct label
     //  xx1 - entry point;
     //  xxx1 - too many definition;
     //
-    char type;                     // type field : 00 - unknown type
-                                   //              01 - function
-                                   //              10 - specifier
-    size_t l;                      // identifier length
-    struct label *i;               // left reference
-    struct label *j;               // right reference
-    T_USAGE_LIST *last_usage_list; // on the end of usage list
-    T_USAGE_LIST usage_list;       // where used
-    uint32_t def;                  // where defined
-    char k;                        // kren feature:      '00'B - kren no
-                                   //                    '01'B - left kren
-                                   //                    '10'B - right kren
-    char *id;                      // identifier
+    uint8_t type;                           // type field : 00 - unknown type
+                                            //              01 - function
+                                            //              10 - specifier
+    T_USAGE_LIST *last_usage_list;          // on the end of usage list
+    T_USAGE_LIST usage_list;                // where used
+    uint32_t carriage_number_defined;       // where defined
+    char identifier[MAX_IDENTIFIER_LENGTH]; // identifier
+    uint8_t identifier_length;              // identifier length
+    struct label *left_label;               // left reference
+    struct label *right_label;              // right reference
+    uint8_t balance;                        // balance feature:   '00'B - kren no
+                                            //                    '01'B - left kren
+                                            //                    '10'B - right kren
+
 } T_LABEL;
 
 extern T_LABEL *lookup(const char *idp, size_t lid);

@@ -82,7 +82,7 @@ void function_definition(const char *identifier, uint8_t identifier_length)
         else
         {
             function_head(identifier, identifier_length);
-            label->def = scanner.carriage_number;
+            label->carriage_number_defined = scanner.carriage_number;
             jit_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
@@ -125,7 +125,7 @@ void set_empty(const char *identifier, uint8_t identifier_length)
     else
     {
         function_head(identifier, identifier_length);
-        label->def = scanner.carriage_number;
+        label->carriage_number_defined = scanner.carriage_number;
         jit_label(label);
         jit_byte(n_fail);
     }
@@ -151,7 +151,7 @@ void set_swap(const char *identifier, uint8_t identifier_length)
         for (uint8_t i = 1; i <= align_bytes; i++)
             jit_byte(' ');
         function_head(identifier, identifier_length);
-        label->def = scanner.carriage_number;
+        label->carriage_number_defined = scanner.carriage_number;
         jit_label(label);
         jit_byte(n_swap);
         const uint8_t swap_length = SMBL + LBLL * 2;
@@ -177,7 +177,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
         PRINT_ERROR_504;
     else
     {
-        label->def = scanner.carriage_number;
+        label->carriage_number_defined = scanner.carriage_number;
         jit_extrn(label, identifier_extern, identifier_extern_length);
     }
     return;
@@ -211,7 +211,7 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
             PRINT_ERROR_504;
         else
         {
-            label->def = scanner.carriage_number;
+            label->carriage_number_defined = scanner.carriage_number;
             jit_label(label);
         }
     }
@@ -232,13 +232,13 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, const char *id
     if ((label1->mode & '\300') == '\000')
     {
         label2->type |= label1->type;
-        label1->def = scanner.carriage_number;
+        label1->carriage_number_defined = scanner.carriage_number;
         jit_equ(label1, label2);
     }
     else if ((label2->mode & '\300') == '\000')
     {
         label1->type |= label2->type;
-        label2->def = scanner.carriage_number;
+        label2->carriage_number_defined = scanner.carriage_number;
         jit_equ(label2, label1);
     }
     else
@@ -275,11 +275,11 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
     while ((not_equ_label->mode & '\300') == '\300')
         not_equ_label = not_equ_label->info.infop;
     if ((label->mode & '\300') == '\000')
-        print_error_three_strings("512 label", label->id, label->l, " not defined");
+        print_error_three_strings("512 label", label->identifier, label->identifier_length, " not defined");
     if ((label->mode & '\040') == '\040' && (not_equ_label->mode & '\300') == '\200')
-        print_error_three_strings("511 label", label->id, label->l, " both extrn and entry");
+        print_error_three_strings("511 label", label->identifier, label->identifier_length, " both extrn and entry");
     if ((not_equ_label->type & '\300') == '\300')
-        print_error_three_strings("502 label", label->id, label->l, " boht specifier and function");
+        print_error_three_strings("502 label", label->identifier, label->identifier_length, " boht specifier and function");
     return;
 }
 
