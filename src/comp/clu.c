@@ -64,9 +64,9 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     size_t tgld = 0; // current  tree depth
     T_LABEL *p = korenj;
     T_LABEL *q;
-    char kren;
+    uint8_t kren;
     T_LABEL *adruz[36]; // stack for tree work
-    char otnuz[36];
+    uint8_t otnuz[36];
     while (true)
     { // search step
         do
@@ -206,7 +206,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             r->right_label = p;
             r->left_label = q;
         };
-        const char nruk = (r->balance == 0) & 0300;
+        const uint8_t nruk = (r->balance == 0) & 0300;
         if (r->balance == 0)
         {
             p->balance = 0;
@@ -280,10 +280,8 @@ static void kil_tree(T_LABEL *p)
         }
         r = q->right_label;
 #if defined mdebug
-        fprintf(stderr, "free(clu): identifier=%p\n", (void *)q->identifier);
-        fprintf(stderr, "           q=%p\n", (void *)q);
+        fprintf(stderr, "free(clu): q=%p\n", (void *)q);
 #endif
-        free(q->identifier);
         free(q);
         q = r;
     } while (q != NULL);

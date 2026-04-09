@@ -15,10 +15,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "refalab.h"
 #include "cgop.h"
-
-#define MAX_IDENTIFIER_LENGTH 40
-#define MAX_IDENTIFIER_EXTERN_LENGTH 32
 
 typedef struct options_
 { // compiling   options

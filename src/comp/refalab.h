@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-10
+// 2026-04-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -30,6 +30,9 @@
 #define SMBL (ZBLL + LBLL)
 
 #define MAX_NUMBER 0xFFFFFFFFLL
+
+#define MAX_IDENTIFIER_LENGTH 40
+#define MAX_IDENTIFIER_EXTERN_LENGTH 32
 
 #endif
 
