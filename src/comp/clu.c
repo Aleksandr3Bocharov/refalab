@@ -59,13 +59,12 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     }
     // tree is't empty,begin push.
     // remember path in stack
-    T_LABEL *search_label;
     uint8_t current_tree_depth = 0; // current  tree depth
     T_LABEL *label = root;
     T_LABEL *temp_label;
     uint8_t balance;
-    T_LABEL *adruz[45]; // stack for tree work
-    uint8_t otnuz[45];
+    T_LABEL *labels_stack[45]; // stack for tree work
+    uint8_t balances_stack[45];
     while (true)
     { // search step
         do
@@ -74,30 +73,30 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             {
                 if (identifier_length == label->identifier_length)
                 { // include usage number to list
-                    T_USAGE_LIST *q1 = label->last_usage_list;
-                    size_t k = 5;
-                    while (q1->carriage_numbers[k] == 0)
-                        k--;
-                    if (q1->carriage_numbers[k] != scanner.carriage_number)
+                    T_USAGE_LIST *last_usage_list = label->last_usage_list;
+                    uint8_t i = 5;
+                    while (last_usage_list->carriage_numbers[i] == 0)
+                        i--;
+                    if (last_usage_list->carriage_numbers[i] != scanner.carriage_number)
                     {
                         // include number to list
-                        if (q1->carriage_numbers[5] == 0)
+                        if (last_usage_list->carriage_numbers[5] == 0)
                             // it's free field in current item
-                            q1->carriage_numbers[k + 1] = scanner.carriage_number;
+                            last_usage_list->carriage_numbers[i + 1] = scanner.carriage_number;
                         else
                         { // create new item
-                            T_USAGE_LIST *r1 = (T_USAGE_LIST *)calloc(1, sizeof(T_USAGE_LIST));
+                            T_USAGE_LIST *new_usage_list = (T_USAGE_LIST *)calloc(1, sizeof(T_USAGE_LIST));
 #if defined mdebug
-                            fprintf(stderr, "calloc(clu): r1=%p\n", (void *)r1);
+                            fprintf(stderr, "calloc(clu): new_usage_list=%p\n", (void *)new_usage_list);
 #endif
-                            if (r1 == NULL)
+                            if (new_usage_list == NULL)
                                 error_no_memory_labels();
-                            q1->next = r1;
-                            label->last_usage_list = q1->next;
-                            r1->next = NULL;
-                            for (k = 0; k <= 5; k++)
-                                r1->carriage_numbers[k] = 0;
-                            r1->carriage_numbers[0] = scanner.carriage_number;
+                            last_usage_list->next = new_usage_list;
+                            label->last_usage_list = last_usage_list->next;
+                            new_usage_list->next = NULL;
+                            for (i = 0; i <= 5; i++)
+                                new_usage_list->carriage_numbers[i] = 0;
+                            new_usage_list->carriage_numbers[0] = scanner.carriage_number;
                         };
                     }
                     while ((label->mode & 0300) == 0300)
@@ -118,8 +117,8 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             else
                 balance = 0200;
         } while (false);
-        adruz[current_tree_depth] = label;
-        otnuz[current_tree_depth] = balance;
+        labels_stack[current_tree_depth] = label;
+        balances_stack[current_tree_depth] = balance;
         current_tree_depth++;
         // step down in tree
         if (balance == 0100)
@@ -134,7 +133,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         break;
     }
     // include new node to tree
-    search_label = new_label(identifier, identifier_length);
+    T_LABEL *search_label = new_label(identifier, identifier_length);
     temp_label = search_label;
     if (balance == 0100)
         label->right_label = temp_label;
@@ -145,11 +144,11 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     { // move up and correct
         // balance  features
         current_tree_depth--;
-        label = adruz[current_tree_depth];
+        label = labels_stack[current_tree_depth];
         balance = label->balance;
         if (balance == 0)
         {
-            label->balance = otnuz[current_tree_depth];
+            label->balance = balances_stack[current_tree_depth];
             if (current_tree_depth != 0)
                 continue;
             return search_label;
@@ -157,7 +156,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         break;
     }
     // in this point balance != 0
-    if (balance != otnuz[current_tree_depth])
+    if (balance != balances_stack[current_tree_depth])
     {
         label->balance = 0;
         return search_label;
@@ -230,10 +229,10 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     else
     {
         current_tree_depth--;
-        if (otnuz[current_tree_depth] == 0100)
-            adruz[current_tree_depth]->right_label = verquz;
+        if (balances_stack[current_tree_depth] == 0100)
+            labels_stack[current_tree_depth]->right_label = verquz;
         else
-            adruz[current_tree_depth]->left_label = verquz;
+            labels_stack[current_tree_depth]->left_label = verquz;
     };
     return search_label;
 }
