@@ -168,7 +168,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         temp_label = label->right_label;
     else
         temp_label = label->left_label;
-    T_LABEL *verquz;
+    T_LABEL *upper_label;
     if (balance == temp_label->balance)
     {
         if (balance == 0100)
@@ -183,29 +183,29 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         };
         temp_label->balance = 0;
         label->balance = temp_label->balance;
-        verquz = temp_label;
+        upper_label = temp_label;
     }
     else
     { // twos turn
-        T_LABEL *r;
+        T_LABEL *temp2_label;
         if (balance == 0100)
         {
-            r = temp_label->left_label;
-            label->right_label = r->left_label;
-            temp_label->left_label = r->right_label;
-            r->left_label = label;
-            r->right_label = temp_label;
+            temp2_label = temp_label->left_label;
+            label->right_label = temp2_label->left_label;
+            temp_label->left_label = temp2_label->right_label;
+            temp2_label->left_label = label;
+            temp2_label->right_label = temp_label;
         }
         else
         {
-            r = temp_label->right_label;
-            label->left_label = r->right_label;
-            temp_label->right_label = r->left_label;
-            r->right_label = label;
-            r->left_label = temp_label;
+            temp2_label = temp_label->right_label;
+            label->left_label = temp2_label->right_label;
+            temp_label->right_label = temp2_label->left_label;
+            temp2_label->right_label = label;
+            temp2_label->left_label = temp_label;
         };
-        const uint8_t nruk = (r->balance == 0) & 0300;
-        if (r->balance == 0)
+        const uint8_t nruk = (temp2_label->balance == 0) & 0300;
+        if (temp2_label->balance == 0)
         {
             label->balance = 0;
             temp_label->balance = label->balance;
@@ -220,19 +220,19 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             temp_label->balance = 0;
             label->balance = nruk;
         };
-        r->balance = 0;
-        verquz = r;
+        temp2_label->balance = 0;
+        upper_label = temp2_label;
     }; // end of twos turn
     // correct upper reference
     if (current_tree_depth == 0)
-        root = verquz;
+        root = upper_label;
     else
     {
         current_tree_depth--;
         if (balances_stack[current_tree_depth] == 0100)
-            labels_stack[current_tree_depth]->right_label = verquz;
+            labels_stack[current_tree_depth]->right_label = upper_label;
         else
-            labels_stack[current_tree_depth]->left_label = verquz;
+            labels_stack[current_tree_depth]->left_label = upper_label;
     };
     return search_label;
 }
