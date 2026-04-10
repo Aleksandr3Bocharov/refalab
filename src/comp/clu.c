@@ -64,8 +64,8 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     T_LABEL *label = root;
     T_LABEL *temp_label;
     uint8_t balance;
-    T_LABEL *adruz[36]; // stack for tree work
-    uint8_t otnuz[36];
+    T_LABEL *adruz[45]; // stack for tree work
+    uint8_t otnuz[45];
     while (true)
     { // search step
         do
