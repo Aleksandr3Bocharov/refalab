@@ -49,9 +49,9 @@ typedef struct label
     uint8_t identifier_length;              // identifier length
     struct label *left_label;               // left reference
     struct label *right_label;              // right reference
-    uint8_t balance;                        // balance feature:   '00'B - kren no
-                                            //                    '01'B - left kren
-                                            //                    '10'B - right kren
+    uint8_t balance;                        // balance feature:   '00'B - no
+                                            //                    '01'B - left
+                                            //                    '10'B - right
 
 } T_LABEL;
 

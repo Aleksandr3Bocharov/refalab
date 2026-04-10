@@ -16,7 +16,7 @@
 #include "clu.h"
 #include "refal.h"
 
-static T_LABEL *korenj = NULL; // tree koren
+static T_LABEL *root = NULL; // tree root
 
 void error_no_memory_labels(void)
 {
@@ -25,57 +25,56 @@ void error_no_memory_labels(void)
     return;
 }
 
-static T_LABEL *nov_uzel(const char *idp, size_t lid)
+static T_LABEL *new_label(const char *identifier, uint8_t identifier_length)
 {
-    T_LABEL *p = (T_LABEL *)calloc(1, sizeof(T_LABEL));
+    T_LABEL *label = (T_LABEL *)calloc(1, sizeof(T_LABEL));
 #if defined mdebug
-    fprintf(stderr, "calloc(clu): p=%p identifier_length=%u type=%o\n", (void *)p, p->identifier_length, p->type);
+    fprintf(stderr, "calloc(clu): label=%p identifier_length=%u type=%o\n", (void *)label, label->identifier_length, label->type);
 #endif
-    if (p == NULL)
+    if (label == NULL)
         error_no_memory_labels();
-    p->left_label = NULL;
-    p->right_label = NULL;
-    p->balance = 0;
-    p->mode = 0;
-    p->type = 0;
-    p->last_usage_list = &p->usage_list;
-    p->usage_list.next = NULL;
-    for (size_t m = 1; m <= 5; m++)
-        p->usage_list.carriage_numbers[m] = 0;
-    p->usage_list.carriage_numbers[0] = scanner.carriage_number;
-    p->carriage_number_defined = 0;
-    strncpy(p->identifier, idp, lid);
-    p->identifier_length = lid;
-    return p;
+    label->left_label = NULL;
+    label->right_label = NULL;
+    label->balance = 0;
+    label->mode = 0;
+    label->type = 0;
+    label->last_usage_list = &label->usage_list;
+    label->usage_list.next = NULL;
+    for (uint8_t i = 1; i <= 5; i++)
+        label->usage_list.carriage_numbers[i] = 0;
+    label->usage_list.carriage_numbers[0] = scanner.carriage_number;
+    label->carriage_number_defined = 0;
+    strncpy(label->identifier, identifier, identifier_length);
+    label->identifier_length = identifier_length;
+    return label;
 }
 
 T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
 // identifier_length identifier length
 {
-    T_LABEL *isk_uz;
-    if (korenj == NULL)
+    if (root == NULL)
     { // empty tree
-        korenj = nov_uzel(identifier, identifier_length);
-        isk_uz = korenj;
-        return isk_uz;
+        root = new_label(identifier, identifier_length);
+        return root;
     }
     // tree is't empty,begin push.
     // remember path in stack
-    size_t tgld = 0; // current  tree depth
-    T_LABEL *p = korenj;
-    T_LABEL *q;
-    uint8_t kren;
+    T_LABEL *search_label;
+    uint8_t current_tree_depth = 0; // current  tree depth
+    T_LABEL *label = root;
+    T_LABEL *temp_label;
+    uint8_t balance;
     T_LABEL *adruz[36]; // stack for tree work
     uint8_t otnuz[36];
     while (true)
     { // search step
         do
         {
-            if (strncmp(identifier, p->identifier, identifier_length < p->identifier_length ? identifier_length : p->identifier_length) == 0)
+            if (strncmp(identifier, label->identifier, identifier_length < label->identifier_length ? identifier_length : label->identifier_length) == 0)
             {
-                if (identifier_length == p->identifier_length)
+                if (identifier_length == label->identifier_length)
                 { // include usage number to list
-                    T_USAGE_LIST *q1 = p->last_usage_list;
+                    T_USAGE_LIST *q1 = label->last_usage_list;
                     size_t k = 5;
                     while (q1->carriage_numbers[k] == 0)
                         k--;
@@ -94,149 +93,149 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
                             if (r1 == NULL)
                                 error_no_memory_labels();
                             q1->next = r1;
-                            p->last_usage_list = q1->next;
+                            label->last_usage_list = q1->next;
                             r1->next = NULL;
                             for (k = 0; k <= 5; k++)
                                 r1->carriage_numbers[k] = 0;
                             r1->carriage_numbers[0] = scanner.carriage_number;
                         };
                     }
-                    while ((p->mode & 0300) == 0300)
-                        p = p->info.infop;
-                    return p;
+                    while ((label->mode & 0300) == 0300)
+                        label = label->info.infop;
+                    return label;
                 }
                 else
                 {
-                    if (identifier_length > p->identifier_length)
-                        kren = 0100;
+                    if (identifier_length > label->identifier_length)
+                        balance = 0100;
                     else
-                        kren = 0200;
+                        balance = 0200;
                     break;
                 }
             }
-            if (strncmp(identifier, p->identifier, identifier_length < p->identifier_length ? identifier_length : p->identifier_length) > 0)
-                kren = 0100;
+            if (strncmp(identifier, label->identifier, identifier_length < label->identifier_length ? identifier_length : label->identifier_length) > 0)
+                balance = 0100;
             else
-                kren = 0200;
+                balance = 0200;
         } while (false);
-        adruz[tgld] = p;
-        otnuz[tgld] = kren;
-        tgld++;
+        adruz[current_tree_depth] = label;
+        otnuz[current_tree_depth] = balance;
+        current_tree_depth++;
         // step down in tree
-        if (kren == 0100)
-            q = p->right_label;
+        if (balance == 0100)
+            temp_label = label->right_label;
         else
-            q = p->left_label;
-        if (q != NULL)
+            temp_label = label->left_label;
+        if (temp_label != NULL)
         {
-            p = q;
+            label = temp_label;
             continue;
         };
         break;
     }
     // include new node to tree
-    isk_uz = nov_uzel(identifier, identifier_length);
-    q = isk_uz;
-    if (kren == 0100)
-        p->right_label = q;
+    search_label = new_label(identifier, identifier_length);
+    temp_label = search_label;
+    if (balance == 0100)
+        label->right_label = temp_label;
     else
-        p->left_label = q;
+        label->left_label = temp_label;
     // necessary node is new
     while (true)
     { // move up and correct
         // balance  features
-        tgld--;
-        p = adruz[tgld];
-        kren = p->balance;
-        if (kren == 0)
+        current_tree_depth--;
+        label = adruz[current_tree_depth];
+        balance = label->balance;
+        if (balance == 0)
         {
-            p->balance = otnuz[tgld];
-            if (tgld != 0)
+            label->balance = otnuz[current_tree_depth];
+            if (current_tree_depth != 0)
                 continue;
-            return isk_uz;
+            return search_label;
         };
         break;
     }
-    // in this point kren != 0
-    if (kren != otnuz[tgld])
+    // in this point balance != 0
+    if (balance != otnuz[current_tree_depth])
     {
-        p->balance = 0;
-        return isk_uz;
+        label->balance = 0;
+        return search_label;
     };
     // tree turn
-    // if kren = 0100 -- left turn
-    // if kren = 0200 -- right turn
-    if (kren == 0100)
-        q = p->right_label;
+    // if balance = 0100 -- left turn
+    // if balance = 0200 -- right turn
+    if (balance == 0100)
+        temp_label = label->right_label;
     else
-        q = p->left_label;
+        temp_label = label->left_label;
     T_LABEL *verquz;
-    if (kren == q->balance)
+    if (balance == temp_label->balance)
     {
-        if (kren == 0100)
+        if (balance == 0100)
         { // once turn
-            p->right_label = q->left_label;
-            q->left_label = p;
+            label->right_label = temp_label->left_label;
+            temp_label->left_label = label;
         }
         else
         {
-            p->left_label = q->right_label;
-            q->right_label = p;
+            label->left_label = temp_label->right_label;
+            temp_label->right_label = label;
         };
-        q->balance = 0;
-        p->balance = q->balance;
-        verquz = q;
+        temp_label->balance = 0;
+        label->balance = temp_label->balance;
+        verquz = temp_label;
     }
     else
     { // twos turn
         T_LABEL *r;
-        if (kren == 0100)
+        if (balance == 0100)
         {
-            r = q->left_label;
-            p->right_label = r->left_label;
-            q->left_label = r->right_label;
-            r->left_label = p;
-            r->right_label = q;
+            r = temp_label->left_label;
+            label->right_label = r->left_label;
+            temp_label->left_label = r->right_label;
+            r->left_label = label;
+            r->right_label = temp_label;
         }
         else
         {
-            r = q->right_label;
-            p->left_label = r->right_label;
-            q->right_label = r->left_label;
-            r->right_label = p;
-            r->left_label = q;
+            r = temp_label->right_label;
+            label->left_label = r->right_label;
+            temp_label->right_label = r->left_label;
+            r->right_label = label;
+            r->left_label = temp_label;
         };
         const uint8_t nruk = (r->balance == 0) & 0300;
         if (r->balance == 0)
         {
-            p->balance = 0;
-            q->balance = p->balance;
+            label->balance = 0;
+            temp_label->balance = label->balance;
         }
-        else if (nruk == kren)
+        else if (nruk == balance)
         {
-            p->balance = 0;
-            q->balance = nruk;
+            label->balance = 0;
+            temp_label->balance = nruk;
         }
         else
         {
-            q->balance = 0;
-            p->balance = nruk;
+            temp_label->balance = 0;
+            label->balance = nruk;
         };
         r->balance = 0;
         verquz = r;
     }; // end of twos turn
     // correct upper reference
-    if (tgld == 0)
-        korenj = verquz;
+    if (current_tree_depth == 0)
+        root = verquz;
     else
     {
-        tgld--;
-        if (otnuz[tgld] == 0100)
-            adruz[tgld]->right_label = verquz;
+        current_tree_depth--;
+        if (otnuz[current_tree_depth] == 0100)
+            adruz[current_tree_depth]->right_label = verquz;
         else
-            adruz[tgld]->left_label = verquz;
+            adruz[current_tree_depth]->left_label = verquz;
     };
-    return isk_uz;
+    return search_label;
 }
 
 static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
@@ -255,8 +254,8 @@ static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
 
 void through_labels(void (*handler)(const T_LABEL *))
 {
-    if (korenj != NULL)
-        traverse(korenj, handler);
+    if (root != NULL)
+        traverse(root, handler);
     return;
 }
 
@@ -290,10 +289,10 @@ static void kil_tree(T_LABEL *p)
 
 void labels_terminate(void)
 {
-    if (korenj != NULL)
+    if (root != NULL)
     {
-        kil_tree(korenj);
-        korenj = NULL;
+        kil_tree(root);
+        root = NULL;
     }
     return;
 }
