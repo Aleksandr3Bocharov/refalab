@@ -61,7 +61,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     // remember path in stack
     uint8_t current_tree_depth = 0; // current  tree depth
     T_LABEL *label = root;
-    T_LABEL *temp_label;
+    T_LABEL *child_label;
     uint8_t balance;
     T_LABEL *labels_stack[45]; // stack for tree work
     uint8_t balances_stack[45];
@@ -122,23 +122,23 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
         current_tree_depth++;
         // step down in tree
         if (balance == 0100)
-            temp_label = label->right_label;
+            child_label = label->right_label;
         else
-            temp_label = label->left_label;
-        if (temp_label != NULL)
+            child_label = label->left_label;
+        if (child_label != NULL)
         {
-            label = temp_label;
+            label = child_label;
             continue;
         };
         break;
     }
     // include new node to tree
     T_LABEL *search_label = new_label(identifier, identifier_length);
-    temp_label = search_label;
+    child_label = search_label;
     if (balance == 0100)
-        label->right_label = temp_label;
+        label->right_label = child_label;
     else
-        label->left_label = temp_label;
+        label->left_label = child_label;
     // necessary node is new
     while (true)
     { // move up and correct
@@ -165,63 +165,63 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     // if balance = 0100 -- left turn
     // if balance = 0200 -- right turn
     if (balance == 0100)
-        temp_label = label->right_label;
+        child_label = label->right_label;
     else
-        temp_label = label->left_label;
+        child_label = label->left_label;
     T_LABEL *upper_label;
-    if (balance == temp_label->balance)
+    if (balance == child_label->balance)
     {
         if (balance == 0100)
         { // once turn
-            label->right_label = temp_label->left_label;
-            temp_label->left_label = label;
+            label->right_label = child_label->left_label;
+            child_label->left_label = label;
         }
         else
         {
-            label->left_label = temp_label->right_label;
-            temp_label->right_label = label;
+            label->left_label = child_label->right_label;
+            child_label->right_label = label;
         };
-        temp_label->balance = 0;
-        label->balance = temp_label->balance;
-        upper_label = temp_label;
+        child_label->balance = 0;
+        label->balance = child_label->balance;
+        upper_label = child_label;
     }
     else
     { // twos turn
-        T_LABEL *temp2_label;
+        T_LABEL *grand_child_label;
         if (balance == 0100)
         {
-            temp2_label = temp_label->left_label;
-            label->right_label = temp2_label->left_label;
-            temp_label->left_label = temp2_label->right_label;
-            temp2_label->left_label = label;
-            temp2_label->right_label = temp_label;
+            grand_child_label = child_label->left_label;
+            label->right_label = grand_child_label->left_label;
+            child_label->left_label = grand_child_label->right_label;
+            grand_child_label->left_label = label;
+            grand_child_label->right_label = child_label;
         }
         else
         {
-            temp2_label = temp_label->right_label;
-            label->left_label = temp2_label->right_label;
-            temp_label->right_label = temp2_label->left_label;
-            temp2_label->right_label = label;
-            temp2_label->left_label = temp_label;
+            grand_child_label = child_label->right_label;
+            label->left_label = grand_child_label->right_label;
+            child_label->right_label = grand_child_label->left_label;
+            grand_child_label->right_label = label;
+            grand_child_label->left_label = child_label;
         };
-        const uint8_t nruk = (temp2_label->balance == 0) & 0300;
-        if (temp2_label->balance == 0)
+        const uint8_t nruk = (grand_child_label->balance == 0) & 0300;
+        if (grand_child_label->balance == 0)
         {
             label->balance = 0;
-            temp_label->balance = label->balance;
+            child_label->balance = label->balance;
         }
         else if (nruk == balance)
         {
             label->balance = 0;
-            temp_label->balance = nruk;
+            child_label->balance = nruk;
         }
         else
         {
-            temp_label->balance = 0;
+            child_label->balance = 0;
             label->balance = nruk;
         };
-        temp2_label->balance = 0;
-        upper_label = temp2_label;
+        grand_child_label->balance = 0;
+        upper_label = grand_child_label;
     }; // end of twos turn
     // correct upper reference
     if (current_tree_depth == 0)
