@@ -264,7 +264,7 @@ static void kill_tree(T_LABEL *label)
     {
         T_LABEL *child_traverse_label = traverse_label->left_label;
         if (child_traverse_label != NULL)
-            kil_tree(child_traverse_label);
+            kill_tree(child_traverse_label);
         T_USAGE_LIST *usage_list = traverse_label->usage_list.next;
         while (usage_list != NULL)
         {
