@@ -204,21 +204,21 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
             grand_child_label->right_label = label;
             grand_child_label->left_label = child_label;
         };
-        const uint8_t nruk = (grand_child_label->balance == 0) & 0300;
+        const uint8_t negative_grand_child_label_balance = ~grand_child_label->balance & 0300;
         if (grand_child_label->balance == 0)
         {
             label->balance = 0;
             child_label->balance = label->balance;
         }
-        else if (nruk == balance)
+        else if (negative_grand_child_label_balance == balance)
         {
             label->balance = 0;
-            child_label->balance = nruk;
+            child_label->balance = negative_grand_child_label_balance;
         }
         else
         {
             child_label->balance = 0;
-            label->balance = nruk;
+            label->balance = negative_grand_child_label_balance;
         };
         grand_child_label->balance = 0;
         upper_label = grand_child_label;
@@ -237,52 +237,51 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length)
     return search_label;
 }
 
-static void traverse(const T_LABEL *ptr, void (*prog)(const T_LABEL *))
+static void traverse_down_label(const T_LABEL *label, void (*handler)(const T_LABEL *))
 {
-    const T_LABEL *q = ptr;
+    const T_LABEL *traverse_label = label;
     do
     {
-        const T_LABEL *r = q->left_label;
-        if (r != NULL)
-            traverse(r, prog);
-        (*prog)(q);
-        q = q->right_label;
-    } while (q != NULL);
+        if (traverse_label->left_label != NULL)
+            traverse_down_label(traverse_label->left_label, handler);
+        (*handler)(traverse_label);
+        traverse_label = traverse_label->right_label;
+    } while (traverse_label != NULL);
     return;
 }
 
 void through_labels(void (*handler)(const T_LABEL *))
 {
     if (root != NULL)
-        traverse(root, handler);
+        traverse_down_label(root, handler);
     return;
 }
 
-static void kil_tree(T_LABEL *p)
+static void kill_tree(T_LABEL *label)
 {
-    T_LABEL *q = p;
+    T_LABEL *traverse_label = label;
     do
     {
-        T_LABEL *r = q->left_label;
-        if (r != NULL)
-            kil_tree(r);
-        T_USAGE_LIST *r2 = q->usage_list.next;
-        while (r2 != NULL)
+        T_LABEL *child_traverse_label = traverse_label->left_label;
+        if (child_traverse_label != NULL)
+            kil_tree(child_traverse_label);
+        T_USAGE_LIST *usage_list = traverse_label->usage_list.next;
+        while (usage_list != NULL)
         {
-            T_USAGE_LIST *r1 = r2->next;
+            T_USAGE_LIST *temp_usage_list = usage_list->next;
 #if defined mdebug
-            fprintf(stderr, "free(clu): r2=%p\n", (void *)r2);
+            fprintf(stderr, "free(clu): usage_list=%p\n", (void *)usage_list);
 #endif
-            free(r2);
-            r2 = r1;
+            free(usage_list);
+            usage_list = temp_usage_list;
         }
-        r = q->right_label;
+        child_traverse_label = traverse_label->right_label;
 #if defined mdebug
-        fprintf(stderr, "free(clu): q=%p\n", (void *)q);
+        fprintf(stderr, "free(clu): traverse_label=%p\n", (void *)traverse_label);
 #endif
-        free(q);
-        q = r;
-    } while (q != NULL);
+        free(traverse_label);
+        traverse_label = child_traverse_label;
+    } while (traverse_label != NULL);
     return;
 }
 
@@ -290,7 +289,7 @@ void labels_terminate(void)
 {
     if (root != NULL)
     {
-        kil_tree(root);
+        kill_tree(root);
         root = NULL;
     }
     return;
