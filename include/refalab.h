@@ -99,7 +99,7 @@ typedef struct refal
     T_STATUS_TABLE *last_status_table;
     T_STATUS_TABLE *first_status_table;
     uint8_t upshot;
-    T_LINKCB *preva;
+    T_LINKCB *previous_argument;
     T_LINKCB *nexta;
     T_LINKCB *prevr;
     T_LINKCB *nextr;
