@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XTRY.C --------------
@@ -70,7 +70,7 @@ static void try_(void)
                 s_st->step = 0;
             s_st->stop = s_st->step + 1;
             const T_LINKCB *pk1 = s_st->dot->info.codep;
-            const T_LINKCB *prevk = pk1->prev;
+            const T_LINKCB *prevk = pk1->previous;
             const T_LINKCB *nextd = s_st->dot->next;
             printf(" Step: %d\n", s_st->stop);
             rfpexm(" Term: ", prevk, nextd, true);

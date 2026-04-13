@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XRAND.C ------------
@@ -102,7 +102,7 @@ static void random_number_(void)
     else
         res = random_number();
     pcoden(p, res);
-    rftpl(refal.prevr, p->prev, p->next);
+    rftpl(refal.prevr, p->previous, p->next);
     return;
 }
 char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)13};

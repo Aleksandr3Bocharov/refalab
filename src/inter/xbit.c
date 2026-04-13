@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -62,7 +62,7 @@ static char zn, Xzn, Yzn;
 static bool dajch(void)
 {
     zn = '+';
-    kon = y->prev;
+    kon = y->previous;
     if (x == kon)
     { // pustoe chislo
         dl = 0;
@@ -247,7 +247,7 @@ static void boper(uint32_t o)
             x = refal.preva->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.prevr, x->prev, x->next);
+            rftpl(refal.prevr, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -256,13 +256,13 @@ static void boper(uint32_t o)
             ;
         if (Xzn == '-')
         {
-            x = x->prev;
+            x = x->previous;
             x->tag = TAGO;
             x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->prev, Xk->next);
+        rftpl(refal.prevr, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -302,7 +302,7 @@ static void shoper(uint32_t o)
             rez0 = false;
             const size_t n = dl + (sh == 0 ? 0 : 1) + (Xzn == '-' ? 1 : 0);
             size_t e = 4;
-            for (x = Xn->prev; x->tag != TAGLB && n > e; x = x->prev, e++)
+            for (x = Xn->previous; x->tag != TAGLB && n > e; x = x->previous, e++)
                 ;
             if (n > e)
                 if (!slins(refal.nextr, n - e))
@@ -313,7 +313,7 @@ static void shoper(uint32_t o)
                 y = Xn;
                 for (Ydl = 0; Ydl < dl; Ydl++)
                 {
-                    Xn = Xn->prev;
+                    Xn = Xn->previous;
                     Xn->tag = TAGN;
                     Xn->info.code = NULL;
                 }
@@ -322,19 +322,19 @@ static void shoper(uint32_t o)
                     pcoden(x, gcoden(y));
                     y->info.code = NULL;
                 }
-                Yk = x->prev;
+                Yk = x->previous;
             }
             else
                 Yk = Xk;
             if (sh == 0)
                 break;
-            Xn = Xn->prev;
+            Xn = Xn->previous;
             Xn->tag = TAGN;
             Xn->info.code = NULL;
             for (x = Xn->next; x != Yk->next; x = x->next)
             {
                 const uint32_t t = gcoden(x) >> sh1;
-                pcoden(x->prev, gcoden(x->prev) | t);
+                pcoden(x->previous, gcoden(x->previous) | t);
                 pcoden(x, gcoden(x) << sh);
             }
             break;
@@ -343,9 +343,9 @@ static void shoper(uint32_t o)
                 break;
             if (dl != 0)
             {
-                for (x = Xk, Ydl = 0; Ydl < dl; x = x->prev, Ydl++)
+                for (x = Xk, Ydl = 0; Ydl < dl; x = x->previous, Ydl++)
                     ;
-                for (y = Xk; x != Xn->prev; x = x->prev, y = y->prev)
+                for (y = Xk; x != Xn->previous; x = x->previous, y = y->previous)
                     pcoden(y, gcoden(x));
                 Xn = y->next;
             }
@@ -354,10 +354,10 @@ static void shoper(uint32_t o)
                 rez0 = false;
                 break;
             }
-            for (x = Xk; x != Xn; x = x->prev)
+            for (x = Xk; x != Xn; x = x->previous)
             {
                 pcoden(x, gcoden(x) >> sh);
-                const uint32_t t = gcoden(x->prev) << sh1;
+                const uint32_t t = gcoden(x->previous) << sh1;
                 pcoden(x, gcoden(x) | t);
             }
             pcoden(Xn, gcoden(Xn) >> sh);
@@ -369,7 +369,7 @@ static void shoper(uint32_t o)
             x = refal.preva->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.prevr, x->prev, x->next);
+            rftpl(refal.prevr, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -378,13 +378,13 @@ static void shoper(uint32_t o)
             ;
         if (Xzn == '-')
         {
-            x = x->prev;
+            x = x->previous;
             x->tag = TAGO;
             x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->prev, Xk->next);
+        rftpl(refal.prevr, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;

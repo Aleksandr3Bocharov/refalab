@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
@@ -65,15 +65,15 @@ static void numb_(void)
     str[i] = '\0';
     if (strlen(str) == 0)
     {
-        if (!slins(refal.nexta->prev, 1))
+        if (!slins(refal.nexta->previous, 1))
             return;
-        pp = refal.nexta->prev;
+        pp = refal.nexta->previous;
         pz = pp;
     }
     pp->tag = TAGN;
     pp->info.code = NULL;
     pcoden(pp, (uint32_t)atoll(str));
-    rftpl(refal.prevr, pz->prev, pp->next);
+    rftpl(refal.prevr, pz->previous, pp->next);
     return;
 }
 char numb_0[] = {Z4 'N', 'U', 'M', 'B', (char)4};
@@ -101,7 +101,7 @@ static void symb_(void)
             refal.upshot = 2;
             return;
         }
-    p = p->prev;
+    p = p->previous;
     uint32_t l = gcoden(p);
     if (i == 0 || l == 0)
     {
@@ -121,7 +121,7 @@ static void symb_(void)
         lins(pp, j);
     else
     {
-        pz = pz->prev;
+        pz = pz->previous;
         lins(pz, j);
         pz = pz->next;
         pp = pz;
@@ -132,7 +132,7 @@ static void symb_(void)
         p->info.code = NULL;
         p->info.infoc = str[i];
     }
-    rftpl(refal.prevr, pz->prev, p);
+    rftpl(refal.prevr, pz->previous, p);
     return;
 }
 char symb_0[] = {Z4 'S', 'Y', 'M', 'B', (char)4};
@@ -188,28 +188,28 @@ static void last_(void)
     T_LINKCB *p = refal.nexta;
     for (size_t k = 1; k <= n; k++)
     {
-        p = p->prev;
+        p = p->previous;
         if (p == pn)
         {
             pn->tag = TAGO;
             pn->info.code = NULL;
             pn->info.infoc = '*';
             rftpl(refal.prevr, pn, refal.nexta);
-            p = refal.nextr->prev;
+            p = refal.nextr->previous;
             rftpl(p, refal.preva, refal.nexta);
             return;
         }
         if (p->tag == TAGRB)
             p = p->info.codep;
     }
-    p = p->prev;
+    p = p->previous;
     refal.preva->tag = TAGLB;
     refal.preva->info.codep = pn;
     pn->tag = TAGRB;
     pn->info.codep = refal.preva;
     rftpl(refal.preva, p, refal.nexta);
     rftpl(refal.prevr, pn, refal.nexta);
-    p = refal.nextr->prev;
+    p = refal.nextr->previous;
     rftpl(p, refal.nextr, refal.nexta);
     return;
 }
@@ -275,7 +275,7 @@ static void multe_(void)
     {
         do
         {
-            p = refal.nextr->prev;
+            p = refal.nextr->previous;
             if (!lcopy(p, pn, refal.nexta))
             {
                 refal.upshot = 3;

@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -832,7 +832,7 @@ static void getpf(const T_ST *ss_st)
 {
     curr_step = ss_st->step + 1;
     pk = ss_st->dot->info.codep;
-    prevk = pk->prev;
+    prevk = pk->previous;
     nextd = ss_st->dot->next;
     nextk = pk->next;
     size_t i;

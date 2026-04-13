@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-01
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XSTOR.C -----------
@@ -69,7 +69,7 @@ static void dg_(void)
         break;
     }
     rftpl(refal.prevr, q, pr);
-    pl = pl->prev;
+    pl = pl->previous;
     pr = pr->next;
     rfdel(pl, pr);
     return;

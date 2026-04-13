@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -84,7 +84,7 @@ static char zn, Xzn, Yzn;
 static bool dajch(void)
 {
     zn = '+';
-    kon = y->prev;
+    kon = y->previous;
     if (x == kon)
     { // pustoe chislo
         dl = 0;
@@ -220,7 +220,7 @@ static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makr
         const int64_t a = (g & m) << j;
         pcoden(X, (uint32_t)(a | peren));
         peren = g >> ip;
-        X = X->prev;
+        X = X->previous;
     }
     return;
 }
@@ -261,16 +261,16 @@ static void oper(uint32_t o, uint32_t prn)
                 if (Xdl < Ydl)
                     obmen();
                 //  X  dlinnee  Y  (ili =)
-                Xn = Xn->prev; //  pripisywaem  0
+                Xn = Xn->previous; //  pripisywaem  0
                 Xn->tag = TAGN;
                 Xn->info.code = NULL;
                 peren = 0;
-                for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
+                for (x = Xk, y = Yk; x != Xn->previous; x = x->previous)
                 {
-                    if (y != Yn->prev)
+                    if (y != Yn->previous)
                     {
                         j = (int64_t)gcoden(x) + gcoden(y) + peren;
-                        y = y->prev;
+                        y = y->previous;
                     }
                     else
                         j = (int64_t)gcoden(x) + peren;
@@ -292,18 +292,18 @@ static void oper(uint32_t o, uint32_t prn)
                     break;
                 }
                 if (xmy() == 1)
-                    obmen();   //  menjaem x i y
-                Xn = Xn->prev; //  pripisywaem 0
+                    obmen();       //  menjaem x i y
+                Xn = Xn->previous; //  pripisywaem 0
                 Xn->tag = TAGN;
                 Xn->info.code = NULL;
                 peren = 0;
-                for (x = Xk, y = Yk; x != Xn->prev; x = x->prev)
+                for (x = Xk, y = Yk; x != Xn->previous; x = x->previous)
                 {
                     j = gcoden(x);
-                    if (y != Yn->prev)
+                    if (y != Yn->previous)
                     {
                         j -= (int64_t)gcoden(y) + peren;
-                        y = y->prev;
+                        y = y->previous;
                     }
                     else
                         j -= peren;
@@ -334,7 +334,7 @@ static void oper(uint32_t o, uint32_t prn)
         T_LINKCB *r = p->next;
         lins(p, Xdl + Ydl + 1); //  1 zweno dlja znaka
         p = p->next;
-        r = r->prev;
+        r = r->previous;
         for (x = p; x != r->next; x = x->next)
         {
             x->tag = TAGN;
@@ -343,12 +343,12 @@ static void oper(uint32_t o, uint32_t prn)
         if (Xdl < Ydl)
             obmen();
         //  dobawim 0 k X dlja summir. s perenosom
-        Xn = Xn->prev;
+        Xn = Xn->previous;
         Xn->tag = TAGN;
         Xn->info.code = NULL;
         T_LINKCB *f;
         int64_t c;
-        for (f = r, y = Yk; y != Yn->prev; y = y->prev, f = f->prev)
+        for (f = r, y = Yk; y != Yn->previous; y = y->previous, f = f->previous)
         {
             const uint32_t d = gcoden(y);
             if (d != 0)
@@ -356,7 +356,7 @@ static void oper(uint32_t o, uint32_t prn)
                 peren = 0;
                 const int64_t b11 = d >> 16;
                 const int64_t b22 = d & 0xFFFF;
-                for (x = Xk, p = f; x != Xn->prev; x = x->prev, p = p->prev)
+                for (x = Xk, p = f; x != Xn->previous; x = x->previous, p = p->previous)
                 {
                     a = gcoden(x);
                     if (a == 0)
@@ -435,12 +435,12 @@ static void oper(uint32_t o, uint32_t prn)
             }
             if (Xzn == '-')
             {
-                Xn = Xn->prev;
+                Xn = Xn->previous;
                 Xn->tag = TAGO;
                 Xn->info.code = NULL;
                 Xn->info.infoc = '-';
             }
-            Xn = Xn->prev;
+            Xn = Xn->previous;
             Xk = Xk->next;
             Xn->tag = TAGLB;
             Xk->tag = TAGRB;
@@ -448,11 +448,11 @@ static void oper(uint32_t o, uint32_t prn)
             Xk->info.codep = Xn;
             if (prn == 0)
             {
-                Xn = Xn->prev;
+                Xn = Xn->previous;
                 Xn->tag = TAGN;
                 Xn->info.code = NULL;
             }
-            rftpl(refal.prevr, Xn->prev, Xk->next);
+            rftpl(refal.prevr, Xn->previous, Xk->next);
             return;
         }
         //   delimoe > delitelja
@@ -475,14 +475,14 @@ static void oper(uint32_t o, uint32_t prn)
         p = p->next; //  dlja znaka
         r = p->next; //  dlja  perwoj  cifry
         nach = r;
-        Xn = Xn->prev;
+        Xn = Xn->previous;
         Xn->tag = TAGN;
         Xn->info.code = NULL;
         Xdl++;
         size_t i;
         for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
             ;
-        y = Yn->prev;
+        y = Yn->previous;
         y->tag = TAGN;
         y->info.code = NULL;
         size_t n = 0;
@@ -556,7 +556,7 @@ static void oper(uint32_t o, uint32_t prn)
                 const T_LINKCB *Yt = Yk;
                 T_LINKCB *Xt = x;
                 peren = 0;
-                for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
+                for (; Yt != y->previous; Xt = Xt->previous, Yt = Yt->previous)
                 {
                     b = gcoden(Yt);
                     a = c;
@@ -580,7 +580,7 @@ static void oper(uint32_t o, uint32_t prn)
                         Xt = x;
                         Yt = Yk;
                         j = 0;
-                        for (; Yt != y->prev; Xt = Xt->prev, Yt = Yt->prev)
+                        for (; Yt != y->previous; Xt = Xt->previous, Yt = Yt->previous)
                         {
                             a = (int64_t)gcoden(Xt) + gcoden(Yt) + j;
                             j = 0;
@@ -601,8 +601,8 @@ static void oper(uint32_t o, uint32_t prn)
             x = x->next;
             Xn = Xn->next;
         } while (x != Xk->next);
-        Xn = Xn->prev;
-        r = r->prev;
+        Xn = Xn->previous;
+        r = r->previous;
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
@@ -618,7 +618,7 @@ static void oper(uint32_t o, uint32_t prn)
         }
         for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
             ;
-        x = x->prev;
+        x = x->previous;
         if (x != Xk)
         {
             if (Xzn != Yzn)
@@ -635,24 +635,24 @@ static void oper(uint32_t o, uint32_t prn)
             ;
         if (Xzn == '-')
         {
-            x = x->prev;
+            x = x->previous;
             x->tag = TAGO;
             x->info.code = NULL;
             x->info.infoc = '-';
         }
         if ((prn & 1) == 0 || Xn != Xk || gcoden(Xn) != 0)
-            Xn = Xn->prev;
+            Xn = Xn->previous;
         Xn->tag = TAGLB;
         Xn->info.codep = Xk->next;
         Xk = Xk->next;
         Xk->tag = TAGRB;
         Xk->info.codep = Xn;
         if (r->next != Xn)
-            rftpl(r, Xn->prev, Xk->next);
+            rftpl(r, Xn->previous, Xk->next);
         if ((prn & 2) == 0)
-            rftpl(refal.prevr, x->prev, Xk->next);
+            rftpl(refal.prevr, x->previous, Xk->next);
         else
-            rftpl(refal.prevr, x->prev, Xn);
+            rftpl(refal.prevr, x->previous, Xn);
         return;
     } // end case
     if (rez0)
@@ -662,7 +662,7 @@ static void oper(uint32_t o, uint32_t prn)
         x = refal.preva->next;
         x->tag = TAGN;
         x->info.code = NULL;
-        rftpl(refal.prevr, x->prev, x->next);
+        rftpl(refal.prevr, x->previous, x->next);
         return;
     }
     if (!odnc)
@@ -675,13 +675,13 @@ static void oper(uint32_t o, uint32_t prn)
             return;
         if (Xzn == '-')
         {
-            x = x->prev;
+            x = x->previous;
             x->tag = TAGO;
             x->info.code = NULL;
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->prev, Xk->next);
+        rftpl(refal.prevr, x->previous, Xk->next);
         return;
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
@@ -729,10 +729,10 @@ static void oper(uint32_t o, uint32_t prn)
     y->info.codep = x;
     if ((prn & 2) == 0)
         // dr/n
-        rftpl(refal.prevr, refal.preva->prev, y->next);
+        rftpl(refal.prevr, refal.preva->previous, y->next);
     else
         // div/n
-        rftpl(refal.prevr, refal.preva->prev, x);
+        rftpl(refal.prevr, refal.preva->previous, x);
     return;
 }
 
@@ -779,7 +779,7 @@ static void gcd_(void)
             }
             if (gcd_state == NEOT)
                 break;
-            tl[i] = pr->prev;
+            tl[i] = pr->previous;
         }
     }
     int64_t A;
@@ -973,7 +973,7 @@ static void gcd_(void)
             //   vyravnivanie dlin
             if (l[0] != l[1])
             {
-                hd[1] = hd[1]->prev;
+                hd[1] = hd[1]->previous;
                 hd[1]->tag = TAGN;
                 hd[1]->info.code = NULL;
                 l[1]++;
@@ -1029,7 +1029,7 @@ static void gcd_(void)
                         r0 += MAX_NUMBER + 1;
                     }
                     pcoden(p[i], (uint32_t)r0);
-                    p[i] = p[i]->prev;
+                    p[i] = p[i]->previous;
                 }
             }
             //   UTV: r[0] i r[1] ===0
@@ -1041,14 +1041,14 @@ static void gcd_(void)
             //  B nabiraem s izbytkom
         case SHD:
             //  delenie mnogih  cifr
-            hd[0] = hd[0]->prev;
+            hd[0] = hd[0]->previous;
             hd[0]->tag = TAGN;
             hd[0]->info.code = NULL;
             l[0]++;
             T_LINKCB *px;
             for (i = 0, px = hd[0]; i < l[1]; i++, px = px->next)
                 ;
-            T_LINKCB *py = hd[1]->prev;
+            T_LINKCB *py = hd[1]->previous;
             py->tag = TAGN;
             py->info.code = NULL;
             size_t n = 0;
@@ -1126,7 +1126,7 @@ static void gcd_(void)
                     T_LINKCB *Xt = px;
                     peren = 0;
                     int64_t J;
-                    for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
+                    for (; Yt != py->previous; Xt = Xt->previous, Yt = Yt->previous)
                     {
                         b = gcoden(Yt);
                         a = c;
@@ -1151,7 +1151,7 @@ static void gcd_(void)
                             Xt = px;
                             Yt = tl[1];
                             J = 0;
-                            for (; Yt != py->prev; Xt = Xt->prev, Yt = Yt->prev)
+                            for (; Yt != py->previous; Xt = Xt->previous, Yt = Yt->previous)
                             {
                                 a = (int64_t)gcoden(Xt) + gcoden(Yt) + J;
                                 J = 0;
@@ -1170,7 +1170,7 @@ static void gcd_(void)
                 hd[0] = hd[0]->next;
                 l[0]--;
             } while (px != tl[0]->next);
-            hd[0] = hd[0]->prev;
+            hd[0] = hd[0]->previous;
             l[0]++;
             if (n != 0)
             {
@@ -1204,7 +1204,7 @@ static void gcd_(void)
                 gcd_state = NEOT;
                 break;
             }
-            rftpl(refal.prevr, hd[rez]->prev, tl[rez]->next);
+            rftpl(refal.prevr, hd[rez]->previous, tl[rez]->next);
             return;
         case NEOT:
             refal.upshot = 2;

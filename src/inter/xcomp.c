@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCOMP.C ---------------
@@ -21,7 +21,7 @@ static char zn, Xzn, Yzn;
 static bool dajch(void)
 {
     zn = '+';
-    kon = y->prev;
+    kon = y->previous;
     if (x == kon)
     { // pustoe chislo
         dl = 0;
@@ -122,7 +122,7 @@ static void nrel_(void)
     refal.preva->tag = TAGO;
     refal.preva->info.code = NULL;
     refal.preva->info.infoc = c;
-    rftpl(refal.prevr, refal.preva->prev, refal.nexta);
+    rftpl(refal.prevr, refal.preva->previous, refal.nexta);
     return;
 }
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};

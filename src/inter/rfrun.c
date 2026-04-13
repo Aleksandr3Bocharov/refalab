@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-25
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -27,12 +27,12 @@
         break;                               \
     }
 
-#define SHIFT_RIGHT_BOARD_HOLE                 \
-    right_board_hole = right_board_hole->prev; \
-    if (right_board_hole == left_board_hole)   \
-    {                                          \
-        interpretator_state = FAIL;            \
-        break;                                 \
+#define SHIFT_RIGHT_BOARD_HOLE                     \
+    right_board_hole = right_board_hole->previous; \
+    if (right_board_hole == left_board_hole)       \
+    {                                              \
+        interpretator_state = FAIL;                \
+        break;                                     \
     }
 
 #define SHIFT_CURRENT_LINKCB_FREE_MEMORY                           \
@@ -45,7 +45,7 @@
 
 #define LINK(x, y) \
     x->next = y;   \
-    y->prev = x
+    y->previous = x
 
 #define PUT_JUMP_STACK(ab1, ab2, anel, avpc)    \
     jump_stack_pointer->left_board_hole = ab1;  \
@@ -59,14 +59,14 @@
     anel = jump_stack_pointer->number_element;  \
     avpc = jump_stack_pointer->virtual_program_counter
 
-#define PUT_TRANSPLANTATION_STACK(az, ax, ay)                   \
+#define PUT_TRANSPLANTATION_STACK(az, ax, ay)                  \
     transplantation_stack_pointer->transplantation_where = az; \
-    transplantation_stack_pointer->transplantation_from = ax; \
+    transplantation_stack_pointer->transplantation_from = ax;  \
     transplantation_stack_pointer->transplantation_to = ay
 
-#define GET_TRANSPLANTATION_STACK(az, ax, ay)                   \
+#define GET_TRANSPLANTATION_STACK(az, ax, ay)                  \
     az = transplantation_stack_pointer->transplantation_where; \
-    ax = transplantation_stack_pointer->transplantation_from; \
+    ax = transplantation_stack_pointer->transplantation_from;  \
     ay = transplantation_stack_pointer->transplantation_to
 
 typedef enum intepretator_states
@@ -949,7 +949,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element] = temp_board_hole;
             table_elements[number_element + 1] = left_board_hole;
             table_elements[number_element + 2] = temp_board_hole->next;
-            table_elements[number_element + 3] = left_board_hole->prev;
+            table_elements[number_element + 3] = left_board_hole->previous;
             number_element += 4;
             interpretator_state = ADVANCE;
             break;
@@ -966,7 +966,7 @@ void rfrun(T_ST *ast) // adress of current state table
             table_elements[number_element] = right_board_hole;
             table_elements[number_element + 1] = temp_board_hole;
             table_elements[number_element + 2] = right_board_hole->next;
-            table_elements[number_element + 3] = temp_board_hole->prev;
+            table_elements[number_element + 3] = temp_board_hole->previous;
             number_element += 4;
             interpretator_state = ADVANCE;
             break;
@@ -982,7 +982,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // CE;
         case CE:
             table_elements[number_element] = left_board_hole->next;
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             number_element += 2;
             interpretator_state = ADVANCE;
             break;
@@ -990,7 +990,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case LED:
             n = *(virtual_program_counter + NMBL);
             table_elements[number_element] = left_board_hole->next;
-            temp_board_hole = table_elements[n - 1]->prev;
+            temp_board_hole = table_elements[n - 1]->previous;
             interpretator_state = LED1;
             break;
         case LED1:
@@ -1021,7 +1021,7 @@ void rfrun(T_ST *ast) // adress of current state table
             // RED(N);
         case RED:
             n = *(virtual_program_counter + NMBL);
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             temp_board_hole = table_elements[n]->next;
             interpretator_state = RED1;
             break;
@@ -1031,7 +1031,7 @@ void rfrun(T_ST *ast) // adress of current state table
                 interpretator_state = RED2;
                 break;
             }
-            temp_board_hole = temp_board_hole->prev;
+            temp_board_hole = temp_board_hole->previous;
             SHIFT_RIGHT_BOARD_HOLE;
             if (right_board_hole->tag != temp_board_hole->tag)
             {
@@ -1094,7 +1094,7 @@ void rfrun(T_ST *ast) // adress of current state table
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             number_element += 2;
             interpretator_state = ADVANCE;
             break;
@@ -1103,7 +1103,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = right_board_hole;
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             interpretator_state = NEXTOP;
             break;
             // RE;
@@ -1156,7 +1156,7 @@ void rfrun(T_ST *ast) // adress of current state table
             if (memcmp(virtual_program_counter2, &left_board_hole->tag, SMBL) != 0)
                 break;
             jump_stack_pointer++;
-            table_elements[number_element + 1] = left_board_hole->prev;
+            table_elements[number_element + 1] = left_board_hole->previous;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
             interpretator_state = NEXTOP;
@@ -1165,7 +1165,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case PRESC:
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             table_elements[number_element + 2] = right_board_hole;
             interpretator_state = NEXTOP;
             break;
@@ -1173,7 +1173,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case PRVSC:
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
@@ -1248,7 +1248,7 @@ void rfrun(T_ST *ast) // adress of current state table
             if (NBRA(left_board_hole))
                 break;
             jump_stack_pointer++;
-            table_elements[number_element + 1] = left_board_hole->prev;
+            table_elements[number_element + 1] = left_board_hole->previous;
             table_elements[number_element + 2] = left_board_hole;
             right_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = right_board_hole;
@@ -1259,7 +1259,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case PREB:
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             table_elements[number_element + 2] = right_board_hole;
             interpretator_state = NEXTOP;
             break;
@@ -1267,7 +1267,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case PRVB:
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRA(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
@@ -1317,7 +1317,7 @@ void rfrun(T_ST *ast) // adress of current state table
             };
             if (memcmp(virtual_program_counter + NMBL, &left_board_hole->tag, SMBL) != 0)
                 break;
-            table_elements[number_element + 1] = left_board_hole->prev;
+            table_elements[number_element + 1] = left_board_hole->previous;
             table_elements[number_element + 2] = left_board_hole;
             number_element += 3;
             virtual_program_counter += NMBL + SMBL;
@@ -1325,7 +1325,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RSRCH(S);
         case RSRCH:
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             interpretator_state = RSRCH1;
             break;
         case RSRCH1:
@@ -1355,7 +1355,7 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // ESPC(L);
         case ESPC:
-            temp_board_hole = table_elements[number_element - 2]->prev;
+            temp_board_hole = table_elements[number_element - 2]->previous;
             bool fail = false;
             while (temp_board_hole != table_elements[number_element - 1])
             {
@@ -1407,7 +1407,7 @@ void rfrun(T_ST *ast) // adress of current state table
             virtual_program_counter += NMBL;
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             jump_stack_pointer++;
-            table_elements[number_element + 1] = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
@@ -1442,7 +1442,7 @@ void rfrun(T_ST *ast) // adress of current state table
                     left_board_hole = left_board_hole->info.codep;
                 left_board_hole = left_board_hole->next;
             };
-            left_board_hole = left_board_hole->prev;
+            left_board_hole = left_board_hole->previous;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
             virtual_program_counter += NMBL + LBLL;
@@ -1450,15 +1450,15 @@ void rfrun(T_ST *ast) // adress of current state table
             break;
             // RMAX(L);
         case RMAX:
-            table_elements[number_element + 1] = right_board_hole->prev;
-            right_board_hole = right_board_hole->prev;
+            table_elements[number_element + 1] = right_board_hole->previous;
+            right_board_hole = right_board_hole->previous;
             while (right_board_hole != left_board_hole)
             {
                 if (!spc(virtual_program_counter, right_board_hole))
                     break;
                 if (BRA(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
-                right_board_hole = right_board_hole->prev;
+                right_board_hole = right_board_hole->previous;
             };
             right_board_hole = right_board_hole->next;
             table_elements[number_element] = right_board_hole;
@@ -1565,7 +1565,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case MULE:
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
-            temp_linkcb = table_elements[n - 1]->prev;
+            temp_linkcb = table_elements[n - 1]->previous;
             lack = false;
             while (temp_linkcb != table_elements[n])
             {
@@ -1665,7 +1665,7 @@ void rfrun(T_ST *ast) // adress of current state table
             {
                 transplantation_stack_pointer--;
                 GET_TRANSPLANTATION_STACK(current_linkcb_free_memory, temp_linkcb, temp_linkcb_free_memory);
-                LINK(temp_linkcb->prev, temp_linkcb_free_memory->next);
+                LINK(temp_linkcb->previous, temp_linkcb_free_memory->next);
                 LINK(temp_linkcb_free_memory, current_linkcb_free_memory->next);
                 LINK(current_linkcb_free_memory, temp_linkcb);
             }
@@ -1673,12 +1673,12 @@ void rfrun(T_ST *ast) // adress of current state table
             // INSRES:
             if (free_memory_list_head->next == nextr)
             {
-                LINK(table_elements[1]->prev, table_elements[2]->next);
+                LINK(table_elements[1]->previous, table_elements[2]->next);
             }
             else
             {
-                LINK(nextr->prev, table_elements[2]->next);
-                LINK(table_elements[1]->prev, free_memory_list_head->next);
+                LINK(nextr->previous, table_elements[2]->next);
+                LINK(table_elements[1]->previous, free_memory_list_head->next);
             };
             //  delete < and >
             // DELKD:
@@ -1691,7 +1691,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case SWAP:
             virtual_program_counter += NMBL;
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
-            if (current_linkcb_free_memory->prev != NULL)
+            if (current_linkcb_free_memory->previous != NULL)
             {
                 interpretator_state = SWAPREF;
                 break;
@@ -1706,16 +1706,16 @@ void rfrun(T_ST *ast) // adress of current state table
             quasik.info.codep = table_elements[1]->info.codep;
             if (current_linkcb_free_memory->next != current_linkcb_free_memory)
             {
-                LINK(current_linkcb_free_memory->prev, table_elements[2]->next);
-                LINK(table_elements[1]->prev, current_linkcb_free_memory->next);
+                LINK(current_linkcb_free_memory->previous, table_elements[2]->next);
+                LINK(table_elements[1]->previous, current_linkcb_free_memory->next);
             }
             else
             {
-                LINK(table_elements[1]->prev, table_elements[2]->next);
+                LINK(table_elements[1]->previous, table_elements[2]->next);
             }
             if (table_elements[3]->next != table_elements[2])
             {
-                LINK(table_elements[2]->prev, current_linkcb_free_memory);
+                LINK(table_elements[2]->previous, current_linkcb_free_memory);
                 LINK(current_linkcb_free_memory, table_elements[3]->next);
                 LINK(table_elements[3], table_elements[2]);
             }
@@ -1742,7 +1742,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case CFUNC:
             memcpy(&function_c_pointer, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
-            refal.prevr = temp_board_hole->prev;
+            refal.prevr = temp_board_hole->previous;
             refal.nextr = temp_board_hole;
             refal.preva = left_board_hole;
             refal.nexta = right_board_hole;
@@ -1767,7 +1767,7 @@ void rfrun(T_ST *ast) // adress of current state table
             //          step is done
         case CFDONE:
             quasik.info.codep = refal.nextr->info.codep;
-            LINK(refal.nextr->prev, refal.nexta->next);
+            LINK(refal.nextr->previous, refal.nexta->next);
             LINK(refal.nexta, free_memory_list_head->next);
             LINK(free_memory_list_head, refal.nextr);
             interpretator_state = ADVSTEP;
@@ -1777,7 +1777,7 @@ void rfrun(T_ST *ast) // adress of current state table
         case CFLACK:
             if (refal.prevr->next != refal.nextr)
             {
-                LINK(refal.nextr->prev, free_memory_list_head->next);
+                LINK(refal.nextr->previous, free_memory_list_head->next);
                 LINK(free_memory_list_head, refal.prevr->next);
                 LINK(refal.prevr, refal.nextr);
             }

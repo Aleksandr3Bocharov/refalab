@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-01
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XDELF.C ------------
@@ -39,13 +39,13 @@ static void delf_(void)
     {
         sk = dot1->info.codep;
         nd = sk->info.codep;
-        rfdel(sk->prev, dot1->next);
+        rfdel(sk->previous, dot1->next);
         dot1 = nd;
     }
     sk = dot1->info.codep;
     nd = sk->info.codep;
     dot1 = dot1->next;
-    rfdel(sk->prev, dot1->next);
+    rfdel(sk->previous, dot1->next);
     refal.nextr->info.codep = nd;
     return;
 }

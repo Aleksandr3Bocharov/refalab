@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-11-01
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XJAK.C ------------
@@ -33,10 +33,10 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
             return false;
         q++;
         p = (T_LINKCB *)q;
-        if (p->prev == NULL)
+        if (p->previous == NULL)
         {
             p->next = p;
-            p->prev = p->next;
+            p->previous = p->next;
             p->info.codep = refal.svar;
             p->tag = TAGO;
             refal.svar = p;
@@ -94,7 +94,7 @@ static void ptr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    T_LINKCB *q = p->prev;
+    T_LINKCB *q = p->previous;
     rftpl(q, r, refal.nexta);
     return;
 }
@@ -146,11 +146,11 @@ static void new_(void)
     T_LINKCB *r = refal.prevr->next;
     r->info.codep = refal.preva;
     r->tag = TAGR;
-    T_LINKCB *p = refal.nexta->prev;
+    T_LINKCB *p = refal.nexta->previous;
     p->next = refal.preva;
-    refal.preva->prev = p;
+    refal.preva->previous = p;
     refal.nextr->next = refal.nexta;
-    refal.nexta->prev = refal.nextr;
+    refal.nexta->previous = refal.nextr;
     refal.preva->info.codep = refal.dvar;
     refal.preva->tag = TAGO;
     refal.dvar = refal.preva;

@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCF.C ---------------
@@ -128,7 +128,7 @@ static void chartof_(void)
             p->info.codef = func_f[k];
             if (p->next != refal.nexta)
                 rfdel(p, refal.nexta);
-            rftpl(refal.prevr, p->prev, p->next);
+            rftpl(refal.prevr, p->previous, p->next);
             free(u);
             return;
         }
@@ -146,7 +146,7 @@ static void chartof_(void)
     p->info.codef = j;
     if (p->next != refal.nexta)
         rfdel(p, refal.nexta);
-    rftpl(refal.prevr, p->prev, p->next);
+    rftpl(refal.prevr, p->previous, p->next);
     return;
 }
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};
