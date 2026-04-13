@@ -202,7 +202,7 @@ static void step_(void)
     }
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
-    pcoden(refal.previous_argument, refal.currst->step);
+    pcoden(refal.previous_argument, refal.current_status_table->step);
     rftpl(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }

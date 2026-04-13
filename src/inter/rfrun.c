@@ -197,23 +197,23 @@ typedef enum specifier_states
     SPCL
 } T_SPECIFIER_STATES;
 
-typedef struct sav_
+typedef struct save_area
 { // save area for var-part of refal-block
-    uint32_t upshot_;
-    T_LINKCB *preva_;
-    T_LINKCB *nexta_;
-    T_LINKCB *prevr_;
-    T_LINKCB *nextr_;
-    T_STATUS_TABLE *currst_;
-} T_SAV;
+    uint8_t upshot;
+    T_LINKCB *previous_argument;
+    T_LINKCB *next_argument;
+    T_LINKCB *previous_result;
+    T_LINKCB *next_result;
+    T_STATUS_TABLE *current_status_table;
+} T_SAVE_AREA;
 
-typedef struct w_jump_stack
+typedef struct jump_stack
 { // jump stack structure
     T_LINKCB *left_board_hole;
     T_LINKCB *right_board_hole;
     uint16_t number_element;
     uint8_t *virtual_program_counter;
-} T_W_JUMP_STACK;
+} T_JUMP_STACK;
 
 typedef struct transplantation_stack
 { // transplantation stack structure
@@ -233,8 +233,8 @@ uint8_t *inch_ptr;
 static T_LINKCB *table_elements[256]; // table of elements
 static uint16_t number_element;       // adress of first free string in table of elements
 
-static T_W_JUMP_STACK jump_stack[128];     // jump stack
-static T_W_JUMP_STACK *jump_stack_pointer; // jump stack pointer
+static T_JUMP_STACK jump_stack[128];     // jump stack
+static T_JUMP_STACK *jump_stack_pointer; // jump stack pointer
 
 static T_TRANSPLANTATION_STACK transplantation_stack[256];     // transplantation stack
 static T_TRANSPLANTATION_STACK *transplantation_stack_pointer; // transplantation stack pointer
@@ -260,23 +260,21 @@ static bool digit(char s);
 void rfrun(T_STATUS_TABLE *ast) // adress of current state table
 {
     // dynamic area DSA
-    T_SAV *savecr = malloc(sizeof(T_SAV));
-    if (savecr == NULL)
+    T_SAVE_AREA *save_process = malloc(sizeof(T_SAVE_AREA));
+    if (save_process == NULL)
         rfabe("rfrun: no memory");
     if (!lexist(ast))
         rfabe("rfrun: attempt to run unexisting process");
     if (ast->state == 4)
         rfabe("rfrun: attampt to run process in state 4");
-
     // saving part of refal-block
-
-    savecr->upshot_ = refal.upshot;
-    savecr->preva_ = refal.previous_argument;
-    savecr->nexta_ = refal.next_argument;
-    savecr->prevr_ = refal.previous_result;
-    savecr->nextr_ = refal.next_result;
-    savecr->currst_ = refal.currst;
-    refal.currst = ast;
+    save_process->upshot = refal.upshot;
+    save_process->previous_argument = refal.previous_argument;
+    save_process->next_argument = refal.next_argument;
+    save_process->previous_result = refal.previous_result;
+    save_process->next_result = refal.next_result;
+    save_process->current_status_table = refal.current_status_table;
+    refal.current_status_table = ast;
     ast->state = 4;
     T_LINKCB quasik; // quasi-sign '<'
     quasik.info.codep = ast->dot;
@@ -353,13 +351,13 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case EXIT:
             ast->dot = quasik.info.codep;
             // restore refal-block
-            refal.upshot = savecr->upshot_;
-            refal.previous_argument = savecr->preva_;
-            refal.next_argument = savecr->nexta_;
-            refal.previous_result = savecr->prevr_;
-            refal.next_result = savecr->nextr_;
-            refal.currst = savecr->currst_;
-            free(savecr);
+            refal.upshot = save_process->upshot;
+            refal.previous_argument = save_process->previous_argument;
+            refal.next_argument = save_process->next_argument;
+            refal.previous_result = save_process->previous_result;
+            refal.next_result = save_process->next_result;
+            refal.current_status_table = save_process->current_status_table;
+            free(save_process);
             return;
         case NEXTOP:
             operation_program_code = *virtual_program_counter;

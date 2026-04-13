@@ -16,7 +16,7 @@
 
 static void br_(void)
 {
-    const T_STATUS_TABLE *ast = refal.currst;
+    const T_STATUS_TABLE *ast = refal.current_status_table;
     const T_LINKCB *p = refal.previous_argument;
     while (p->tag != TAGO || p->info.infoc != '=')
     {
@@ -47,7 +47,7 @@ void (*br_1)(void) = br_;
 
 static void dg_(void)
 {
-    const T_STATUS_TABLE *ast = refal.currst;
+    const T_STATUS_TABLE *ast = refal.current_status_table;
     T_LINKCB *pr = ast->store;
     T_LINKCB *q, *pl;
     while (true)
@@ -80,7 +80,7 @@ void (*dg_1)(void) = dg_;
 
 static void dgall_(void)
 {
-    const T_STATUS_TABLE *ast = refal.currst;
+    const T_STATUS_TABLE *ast = refal.current_status_table;
     if (refal.previous_argument->next != refal.next_argument)
         refal.upshot = 2; // FAIL
     else
@@ -93,7 +93,7 @@ void (*dgal_1)(void) = dgall_;
 
 static void rp_(void)
 {
-    const T_STATUS_TABLE *ast = refal.currst;
+    const T_STATUS_TABLE *ast = refal.current_status_table;
     T_LINKCB *p = refal.previous_argument;
     bool fail = false;
     while (p->tag != TAGO || p->info.infoc != '=')
@@ -151,7 +151,7 @@ void (*rp_1)(void) = rp_;
 
 static void cp_(void)
 {
-    const T_STATUS_TABLE *ast = refal.currst;
+    const T_STATUS_TABLE *ast = refal.current_status_table;
     const T_LINKCB *pr = ast->store;
     const T_LINKCB *q;
     while (true)

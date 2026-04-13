@@ -167,7 +167,7 @@ void rfinit(void)
     p->last_status_table = (T_STATUS_TABLE *)&refal;
     p->first_status_table = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
-    p->currst = NULL;
+    p->current_status_table = NULL;
     p->svar = NULL;
     p->dvar = NULL;
     p->flhead = &hd;
