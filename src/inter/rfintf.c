@@ -25,7 +25,7 @@ T_REFAL refal;
 
 static struct
 {
-    bool tmon;
+    bool timer_on;
 } options = {true};
 
 static size_t gargc = 0;
@@ -46,7 +46,7 @@ void rfgetargs(int argc, char *argv[])
         if (strncmp(gargv[i], "--rfinteropt", 12) == 0)
         {
             if (strstr(&gargv[i][12], "-tmoff") != NULL)
-                options.tmon = false;
+                options.timer_on = false;
             break;
         }
     return;
@@ -178,7 +178,7 @@ void rfinit(void)
     phd->info.code = NULL;
     p->arg.argc = gargc;
     p->arg.argv = gargv;
-    p->timer.mode = options.tmon;
+    p->timer.mode = options.timer_on;
     if (p->timer.mode)
         timespec_get(&p->timer.start_time, TIME_UTC);
     return;
