@@ -115,9 +115,9 @@ typedef struct refal
     struct
     {
         bool mode;
-        T_TIMESPEC start;
-        T_TIMESPEC stop;
-    } tm;
+        T_TIMESPEC start_time;
+        T_TIMESPEC stop_time;
+    } timer;
 } T_REFAL;
 
 extern T_REFAL refal;
