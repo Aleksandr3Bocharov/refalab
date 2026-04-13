@@ -32,8 +32,8 @@ static size_t gargc = 0;
 static char **gargv = NULL;
 
 static T_LINKCB *last_block_free_memory = NULL;
-static bool rf_init = true;
-static T_LINKCB hd;
+static bool refal_init = true;
+static T_LINKCB free_memory_list_head;
 
 static bool lgcl(void);
 static void rflist(T_LINKCB *par, size_t n);
@@ -162,7 +162,7 @@ bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
 
 void rfinit(void)
 {
-    rf_init = false;
+    refal_init = false;
     T_REFAL *p = &refal;
     p->last_status_table = (T_STATUS_TABLE *)&refal;
     p->first_status_table = (T_STATUS_TABLE *)&refal;
@@ -170,8 +170,8 @@ void rfinit(void)
     p->current_status_table = NULL;
     p->static_variables = NULL;
     p->dynamic_variables = NULL;
-    p->free_memory_list_head = &hd;
-    T_LINKCB *phd = &hd;
+    p->free_memory_list_head = &free_memory_list_head;
+    T_LINKCB *phd = &free_memory_list_head;
     phd->previous = phd;
     phd->next = phd;
     phd->tag = TAGO;
@@ -186,7 +186,7 @@ void rfinit(void)
 
 void rfcanc(const T_STATUS_TABLE *ast)
 {
-    if (rf_init)
+    if (refal_init)
         rfinit();
     if (!lexist(ast))
         rfabe("rfcanc: process doesn't exist");
@@ -239,7 +239,7 @@ void rftermm(void)
 void rfexec(uint8_t *func)
 {
     T_STATUS_TABLE s_st;
-    if (rf_init)
+    if (refal_init)
         rfinit();
     bool lack = false;
     if (!lincrm())
@@ -606,7 +606,7 @@ bool lexist(const T_STATUS_TABLE *ast)
 
 bool lcre(T_STATUS_TABLE *ast)
 {
-    if (rf_init)
+    if (refal_init)
         rfinit();
     if (lexist(ast))
         rfabe("lcre: process already exists");
@@ -729,7 +729,7 @@ static bool lgcl(void)
 
 static void rflist(T_LINKCB *par, size_t n)
 {
-    if (rf_init)
+    if (refal_init)
         rfinit();
     T_LINKCB *q = par;
     T_LINKCB *p = refal.free_memory_list_head->previous;
