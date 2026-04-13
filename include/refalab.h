@@ -82,8 +82,8 @@ typedef struct linkcb
 
 typedef struct status_table
 {
-    struct status_table *stprev;
-    struct status_table *stnext;
+    struct status_table *previous;
+    struct status_table *next;
     uint32_t state;
     T_LINKCB *dot;
     uint32_t step;
