@@ -60,16 +60,16 @@
 // pragma for 1 byte aligniment structure ------------
 #pragma pack(1)
 
-typedef struct linkcb_
+typedef struct linkcb
 {
-    struct linkcb_ *previous;
-    struct linkcb_ *next;
+    struct linkcb *previous;
+    struct linkcb *next;
     uint16_t tag;
     union
     {
         char infoc;
         uint32_t coden;
-        struct linkcb_ *codep;
+        struct linkcb *codep;
         uint8_t *codef;
         void *code;
     } info;
