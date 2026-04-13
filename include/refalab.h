@@ -103,7 +103,7 @@ typedef struct refal
     T_LINKCB *next_argument;
     T_LINKCB *previous_result;
     T_LINKCB *next_result;
-    T_STATUS_TABLE *currst;
+    T_STATUS_TABLE *current_status_table;
     T_LINKCB *flhead;
     T_LINKCB *svar;
     T_LINKCB *dvar;
