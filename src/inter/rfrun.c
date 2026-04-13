@@ -274,7 +274,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     savecr->preva_ = refal.previous_argument;
     savecr->nexta_ = refal.next_argument;
     savecr->prevr_ = refal.previous_result;
-    savecr->nextr_ = refal.nextr;
+    savecr->nextr_ = refal.next_result;
     savecr->currst_ = refal.currst;
     refal.currst = ast;
     ast->state = 4;
@@ -357,7 +357,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             refal.previous_argument = savecr->preva_;
             refal.next_argument = savecr->nexta_;
             refal.previous_result = savecr->prevr_;
-            refal.nextr = savecr->nextr_;
+            refal.next_result = savecr->nextr_;
             refal.currst = savecr->currst_;
             free(savecr);
             return;
@@ -1658,7 +1658,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             last_acted_k->info.codep = table_elements[1]->info.codep;
             last_acted_k->tag = TAGK;
             // item adress followed by result
-            T_LINKCB *nextr = current_linkcb_free_memory->next;
+            T_LINKCB *next_result = current_linkcb_free_memory->next;
             // execute planned transplantation
             // EOS1:
             while (transplantation_stack_pointer != transplantation_stack)
@@ -1671,18 +1671,18 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             }
             // include replace result
             // INSRES:
-            if (free_memory_list_head->next == nextr)
+            if (free_memory_list_head->next == next_result)
             {
                 LINK(table_elements[1]->previous, table_elements[2]->next);
             }
             else
             {
-                LINK(nextr->previous, table_elements[2]->next);
+                LINK(next_result->previous, table_elements[2]->next);
                 LINK(table_elements[1]->previous, free_memory_list_head->next);
             };
             //  delete < and >
             // DELKD:
-            LINK(table_elements[2], nextr);
+            LINK(table_elements[2], next_result);
             LINK(free_memory_list_head, table_elements[1]);
             interpretator_state = ADVSTEP;
             break;
@@ -1743,7 +1743,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             memcpy(&function_c_pointer, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
             refal.previous_result = temp_board_hole->previous;
-            refal.nextr = temp_board_hole;
+            refal.next_result = temp_board_hole;
             refal.previous_argument = left_board_hole;
             refal.next_argument = right_board_hole;
             //        call  C - function
@@ -1766,20 +1766,20 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             //        return from C - function
             //          step is done
         case CFDONE:
-            quasik.info.codep = refal.nextr->info.codep;
-            LINK(refal.nextr->previous, refal.next_argument->next);
+            quasik.info.codep = refal.next_result->info.codep;
+            LINK(refal.next_result->previous, refal.next_argument->next);
             LINK(refal.next_argument, free_memory_list_head->next);
-            LINK(free_memory_list_head, refal.nextr);
+            LINK(free_memory_list_head, refal.next_result);
             interpretator_state = ADVSTEP;
             break;
             //        return from C - function
             //     free memory exhausted
         case CFLACK:
-            if (refal.previous_result->next != refal.nextr)
+            if (refal.previous_result->next != refal.next_result)
             {
-                LINK(refal.nextr->previous, free_memory_list_head->next);
+                LINK(refal.next_result->previous, free_memory_list_head->next);
                 LINK(free_memory_list_head, refal.previous_result->next);
-                LINK(refal.previous_result, refal.nextr);
+                LINK(refal.previous_result, refal.next_result);
             }
             ast->state = 3;
             interpretator_state = EXIT;

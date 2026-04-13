@@ -169,7 +169,7 @@ static void first_(void)
     pn->tag = TAGRB;
     pn->info.codep = refal.previous_argument;
     rftpl(refal.previous_argument, pn, p);
-    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', (char)5};
@@ -195,7 +195,7 @@ static void last_(void)
             pn->info.code = NULL;
             pn->info.infoc = '*';
             rftpl(refal.previous_result, pn, refal.next_argument);
-            p = refal.nextr->previous;
+            p = refal.next_result->previous;
             rftpl(p, refal.previous_argument, refal.next_argument);
             return;
         }
@@ -209,8 +209,8 @@ static void last_(void)
     pn->info.codep = refal.previous_argument;
     rftpl(refal.previous_argument, p, refal.next_argument);
     rftpl(refal.previous_result, pn, refal.next_argument);
-    p = refal.nextr->previous;
-    rftpl(p, refal.nextr, refal.next_argument);
+    p = refal.next_result->previous;
+    rftpl(p, refal.next_result, refal.next_argument);
     return;
 }
 char last_0[] = {Z4 'L', 'A', 'S', 'T', (char)4};
@@ -229,7 +229,7 @@ static void lengr_(void)
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
     pcoden(refal.previous_argument, n);
-    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', (char)5};
@@ -250,7 +250,7 @@ static void lengw_(void)
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
     pcoden(refal.previous_argument, n);
-    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', (char)5};
@@ -275,7 +275,7 @@ static void multe_(void)
     {
         do
         {
-            p = refal.nextr->previous;
+            p = refal.next_result->previous;
             if (!lcopy(p, pn, refal.next_argument))
             {
                 refal.upshot = 3;

@@ -21,7 +21,7 @@ static void delf_(void)
         return;
     } // FAIL
     const T_LINKCB *dot = refal.next_argument;
-    const T_LINKCB *dot1 = refal.nextr->info.codep;
+    const T_LINKCB *dot1 = refal.next_result->info.codep;
     const T_LINKCB *sk;
     T_LINKCB *nd;
     while (true)
@@ -46,7 +46,7 @@ static void delf_(void)
     nd = sk->info.codep;
     dot1 = dot1->next;
     rfdel(sk->previous, dot1->next);
-    refal.nextr->info.codep = nd;
+    refal.next_result->info.codep = nd;
     return;
 }
 char delf_0[] = {Z4 'D', 'E', 'L', 'F', (char)4};

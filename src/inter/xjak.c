@@ -149,8 +149,8 @@ static void new_(void)
     T_LINKCB *p = refal.next_argument->previous;
     p->next = refal.previous_argument;
     refal.previous_argument->previous = p;
-    refal.nextr->next = refal.next_argument;
-    refal.next_argument->previous = refal.nextr;
+    refal.next_result->next = refal.next_argument;
+    refal.next_argument->previous = refal.next_result;
     refal.previous_argument->info.codep = refal.dvar;
     refal.previous_argument->tag = TAGO;
     refal.dvar = refal.previous_argument;

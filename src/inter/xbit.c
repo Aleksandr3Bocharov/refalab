@@ -305,9 +305,9 @@ static void shoper(uint32_t o)
             for (x = Xn->previous; x->tag != TAGLB && n > e; x = x->previous, e++)
                 ;
             if (n > e)
-                if (!slins(refal.nextr, n - e))
+                if (!slins(refal.next_result, n - e))
                     return;
-            rftpl(refal.nextr, Xk, refal.next_argument);
+            rftpl(refal.next_result, Xk, refal.next_argument);
             if (dl != 0)
             {
                 y = Xn;

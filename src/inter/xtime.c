@@ -35,17 +35,17 @@ static void time_(void)
     if (lt == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
+        rftpl(refal.previous_result, refal.next_result, refal.previous_argument->next);
         return;
     }
     char s[256];
     const size_t sl = strftime(s, sizeof(s), "%c", lt);
     if (sl == 0)
         return;
-    if (!slins(refal.nextr, sl - 1))
+    if (!slins(refal.next_result, sl - 1))
         return;
-    rfrstr(s, refal.nextr);
-    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+    rfrstr(s, refal.next_result);
+    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -78,10 +78,10 @@ static void tm_(void)
             im %= 60;
             char s[64];
             sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-            if (!slins(refal.nextr, strlen(s) - 2))
+            if (!slins(refal.next_result, strlen(s) - 2))
                 return;
-            rfrstr(s, refal.nextr);
-            rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+            rfrstr(s, refal.next_result);
+            rftpl(refal.previous_result, refal.next_result, refal.next_argument);
         }
         else
             break;
@@ -117,10 +117,10 @@ static void tm_elapsed_(void)
     im %= 60;
     char s[64];
     sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-    if (!slins(refal.nextr, strlen(s) - 1))
+    if (!slins(refal.next_result, strlen(s) - 1))
         return;
-    rfrstr(s, refal.nextr);
-    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
+    rfrstr(s, refal.next_result);
+    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
 G_L_B uint8_t refalab_tm_elapsed = '\122';

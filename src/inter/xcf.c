@@ -36,7 +36,7 @@ static void ftochar_(void)
     if (!lrqlk(l))
         if (!lincrm())
         {
-            rfdel(refal.previous_result, refal.nextr);
+            rfdel(refal.previous_result, refal.next_result);
             refal.upshot = 3;
             return;
         }
