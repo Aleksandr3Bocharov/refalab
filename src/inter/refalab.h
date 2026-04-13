@@ -82,7 +82,7 @@ typedef struct status_table
 {
     struct status_table *previous;
     struct status_table *next;
-    uint32_t state;
+    uint8_t state;
     T_LINKCB *dot;
     uint32_t step;
     uint32_t stop;
