@@ -78,10 +78,10 @@ typedef struct linkcb
 
 // ------------ end of pragma ------------------------------------
 
-typedef struct status_table_
+typedef struct status_table
 {
-    struct status_table_ *stprev;
-    struct status_table_ *stnext;
+    struct status_table *stprev;
+    struct status_table *stnext;
     uint32_t state;
     T_LINKCB *dot;
     uint32_t step;
