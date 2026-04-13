@@ -68,7 +68,7 @@ static void dg_(void)
             continue;
         break;
     }
-    rftpl(refal.prevr, q, pr);
+    rftpl(refal.previous_result, q, pr);
     pl = pl->previous;
     pr = pr->next;
     rfdel(pl, pr);
@@ -84,7 +84,7 @@ static void dgall_(void)
     if (refal.previous_argument->next != refal.next_argument)
         refal.upshot = 2; // FAIL
     else
-        rftpl(refal.prevr, ast->store, ast->store);
+        rftpl(refal.previous_result, ast->store, ast->store);
     return;
 }
 char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
@@ -172,7 +172,7 @@ static void cp_(void)
             continue;
         break;
     }
-    if (!lcopy(refal.prevr, q, pr))
+    if (!lcopy(refal.previous_result, q, pr))
         refal.upshot = 3; // LACK
     return;
 }

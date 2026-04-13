@@ -95,7 +95,7 @@ static void fopen_(void)
                 if (!slins(refal.nextr, (size_t)d))
                     return;
             p = rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, p->next);
+            rftpl(refal.previous_result, refal.nextr, p->next);
         }
         return;
     } while (false);
@@ -123,7 +123,7 @@ static void fclose_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         const int cl = fclose(f);
@@ -134,7 +134,7 @@ static void fclose_(void)
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.next_argument);
+            rftpl(refal.previous_result, refal.nextr, refal.next_argument);
         }
         return;
     } while (false);
@@ -170,10 +170,10 @@ static void fgets_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
-        p = refal.prevr;
+        p = refal.previous_result;
         int c = getc(f);
         while (c != '\n')
         {
@@ -235,7 +235,7 @@ static void fputs_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -245,7 +245,7 @@ static void fputs_(void)
             const int pcc = putc(cc, f);
             if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -285,7 +285,7 @@ static void fprint_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -334,7 +334,7 @@ static void fprint_(void)
             }
             if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -374,7 +374,7 @@ static void fprints_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -422,7 +422,7 @@ static void fprints_(void)
             }
             if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -462,7 +462,7 @@ static void fprintm_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -537,7 +537,7 @@ static void fprintm_(void)
             }
             if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -546,7 +546,7 @@ static void fprintm_(void)
         {
             const int pcc = putc('\'', f);
             if (rfreof(pcc, f, refal.previous_argument))
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
         }
         return;
     } while (false);
@@ -577,10 +577,10 @@ static void fread_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
-        p = refal.prevr;
+        p = refal.previous_result;
         if (!slins(p, count))
             return;
         for (; count > 0; count--)
@@ -632,7 +632,7 @@ static void fwrite_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -646,7 +646,7 @@ static void fwrite_(void)
             const int pcc = putc(cc, f);
             if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+                rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -703,7 +703,7 @@ static void fseek_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         const int res = fseek(f, offset, origin);
@@ -714,7 +714,7 @@ static void fseek_(void)
             if (!slins(refal.nextr, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.next_argument);
+            rftpl(refal.previous_result, refal.nextr, refal.next_argument);
         }
         return;
     } while (false);
@@ -741,7 +741,7 @@ static void ftell_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         long int res = ftell(f);
@@ -752,11 +752,11 @@ static void ftell_(void)
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.next_argument);
+            rftpl(refal.previous_result, refal.nextr, refal.next_argument);
             return;
         }
         pcoden(p, (uint32_t)res);
-        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+        rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;
@@ -796,14 +796,14 @@ static void is_eof_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (feof(f) != 0 || ferror(f) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+        rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -843,14 +843,14 @@ static void is_feof_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (feof(f) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+        rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -890,14 +890,14 @@ static void is_ferror_(void)
         if (f == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+            rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (ferror(f) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+        rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -927,7 +927,7 @@ static void remove_file_(void)
             if (!slins(refal.nextr, (size_t)d))
                 return;
         p = rfrstr(serr, refal.nextr);
-        rftpl(refal.prevr, refal.nextr, p->next);
+        rftpl(refal.previous_result, refal.nextr, p->next);
     }
     return;
 }
@@ -959,7 +959,7 @@ static void rename_(void)
                 if (!slins(refal.nextr, (size_t)d))
                     return;
             p = rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, p->next);
+            rftpl(refal.previous_result, refal.nextr, p->next);
         }
         return;
     } while (false);
@@ -985,7 +985,7 @@ static void exist_file_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+    rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -1007,7 +1007,7 @@ static void exist_dir_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+    rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};

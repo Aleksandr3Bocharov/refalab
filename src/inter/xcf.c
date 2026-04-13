@@ -32,11 +32,11 @@ static void ftochar_(void)
     const uint8_t *lp = p->info.codef - 1;
     const uint8_t l = *lp;
     const char *u = (char *)lp - l;
-    p = refal.prevr;
+    p = refal.previous_result;
     if (!lrqlk(l))
         if (!lincrm())
         {
-            rfdel(refal.prevr, refal.nextr);
+            rfdel(refal.previous_result, refal.nextr);
             refal.upshot = 3;
             return;
         }
@@ -128,7 +128,7 @@ static void chartof_(void)
             p->info.codef = func_f[k];
             if (p->next != refal.next_argument)
                 rfdel(p, refal.next_argument);
-            rftpl(refal.prevr, p->previous, p->next);
+            rftpl(refal.previous_result, p->previous, p->next);
             free(u);
             return;
         }
@@ -146,7 +146,7 @@ static void chartof_(void)
     p->info.codef = j;
     if (p->next != refal.next_argument)
         rfdel(p, refal.next_argument);
-    rftpl(refal.prevr, p->previous, p->next);
+    rftpl(refal.previous_result, p->previous, p->next);
     return;
 }
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};

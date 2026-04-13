@@ -452,7 +452,7 @@ static void oper(uint32_t o, uint32_t prn)
                 Xn->tag = TAGN;
                 Xn->info.code = NULL;
             }
-            rftpl(refal.prevr, Xn->previous, Xk->next);
+            rftpl(refal.previous_result, Xn->previous, Xk->next);
             return;
         }
         //   delimoe > delitelja
@@ -650,9 +650,9 @@ static void oper(uint32_t o, uint32_t prn)
         if (r->next != Xn)
             rftpl(r, Xn->previous, Xk->next);
         if ((prn & 2) == 0)
-            rftpl(refal.prevr, x->previous, Xk->next);
+            rftpl(refal.previous_result, x->previous, Xk->next);
         else
-            rftpl(refal.prevr, x->previous, Xn);
+            rftpl(refal.previous_result, x->previous, Xn);
         return;
     } // end case
     if (rez0)
@@ -662,7 +662,7 @@ static void oper(uint32_t o, uint32_t prn)
         x = refal.previous_argument->next;
         x->tag = TAGN;
         x->info.code = NULL;
-        rftpl(refal.prevr, x->previous, x->next);
+        rftpl(refal.previous_result, x->previous, x->next);
         return;
     }
     if (!odnc)
@@ -681,7 +681,7 @@ static void oper(uint32_t o, uint32_t prn)
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->previous, Xk->next);
+        rftpl(refal.previous_result, x->previous, Xk->next);
         return;
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
@@ -729,10 +729,10 @@ static void oper(uint32_t o, uint32_t prn)
     y->info.codep = x;
     if ((prn & 2) == 0)
         // dr/n
-        rftpl(refal.prevr, refal.previous_argument->previous, y->next);
+        rftpl(refal.previous_result, refal.previous_argument->previous, y->next);
     else
         // div/n
-        rftpl(refal.prevr, refal.previous_argument->previous, x);
+        rftpl(refal.previous_result, refal.previous_argument->previous, x);
     return;
 }
 
@@ -910,7 +910,7 @@ static void gcd_(void)
                 pr->info.code = NULL;
                 pcoden(pr, (uint32_t)A);
                 pr = pr->next;
-                rftpl(refal.prevr, refal.previous_argument, pr);
+                rftpl(refal.previous_result, refal.previous_argument, pr);
                 return;
             }
             //    A - pribligenie
@@ -1204,7 +1204,7 @@ static void gcd_(void)
                 gcd_state = NEOT;
                 break;
             }
-            rftpl(refal.prevr, hd[rez]->previous, tl[rez]->next);
+            rftpl(refal.previous_result, hd[rez]->previous, tl[rez]->next);
             return;
         case NEOT:
             refal.upshot = 2;
@@ -1226,7 +1226,7 @@ static void p1_(void)
         if (l == 0)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+        rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;
@@ -1247,7 +1247,7 @@ static void m1_(void)
         if (l == MAX_NUMBER)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+        rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;

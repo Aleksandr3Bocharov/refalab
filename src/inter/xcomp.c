@@ -122,7 +122,7 @@ static void nrel_(void)
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
     refal.previous_argument->info.infoc = c;
-    rftpl(refal.prevr, refal.previous_argument->previous, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};
@@ -170,7 +170,7 @@ static void lrel_(void)
     p->info.code = NULL;
     p->info.infoc = c;
     q = p->next;
-    rftpl(refal.prevr, refal.previous_argument, q);
+    rftpl(refal.previous_result, refal.previous_argument, q);
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};

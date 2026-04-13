@@ -58,7 +58,7 @@ static void gtr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    rftpl(refal.prevr, p, p);
+    rftpl(refal.previous_result, p, p);
     return;
 }
 char gtr_0[] = {Z3 'G', 'T', 'R', (char)3};
@@ -74,7 +74,7 @@ static void rdr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    if (!lcopy(refal.prevr, p, p))
+    if (!lcopy(refal.previous_result, p, p))
     {
         refal.upshot = 3;
         return;
@@ -128,7 +128,7 @@ static void swr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    rftpl(refal.prevr, p, p);
+    rftpl(refal.previous_result, p, p);
     rftpl(p, r, refal.next_argument);
     return;
 }
@@ -138,12 +138,12 @@ void (*swr_1)(void) = swr_;
 
 static void new_(void)
 {
-    if (!lins(refal.prevr, 1))
+    if (!lins(refal.previous_result, 1))
     {
         refal.upshot = 3;
         return;
     }; // LACK
-    T_LINKCB *r = refal.prevr->next;
+    T_LINKCB *r = refal.previous_result->next;
     r->info.codep = refal.previous_argument;
     r->tag = TAGR;
     T_LINKCB *p = refal.next_argument->previous;

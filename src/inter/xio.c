@@ -18,7 +18,7 @@ static void card_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
         rfpexs("", refal.previous_argument, refal.next_argument, false);
-    T_LINKCB *p = refal.prevr;
+    T_LINKCB *p = refal.previous_result;
     int c = getchar();
     while (c != '\n')
     {
@@ -44,7 +44,7 @@ void (*card_1)(void) = card_;
 static void pr1_(void)
 {
     rfpex("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', (char)5};
@@ -54,7 +54,7 @@ void (*pr1_1)(void) = pr1_;
 static void pr2_(void)
 {
     rfpexs("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'S', (char)6};
@@ -64,7 +64,7 @@ void (*pr2_1)(void) = pr2_;
 static void pr3_(void)
 {
     rfpexm("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr3_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', (char)6};
@@ -101,7 +101,7 @@ void (*pr6_1)(void) = pr6_;
 static void wr1_(void)
 {
     rfpex("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr1_0[] = {Z5 'W', 'R', 'I', 'T', 'E', (char)5};
@@ -111,7 +111,7 @@ void (*wr1_1)(void) = wr1_;
 static void wr2_(void)
 {
     rfpexs("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr2_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'S', (char)6};
@@ -121,7 +121,7 @@ void (*wr2_1)(void) = wr2_;
 static void wr3_(void)
 {
     rfpexm("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
+    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr3_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'M', (char)6};

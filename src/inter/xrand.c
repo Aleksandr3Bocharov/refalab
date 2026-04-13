@@ -67,7 +67,7 @@ static void random_(void)
         if (count == 0)
             break;
         count = random_number_in_range(count) + 1;
-        p = refal.prevr;
+        p = refal.previous_result;
         if (!slins(p, count))
             return;
         while (count > 0)
@@ -102,7 +102,7 @@ static void random_number_(void)
     else
         res = random_number();
     pcoden(p, res);
-    rftpl(refal.prevr, p->previous, p->next);
+    rftpl(refal.previous_result, p->previous, p->next);
     return;
 }
 char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)13};

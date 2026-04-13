@@ -28,9 +28,9 @@ static void try_(void)
     else
     {
         upst = refal.currst;
-        if (!slins(refal.prevr, 1))
+        if (!slins(refal.previous_result, 1))
             return;
-        px = refal.prevr->next;
+        px = refal.previous_result->next;
         s_st = malloc(sizeof(T_STATUS_TABLE));
         if (s_st == NULL)
             lack = true;

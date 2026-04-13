@@ -247,7 +247,7 @@ static void boper(uint32_t o)
             x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.prevr, x->previous, x->next);
+            rftpl(refal.previous_result, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -262,7 +262,7 @@ static void boper(uint32_t o)
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->previous, Xk->next);
+        rftpl(refal.previous_result, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -369,7 +369,7 @@ static void shoper(uint32_t o)
             x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.prevr, x->previous, x->next);
+            rftpl(refal.previous_result, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -384,7 +384,7 @@ static void shoper(uint32_t o)
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.prevr, x->previous, Xk->next);
+        rftpl(refal.previous_result, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;

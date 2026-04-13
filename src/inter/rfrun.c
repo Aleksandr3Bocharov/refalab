@@ -273,7 +273,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     savecr->upshot_ = refal.upshot;
     savecr->preva_ = refal.previous_argument;
     savecr->nexta_ = refal.next_argument;
-    savecr->prevr_ = refal.prevr;
+    savecr->prevr_ = refal.previous_result;
     savecr->nextr_ = refal.nextr;
     savecr->currst_ = refal.currst;
     refal.currst = ast;
@@ -356,7 +356,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             refal.upshot = savecr->upshot_;
             refal.previous_argument = savecr->preva_;
             refal.next_argument = savecr->nexta_;
-            refal.prevr = savecr->prevr_;
+            refal.previous_result = savecr->prevr_;
             refal.nextr = savecr->nextr_;
             refal.currst = savecr->currst_;
             free(savecr);
@@ -1742,7 +1742,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case CFUNC:
             memcpy(&function_c_pointer, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
-            refal.prevr = temp_board_hole->previous;
+            refal.previous_result = temp_board_hole->previous;
             refal.nextr = temp_board_hole;
             refal.previous_argument = left_board_hole;
             refal.next_argument = right_board_hole;
@@ -1775,11 +1775,11 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             //        return from C - function
             //     free memory exhausted
         case CFLACK:
-            if (refal.prevr->next != refal.nextr)
+            if (refal.previous_result->next != refal.nextr)
             {
                 LINK(refal.nextr->previous, free_memory_list_head->next);
-                LINK(free_memory_list_head, refal.prevr->next);
-                LINK(refal.prevr, refal.nextr);
+                LINK(free_memory_list_head, refal.previous_result->next);
+                LINK(refal.previous_result, refal.nextr);
             }
             ast->state = 3;
             interpretator_state = EXIT;

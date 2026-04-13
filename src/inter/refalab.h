@@ -99,7 +99,7 @@ typedef struct refal
     uint8_t upshot;
     T_LINKCB *previous_argument;
     T_LINKCB *next_argument;
-    T_LINKCB *prevr;
+    T_LINKCB *previous_result;
     T_LINKCB *nextr;
     T_STATUS_TABLE *currst;
     T_LINKCB *flhead;

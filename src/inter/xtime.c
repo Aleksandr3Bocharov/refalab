@@ -35,7 +35,7 @@ static void time_(void)
     if (lt == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
+        rftpl(refal.previous_result, refal.nextr, refal.previous_argument->next);
         return;
     }
     char s[256];
@@ -45,7 +45,7 @@ static void time_(void)
     if (!slins(refal.nextr, sl - 1))
         return;
     rfrstr(s, refal.nextr);
-    rftpl(refal.prevr, refal.nextr, refal.next_argument);
+    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -81,7 +81,7 @@ static void tm_(void)
             if (!slins(refal.nextr, strlen(s) - 2))
                 return;
             rfrstr(s, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.next_argument);
+            rftpl(refal.previous_result, refal.nextr, refal.next_argument);
         }
         else
             break;
@@ -120,7 +120,7 @@ static void tm_elapsed_(void)
     if (!slins(refal.nextr, strlen(s) - 1))
         return;
     rfrstr(s, refal.nextr);
-    rftpl(refal.prevr, refal.nextr, refal.next_argument);
+    rftpl(refal.previous_result, refal.nextr, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
 G_L_B uint8_t refalab_tm_elapsed = '\122';
