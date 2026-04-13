@@ -31,7 +31,7 @@ static struct
 static size_t gargc = 0;
 static char **gargv = NULL;
 
-static T_LINKCB *last_block = NULL;
+static T_LINKCB *last_block_free_memory = NULL;
 static bool rf_init = true;
 static T_LINKCB hd;
 
@@ -62,7 +62,7 @@ void rfabe(const char *amsg)
 bool lincrm(void)
 {
     size_t n = 0;
-    if (last_block != NULL)
+    if (last_block_free_memory != NULL)
     {
         const T_LINKCB *first_free = refal.free_memory_list_head->next;
         const bool was_coll = lgcl();
@@ -85,8 +85,8 @@ bool lincrm(void)
 #endif
     if (new_block == NULL)
         return false;
-    new_block->previous = last_block;
-    last_block = new_block;
+    new_block->previous = last_block_free_memory;
+    last_block_free_memory = new_block;
     rflist(new_block + 1, 1000);
     return true;
 }
@@ -225,10 +225,10 @@ void rfdel(T_LINKCB *p, T_LINKCB *q)
 
 void rftermm(void)
 {
-    while (last_block != NULL)
+    while (last_block_free_memory != NULL)
     {
-        T_LINKCB *new_block = last_block;
-        last_block = new_block->previous;
+        T_LINKCB *new_block = last_block_free_memory;
+        last_block_free_memory = new_block->previous;
 #if defined mdebug
         fprintf(stderr, "lincrm: free new_block=%p\n", (void *)new_block);
 #endif
