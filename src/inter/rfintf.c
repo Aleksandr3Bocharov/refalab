@@ -64,11 +64,11 @@ bool lincrm(void)
     size_t n = 0;
     if (last_block != NULL)
     {
-        const T_LINKCB *first_free = refal.flhead->next;
+        const T_LINKCB *first_free = refal.free_memory_list_head->next;
         const bool was_coll = lgcl();
         if (was_coll)
         {
-            const T_LINKCB *p = refal.flhead->next;
+            const T_LINKCB *p = refal.free_memory_list_head->next;
             n = 0;
             while (p != first_free && n != 1000)
             {
@@ -94,11 +94,11 @@ bool lincrm(void)
 //  check a number of items in free items list
 bool lrqlk(size_t l)
 {
-    const T_LINKCB *p = refal.flhead;
+    const T_LINKCB *p = refal.free_memory_list_head;
     for (size_t n = 0; n < l; n++)
     {
         p = p->next;
-        if (p == refal.flhead)
+        if (p == refal.free_memory_list_head)
             return false;
     }
     return true;
@@ -108,19 +108,19 @@ bool lins(T_LINKCB *p, size_t l)
 {
     if (l == 0)
         return true;
-    T_LINKCB *q1 = refal.flhead;
+    T_LINKCB *q1 = refal.free_memory_list_head;
     for (size_t n = 0; n < l; n++)
     {
         q1 = q1->next;
-        if (q1 == refal.flhead)
+        if (q1 == refal.free_memory_list_head)
             return false;
         q1->tag = TAGO;
         q1->info.code = NULL;
     }
     T_LINKCB *r = q1->next;
-    T_LINKCB *q = refal.flhead->next;
-    refal.flhead->next = r;
-    r->previous = refal.flhead;
+    T_LINKCB *q = refal.free_memory_list_head->next;
+    refal.free_memory_list_head->next = r;
+    r->previous = refal.free_memory_list_head;
     T_LINKCB *p1 = p->next;
     q1->next = p1;
     p1->previous = q1;
@@ -170,7 +170,7 @@ void rfinit(void)
     p->current_status_table = NULL;
     p->svar = NULL;
     p->dvar = NULL;
-    p->flhead = &hd;
+    p->free_memory_list_head = &hd;
     T_LINKCB *phd = &hd;
     phd->previous = phd;
     phd->next = phd;
@@ -194,15 +194,15 @@ void rfcanc(const T_STATUS_TABLE *ast)
         rfabe("rfcanc: process is in job yet");
     ast->previous->next = ast->next;
     ast->next->previous = ast->previous;
-    T_LINKCB *flhead1 = refal.flhead->previous;
+    T_LINKCB *flhead1 = refal.free_memory_list_head->previous;
     T_LINKCB *view1 = ast->view->previous;
     T_LINKCB *store1 = ast->store->previous;
     flhead1->next = ast->view;
     ast->view->previous = flhead1;
     view1->next = ast->store;
     ast->store->previous = view1;
-    store1->next = refal.flhead;
-    refal.flhead->previous = store1;
+    store1->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = store1;
     return;
 }
 
@@ -213,11 +213,11 @@ void rfdel(T_LINKCB *p, T_LINKCB *q)
     if (p1 == q)
         return;
     T_LINKCB *q1 = q->previous;
-    T_LINKCB *r = refal.flhead->previous;
+    T_LINKCB *r = refal.free_memory_list_head->previous;
     p->next = q;
     q->previous = p;
-    q1->next = refal.flhead;
-    refal.flhead->previous = q1;
+    q1->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = q1;
     r->next = p1;
     p1->previous = r;
     return;
@@ -550,13 +550,13 @@ void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q)
 //  copy expression and add it to nessecary place
 bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
 {
-    T_LINKCB *f = refal.flhead;
+    T_LINKCB *f = refal.free_memory_list_head;
     T_LINKCB *f0 = p->next;
     T_LINKCB *f1, *lastb = NULL;
     while (f0 != q)
     {
         f = f->next;
-        if (f == refal.flhead)
+        if (f == refal.free_memory_list_head)
             return false;
         switch (f0->tag)
         {
@@ -578,12 +578,12 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
         }
         f0 = f0->next;
     }
-    if (refal.flhead == f)
+    if (refal.free_memory_list_head == f)
         return true;
-    f0 = refal.flhead->next;
+    f0 = refal.free_memory_list_head->next;
     f1 = f->next;
-    refal.flhead->next = f1;
-    f1->previous = refal.flhead;
+    refal.free_memory_list_head->next = f1;
+    f1->previous = refal.free_memory_list_head;
     T_LINKCB *r1 = r->next;
     f->next = r1;
     r1->previous = f;
@@ -610,15 +610,15 @@ bool lcre(T_STATUS_TABLE *ast)
         rfinit();
     if (lexist(ast))
         rfabe("lcre: process already exists");
-    ast->view = refal.flhead->next;
-    if (ast->view == refal.flhead)
+    ast->view = refal.free_memory_list_head->next;
+    if (ast->view == refal.free_memory_list_head)
         return false;
     ast->store = ast->view->next;
-    if (ast->store == refal.flhead)
+    if (ast->store == refal.free_memory_list_head)
         return false;
     T_LINKCB *flhead1 = ast->store->next;
-    refal.flhead->next = flhead1;
-    flhead1->previous = refal.flhead;
+    refal.free_memory_list_head->next = flhead1;
+    flhead1->previous = refal.free_memory_list_head;
     ast->view->next = ast->view;
     ast->view->previous = ast->view;
     ast->store->next = ast->store;
@@ -711,11 +711,11 @@ static bool lgcl(void)
                 p1->info.code = q->info.code;
                 p1->tag = q->tag;
                 r = q->previous;
-                T_LINKCB *flhead1 = refal.flhead->next;
+                T_LINKCB *flhead1 = refal.free_memory_list_head->next;
                 r->next = flhead1;
                 flhead1->previous = r;
-                refal.flhead->next = q;
-                q->previous = refal.flhead;
+                refal.free_memory_list_head->next = q;
+                q->previous = refal.free_memory_list_head;
             }
             q = p1->info.codep;
         } while (q != pzero);
@@ -732,7 +732,7 @@ static void rflist(T_LINKCB *par, size_t n)
     if (rf_init)
         rfinit();
     T_LINKCB *q = par;
-    T_LINKCB *p = refal.flhead->previous;
+    T_LINKCB *p = refal.free_memory_list_head->previous;
     for (size_t k = 0; k < n; k++)
     {
         p->next = q;
@@ -742,8 +742,8 @@ static void rflist(T_LINKCB *par, size_t n)
         p = q;
         q++;
     }
-    p->next = refal.flhead;
-    refal.flhead->previous = p;
+    p->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = p;
     return;
 }
 

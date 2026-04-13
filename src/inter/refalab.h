@@ -102,7 +102,7 @@ typedef struct refal
     T_LINKCB *previous_result;
     T_LINKCB *next_result;
     T_STATUS_TABLE *current_status_table;
-    T_LINKCB *flhead;
+    T_LINKCB *free_memory_list_head;
     T_LINKCB *svar;
     T_LINKCB *dvar;
     struct

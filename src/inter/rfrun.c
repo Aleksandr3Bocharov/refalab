@@ -279,7 +279,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     T_LINKCB quasik; // quasi-sign '<'
     quasik.info.codep = ast->dot;
     // adress of free memory list head
-    T_LINKCB *free_memory_list_head = refal.flhead;
+    T_LINKCB *free_memory_list_head = refal.free_memory_list_head;
     T_INTERPRETATOR_STATES interpretator_state = START;
     while (true)
         switch (interpretator_state)
