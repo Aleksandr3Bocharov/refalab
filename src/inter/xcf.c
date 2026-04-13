@@ -23,7 +23,7 @@ static adr *func_f = NULL;
 
 static void ftochar_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     if (p->next != refal.nexta || p->tag != TAGF)
     {
         refal.upshot = 2;
@@ -56,7 +56,7 @@ void (*ftochar_1)(void) = ftochar_;
 
 static void functab_(void)
 {
-    const T_LINKCB *p = refal.preva->next;
+    const T_LINKCB *p = refal.previous_argument->next;
     if (p->next != refal.nexta || p->tag != TAGF)
     {
         refal.upshot = 2;
@@ -82,7 +82,7 @@ void (*functab_1)(void) = functab_;
 
 static void chartof_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     size_t i;
     bool heot = false;
     if (p == refal.nexta)
@@ -103,7 +103,7 @@ static void chartof_(void)
         refal.upshot = 2;
         return;
     }
-    p = refal.preva->next;
+    p = refal.previous_argument->next;
     char *u = (char *)malloc(i + 2);
     if (u == NULL)
         rfabe("chartof: malloc error");
@@ -123,7 +123,7 @@ static void chartof_(void)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
-            p = refal.preva->next;
+            p = refal.previous_argument->next;
             p->tag = TAGF;
             p->info.codef = func_f[k];
             if (p->next != refal.nexta)
@@ -141,7 +141,7 @@ static void chartof_(void)
         rfabe("chartof: malloc or realloc error");
     func_f[func_n] = j;
     func_n++;
-    p = refal.preva->next;
+    p = refal.previous_argument->next;
     p->tag = TAGF;
     p->info.codef = j;
     if (p->next != refal.nexta)

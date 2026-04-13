@@ -22,7 +22,7 @@
 
 static void numb_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     const char zn = p->info.infoc;
     const T_LINKCB *pz = p;
     if (p->tag == TAGO && (zn == '-' || zn == '+'))
@@ -82,7 +82,7 @@ void (*numb_1)(void) = numb_;
 
 static void symb_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     const char zn = p->info.infoc;
     T_LINKCB *pz = p;
     if (p->tag == TAGO && (zn == '-' || zn == '+'))
@@ -141,7 +141,7 @@ void (*symb_1)(void) = symb_;
 
 static void first_(void)
 {
-    T_LINKCB *pn = refal.preva->next;
+    T_LINKCB *pn = refal.previous_argument->next;
     if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
@@ -157,18 +157,18 @@ static void first_(void)
             pn->info.code = NULL;
             pn->info.infoc = '*';
             pn->tag = TAGO;
-            rftpl(refal.prevr, refal.preva, refal.nexta);
+            rftpl(refal.prevr, refal.previous_argument, refal.nexta);
             return;
         }
         if (p->tag == TAGLB)
             p = p->info.codep;
     }
     p = p->next;
-    refal.preva->tag = TAGLB;
-    refal.preva->info.codep = pn;
+    refal.previous_argument->tag = TAGLB;
+    refal.previous_argument->info.codep = pn;
     pn->tag = TAGRB;
-    pn->info.codep = refal.preva;
-    rftpl(refal.preva, pn, p);
+    pn->info.codep = refal.previous_argument;
+    rftpl(refal.previous_argument, pn, p);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
@@ -178,7 +178,7 @@ void (*first_1)(void) = first_;
 
 static void last_(void)
 {
-    T_LINKCB *pn = refal.preva->next;
+    T_LINKCB *pn = refal.previous_argument->next;
     if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
@@ -196,18 +196,18 @@ static void last_(void)
             pn->info.infoc = '*';
             rftpl(refal.prevr, pn, refal.nexta);
             p = refal.nextr->previous;
-            rftpl(p, refal.preva, refal.nexta);
+            rftpl(p, refal.previous_argument, refal.nexta);
             return;
         }
         if (p->tag == TAGRB)
             p = p->info.codep;
     }
     p = p->previous;
-    refal.preva->tag = TAGLB;
-    refal.preva->info.codep = pn;
+    refal.previous_argument->tag = TAGLB;
+    refal.previous_argument->info.codep = pn;
     pn->tag = TAGRB;
-    pn->info.codep = refal.preva;
-    rftpl(refal.preva, p, refal.nexta);
+    pn->info.codep = refal.previous_argument;
+    rftpl(refal.previous_argument, p, refal.nexta);
     rftpl(refal.prevr, pn, refal.nexta);
     p = refal.nextr->previous;
     rftpl(p, refal.nextr, refal.nexta);
@@ -220,15 +220,15 @@ void (*last_1)(void) = last_;
 static void lengr_(void)
 {
     uint32_t n = 0;
-    const T_LINKCB *p = refal.preva->next;
+    const T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         n++;
         p = p->next;
     }
-    refal.preva->tag = TAGN;
-    refal.preva->info.code = NULL;
-    pcoden(refal.preva, n);
+    refal.previous_argument->tag = TAGN;
+    refal.previous_argument->info.code = NULL;
+    pcoden(refal.previous_argument, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
@@ -239,7 +239,7 @@ void (*lengr_1)(void) = lengr_;
 static void lengw_(void)
 {
     uint32_t n = 0;
-    const T_LINKCB *p = refal.preva->next;
+    const T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         n++;
@@ -247,9 +247,9 @@ static void lengw_(void)
             p = p->info.codep;
         p = p->next;
     }
-    refal.preva->tag = TAGN;
-    refal.preva->info.code = NULL;
-    pcoden(refal.preva, n);
+    refal.previous_argument->tag = TAGN;
+    refal.previous_argument->info.code = NULL;
+    pcoden(refal.previous_argument, n);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }
@@ -259,7 +259,7 @@ void (*lengw_1)(void) = lengw_;
 
 static void multe_(void)
 {
-    const T_LINKCB *pn = refal.preva->next;
+    const T_LINKCB *pn = refal.previous_argument->next;
     if (pn == refal.nexta || pn->tag != TAGN)
     {
         refal.upshot = 2;
@@ -304,7 +304,7 @@ void (*multe_1)(void) = multe_;
 
 static void chr_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         if (p->tag == TAGN)
@@ -316,7 +316,7 @@ static void chr_(void)
         }
         p = p->next;
     }
-    rftpl(refal.prevr, refal.preva, refal.nexta);
+    rftpl(refal.prevr, refal.previous_argument, refal.nexta);
     return;
 }
 char chr_0[] = {Z3 'C', 'H', 'R', (char)3};
@@ -325,7 +325,7 @@ void (*chr_1)(void) = chr_;
 
 static void ord_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         if (p->tag == TAGO)
@@ -335,7 +335,7 @@ static void ord_(void)
         }
         p = p->next;
     }
-    rftpl(refal.prevr, refal.preva, refal.nexta);
+    rftpl(refal.prevr, refal.previous_argument, refal.nexta);
     return;
 }
 char ord_0[] = {Z3 'O', 'R', 'D', (char)3};
@@ -344,14 +344,14 @@ void (*ord_1)(void) = ord_;
 
 static void upper_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         if (p->tag == TAGO)
             p->info.infoc = (char)toupper(p->info.infoc);
         p = p->next;
     }
-    rftpl(refal.prevr, refal.preva, refal.nexta);
+    rftpl(refal.prevr, refal.previous_argument, refal.nexta);
     return;
 }
 char upper_0[] = {Z5 'U', 'P', 'P', 'E', 'R', (char)5};
@@ -360,14 +360,14 @@ void (*upper_1)(void) = upper_;
 
 static void lower_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     while (p != refal.nexta)
     {
         if (p->tag == TAGO)
             p->info.infoc = (char)tolower(p->info.infoc);
         p = p->next;
     }
-    rftpl(refal.prevr, refal.preva, refal.nexta);
+    rftpl(refal.prevr, refal.previous_argument, refal.nexta);
     return;
 }
 char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};

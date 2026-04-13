@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-28
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XTIME.C -----------------------
@@ -24,7 +24,7 @@ static T_TIMESPEC t0, t1, tm_e;
 
 static void time_(void)
 {
-    if (refal.preva->next != refal.nexta)
+    if (refal.previous_argument->next != refal.nexta)
     {
         refal.upshot = 2;
         return;
@@ -34,8 +34,8 @@ static void time_(void)
     const struct tm *lt = localtime(&tim);
     if (lt == NULL)
     {
-        refal.preva->info.codef = &refalab_null;
-        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        refal.previous_argument->info.codef = &refalab_null;
+        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         return;
     }
     char s[256];
@@ -56,7 +56,7 @@ static void tm_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->next != refal.nexta || p->tag != TAGO)
             break;
         const char c = p->info.infoc;
@@ -96,7 +96,7 @@ void (*tm_1)(void) = tm_;
 
 static void tm_elapsed_(void)
 {
-    if (refal.preva->next != refal.nexta)
+    if (refal.previous_argument->next != refal.nexta)
     {
         refal.upshot = 2;
         return;

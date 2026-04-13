@@ -115,7 +115,7 @@ static bool dajch(void)
 
 static bool dajarg(void)
 {
-    x = refal.preva->next;
+    x = refal.previous_argument->next;
     if (x->tag != TAGLB)
         return false;
     y = x->info.codep;
@@ -330,7 +330,7 @@ static void oper(uint32_t o, uint32_t prn)
             refal.upshot = 3;
             return;
         }
-        T_LINKCB *p = refal.preva;
+        T_LINKCB *p = refal.previous_argument;
         T_LINKCB *r = p->next;
         lins(p, Xdl + Ydl + 1); //  1 zweno dlja znaka
         p = p->next;
@@ -470,7 +470,7 @@ static void oper(uint32_t o, uint32_t prn)
             return;
         }
         // t.k. k chastnomu dob. 0 i zweno na znak
-        p = refal.preva;
+        p = refal.previous_argument;
         lins(p, Xdl - Ydl + 2);
         p = p->next; //  dlja znaka
         r = p->next; //  dlja  perwoj  cifry
@@ -659,7 +659,7 @@ static void oper(uint32_t o, uint32_t prn)
     {
         if (prn == 1)
             return; // dlja n-operacij
-        x = refal.preva->next;
+        x = refal.previous_argument->next;
         x->tag = TAGN;
         x->info.code = NULL;
         rftpl(refal.prevr, x->previous, x->next);
@@ -686,13 +686,13 @@ static void oper(uint32_t o, uint32_t prn)
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
     // rawno po odnoj makrocifre a - ost., b - chastnoe
-    if (!slins(refal.preva, 2))
+    if (!slins(refal.previous_argument, 2))
     {
         refal.upshot = 3;
         return;
     }
     // in bad case: /1/() - 3 zwena est uje + name
-    x = refal.preva;
+    x = refal.previous_argument;
     if (Xzn != Yzn)
     {
         x->tag = TAGO;
@@ -729,17 +729,17 @@ static void oper(uint32_t o, uint32_t prn)
     y->info.codep = x;
     if ((prn & 2) == 0)
         // dr/n
-        rftpl(refal.prevr, refal.preva->previous, y->next);
+        rftpl(refal.prevr, refal.previous_argument->previous, y->next);
     else
         // div/n
-        rftpl(refal.prevr, refal.preva->previous, x);
+        rftpl(refal.prevr, refal.previous_argument->previous, x);
     return;
 }
 
 static void gcd_(void)
 {
     //   sint. control
-    T_LINKCB *pr = refal.preva->next;
+    T_LINKCB *pr = refal.previous_argument->next;
     T_LINKCB *tl[2], *p[2], *hd[2];
     size_t l[2];
     size_t i;
@@ -896,7 +896,7 @@ static void gcd_(void)
                     B = v2;
                 }
                 // UTV: rez v A
-                pr = refal.preva->next;
+                pr = refal.previous_argument->next;
                 v1 = A >> SMAX;
                 if (v1 != 0)
                 {
@@ -910,7 +910,7 @@ static void gcd_(void)
                 pr->info.code = NULL;
                 pcoden(pr, (uint32_t)A);
                 pr = pr->next;
-                rftpl(refal.prevr, refal.preva, pr);
+                rftpl(refal.prevr, refal.previous_argument, pr);
                 return;
             }
             //    A - pribligenie
@@ -1219,14 +1219,14 @@ static void p1_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->next != refal.nexta || p->tag != TAGN)
             break;
         uint32_t l = gcoden(p) + 1;
         if (l == 0)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.preva, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;
@@ -1240,14 +1240,14 @@ static void m1_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->next != refal.nexta || p->tag != TAGN)
             break;
         uint32_t l = gcoden(p) - 1;
         if (l == MAX_NUMBER)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.preva, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;

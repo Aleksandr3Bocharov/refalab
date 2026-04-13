@@ -93,7 +93,7 @@ static bool dajch(void)
 
 static bool dajarg(void)
 {
-    x = refal.preva->next;
+    x = refal.previous_argument->next;
     if (x->tag != TAGLB)
         return false;
     y = x->info.codep;
@@ -148,7 +148,7 @@ static void boper(uint32_t o)
         }
         else
         {
-            x = refal.preva;
+            x = refal.previous_argument;
             y = refal.nexta;
             if (dajch())
             {
@@ -219,13 +219,13 @@ static void boper(uint32_t o)
         case Onot:
             if (Xdl == 0)
             {
-                if (refal.preva->next == refal.nexta)
-                    if (!slins(refal.preva, 1))
+                if (refal.previous_argument->next == refal.nexta)
+                    if (!slins(refal.previous_argument, 1))
                         return;
                 rez0 = false;
                 Xzn = '-';
-                Xn = refal.preva->next;
-                Xk = refal.preva->next;
+                Xn = refal.previous_argument->next;
+                Xk = refal.previous_argument->next;
                 Xn->tag = TAGN;
                 Xn->info.code = NULL;
                 pcoden(Xn, MAX_NUMBER);
@@ -244,7 +244,7 @@ static void boper(uint32_t o)
         }
         if (rez0)
         {
-            x = refal.preva->next;
+            x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
             rftpl(refal.prevr, x->previous, x->next);
@@ -273,7 +273,7 @@ static void shoper(uint32_t o)
 {
     do
     {
-        x = refal.preva->next;
+        x = refal.previous_argument->next;
         if (x->tag != TAGLB)
             break;
         y = x->info.codep;
@@ -366,7 +366,7 @@ static void shoper(uint32_t o)
         }
         if (rez0)
         {
-            x = refal.preva->next;
+            x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
             rftpl(refal.prevr, x->previous, x->next);

@@ -271,7 +271,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     // saving part of refal-block
 
     savecr->upshot_ = refal.upshot;
-    savecr->preva_ = refal.preva;
+    savecr->preva_ = refal.previous_argument;
     savecr->nexta_ = refal.nexta;
     savecr->prevr_ = refal.prevr;
     savecr->nextr_ = refal.nextr;
@@ -354,7 +354,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             ast->dot = quasik.info.codep;
             // restore refal-block
             refal.upshot = savecr->upshot_;
-            refal.preva = savecr->preva_;
+            refal.previous_argument = savecr->preva_;
             refal.nexta = savecr->nexta_;
             refal.prevr = savecr->prevr_;
             refal.nextr = savecr->nextr_;
@@ -1744,7 +1744,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             refal.upshot = 1;
             refal.prevr = temp_board_hole->previous;
             refal.nextr = temp_board_hole;
-            refal.preva = left_board_hole;
+            refal.previous_argument = left_board_hole;
             refal.nexta = right_board_hole;
             //        call  C - function
             (*function_c_pointer)();

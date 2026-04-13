@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XSYS.C --------------------
@@ -23,7 +23,7 @@ extern uint8_t refalab_null;
 
 static void arg_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     if (p->next != refal.nexta || p->tag != TAGN)
     {
         refal.upshot = 2;
@@ -46,7 +46,7 @@ void (*arg_1)(void) = arg_;
 
 static void system_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char cmd[8192];
     p = rfgstr(cmd, 8191, p);
     if (p != refal.nexta)
@@ -62,7 +62,7 @@ static void system_(void)
         sys = -1;
 #endif
     int64_t sys_64 = sys;
-    p = refal.preva;
+    p = refal.previous_argument;
     if (sys_64 < 0)
     {
         if (p->next == refal.nexta)
@@ -88,7 +88,7 @@ static void exit_(void)
 {
     do
     {
-        const T_LINKCB *p = refal.preva->next;
+        const T_LINKCB *p = refal.previous_argument->next;
         const char zn = p->info.infoc;
         int z = 1;
         if (p->tag == TAGO && (zn == '-' || zn == '+'))
@@ -115,7 +115,7 @@ void (*exit_1)(void) = exit_;
 
 static void get_env_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char env_name[32768];
     p = rfgstr(env_name, 32767, p);
     if (p != refal.nexta)
@@ -126,8 +126,8 @@ static void get_env_(void)
     const char *env_value = getenv(env_name);
     if (env_value == NULL)
     {
-        refal.preva->info.codef = &refalab_null;
-        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        refal.previous_argument->info.codef = &refalab_null;
+        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         return;
     }
     const int32_t d = (int32_t)strlen(env_value) - ((int32_t)strlen(env_name) + 1);
@@ -145,7 +145,7 @@ void (*get_env_1)(void) = get_env_;
 
 static void change_dir_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
     p = rfgstr(namd, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
@@ -173,7 +173,7 @@ void (*change_dir_1)(void) = change_dir_;
 
 static void get_current_dir_(void)
 {
-    if (refal.preva->next != refal.nexta)
+    if (refal.previous_argument->next != refal.nexta)
     {
         refal.upshot = 2;
         return;
@@ -195,14 +195,14 @@ void (*get_current_dir_1)(void) = get_current_dir_;
 
 static void step_(void)
 {
-    if (refal.preva->next != refal.nexta)
+    if (refal.previous_argument->next != refal.nexta)
     {
         refal.upshot = 2;
         return;
     }
-    refal.preva->tag = TAGN;
-    refal.preva->info.code = NULL;
-    pcoden(refal.preva, refal.currst->step);
+    refal.previous_argument->tag = TAGN;
+    refal.previous_argument->info.code = NULL;
+    pcoden(refal.previous_argument, refal.currst->step);
     rftpl(refal.prevr, refal.nextr, refal.nexta);
     return;
 }

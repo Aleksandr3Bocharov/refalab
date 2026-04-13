@@ -49,7 +49,7 @@ static void fopen_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGO)
             break;
         char c = p->info.infoc;
@@ -110,7 +110,7 @@ static void fclose_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -122,8 +122,8 @@ static void fclose_(void)
         files[j] = NULL;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         const int cl = fclose(f);
@@ -149,7 +149,7 @@ static void fgets_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -169,8 +169,8 @@ static void fgets_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = refal.prevr;
@@ -200,7 +200,7 @@ static void fputs_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -234,8 +234,8 @@ static void fputs_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -243,9 +243,9 @@ static void fputs_(void)
         {
             const int cc = p->info.infoc;
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, refal.preva))
+            if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -263,7 +263,7 @@ static void fprint_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -284,8 +284,8 @@ static void fprint_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -332,9 +332,9 @@ static void fprint_(void)
                 sprintf(s, "'%x,%p'", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.preva))
+            if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -352,7 +352,7 @@ static void fprints_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -373,8 +373,8 @@ static void fprints_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -420,9 +420,9 @@ static void fprints_(void)
                 sprintf(s, "%x,%p", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.preva))
+            if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -440,7 +440,7 @@ static void fprintm_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -461,8 +461,8 @@ static void fprintm_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -535,9 +535,9 @@ static void fprintm_(void)
                 }
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.preva))
+            if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -545,8 +545,8 @@ static void fprintm_(void)
         if (fr)
         {
             const int pcc = putc('\'', f);
-            if (rfreof(pcc, f, refal.preva))
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            if (rfreof(pcc, f, refal.previous_argument))
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         }
         return;
     } while (false);
@@ -561,7 +561,7 @@ static void fread_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -576,8 +576,8 @@ static void fread_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = refal.prevr;
@@ -609,7 +609,7 @@ static void fwrite_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -631,8 +631,8 @@ static void fwrite_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -644,9 +644,9 @@ static void fwrite_(void)
             else
                 cc = (uint8_t)gcoden(p);
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, refal.preva))
+            if (rfreof(pcc, f, refal.previous_argument))
             {
-                rftpl(refal.prevr, refal.nextr, refal.preva->next);
+                rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
                 return;
             }
             p = p->next;
@@ -664,7 +664,7 @@ static void fseek_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -702,8 +702,8 @@ static void fseek_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         const int res = fseek(f, offset, origin);
@@ -729,7 +729,7 @@ static void ftell_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
@@ -740,8 +740,8 @@ static void ftell_(void)
         f = files[j];
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         long int res = ftell(f);
@@ -756,7 +756,7 @@ static void ftell_(void)
             return;
         }
         pcoden(p, (uint32_t)res);
-        rftpl(refal.prevr, refal.preva, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
         return;
     } while (false);
     refal.upshot = 2;
@@ -770,7 +770,7 @@ static void is_eof_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -795,15 +795,15 @@ static void is_eof_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (feof(f) != 0 || ferror(f) != 0)
-            refal.preva->info.codef = &refalab_true;
+            refal.previous_argument->info.codef = &refalab_true;
         else
-            refal.preva->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -817,7 +817,7 @@ static void is_feof_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -842,15 +842,15 @@ static void is_feof_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (feof(f) != 0)
-            refal.preva->info.codef = &refalab_true;
+            refal.previous_argument->info.codef = &refalab_true;
         else
-            refal.preva->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -864,7 +864,7 @@ static void is_ferror_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
@@ -889,15 +889,15 @@ static void is_ferror_(void)
             break;
         if (f == NULL)
         {
-            refal.preva->info.codef = &refalab_null;
-            rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_null;
+            rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
             return;
         }
         if (ferror(f) != 0)
-            refal.preva->info.codef = &refalab_true;
+            refal.previous_argument->info.codef = &refalab_true;
         else
-            refal.preva->info.codef = &refalab_false;
-        rftpl(refal.prevr, refal.nextr, refal.preva->next);
+            refal.previous_argument->info.codef = &refalab_false;
+        rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -909,7 +909,7 @@ void (*is_ferror_1)(void) = is_ferror_;
 
 static void remove_file_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
     p = rfgstr(namf, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
@@ -939,7 +939,7 @@ static void rename_(void)
 {
     do
     {
-        T_LINKCB *p = refal.preva->next;
+        T_LINKCB *p = refal.previous_argument->next;
         char namf[MAX_PATHFILENAME + 1];
         p = rfgstr(namf, MAX_PATHFILENAME, p);
         if (p->tag != TAGN || gcoden(p) != 0)
@@ -972,7 +972,7 @@ void (*rename_1)(void) = rename_;
 
 static void exist_file_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
     p = rfgstr(namf, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
@@ -982,10 +982,10 @@ static void exist_file_(void)
     }
     struct stat st_buf;
     if (stat(namf, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
-        refal.preva->info.codef = &refalab_true;
+        refal.previous_argument->info.codef = &refalab_true;
     else
-        refal.preva->info.codef = &refalab_false;
-    rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        refal.previous_argument->info.codef = &refalab_false;
+    rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -994,7 +994,7 @@ void (*exist_file_1)(void) = exist_file_;
 
 static void exist_dir_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
     p = rfgstr(namd, MAX_PATHFILENAME, p);
     if (p != refal.nexta)
@@ -1004,10 +1004,10 @@ static void exist_dir_(void)
     }
     struct stat st_buf;
     if (stat(namd, &st_buf) == 0 && S_ISDIR(st_buf.st_mode))
-        refal.preva->info.codef = &refalab_true;
+        refal.previous_argument->info.codef = &refalab_true;
     else
-        refal.preva->info.codef = &refalab_false;
-    rftpl(refal.prevr, refal.nextr, refal.preva->next);
+        refal.previous_argument->info.codef = &refalab_false;
+    rftpl(refal.prevr, refal.nextr, refal.previous_argument->next);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};

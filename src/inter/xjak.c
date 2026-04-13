@@ -18,7 +18,7 @@
 
 static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
 {
-    T_LINKCB *r = refal.preva->next;
+    T_LINKCB *r = refal.previous_argument->next;
     if (r == refal.nexta)
         return false;
     if (emp && r->next != refal.nexta)
@@ -144,16 +144,16 @@ static void new_(void)
         return;
     }; // LACK
     T_LINKCB *r = refal.prevr->next;
-    r->info.codep = refal.preva;
+    r->info.codep = refal.previous_argument;
     r->tag = TAGR;
     T_LINKCB *p = refal.nexta->previous;
-    p->next = refal.preva;
-    refal.preva->previous = p;
+    p->next = refal.previous_argument;
+    refal.previous_argument->previous = p;
     refal.nextr->next = refal.nexta;
     refal.nexta->previous = refal.nextr;
-    refal.preva->info.codep = refal.dvar;
-    refal.preva->tag = TAGO;
-    refal.dvar = refal.preva;
+    refal.previous_argument->info.codep = refal.dvar;
+    refal.previous_argument->tag = TAGO;
+    refal.dvar = refal.previous_argument;
     return;
 }
 char new_0[] = {Z3 'N', 'E', 'W', (char)3};

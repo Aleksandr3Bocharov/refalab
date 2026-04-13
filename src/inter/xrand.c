@@ -58,7 +58,7 @@ static uint32_t random_number_in_range(uint32_t limit)
 
 static void random_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     do
     {
         if (p->next != refal.nexta || p->tag != TAGN)
@@ -89,7 +89,7 @@ void (*random_1)(void) = random_;
 
 static void random_number_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     if (p->next != refal.nexta || p->tag != TAGN)
     {
         refal.upshot = 2;

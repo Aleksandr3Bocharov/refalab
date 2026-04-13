@@ -52,7 +52,7 @@ static bool dajch(void)
 
 static bool dajarg(void)
 {
-    x = refal.preva->next;
+    x = refal.previous_argument->next;
     if (x->tag != TAGLB)
         return false;
     y = x->info.codep;
@@ -119,10 +119,10 @@ static void nrel_(void)
                 c = '>';
         }
     }
-    refal.preva->tag = TAGO;
-    refal.preva->info.code = NULL;
-    refal.preva->info.infoc = c;
-    rftpl(refal.prevr, refal.preva->previous, refal.nexta);
+    refal.previous_argument->tag = TAGO;
+    refal.previous_argument->info.code = NULL;
+    refal.previous_argument->info.infoc = c;
+    rftpl(refal.prevr, refal.previous_argument->previous, refal.nexta);
     return;
 }
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};
@@ -131,7 +131,7 @@ void (*nrel_1)(void) = nrel_;
 
 static void lrel_(void)
 {
-    T_LINKCB *p = refal.preva->next;
+    T_LINKCB *p = refal.previous_argument->next;
     if (p->tag != TAGLB)
     {
         refal.upshot = 2;
@@ -165,12 +165,12 @@ static void lrel_(void)
         else if (q == q1 && p != pp)
             c = '>';
     }
-    p = refal.preva->next;
+    p = refal.previous_argument->next;
     p->tag = TAGO;
     p->info.code = NULL;
     p->info.infoc = c;
     q = p->next;
-    rftpl(refal.prevr, refal.preva, q);
+    rftpl(refal.prevr, refal.previous_argument, q);
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};

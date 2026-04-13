@@ -15,7 +15,7 @@
 
 static void delf_(void)
 {
-    if (refal.preva->next != refal.nexta)
+    if (refal.previous_argument->next != refal.nexta)
     {
         refal.upshot = 2;
         return;
