@@ -192,8 +192,8 @@ void rfcanc(const T_STATUS_TABLE *ast)
         rfabe("rfcanc: process doesn't exist");
     if (ast->state == 4)
         rfabe("rfcanc: process is in job yet");
-    ast->stprev->stnext = ast->stnext;
-    ast->stnext->stprev = ast->stprev;
+    ast->previous->next = ast->next;
+    ast->next->previous = ast->previous;
     T_LINKCB *flhead1 = refal.flhead->previous;
     T_LINKCB *view1 = ast->view->previous;
     T_LINKCB *store1 = ast->store->previous;
@@ -624,10 +624,10 @@ bool lcre(T_STATUS_TABLE *ast)
     ast->store->next = ast->store;
     ast->store->previous = ast->store;
     T_STATUS_TABLE *q = refal.crprev;
-    ast->stnext = (T_STATUS_TABLE *)&refal;
+    ast->next = (T_STATUS_TABLE *)&refal;
     refal.crprev = ast;
-    q->stnext = ast;
-    ast->stprev = q;
+    q->next = ast;
+    ast->previous = q;
     ast->state = 1;
     ast->dot = NULL;
     ast->step = 0;
@@ -683,7 +683,7 @@ static bool lgcl(void)
     {
         mark(p->view);
         mark(p->store);
-        p = p->stnext;
+        p = p->next;
     }
     // mark boxes achieved from static boxes
     if (refal.svar != NULL)
