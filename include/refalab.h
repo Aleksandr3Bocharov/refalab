@@ -90,20 +90,20 @@ typedef struct status_table_
     uint32_t stop;
     T_LINKCB *view;
     T_LINKCB *store;
-} T_ST;
+} T_STATUS_TABLE;
 
 typedef struct timespec T_TIMESPEC;
 
 typedef struct refal_
 {
-    T_ST *crprev;
-    T_ST *crnext;
+    T_STATUS_TABLE *crprev;
+    T_STATUS_TABLE *crnext;
     uint32_t upshot;
     T_LINKCB *preva;
     T_LINKCB *nexta;
     T_LINKCB *prevr;
     T_LINKCB *nextr;
-    T_ST *currst;
+    T_STATUS_TABLE *currst;
     T_LINKCB *flhead;
     T_LINKCB *svar;
     T_LINKCB *dvar;
@@ -123,7 +123,7 @@ typedef struct refal_
 extern T_REFAL refal;
 
 extern void rfabe(const char *amsg);
-extern void rfcanc(const T_ST *ast);
+extern void rfcanc(const T_STATUS_TABLE *ast);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
 extern void rfgetargs(int argc, char *argv[]);
@@ -138,19 +138,19 @@ extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
-extern bool lcre(T_ST *ast);
-extern bool lexist(const T_ST *ast);
+extern bool lcre(T_STATUS_TABLE *ast);
+extern bool lexist(const T_STATUS_TABLE *ast);
 extern bool lincrm(void);
 extern bool lins(T_LINKCB *p, size_t l);
 extern bool slins(T_LINKCB *p, size_t k);
-extern bool linskd(T_ST *ast, uint8_t *f);
+extern bool linskd(T_STATUS_TABLE *ast, uint8_t *f);
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool lrqlk(size_t l);
 
-extern void rfrun(T_ST *ast);
+extern void rfrun(T_STATUS_TABLE *ast);
 
-extern void (*dbt)(T_ST *);
-extern void rfdbg(T_ST *s_st);
+extern void (*dbt)(T_STATUS_TABLE *);
+extern void rfdbg(T_STATUS_TABLE *s_st);
 
 #endif
 
