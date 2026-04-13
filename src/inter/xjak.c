@@ -19,9 +19,9 @@
 static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
 {
     T_LINKCB *r = refal.previous_argument->next;
-    if (r == refal.nexta)
+    if (r == refal.next_argument)
         return false;
-    if (emp && r->next != refal.nexta)
+    if (emp && r->next != refal.next_argument)
         return true;
     T_LINKCB *p;
     if (r->tag == TAGR)
@@ -95,7 +95,7 @@ static void ptr_(void)
         return;
     }; // FAIL
     T_LINKCB *q = p->previous;
-    rftpl(q, r, refal.nexta);
+    rftpl(q, r, refal.next_argument);
     return;
 }
 char ptr_0[] = {Z3 'P', 'T', 'R', (char)3};
@@ -112,7 +112,7 @@ static void wtr_(void)
         return;
     }; // FAIL
     rfdel(p, p);
-    rftpl(p, r, refal.nexta);
+    rftpl(p, r, refal.next_argument);
     return;
 }
 char wtr_0[] = {Z3 'W', 'T', 'R', (char)3};
@@ -129,7 +129,7 @@ static void swr_(void)
         return;
     }; // FAIL
     rftpl(refal.prevr, p, p);
-    rftpl(p, r, refal.nexta);
+    rftpl(p, r, refal.next_argument);
     return;
 }
 char swr_0[] = {Z3 'S', 'W', 'R', (char)3};
@@ -146,11 +146,11 @@ static void new_(void)
     T_LINKCB *r = refal.prevr->next;
     r->info.codep = refal.previous_argument;
     r->tag = TAGR;
-    T_LINKCB *p = refal.nexta->previous;
+    T_LINKCB *p = refal.next_argument->previous;
     p->next = refal.previous_argument;
     refal.previous_argument->previous = p;
-    refal.nextr->next = refal.nexta;
-    refal.nexta->previous = refal.nextr;
+    refal.nextr->next = refal.next_argument;
+    refal.next_argument->previous = refal.nextr;
     refal.previous_argument->info.codep = refal.dvar;
     refal.previous_argument->tag = TAGO;
     refal.dvar = refal.previous_argument;

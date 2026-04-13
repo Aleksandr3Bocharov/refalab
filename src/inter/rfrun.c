@@ -272,7 +272,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
 
     savecr->upshot_ = refal.upshot;
     savecr->preva_ = refal.previous_argument;
-    savecr->nexta_ = refal.nexta;
+    savecr->nexta_ = refal.next_argument;
     savecr->prevr_ = refal.prevr;
     savecr->nextr_ = refal.nextr;
     savecr->currst_ = refal.currst;
@@ -355,7 +355,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // restore refal-block
             refal.upshot = savecr->upshot_;
             refal.previous_argument = savecr->preva_;
-            refal.nexta = savecr->nexta_;
+            refal.next_argument = savecr->nexta_;
             refal.prevr = savecr->prevr_;
             refal.nextr = savecr->nextr_;
             refal.currst = savecr->currst_;
@@ -1745,7 +1745,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             refal.prevr = temp_board_hole->previous;
             refal.nextr = temp_board_hole;
             refal.previous_argument = left_board_hole;
-            refal.nexta = right_board_hole;
+            refal.next_argument = right_board_hole;
             //        call  C - function
             (*function_c_pointer)();
             switch (refal.upshot)
@@ -1767,8 +1767,8 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             //          step is done
         case CFDONE:
             quasik.info.codep = refal.nextr->info.codep;
-            LINK(refal.nextr->previous, refal.nexta->next);
-            LINK(refal.nexta, free_memory_list_head->next);
+            LINK(refal.nextr->previous, refal.next_argument->next);
+            LINK(refal.next_argument, free_memory_list_head->next);
             LINK(free_memory_list_head, refal.nextr);
             interpretator_state = ADVSTEP;
             break;

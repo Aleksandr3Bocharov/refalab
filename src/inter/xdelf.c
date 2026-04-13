@@ -15,12 +15,12 @@
 
 static void delf_(void)
 {
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     } // FAIL
-    const T_LINKCB *dot = refal.nexta;
+    const T_LINKCB *dot = refal.next_argument;
     const T_LINKCB *dot1 = refal.nextr->info.codep;
     const T_LINKCB *sk;
     T_LINKCB *nd;

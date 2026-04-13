@@ -82,7 +82,7 @@ static void fopen_(void)
         p = p->next;
         char namf[MAX_PATHFILENAME + 1];
         p = rfgstr(namf, MAX_PATHFILENAME, p);
-        if (p != refal.nexta)
+        if (p != refal.next_argument)
             break;
         f = fopen(namf, s);
         const int err = errno;
@@ -116,7 +116,7 @@ static void fclose_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         f = files[j];
         files[j] = NULL;
@@ -134,7 +134,7 @@ static void fclose_(void)
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.nexta);
+            rftpl(refal.prevr, refal.nextr, refal.next_argument);
         }
         return;
     } while (false);
@@ -165,7 +165,7 @@ static void fgets_(void)
         }
         else
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -221,7 +221,7 @@ static void fputs_(void)
             break;
         const T_LINKCB *q = p->next;
         bool neot = false;
-        while (q != refal.nexta)
+        while (q != refal.next_argument)
         {
             if (q->tag != TAGO)
             {
@@ -239,7 +239,7 @@ static void fputs_(void)
             return;
         }
         p = p->next;
-        while (p != refal.nexta)
+        while (p != refal.next_argument)
         {
             const int cc = p->info.infoc;
             const int pcc = putc(cc, f);
@@ -289,7 +289,7 @@ static void fprint_(void)
             return;
         }
         p = p->next;
-        while (p != refal.nexta)
+        while (p != refal.next_argument)
         {
             int pcc = 0;
             char s[512];
@@ -378,7 +378,7 @@ static void fprints_(void)
             return;
         }
         p = p->next;
-        while (p != refal.nexta)
+        while (p != refal.next_argument)
         {
             int pcc = 0;
             char s[512];
@@ -467,7 +467,7 @@ static void fprintm_(void)
         }
         p = p->next;
         bool fr = false;
-        while (p != refal.nexta)
+        while (p != refal.next_argument)
         {
             int pcc = 0;
             char s[512];
@@ -572,7 +572,7 @@ static void fread_(void)
         if (p->tag != TAGN)
             break;
         uint32_t count = gcoden(p);
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -618,7 +618,7 @@ static void fwrite_(void)
         f = files[j];
         const T_LINKCB *q = p->next;
         bool neot = false;
-        while (q != refal.nexta)
+        while (q != refal.next_argument)
         {
             if (q->tag != TAGO && q->tag != TAGN)
             {
@@ -636,7 +636,7 @@ static void fwrite_(void)
             return;
         }
         p = p->next;
-        while (p != refal.nexta)
+        while (p != refal.next_argument)
         {
             int cc;
             if (p->tag == TAGO)
@@ -698,7 +698,7 @@ static void fseek_(void)
             origin = SEEK_CUR;
         else
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -714,7 +714,7 @@ static void fseek_(void)
             if (!slins(refal.nextr, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.nexta);
+            rftpl(refal.prevr, refal.nextr, refal.next_argument);
         }
         return;
     } while (false);
@@ -735,7 +735,7 @@ static void ftell_(void)
         const uint32_t j = gcoden(p);
         if (j >= fmax)
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         f = files[j];
         if (f == NULL)
@@ -752,11 +752,11 @@ static void ftell_(void)
             if (!slins(refal.nextr, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.nexta);
+            rftpl(refal.prevr, refal.nextr, refal.next_argument);
             return;
         }
         pcoden(p, (uint32_t)res);
-        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;
@@ -791,7 +791,7 @@ static void is_eof_(void)
         }
         else
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -838,7 +838,7 @@ static void is_feof_(void)
         }
         else
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -885,7 +885,7 @@ static void is_ferror_(void)
         }
         else
             break;
-        if (p->next != refal.nexta)
+        if (p->next != refal.next_argument)
             break;
         if (f == NULL)
         {
@@ -912,7 +912,7 @@ static void remove_file_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
     p = rfgstr(namf, MAX_PATHFILENAME, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -947,7 +947,7 @@ static void rename_(void)
         p = p->next;
         char namt[MAX_PATHFILENAME + 1];
         p = rfgstr(namt, MAX_PATHFILENAME, p);
-        if (p != refal.nexta)
+        if (p != refal.next_argument)
             break;
         const int r = rename(namf, namt);
         const int err = errno;
@@ -975,7 +975,7 @@ static void exist_file_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
     p = rfgstr(namf, MAX_PATHFILENAME, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -997,7 +997,7 @@ static void exist_dir_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
     p = rfgstr(namd, MAX_PATHFILENAME, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;

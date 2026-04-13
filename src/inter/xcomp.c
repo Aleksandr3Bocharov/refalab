@@ -66,7 +66,7 @@ static bool dajarg(void)
     else
         return false;
     x = y;
-    y = refal.nexta;
+    y = refal.next_argument;
     if (dajch())
     {
         Yn = nach;
@@ -122,7 +122,7 @@ static void nrel_(void)
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
     refal.previous_argument->info.infoc = c;
-    rftpl(refal.prevr, refal.previous_argument->previous, refal.nexta);
+    rftpl(refal.prevr, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};
@@ -140,7 +140,7 @@ static void lrel_(void)
     const T_LINKCB *pp = p->info.codep;
     p = p->next;
     T_LINKCB *q = pp->next;
-    const T_LINKCB *q1 = refal.nexta;
+    const T_LINKCB *q1 = refal.next_argument;
     char c = '=';
     for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
         if ((p->tag == TAGLB && q->tag == TAGLB) ||

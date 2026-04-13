@@ -808,7 +808,7 @@ bool rfreof(int c, FILE *f, T_LINKCB *p)
 T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p)
 {
     size_t i;
-    for (i = 0; p != refal.nexta; i++)
+    for (i = 0; p != refal.next_argument; i++)
     {
         if (p->tag != TAGO || i == l)
             break;

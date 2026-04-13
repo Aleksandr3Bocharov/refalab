@@ -24,7 +24,7 @@ static T_TIMESPEC t0, t1, tm_e;
 
 static void time_(void)
 {
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -45,7 +45,7 @@ static void time_(void)
     if (!slins(refal.nextr, sl - 1))
         return;
     rfrstr(s, refal.nextr);
-    rftpl(refal.prevr, refal.nextr, refal.nexta);
+    rftpl(refal.prevr, refal.nextr, refal.next_argument);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -57,7 +57,7 @@ static void tm_(void)
     do
     {
         T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.nexta || p->tag != TAGO)
+        if (p->next != refal.next_argument || p->tag != TAGO)
             break;
         const char c = p->info.infoc;
         if (c == 'S' || c == 's')
@@ -81,7 +81,7 @@ static void tm_(void)
             if (!slins(refal.nextr, strlen(s) - 2))
                 return;
             rfrstr(s, refal.nextr);
-            rftpl(refal.prevr, refal.nextr, refal.nexta);
+            rftpl(refal.prevr, refal.nextr, refal.next_argument);
         }
         else
             break;
@@ -96,7 +96,7 @@ void (*tm_1)(void) = tm_;
 
 static void tm_elapsed_(void)
 {
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -120,7 +120,7 @@ static void tm_elapsed_(void)
     if (!slins(refal.nextr, strlen(s) - 1))
         return;
     rfrstr(s, refal.nextr);
-    rftpl(refal.prevr, refal.nextr, refal.nexta);
+    rftpl(refal.prevr, refal.nextr, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
 G_L_B uint8_t refalab_tm_elapsed = '\122';

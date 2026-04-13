@@ -24,7 +24,7 @@ extern uint8_t refalab_null;
 static void arg_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.nexta || p->tag != TAGN)
+    if (p->next != refal.next_argument || p->tag != TAGN)
     {
         refal.upshot = 2;
         return;
@@ -49,7 +49,7 @@ static void system_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char cmd[8192];
     p = rfgstr(cmd, 8191, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -65,7 +65,7 @@ static void system_(void)
     p = refal.previous_argument;
     if (sys_64 < 0)
     {
-        if (p->next == refal.nexta)
+        if (p->next == refal.next_argument)
             if (!slins(p, 1))
                 return;
         p->tag = TAGO;
@@ -97,7 +97,7 @@ static void exit_(void)
             if (zn == '-')
                 z = -1;
         }
-        if (p->next != refal.nexta || p->tag != TAGN)
+        if (p->next != refal.next_argument || p->tag != TAGN)
             break;
         const int64_t exit_code_abs = gcoden(p);
         if (z == 1 ? exit_code_abs > 2147483647 : exit_code_abs > 2147483648)
@@ -118,7 +118,7 @@ static void get_env_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char env_name[32768];
     p = rfgstr(env_name, 32767, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -148,7 +148,7 @@ static void change_dir_(void)
     T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
     p = rfgstr(namd, MAX_PATHFILENAME, p);
-    if (p != refal.nexta)
+    if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -173,7 +173,7 @@ void (*change_dir_1)(void) = change_dir_;
 
 static void get_current_dir_(void)
 {
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -184,7 +184,7 @@ static void get_current_dir_(void)
     if (slins(refal.nextr, strlen(cwd) - 1))
     {
         rfrstr(cwd, refal.nextr);
-        rftpl(refal.prevr, refal.nextr, refal.nexta);
+        rftpl(refal.prevr, refal.nextr, refal.next_argument);
     }
     free(cwd);
     return;
@@ -195,7 +195,7 @@ void (*get_current_dir_1)(void) = get_current_dir_;
 
 static void step_(void)
 {
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -203,7 +203,7 @@ static void step_(void)
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
     pcoden(refal.previous_argument, refal.currst->step);
-    rftpl(refal.prevr, refal.nextr, refal.nexta);
+    rftpl(refal.prevr, refal.nextr, refal.next_argument);
     return;
 }
 char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};

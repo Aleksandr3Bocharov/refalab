@@ -54,7 +54,7 @@ static void try_(void)
     pd->info.codep = pk;
     pd->tag = TAGD;
     s_st->dot = pd;
-    rftpl(pk, refal.previous_argument, refal.nexta);
+    rftpl(pk, refal.previous_argument, refal.next_argument);
     rftpl(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
     s_st->stop = MAX_STOP;

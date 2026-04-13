@@ -107,7 +107,7 @@ static bool dajarg(void)
     else
         return false;
     x = y;
-    y = refal.nexta;
+    y = refal.next_argument;
     if (dajch())
     {
         Yn = nach;
@@ -149,7 +149,7 @@ static void boper(uint32_t o)
         else
         {
             x = refal.previous_argument;
-            y = refal.nexta;
+            y = refal.next_argument;
             if (dajch())
             {
                 Xn = nach;
@@ -219,7 +219,7 @@ static void boper(uint32_t o)
         case Onot:
             if (Xdl == 0)
             {
-                if (refal.previous_argument->next == refal.nexta)
+                if (refal.previous_argument->next == refal.next_argument)
                     if (!slins(refal.previous_argument, 1))
                         return;
                 rez0 = false;
@@ -287,7 +287,7 @@ static void shoper(uint32_t o)
         else
             break;
         y = y->next;
-        if (y->next != refal.nexta || y->tag != TAGN)
+        if (y->next != refal.next_argument || y->tag != TAGN)
             break;
         uint32_t sh = gcoden(y);
         dl = sh / 32;
@@ -307,7 +307,7 @@ static void shoper(uint32_t o)
             if (n > e)
                 if (!slins(refal.nextr, n - e))
                     return;
-            rftpl(refal.nextr, Xk, refal.nexta);
+            rftpl(refal.nextr, Xk, refal.next_argument);
             if (dl != 0)
             {
                 y = Xn;

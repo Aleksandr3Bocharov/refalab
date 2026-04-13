@@ -61,7 +61,7 @@ static void random_(void)
     T_LINKCB *p = refal.previous_argument->next;
     do
     {
-        if (p->next != refal.nexta || p->tag != TAGN)
+        if (p->next != refal.next_argument || p->tag != TAGN)
             break;
         uint32_t count = gcoden(p);
         if (count == 0)
@@ -90,7 +90,7 @@ void (*random_1)(void) = random_;
 static void random_number_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.nexta || p->tag != TAGN)
+    if (p->next != refal.next_argument || p->tag != TAGN)
     {
         refal.upshot = 2;
         return;

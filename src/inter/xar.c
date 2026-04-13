@@ -129,7 +129,7 @@ static bool dajarg(void)
     else
         return false;
     x = y;
-    y = refal.nexta;
+    y = refal.next_argument;
     if (dajch())
     {
         Yn = nach;
@@ -757,7 +757,7 @@ static void gcd_(void)
     else
     {
         tl[0] = pr->info.codep;
-        tl[1] = refal.nexta;
+        tl[1] = refal.next_argument;
         p[0] = pr;
         p[1] = tl[0];
         for (i = 0; i < 2; i++)
@@ -1220,13 +1220,13 @@ static void p1_(void)
     do
     {
         T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.nexta || p->tag != TAGN)
+        if (p->next != refal.next_argument || p->tag != TAGN)
             break;
         uint32_t l = gcoden(p) + 1;
         if (l == 0)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;
@@ -1241,13 +1241,13 @@ static void m1_(void)
     do
     {
         T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.nexta || p->tag != TAGN)
+        if (p->next != refal.next_argument || p->tag != TAGN)
             break;
         uint32_t l = gcoden(p) - 1;
         if (l == MAX_NUMBER)
             break;
         pcoden(p, l);
-        rftpl(refal.prevr, refal.previous_argument, refal.nexta);
+        rftpl(refal.prevr, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;

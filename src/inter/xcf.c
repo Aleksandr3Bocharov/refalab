@@ -24,7 +24,7 @@ static adr *func_f = NULL;
 static void ftochar_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.nexta || p->tag != TAGF)
+    if (p->next != refal.next_argument || p->tag != TAGF)
     {
         refal.upshot = 2;
         return;
@@ -57,7 +57,7 @@ void (*ftochar_1)(void) = ftochar_;
 static void functab_(void)
 {
     const T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.nexta || p->tag != TAGF)
+    if (p->next != refal.next_argument || p->tag != TAGF)
     {
         refal.upshot = 2;
         return;
@@ -85,11 +85,11 @@ static void chartof_(void)
     T_LINKCB *p = refal.previous_argument->next;
     size_t i;
     bool heot = false;
-    if (p == refal.nexta)
+    if (p == refal.next_argument)
         heot = true;
     else
     {
-        for (i = 0; p != refal.nexta; i++, p = p->next)
+        for (i = 0; p != refal.next_argument; i++, p = p->next)
             if (p->tag != TAGO)
             {
                 heot = true;
@@ -107,7 +107,7 @@ static void chartof_(void)
     char *u = (char *)malloc(i + 2);
     if (u == NULL)
         rfabe("chartof: malloc error");
-    for (i = 0; p != refal.nexta; i++, p = p->next)
+    for (i = 0; p != refal.next_argument; i++, p = p->next)
         u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
     ++i;
@@ -126,8 +126,8 @@ static void chartof_(void)
             p = refal.previous_argument->next;
             p->tag = TAGF;
             p->info.codef = func_f[k];
-            if (p->next != refal.nexta)
-                rfdel(p, refal.nexta);
+            if (p->next != refal.next_argument)
+                rfdel(p, refal.next_argument);
             rftpl(refal.prevr, p->previous, p->next);
             free(u);
             return;
@@ -144,8 +144,8 @@ static void chartof_(void)
     p = refal.previous_argument->next;
     p->tag = TAGF;
     p->info.codef = j;
-    if (p->next != refal.nexta)
-        rfdel(p, refal.nexta);
+    if (p->next != refal.next_argument)
+        rfdel(p, refal.next_argument);
     rftpl(refal.prevr, p->previous, p->next);
     return;
 }

@@ -21,7 +21,7 @@ static void br_(void)
     while (p->tag != TAGO || p->info.infoc != '=')
     {
         p = p->next;
-        if (p == refal.nexta)
+        if (p == refal.next_argument)
         {
             refal.upshot = 2;
             return;
@@ -38,7 +38,7 @@ static void br_(void)
     pl->tag = TAGLB;
     pr->info.codep = pl;
     pr->tag = TAGRB;
-    rftpl(pl, refal.previous_argument, refal.nexta);
+    rftpl(pl, refal.previous_argument, refal.next_argument);
     return;
 }
 char br_0[] = {Z2 'B', 'R', (char)2};
@@ -61,7 +61,7 @@ static void dg_(void)
             return;
         }; // FAIL
         pr = pl->info.codep;
-        q = lldupl(refal.previous_argument, refal.nexta, pl);
+        q = lldupl(refal.previous_argument, refal.next_argument, pl);
         if (q == NULL)
             continue;
         if (q->tag != TAGO || q->info.infoc != '=')
@@ -81,7 +81,7 @@ void (*dg_1)(void) = dg_;
 static void dgall_(void)
 {
     const T_STATUS_TABLE *ast = refal.currst;
-    if (refal.previous_argument->next != refal.nexta)
+    if (refal.previous_argument->next != refal.next_argument)
         refal.upshot = 2; // FAIL
     else
         rftpl(refal.prevr, ast->store, ast->store);
@@ -99,7 +99,7 @@ static void rp_(void)
     while (p->tag != TAGO || p->info.infoc != '=')
     {
         p = p->next;
-        if (p == refal.nexta)
+        if (p == refal.next_argument)
         {
             fail = true;
             break;
@@ -124,7 +124,7 @@ static void rp_(void)
                 pl->tag = TAGLB;
                 pr->info.codep = pl;
                 pr->tag = TAGRB;
-                rftpl(pl, refal.previous_argument, refal.nexta);
+                rftpl(pl, refal.previous_argument, refal.next_argument);
             }
             else
             {
@@ -137,7 +137,7 @@ static void rp_(void)
                 if (q->tag != TAGO || q->info.infoc != '=')
                     continue;
                 rfdel(q, pr);
-                rftpl(q, p, refal.nexta);
+                rftpl(q, p, refal.next_argument);
             }
             return;
         }
@@ -165,7 +165,7 @@ static void cp_(void)
             return;
         }; // FAIL
         pr = pl->info.codep;
-        q = lldupl(refal.previous_argument, refal.nexta, pl);
+        q = lldupl(refal.previous_argument, refal.next_argument, pl);
         if (q == NULL)
             continue;
         if (q->tag != TAGO || q->info.infoc != '=')
