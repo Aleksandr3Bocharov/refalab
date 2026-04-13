@@ -477,11 +477,11 @@ void rfdbg(T_STATUS_TABLE *s_st)
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
-            if (refal.tm.mode)
+            if (refal.timer.mode)
             {
-                timespec_get(&refal.tm.stop, TIME_UTC);
-                long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
-                long long int is = (long long int)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                timespec_get(&refal.timer.stop_time, TIME_UTC);
+                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;
@@ -682,11 +682,11 @@ static void dbtry(T_STATUS_TABLE *ss_st)
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
-            if (refal.tm.mode)
+            if (refal.timer.mode)
             {
-                timespec_get(&refal.tm.stop, TIME_UTC);
-                long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
-                long long int is = (long long int)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                timespec_get(&refal.timer.stop_time, TIME_UTC);
+                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;

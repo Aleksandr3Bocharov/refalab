@@ -101,11 +101,11 @@ static void tm_elapsed_(void)
         refal.upshot = 2;
         return;
     }
-    if (!refal.tm.mode)
+    if (!refal.timer.mode)
         return;
     timespec_get(&tm_e, TIME_UTC);
-    long int in = tm_e.tv_nsec - refal.tm.start.tv_nsec;
-    long long int is = (long long int)difftime(tm_e.tv_sec, refal.tm.start.tv_sec);
+    long int in = tm_e.tv_nsec - refal.timer.start_time.tv_nsec;
+    long long int is = (long long int)difftime(tm_e.tv_sec, refal.timer.start_time.tv_sec);
     if (in < 0)
     {
         in += 1000000000;

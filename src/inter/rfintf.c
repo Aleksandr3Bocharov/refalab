@@ -178,9 +178,9 @@ void rfinit(void)
     phd->info.code = NULL;
     p->arg.argc = gargc;
     p->arg.argv = gargv;
-    p->tm.mode = options.tmon;
-    if (p->tm.mode)
-        timespec_get(&p->tm.start, TIME_UTC);
+    p->timer.mode = options.tmon;
+    if (p->timer.mode)
+        timespec_get(&p->timer.start_time, TIME_UTC);
     return;
 }
 
@@ -354,11 +354,11 @@ void rfexec(uint8_t *func)
                 printf("Burried:\n");
                 rfpexm("         ", s_st.store, s_st.store, true);
             }
-            if (refal.tm.mode)
+            if (refal.timer.mode)
             {
-                timespec_get(&refal.tm.stop, TIME_UTC);
-                long int in = refal.tm.stop.tv_nsec - refal.tm.start.tv_nsec;
-                long long int is = (long long int)difftime(refal.tm.stop.tv_sec, refal.tm.start.tv_sec);
+                timespec_get(&refal.timer.stop_time, TIME_UTC);
+                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
                 if (in < 0)
                 {
                     in += 1000000000;
