@@ -151,9 +151,9 @@ static void new_(void)
     refal.previous_argument->previous = p;
     refal.next_result->next = refal.next_argument;
     refal.next_argument->previous = refal.next_result;
-    refal.previous_argument->info.codep = refal.dvar;
+    refal.previous_argument->info.codep = refal.dynamic_variables;
     refal.previous_argument->tag = TAGO;
-    refal.dvar = refal.previous_argument;
+    refal.dynamic_variables = refal.previous_argument;
     return;
 }
 char new_0[] = {Z3 'N', 'E', 'W', (char)3};

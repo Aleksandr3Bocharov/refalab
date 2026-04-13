@@ -169,7 +169,7 @@ void rfinit(void)
     p->upshot = 1;
     p->current_status_table = NULL;
     p->static_variables = NULL;
-    p->dvar = NULL;
+    p->dynamic_variables = NULL;
     p->free_memory_list_head = &hd;
     T_LINKCB *phd = &hd;
     phd->previous = phd;
@@ -673,7 +673,7 @@ static bool lgcl(void)
 {
     T_LINKCB hdvar;
     T_LINKCB *hdp = &hdvar;
-    if (refal.dvar == NULL)
+    if (refal.dynamic_variables == NULL)
         return false;
     // mark boxes achieved from view field & burriage
     bool was_coll = false;
@@ -695,9 +695,9 @@ static bool lgcl(void)
             r = r->info.codep;
         } while (r != pzero);
         //   remove garbage
-        hdp->info.codep = refal.dvar;
+        hdp->info.codep = refal.dynamic_variables;
         T_LINKCB *p1 = hdp;
-        T_LINKCB *q = refal.dvar;
+        T_LINKCB *q = refal.dynamic_variables;
         do
         {
             if (q->tag != TAGO)
@@ -720,9 +720,9 @@ static bool lgcl(void)
             q = p1->info.codep;
         } while (q != pzero);
         if (hdp->info.codep == pzero)
-            refal.dvar = NULL;
+            refal.dynamic_variables = NULL;
         else
-            refal.dvar = hdp->info.codep;
+            refal.dynamic_variables = hdp->info.codep;
     }
     return was_coll;
 }

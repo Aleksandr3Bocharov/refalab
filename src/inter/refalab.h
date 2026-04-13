@@ -104,7 +104,7 @@ typedef struct refal
     T_STATUS_TABLE *current_status_table;
     T_LINKCB *free_memory_list_head;
     T_LINKCB *static_variables;
-    T_LINKCB *dvar;
+    T_LINKCB *dynamic_variables;
     struct
     {
         size_t argc;
