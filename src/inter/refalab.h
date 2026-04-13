@@ -94,7 +94,7 @@ typedef struct timespec T_TIMESPEC;
 
 typedef struct refal
 {
-    T_STATUS_TABLE *crprev;
+    T_STATUS_TABLE *last_status_table;
     T_STATUS_TABLE *crnext;
     uint32_t upshot;
     T_LINKCB *preva;

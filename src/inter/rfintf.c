@@ -164,7 +164,7 @@ void rfinit(void)
 {
     rf_init = false;
     T_REFAL *p = &refal;
-    p->crprev = (T_STATUS_TABLE *)&refal;
+    p->last_status_table = (T_STATUS_TABLE *)&refal;
     p->crnext = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
     p->currst = NULL;
@@ -623,9 +623,9 @@ bool lcre(T_STATUS_TABLE *ast)
     ast->view->previous = ast->view;
     ast->store->next = ast->store;
     ast->store->previous = ast->store;
-    T_STATUS_TABLE *q = refal.crprev;
+    T_STATUS_TABLE *q = refal.last_status_table;
     ast->next = (T_STATUS_TABLE *)&refal;
-    refal.crprev = ast;
+    refal.last_status_table = ast;
     q->next = ast;
     ast->previous = q;
     ast->state = 1;
