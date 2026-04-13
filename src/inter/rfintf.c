@@ -140,7 +140,7 @@ bool slins(T_LINKCB *p, size_t k)
     return lins(p, k);
 }
 
-bool linskd(T_ST *ast, uint8_t *f)
+bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
 {
     if (!lexist(ast))
         rfabe("linskd: process doesn't exist still");
@@ -164,8 +164,8 @@ void rfinit(void)
 {
     rf_init = false;
     T_REFAL *p = &refal;
-    p->crprev = (T_ST *)&refal;
-    p->crnext = (T_ST *)&refal;
+    p->crprev = (T_STATUS_TABLE *)&refal;
+    p->crnext = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
     p->currst = NULL;
     p->svar = NULL;
@@ -184,7 +184,7 @@ void rfinit(void)
     return;
 }
 
-void rfcanc(const T_ST *ast)
+void rfcanc(const T_STATUS_TABLE *ast)
 {
     if (rf_init)
         rfinit();
@@ -238,7 +238,7 @@ void rftermm(void)
 
 void rfexec(uint8_t *func)
 {
-    T_ST s_st;
+    T_STATUS_TABLE s_st;
     if (rf_init)
         rfinit();
     bool lack = false;
@@ -592,7 +592,7 @@ bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
     return true;
 }
 
-bool lexist(const T_ST *ast)
+bool lexist(const T_STATUS_TABLE *ast)
 {
     const T_REFAL *p = &refal;
     do
@@ -604,7 +604,7 @@ bool lexist(const T_ST *ast)
     return false;
 }
 
-bool lcre(T_ST *ast)
+bool lcre(T_STATUS_TABLE *ast)
 {
     if (rf_init)
         rfinit();
@@ -623,8 +623,8 @@ bool lcre(T_ST *ast)
     ast->view->previous = ast->view;
     ast->store->next = ast->store;
     ast->store->previous = ast->store;
-    T_ST *q = refal.crprev;
-    ast->stnext = (T_ST *)&refal;
+    T_STATUS_TABLE *q = refal.crprev;
+    ast->stnext = (T_STATUS_TABLE *)&refal;
     refal.crprev = ast;
     q->stnext = ast;
     ast->stprev = q;
@@ -678,8 +678,8 @@ static bool lgcl(void)
     // mark boxes achieved from view field & burriage
     bool was_coll = false;
     const T_LINKCB *pzero = NULL;
-    const T_ST *p = refal.crnext;
-    while (p != (T_ST *)&refal)
+    const T_STATUS_TABLE *p = refal.crnext;
+    while (p != (T_STATUS_TABLE *)&refal)
     {
         mark(p->view);
         mark(p->store);

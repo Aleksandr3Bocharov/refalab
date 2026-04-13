@@ -204,7 +204,7 @@ typedef struct sav_
     T_LINKCB *nexta_;
     T_LINKCB *prevr_;
     T_LINKCB *nextr_;
-    T_ST *currst_;
+    T_STATUS_TABLE *currst_;
 } T_SAV;
 
 typedef struct w_jump_stack
@@ -257,7 +257,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 
-void rfrun(T_ST *ast) // adress of current state table
+void rfrun(T_STATUS_TABLE *ast) // adress of current state table
 {
     // dynamic area DSA
     T_SAV *savecr = malloc(sizeof(T_SAV));

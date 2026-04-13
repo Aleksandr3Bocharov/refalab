@@ -176,7 +176,7 @@ static uint32_t xmy(void)
 }
 
 static void ymn(int64_t *a, int64_t *b)
-{ // rez.: a - T_ST., b - ml
+{ // rez.: a - st., b - ml
     if (*a == 0)
     {
         *b = 0;

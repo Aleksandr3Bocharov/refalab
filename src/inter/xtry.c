@@ -18,9 +18,9 @@
 
 static void try_(void)
 {
-    T_ST *s_st;
+    T_STATUS_TABLE *s_st;
     size_t l = (size_t)&s_st;
-    T_ST *upst;
+    T_STATUS_TABLE *upst;
     T_LINKCB *px;
     bool lack = false;
     if ((l & 0xffff) < 200)
@@ -31,7 +31,7 @@ static void try_(void)
         if (!slins(refal.prevr, 1))
             return;
         px = refal.prevr->next;
-        s_st = malloc(sizeof(T_ST));
+        s_st = malloc(sizeof(T_STATUS_TABLE));
         if (s_st == NULL)
             lack = true;
         else if (!lcre(s_st))

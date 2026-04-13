@@ -88,20 +88,20 @@ typedef struct status_table_
     uint32_t stop;
     T_LINKCB *view;
     T_LINKCB *store;
-} T_ST;
+} T_STATUS_TABLE;
 
 typedef struct timespec T_TIMESPEC;
 
 typedef struct refal_
 {
-    T_ST *crprev;
-    T_ST *crnext;
+    T_STATUS_TABLE *crprev;
+    T_STATUS_TABLE *crnext;
     uint32_t upshot;
     T_LINKCB *preva;
     T_LINKCB *nexta;
     T_LINKCB *prevr;
     T_LINKCB *nextr;
-    T_ST *currst;
+    T_STATUS_TABLE *currst;
     T_LINKCB *flhead;
     T_LINKCB *svar;
     T_LINKCB *dvar;

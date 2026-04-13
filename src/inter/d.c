@@ -96,17 +96,17 @@ static void get_arg(void);
 static bool get_det(void);
 static bool get_numb(int32_t *numb);
 static bool get_yn(const char *b);
-static void dbtry(T_ST *ss_st);
-static void getpf(const T_ST *ss_st);
-static void one_step(T_ST *ss_st);
+static void dbtry(T_STATUS_TABLE *ss_st);
+static void getpf(const T_STATUS_TABLE *ss_st);
+static void one_step(T_STATUS_TABLE *ss_st);
 static void pr_euc(void);
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
 static void pr_imres(void);
 static void pr_step(void);
 
-void (*dbt)(T_ST *) = NULL;
+void (*dbt)(T_STATUS_TABLE *) = NULL;
 
-void rfdbg(T_ST *s_st)
+void rfdbg(T_STATUS_TABLE *s_st)
 {
     // read task for debugging
     init_det_flags();
@@ -502,7 +502,7 @@ void rfdbg(T_ST *s_st)
         }
 }
 
-static void dbtry(T_ST *ss_st)
+static void dbtry(T_STATUS_TABLE *ss_st)
 {
     T_LINKCB *v1 = prevk;
     T_LINKCB *v2 = nextd;
@@ -729,7 +729,7 @@ static void init_det_flags(void)
     return;
 }
 
-static void one_step(T_ST *ss_st)
+static void one_step(T_STATUS_TABLE *ss_st)
 {
     ss_st->stop = ss_st->step + 1;
     while (true)
@@ -828,7 +828,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     return;
 }
 
-static void getpf(const T_ST *ss_st)
+static void getpf(const T_STATUS_TABLE *ss_st)
 {
     curr_step = ss_st->step + 1;
     pk = ss_st->dot->info.codep;

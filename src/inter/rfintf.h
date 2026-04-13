@@ -1,7 +1,7 @@
-// Copyright 2025 Aleksandr Bocharov
+// Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2025-09-30
+// 2026-04-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.H ------------------
@@ -20,7 +20,7 @@
 extern T_REFAL refal;
 
 extern void rfabe(const char *amsg);
-extern void rfcanc(const T_ST *ast);
+extern void rfcanc(const T_STATUS_TABLE *ast);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
 extern void rfgetargs(int argc, char *argv[]);
@@ -35,12 +35,12 @@ extern void rftermm(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
-extern bool lcre(T_ST *ast);
-extern bool lexist(const T_ST *ast);
+extern bool lcre(T_STATUS_TABLE *ast);
+extern bool lexist(const T_STATUS_TABLE *ast);
 extern bool lincrm(void);
 extern bool lins(T_LINKCB *p, size_t l);
 extern bool slins(T_LINKCB *p, size_t k);
-extern bool linskd(T_ST *ast, uint8_t *f);
+extern bool linskd(T_STATUS_TABLE *ast, uint8_t *f);
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool lrqlk(size_t l);
 
