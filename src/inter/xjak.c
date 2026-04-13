@@ -37,9 +37,9 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
         {
             p->next = p;
             p->previous = p->next;
-            p->info.codep = refal.svar;
+            p->info.codep = refal.static_variables;
             p->tag = TAGO;
-            refal.svar = p;
+            refal.static_variables = p;
         }
     }
     else

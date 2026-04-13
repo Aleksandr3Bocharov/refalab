@@ -168,7 +168,7 @@ void rfinit(void)
     p->first_status_table = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
     p->current_status_table = NULL;
-    p->svar = NULL;
+    p->static_variables = NULL;
     p->dvar = NULL;
     p->free_memory_list_head = &hd;
     T_LINKCB *phd = &hd;
@@ -686,9 +686,9 @@ static bool lgcl(void)
         p = p->next;
     }
     // mark boxes achieved from static boxes
-    if (refal.svar != NULL)
+    if (refal.static_variables != NULL)
     {
-        T_LINKCB *r = refal.svar;
+        T_LINKCB *r = refal.static_variables;
         do
         {
             mark(r);
