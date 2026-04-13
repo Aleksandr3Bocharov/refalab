@@ -165,7 +165,7 @@ void rfinit(void)
     rf_init = false;
     T_REFAL *p = &refal;
     p->last_status_table = (T_STATUS_TABLE *)&refal;
-    p->crnext = (T_STATUS_TABLE *)&refal;
+    p->first_status_table = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
     p->currst = NULL;
     p->svar = NULL;
@@ -597,7 +597,7 @@ bool lexist(const T_STATUS_TABLE *ast)
     const T_REFAL *p = &refal;
     do
     {
-        p = (T_REFAL *)(p->crnext);
+        p = (T_REFAL *)(p->first_status_table);
         if (p == (T_REFAL *)ast)
             return true;
     } while (p != &refal);
@@ -678,7 +678,7 @@ static bool lgcl(void)
     // mark boxes achieved from view field & burriage
     bool was_coll = false;
     const T_LINKCB *pzero = NULL;
-    const T_STATUS_TABLE *p = refal.crnext;
+    const T_STATUS_TABLE *p = refal.first_status_table;
     while (p != (T_STATUS_TABLE *)&refal)
     {
         mark(p->view);
