@@ -325,7 +325,7 @@ static void fprint_(void)
                 sprintf(s, "'%%%p'", (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            else if (BRA(p))
+            else if (BRACKET(p))
                 rfabe("fprint: unknown bracket type");
             else
             {
@@ -413,7 +413,7 @@ static void fprints_(void)
                 sprintf(s, "%%%p", (void *)p->info.codep);
                 pcc = fputs(s, f);
             }
-            else if (BRA(p))
+            else if (BRACKET(p))
                 rfabe("fprints: unknown bracket type");
             else
             {
@@ -525,7 +525,7 @@ static void fprintm_(void)
                     sprintf(sr, "/%%%p/", (void *)p->info.codep);
                     strcat(s, sr);
                 }
-                else if (BRA(p))
+                else if (BRACKET(p))
                     rfabe("fprintm: unknown bracket type");
                 else
                 {

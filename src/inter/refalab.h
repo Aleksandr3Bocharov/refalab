@@ -37,8 +37,8 @@
 #define G_L_B
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W
-#define BRA(b) (b->tag & 0001) != 0
-#define NBRA(b) (b->tag & 0001) == 0
+#define BRACKET(b) (b->tag & 0001) != 0
+#define NOT_BRACKET(b) (b->tag & 0001) == 0
 
 #define NMBL 1 // sizeof(uint8_t)
 #define ZBLL 2 // sizeof(uint16_t)

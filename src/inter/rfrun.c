@@ -797,7 +797,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // LB;
         case LB:
             SHIFT_LEFT_BOARD_HOLE;
-            if (NBRA(left_board_hole))
+            if (NOT_BRACKET(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -811,7 +811,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // LBY;
         case LBY:
             SHIFT_LEFT_BOARD_HOLE;
-            if (NBRA(left_board_hole))
+            if (NOT_BRACKET(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -825,7 +825,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // RB;
         case RB:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (NBRA(right_board_hole))
+            if (NOT_BRACKET(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -839,7 +839,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // RBY;
         case RBY:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (NBRA(right_board_hole))
+            if (NOT_BRACKET(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -853,7 +853,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // LS;
         case LS:
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -865,7 +865,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // RS;
         case RS:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -878,7 +878,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case LW:
             SHIFT_LEFT_BOARD_HOLE;
             table_elements[number_element] = left_board_hole;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 1] = left_board_hole;
             number_element += 2;
@@ -888,7 +888,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case RW:
             SHIFT_RIGHT_BOARD_HOLE;
             table_elements[number_element + 1] = right_board_hole;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element] = right_board_hole;
             number_element += 2;
@@ -897,7 +897,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // LBNIL
         case LBNIL:
             SHIFT_LEFT_BOARD_HOLE;
-            if (NBRA(left_board_hole))
+            if (NOT_BRACKET(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -917,7 +917,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // RBNIL;
         case RBNIL:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (NBRA(right_board_hole))
+            if (NOT_BRACKET(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -937,7 +937,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // LBCE;
         case LBCE:
             SHIFT_LEFT_BOARD_HOLE;
-            if (NBRA(left_board_hole))
+            if (NOT_BRACKET(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -954,7 +954,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             // RBCE;
         case RBCE:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (NBRA(right_board_hole))
+            if (NOT_BRACKET(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -1006,7 +1006,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             }
             if (left_board_hole->info.code == temp_board_hole->info.code)
                 break;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 break;
             interpretator_state = FAIL;
             break;
@@ -1038,7 +1038,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             }
             if (right_board_hole->info.code == temp_board_hole->info.code)
                 break;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 break;
             interpretator_state = FAIL;
             break;
@@ -1079,7 +1079,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case LE:
             left_board_hole = table_elements[number_element + 1];
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole;
@@ -1108,7 +1108,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case RE:
             right_board_hole = table_elements[number_element];
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole;
@@ -1129,7 +1129,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 2] = left_board_hole;
             interpretator_state = NEXTOP;
@@ -1146,7 +1146,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case LESC1:
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
             {
                 left_board_hole = left_board_hole->info.codep;
                 break;
@@ -1173,7 +1173,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->previous;
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
             interpretator_state = NEXTOP;
@@ -1190,7 +1190,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case RESC1:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
             {
                 right_board_hole = right_board_hole->info.codep;
                 break;
@@ -1231,7 +1231,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element] = left_board_hole->next;
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             table_elements[number_element + 3] = left_board_hole;
             interpretator_state = NEXTOP;
@@ -1243,7 +1243,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case LEB1:
             SHIFT_LEFT_BOARD_HOLE;
-            if (NBRA(left_board_hole))
+            if (NOT_BRACKET(left_board_hole))
                 break;
             jump_stack_pointer++;
             table_elements[number_element + 1] = left_board_hole->previous;
@@ -1267,7 +1267,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             PUT_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
             table_elements[number_element + 1] = right_board_hole->previous;
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             table_elements[number_element + 2] = right_board_hole;
             interpretator_state = NEXTOP;
@@ -1279,7 +1279,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case REB1:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (NBRA(right_board_hole))
+            if (NOT_BRACKET(right_board_hole))
                 break;
             jump_stack_pointer++;
             table_elements[number_element] = right_board_hole->next;
@@ -1308,7 +1308,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case LSRCH1:
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
             {
                 left_board_hole = left_board_hole->info.codep;
                 break;
@@ -1328,7 +1328,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             break;
         case RSRCH1:
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
             {
                 right_board_hole = right_board_hole->info.codep;
                 break;
@@ -1358,7 +1358,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             while (temp_board_hole != table_elements[number_element - 1])
             {
                 temp_board_hole = temp_board_hole->next;
-                if (BRA(temp_board_hole))
+                if (BRACKET(temp_board_hole))
                     temp_board_hole = temp_board_hole->info.codep;
                 if (!spc(virtual_program_counter, temp_board_hole))
                 {
@@ -1387,7 +1387,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case LESPC:
             left_board_hole = table_elements[number_element + 1];
             SHIFT_LEFT_BOARD_HOLE;
-            if (BRA(left_board_hole))
+            if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
             if (!spc(virtual_program_counter, left_board_hole))
             {
@@ -1415,7 +1415,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
         case RESPC:
             right_board_hole = table_elements[number_element];
             SHIFT_RIGHT_BOARD_HOLE;
-            if (BRA(right_board_hole))
+            if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
             if (!spc(virtual_program_counter, right_board_hole))
             {
@@ -1436,7 +1436,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             {
                 if (!spc(virtual_program_counter, left_board_hole))
                     break;
-                if (BRA(left_board_hole))
+                if (BRACKET(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
                 left_board_hole = left_board_hole->next;
             };
@@ -1454,7 +1454,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
             {
                 if (!spc(virtual_program_counter, right_board_hole))
                     break;
-                if (BRA(right_board_hole))
+                if (BRACKET(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
                 right_board_hole = right_board_hole->previous;
             };
@@ -1575,7 +1575,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
                     lack = true;
                     break;
                 }
-                if (BRA(temp_linkcb))
+                if (BRACKET(temp_linkcb))
                 {
                     if (temp_linkcb->tag != TAGRB)
                     {
@@ -1891,7 +1891,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCS:
-            if (NBRA(b))
+            if (NOT_BRACKET(b))
             {
                 specifier_state = SPCRET;
                 break;
@@ -1899,7 +1899,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCB:
-            if (BRA(b))
+            if (BRACKET(b))
             {
                 specifier_state = SPCRET;
                 break;

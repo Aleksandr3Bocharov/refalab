@@ -414,7 +414,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         }
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
-        else if (BRA(pr))
+        else if (BRACKET(pr))
             rfabe("rfpex: unknown bracket type");
         else
             printf("'%x,%p'", pr->tag, pr->info.code);
@@ -455,7 +455,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         }
         else if (pr->tag == TAGR)
             printf("%%%p", (void *)pr->info.codep);
-        else if (BRA(pr))
+        else if (BRACKET(pr))
             rfabe("rfpexs: unknown bracket type");
         else
             printf("%x,%p", pr->tag, pr->info.code);
@@ -518,7 +518,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             }
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
-            else if (BRA(pr))
+            else if (BRACKET(pr))
                 rfabe("rfpexm: unknown bracket type");
             else
                 printf("/%x,%p/", pr->tag, pr->info.code);
