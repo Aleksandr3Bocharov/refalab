@@ -96,7 +96,7 @@ typedef struct refal
 {
     T_STATUS_TABLE *last_status_table;
     T_STATUS_TABLE *first_status_table;
-    uint32_t upshot;
+    uint8_t upshot;
     T_LINKCB *preva;
     T_LINKCB *nexta;
     T_LINKCB *prevr;
