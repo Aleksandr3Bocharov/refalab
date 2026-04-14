@@ -61,19 +61,19 @@ void refal_abort_end(const char *abort_message)
 
 bool more_free_memory(void)
 {
-    size_t n = 0;
+    size_t free_linkcb_count = 0;
     if (last_block_free_memory != NULL)
     {
         const T_LINKCB *first_free = refal.free_memory_list_head->next;
-        const bool was_coll = lgcl();
-        if (was_coll)
+        const bool was_collected_garbage = lgcl();
+        if (was_collected_garbage)
         {
-            const T_LINKCB *p = refal.free_memory_list_head->next;
+            const T_LINKCB *linkcb_free_memory = refal.free_memory_list_head->next;
             n = 0;
-            while (p != first_free && n != 1000)
+            while (linkcb_free_memory != first_free && n != 1000)
             {
                 n++;
-                p = p->next;
+                linkcb_free_memory = linkcb_free_memory->next;
             }
             if (n == 1000)
                 return true;
