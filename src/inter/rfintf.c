@@ -36,7 +36,7 @@ static bool refal_init = true;
 static T_LINKCB free_memory_list_head;
 
 static bool collect_garbage(void);
-static void rflist(T_LINKCB *par, size_t n);
+static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_free_memory);
 
 void refal_get_args(int argc, char *argv[])
 {
@@ -86,7 +86,7 @@ bool more_free_memory(void)
         return false;
     new_block_free_memory->previous = last_block_free_memory;
     last_block_free_memory = new_block_free_memory;
-    rflist(new_block_free_memory + 1, 1000);
+    add_free_memory_list(new_block_free_memory + 1, 1000);
     return true;
 }
 
@@ -634,37 +634,37 @@ bool lcre(T_STATUS_TABLE *ast)
     return true;
 }
 
-static void mark(T_LINKCB *root)
+static void mark_dynamic_box_heads(T_LINKCB *root)
 {
-    T_LINKCB *p = root;
-    T_LINKCB *h = p;
+    T_LINKCB *linkcb = root;
+    T_LINKCB *head = linkcb;
     while (true)
     {
-        T_LINKCB *q;
-        if (p->next != h)
+        T_LINKCB *dynamic_box_head;
+        if (linkcb->next != head)
         {
-            p = p->next;
-            if (p->tag != TAGR)
+            linkcb = linkcb->next;
+            if (linkcb->tag != TAGR)
                 continue;
-            q = p->info.codep;
-            if (q->tag != TAGO)
+            dynamic_box_head = linkcb->info.codep;
+            if (dynamic_box_head->tag != TAGO)
                 continue;
-            q->tag = 0xFFFF;
-            p->info.codep = h;
-            q->previous = p;
-            p = q;
-            h = p;
+            dynamic_box_head->tag = 0xFFFF;
+            linkcb->info.codep = head;
+            dynamic_box_head->previous = linkcb;
+            linkcb = dynamic_box_head;
+            head = linkcb;
             continue;
         }
-        if (h == root)
+        if (head == root)
             return;
-        q = h->previous;
-        h->previous = p;
-        T_LINKCB *r = h;
-        h = q->info.codep;
-        q->info.codep = r;
-        q->tag = TAGR;
-        p = q;
+        T_LINKCB *symbol_reference = head->previous;
+        head->previous = linkcb;
+        dynamic_box_head = head;
+        head = symbol_reference->info.codep;
+        symbol_reference->info.codep = dynamic_box_head;
+        symbol_reference->tag = TAGR;
+        linkcb = symbol_reference;
     }
 }
 
@@ -676,8 +676,8 @@ static bool collect_garbage(void)
     const T_STATUS_TABLE *status_table = refal.first_status_table;
     while (status_table != (T_STATUS_TABLE *)&refal)
     {
-        mark(status_table->view);
-        mark(status_table->store);
+        mark_dynamic_box_heads(status_table->view);
+        mark_dynamic_box_heads(status_table->store);
         status_table = status_table->next;
     }
     // mark boxes achieved from static boxes
@@ -686,7 +686,7 @@ static bool collect_garbage(void)
         T_LINKCB *static_box_head = refal.static_boxes;
         do
         {
-            mark(static_box_head);
+            mark_dynamic_box_heads(static_box_head);
             static_box_head = static_box_head->info.codep;
         } while (static_box_head != NULL);
     }
@@ -725,23 +725,23 @@ static bool collect_garbage(void)
     return was_collected_garbage;
 }
 
-static void rflist(T_LINKCB *par, size_t n)
+static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_free_memory)
 {
     if (refal_init)
         rfinit();
-    T_LINKCB *q = par;
-    T_LINKCB *p = refal.free_memory_list_head->previous;
-    for (size_t k = 0; k < n; k++)
+    T_LINKCB *linkcb_block_free_memory = block_free_memory;
+    T_LINKCB *linkcb_free_memory_list = refal.free_memory_list_head->previous;
+    for (size_t i = 0; i < size_block_free_memory; i++)
     {
-        p->next = q;
-        q->previous = p;
-        q->tag = TAGO;
-        q->info.code = NULL;
-        p = q;
-        q++;
+        linkcb_free_memory_list->next = linkcb_block_free_memory;
+        linkcb_block_free_memory->previous = linkcb_free_memory_list;
+        linkcb_block_free_memory->tag = TAGO;
+        linkcb_block_free_memory->info.code = NULL;
+        linkcb_free_memory_list = linkcb_block_free_memory;
+        linkcb_block_free_memory++;
     }
-    p->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = p;
+    linkcb_free_memory_list->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = linkcb_free_memory_list;
     return;
 }
 
