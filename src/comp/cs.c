@@ -256,13 +256,13 @@ static void function_head(const char *identifier, uint8_t identifier_length)
             for (uint8_t i = 0; i < scanner.module_name_length; i++)
                 jit_byte((uint8_t)*(scanner.module_name + i));
             jit_byte(':');
-            name_length_add = 1;
+            name_length_add = scanner.module_name_length + 1;
         }
         else
             name_length_add = 0;
         for (uint8_t i = 0; i < identifier_length; i++)
             jit_byte((uint8_t)*(identifier + i));
-        jit_byte(255 < scanner.module_name_length + name_length_add + identifier_length ? 255 : scanner.module_name_length + name_length_add + identifier_length);
+        jit_byte(255 < name_length_add + identifier_length ? 255 : name_length_add + identifier_length);
     }
     else
         jit_byte(0);
