@@ -61,7 +61,7 @@ void refal_abort_end(const char *abort_message)
 
 bool more_free_memory(void)
 {
-    size_t free_linkcb_count = 0;
+    size_t collected_garbage_count = 0;
     if (last_block_free_memory != NULL)
     {
         const T_LINKCB *first_free = refal.free_memory_list_head->next;
@@ -69,25 +69,24 @@ bool more_free_memory(void)
         if (was_collected_garbage)
         {
             const T_LINKCB *linkcb_free_memory = refal.free_memory_list_head->next;
-            n = 0;
-            while (linkcb_free_memory != first_free && n != 1000)
+            while (linkcb_free_memory != first_free && collected_garbage_count != 1000)
             {
-                n++;
+                collected_garbage_count++;
                 linkcb_free_memory = linkcb_free_memory->next;
             }
-            if (n == 1000)
+            if (collected_garbage_count == 1000)
                 return true;
         }
     }
-    T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
+    T_LINKCB *new_block_free_memory = malloc(1001 * sizeof(T_LINKCB));
 #if defined mdebug
-    fprintf(stderr, "more_free_memory: n=%zu after new_block=%p\n", n, (void *)new_block);
+    fprintf(stderr, "more_free_memory: collected_garbage_count=%zu after new_block_free_memory=%p\n", collected_garbage_count, (void *)new_block_free_memory);
 #endif
-    if (new_block == NULL)
+    if (new_block_free_memory == NULL)
         return false;
-    new_block->previous = last_block_free_memory;
-    last_block_free_memory = new_block;
-    rflist(new_block + 1, 1000);
+    new_block_free_memory->previous = last_block_free_memory;
+    last_block_free_memory = new_block_free_memory;
+    rflist(new_block_free_memory + 1, 1000);
     return true;
 }
 
@@ -168,8 +167,8 @@ void rfinit(void)
     p->first_status_table = (T_STATUS_TABLE *)&refal;
     p->upshot = 1;
     p->current_status_table = NULL;
-    p->static_variables = NULL;
-    p->dynamic_variables = NULL;
+    p->static_boxes = NULL;
+    p->dynamic_boxes = NULL;
     p->free_memory_list_head = &free_memory_list_head;
     T_LINKCB *phd = &free_memory_list_head;
     phd->previous = phd;
@@ -673,7 +672,7 @@ static bool lgcl(void)
 {
     T_LINKCB hdvar;
     T_LINKCB *hdp = &hdvar;
-    if (refal.dynamic_variables == NULL)
+    if (refal.dynamic_boxes == NULL)
         return false;
     // mark boxes achieved from view field & burriage
     bool was_coll = false;
@@ -686,44 +685,44 @@ static bool lgcl(void)
         p = p->next;
     }
     // mark boxes achieved from static boxes
-    if (refal.static_variables != NULL)
+    if (refal.static_boxes != NULL)
     {
-        T_LINKCB *r = refal.static_variables;
+        T_LINKCB *r = refal.static_boxes;
         do
         {
             mark(r);
             r = r->info.codep;
         } while (r != pzero);
-        //   remove garbage
-        hdp->info.codep = refal.dynamic_variables;
-        T_LINKCB *p1 = hdp;
-        T_LINKCB *q = refal.dynamic_variables;
-        do
-        {
-            if (q->tag != TAGO)
-            { // box isn't removed
-                q->tag = TAGO;
-                p1 = q;
-            }
-            else
-            { // remove box
-                was_coll = true;
-                p1->info.code = q->info.code;
-                p1->tag = q->tag;
-                r = q->previous;
-                T_LINKCB *flhead1 = refal.free_memory_list_head->next;
-                r->next = flhead1;
-                flhead1->previous = r;
-                refal.free_memory_list_head->next = q;
-                q->previous = refal.free_memory_list_head;
-            }
-            q = p1->info.codep;
-        } while (q != pzero);
-        if (hdp->info.codep == pzero)
-            refal.dynamic_variables = NULL;
-        else
-            refal.dynamic_variables = hdp->info.codep;
     }
+    //   remove garbage
+    hdp->info.codep = refal.dynamic_boxes;
+    T_LINKCB *p1 = hdp;
+    T_LINKCB *q = refal.dynamic_boxes;
+    do
+    {
+        if (q->tag != TAGO)
+        { // box isn't removed
+            q->tag = TAGO;
+            p1 = q;
+        }
+        else
+        { // remove box
+            was_coll = true;
+            p1->info.code = q->info.code;
+            p1->tag = q->tag;
+            r = q->previous;
+            T_LINKCB *flhead1 = refal.free_memory_list_head->next;
+            r->next = flhead1;
+            flhead1->previous = r;
+            refal.free_memory_list_head->next = q;
+            q->previous = refal.free_memory_list_head;
+        }
+        q = p1->info.codep;
+    } while (q != pzero);
+    if (hdp->info.codep == pzero)
+        refal.dynamic_boxes = NULL;
+    else
+        refal.dynamic_boxes = hdp->info.codep;
     return was_coll;
 }
 

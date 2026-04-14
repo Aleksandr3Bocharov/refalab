@@ -1695,9 +1695,9 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
                 break;
             }
             LINK(current_linkcb_free_memory, current_linkcb_free_memory);
-            current_linkcb_free_memory->info.codep = refal.static_variables;
+            current_linkcb_free_memory->info.codep = refal.static_boxes;
             current_linkcb_free_memory->tag = TAGO;
-            refal.static_variables = current_linkcb_free_memory;
+            refal.static_boxes = current_linkcb_free_memory;
             interpretator_state = SWAPREF;
             break;
         case SWAPREF:

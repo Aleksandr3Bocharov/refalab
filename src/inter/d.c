@@ -737,7 +737,7 @@ static void one_step(T_STATUS_TABLE *ss_st)
         rfrun(ss_st);
         if (ss_st->state != 3)
             break;
-        if (refal.dynamic_variables != NULL)
+        if (refal.dynamic_boxes != NULL)
             nogcl++;
         if (more_free_memory())
             continue;

@@ -37,9 +37,9 @@ static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
         {
             p->next = p;
             p->previous = p->next;
-            p->info.codep = refal.static_variables;
+            p->info.codep = refal.static_boxes;
             p->tag = TAGO;
-            refal.static_variables = p;
+            refal.static_boxes = p;
         }
     }
     else
@@ -151,9 +151,9 @@ static void new_(void)
     refal.previous_argument->previous = p;
     refal.next_result->next = refal.next_argument;
     refal.next_argument->previous = refal.next_result;
-    refal.previous_argument->info.codep = refal.dynamic_variables;
+    refal.previous_argument->info.codep = refal.dynamic_boxes;
     refal.previous_argument->tag = TAGO;
-    refal.dynamic_variables = refal.previous_argument;
+    refal.dynamic_boxes = refal.previous_argument;
     return;
 }
 char new_0[] = {Z3 'N', 'E', 'W', (char)3};
