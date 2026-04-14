@@ -105,8 +105,8 @@ typedef struct refal
     T_LINKCB *next_result;
     T_STATUS_TABLE *current_status_table;
     T_LINKCB *free_memory_list_head;
-    T_LINKCB *static_variables;
-    T_LINKCB *dynamic_variables;
+    T_LINKCB *static_boxes;
+    T_LINKCB *dynamic_boxes;
     struct
     {
         size_t argc;
