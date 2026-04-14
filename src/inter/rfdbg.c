@@ -21,7 +21,7 @@ extern uint8_t refalab_go;
 
 int main(int argc, char *argv[])
 {
-    rfgetargs(argc, argv);
+    refal_get_args(argc, argv);
     rfinit();
     do
     {

@@ -23,7 +23,7 @@ extern void rfabe(const char *amsg);
 extern void rfcanc(const T_STATUS_TABLE *ast);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
-extern void rfgetargs(int argc, char *argv[]);
+extern void refal_get_args(int argc, char *argv[]);
 extern T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p);
 extern void rfinit(void);
 extern void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);

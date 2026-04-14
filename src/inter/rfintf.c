@@ -38,14 +38,14 @@ static T_LINKCB free_memory_list_head;
 static bool lgcl(void);
 static void rflist(T_LINKCB *par, size_t n);
 
-void rfgetargs(int argc, char *argv[])
+void refal_get_args(int argc, char *argv[])
 {
     gargc = (size_t)argc;
     gargv = argv;
     for (size_t i = 1; i < gargc; i++)
         if (strncmp(gargv[i], "--rfinteropt", 12) == 0)
         {
-            if (strstr(&gargv[i][12], "-tmoff") != NULL)
+            if (strstr(&gargv[i][12], "-timer_off") != NULL)
                 options.timer_on = false;
             break;
         }
