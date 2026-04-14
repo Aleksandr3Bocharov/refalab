@@ -52,9 +52,9 @@ void refal_get_args(int argc, char *argv[])
     return;
 }
 
-void rfabe(const char *amsg)
+void refal_abort_end(const char *abort_message)
 {
-    printf(" *** refal-abend *** %s\n", amsg);
+    printf(" *** refal-abort-end *** %s\n", abort_message);
     exit(1);
     return;
 }
@@ -143,9 +143,9 @@ bool slins(T_LINKCB *p, size_t k)
 bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
 {
     if (!lexist(ast))
-        rfabe("linskd: process doesn't exist still");
+        refal_abort_end("linskd: process doesn't exist still");
     if (ast->dot != NULL)
-        rfabe("linskd: there are '<'-signes in view field");
+        refal_abort_end("linskd: there are '<'-signes in view field");
     if (!slins(ast->view, 3))
         return false;
     T_LINKCB *p = ast->view->next;
@@ -189,9 +189,9 @@ void rfcanc(const T_STATUS_TABLE *ast)
     if (refal_init)
         rfinit();
     if (!lexist(ast))
-        rfabe("rfcanc: process doesn't exist");
+        refal_abort_end("rfcanc: process doesn't exist");
     if (ast->state == 4)
-        rfabe("rfcanc: process is in job yet");
+        refal_abort_end("rfcanc: process is in job yet");
     ast->previous->next = ast->next;
     ast->next->previous = ast->previous;
     T_LINKCB *flhead1 = refal.free_memory_list_head->previous;
@@ -389,7 +389,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->previous)
-            rfabe("rfpex: list structure violation");
+            refal_abort_end("rfpex: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -415,7 +415,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else if (pr->tag == TAGR)
             printf("'%%%p'", (void *)pr->info.codep);
         else if (BRACKET(pr))
-            rfabe("rfpex: unknown bracket type");
+            refal_abort_end("rfpex: unknown bracket type");
         else
             printf("'%x,%p'", pr->tag, pr->info.code);
     }
@@ -432,7 +432,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr1 != pr->previous)
-            rfabe("rfpexs: list structure violation");
+            refal_abort_end("rfpexs: list structure violation");
         if (pr->tag == TAGO)
             putchar(pr->info.infoc);
         else if (pr->tag == TAGK)
@@ -456,7 +456,7 @@ void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         else if (pr->tag == TAGR)
             printf("%%%p", (void *)pr->info.codep);
         else if (BRACKET(pr))
-            rfabe("rfpexs: unknown bracket type");
+            refal_abort_end("rfpexs: unknown bracket type");
         else
             printf("%x,%p", pr->tag, pr->info.code);
     }
@@ -474,7 +474,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
         const T_LINKCB *pr1 = pr;
         pr = pr->next;
         if (pr->previous != pr1)
-            rfabe("rfpexm: list structure violation");
+            refal_abort_end("rfpexm: list structure violation");
         if (pr->tag == TAGO)
         {
             if (!fr)
@@ -519,7 +519,7 @@ void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool n
             else if (pr->tag == TAGR)
                 printf("/%%%p/", (void *)pr->info.codep);
             else if (BRACKET(pr))
-                rfabe("rfpexm: unknown bracket type");
+                refal_abort_end("rfpexm: unknown bracket type");
             else
                 printf("/%x,%p/", pr->tag, pr->info.code);
         }
@@ -609,7 +609,7 @@ bool lcre(T_STATUS_TABLE *ast)
     if (refal_init)
         rfinit();
     if (lexist(ast))
-        rfabe("lcre: process already exists");
+        refal_abort_end("lcre: process already exists");
     ast->view = refal.free_memory_list_head->next;
     if (ast->view == refal.free_memory_list_head)
         return false;

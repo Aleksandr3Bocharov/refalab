@@ -71,7 +71,7 @@ static void functab_(void)
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
     if (func_f == NULL)
-        rfabe("functab: malloc or realloc error");
+        refal_abort_end("functab: malloc or realloc error");
     func_f[func_n] = u;
     func_n++;
     return;
@@ -106,7 +106,7 @@ static void chartof_(void)
     p = refal.previous_argument->next;
     char *u = (char *)malloc(i + 2);
     if (u == NULL)
-        rfabe("chartof: malloc error");
+        refal_abort_end("chartof: malloc error");
     for (i = 0; p != refal.next_argument; i++, p = p->next)
         u[i] = (char)toupper(p->info.infoc);
     u[i] = (char)i;
@@ -138,7 +138,7 @@ static void chartof_(void)
     else
         func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
     if (func_f == NULL)
-        rfabe("chartof: malloc or realloc error");
+        refal_abort_end("chartof: malloc or realloc error");
     func_f[func_n] = j;
     func_n++;
     p = refal.previous_argument->next;

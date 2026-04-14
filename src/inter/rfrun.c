@@ -262,11 +262,11 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     // dynamic area DSA
     T_SAVE_AREA *save_process = malloc(sizeof(T_SAVE_AREA));
     if (save_process == NULL)
-        rfabe("rfrun: no memory");
+        refal_abort_end("rfrun: no memory");
     if (!lexist(ast))
-        rfabe("rfrun: attempt to run unexisting process");
+        refal_abort_end("rfrun: attempt to run unexisting process");
     if (ast->state == 4)
-        rfabe("rfrun: attampt to run process in state 4");
+        refal_abort_end("rfrun: attampt to run process in state 4");
     // saving part of refal-block
     save_process->upshot = refal.upshot;
     save_process->previous_argument = refal.previous_argument;

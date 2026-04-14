@@ -29,7 +29,7 @@ static void delf_(void)
         sk = dot->info.codep;
         dot = sk->info.codep;
         if (dot == NULL)
-            rfabe("delf: sign '#' missing");
+            refal_abort_end("delf: sign '#' missing");
         nd = dot->next;
         if (nd->info.infoc != '#')
             continue;
