@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     rfinit();
     do
     {
-        if (!lincrm())
+        if (!more_free_memory())
             break;
         if (!lcre(&s_st))
             break;

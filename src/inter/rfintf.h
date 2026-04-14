@@ -37,7 +37,7 @@ extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
 extern bool lcre(T_STATUS_TABLE *ast);
 extern bool lexist(const T_STATUS_TABLE *ast);
-extern bool lincrm(void);
+extern bool more_free_memory(void);
 extern bool lins(T_LINKCB *p, size_t l);
 extern bool slins(T_LINKCB *p, size_t k);
 extern bool linskd(T_STATUS_TABLE *ast, uint8_t *f);

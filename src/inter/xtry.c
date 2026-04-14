@@ -89,7 +89,7 @@ static void try_(void)
         else
             (*dbt)(s_st); // prokrutka vkluchena
         if (s_st->state == 3)
-            if (lincrm())
+            if (more_free_memory())
                 s_st->state = 1;
     } while (s_st->state == 1 && s_st->dot != NULL);
     rftpl(upst->store, s_st->store, s_st->store);

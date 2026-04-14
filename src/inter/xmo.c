@@ -112,7 +112,7 @@ static void symb_(void)
     sprintf(str, "%u", l);
     const size_t j = strlen(str);
     if (!lrqlk(j))
-        if (!lincrm())
+        if (!more_free_memory())
         {
             refal.upshot = 3;
             return;

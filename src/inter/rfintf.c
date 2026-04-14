@@ -59,7 +59,7 @@ void refal_abort_end(const char *abort_message)
     return;
 }
 
-bool lincrm(void)
+bool more_free_memory(void)
 {
     size_t n = 0;
     if (last_block_free_memory != NULL)
@@ -81,7 +81,7 @@ bool lincrm(void)
     }
     T_LINKCB *new_block = malloc(1001 * sizeof(T_LINKCB));
 #if defined mdebug
-    fprintf(stderr, "lincrm: n=%zu after new_block=%p\n", n, (void *)new_block);
+    fprintf(stderr, "more_free_memory: n=%zu after new_block=%p\n", n, (void *)new_block);
 #endif
     if (new_block == NULL)
         return false;
@@ -132,7 +132,7 @@ bool lins(T_LINKCB *p, size_t l)
 bool slins(T_LINKCB *p, size_t k)
 {
     while (!lrqlk(k))
-        if (!lincrm())
+        if (!more_free_memory())
         {
             refal.upshot = 3;
             return false;
@@ -230,7 +230,7 @@ void rftermm(void)
         T_LINKCB *new_block = last_block_free_memory;
         last_block_free_memory = new_block->previous;
 #if defined mdebug
-        fprintf(stderr, "lincrm: free new_block=%p\n", (void *)new_block);
+        fprintf(stderr, "more_free_memory: free new_block=%p\n", (void *)new_block);
 #endif
         free(new_block);
     }
@@ -242,7 +242,7 @@ void rfexec(uint8_t *func)
     if (refal_init)
         rfinit();
     bool lack = false;
-    if (!lincrm())
+    if (!more_free_memory())
         lack = true;
     else if (!lcre(&s_st))
         lack = true;
@@ -281,7 +281,7 @@ void rfexec(uint8_t *func)
             {
                 bool go = false;
                 if (s_st.state == 3)
-                    if (lincrm())
+                    if (more_free_memory())
                         go = true;
                 if (s_st.step >= s_stop)
                 {
@@ -308,7 +308,7 @@ void rfexec(uint8_t *func)
             // no debug info
             rfrun(&s_st);
             if (s_st.state == 3)
-                if (lincrm())
+                if (more_free_memory())
                     break;
             if (s_st.state == 1 && s_st.dot != NULL)
             {

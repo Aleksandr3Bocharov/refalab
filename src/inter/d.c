@@ -739,7 +739,7 @@ static void one_step(T_STATUS_TABLE *ss_st)
             break;
         if (refal.dynamic_variables != NULL)
             nogcl++;
-        if (lincrm())
+        if (more_free_memory())
             continue;
         break;
     }

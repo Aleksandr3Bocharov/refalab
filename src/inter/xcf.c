@@ -34,7 +34,7 @@ static void ftochar_(void)
     const char *u = (char *)lp - l;
     p = refal.previous_result;
     if (!lrqlk(l))
-        if (!lincrm())
+        if (!more_free_memory())
         {
             rfdel(refal.previous_result, refal.next_result);
             refal.upshot = 3;
