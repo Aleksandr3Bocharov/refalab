@@ -264,7 +264,6 @@ int main(int argc, char *argv[])
         printf("\n\n");
         exit(1);
     };
-
     if (strlen(argv[1]) > MAX_PATHFILENAME - 4)
     {
         printf("\nSource file name too long\n");
@@ -282,9 +281,7 @@ int main(int argc, char *argv[])
     };
     terminal = stdout;
     refalab_source_listing = NULL;
-
     SET_time();
-
     options.source_listing = true;
     options.full_name = false;
     options.names = true;
