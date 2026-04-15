@@ -117,12 +117,12 @@ bool insert_from_free_memory_list(T_LINKCB *where, size_t count)
         linkcb_free_memory->info.code = NULL;
     }
     T_LINKCB *next_linkcb_free_memory = linkcb_free_memory->next;
+    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
     refal.free_memory_list_head->next = next_linkcb_free_memory;
     next_linkcb_free_memory->previous = refal.free_memory_list_head;
     T_LINKCB *next_where = where->next;
     linkcb_free_memory->next = next_where;
     next_where->previous = linkcb_free_memory;
-    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
     where->next = first_linkcb_free_memory;
     first_linkcb_free_memory->previous = where;
     return true;
