@@ -141,7 +141,7 @@ extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
 extern bool lcre(T_STATUS_TABLE *ast);
 extern bool lexist(const T_STATUS_TABLE *ast);
 extern bool more_free_memory(void);
-extern bool lins(T_LINKCB *p, size_t l);
+extern bool insert_from_free_memory_list(T_LINKCB *where, size_t count);
 extern bool slins(T_LINKCB *p, size_t k);
 extern bool linskd(T_STATUS_TABLE *ast, uint8_t *f);
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
