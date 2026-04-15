@@ -92,7 +92,7 @@ static void fopen_(void)
             const char *serr = strerror(err);
             const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(s) + (int32_t)strlen(namf) + 2);
             if (d > 0)
-                if (!slins(refal.next_result, (size_t)d))
+                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                     return;
             p = rfrstr(serr, refal.next_result);
             rftpl(refal.previous_result, refal.next_result, p->next);
@@ -131,7 +131,7 @@ static void fclose_(void)
         if (cl == EOF)
         {
             const char *serr = strerror(err);
-            if (!slins(refal.next_result, strlen(serr) - 2))
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.next_result);
             rftpl(refal.previous_result, refal.next_result, refal.next_argument);
@@ -177,7 +177,7 @@ static void fgets_(void)
         int c = getc(f);
         while (c != '\n')
         {
-            if (!slins(p, 1))
+            if (!extended_insert_from_free_memory_list(p, 1))
                 return;
             p = p->next;
             p->info.code = NULL;
@@ -581,7 +581,7 @@ static void fread_(void)
             return;
         }
         p = refal.previous_result;
-        if (!slins(p, count))
+        if (!extended_insert_from_free_memory_list(p, count))
             return;
         for (; count > 0; count--)
         {
@@ -711,7 +711,7 @@ static void fseek_(void)
         if (res == -1)
         {
             const char *serr = strerror(err);
-            if (!slins(refal.next_result, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
                 return;
             rfrstr(serr, refal.next_result);
             rftpl(refal.previous_result, refal.next_result, refal.next_argument);
@@ -749,7 +749,7 @@ static void ftell_(void)
         if (res == -1)
         {
             const char *serr = strerror(err);
-            if (!slins(refal.next_result, strlen(serr) - 2))
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
                 return;
             rfrstr(serr, refal.next_result);
             rftpl(refal.previous_result, refal.next_result, refal.next_argument);
@@ -924,7 +924,7 @@ static void remove_file_(void)
         const char *serr = strerror(err);
         const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + 1);
         if (d > 0)
-            if (!slins(refal.next_result, (size_t)d))
+            if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
         p = rfrstr(serr, refal.next_result);
         rftpl(refal.previous_result, refal.next_result, p->next);
@@ -956,7 +956,7 @@ static void rename_(void)
             const char *serr = strerror(err);
             const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
             if (d > 0)
-                if (!slins(refal.next_result, (size_t)d))
+                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                     return;
             p = rfrstr(serr, refal.next_result);
             rftpl(refal.previous_result, refal.next_result, p->next);

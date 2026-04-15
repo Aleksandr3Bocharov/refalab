@@ -220,7 +220,7 @@ static void boper(uint32_t o)
             if (Xdl == 0)
             {
                 if (refal.previous_argument->next == refal.next_argument)
-                    if (!slins(refal.previous_argument, 1))
+                    if (!extended_insert_from_free_memory_list(refal.previous_argument, 1))
                         return;
                 rez0 = false;
                 Xzn = '-';
@@ -305,7 +305,7 @@ static void shoper(uint32_t o)
             for (x = Xn->previous; x->tag != TAGLB && n > e; x = x->previous, e++)
                 ;
             if (n > e)
-                if (!slins(refal.next_result, n - e))
+                if (!extended_insert_from_free_memory_list(refal.next_result, n - e))
                     return;
             rftpl(refal.next_result, Xk, refal.next_argument);
             if (dl != 0)

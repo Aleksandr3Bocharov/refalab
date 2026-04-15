@@ -686,7 +686,7 @@ static void oper(uint32_t o, uint32_t prn)
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
     // rawno po odnoj makrocifre a - ost., b - chastnoe
-    if (!slins(refal.previous_argument, 2))
+    if (!extended_insert_from_free_memory_list(refal.previous_argument, 2))
     {
         refal.upshot = 3;
         return;

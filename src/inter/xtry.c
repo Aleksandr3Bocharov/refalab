@@ -28,7 +28,7 @@ static void try_(void)
     else
     {
         upst = refal.current_status_table;
-        if (!slins(refal.previous_result, 1))
+        if (!extended_insert_from_free_memory_list(refal.previous_result, 1))
             return;
         px = refal.previous_result->next;
         s_st = malloc(sizeof(T_STATUS_TABLE));

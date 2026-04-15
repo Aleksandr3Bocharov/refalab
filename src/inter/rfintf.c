@@ -128,15 +128,15 @@ bool insert_from_free_memory_list(T_LINKCB *where, size_t count)
     return true;
 }
 
-bool slins(T_LINKCB *p, size_t k)
+bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count)
 {
-    while (!check_count_free_memory_list(k))
+    while (!check_count_free_memory_list(count))
         if (!more_free_memory())
         {
             refal.upshot = 3;
             return false;
         }
-    return insert_from_free_memory_list(p, k);
+    return insert_from_free_memory_list(where, count);
 }
 
 bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
@@ -145,7 +145,7 @@ bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
         refal_abort_end("linskd: process doesn't exist still");
     if (ast->dot != NULL)
         refal_abort_end("linskd: there are '<'-signes in view field");
-    if (!slins(ast->view, 3))
+    if (!extended_insert_from_free_memory_list(ast->view, 3))
         return false;
     T_LINKCB *p = ast->view->next;
     T_LINKCB *r = p->next;

@@ -22,7 +22,7 @@ static void card_(void)
     int c = getchar();
     while (c != '\n')
     {
-        if  (!slins(p, 1))
+        if  (!extended_insert_from_free_memory_list(p, 1))
             return;
         p = p->next;
         p->info.code = NULL;

@@ -65,7 +65,7 @@ static void numb_(void)
     str[i] = '\0';
     if (strlen(str) == 0)
     {
-        if (!slins(refal.next_argument->previous, 1))
+        if (!extended_insert_from_free_memory_list(refal.next_argument->previous, 1))
             return;
         pp = refal.next_argument->previous;
         pz = pp;
@@ -286,7 +286,7 @@ static void multe_(void)
     }
     else
     {
-        if (!slins(refal.previous_result, n))
+        if (!extended_insert_from_free_memory_list(refal.previous_result, n))
             return; //  LACK
         T_LINKCB *q = refal.previous_result;
         for (uint32_t k = 0; k < n; k++)

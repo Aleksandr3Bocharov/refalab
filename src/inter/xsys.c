@@ -34,7 +34,7 @@ static void arg_(void)
         return;
     const int32_t d = (int32_t)strlen(refal.arg.argv[argn]) - 2;
     if (d > 0)
-        if (!slins(refal.next_result, (size_t)d))
+        if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
             return;
     p = rfrstr(refal.arg.argv[argn], refal.next_result);
     rftpl(refal.previous_result, refal.next_result, p->next);
@@ -66,7 +66,7 @@ static void system_(void)
     if (sys_64 < 0)
     {
         if (p->next == refal.next_argument)
-            if (!slins(p, 1))
+            if (!extended_insert_from_free_memory_list(p, 1))
                 return;
         p->tag = TAGO;
         p->info.code = NULL;
@@ -132,7 +132,7 @@ static void get_env_(void)
     }
     const int32_t d = (int32_t)strlen(env_value) - ((int32_t)strlen(env_name) + 1);
     if (d > 0)
-        if (!slins(refal.next_result, (size_t)d))
+        if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
             return;
     p = rfrstr(env_value, refal.next_result);
     if (p != NULL)
@@ -160,7 +160,7 @@ static void change_dir_(void)
         const char *serr = strerror(err);
         const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namd) + 1);
         if (d > 0)
-            if (!slins(refal.next_result, (size_t)d))
+            if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
         p = rfrstr(serr, refal.next_result);
         rftpl(refal.previous_result, refal.next_result, p->next);
@@ -181,7 +181,7 @@ static void get_current_dir_(void)
     char *cwd = getcwd(NULL, 0);
     if (cwd == NULL)
         return;
-    if (slins(refal.next_result, strlen(cwd) - 1))
+    if (extended_insert_from_free_memory_list(refal.next_result, strlen(cwd) - 1))
     {
         rfrstr(cwd, refal.next_result);
         rftpl(refal.previous_result, refal.next_result, refal.next_argument);
