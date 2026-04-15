@@ -22,7 +22,7 @@ extern uint8_t refalab_go;
 int main(int argc, char *argv[])
 {
     refal_get_args(argc, argv);
-    rfinit();
+    refal_initiate();
     do
     {
         if (!more_free_memory())

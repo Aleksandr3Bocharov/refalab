@@ -161,34 +161,32 @@ bool insert_view_k_function_d(T_STATUS_TABLE *status_table, uint8_t *refalab_fun
     return true;
 }
 
-void rfinit(void)
+void refal_initiate(void)
 {
     refal_init = false;
-    T_REFAL *p = &refal;
-    p->last_status_table = (T_STATUS_TABLE *)&refal;
-    p->first_status_table = (T_STATUS_TABLE *)&refal;
-    p->upshot = 1;
-    p->current_status_table = NULL;
-    p->static_boxes = NULL;
-    p->dynamic_boxes = NULL;
-    p->free_memory_list_head = &free_memory_list_head;
-    T_LINKCB *phd = &free_memory_list_head;
-    phd->previous = phd;
-    phd->next = phd;
-    phd->tag = TAGO;
-    phd->info.code = NULL;
-    p->arg.argc = gargc;
-    p->arg.argv = gargv;
-    p->timer.mode = options.timer_on;
-    if (p->timer.mode)
-        timespec_get(&p->timer.start_time, TIME_UTC);
+    refal.last_status_table = (T_STATUS_TABLE *)&refal;
+    refal.first_status_table = (T_STATUS_TABLE *)&refal;
+    refal.upshot = 1;
+    refal.current_status_table = NULL;
+    refal.static_boxes = NULL;
+    refal.dynamic_boxes = NULL;
+    refal.free_memory_list_head = &free_memory_list_head;
+    refal.free_memory_list_head->previous = &free_memory_list_head;
+    refal.free_memory_list_head->next = &free_memory_list_head;
+    refal.free_memory_list_head->tag = TAGO;
+    refal.free_memory_list_head->info.code = NULL;
+    refal.arg.argc = gargc;
+    refal.arg.argv = gargv;
+    refal.timer.mode = options.timer_on;
+    if (refal.timer.mode)
+        timespec_get(&refal.timer.start_time, TIME_UTC);
     return;
 }
 
 void rfcanc(const T_STATUS_TABLE *ast)
 {
     if (refal_init)
-        rfinit();
+        refal_initiate();
     if (!lexist(ast))
         refal_abort_end("rfcanc: process doesn't exist");
     if (ast->state == 4)
@@ -241,7 +239,7 @@ void rfexec(uint8_t *func)
 {
     T_STATUS_TABLE s_st;
     if (refal_init)
-        rfinit();
+        refal_initiate();
     bool lack = false;
     if (!more_free_memory())
         lack = true;
@@ -608,7 +606,7 @@ bool lexist(const T_STATUS_TABLE *ast)
 bool lcre(T_STATUS_TABLE *ast)
 {
     if (refal_init)
-        rfinit();
+        refal_initiate();
     if (lexist(ast))
         refal_abort_end("lcre: process already exists");
     ast->view = refal.free_memory_list_head->next;
@@ -730,7 +728,7 @@ static bool collect_garbage(void)
 static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_free_memory)
 {
     if (refal_init)
-        rfinit();
+        refal_initiate();
     T_LINKCB *linkcb_block_free_memory = block_free_memory;
     T_LINKCB *linkcb_free_memory_list = refal.free_memory_list_head->previous;
     for (size_t i = 0; i < size_block_free_memory; i++)
