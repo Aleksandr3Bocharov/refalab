@@ -143,7 +143,7 @@ extern bool lexist(const T_STATUS_TABLE *ast);
 extern bool more_free_memory(void);
 extern bool insert_from_free_memory_list(T_LINKCB *where, size_t count);
 extern bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count);
-extern bool linskd(T_STATUS_TABLE *ast, uint8_t *f);
+extern bool insert_view_k_function_d(T_STATUS_TABLE *status_table, uint8_t *refalab_function);
 extern T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u);
 extern bool check_count_free_memory_list(size_t count);
 
