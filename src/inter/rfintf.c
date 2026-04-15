@@ -139,25 +139,25 @@ bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count)
     return insert_from_free_memory_list(where, count);
 }
 
-bool insert_view_k_function_d(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
+bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
 {
     if (!lexist(status_table))
-        refal_abort_end("insert_view_k_function_d: process doesn't exist still");
+        refal_abort_end("insert_view_k_function_dot: process doesn't exist still");
     if (status_table->dot != NULL)
-        refal_abort_end("insert_view_k_function_d: there are '<'-signes in view field");
+        refal_abort_end("insert_view_k_function_dot: there are '<'-signes in view field");
     if (!extended_insert_from_free_memory_list(status_table->view, 3))
         return false;
     T_LINKCB *k = status_table->view->next;
     T_LINKCB *symbol_label = k->next;
     if (symbol_label->next != status_table->view->previous)
         rftpl(status_table->view->previous, symbol_label, symbol_label->next->next);
-    T_LINKCB *d = status_table->view->previous;
+    T_LINKCB *dot = status_table->view->previous;
     k->tag = TAGK;
-    d->tag = TAGD;
-    d->info.codep = k;
+    dot->tag = TAGD;
+    dot->info.codep = k;
     symbol_label->tag = TAGF;
     symbol_label->info.codef = refalab_function;
-    status_table->dot = d;
+    status_table->dot = dot;
     return true;
 }
 
