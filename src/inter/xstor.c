@@ -27,7 +27,7 @@ static void br_(void)
             return;
         }; // FAIL
     }
-    if (!lins(ast->store, 2))
+    if (!insert_from_free_memory_list(ast->store, 2))
     {
         refal.upshot = 3;
         return;
@@ -113,7 +113,7 @@ static void rp_(void)
             T_LINKCB *pl = pr->next;
             if (pl == ast->store)
             {
-                if (!lins(ast->store, 2))
+                if (!insert_from_free_memory_list(ast->store, 2))
                 {
                     refal.upshot = 3;
                     return;

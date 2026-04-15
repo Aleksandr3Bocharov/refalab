@@ -36,7 +36,7 @@ static void try_(void)
             lack = true;
         else if (!lcre(s_st))
             lack = true;
-        else if (!lins(s_st->view, 2))
+        else if (!insert_from_free_memory_list(s_st->view, 2))
         {
             rfcanc(s_st);
             lack = true;

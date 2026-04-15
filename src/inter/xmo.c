@@ -118,11 +118,11 @@ static void symb_(void)
             return;
         }
     if (pz != refal.next_argument)
-        lins(pp, j);
+        insert_from_free_memory_list(pp, j);
     else
     {
         pz = pz->previous;
-        lins(pz, j);
+        insert_from_free_memory_list(pz, j);
         pz = pz->next;
         pp = pz;
     }

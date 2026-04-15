@@ -332,7 +332,7 @@ static void oper(uint32_t o, uint32_t prn)
         }
         T_LINKCB *p = refal.previous_argument;
         T_LINKCB *r = p->next;
-        lins(p, Xdl + Ydl + 1); //  1 zweno dlja znaka
+        insert_from_free_memory_list(p, Xdl + Ydl + 1); //  1 zweno dlja znaka
         p = p->next;
         r = r->previous;
         for (x = p; x != r->next; x = x->next)
@@ -471,7 +471,7 @@ static void oper(uint32_t o, uint32_t prn)
         }
         // t.k. k chastnomu dob. 0 i zweno na znak
         p = refal.previous_argument;
-        lins(p, Xdl - Ydl + 2);
+        insert_from_free_memory_list(p, Xdl - Ydl + 2);
         p = p->next; //  dlja znaka
         r = p->next; //  dlja  perwoj  cifry
         nach = r;

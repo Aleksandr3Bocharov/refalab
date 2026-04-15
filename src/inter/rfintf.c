@@ -103,28 +103,28 @@ bool check_count_free_memory_list(size_t count)
     return true;
 }
 
-bool lins(T_LINKCB *p, size_t l)
+bool insert_from_free_memory_list(T_LINKCB *where, size_t count)
 {
-    if (l == 0)
+    if (count == 0)
         return true;
-    T_LINKCB *q1 = refal.free_memory_list_head;
-    for (size_t n = 0; n < l; n++)
+    T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    for (size_t i = 0; i < count; i++)
     {
-        q1 = q1->next;
-        if (q1 == refal.free_memory_list_head)
+        linkcb_free_memory = linkcb_free_memory->next;
+        if (linkcb_free_memory == refal.free_memory_list_head)
             return false;
-        q1->tag = TAGO;
-        q1->info.code = NULL;
+        linkcb_free_memory->tag = TAGO;
+        linkcb_free_memory->info.code = NULL;
     }
-    T_LINKCB *r = q1->next;
-    T_LINKCB *q = refal.free_memory_list_head->next;
-    refal.free_memory_list_head->next = r;
-    r->previous = refal.free_memory_list_head;
-    T_LINKCB *p1 = p->next;
-    q1->next = p1;
-    p1->previous = q1;
-    p->next = q;
-    q->previous = p;
+    T_LINKCB *next_linkcb_free_memory = linkcb_free_memory->next;
+    refal.free_memory_list_head->next = next_linkcb_free_memory;
+    next_linkcb_free_memory->previous = refal.free_memory_list_head;
+    T_LINKCB *next_where = where->next;
+    linkcb_free_memory->next = next_where;
+    next_where->previous = linkcb_free_memory;
+    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
+    where->next = first_linkcb_free_memory;
+    first_linkcb_free_memory->previous = where;
     return true;
 }
 
@@ -136,7 +136,7 @@ bool slins(T_LINKCB *p, size_t k)
             refal.upshot = 3;
             return false;
         }
-    return lins(p, k);
+    return insert_from_free_memory_list(p, k);
 }
 
 bool linskd(T_STATUS_TABLE *ast, uint8_t *f)

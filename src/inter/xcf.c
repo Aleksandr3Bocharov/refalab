@@ -40,7 +40,7 @@ static void ftochar_(void)
             refal.upshot = 3;
             return;
         }
-    lins(p, l);
+    insert_from_free_memory_list(p, l);
     for (uint8_t i = 0; i < l; i++)
     {
         p = p->next;

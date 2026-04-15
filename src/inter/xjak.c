@@ -138,7 +138,7 @@ void (*swr_1)(void) = swr_;
 
 static void new_(void)
 {
-    if (!lins(refal.previous_result, 1))
+    if (!insert_from_free_memory_list(refal.previous_result, 1))
     {
         refal.upshot = 3;
         return;
