@@ -181,8 +181,8 @@ static struct
 static const char *version = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
 
 static FILE *refalab_source;
-static uint8_t current_symbol_number; // current symbol number
-static char card[CUT + 9];            // card buffer (input)
+static int8_t current_symbol_number; // current symbol number
+static char card[CUT + 9];           // card buffer (input)
 static const char *card_cut = card;
 static uint32_t card_number; // card number
 static uint32_t errors_count;
@@ -195,7 +195,7 @@ static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t statement_label_length;
 static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
 static char statement_key[6];
-static uint8_t fix_current_symbol_number;           // start sentence position
+static int8_t fix_current_symbol_number;            // start sentence position
 static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
 static size_t module_length;                        // module length
 
@@ -694,15 +694,15 @@ static void label_key(bool previous)
         {
             if (current_symbol_number == CUT - 1)
             {
-                const uint8_t delta = CUT - 1 - fix_current_symbol_number;
-                const int8_t temp_fix_current_symbol_number = (int8_t)(0 - delta);
+                const int8_t delta = CUT - 1 - fix_current_symbol_number;
+                const int8_t temp_fix_current_symbol_number = 0 - delta;
                 for (current_symbol_number = 0; current_symbol_number != delta; current_symbol_number++)
                 {
-                    symbols[temp_fix_current_symbol_number + (int8_t)current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
-                    class_symbols[temp_fix_current_symbol_number + (int8_t)current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
+                    symbols[temp_fix_current_symbol_number + current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
+                    class_symbols[temp_fix_current_symbol_number + current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
                 }
                 read_card();
-                fix_current_symbol_number = (uint8_t)temp_fix_current_symbol_number;
+                fix_current_symbol_number = temp_fix_current_symbol_number;
                 if (symbols[0] == ' ')
                     break;
             }
