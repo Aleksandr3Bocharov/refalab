@@ -139,23 +139,25 @@ bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count)
     return insert_from_free_memory_list(where, count);
 }
 
-bool linskd(T_STATUS_TABLE *ast, uint8_t *f)
+bool insert_view_k_function_d(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
 {
-    if (!lexist(ast))
-        refal_abort_end("linskd: process doesn't exist still");
-    if (ast->dot != NULL)
-        refal_abort_end("linskd: there are '<'-signes in view field");
-    if (!extended_insert_from_free_memory_list(ast->view, 3))
+    if (!lexist(status_table))
+        refal_abort_end("insert_view_k_function_d: process doesn't exist still");
+    if (status_table->dot != NULL)
+        refal_abort_end("insert_view_k_function_d: there are '<'-signes in view field");
+    if (!extended_insert_from_free_memory_list(status_table->view, 3))
         return false;
-    T_LINKCB *p = ast->view->next;
-    T_LINKCB *r = p->next;
-    T_LINKCB *q = ast->view->previous;
-    p->tag = TAGK;
-    q->tag = TAGD;
-    q->info.codep = p;
-    r->tag = TAGF;
-    r->info.codef = f;
-    ast->dot = q;
+    T_LINKCB *k = status_table->view->next;
+    T_LINKCB *symbol_label = k->next;
+    if (symbol_label->next != status_table->view->previous)
+        rftpl(status_table->view->previous, symbol_label, symbol_label->next->next);
+    T_LINKCB *d = status_table->view->previous;
+    k->tag = TAGK;
+    d->tag = TAGD;
+    d->info.codep = k;
+    symbol_label->tag = TAGF;
+    symbol_label->info.codef = refalab_function;
+    status_table->dot = d;
     return true;
 }
 
@@ -245,7 +247,7 @@ void rfexec(uint8_t *func)
         lack = true;
     else if (!lcre(&s_st))
         lack = true;
-    else if (!linskd(&s_st, func))
+    else if (!insert_view_k_function_d(&s_st, func))
         lack = true;
     if (lack)
     {
