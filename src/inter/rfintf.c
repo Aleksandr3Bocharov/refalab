@@ -91,13 +91,13 @@ bool more_free_memory(void)
 }
 
 //  check a number of items in free items list
-bool lrqlk(size_t l)
+bool check_count_free_memory_list(size_t count)
 {
-    const T_LINKCB *p = refal.free_memory_list_head;
-    for (size_t n = 0; n < l; n++)
+    const T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    for (size_t i = 0; i < count; i++)
     {
-        p = p->next;
-        if (p == refal.free_memory_list_head)
+        linkcb_free_memory = linkcb_free_memory->next;
+        if (linkcb_free_memory == refal.free_memory_list_head)
             return false;
     }
     return true;
@@ -130,7 +130,7 @@ bool lins(T_LINKCB *p, size_t l)
 
 bool slins(T_LINKCB *p, size_t k)
 {
-    while (!lrqlk(k))
+    while (!check_count_free_memory_list(k))
         if (!more_free_memory())
         {
             refal.upshot = 3;

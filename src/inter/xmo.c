@@ -111,7 +111,7 @@ static void symb_(void)
     char str[12];
     sprintf(str, "%u", l);
     const size_t j = strlen(str);
-    if (!lrqlk(j))
+    if (!check_count_free_memory_list(j))
         if (!more_free_memory())
         {
             refal.upshot = 3;

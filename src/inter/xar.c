@@ -325,7 +325,7 @@ static void oper(uint32_t o, uint32_t prn)
             rez0 = true;
             break;
         }
-        if (!lrqlk(Xdl + Ydl + 1))
+        if (!check_count_free_memory_list(Xdl + Ydl + 1))
         {
             refal.upshot = 3;
             return;
@@ -464,7 +464,7 @@ static void oper(uint32_t o, uint32_t prn)
             break;
         }
         //  delenie mnogih  cifr
-        if (!lrqlk(Xdl - Ydl + 2))
+        if (!check_count_free_memory_list(Xdl - Ydl + 2))
         {
             refal.upshot = 3;
             return;
