@@ -39,13 +39,13 @@ static void delf_(void)
     {
         sk = dot1->info.codep;
         nd = sk->info.codep;
-        rfdel(sk->previous, dot1->next);
+        insert_to_free_memory_list(sk->previous, dot1->next);
         dot1 = nd;
     }
     sk = dot1->info.codep;
     nd = sk->info.codep;
     dot1 = dot1->next;
-    rfdel(sk->previous, dot1->next);
+    insert_to_free_memory_list(sk->previous, dot1->next);
     refal.next_result->info.codep = nd;
     return;
 }

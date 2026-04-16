@@ -36,7 +36,7 @@ static void ftochar_(void)
     if (!check_count_free_memory_list(l))
         if (!more_free_memory())
         {
-            rfdel(refal.previous_result, refal.next_result);
+            insert_to_free_memory_list(refal.previous_result, refal.next_result);
             refal.upshot = 3;
             return;
         }
@@ -127,7 +127,7 @@ static void chartof_(void)
             p->tag = TAGF;
             p->info.codef = func_f[k];
             if (p->next != refal.next_argument)
-                rfdel(p, refal.next_argument);
+                insert_to_free_memory_list(p, refal.next_argument);
             rftpl(refal.previous_result, p->previous, p->next);
             free(u);
             return;
@@ -145,7 +145,7 @@ static void chartof_(void)
     p->tag = TAGF;
     p->info.codef = j;
     if (p->next != refal.next_argument)
-        rfdel(p, refal.next_argument);
+        insert_to_free_memory_list(p, refal.next_argument);
     rftpl(refal.previous_result, p->previous, p->next);
     return;
 }

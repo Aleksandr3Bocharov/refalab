@@ -111,7 +111,7 @@ static void wtr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    rfdel(p, p);
+    insert_to_free_memory_list(p, p);
     rftpl(p, r, refal.next_argument);
     return;
 }

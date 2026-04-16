@@ -206,19 +206,19 @@ void delete_status_table(const T_STATUS_TABLE *status_table)
 }
 
 //    delete part of list and add it to free memory list
-void rfdel(T_LINKCB *p, T_LINKCB *q)
+void insert_to_free_memory_list(T_LINKCB *before, T_LINKCB *after)
 {
-    T_LINKCB *p1 = p->next;
-    if (p1 == q)
+    T_LINKCB *first = before->next;
+    if (first == after)
         return;
-    T_LINKCB *q1 = q->previous;
-    T_LINKCB *r = refal.free_memory_list_head->previous;
-    p->next = q;
-    q->previous = p;
-    q1->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = q1;
-    r->next = p1;
-    p1->previous = r;
+    T_LINKCB *last = after->previous;
+    T_LINKCB *where = refal.free_memory_list_head->previous;
+    before->next = after;
+    after->previous = before;
+    last->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = last;
+    where->next = first;
+    first->previous = where;
     return;
 }
 
@@ -245,7 +245,7 @@ void rfexec(uint8_t *func)
         lack = true;
     else if (!lcre(&s_st))
         lack = true;
-    else if (!insert_view_k_function_d(&s_st, func))
+    else if (!insert_view_k_function_dot(&s_st, func))
         lack = true;
     if (lack)
     {

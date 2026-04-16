@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
             break;
         if (!lcre(&s_st))
             break;
-        if (!insert_view_k_function_d(&s_st, &refalab_go))
+        if (!insert_view_k_function_dot(&s_st, &refalab_go))
             break;
         rfdbg(&s_st); // there is exit
     } while (false);

@@ -754,7 +754,7 @@ static void one_step(T_STATUS_TABLE *ss_st)
         printf("*** Recognition impossible\n");
         printf("*** Change leading term by empty term and continue ***\n");
         ss_st->dot = pk->info.codep;
-        rfdel(prevk, nextd);
+        insert_to_free_memory_list(prevk, nextd);
         ss_st->state = 1;
         ss_st->step++;
     };

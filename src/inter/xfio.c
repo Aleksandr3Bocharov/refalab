@@ -590,7 +590,7 @@ static void fread_(void)
             const int c = getc(f);
             if (rfreof(c, f, p))
             {
-                rfdel(p, refal.next_result);
+                insert_to_free_memory_list(p, refal.next_result);
                 return;
             }
             p->tag = TAGN;

@@ -71,7 +71,7 @@ static void dg_(void)
     rftpl(refal.previous_result, q, pr);
     pl = pl->previous;
     pr = pr->next;
-    rfdel(pl, pr);
+    insert_to_free_memory_list(pl, pr);
     return;
 }
 char dg_0[] = {Z2 'D', 'G', (char)2};
@@ -136,7 +136,7 @@ static void rp_(void)
                     continue;
                 if (q->tag != TAGO || q->info.infoc != '=')
                     continue;
-                rfdel(q, pr);
+                insert_to_free_memory_list(q, pr);
                 rftpl(q, p, refal.next_argument);
             }
             return;
