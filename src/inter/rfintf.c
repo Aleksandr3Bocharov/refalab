@@ -183,25 +183,25 @@ void refal_initiate(void)
     return;
 }
 
-void rfcanc(const T_STATUS_TABLE *ast)
+void delete_status_table(const T_STATUS_TABLE *status_table)
 {
     if (refal_init)
         refal_initiate();
-    if (!lexist(ast))
-        refal_abort_end("rfcanc: process doesn't exist");
-    if (ast->state == 4)
-        refal_abort_end("rfcanc: process is in job yet");
-    ast->previous->next = ast->next;
-    ast->next->previous = ast->previous;
-    T_LINKCB *flhead1 = refal.free_memory_list_head->previous;
-    T_LINKCB *view1 = ast->view->previous;
-    T_LINKCB *store1 = ast->store->previous;
-    flhead1->next = ast->view;
-    ast->view->previous = flhead1;
-    view1->next = ast->store;
-    ast->store->previous = view1;
-    store1->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = store1;
+    if (!lexist(status_table))
+        refal_abort_end("delete_status_table: process doesn't exist");
+    if (status_table->state == 4)
+        refal_abort_end("delete_status_table: process is in job yet");
+    status_table->previous->next = status_table->next;
+    status_table->next->previous = status_table->previous;
+    T_LINKCB *last_linkcb_free_memory = refal.free_memory_list_head->previous;
+    T_LINKCB *last_view = status_table->view->previous;
+    T_LINKCB *last_store = status_table->store->previous;
+    last_linkcb_free_memory->next = status_table->view;
+    status_table->view->previous = last_linkcb_free_memory;
+    last_view->next = status_table->store;
+    status_table->store->previous = last_view;
+    last_store->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = last_store;
     return;
 }
 
@@ -374,7 +374,7 @@ void rfexec(uint8_t *func)
             ex_state = RET;
             break;
         case RET:
-            rfcanc(&s_st);
+            delete_status_table(&s_st);
             rftermm();
             return;
         }

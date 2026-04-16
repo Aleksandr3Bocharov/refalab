@@ -38,7 +38,7 @@ static void try_(void)
             lack = true;
         else if (!insert_from_free_memory_list(s_st->view, 2))
         {
-            rfcanc(s_st);
+            delete_status_table(s_st);
             lack = true;
         }
     }
@@ -114,7 +114,7 @@ static void try_(void)
         px->info.infoc = 'S';
         break;
     }
-    rfcanc(s_st);
+    delete_status_table(s_st);
     free(s_st);
     return;
 }
