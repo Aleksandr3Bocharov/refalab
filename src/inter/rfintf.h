@@ -22,7 +22,7 @@ extern T_REFAL refal;
 extern void refal_abort_end(const char *abort_message);
 extern void delete_status_table(const T_STATUS_TABLE *status_table);
 extern void insert_to_free_memory_list(T_LINKCB *before, T_LINKCB *after);
-extern void rfexec(uint8_t *func);
+extern void refal_execute(uint8_t *refalab_function);
 extern void refal_get_args(int argc, char *argv[]);
 extern T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p);
 extern void refal_initiate(void);

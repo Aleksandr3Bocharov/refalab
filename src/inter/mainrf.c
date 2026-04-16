@@ -18,7 +18,7 @@ extern uint8_t refalab_go;
 int main(int argc, char *argv[])
 {
     refal_get_args(argc, argv);
-    rfexec(&refalab_go);
+    refal_execute(&refalab_go);
 }
 
 //---------  end of file MAINRF.C  ---------

@@ -235,7 +235,7 @@ void refal_terminate_memory(void)
     }
 }
 
-void rfexec(uint8_t *func)
+void refal_execute(uint8_t *refalab_function)
 {
     T_STATUS_TABLE s_st;
     if (refal_init)
