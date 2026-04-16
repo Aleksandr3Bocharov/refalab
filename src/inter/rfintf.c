@@ -222,16 +222,16 @@ void insert_to_free_memory_list(T_LINKCB *before, T_LINKCB *after)
     return;
 }
 
-void rftermm(void)
+void refal_terminate_memory(void)
 {
     while (last_block_free_memory != NULL)
     {
-        T_LINKCB *new_block = last_block_free_memory;
-        last_block_free_memory = new_block->previous;
+        T_LINKCB *delete_block_free_memory = last_block_free_memory;
+        last_block_free_memory = delete_block_free_memory->previous;
 #if defined mdebug
-        fprintf(stderr, "more_free_memory: free new_block=%p\n", (void *)new_block);
+        fprintf(stderr, "refal_terminate_memory: free delete_block_free_memory=%p\n", (void *)delete_block_free_memory);
 #endif
-        free(new_block);
+        free(delete_block_free_memory);
     }
 }
 
@@ -250,7 +250,7 @@ void rfexec(uint8_t *func)
     if (lack)
     {
         printf("\nNo enough memory for initialization\n");
-        rftermm();
+        refal_terminate_memory();
         return;
     }
     s_st.stop = MAX_STOP;
@@ -375,7 +375,7 @@ void rfexec(uint8_t *func)
             break;
         case RET:
             delete_status_table(&s_st);
-            rftermm();
+            refal_terminate_memory();
             return;
         }
 }

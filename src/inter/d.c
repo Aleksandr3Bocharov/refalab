@@ -496,7 +496,7 @@ void rfdbg(T_STATUS_TABLE *s_st)
                 printf("Elapsed time = %s\n", s);
             }
             delete_status_table(s_st);
-            rftermm();
+            refal_terminate_memory();
             exit(0);
             return;
         }

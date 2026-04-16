@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     } while (false);
     printf("\nRefalAB debugger: no memory for initialization\n");
     fclose(stdin);
-    rftermm();
+    refal_terminate_memory();
     exit(1);
 }
 
