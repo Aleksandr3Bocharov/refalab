@@ -264,74 +264,74 @@ void refal_execute(uint8_t *refalab_function)
         ABEND,
         EOJ,
         RET
-    } ex_state = AGAIN;
+    } execute_state = AGAIN;
     while (true)
-        switch (ex_state)
+        switch (execute_state)
         {
         case AGAIN:
 #if defined mdebug
             //	step by step execution with full debug trace information
-            if (s_st.dot == NULL)
+            if (status_table.dot == NULL)
             {
-                ex_state = DONE;
+                execute_state = DONE;
                 break;
             }
-            if (s_st.state != 1 || s_st.step >= s_stop)
+            if (status_table.state != 1 || status_table.step >= status_table_stop)
             {
-                bool go = false;
-                if (s_st.state == 3)
+                bool abort_end = true;
+                if (status_table.state == 3)
                     if (more_free_memory())
-                        go = true;
-                if (s_st.step >= s_stop)
+                        abort_end = false;
+                if (status_table.step >= status_table_stop)
                 {
-                    s_st.step = 0;
-                    go = true;
+                    status_table.step = 0;
+                    abort_end = false;
                 }
-                if (!go)
+                if (abort_end)
                 {
-                    ex_state = ABEND;
+                    execute_state = ABEND;
                     break;
                 }
             }
-            s_st.stop = s_st.step + 1;
-            const T_LINKCB *pk = s_st.dot->info.codep;
-            const T_LINKCB *prevk = pk->previous;
-            const T_LINKCB *nextd = s_st.dot->next;
-            printf(" Step: %d\n", s_st.stop);
-            rfpexm(" Term: ", prevk, nextd, true);
-            rfrun(&s_st);
-            if (s_st.state == 1)
-                rfpexm(" Result: ", prevk, nextd, true);
+            status_table.stop = status_table.step + 1;
+            const T_LINKCB *k = status_table.dot->info.codep;
+            const T_LINKCB *previous_k = k->previous;
+            const T_LINKCB *next_dot = status_table.dot->next;
+            printf(" Step: %d\n", status_table.stop);
+            rfpexm(" Term: ", previous_k, next_dot, true);
+            rfrun(&status_table);
+            if (status_table.state == 1)
+                rfpexm(" Result: ", previous_k, next_dot, true);
             break;
 #else
             // no debug info
-            rfrun(&s_st);
-            if (s_st.state == 3)
+            rfrun(&status_table);
+            if (status_table.state == 3)
                 if (more_free_memory())
                     break;
-            if (s_st.state == 1 && s_st.dot != NULL)
+            if (status_table.state == 1 && status_table.dot != NULL)
             {
-                s_st.step = 0;
+                status_table.step = 0;
                 break;
             }
-            if (s_st.dot != NULL)
+            if (status_table.dot != NULL)
             {
-                ex_state = ABEND;
+                execute_state = ABEND;
                 break;
             }
-            ex_state = DONE;
+            execute_state = DONE;
             break;
 #endif
         case DONE:
 #if defined mdebug
             printf("Concretization is executed\n");
-            ex_state = EOJ;
+            execute_state = EOJ;
 #else
-            ex_state = RET;
+            execute_state = RET;
 #endif
             break;
         case ABEND:
-            switch (s_st.state)
+            switch (status_table.state)
             {
             case 2:
                 printf("Recognition impossible\n");
@@ -339,42 +339,42 @@ void refal_execute(uint8_t *refalab_function)
             case 3:
                 printf("Free memory exhausted\n");
             }
-            ex_state = EOJ;
+            execute_state = EOJ;
             break;
         case EOJ:
-            printf("Total steps number = %u\n", s_st.step);
-            if (s_st.view->next != s_st.view)
+            printf("Total steps number = %u\n", status_table.step);
+            if (status_table.view->next != status_table.view)
             {
                 printf("View field:\n");
-                rfpexm("            ", s_st.view, s_st.view, true);
+                rfpexm("            ", status_table.view, status_table.view, true);
             }
-            if (s_st.store->next != s_st.store)
+            if (status_table.store->next != status_table.store)
             {
                 printf("Burried:\n");
-                rfpexm("         ", s_st.store, s_st.store, true);
+                rfpexm("         ", status_table.store, status_table.store, true);
             }
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
-                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-                if (in < 0)
+                long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
+                if (nanoseconds < 0)
                 {
-                    in += 1000000000;
-                    is--;
+                    nanoseconds += 1000000000;
+                    seconds--;
                 }
-                long long int im = is / 60;
-                is %= 60;
-                const long long int ih = im / 60;
-                im %= 60;
-                char s[64];
-                sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-                printf("Elapsed time = %s\n", s);
+                long long int minutes = seconds / 60;
+                seconds %= 60;
+                const long long int hours = minutes / 60;
+                minutes %= 60;
+                char string_time[64];
+                sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+                printf("Elapsed time = %s\n", string_time);
             }
-            ex_state = RET;
+            execute_state = RET;
             break;
         case RET:
-            delete_status_table(&s_st);
+            delete_status_table(&status_table);
             refal_terminate_memory();
             return;
         }
