@@ -636,35 +636,35 @@ bool lcre(T_STATUS_TABLE *ast)
 
 static void mark_dynamic_box_heads(T_LINKCB *root)
 {
-    T_LINKCB *linkcb = root;
-    T_LINKCB *head = linkcb;
+    T_LINKCB *current_linkcb = root;
+    T_LINKCB *head = current_linkcb;
     while (true)
     {
         T_LINKCB *dynamic_box_head;
-        if (linkcb->next != head)
+        if (current_linkcb->next != head)
         {
-            linkcb = linkcb->next;
-            if (linkcb->tag != TAGR)
+            current_linkcb = current_linkcb->next;
+            if (current_linkcb->tag != TAGR)
                 continue;
-            dynamic_box_head = linkcb->info.codep;
+            dynamic_box_head = current_linkcb->info.codep;
             if (dynamic_box_head->tag != TAGO)
                 continue;
             dynamic_box_head->tag = 0xFFFF;
-            linkcb->info.codep = head;
-            dynamic_box_head->previous = linkcb;
-            linkcb = dynamic_box_head;
-            head = linkcb;
+            current_linkcb->info.codep = head;
+            dynamic_box_head->previous = current_linkcb;
+            current_linkcb = dynamic_box_head;
+            head = current_linkcb;
             continue;
         }
         if (head == root)
             return;
         T_LINKCB *symbol_reference = head->previous;
-        head->previous = linkcb;
+        head->previous = current_linkcb;
         dynamic_box_head = head;
         head = symbol_reference->info.codep;
         symbol_reference->info.codep = dynamic_box_head;
         symbol_reference->tag = TAGR;
-        linkcb = symbol_reference;
+        current_linkcb = symbol_reference;
     }
 }
 
@@ -730,18 +730,18 @@ static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_
     if (refal_init)
         refal_initiate();
     T_LINKCB *linkcb_block_free_memory = block_free_memory;
-    T_LINKCB *linkcb_free_memory_list = refal.free_memory_list_head->previous;
+    T_LINKCB *last_linkcb_free_memory = refal.free_memory_list_head->previous;
     for (size_t i = 0; i < size_block_free_memory; i++)
     {
-        linkcb_free_memory_list->next = linkcb_block_free_memory;
-        linkcb_block_free_memory->previous = linkcb_free_memory_list;
+        last_linkcb_free_memory->next = linkcb_block_free_memory;
+        linkcb_block_free_memory->previous = last_linkcb_free_memory;
         linkcb_block_free_memory->tag = TAGO;
         linkcb_block_free_memory->info.code = NULL;
-        linkcb_free_memory_list = linkcb_block_free_memory;
+        last_linkcb_free_memory = linkcb_block_free_memory;
         linkcb_block_free_memory++;
     }
-    linkcb_free_memory_list->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = linkcb_free_memory_list;
+    last_linkcb_free_memory->next = refal.free_memory_list_head;
+    refal.free_memory_list_head->previous = last_linkcb_free_memory;
     return;
 }
 
