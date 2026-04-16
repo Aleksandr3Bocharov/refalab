@@ -134,7 +134,7 @@ extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const
 extern void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
 extern bool rfreof(int c, FILE *f, T_LINKCB *p);
 extern T_LINKCB *rfrstr(const char *str, T_LINKCB *p);
-extern void rftermm(void);
+extern void refal_terminate_memory(void);
 extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
 
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
