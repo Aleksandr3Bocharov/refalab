@@ -237,25 +237,25 @@ void refal_terminate_memory(void)
 
 void refal_execute(uint8_t *refalab_function)
 {
-    T_STATUS_TABLE s_st;
+    T_STATUS_TABLE status_table;
     if (refal_init)
         refal_initiate();
-    bool lack = false;
+    bool lack_memory = false;
     if (!more_free_memory())
-        lack = true;
-    else if (!lcre(&s_st))
-        lack = true;
-    else if (!insert_view_k_function_dot(&s_st, func))
-        lack = true;
-    if (lack)
+        lack_memory = true;
+    else if (!lcre(&status_table))
+        lack_memory = true;
+    else if (!insert_view_k_function_dot(&status_table, refalab_function))
+        lack_memory = true;
+    if (lack_memory)
     {
         printf("\nNo enough memory for initialization\n");
         refal_terminate_memory();
         return;
     }
-    s_st.stop = MAX_STOP;
+    status_table.stop = MAX_STOP;
 #if defined mdebug
-    const uint32_t s_stop = s_st.stop;
+    const uint32_t status_table_stop = status_table.stop;
 #endif
     enum
     {
