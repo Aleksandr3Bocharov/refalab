@@ -123,7 +123,7 @@ typedef struct refal
 extern T_REFAL refal;
 
 extern void refal_abort_end(const char *abort_message);
-extern void rfcanc(const T_STATUS_TABLE *ast);
+extern void delete_status_table(const T_STATUS_TABLE *status_table);
 extern void rfdel(T_LINKCB *p, T_LINKCB *q);
 extern void rfexec(uint8_t *func);
 extern void refal_get_args(int argc, char *argv[]);
