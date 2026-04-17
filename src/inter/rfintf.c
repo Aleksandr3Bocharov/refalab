@@ -380,7 +380,7 @@ void refal_execute(uint8_t *refalab_function)
         }
 }
 
-void rfpex(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
+void print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
     printf("%s", begin_string);
     const T_LINKCB *print = before;
@@ -389,7 +389,7 @@ void rfpex(const char *begin_string, const T_LINKCB *before, const T_LINKCB *aft
         const T_LINKCB *temp_print = print;
         print = print->next;
         if (temp_print != print->previous)
-            refal_abort_end("rfpex: list structure violation");
+            refal_abort_end("print_expression: list structure violation");
         if (print->tag == TAGO)
             putchar(print->info.infoc);
         else if (print->tag == TAGK)
@@ -406,17 +406,17 @@ void rfpex(const char *begin_string, const T_LINKCB *before, const T_LINKCB *aft
         {
             putchar('\'');
             const uint8_t *label_length = print->info.codef - 1;
-            const char *f = (char *)label_length - *label_length;
-            for (uint8_t k = 1; k <= *label_length; k++, f++)
-                putchar(toupper(*f));
+            const char *label = (char *)label_length - *label_length;
+            for (uint8_t i = 1; i <= *label_length; i++, label++)
+                putchar(toupper(*label));
             putchar('\'');
         }
-        else if (pr->tag == TAGR)
-            printf("'%%%p'", (void *)pr->info.codep);
-        else if (BRACKET(pr))
-            refal_abort_end("rfpex: unknown bracket type");
+        else if (print->tag == TAGR)
+            printf("'%%%p'", (void *)print->info.codep);
+        else if (BRACKET(print))
+            refal_abort_end("print_expression: unknown bracket type");
         else
-            printf("'%x,%p'", pr->tag, pr->info.code);
+            printf("'%x,%p'", print->tag, print->info.code);
     }
     if (new_line)
         printf("\n");

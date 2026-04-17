@@ -43,7 +43,7 @@ void (*card_1)(void) = card_;
 
 static void pr1_(void)
 {
-    rfpex("", refal.previous_argument, refal.next_argument, true);
+    print_expression("", refal.previous_argument, refal.next_argument, true);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -73,7 +73,7 @@ void (*pr3_1)(void) = pr3_;
 
 static void pr4_(void)
 {
-    rfpex("", refal.previous_argument, refal.next_argument, true);
+    print_expression("", refal.previous_argument, refal.next_argument, true);
     return;
 }
 char pr4_0[] = {Z5 'P', 'R', 'O', 'U', 'T', (char)5};
@@ -100,7 +100,7 @@ void (*pr6_1)(void) = pr6_;
 
 static void wr1_(void)
 {
-    rfpex("", refal.previous_argument, refal.next_argument, false);
+    print_expression("", refal.previous_argument, refal.next_argument, false);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -130,7 +130,7 @@ void (*wr3_1)(void) = wr3_;
 
 static void wr4_(void)
 {
-    rfpex("", refal.previous_argument, refal.next_argument, false);
+    print_expression("", refal.previous_argument, refal.next_argument, false);
     return;
 }
 char wr4_0[] = {Z5 'W', 'R', 'O', 'U', 'T', (char)5};
