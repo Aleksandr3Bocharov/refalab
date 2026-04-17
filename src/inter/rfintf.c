@@ -380,34 +380,34 @@ void refal_execute(uint8_t *refalab_function)
         }
 }
 
-void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
+void rfpex(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
-    printf("%s", pt);
-    while (pr != pn->previous)
+    printf("%s", begin_string);
+    const T_LINKCB *print = before;
+    while (print != after->previous)
     {
-        const T_LINKCB *pr1 = pr;
-        pr = pr->next;
-        if (pr1 != pr->previous)
+        const T_LINKCB *temp_print = print;
+        print = print->next;
+        if (temp_print != print->previous)
             refal_abort_end("rfpex: list structure violation");
-        if (pr->tag == TAGO)
-            putchar(pr->info.infoc);
-        else if (pr->tag == TAGK)
+        if (print->tag == TAGO)
+            putchar(print->info.infoc);
+        else if (print->tag == TAGK)
             putchar('<');
-        else if (pr->tag == TAGD)
+        else if (print->tag == TAGD)
             putchar('>');
-        else if (pr->tag == TAGLB)
+        else if (print->tag == TAGLB)
             putchar('(');
-        else if (pr->tag == TAGRB)
+        else if (print->tag == TAGRB)
             putchar(')');
-        else if (pr->tag == TAGN)
-            printf("'%u'", gcoden(pr));
-        else if (pr->tag == TAGF)
+        else if (print->tag == TAGN)
+            printf("'%u'", gcoden(print));
+        else if (print->tag == TAGF)
         {
             putchar('\'');
-            const uint8_t *lp = pr->info.codef - 1;
-            const uint8_t l = *lp;
-            const char *f = (char *)lp - l;
-            for (uint8_t k = 1; k <= l; k++, f++)
+            const uint8_t *label_length = print->info.codef - 1;
+            const char *f = (char *)label_length - *label_length;
+            for (uint8_t k = 1; k <= *label_length; k++, f++)
                 putchar(toupper(*f));
             putchar('\'');
         }
@@ -418,7 +418,7 @@ void rfpex(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl
         else
             printf("'%x,%p'", pr->tag, pr->info.code);
     }
-    if (nl)
+    if (new_line)
         printf("\n");
     return;
 }
