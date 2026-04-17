@@ -423,43 +423,43 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
     return;
 }
 
-void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
+void print_expression_s(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
-    printf("%s", pt);
-    while (pr != pn->previous)
+    printf("%s", begin_string);
+    const T_LINKCB *prints = before;
+    while (prints != after->previous)
     {
-        const T_LINKCB *pr1 = pr;
-        pr = pr->next;
-        if (pr1 != pr->previous)
-            refal_abort_end("rfpexs: list structure violation");
-        if (pr->tag == TAGO)
-            putchar(pr->info.infoc);
-        else if (pr->tag == TAGK)
+        const T_LINKCB *temp_prints = prints;
+        prints = prints->next;
+        if (temp_prints != prints->previous)
+            refal_abort_end("print_expression_s: list structure violation");
+        if (prints->tag == TAGO)
+            putchar(prints->info.infoc);
+        else if (prints->tag == TAGK)
             putchar('<');
-        else if (pr->tag == TAGD)
+        else if (prints->tag == TAGD)
             putchar('>');
-        else if (pr->tag == TAGLB)
+        else if (prints->tag == TAGLB)
             putchar('(');
-        else if (pr->tag == TAGRB)
+        else if (prints->tag == TAGRB)
             putchar(')');
-        else if (pr->tag == TAGN)
-            printf("%u", gcoden(pr));
-        else if (pr->tag == TAGF)
+        else if (prints->tag == TAGN)
+            printf("%u", gcoden(prints));
+        else if (prints->tag == TAGF)
         {
-            const uint8_t *lp = pr->info.codef - 1;
-            const uint8_t l = *lp;
-            const char *f = (char *)lp - l;
-            for (uint8_t k = 1; k <= l; k++, f++)
-                putchar(toupper(*f));
+            const uint8_t *label_length = prints->info.codef - 1;
+            const char *label = (char *)label_length - *label_length;
+            for (uint8_t i = 1; i <= *label_length; i++, label++)
+                putchar(toupper(*label));
         }
-        else if (pr->tag == TAGR)
-            printf("%%%p", (void *)pr->info.codep);
-        else if (BRACKET(pr))
-            refal_abort_end("rfpexs: unknown bracket type");
+        else if (prints->tag == TAGR)
+            printf("%%%p", (void *)prints->info.codep);
+        else if (BRACKET(prints))
+            refal_abort_end("print_expression_s: unknown bracket type");
         else
-            printf("%x,%p", pr->tag, pr->info.code);
+            printf("%x,%p", prints->tag, prints->info.code);
     }
-    if (nl)
+    if (new_line)
         printf("\n");
     return;
 }

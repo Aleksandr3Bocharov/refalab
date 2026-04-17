@@ -28,7 +28,7 @@ extern T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p);
 extern void refal_initiate(void);
 extern void print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
-extern void rfpexs(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl);
+extern void print_expression_s(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern bool rfreof(int c, FILE *f, T_LINKCB *p);
 extern T_LINKCB *rfrstr(const char *str, T_LINKCB *p);
 extern void refal_terminate_memory(void);

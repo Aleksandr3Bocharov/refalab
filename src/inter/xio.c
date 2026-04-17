@@ -17,7 +17,7 @@
 static void card_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
-        rfpexs("", refal.previous_argument, refal.next_argument, false);
+        print_expression_s("", refal.previous_argument, refal.next_argument, false);
     T_LINKCB *p = refal.previous_result;
     int c = getchar();
     while (c != '\n')
@@ -53,7 +53,7 @@ void (*pr1_1)(void) = pr1_;
 
 static void pr2_(void)
 {
-    rfpexs("", refal.previous_argument, refal.next_argument, true);
+    print_expression_s("", refal.previous_argument, refal.next_argument, true);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -82,7 +82,7 @@ void (*pr4_1)(void) = pr4_;
 
 static void pr5_(void)
 {
-    rfpexs("", refal.previous_argument, refal.next_argument, true);
+    print_expression_s("", refal.previous_argument, refal.next_argument, true);
     return;
 }
 char pr5_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'S', (char)6};
@@ -110,7 +110,7 @@ void (*wr1_1)(void) = wr1_;
 
 static void wr2_(void)
 {
-    rfpexs("", refal.previous_argument, refal.next_argument, false);
+    print_expression_s("", refal.previous_argument, refal.next_argument, false);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -139,7 +139,7 @@ void (*wr4_1)(void) = wr4_;
 
 static void wr5_(void)
 {
-    rfpexs("", refal.previous_argument, refal.next_argument, false);
+    print_expression_s("", refal.previous_argument, refal.next_argument, false);
     return;
 }
 char wr5_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'S', (char)6};
