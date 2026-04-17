@@ -63,7 +63,7 @@ void (*pr2_1)(void) = pr2_;
 
 static void pr3_(void)
 {
-    rfpexm("", refal.previous_argument, refal.next_argument, true);
+    print_expression_m("", refal.previous_argument, refal.next_argument, true);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -91,7 +91,7 @@ void (*pr5_1)(void) = pr5_;
 
 static void pr6_(void)
 {
-    rfpexm("", refal.previous_argument, refal.next_argument, true);
+    print_expression_m("", refal.previous_argument, refal.next_argument, true);
     return;
 }
 char pr6_0[] = {Z6 'P', 'R', 'O', 'U', 'T', 'M', (char)6};
@@ -120,7 +120,7 @@ void (*wr2_1)(void) = wr2_;
 
 static void wr3_(void)
 {
-    rfpexm("", refal.previous_argument, refal.next_argument, false);
+    print_expression_m("", refal.previous_argument, refal.next_argument, false);
     rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
@@ -148,7 +148,7 @@ void (*wr5_1)(void) = wr5_;
 
 static void wr6_(void)
 {
-    rfpexm("", refal.previous_argument, refal.next_argument, false);
+    print_expression_m("", refal.previous_argument, refal.next_argument, false);
     return;
 }
 char wr6_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'M', (char)6};

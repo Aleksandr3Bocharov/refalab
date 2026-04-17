@@ -298,10 +298,10 @@ void refal_execute(uint8_t *refalab_function)
             const T_LINKCB *previous_k = k->previous;
             const T_LINKCB *next_dot = status_table.dot->next;
             printf(" Step: %d\n", status_table.stop);
-            rfpexm(" Term: ", previous_k, next_dot, true);
+            print_expression_m(" Term: ", previous_k, next_dot, true);
             rfrun(&status_table);
             if (status_table.state == 1)
-                rfpexm(" Result: ", previous_k, next_dot, true);
+                print_expression_m(" Result: ", previous_k, next_dot, true);
             break;
 #else
             // no debug info
@@ -346,12 +346,12 @@ void refal_execute(uint8_t *refalab_function)
             if (status_table.view->next != status_table.view)
             {
                 printf("View field:\n");
-                rfpexm("            ", status_table.view, status_table.view, true);
+                print_expression_m("            ", status_table.view, status_table.view, true);
             }
             if (status_table.store->next != status_table.store)
             {
                 printf("Burried:\n");
-                rfpexm("         ", status_table.store, status_table.store, true);
+                print_expression_m("         ", status_table.store, status_table.store, true);
             }
             if (refal.timer.mode)
             {
@@ -464,68 +464,68 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
     return;
 }
 
-void rfpexm(const char *pt, const T_LINKCB *pr, const T_LINKCB *pn, const bool nl)
+void print_expression_m(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
-    printf("%s", pt);
-    bool fr = false;
-    while (pr != pn->previous)
+    printf("%s", begin_string);
+    const T_LINKCB *printm = before;
+    bool tago = false;
+    while (printm != after->previous)
     {
-        const T_LINKCB *pr1 = pr;
-        pr = pr->next;
-        if (pr->previous != pr1)
-            refal_abort_end("rfpexm: list structure violation");
-        if (pr->tag == TAGO)
+        const T_LINKCB *temp_printm = printm;
+        printm = printm->next;
+        if (temp_printm != printm->previous)
+            refal_abort_end("print_expression_m: list structure violation");
+        if (printm->tag == TAGO)
         {
-            if (!fr)
+            if (!tago)
             {
-                fr = true;
+                tago = true;
                 putchar('\'');
             };
-            putchar(pr->info.infoc);
+            putchar(printm->info.infoc);
         }
         else
         {
-            if (fr)
+            if (tago)
             {
-                fr = false;
+                tago = false;
                 putchar('\'');
             };
-            if (pr->tag == TAGK)
+            if (printm->tag == TAGK)
                 printf("< ");
-            else if (pr->tag == TAGD)
+            else if (printm->tag == TAGD)
                 putchar('>');
-            else if (pr->tag == TAGLB)
+            else if (printm->tag == TAGLB)
                 putchar('(');
-            else if (pr->tag == TAGRB)
+            else if (printm->tag == TAGRB)
                 putchar(')');
-            else if (pr->tag == TAGN)
+            else if (printm->tag == TAGN)
             {
-                printf("%u", gcoden(pr));
-                if (pr->next->tag == TAGN)
+                printf("%u", gcoden(printm));
+                if (printm->next->tag == TAGN)
                     putchar(' ');
             }
-            else if (pr->tag == TAGF)
+            else if (printm->tag == TAGF)
             {
                 putchar('&');
-                const uint8_t *lp = pr->info.codef - 1;
-                const uint8_t l = *lp;
-                const char *f = (char *)lp - l;
-                for (uint8_t k = 1; k <= l; k++, f++)
-                    putchar(toupper(*f));
-                if (pr->next->tag == TAGN)
+                const uint8_t *label_length = printm->info.codef - 1;
+                const char *label = (char *)label_length - *label_length;
+                for (uint8_t i = 1; i <= *label_length; i++, label++)
+                    putchar(toupper(*label));
+                if (printm->next->tag == TAGN)
                     putchar(' ');
             }
-            else if (pr->tag == TAGR)
-                printf("/%%%p/", (void *)pr->info.codep);
-            else if (BRACKET(pr))
-                refal_abort_end("rfpexm: unknown bracket type");
+            else if (printm->tag == TAGR)
+                printf("/%%%p/", (void *)printm->info.codep);
+            else if (BRACKET(printm))
+                refal_abort_end("print_expression_m: unknown bracket type");
             else
-                printf("/%x,%p/", pr->tag, pr->info.code);
+                printf("/%x,%p/", printm->tag, printm->info.code);
         }
     }
-    if (fr)
+    if (tago)
         putchar('\'');
-    if (nl)
+    if (new_line)
         printf("\n");
     return;
 }

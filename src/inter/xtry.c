@@ -73,10 +73,10 @@ static void try_(void)
             const T_LINKCB *prevk = pk1->previous;
             const T_LINKCB *nextd = s_st->dot->next;
             printf(" Step: %d\n", s_st->stop);
-            rfpexm(" Term: ", prevk, nextd, true);
+            print_expression_m(" Term: ", prevk, nextd, true);
             rfrun(s_st);
             if (s_st->state == 1)
-                rfpexm(" Result: ", prevk, nextd, true);
+                print_expression_m(" Result: ", prevk, nextd, true);
 #else
             rfrun(s_st); // net prokrutki
             if (s_st->state == 1 && s_st->dot != NULL)
