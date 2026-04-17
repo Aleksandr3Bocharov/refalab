@@ -44,7 +44,7 @@ void (*card_1)(void) = card_;
 static void pr1_(void)
 {
     print_expression("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr1_0[] = {Z5 'P', 'R', 'I', 'N', 'T', (char)5};
@@ -54,7 +54,7 @@ void (*pr1_1)(void) = pr1_;
 static void pr2_(void)
 {
     print_expression_s("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr2_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'S', (char)6};
@@ -64,7 +64,7 @@ void (*pr2_1)(void) = pr2_;
 static void pr3_(void)
 {
     print_expression_m("", refal.previous_argument, refal.next_argument, true);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char pr3_0[] = {Z6 'P', 'R', 'I', 'N', 'T', 'M', (char)6};
@@ -101,7 +101,7 @@ void (*pr6_1)(void) = pr6_;
 static void wr1_(void)
 {
     print_expression("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr1_0[] = {Z5 'W', 'R', 'I', 'T', 'E', (char)5};
@@ -111,7 +111,7 @@ void (*wr1_1)(void) = wr1_;
 static void wr2_(void)
 {
     print_expression_s("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr2_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'S', (char)6};
@@ -121,7 +121,7 @@ void (*wr2_1)(void) = wr2_;
 static void wr3_(void)
 {
     print_expression_m("", refal.previous_argument, refal.next_argument, false);
-    rftpl(refal.previous_result, refal.previous_argument, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
 }
 char wr3_0[] = {Z6 'W', 'R', 'I', 'T', 'E', 'M', (char)6};

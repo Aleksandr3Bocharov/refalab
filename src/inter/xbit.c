@@ -247,7 +247,7 @@ static void boper(uint32_t o)
             x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.previous_result, x->previous, x->next);
+            transplantation(refal.previous_result, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -262,7 +262,7 @@ static void boper(uint32_t o)
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.previous_result, x->previous, Xk->next);
+        transplantation(refal.previous_result, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -307,7 +307,7 @@ static void shoper(uint32_t o)
             if (n > e)
                 if (!extended_insert_from_free_memory_list(refal.next_result, n - e))
                     return;
-            rftpl(refal.next_result, Xk, refal.next_argument);
+            transplantation(refal.next_result, Xk, refal.next_argument);
             if (dl != 0)
             {
                 y = Xn;
@@ -369,7 +369,7 @@ static void shoper(uint32_t o)
             x = refal.previous_argument->next;
             x->tag = TAGN;
             x->info.code = NULL;
-            rftpl(refal.previous_result, x->previous, x->next);
+            transplantation(refal.previous_result, x->previous, x->next);
             return;
         }
         //  wozwratim X
@@ -384,7 +384,7 @@ static void shoper(uint32_t o)
             x->info.infoc = '-';
         }
         //  perenosim reultat
-        rftpl(refal.previous_result, x->previous, Xk->next);
+        transplantation(refal.previous_result, x->previous, Xk->next);
         return;
     } while (false);
     refal.upshot = 2;

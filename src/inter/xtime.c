@@ -35,7 +35,7 @@ static void time_(void)
     if (lt == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        rftpl(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
         return;
     }
     char s[256];
@@ -45,7 +45,7 @@ static void time_(void)
     if (!extended_insert_from_free_memory_list(refal.next_result, sl - 1))
         return;
     rfrstr(s, refal.next_result);
-    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
+    transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
@@ -81,7 +81,7 @@ static void tm_(void)
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 2))
                 return;
             rfrstr(s, refal.next_result);
-            rftpl(refal.previous_result, refal.next_result, refal.next_argument);
+            transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         else
             break;
@@ -120,7 +120,7 @@ static void tm_elapsed_(void)
     if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 1))
         return;
     rfrstr(s, refal.next_result);
-    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
+    transplantation(refal.previous_result, refal.next_result, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
 G_L_B uint8_t refalab_tm_elapsed = '\122';

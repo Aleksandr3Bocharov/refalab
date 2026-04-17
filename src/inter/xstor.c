@@ -38,7 +38,7 @@ static void br_(void)
     pl->tag = TAGLB;
     pr->info.codep = pl;
     pr->tag = TAGRB;
-    rftpl(pl, refal.previous_argument, refal.next_argument);
+    transplantation(pl, refal.previous_argument, refal.next_argument);
     return;
 }
 char br_0[] = {Z2 'B', 'R', (char)2};
@@ -68,7 +68,7 @@ static void dg_(void)
             continue;
         break;
     }
-    rftpl(refal.previous_result, q, pr);
+    transplantation(refal.previous_result, q, pr);
     pl = pl->previous;
     pr = pr->next;
     insert_to_free_memory_list(pl, pr);
@@ -84,7 +84,7 @@ static void dgall_(void)
     if (refal.previous_argument->next != refal.next_argument)
         refal.upshot = 2; // FAIL
     else
-        rftpl(refal.previous_result, ast->store, ast->store);
+        transplantation(refal.previous_result, ast->store, ast->store);
     return;
 }
 char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
@@ -124,7 +124,7 @@ static void rp_(void)
                 pl->tag = TAGLB;
                 pr->info.codep = pl;
                 pr->tag = TAGRB;
-                rftpl(pl, refal.previous_argument, refal.next_argument);
+                transplantation(pl, refal.previous_argument, refal.next_argument);
             }
             else
             {
@@ -137,7 +137,7 @@ static void rp_(void)
                 if (q->tag != TAGO || q->info.infoc != '=')
                     continue;
                 insert_to_free_memory_list(q, pr);
-                rftpl(q, p, refal.next_argument);
+                transplantation(q, p, refal.next_argument);
             }
             return;
         }

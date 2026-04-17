@@ -150,7 +150,7 @@ bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_f
     T_LINKCB *k = status_table->view->next;
     T_LINKCB *symbol_label = k->next;
     if (symbol_label->next != status_table->view->previous)
-        rftpl(status_table->view->previous, symbol_label, symbol_label->next->next);
+        transplantation(status_table->view->previous, symbol_label, symbol_label->next->next);
     T_LINKCB *dot = status_table->view->previous;
     k->tag = TAGK;
     dot->tag = TAGD;
@@ -530,19 +530,19 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
     return;
 }
 
-void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q)
+void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
-    T_LINKCB *p1 = p->next;
-    if (p1 == q)
+    T_LINKCB *first = before->next;
+    if (first == after)
         return;
-    T_LINKCB *r1 = r->next;
-    T_LINKCB *q1 = q->previous;
-    p->next = q;
-    q->previous = p;
-    q1->next = r1;
-    r1->previous = q1;
-    r->next = p1;
-    p1->previous = r;
+    T_LINKCB *next_where = where->next;
+    T_LINKCB *last = after->previous;
+    before->next = after;
+    after->previous = before;
+    last->next = next_where;
+    next_where->previous = last;
+    where->next = first;
+    first->previous = where;
     return;
 }
 

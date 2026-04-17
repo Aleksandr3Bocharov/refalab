@@ -128,7 +128,7 @@ static void chartof_(void)
             p->info.codef = func_f[k];
             if (p->next != refal.next_argument)
                 insert_to_free_memory_list(p, refal.next_argument);
-            rftpl(refal.previous_result, p->previous, p->next);
+            transplantation(refal.previous_result, p->previous, p->next);
             free(u);
             return;
         }
@@ -146,7 +146,7 @@ static void chartof_(void)
     p->info.codef = j;
     if (p->next != refal.next_argument)
         insert_to_free_memory_list(p, refal.next_argument);
-    rftpl(refal.previous_result, p->previous, p->next);
+    transplantation(refal.previous_result, p->previous, p->next);
     return;
 }
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};

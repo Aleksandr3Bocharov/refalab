@@ -102,7 +102,7 @@ static void random_number_(void)
     else
         res = random_number();
     pcoden(p, res);
-    rftpl(refal.previous_result, p->previous, p->next);
+    transplantation(refal.previous_result, p->previous, p->next);
     return;
 }
 char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)13};

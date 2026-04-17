@@ -37,7 +37,7 @@ static void arg_(void)
         if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
             return;
     p = rfrstr(refal.arg.argv[argn], refal.next_result);
-    rftpl(refal.previous_result, refal.next_result, p->next);
+    transplantation(refal.previous_result, refal.next_result, p->next);
     return;
 }
 char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
@@ -77,7 +77,7 @@ static void system_(void)
     p->tag = TAGN;
     p->info.code = NULL;
     pcoden(p, (uint32_t)sys_64);
-    rftpl(refal.previous_result, refal.next_result, p->next);
+    transplantation(refal.previous_result, refal.next_result, p->next);
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
@@ -127,7 +127,7 @@ static void get_env_(void)
     if (env_value == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        rftpl(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
         return;
     }
     const int32_t d = (int32_t)strlen(env_value) - ((int32_t)strlen(env_name) + 1);
@@ -136,7 +136,7 @@ static void get_env_(void)
             return;
     p = rfrstr(env_value, refal.next_result);
     if (p != NULL)
-        rftpl(refal.previous_result, refal.next_result, p->next);
+        transplantation(refal.previous_result, refal.next_result, p->next);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
@@ -163,7 +163,7 @@ static void change_dir_(void)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
         p = rfrstr(serr, refal.next_result);
-        rftpl(refal.previous_result, refal.next_result, p->next);
+        transplantation(refal.previous_result, refal.next_result, p->next);
     }
     return;
 }
@@ -184,7 +184,7 @@ static void get_current_dir_(void)
     if (extended_insert_from_free_memory_list(refal.next_result, strlen(cwd) - 1))
     {
         rfrstr(cwd, refal.next_result);
-        rftpl(refal.previous_result, refal.next_result, refal.next_argument);
+        transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     }
     free(cwd);
     return;
@@ -203,7 +203,7 @@ static void step_(void)
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
     pcoden(refal.previous_argument, refal.current_status_table->step);
-    rftpl(refal.previous_result, refal.next_result, refal.next_argument);
+    transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
 char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};

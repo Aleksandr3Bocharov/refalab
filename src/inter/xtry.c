@@ -54,8 +54,8 @@ static void try_(void)
     pd->info.codep = pk;
     pd->tag = TAGD;
     s_st->dot = pd;
-    rftpl(pk, refal.previous_argument, refal.next_argument);
-    rftpl(s_st->store, upst->store, upst->store);
+    transplantation(pk, refal.previous_argument, refal.next_argument);
+    transplantation(s_st->store, upst->store, upst->store);
     s_st->step = ++upst->step;
     s_st->stop = MAX_STOP;
 #if defined mdebug
@@ -92,7 +92,7 @@ static void try_(void)
             if (more_free_memory())
                 s_st->state = 1;
     } while (s_st->state == 1 && s_st->dot != NULL);
-    rftpl(upst->store, s_st->store, s_st->store);
+    transplantation(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
 #if defined mdebug
     if (dbt == NULL)
@@ -102,13 +102,13 @@ static void try_(void)
     {
     case 1:
         px->info.infoc = 'N';
-        rftpl(px, s_st->view, s_st->view);
+        transplantation(px, s_st->view, s_st->view);
         break;
     case 2:
         px->info.infoc = 'R';
         pd = s_st->dot;
         pk = pd->info.codep;
-        rftpl(px, pk, pd);
+        transplantation(px, pk, pd);
         break;
     case 3:
         px->info.infoc = 'S';

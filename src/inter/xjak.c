@@ -58,7 +58,7 @@ static void gtr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    rftpl(refal.previous_result, p, p);
+    transplantation(refal.previous_result, p, p);
     return;
 }
 char gtr_0[] = {Z3 'G', 'T', 'R', (char)3};
@@ -95,7 +95,7 @@ static void ptr_(void)
         return;
     }; // FAIL
     T_LINKCB *q = p->previous;
-    rftpl(q, r, refal.next_argument);
+    transplantation(q, r, refal.next_argument);
     return;
 }
 char ptr_0[] = {Z3 'P', 'T', 'R', (char)3};
@@ -112,7 +112,7 @@ static void wtr_(void)
         return;
     }; // FAIL
     insert_to_free_memory_list(p, p);
-    rftpl(p, r, refal.next_argument);
+    transplantation(p, r, refal.next_argument);
     return;
 }
 char wtr_0[] = {Z3 'W', 'T', 'R', (char)3};
@@ -128,8 +128,8 @@ static void swr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    rftpl(refal.previous_result, p, p);
-    rftpl(p, r, refal.next_argument);
+    transplantation(refal.previous_result, p, p);
+    transplantation(p, r, refal.next_argument);
     return;
 }
 char swr_0[] = {Z3 'S', 'W', 'R', (char)3};
