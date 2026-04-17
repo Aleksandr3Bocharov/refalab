@@ -135,7 +135,7 @@ extern void print_expression_s(const char *begin_string, const T_LINKCB *before,
 extern bool rfreof(int c, FILE *f, T_LINKCB *p);
 extern T_LINKCB *rfrstr(const char *str, T_LINKCB *p);
 extern void refal_terminate_memory(void);
-extern void rftpl(T_LINKCB *r, T_LINKCB *p, T_LINKCB *q);
+extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 
 extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
 extern bool lcre(T_STATUS_TABLE *ast);
