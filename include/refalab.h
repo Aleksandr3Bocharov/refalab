@@ -139,7 +139,7 @@ extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 
 extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool lcre(T_STATUS_TABLE *ast);
-extern bool lexist(const T_STATUS_TABLE *ast);
+extern bool exist_status_table(const T_STATUS_TABLE *status_table);
 extern bool more_free_memory(void);
 extern bool insert_from_free_memory_list(T_LINKCB *where, size_t count);
 extern bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count);
