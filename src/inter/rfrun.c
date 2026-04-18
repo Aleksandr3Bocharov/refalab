@@ -263,7 +263,7 @@ void rfrun(T_STATUS_TABLE *ast) // adress of current state table
     T_SAVE_AREA *save_process = malloc(sizeof(T_SAVE_AREA));
     if (save_process == NULL)
         refal_abort_end("rfrun: no memory");
-    if (!lexist(ast))
+    if (!exist_status_table(ast))
         refal_abort_end("rfrun: attempt to run unexisting process");
     if (ast->state == 4)
         refal_abort_end("rfrun: attampt to run process in state 4");

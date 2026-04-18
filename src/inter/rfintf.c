@@ -141,7 +141,7 @@ bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count)
 
 bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
 {
-    if (!lexist(status_table))
+    if (!exist_status_table(status_table))
         refal_abort_end("insert_view_k_function_dot: process doesn't exist still");
     if (status_table->dot != NULL)
         refal_abort_end("insert_view_k_function_dot: there are '<'-signes in view field");
@@ -187,7 +187,7 @@ void delete_status_table(const T_STATUS_TABLE *status_table)
 {
     if (refal_init)
         refal_initiate();
-    if (!lexist(status_table))
+    if (!exist_status_table(status_table))
         refal_abort_end("delete_status_table: process doesn't exist");
     if (status_table->state == 4)
         refal_abort_end("delete_status_table: process is in job yet");
@@ -591,15 +591,15 @@ bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
     return true;
 }
 
-bool lexist(const T_STATUS_TABLE *ast)
+bool exist_status_table(const T_STATUS_TABLE *status_table)
 {
-    const T_REFAL *p = &refal;
+    const T_STATUS_TABLE *current_status_table = (T_STATUS_TABLE *)&refal;
     do
     {
-        p = (T_REFAL *)(p->first_status_table);
-        if (p == (T_REFAL *)ast)
+        current_status_table = current_status_table->next;
+        if (current_status_table == status_table)
             return true;
-    } while (p != &refal);
+    } while (current_status_table != (T_STATUS_TABLE *)&refal);
     return false;
 }
 
@@ -607,7 +607,7 @@ bool lcre(T_STATUS_TABLE *ast)
 {
     if (refal_init)
         refal_initiate();
-    if (lexist(ast))
+    if (exist_status_table(ast))
         refal_abort_end("lcre: process already exists");
     ast->view = refal.free_memory_list_head->next;
     if (ast->view == refal.free_memory_list_head)
