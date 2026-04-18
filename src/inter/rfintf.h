@@ -34,7 +34,7 @@ extern T_LINKCB *rfrstr(const char *str, T_LINKCB *p);
 extern void refal_terminate_memory(void);
 extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 
-extern bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q);
+extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool lcre(T_STATUS_TABLE *ast);
 extern bool lexist(const T_STATUS_TABLE *ast);
 extern bool more_free_memory(void);

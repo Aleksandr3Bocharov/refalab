@@ -74,7 +74,7 @@ static void rdr_(void)
         refal.upshot = 2;
         return;
     }; // FAIL
-    if (!lcopy(refal.previous_result, p, p))
+    if (!copy_expression(refal.previous_result, p, p))
     {
         refal.upshot = 3;
         return;

@@ -152,8 +152,8 @@ void (*rp_1)(void) = rp_;
 static void cp_(void)
 {
     const T_STATUS_TABLE *ast = refal.current_status_table;
-    const T_LINKCB *pr = ast->store;
-    const T_LINKCB *q;
+    T_LINKCB *pr = ast->store;
+    T_LINKCB *q;
     while (true)
     {
         const T_LINKCB *pl = pr->next;
@@ -172,7 +172,7 @@ static void cp_(void)
             continue;
         break;
     }
-    if (!lcopy(refal.previous_result, q, pr))
+    if (!copy_expression(refal.previous_result, q, pr))
         refal.upshot = 3; // LACK
     return;
 }

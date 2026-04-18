@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.C ------------------
@@ -547,47 +547,47 @@ void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 }
 
 //  copy expression and add it to nessecary place
-bool lcopy(T_LINKCB *r, const T_LINKCB *p, const T_LINKCB *q)
+bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
-    T_LINKCB *f = refal.free_memory_list_head;
-    T_LINKCB *f0 = p->next;
-    T_LINKCB *f1, *lastb = NULL;
-    while (f0 != q)
+    T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    const T_LINKCB *current_linkcb = before->next;
+    T_LINKCB *last_bracket = NULL;
+    while (current_linkcb != after)
     {
-        f = f->next;
-        if (f == refal.free_memory_list_head)
+        linkcb_free_memory = linkcb_free_memory->next;
+        if (linkcb_free_memory == refal.free_memory_list_head)
             return false;
-        switch (f0->tag)
+        switch (current_linkcb->tag)
         {
         case TAGLB:
-            f->info.codep = lastb;
-            lastb = f;
+            linkcb_free_memory->info.codep = last_bracket;
+            last_bracket = linkcb_free_memory;
             break;
         case TAGRB:
-            f->info.codep = lastb;
-            f->tag = TAGRB;
-            f1 = lastb->info.codep;
-            lastb->info.codep = f;
-            lastb->tag = TAGLB;
-            lastb = f1;
+            linkcb_free_memory->info.codep = last_bracket;
+            linkcb_free_memory->tag = TAGRB;
+            T_LINKCB *temp_last_bracket = last_bracket->info.codep;
+            last_bracket->info.codep = linkcb_free_memory;
+            last_bracket->tag = TAGLB;
+            last_bracket = temp_last_bracket;
             break;
         default:
-            f->tag = f0->tag;
-            f->info.code = f0->info.code;
+            linkcb_free_memory->tag = current_linkcb->tag;
+            linkcb_free_memory->info.code = current_linkcb->info.code;
         }
-        f0 = f0->next;
+        current_linkcb = current_linkcb->next;
     }
-    if (refal.free_memory_list_head == f)
+    if (refal.free_memory_list_head == linkcb_free_memory)
         return true;
-    f0 = refal.free_memory_list_head->next;
-    f1 = f->next;
-    refal.free_memory_list_head->next = f1;
-    f1->previous = refal.free_memory_list_head;
-    T_LINKCB *r1 = r->next;
-    f->next = r1;
-    r1->previous = f;
-    r->next = f0;
-    f0->previous = r;
+    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
+    T_LINKCB *next_linkcb_free_memory = linkcb_free_memory->next;
+    refal.free_memory_list_head->next = next_linkcb_free_memory;
+    next_linkcb_free_memory->previous = refal.free_memory_list_head;
+    T_LINKCB *next_where = where->next;
+    linkcb_free_memory->next = next_where;
+    next_where->previous = linkcb_free_memory;
+    where->next = first_linkcb_free_memory;
+    first_linkcb_free_memory->previous = where;
     return true;
 }
 

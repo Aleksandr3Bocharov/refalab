@@ -259,7 +259,7 @@ void (*lengw_1)(void) = lengw_;
 
 static void multe_(void)
 {
-    const T_LINKCB *pn = refal.previous_argument->next;
+    T_LINKCB *pn = refal.previous_argument->next;
     if (pn == refal.next_argument || pn->tag != TAGN)
     {
         refal.upshot = 2;
@@ -276,7 +276,7 @@ static void multe_(void)
         do
         {
             p = refal.next_result->previous;
-            if (!lcopy(p, pn, refal.next_argument))
+            if (!copy_expression(p, pn, refal.next_argument))
             {
                 refal.upshot = 3;
                 return;
