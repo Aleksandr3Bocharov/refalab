@@ -550,14 +550,14 @@ void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
     T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
-    const T_LINKCB *current_linkcb = before->next;
+    const T_LINKCB *current = before->next;
     T_LINKCB *last_bracket = NULL;
-    while (current_linkcb != after)
+    while (current != after)
     {
         linkcb_free_memory = linkcb_free_memory->next;
         if (linkcb_free_memory == refal.free_memory_list_head)
             return false;
-        switch (current_linkcb->tag)
+        switch (current->tag)
         {
         case TAGLB:
             linkcb_free_memory->info.codep = last_bracket;
@@ -572,10 +572,10 @@ bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
             last_bracket = temp_last_bracket;
             break;
         default:
-            linkcb_free_memory->tag = current_linkcb->tag;
-            linkcb_free_memory->info.code = current_linkcb->info.code;
+            linkcb_free_memory->tag = current->tag;
+            linkcb_free_memory->info.code = current->info.code;
         }
-        current_linkcb = current_linkcb->next;
+        current = current->next;
     }
     if (refal.free_memory_list_head == linkcb_free_memory)
         return true;
@@ -745,21 +745,21 @@ static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_
     return;
 }
 
-T_LINKCB *lldupl(const T_LINKCB *p, const T_LINKCB *q, const T_LINKCB *u)
+T_LINKCB *after_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate)
 {
-    const T_LINKCB *x = p->next;
-    T_LINKCB *y = u->next;
-    while (x != q)
+    const T_LINKCB *current = before->next;
+    T_LINKCB *current_duplicate = before_duplicate->next;
+    while (current != after)
     {
-        if (x->tag != y->tag)
+        if (current->tag != current_duplicate->tag)
             return NULL;
-        if (x->info.code != y->info.code)
-            if (x->tag != TAGLB && x->tag != TAGRB)
+        if (current->info.code != current_duplicate->info.code)
+            if (current->tag != TAGLB && current->tag != TAGRB)
                 return NULL;
-        x = x->next;
-        y = y->next;
+        current = current->next;
+        current_duplicate = current_duplicate->next;
     }
-    return y;
+    return current_duplicate;
 }
 
 T_LINKCB *rfrstr(const char *str, T_LINKCB *p)
