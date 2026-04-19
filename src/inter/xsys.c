@@ -48,7 +48,7 @@ static void system_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char cmd[8192];
-    p = get_string_argument(cmd, 8191, p);
+    p = get_string_expression(cmd, 8191, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
@@ -117,7 +117,7 @@ static void get_env_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char env_name[32768];
-    p = get_string_argument(env_name, 32767, p);
+    p = get_string_expression(env_name, 32767, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
@@ -147,7 +147,7 @@ static void change_dir_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
-    p = get_string_argument(namd, MAX_PATHFILENAME, p);
+    p = get_string_expression(namd, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;

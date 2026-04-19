@@ -81,7 +81,7 @@ static void fopen_(void)
             break;
         p = p->next;
         char namf[MAX_PATHFILENAME + 1];
-        p = get_string_argument(namf, MAX_PATHFILENAME, p);
+        p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
         if (p != refal.next_argument)
             break;
         f = fopen(namf, s);
@@ -911,7 +911,7 @@ static void remove_file_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
-    p = get_string_argument(namf, MAX_PATHFILENAME, p);
+    p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
@@ -941,12 +941,12 @@ static void rename_(void)
     {
         T_LINKCB *p = refal.previous_argument->next;
         char namf[MAX_PATHFILENAME + 1];
-        p = get_string_argument(namf, MAX_PATHFILENAME, p);
+        p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
         if (p->tag != TAGN || gcoden(p) != 0)
             break;
         p = p->next;
         char namt[MAX_PATHFILENAME + 1];
-        p = get_string_argument(namt, MAX_PATHFILENAME, p);
+        p = get_string_expression(namt, MAX_PATHFILENAME, p, refal.next_argument);
         if (p != refal.next_argument)
             break;
         const int r = rename(namf, namt);
@@ -974,7 +974,7 @@ static void exist_file_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char namf[MAX_PATHFILENAME + 1];
-    p = get_string_argument(namf, MAX_PATHFILENAME, p);
+    p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
@@ -996,7 +996,7 @@ static void exist_dir_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
     char namd[MAX_PATHFILENAME + 1];
-    p = get_string_argument(namd, MAX_PATHFILENAME, p);
+    p = get_string_expression(namd, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;

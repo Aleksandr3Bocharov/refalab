@@ -803,11 +803,11 @@ bool rfreof(int c, FILE *f, T_LINKCB *p)
     return false;
 }
 
-T_LINKCB *get_string_argument(char *string, size_t max_string_size, T_LINKCB *begin)
+T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *begin, const T_LINKCB *max_after)
 {
     T_LINKCB *current = begin;
     size_t i;
-    for (i = 0; current != refal.next_argument; i++)
+    for (i = 0; current != max_after; i++)
     {
         if (current->tag != TAGO || i == max_string_size)
             break;
