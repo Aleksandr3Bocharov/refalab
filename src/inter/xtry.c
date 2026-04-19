@@ -34,7 +34,7 @@ static void try_(void)
         s_st = malloc(sizeof(T_STATUS_TABLE));
         if (s_st == NULL)
             lack = true;
-        else if (!lcre(s_st))
+        else if (!create_status_table(s_st))
             lack = true;
         else if (!insert_from_free_memory_list(s_st->view, 2))
         {

@@ -243,7 +243,7 @@ void refal_execute(uint8_t *refalab_function)
     bool lack_memory = false;
     if (!more_free_memory())
         lack_memory = true;
-    else if (!lcre(&status_table))
+    else if (!create_status_table(&status_table))
         lack_memory = true;
     else if (!insert_view_k_function_dot(&status_table, refalab_function))
         lack_memory = true;
@@ -603,34 +603,34 @@ bool exist_status_table(const T_STATUS_TABLE *status_table)
     return false;
 }
 
-bool lcre(T_STATUS_TABLE *ast)
+bool create_status_table(T_STATUS_TABLE *status_table)
 {
     if (refal_init)
         refal_initiate();
-    if (exist_status_table(ast))
-        refal_abort_end("lcre: process already exists");
-    ast->view = refal.free_memory_list_head->next;
-    if (ast->view == refal.free_memory_list_head)
+    if (exist_status_table(status_table))
+        refal_abort_end("create_status_table: process already exists");
+    status_table->view = refal.free_memory_list_head->next;
+    if (status_table->view == refal.free_memory_list_head)
         return false;
-    ast->store = ast->view->next;
-    if (ast->store == refal.free_memory_list_head)
+    status_table->store = status_table->view->next;
+    if (status_table->store == refal.free_memory_list_head)
         return false;
-    T_LINKCB *flhead1 = ast->store->next;
-    refal.free_memory_list_head->next = flhead1;
-    flhead1->previous = refal.free_memory_list_head;
-    ast->view->next = ast->view;
-    ast->view->previous = ast->view;
-    ast->store->next = ast->store;
-    ast->store->previous = ast->store;
-    T_STATUS_TABLE *q = refal.last_status_table;
-    ast->next = (T_STATUS_TABLE *)&refal;
-    refal.last_status_table = ast;
-    q->next = ast;
-    ast->previous = q;
-    ast->state = 1;
-    ast->dot = NULL;
-    ast->step = 0;
-    ast->stop = MAX_STOP;
+    T_LINKCB *next_free_memory_list_head = status_table->store->next;
+    refal.free_memory_list_head->next = next_free_memory_list_head;
+    next_free_memory_list_head->previous = refal.free_memory_list_head;
+    status_table->view->next = status_table->view;
+    status_table->view->previous = status_table->view;
+    status_table->store->next = status_table->store;
+    status_table->store->previous = status_table->store;
+    T_STATUS_TABLE *last_status_table = refal.last_status_table;
+    status_table->next = (T_STATUS_TABLE *)&refal;
+    refal.last_status_table = status_table;
+    last_status_table->next = status_table;
+    status_table->previous = last_status_table;
+    status_table->state = 1;
+    status_table->dot = NULL;
+    status_table->step = 0;
+    status_table->stop = MAX_STOP;
     return true;
 }
 

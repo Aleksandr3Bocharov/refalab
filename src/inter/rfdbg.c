@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     {
         if (!more_free_memory())
             break;
-        if (!lcre(&s_st))
+        if (!create_status_table(&s_st))
             break;
         if (!insert_view_k_function_dot(&s_st, &refalab_go))
             break;
