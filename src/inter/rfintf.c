@@ -803,18 +803,19 @@ bool rfreof(int c, FILE *f, T_LINKCB *p)
     return false;
 }
 
-T_LINKCB *get_string_argument(char *string, size_t max_string_size, T_LINKCB *p)
+T_LINKCB *get_string_argument(char *string, size_t max_string_size, T_LINKCB *begin)
 {
+    T_LINKCB *current = begin;
     size_t i;
-    for (i = 0; p != refal.next_argument; i++)
+    for (i = 0; current != refal.next_argument; i++)
     {
-        if (p->tag != TAGO || i == l)
+        if (current->tag != TAGO || i == max_string_size)
             break;
-        *(str + i) = p->info.infoc;
-        p = p->next;
+        *(string + i) = current->info.infoc;
+        current = current->next;
     }
-    *(str + i) = '\0';
-    return p;
+    *(string + i) = '\0';
+    return current;
 }
 
 //----------- end of file  RFINTF.C ------------
