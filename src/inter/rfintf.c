@@ -745,7 +745,7 @@ static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_
     return;
 }
 
-T_LINKCB *after_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate)
+T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate)
 {
     const T_LINKCB *current = before->next;
     T_LINKCB *current_duplicate = before_duplicate->next;
@@ -803,7 +803,7 @@ bool rfreof(int c, FILE *f, T_LINKCB *p)
     return false;
 }
 
-T_LINKCB *rfgstr(char *str, size_t l, T_LINKCB *p)
+T_LINKCB *get_string_argument(char *string, size_t max_string_size, T_LINKCB *p)
 {
     size_t i;
     for (i = 0; p != refal.next_argument; i++)

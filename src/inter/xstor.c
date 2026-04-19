@@ -61,7 +61,7 @@ static void dg_(void)
             return;
         }; // FAIL
         pr = pl->info.codep;
-        q = after_duplicate(refal.previous_argument, refal.next_argument, pl);
+        q = find_duplicate(refal.previous_argument, refal.next_argument, pl);
         if (q == NULL)
             continue;
         if (q->tag != TAGO || q->info.infoc != '=')
@@ -131,7 +131,7 @@ static void rp_(void)
                 if (pl->tag != TAGLB)
                     break;
                 pr = pl->info.codep;
-                T_LINKCB *q = after_duplicate(refal.previous_argument, p, pl);
+                T_LINKCB *q = find_duplicate(refal.previous_argument, p, pl);
                 if (q == NULL)
                     continue;
                 if (q->tag != TAGO || q->info.infoc != '=')
@@ -165,7 +165,7 @@ static void cp_(void)
             return;
         }; // FAIL
         pr = pl->info.codep;
-        q = after_duplicate(refal.previous_argument, refal.next_argument, pl);
+        q = find_duplicate(refal.previous_argument, refal.next_argument, pl);
         if (q == NULL)
             continue;
         if (q->tag != TAGO || q->info.infoc != '=')
