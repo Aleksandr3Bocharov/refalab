@@ -144,7 +144,7 @@ extern bool more_free_memory(void);
 extern bool insert_from_free_memory_list(T_LINKCB *where, size_t count);
 extern bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count);
 extern bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_function);
-extern T_LINKCB *after_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate);
+extern T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate);
 extern bool check_count_free_memory_list(size_t count);
 
 extern void rfrun(T_STATUS_TABLE *ast);
