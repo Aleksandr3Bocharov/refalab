@@ -104,7 +104,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
 static void pr_imres(void);
 static void pr_step(void);
 
-void (*dbt)(T_STATUS_TABLE *) = NULL;
+void (*status_table_debugger)(T_STATUS_TABLE *) = NULL;
 
 void rfdbg(T_STATUS_TABLE *s_st)
 {
@@ -281,7 +281,7 @@ void rfdbg(T_STATUS_TABLE *s_st)
         s_upto = 0x7FFFFFFF;
     //==================================
     //  initialization
-    dbt = dbtry;
+    status_table_debugger = dbtry;
     printed_step = 0;
     euc_step = 0;
     res_step = 0;

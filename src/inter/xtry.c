@@ -63,7 +63,7 @@ static void try_(void)
 #endif
     do
     {
-        if (dbt == NULL)
+        if (status_table_debugger == NULL)
         {
 #if defined mdebug
             if (s_st->step >= s_stop)
@@ -87,7 +87,7 @@ static void try_(void)
 #endif
         }
         else
-            (*dbt)(s_st); // prokrutka vkluchena
+            (*status_table_debugger)(s_st); // prokrutka vkluchena
         if (s_st->state == 3)
             if (more_free_memory())
                 s_st->state = 1;
@@ -95,7 +95,7 @@ static void try_(void)
     transplantation(upst->store, s_st->store, s_st->store);
     upst->step = --s_st->step;
 #if defined mdebug
-    if (dbt == NULL)
+    if (status_table_debugger == NULL)
         upst->stop = upst->step + 1;
 #endif
     switch (s_st->state)
