@@ -57,11 +57,10 @@ static T_DETERMINATION *last_determination = NULL;
 static T_DETERMINATION *current_determination;
 static T_DETERMINATION dummy_determination = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
-static bool trace_cond = false;
-static bool trap_cond = false;
+static bool trace_condition = false;
 static bool ge_all = true;
 static bool eq_all = true;
-static bool e1empty = false;
+static bool e_empty = false;
 static bool was_ge;
 static bool was_le;
 static bool was_eq;
@@ -121,7 +120,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         ge_all = false;
         while (*arg != '\n')
         {
@@ -138,7 +137,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         ge_all = false;
         while (*arg != '\n')
         {
@@ -155,7 +154,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         eq_all = false;
         while (*arg != '\n')
         {
@@ -172,7 +171,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -188,7 +187,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -204,7 +203,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_cond = true;
+        trace_condition = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -220,7 +219,6 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trap_cond = true;
         while (*arg != '\n')
         {
             get_arg();
@@ -275,7 +273,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     }
     printf("\n");
     //  set FROM and TO
-    if (!s_from && (s_upto || trace_cond))
+    if (!s_from && (s_upto || trace_condition))
         s_from = 1;
     if (!s_upto && s_from)
         s_upto = 0x7FFFFFFF;
@@ -743,7 +741,7 @@ static void one_step(T_STATUS_TABLE *status_table)
             continue;
         break;
     }
-    if (e1empty && status_table->state == 2)
+    if (e_empty && status_table->state == 2)
     {
         pr_step();
         if (euc_step != curr_step)
@@ -942,7 +940,7 @@ static bool get_yn(const char *b)
         return false;
     }
     if (*b == 'y')
-        e1empty = true;
+        e_empty = true;
     return true;
 }
 

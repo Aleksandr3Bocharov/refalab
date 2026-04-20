@@ -255,7 +255,7 @@ void refal_execute(uint8_t *refalab_function)
     }
     status_table.stop = MAX_STOP;
 #if defined mdebug
-    const uint32_t status_table_stop = status_table.stop;
+    const uint32_t step_stop = status_table.stop;
 #endif
     enum
     {
@@ -276,13 +276,13 @@ void refal_execute(uint8_t *refalab_function)
                 execute_state = DONE;
                 break;
             }
-            if (status_table.state != 1 || status_table.step >= status_table_stop)
+            if (status_table.state != 1 || status_table.step >= step_stop)
             {
                 bool abort_end = true;
                 if (status_table.state == 3)
                     if (more_free_memory())
                         abort_end = false;
-                if (status_table.step >= status_table_stop)
+                if (status_table.step >= step_stop)
                 {
                     status_table.step = 0;
                     abort_end = false;
