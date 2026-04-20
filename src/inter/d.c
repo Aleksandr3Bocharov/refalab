@@ -41,21 +41,21 @@ typedef enum status_table_debugger_states
     DB_AB
 } T_STATUS_TABLE_DEBUGGER_STATES;
 
-typedef struct DET_TAB
+typedef struct determination
 {
-    struct DET_TAB *det_next;
-    char gt;
-    char ge;
-    char eq;
-    char ne;
-    char lt;
-    char le;
-    char tr;
-    char *det_id;
-} DET_TAB;
-static DET_TAB *last_det = NULL;
-static DET_TAB *det_table;
-static DET_TAB dummy_det_table = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
+    struct determination *next;
+    bool gt;
+    bool ge;
+    bool eq;
+    bool ne;
+    bool lt;
+    bool le;
+    bool tr;
+    char *identifier;
+} T_DETERMINATION;
+static T_DETERMINATION *last_determination = NULL;
+static T_DETERMINATION *current_determination;
+static T_DETERMINATION dummy_determination = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
 static bool trace_cond = false;
 static bool trap_cond = false;
@@ -127,7 +127,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->gt = 1;
+            current_determination->gt = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -144,7 +144,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->ge = 1;
+            current_determination->ge = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -161,7 +161,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->eq = 1;
+            current_determination->eq = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -177,7 +177,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->ne = 1;
+            current_determination->ne = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -193,7 +193,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->lt = 1;
+            current_determination->lt = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -209,7 +209,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->le = 1;
+            current_determination->le = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -225,7 +225,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         {
             get_arg();
             get_det();
-            det_table->tr = 1;
+            current_determination->tr = true;
             arg = arg + l_arg + s_arg;
         }
     }
@@ -303,9 +303,9 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 break;
             }
             getpf(status_table);
-            if (!ge_all && !det_table->ge && !det_table->gt)
+            if (!ge_all && !current_determination->ge && !current_determination->gt)
             {
-                if (det_table->tr)
+                if (current_determination->tr)
                 {
                     debugger_state = DBG_TRAP;
                     break;
@@ -320,7 +320,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 break;
             }
             // enter into station "is already"
-            if ((!ge_all && !det_table->ge) || det_table->gt)
+            if ((!ge_all && !current_determination->ge) || current_determination->gt)
                 was_ge = false;
             else
             {
@@ -343,10 +343,10 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             break;
         // "is already" station
         case DBG_ALREADY:
-            if (det_table->le || det_table->lt)
+            if (current_determination->le || current_determination->lt)
             {
                 //  "isn't already"
-                if (det_table->lt)
+                if (current_determination->lt)
                     was_le = false;
                 else
                 {
@@ -369,7 +369,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 while (status_table->dot != NULL)
                 {
                     getpf(status_table);
-                    if (det_table->tr)
+                    if (current_determination->tr)
                     {
                         debugger_state = DBG_TRAP;
                         quit = true;
@@ -405,14 +405,14 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     debugger_state = DBG_ABEND;
                     break;
                 }
-                if ((!eq_all && !det_table->eq) || det_table->ne)
+                if ((!eq_all && !current_determination->eq) || current_determination->ne)
                     was_eq = false;
                 else
                 {
                     was_eq = true;
                     pr_euc();
                 }
-                if (det_table->tr)
+                if (current_determination->tr)
                 {
                     debugger_state = DBG_TRAP;
                     break;
@@ -527,9 +527,9 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 break;
             }
             getpf(status_table);
-            if (!ge_all && !det_table->ge && !det_table->gt)
+            if (!ge_all && !current_determination->ge && !current_determination->gt)
             {
-                if (det_table->tr)
+                if (current_determination->tr)
                 {
                     status_table_debugger_state = DB_TRAP;
                     break;
@@ -544,7 +544,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 break;
             }
             // enter into station "is already"
-            if ((!ge_all && !det_table->ge) || det_table->gt)
+            if ((!ge_all && !current_determination->ge) || current_determination->gt)
                 was_ge = false;
             else
             {
@@ -567,10 +567,10 @@ static void dbtry(T_STATUS_TABLE *status_table)
             break;
         // "is already" station
         case DB_ALREADY:
-            if (det_table->le || det_table->lt)
+            if (current_determination->le || current_determination->lt)
             {
                 //  "isn't already"
-                if (det_table->lt)
+                if (current_determination->lt)
                     was_le = false;
                 else
                 {
@@ -593,7 +593,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 while (status_table->dot != NULL)
                 {
                     getpf(status_table);
-                    if (det_table->tr)
+                    if (current_determination->tr)
                     {
                         status_table_debugger_state = DB_TRAP;
                         quit = true;
@@ -629,14 +629,14 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     status_table_debugger_state = DB_ABEND;
                     break;
                 }
-                if ((!eq_all && !det_table->eq) || det_table->ne)
+                if ((!eq_all && !current_determination->eq) || current_determination->ne)
                     was_eq = false;
                 else
                 {
                     was_eq = true;
                     pr_euc();
                 }
-                if (det_table->tr)
+                if (current_determination->tr)
                 {
                     status_table_debugger_state = DB_TRAP;
                     break;
@@ -718,14 +718,14 @@ static void dbtry(T_STATUS_TABLE *status_table)
 //    procedures
 static void init_det_flags(void)
 {
-    for (DET_TAB *det = last_det; det != NULL;)
+    for (T_DETERMINATION *det = last_determination; det != NULL;)
     {
-        free(det->det_id);
-        DET_TAB *det1 = det;
-        det = det->det_next;
+        free(det->identifier);
+        T_DETERMINATION *det1 = det;
+        det = det->next;
         free(det1);
     }
-    last_det = NULL;
+    last_determination = NULL;
     return;
 }
 
@@ -852,21 +852,21 @@ static void getpf(const T_STATUS_TABLE *status_table)
             buff_id[i] = (char)toupper(*(p_id + i));
         buff_id[id_l] = '\0';
     }
-    det_table = last_det;
+    current_determination = last_determination;
     if (strlen(buff_id) == 0)
-        det_table = NULL;
+        current_determination = NULL;
     else
-        while (det_table != NULL)
+        while (current_determination != NULL)
         {
             for (i = 0; buff_id[i] != '\0'; i++)
-                if (*(det_table->det_id + i) != buff_id[i])
+                if (*(current_determination->identifier + i) != buff_id[i])
                     break;
-            if (buff_id[i] == '\0' && *(det_table->det_id + i) == '\0')
+            if (buff_id[i] == '\0' && *(current_determination->identifier + i) == '\0')
                 break;
-            det_table = det_table->det_next;
+            current_determination = current_determination->next;
         }
-    if (det_table == NULL)
-        det_table = &dummy_det_table;
+    if (current_determination == NULL)
+        current_determination = &dummy_determination;
     return;
 }
 
@@ -885,22 +885,22 @@ static void get_arg(void)
 
 static bool get_det(void)
 {
-    det_table = last_det;
-    while (det_table != NULL)
+    current_determination = last_determination;
+    while (current_determination != NULL)
     {
-        if (strncmp(det_table->det_id, arg, l_arg) == 0)
-            if (*(det_table->det_id + l_arg) == '\0')
+        if (strncmp(current_determination->identifier, arg, l_arg) == 0)
+            if (*(current_determination->identifier + l_arg) == '\0')
                 return true;
-        det_table = det_table->det_next;
+        current_determination = current_determination->next;
     }
     bool ab = false;
-    det_table = (DET_TAB *)malloc(sizeof(DET_TAB));
-    if (det_table == NULL)
+    current_determination = (T_DETERMINATION *)malloc(sizeof(T_DETERMINATION));
+    if (current_determination == NULL)
         ab = true;
     else
     {
-        det_table->det_id = malloc(l_arg + 1);
-        if (det_table->det_id == NULL)
+        current_determination->identifier = malloc(l_arg + 1);
+        if (current_determination->identifier == NULL)
             ab = true;
     }
     if (ab)
@@ -910,17 +910,17 @@ static bool get_det(void)
         return false;
     }
     for (size_t i = 0; i < l_arg; i++)
-        *(det_table->det_id + i) = *(arg + i);
-    *(det_table->det_id + l_arg) = '\0';
-    det_table->det_next = last_det;
-    last_det = det_table;
-    det_table->ge = 0;
-    det_table->gt = 0;
-    det_table->eq = 0;
-    det_table->ne = 0;
-    det_table->le = 0;
-    det_table->lt = 0;
-    det_table->tr = 0;
+        *(current_determination->identifier + i) = *(arg + i);
+    *(current_determination->identifier + l_arg) = '\0';
+    current_determination->next = last_determination;
+    last_determination = current_determination;
+    current_determination->ge = false;
+    current_determination->gt = false;
+    current_determination->eq = false;
+    current_determination->ne = false;
+    current_determination->le = false;
+    current_determination->lt = false;
+    current_determination->tr = false;
     return true;
 }
 
