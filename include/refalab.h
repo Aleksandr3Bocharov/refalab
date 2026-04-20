@@ -124,7 +124,7 @@ extern T_REFAL refal;
 
 extern void refal_abort_end(const char *abort_message);
 extern void delete_status_table(const T_STATUS_TABLE *status_table);
-extern void ;
+extern void insert_to_free_memory_list(T_LINKCB *before, T_LINKCB *after);
 extern void refal_execute(uint8_t *refalab_function);
 extern void refal_get_args(int argc, char *argv[]);
 extern T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *begin, const T_LINKCB *max_after);
