@@ -132,7 +132,7 @@ extern void refal_initiate(void);
 extern void print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern void print_expression_m(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern void print_expression_s(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
-extern bool rfreof(int c, FILE *f, T_LINKCB *p);
+extern bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb);
 extern T_LINKCB *set_string_expression(const char *string, T_LINKCB *before);
 extern void refal_terminate_memory(void);
 extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
