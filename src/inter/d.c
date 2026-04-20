@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -106,7 +106,7 @@ static void pr_step(void);
 
 void (*status_table_debugger)(T_STATUS_TABLE *) = NULL;
 
-void rfdbg(T_STATUS_TABLE *s_st)
+void refal_debugger(T_STATUS_TABLE *status_table)
 {
     // read task for debugging
     init_det_flags();

@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
             break;
         if (!insert_view_k_function_dot(&status_table, &refalab_go))
             break;
-        rfdbg(&status_table); // there is exit
+        refal_debugger(&status_table); // there is exit
     } while (false);
     printf("\nRefalAB debugger: no memory for initialization\n");
     fclose(stdin);

@@ -14,7 +14,7 @@
 #include "refalab.h"
 
 extern void (*status_table_debugger)(T_STATUS_TABLE *);
-extern void rfdbg(T_STATUS_TABLE *s_st);
+extern void refal_debugger(T_STATUS_TABLE *status_table);
 
 #endif
 
