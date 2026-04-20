@@ -149,7 +149,7 @@ extern bool check_count_free_memory_list(size_t count);
 
 extern void rfrun(T_STATUS_TABLE *ast);
 
-extern void (*dbt)(T_STATUS_TABLE *);
+extern void (*status_table_debugger)(T_STATUS_TABLE *);
 extern void rfdbg(T_STATUS_TABLE *s_st);
 
 #endif
