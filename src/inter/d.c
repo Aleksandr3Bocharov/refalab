@@ -19,7 +19,7 @@
 #include "rfintf.h"
 #include "rfrun.h"
 
-typedef enum dbg_states
+typedef enum debugger_states
 {
     DBG_NOT_YET,
     DBG_ALREADY,
@@ -28,9 +28,9 @@ typedef enum dbg_states
     DBG_ABEND,
     DBG_ABEND1,
     DBG_EOJ
-} T_DBG_STATES;
+} T_DEBUGGER_STATES;
 
-typedef enum db_states
+typedef enum status_table_debugger_states
 {
     DB_NOT_YET,
     DB_ALREADY,
@@ -39,7 +39,7 @@ typedef enum db_states
     DB_EOJ,
     DB_DO,
     DB_AB
-} T_DB_STATES;
+} T_STATUS_TABLE_DEBUGGER_STATES;
 
 typedef struct DET_TAB
 {
@@ -96,9 +96,9 @@ static void get_arg(void);
 static bool get_det(void);
 static bool get_numb(int32_t *numb);
 static bool get_yn(const char *b);
-static void dbtry(T_STATUS_TABLE *ss_st);
-static void getpf(const T_STATUS_TABLE *ss_st);
-static void one_step(T_STATUS_TABLE *ss_st);
+static void dbtry(T_STATUS_TABLE *status_table);
+static void getpf(const T_STATUS_TABLE *status_table);
+static void one_step(T_STATUS_TABLE *status_table);
 static void pr_euc(void);
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
 static void pr_imres(void);
@@ -286,37 +286,37 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     euc_step = 0;
     res_step = 0;
     res_prevk = res_nextd = NULL;
-    T_DBG_STATES dbg_state = DBG_NOT_YET;
+    T_DEBUGGER_STATES debugger_state = DBG_NOT_YET;
     while (true)
-        switch (dbg_state)
+        switch (debugger_state)
         {
             // station "not yet"
         case DBG_NOT_YET:
-            if (s_st->dot == NULL)
+            if (status_table->dot == NULL)
             {
-                dbg_state = DBG_DONE;
+                debugger_state = DBG_DONE;
                 break;
             }
-            if (s_stop < s_st->step)
+            if (s_stop < status_table->step)
             {
-                dbg_state = DBG_ABEND;
+                debugger_state = DBG_ABEND;
                 break;
             }
-            getpf(s_st);
+            getpf(status_table);
             if (!ge_all && !det_table->ge && !det_table->gt)
             {
                 if (det_table->tr)
                 {
-                    dbg_state = DBG_TRAP;
+                    debugger_state = DBG_TRAP;
                     break;
                 }
-                one_step(s_st);
-                if (s_st->state != 1)
+                one_step(status_table);
+                if (status_table->state != 1)
                 {
-                    dbg_state = DBG_ABEND;
+                    debugger_state = DBG_ABEND;
                     break;
                 }
-                dbg_state = DBG_NOT_YET;
+                debugger_state = DBG_NOT_YET;
                 break;
             }
             // enter into station "is already"
@@ -339,7 +339,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 dot1 = pk->info.codep;
                 pk->info.code = NULL;
             }
-            dbg_state = DBG_ALREADY;
+            debugger_state = DBG_ALREADY;
             break;
         // "is already" station
         case DBG_ALREADY:
@@ -366,26 +366,26 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 }
                 // compute call entirely
                 bool quit = false;
-                while (s_st->dot != NULL)
+                while (status_table->dot != NULL)
                 {
-                    getpf(s_st);
+                    getpf(status_table);
                     if (det_table->tr)
                     {
-                        dbg_state = DBG_TRAP;
+                        debugger_state = DBG_TRAP;
                         quit = true;
                         break;
                     }
-                    one_step(s_st);
-                    if (s_stop < s_st->step)
+                    one_step(status_table);
+                    if (s_stop < status_table->step)
                     {
-                        dbg_state = DBG_ABEND;
+                        debugger_state = DBG_ABEND;
                         quit = true;
                         break;
                     }
-                    curr_step = s_st->step + 1;
-                    if (s_st->state != 1)
+                    curr_step = status_table->step + 1;
+                    if (status_table->state != 1)
                     {
-                        dbg_state = DBG_ABEND;
+                        debugger_state = DBG_ABEND;
                         quit = true;
                         break;
                     }
@@ -393,16 +393,16 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 if (quit)
                     break;
                 //  joint
-                curr_step = s_st->step;
-                s_st->dot = dot2;
+                curr_step = status_table->step;
+                status_table->dot = dot2;
                 if (was_le)
                     pr_finres(curr_step2, prevk2, nextd2);
             } // for label ALREADY
             else
             { // step in station "is already"
-                if (s_stop < s_st->step)
+                if (s_stop < status_table->step)
                 {
-                    dbg_state = DBG_ABEND;
+                    debugger_state = DBG_ABEND;
                     break;
                 }
                 if ((!eq_all && !det_table->eq) || det_table->ne)
@@ -414,40 +414,40 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 }
                 if (det_table->tr)
                 {
-                    dbg_state = DBG_TRAP;
+                    debugger_state = DBG_TRAP;
                     break;
                 }
-                one_step(s_st);
-                if (s_st->state != 1)
+                one_step(status_table);
+                if (status_table->state != 1)
                 {
-                    dbg_state = DBG_ABEND;
+                    debugger_state = DBG_ABEND;
                     break;
                 }
                 if (was_eq)
                     pr_imres();
             }
-            if (s_st->dot != NULL)
+            if (status_table->dot != NULL)
             {
-                getpf(s_st);
-                dbg_state = DBG_ALREADY;
+                getpf(status_table);
+                debugger_state = DBG_ALREADY;
                 break;
             }
             //  joint
-            s_st->dot = dot1;
+            status_table->dot = dot1;
             if (!ge_all && was_ge)
                 pr_finres(curr_step1, prevk1, nextd1);
-            dbg_state = DBG_NOT_YET;
+            debugger_state = DBG_NOT_YET;
             break;
         case DBG_DONE:
             printf("Concretization is executed\n");
-            dbg_state = DBG_EOJ;
+            debugger_state = DBG_EOJ;
             break;
         case DBG_TRAP:
             printf("Function name trap\n");
-            dbg_state = DBG_ABEND1;
+            debugger_state = DBG_ABEND1;
             break;
         case DBG_ABEND:
-            switch (s_st->state)
+            switch (status_table->state)
             {
             case 1:
                 printf("Stop on step number\n");
@@ -458,22 +458,22 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             case 3:
                 printf("Free memory exhausted\n");
             }
-            getpf(s_st);
-            dbg_state = DBG_ABEND1;
+            getpf(status_table);
+            debugger_state = DBG_ABEND1;
             break;
         case DBG_ABEND1:
             printf("Leading functional term:\n");
             print_expression_m("     ", prevk, nextd, true);
-            dbg_state = DBG_EOJ;
+            debugger_state = DBG_EOJ;
             break;
         case DBG_EOJ:
-            printf("Completed steps number = %u\n", s_st->step);
+            printf("Completed steps number = %u\n", status_table->step);
             printf("View field:\n");
-            print_expression_m("     ", s_st->view, s_st->view, true);
-            if (s_st->store->next != s_st->store)
+            print_expression_m("     ", status_table->view, status_table->view, true);
+            if (status_table->store->next != status_table->store)
             {
                 printf("Burried:\n");
-                print_expression_m("     ", s_st->store, s_st->store, true);
+                print_expression_m("     ", status_table->store, status_table->store, true);
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
@@ -495,14 +495,14 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
                 printf("Elapsed time = %s\n", s);
             }
-            delete_status_table(s_st);
+            delete_status_table(status_table);
             refal_terminate_memory();
             exit(0);
             return;
         }
 }
 
-static void dbtry(T_STATUS_TABLE *ss_st)
+static void dbtry(T_STATUS_TABLE *status_table)
 {
     T_LINKCB *v1 = prevk;
     T_LINKCB *v2 = nextd;
@@ -511,36 +511,36 @@ static void dbtry(T_STATUS_TABLE *ss_st)
     uint32_t v5 = res_step;
     const T_LINKCB *v6 = res_prevk;
     const T_LINKCB *v7 = res_nextd;
-    T_DB_STATES db_state = DB_NOT_YET;
+    T_STATUS_TABLE_DEBUGGER_STATES status_table_debugger_state = DB_NOT_YET;
     while (true)
-        switch (db_state)
+        switch (status_table_debugger_state)
         {
         case DB_NOT_YET:
-            if (ss_st->dot == NULL)
+            if (status_table->dot == NULL)
             {
-                db_state = DB_DO;
+                status_table_debugger_state = DB_DO;
                 break;
             }
-            if (s_stop < ss_st->step)
+            if (s_stop < status_table->step)
             {
-                db_state = DB_ABEND;
+                status_table_debugger_state = DB_ABEND;
                 break;
             }
-            getpf(ss_st);
+            getpf(status_table);
             if (!ge_all && !det_table->ge && !det_table->gt)
             {
                 if (det_table->tr)
                 {
-                    db_state = DB_TRAP;
+                    status_table_debugger_state = DB_TRAP;
                     break;
                 }
-                one_step(ss_st);
-                if (ss_st->state != 1)
+                one_step(status_table);
+                if (status_table->state != 1)
                 {
-                    db_state = DB_AB;
+                    status_table_debugger_state = DB_AB;
                     break;
                 }
-                db_state = DB_NOT_YET;
+                status_table_debugger_state = DB_NOT_YET;
                 break;
             }
             // enter into station "is already"
@@ -563,7 +563,7 @@ static void dbtry(T_STATUS_TABLE *ss_st)
                 dot1 = pk->info.codep;
                 pk->info.code = NULL;
             }
-            db_state = DB_ALREADY;
+            status_table_debugger_state = DB_ALREADY;
             break;
         // "is already" station
         case DB_ALREADY:
@@ -590,26 +590,26 @@ static void dbtry(T_STATUS_TABLE *ss_st)
                 }
                 // compute call entirely
                 bool quit = false;
-                while (ss_st->dot != NULL)
+                while (status_table->dot != NULL)
                 {
-                    getpf(ss_st);
+                    getpf(status_table);
                     if (det_table->tr)
                     {
-                        db_state = DB_TRAP;
+                        status_table_debugger_state = DB_TRAP;
                         quit = true;
                         break;
                     }
-                    one_step(ss_st);
-                    if (s_stop < ss_st->step)
+                    one_step(status_table);
+                    if (s_stop < status_table->step)
                     {
-                        db_state = DB_ABEND;
+                        status_table_debugger_state = DB_ABEND;
                         quit = true;
                         break;
                     }
-                    curr_step = ss_st->step + 1;
-                    if (ss_st->state != 1)
+                    curr_step = status_table->step + 1;
+                    if (status_table->state != 1)
                     {
-                        db_state = DB_AB;
+                        status_table_debugger_state = DB_AB;
                         quit = true;
                         break;
                     }
@@ -617,16 +617,16 @@ static void dbtry(T_STATUS_TABLE *ss_st)
                 if (quit)
                     break;
                 //  joint
-                curr_step = ss_st->step;
-                ss_st->dot = dot2;
+                curr_step = status_table->step;
+                status_table->dot = dot2;
                 if (was_le)
                     pr_finres(curr_step2, prevk2, nextd2);
             } // for label ALREADY
             else
             { // step in station "is already"
-                if (s_stop < ss_st->step)
+                if (s_stop < status_table->step)
                 {
-                    db_state = DB_ABEND;
+                    status_table_debugger_state = DB_ABEND;
                     break;
                 }
                 if ((!eq_all && !det_table->eq) || det_table->ne)
@@ -638,47 +638,47 @@ static void dbtry(T_STATUS_TABLE *ss_st)
                 }
                 if (det_table->tr)
                 {
-                    db_state = DB_TRAP;
+                    status_table_debugger_state = DB_TRAP;
                     break;
                 }
-                one_step(ss_st);
-                if (ss_st->state != 1)
+                one_step(status_table);
+                if (status_table->state != 1)
                 {
-                    db_state = DB_AB;
+                    status_table_debugger_state = DB_AB;
                     break;
                 }
                 if (was_eq)
                     pr_imres();
             }
-            if (ss_st->dot != NULL)
+            if (status_table->dot != NULL)
             {
-                getpf(ss_st);
-                db_state = DB_ALREADY;
+                getpf(status_table);
+                status_table_debugger_state = DB_ALREADY;
                 break;
             }
             //  joint
-            ss_st->dot = dot1;
+            status_table->dot = dot1;
             if (!ge_all && was_ge)
                 pr_finres(curr_step1, prevk1, nextd1);
-            db_state = DB_NOT_YET;
+            status_table_debugger_state = DB_NOT_YET;
             break;
         case DB_TRAP:
             printf("Function name trap\n");
-            db_state = DB_ABEND;
+            status_table_debugger_state = DB_ABEND;
             break;
         case DB_ABEND:
             printf("Leading functional term:\n");
             print_expression_m("     ", prevk, nextd, true);
-            db_state = DB_EOJ;
+            status_table_debugger_state = DB_EOJ;
             break;
         case DB_EOJ:
-            printf("Completed steps number = %u\n", ss_st->step);
+            printf("Completed steps number = %u\n", status_table->step);
             printf("View field:\n");
-            print_expression_m("     ", ss_st->view, ss_st->view, true);
-            if (ss_st->store->next != ss_st->store)
+            print_expression_m("     ", status_table->view, status_table->view, true);
+            if (status_table->store->next != status_table->store)
             {
                 printf("Burried:\n");
-                print_expression_m("     ", ss_st->store, ss_st->store, true);
+                print_expression_m("     ", status_table->store, status_table->store, true);
             }
             if (nogcl != 0)
                 printf("Garbage collection number = %d\n", nogcl);
@@ -729,13 +729,13 @@ static void init_det_flags(void)
     return;
 }
 
-static void one_step(T_STATUS_TABLE *ss_st)
+static void one_step(T_STATUS_TABLE *status_table)
 {
-    ss_st->stop = ss_st->step + 1;
+    status_table->stop = status_table->step + 1;
     while (true)
     {
-        rfrun(ss_st);
-        if (ss_st->state != 3)
+        rfrun(status_table);
+        if (status_table->state != 3)
             break;
         if (refal.dynamic_boxes != NULL)
             nogcl++;
@@ -743,7 +743,7 @@ static void one_step(T_STATUS_TABLE *ss_st)
             continue;
         break;
     }
-    if (e1empty && ss_st->state == 2)
+    if (e1empty && status_table->state == 2)
     {
         pr_step();
         if (euc_step != curr_step)
@@ -753,10 +753,10 @@ static void one_step(T_STATUS_TABLE *ss_st)
         }
         printf("*** Recognition impossible\n");
         printf("*** Change leading term by empty term and continue ***\n");
-        ss_st->dot = pk->info.codep;
+        status_table->dot = pk->info.codep;
         insert_to_free_memory_list(prevk, nextd);
-        ss_st->state = 1;
-        ss_st->step++;
+        status_table->state = 1;
+        status_table->step++;
     };
     return;
 }
@@ -828,12 +828,12 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     return;
 }
 
-static void getpf(const T_STATUS_TABLE *ss_st)
+static void getpf(const T_STATUS_TABLE *status_table)
 {
-    curr_step = ss_st->step + 1;
-    pk = ss_st->dot->info.codep;
+    curr_step = status_table->step + 1;
+    pk = status_table->dot->info.codep;
     prevk = pk->previous;
-    nextd = ss_st->dot->next;
+    nextd = status_table->dot->next;
     nextk = pk->next;
     size_t i;
     uint8_t id_l;
