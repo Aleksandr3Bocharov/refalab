@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-03-14
+// 2026-04-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XFIO.C ---------------
@@ -94,7 +94,7 @@ static void fopen_(void)
             if (d > 0)
                 if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                     return;
-            p = rfrstr(serr, refal.next_result);
+            p = set_string_expression(serr, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, p->next);
         }
         return;
@@ -133,7 +133,7 @@ static void fclose_(void)
             const char *serr = strerror(err);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
                 return;
-            rfrstr(serr, refal.next_result);
+            set_string_expression(serr, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         return;
@@ -713,7 +713,7 @@ static void fseek_(void)
             const char *serr = strerror(err);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
                 return;
-            rfrstr(serr, refal.next_result);
+            set_string_expression(serr, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         return;
@@ -751,7 +751,7 @@ static void ftell_(void)
             const char *serr = strerror(err);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
                 return;
-            rfrstr(serr, refal.next_result);
+            set_string_expression(serr, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
             return;
         }
@@ -926,7 +926,7 @@ static void remove_file_(void)
         if (d > 0)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
-        p = rfrstr(serr, refal.next_result);
+        p = set_string_expression(serr, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, p->next);
     }
     return;
@@ -958,7 +958,7 @@ static void rename_(void)
             if (d > 0)
                 if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                     return;
-            p = rfrstr(serr, refal.next_result);
+            p = set_string_expression(serr, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, p->next);
         }
         return;

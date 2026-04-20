@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XTIME.C -----------------------
@@ -44,7 +44,7 @@ static void time_(void)
         return;
     if (!extended_insert_from_free_memory_list(refal.next_result, sl - 1))
         return;
-    rfrstr(s, refal.next_result);
+    set_string_expression(s, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
@@ -80,7 +80,7 @@ static void tm_(void)
             sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 2))
                 return;
-            rfrstr(s, refal.next_result);
+            set_string_expression(s, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         else
@@ -119,7 +119,7 @@ static void tm_elapsed_(void)
     sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
     if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 1))
         return;
-    rfrstr(s, refal.next_result);
+    set_string_expression(s, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};

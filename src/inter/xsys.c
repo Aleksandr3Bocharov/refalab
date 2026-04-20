@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XSYS.C --------------------
@@ -36,7 +36,7 @@ static void arg_(void)
     if (d > 0)
         if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
             return;
-    p = rfrstr(refal.arg.argv[argn], refal.next_result);
+    p = set_string_expression(refal.arg.argv[argn], refal.next_result);
     transplantation(refal.previous_result, refal.next_result, p->next);
     return;
 }
@@ -134,7 +134,7 @@ static void get_env_(void)
     if (d > 0)
         if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
             return;
-    p = rfrstr(env_value, refal.next_result);
+    p = set_string_expression(env_value, refal.next_result);
     if (p != NULL)
         transplantation(refal.previous_result, refal.next_result, p->next);
     return;
@@ -162,7 +162,7 @@ static void change_dir_(void)
         if (d > 0)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
-        p = rfrstr(serr, refal.next_result);
+        p = set_string_expression(serr, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, p->next);
     }
     return;
@@ -183,7 +183,7 @@ static void get_current_dir_(void)
         return;
     if (extended_insert_from_free_memory_list(refal.next_result, strlen(cwd) - 1))
     {
-        rfrstr(cwd, refal.next_result);
+        set_string_expression(cwd, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     }
     free(cwd);
