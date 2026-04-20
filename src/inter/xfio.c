@@ -181,7 +181,7 @@ static void fgets_(void)
                 return;
             p = p->next;
             p->info.code = NULL;
-            if (rfreof(c, f, p))
+            if (set_eof_linkcb(c, f, p))
                 return;
             p->tag = TAGO;
             p->info.infoc = (char)c;
@@ -243,7 +243,7 @@ static void fputs_(void)
         {
             const int cc = p->info.infoc;
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -332,7 +332,7 @@ static void fprint_(void)
                 sprintf(s, "'%x,%p'", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -420,7 +420,7 @@ static void fprints_(void)
                 sprintf(s, "%x,%p", p->tag, p->info.code);
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -535,7 +535,7 @@ static void fprintm_(void)
                 }
                 pcc = fputs(s, f);
             }
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -545,7 +545,7 @@ static void fprintm_(void)
         if (fr)
         {
             const int pcc = putc('\'', f);
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
         }
         return;
@@ -588,7 +588,7 @@ static void fread_(void)
             p = p->next;
             p->info.code = NULL;
             const int c = getc(f);
-            if (rfreof(c, f, p))
+            if (set_eof_linkcb(c, f, p))
             {
                 insert_to_free_memory_list(p, refal.next_result);
                 return;
@@ -644,7 +644,7 @@ static void fwrite_(void)
             else
                 cc = (uint8_t)gcoden(p);
             const int pcc = putc(cc, f);
-            if (rfreof(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, f, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;

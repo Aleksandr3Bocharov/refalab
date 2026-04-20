@@ -777,28 +777,28 @@ T_LINKCB *set_string_expression(const char *string, T_LINKCB *before)
     return current;
 }
 
-bool rfreof(int c, FILE *f, T_LINKCB *p)
+bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb)
 {
     enum
     {
         OK,
         FEOF,
         FERROR
-    } err = OK;
-    if (c == EOF)
+    } file_status = OK;
+    if (file_result == EOF)
     {
-        if (feof(f) != 0)
-            err = FEOF;
-        else if (ferror(f) != 0)
-            err = FERROR;
+        if (feof(file) != 0)
+            file_status = FEOF;
+        else if (ferror(file) != 0)
+            file_status = FERROR;
     }
-    if (err != OK)
+    if (file_status != OK)
     {
-        p->tag = TAGF;
-        if (err == FEOF)
-            p->info.codef = &refalab_feof;
+        linkcb->tag = TAGF;
+        if (file_status == FEOF)
+            linkcb->info.codef = &refalab_feof;
         else
-            p->info.codef = &refalab_ferror;
+            linkcb->info.codef = &refalab_ferror;
         return true;
     }
     return false;
