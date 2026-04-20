@@ -64,10 +64,10 @@ static bool e_empty = false;
 static bool was_ge;
 static bool was_le;
 static bool was_eq;
-static uint32_t s_from = 0;
-static uint32_t s_upto = 0;
-static uint32_t s_stop = MAX_STOP;
-static uint32_t nogcl = 0; // garbage collection counter
+static uint32_t step_from = 0;
+static uint32_t step_upto = 0;
+static uint32_t step_stop = MAX_STOP;
+static uint32_t garbage_collection_number = 0; // garbage collection counter
 static size_t s_arg;
 static size_t l_arg;
 static char buff_id[100];
@@ -234,7 +234,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(buff + i) == ' '; i++)
             ;
         if (*(buff + i) != '\n')
-            if (!get_numb((int32_t *)&s_stop))
+            if (!get_numb((int32_t *)&step_stop))
                 continue;
         break;
     }
@@ -245,7 +245,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(buff + i) == ' '; i++)
             ;
         if (*(buff + i) != '\n')
-            if (!get_numb((int32_t *)&s_from))
+            if (!get_numb((int32_t *)&step_from))
                 continue;
         break;
     }
@@ -256,7 +256,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(buff + i) == ' '; i++)
             ;
         if (*(buff + i) != '\n')
-            if (!get_numb((int32_t *)&s_upto))
+            if (!get_numb((int32_t *)&step_upto))
                 continue;
         break;
     }
@@ -273,10 +273,10 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     }
     printf("\n");
     //  set FROM and TO
-    if (!s_from && (s_upto || trace_condition))
-        s_from = 1;
-    if (!s_upto && s_from)
-        s_upto = 0x7FFFFFFF;
+    if (!step_from && (step_upto || trace_condition))
+        step_from = 1;
+    if (!step_upto && step_from)
+        step_upto = 0x7FFFFFFF;
     //==================================
     //  initialization
     status_table_debugger = dbtry;
@@ -295,7 +295,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 debugger_state = DBG_DONE;
                 break;
             }
-            if (s_stop < status_table->step)
+            if (step_stop < status_table->step)
             {
                 debugger_state = DBG_ABEND;
                 break;
@@ -374,7 +374,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                         break;
                     }
                     one_step(status_table);
-                    if (s_stop < status_table->step)
+                    if (step_stop < status_table->step)
                     {
                         debugger_state = DBG_ABEND;
                         quit = true;
@@ -398,7 +398,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             } // for label ALREADY
             else
             { // step in station "is already"
-                if (s_stop < status_table->step)
+                if (step_stop < status_table->step)
                 {
                     debugger_state = DBG_ABEND;
                     break;
@@ -473,8 +473,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 printf("Burried:\n");
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
-            if (nogcl != 0)
-                printf("Garbage collection number = %d\n", nogcl);
+            if (garbage_collection_number != 0)
+                printf("Garbage collection number = %d\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
@@ -519,7 +519,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 status_table_debugger_state = DB_DO;
                 break;
             }
-            if (s_stop < status_table->step)
+            if (step_stop < status_table->step)
             {
                 status_table_debugger_state = DB_ABEND;
                 break;
@@ -598,7 +598,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                         break;
                     }
                     one_step(status_table);
-                    if (s_stop < status_table->step)
+                    if (step_stop < status_table->step)
                     {
                         status_table_debugger_state = DB_ABEND;
                         quit = true;
@@ -622,7 +622,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
             } // for label ALREADY
             else
             { // step in station "is already"
-                if (s_stop < status_table->step)
+                if (step_stop < status_table->step)
                 {
                     status_table_debugger_state = DB_ABEND;
                     break;
@@ -678,8 +678,8 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 printf("Burried:\n");
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
-            if (nogcl != 0)
-                printf("Garbage collection number = %d\n", nogcl);
+            if (garbage_collection_number != 0)
+                printf("Garbage collection number = %d\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
@@ -736,7 +736,7 @@ static void one_step(T_STATUS_TABLE *status_table)
         if (status_table->state != 3)
             break;
         if (refal.dynamic_boxes != NULL)
-            nogcl++;
+            garbage_collection_number++;
         if (more_free_memory())
             continue;
         break;
@@ -771,7 +771,7 @@ static void pr_step(void)
 
 static void pr_euc(void)
 {
-    if (curr_step > s_upto || curr_step < s_from)
+    if (curr_step > step_upto || curr_step < step_from)
         return;
     if (euc_step != curr_step)
     {
@@ -788,7 +788,7 @@ static void pr_euc(void)
 
 static void pr_imres(void)
 {
-    if (curr_step > s_upto || curr_step < s_from)
+    if (curr_step > step_upto || curr_step < step_from)
         return;
     pr_step();
     print_expression_m("      Result : ", prevk, nextd, true);
@@ -800,7 +800,7 @@ static void pr_imres(void)
 
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
 {
-    if (curr_step > s_upto || curr_step < s_from)
+    if (curr_step > step_upto || curr_step < step_from)
         return;
     pr_step();
     if (curr_step == res_step && res_prevk == xprevk &&
