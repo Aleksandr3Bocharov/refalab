@@ -114,15 +114,21 @@ void refal_debugger(T_STATUS_TABLE *status_table)
 
     printf("\n > (function list) : ");
     fgets(buff, 100, stdin);
+    if (strlen(buff) == 99 && *(buff + 98) != '\n')
+    {
+        int c = getchar();
+        while (c != '\n' && c != EOF)
+            c = getchar();
+    }
     size_t i;
-    for (i = 0; *(buff + i) == ' '; i++)
+    for (i = 0; *(buff + i) == ' ' || *(buff + i) == ','; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(buff + i) != '\n' && *(buff + i) != '\0')
     {
         arg = buff + i;
         trace_condition = true;
         ge_all = false;
-        while (*arg != '\n')
+        while (*arg != '\n' && *arg != '\0')
         {
             get_arg();
             get_det();
