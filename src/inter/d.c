@@ -114,21 +114,15 @@ void refal_debugger(T_STATUS_TABLE *status_table)
 
     printf("\n > (function list) : ");
     fgets(buff, 100, stdin);
-    if (strlen(buff) == 99 && *(buff + 98) != '\n')
-    {
-        int c = getchar();
-        while (c != '\n' && c != EOF)
-            c = getchar();
-    }
     size_t i;
-    for (i = 0; *(buff + i) == ' ' || *(buff + i) == ','; i++)
+    for (i = 0; *(buff + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n' && *(buff + i) != '\0')
+    if (*(buff + i) != '\n')
     {
         arg = buff + i;
         trace_condition = true;
         ge_all = false;
-        while (*arg != '\n' && *arg != '\0')
+        while (*arg != '\n')
         {
             get_arg();
             get_det();
@@ -882,7 +876,7 @@ static void get_arg(void)
         if (*(arg + l_arg) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
             break;
     }
-    for (s_arg = 0; *(arg + s_arg) == ' ' || *(arg + s_arg) == ','; s_arg++)
+    for (s_arg = 0; *(arg + l_arg + s_arg) == ' ' || *(arg + l_arg + s_arg) == ','; s_arg++)
         ;
     return;
 }
@@ -913,9 +907,9 @@ static bool get_det(void)
         exit(1);
         return false;
     }
-    for (size_t i = 0; i < l_arg; i++)
-        *(current_determination->identifier + i) = *(arg + i);
+    strncpy(current_determination->identifier, arg, l_arg);
     *(current_determination->identifier + l_arg) = '\0';
+    printf("%s ", current_determination->identifier);
     current_determination->next = last_determination;
     last_determination = current_determination;
     current_determination->ge = false;
