@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCF.C ---------------
@@ -66,12 +66,14 @@ static void functab_(void)
     for (size_t i = 0; i < func_n; i++)
         if (u == func_f[i])
             return;
+    adr *temp_func_f = NULL;
     if (func_n == 0)
-        func_f = (adr *)malloc(sizeof(adr));
+        temp_func_f = (adr *)malloc(sizeof(adr));
     else
-        func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
-    if (func_f == NULL)
+        temp_func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+    if (temp_func_f == NULL)
         refal_abort_end("functab: malloc or realloc error");
+    func_f = temp_func_f;
     func_f[func_n] = u;
     func_n++;
     return;
@@ -133,12 +135,14 @@ static void chartof_(void)
             return;
         }
     }
+    adr *temp_func_f = NULL;
     if (func_n == 0)
-        func_f = (adr *)malloc(sizeof(adr));
+        temp_func_f = (adr *)malloc(sizeof(adr));
     else
-        func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
-    if (func_f == NULL)
+        temp_func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+    if (temp_func_f == NULL)
         refal_abort_end("chartof: malloc or realloc error");
+    func_f = temp_func_f;
     func_f[func_n] = j;
     func_n++;
     p = refal.previous_argument->next;

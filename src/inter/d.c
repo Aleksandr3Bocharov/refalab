@@ -120,7 +120,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (*(buff + i) != '\n')
     {
         arg = buff + i;
-        trace_condition = true;
+        trace_condition = true; 
         ge_all = false;
         while (*arg != '\n')
         {
