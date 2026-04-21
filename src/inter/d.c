@@ -68,11 +68,12 @@ static uint32_t step_from = 0;
 static uint32_t step_upto = 0;
 static uint32_t step_stop = MAX_STOP;
 static uint32_t garbage_collection_number = 0; // garbage collection counter
+static size_t parameters_length;
+static char *parameters = NULL;
 static size_t s_arg;
 static size_t l_arg;
+static char *parameter = NULL;
 static char buff_id[100];
-static char buff[100];
-static char *arg = buff;
 static uint32_t printed_step;
 static uint32_t curr_step;
 static uint32_t euc_step;
@@ -91,6 +92,7 @@ static T_LINKCB *dot2;
 static const T_LINKCB *prevk2, *nextd2;
 
 static void init_det_flags(void);
+static char *fgetline(FILE *file, size_t *line_length);
 static void get_arg(void);
 static bool get_det(void);
 static bool get_numb(int32_t *numb);
@@ -111,129 +113,134 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     init_det_flags();
     //----------------------------------
     printf("\n ***** RefalAB debugger ***** \n");
-
+    //----------------------------------
     printf("\n > (function list) : ");
-    fgets(buff, 100, stdin);
-    size_t i;
-    for (i = 0; *(buff + i) == ' '; i++)
-        ;
-    if (*(buff + i) != '\n')
+    parameters = fgetline(stdin, &parameters_length);
+    if (parameters == NULL)
     {
-        arg = buff + i;
-        trace_condition = true; 
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    size_t i;
+    for (i = 0; *(parameters + i) == ' '; i++)
+        ;
+    if (*(parameters + i) != '\n')
+    {
+        parameter = parameters + i;
+        trace_condition = true;
         ge_all = false;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->gt = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n >= (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
+        parameter = parameters + i;
         trace_condition = true;
         ge_all = false;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->ge = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n = (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
+        parameter = parameters + i;
         trace_condition = true;
         eq_all = false;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->eq = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n != (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
+        parameter = parameters + i;
         trace_condition = true;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->ne = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n < (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
+        parameter = parameters + i;
         trace_condition = true;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->lt = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n <= (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
+        parameter = parameters + i;
         trace_condition = true;
-        while (*arg != '\n')
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->le = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     printf("\n TRAP (function list) : ");
-    fgets(buff, 100, stdin);
-    for (i = 0; *(buff + i) == ' '; i++)
+    fgets(parameters, 100, stdin);
+    for (i = 0; *(parameters + i) == ' '; i++)
         ;
-    if (*(buff + i) != '\n')
+    if (*(parameters + i) != '\n')
     {
-        arg = buff + i;
-        while (*arg != '\n')
+        parameter = parameters + i;
+        while (*parameter != '\n')
         {
             get_arg();
             get_det();
             current_determination->tr = true;
-            arg = arg + l_arg + s_arg;
+            parameter = parameter + l_arg + s_arg;
         }
     }
     while (true)
     {
         printf("\n STOP (step number) : ");
-        fgets(buff, 100, stdin);
-        for (i = 0; *(buff + i) == ' '; i++)
+        fgets(parameters, 100, stdin);
+        for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(buff + i) != '\n')
+        if (*(parameters + i) != '\n')
             if (!get_numb((int32_t *)&step_stop))
                 continue;
         break;
@@ -241,10 +248,10 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     while (true)
     {
         printf("\n FROM (step number) : ");
-        fgets(buff, 100, stdin);
-        for (i = 0; *(buff + i) == ' '; i++)
+        fgets(parameters, 100, stdin);
+        for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(buff + i) != '\n')
+        if (*(parameters + i) != '\n')
             if (!get_numb((int32_t *)&step_from))
                 continue;
         break;
@@ -252,10 +259,10 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     while (true)
     {
         printf("\n TO (step number) : ");
-        fgets(buff, 100, stdin);
-        for (i = 0; *(buff + i) == ' '; i++)
+        fgets(parameters, 100, stdin);
+        for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(buff + i) != '\n')
+        if (*(parameters + i) != '\n')
             if (!get_numb((int32_t *)&step_upto))
                 continue;
         break;
@@ -263,11 +270,11 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     while (true)
     {
         printf("\n E._= (y/n) : ");
-        fgets(buff, 100, stdin);
-        for (i = 0; *(buff + i) == ' '; i++)
+        fgets(parameters, 100, stdin);
+        for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(buff + i) != '\n')
-            if (!get_yn(buff + i))
+        if (*(parameters + i) != '\n')
+            if (!get_yn(parameters + i))
                 continue;
         break;
     }
@@ -868,15 +875,54 @@ static void getpf(const T_STATUS_TABLE *status_table)
     return;
 }
 
+static char *fgetline(FILE *file, size_t *line_length)
+{
+    static char *buffer = NULL;
+    static size_t buffer_size = 0;
+    static size_t buffer_length = 0;
+    if (buffer == NULL)
+    {
+        buffer_size = 128;
+        if ((buffer = malloc(buffer_size)) == NULL)
+            return NULL;
+    }
+    buffer_length = 0;
+    int ch = fgetc(file);
+    while (ch != EOF)
+    {
+        if (buffer_length >= buffer_size)
+        {
+            size_t new_buffer_size = buffer_size + 128;
+            char *new_buffer = realloc(buffer, new_buffer_size);
+            if (new_buffer == NULL)
+            {
+                int temp_errno = errno;
+                free(buffer);
+                errno = temp_errno;
+                buffer = NULL;
+                return NULL;
+            }
+            buffer = new_buffer;
+            buffer_size = new_buffer_size;
+        }
+        buffer[buffer_length++] = ch;
+        if (ch == '\n')
+            break;
+        ch = fgetc(file);
+    }
+    *line_length = buffer_length;
+    return buffer_length == 0 ? NULL : buffer;
+}
+
 static void get_arg(void)
 {
     for (l_arg = 0;; l_arg++)
     {
-        *(arg + l_arg) = (char)toupper(*(arg + l_arg));
-        if (*(arg + l_arg) == '\n' || *(arg + l_arg) == ' ' || *(arg + l_arg) == '\0' || *(arg + l_arg) == ',')
+        *(parameter + l_arg) = (char)toupper(*(parameter + l_arg));
+        if (*(parameter + l_arg) == '\n' || *(parameter + l_arg) == ' ' || *(parameter + l_arg) == '\0' || *(parameter + l_arg) == ',')
             break;
     }
-    for (s_arg = 0; *(arg + l_arg + s_arg) == ' ' || *(arg + l_arg + s_arg) == ','; s_arg++)
+    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == ','; s_arg++)
         ;
     return;
 }
@@ -886,7 +932,7 @@ static bool get_det(void)
     current_determination = last_determination;
     while (current_determination != NULL)
     {
-        if (strncmp(current_determination->identifier, arg, l_arg) == 0)
+        if (strncmp(current_determination->identifier, parameter, l_arg) == 0)
             if (*(current_determination->identifier + l_arg) == '\0')
                 return true;
         current_determination = current_determination->next;
@@ -907,7 +953,7 @@ static bool get_det(void)
         exit(1);
         return false;
     }
-    strncpy(current_determination->identifier, arg, l_arg);
+    strncpy(current_determination->identifier, parameter, l_arg);
     *(current_determination->identifier + l_arg) = '\0';
     printf("%s ", current_determination->identifier);
     current_determination->next = last_determination;
@@ -924,7 +970,7 @@ static bool get_det(void)
 
 static bool get_numb(int32_t *numb)
 {
-    if (sscanf(buff, "%d", numb) == 0 || *numb < 1)
+    if (sscanf(parameters, "%d", numb) == 0 || *numb < 1)
     {
         printf("\n                        Invalid number; repeat please.\n");
         return false;
