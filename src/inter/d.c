@@ -75,8 +75,8 @@ static char *parameter = NULL;
 static char identifier[256];
 static uint32_t printed_step;
 static uint32_t current_step;
-static uint32_t euc_step;
-static uint32_t res_step;
+static uint32_t leading_step;
+static uint32_t result_step;
 static uint32_t curr_step1;
 static uint32_t curr_step2;
 static const T_LINKCB *nextk;
@@ -347,8 +347,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     //  initialization
     status_table_debugger = dbtry;
     printed_step = 0;
-    euc_step = 0;
-    res_step = 0;
+    leading_step = 0;
+    result_step = 0;
     res_nextd = NULL;
     res_prevk = res_nextd;
     T_DEBUGGER_STATES debugger_state = DBG_NOT_YET;
@@ -573,7 +573,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
     T_LINKCB *v2 = nextd;
     T_LINKCB *v3 = pk;
     const T_LINKCB *v4 = nextk;
-    uint32_t v5 = res_step;
+    uint32_t v5 = result_step;
     const T_LINKCB *v6 = res_prevk;
     const T_LINKCB *v7 = res_nextd;
     T_STATUS_TABLE_DEBUGGER_STATES status_table_debugger_state = DB_NOT_YET;
@@ -773,7 +773,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
             nextd = v2;
             pk = v3;
             nextk = v4;
-            res_step = v5;
+            result_step = v5;
             res_prevk = v6;
             res_nextd = v7;
             return;
@@ -811,9 +811,9 @@ static void one_step(T_STATUS_TABLE *status_table)
     if (e_empty && status_table->state == 2)
     {
         pr_step();
-        if (euc_step != current_step)
+        if (leading_step != current_step)
         {
-            euc_step = current_step;
+            leading_step = current_step;
             print_expression_m("       Leading term : ", prevk, nextd, true);
         }
         printf("*** Recognition impossible\n");
@@ -840,10 +840,10 @@ static void pr_euc(void)
 {
     if (current_step > step_upto || current_step < step_from)
         return;
-    if (euc_step != current_step)
+    if (leading_step != current_step)
     {
-        euc_step = current_step;
-        if (res_step != current_step - 1 || res_prevk != prevk ||
+        leading_step = current_step;
+        if (result_step != current_step - 1 || res_prevk != prevk ||
             res_nextd != nextd)
         {
             pr_step();
@@ -859,7 +859,7 @@ static void pr_imres(void)
         return;
     pr_step();
     print_expression_m("      Result : ", prevk, nextd, true);
-    res_step = current_step;
+    result_step = current_step;
     res_prevk = prevk;
     res_nextd = nextd;
     return;
@@ -870,7 +870,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     if (current_step > step_upto || current_step < step_from)
         return;
     pr_step();
-    if (current_step == res_step && res_prevk == xprevk &&
+    if (current_step == result_step && res_prevk == xprevk &&
         res_nextd == xnextd)
     {
         if (xstep == current_step)
@@ -886,7 +886,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
         }
         printf("----- Result of call on step %u :\n", xstep);
         print_expression_m("     ", xprevk, xnextd, true);
-        res_step = current_step;
+        result_step = current_step;
         res_prevk = xprevk;
         res_nextd = xnextd;
     }
