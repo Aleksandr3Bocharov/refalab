@@ -136,143 +136,203 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n >= (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
         ge_all = false;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->ge = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n = (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
         eq_all = false;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->eq = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n != (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->ne = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n < (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->lt = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n <= (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->le = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     printf("\n TRAP (function list) : ");
-    fgets(parameters, 100, stdin);
-    for (i = 0; *(parameters + i) == ' '; i++)
+    parameters = card();
+    if (parameters == NULL)
+    {
+        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        exit(1);
+    }
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
-        while (*parameter != '\n')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->tr = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
+    //----------------------------------
     while (true)
     {
         printf("\n STOP (step number) : ");
-        fgets(parameters, 100, stdin);
+        parameters = card();
+        if (parameters == NULL)
+        {
+            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            exit(1);
+        }
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(parameters + i) != '\n')
+        if (*(parameters + i) != '\0')
             if (!get_numb((int32_t *)&step_stop))
                 continue;
         break;
     }
+    //----------------------------------
     while (true)
     {
         printf("\n FROM (step number) : ");
-        fgets(parameters, 100, stdin);
+        parameters = card();
+        if (parameters == NULL)
+        {
+            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            exit(1);
+        }
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(parameters + i) != '\n')
+        if (*(parameters + i) != '\0')
             if (!get_numb((int32_t *)&step_from))
                 continue;
         break;
     }
+    //----------------------------------
     while (true)
     {
         printf("\n TO (step number) : ");
-        fgets(parameters, 100, stdin);
+        parameters = card();
+        if (parameters == NULL)
+        {
+            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            exit(1);
+        }
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(parameters + i) != '\n')
+        if (*(parameters + i) != '\0')
             if (!get_numb((int32_t *)&step_upto))
                 continue;
         break;
     }
+    //----------------------------------
     while (true)
     {
         printf("\n E._= (y/n) : ");
-        fgets(parameters, 100, stdin);
+        parameters = card();
+        if (parameters == NULL)
+        {
+            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            exit(1);
+        }
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
-        if (*(parameters + i) != '\n')
+        if (*(parameters + i) != '\0')
             if (!get_yn(parameters + i))
                 continue;
         break;
