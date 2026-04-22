@@ -121,7 +121,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         exit(1);
     }
     size_t i;
-    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == '\t' || *(parameters + i) == ','; i++)
         ;
     if (*(parameters + i) != '\n' && *(parameters + i) != '\0')
     {
@@ -918,12 +918,13 @@ static void get_arg(void)
     for (l_arg = 0;; l_arg++)
     {
         *(parameter + l_arg) = (char)toupper(*(parameter + l_arg));
-        if (*(parameter + l_arg) == '\n' || *(parameter + l_arg) == ' ' || *(parameter + l_arg) == '\0' || *(parameter + l_arg) == ',')
+        if (*(parameter + l_arg) == '\n' || *(parameter + l_arg) == '\0' || *(parameter + l_arg) == ' ' || *(parameter + l_arg + s_arg) == '\t' || *(parameter + l_arg) == ',')
             break;
     }
-    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == ','; s_arg++)
+    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == '\t' || *(parameter + l_arg + s_arg) == ','; s_arg++)
         ;
     return;
+
 }
 
 static bool get_det(void)
@@ -954,7 +955,7 @@ static bool get_det(void)
     }
     strncpy(current_determination->identifier, parameter, l_arg);
     *(current_determination->identifier + l_arg) = '\0';
-    printf("%s ", current_determination->identifier);
+    printf("%s\n", current_determination->identifier);
     current_determination->next = last_determination;
     last_determination = current_determination;
     current_determination->ge = false;
