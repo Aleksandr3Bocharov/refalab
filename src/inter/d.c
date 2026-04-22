@@ -121,19 +121,19 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         exit(1);
     }
     size_t i;
-    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == '\t' || *(parameters + i) == ','; i++)
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n' && *(parameters + i) != '\0')
+    if (*(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
         ge_all = false;
-        while (*parameter != '\n' && *parameter != '\0')
+        while (*parameter != '\0')
         {
             get_arg();
             get_det();
             current_determination->gt = true;
-            parameter = parameter + l_arg + s_arg;
+            parameter += l_arg + s_arg;
         }
     }
     printf("\n >= (function list) : ");
@@ -904,7 +904,10 @@ static char *card(void)
             buffer = new_buffer;
             buffer_size = new_buffer_size;
         }
-        buffer[buffer_length++] = ch;
+        if (ch < ' ' && ch > '\0')
+            buffer[buffer_length++] = ' ';
+        else
+            buffer[buffer_length++] = (char)ch;
         if (ch == '\n')
             break;
         ch = getchar();
@@ -918,13 +921,12 @@ static void get_arg(void)
     for (l_arg = 0;; l_arg++)
     {
         *(parameter + l_arg) = (char)toupper(*(parameter + l_arg));
-        if (*(parameter + l_arg) == '\n' || *(parameter + l_arg) == '\0' || *(parameter + l_arg) == ' ' || *(parameter + l_arg + s_arg) == '\t' || *(parameter + l_arg) == ',')
+        if (*(parameter + l_arg) == '\0' || *(parameter + l_arg) == ' ' || *(parameter + l_arg) == ',')
             break;
     }
-    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == '\t' || *(parameter + l_arg + s_arg) == ','; s_arg++)
+    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == ','; s_arg++)
         ;
     return;
-
 }
 
 static bool get_det(void)
