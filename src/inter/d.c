@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <errno.h>
 #include "refalab.h"
 #include "d.h"
 #include "rfintf.h"
@@ -77,18 +78,18 @@ static uint32_t printed_step;
 static uint32_t current_step;
 static uint32_t leading_step;
 static uint32_t result_step;
-static uint32_t curr_step1;
-static uint32_t curr_step2;
-static const T_LINKCB *nextk;
-static const T_LINKCB *res_prevk;
-static const T_LINKCB *res_nextd;
-static T_LINKCB *pk;
-static T_LINKCB *prevk;
-static T_LINKCB *nextd;
-static T_LINKCB *dot1;
-static const T_LINKCB *prevk1, *nextd1;
-static T_LINKCB *dot2;
-static const T_LINKCB *prevk2, *nextd2;
+static T_LINKCB *k;
+static const T_LINKCB *next_k;
+static T_LINKCB *previous_k;
+static T_LINKCB *next_dot;
+static const T_LINKCB *result_previous_k;
+static const T_LINKCB *result_next_dot;
+static uint32_t current_step_ge;
+static T_LINKCB *dot_ge;
+static const T_LINKCB *previous_k_ge, *next_dot_ge;
+static uint32_t current_step_le;
+static T_LINKCB *dot_le;
+static const T_LINKCB *previous_k_le, *next_dot_le;
 
 static void init_det_flags(void);
 static char *card(void);
@@ -349,8 +350,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     printed_step = 0;
     leading_step = 0;
     result_step = 0;
-    res_nextd = NULL;
-    res_prevk = res_nextd;
+    result_next_dot = NULL;
+    result_previous_k = result_next_dot;
     T_DEBUGGER_STATES debugger_state = DBG_NOT_YET;
     while (true)
         switch (debugger_state)
@@ -394,15 +395,15 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     pr_euc();
             }
             //  cut
-            curr_step1 = current_step;
-            prevk1 = prevk;
-            nextd1 = nextd;
-            if (pk->info.code == NULL)
-                dot1 = NULL;
+            current_step_ge = current_step;
+            previous_k_ge = previous_k;
+            next_dot_ge = next_dot;
+            if (k->info.code == NULL)
+                dot_ge = NULL;
             else
             {
-                dot1 = pk->info.codep;
-                pk->info.code = NULL;
+                dot_ge = k->info.codep;
+                k->info.code = NULL;
             }
             debugger_state = DBG_ALREADY;
             break;
@@ -419,15 +420,15 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     pr_euc();
                 }
                 //   cut
-                curr_step2 = current_step;
-                prevk2 = prevk;
-                nextd2 = nextd;
-                if (pk->info.code == NULL)
-                    dot2 = NULL;
+                current_step_le = current_step;
+                previous_k_le = previous_k;
+                next_dot_le = next_dot;
+                if (k->info.code == NULL)
+                    dot_le = NULL;
                 else
                 {
-                    dot2 = pk->info.codep;
-                    pk->info.code = NULL;
+                    dot_le = k->info.codep;
+                    k->info.code = NULL;
                 }
                 // compute call entirely
                 bool quit = false;
@@ -459,9 +460,9 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     break;
                 //  joint
                 current_step = status_table->step;
-                status_table->dot = dot2;
+                status_table->dot = dot_le;
                 if (was_le)
-                    pr_finres(curr_step2, prevk2, nextd2);
+                    pr_finres(current_step_le, previous_k_le, next_dot_le);
             } // for label ALREADY
             else
             { // step in station "is already"
@@ -498,9 +499,9 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 break;
             }
             //  joint
-            status_table->dot = dot1;
+            status_table->dot = dot_ge;
             if (!ge_all && was_ge)
-                pr_finres(curr_step1, prevk1, nextd1);
+                pr_finres(current_step_ge, previous_k_ge, next_dot_ge);
             debugger_state = DBG_NOT_YET;
             break;
         case DBG_DONE:
@@ -528,7 +529,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             break;
         case DBG_ABEND1:
             printf("Leading functional term:\n");
-            print_expression_m("     ", prevk, nextd, true);
+            print_expression_m("     ", previous_k, next_dot, true);
             debugger_state = DBG_EOJ;
             break;
         case DBG_EOJ:
@@ -569,13 +570,13 @@ void refal_debugger(T_STATUS_TABLE *status_table)
 
 static void dbtry(T_STATUS_TABLE *status_table)
 {
-    T_LINKCB *v1 = prevk;
-    T_LINKCB *v2 = nextd;
-    T_LINKCB *v3 = pk;
-    const T_LINKCB *v4 = nextk;
+    T_LINKCB *v1 = previous_k;
+    T_LINKCB *v2 = next_dot;
+    T_LINKCB *v3 = k;
+    const T_LINKCB *v4 = next_k;
     uint32_t v5 = result_step;
-    const T_LINKCB *v6 = res_prevk;
-    const T_LINKCB *v7 = res_nextd;
+    const T_LINKCB *v6 = result_previous_k;
+    const T_LINKCB *v7 = result_next_dot;
     T_STATUS_TABLE_DEBUGGER_STATES status_table_debugger_state = DB_NOT_YET;
     while (true)
         switch (status_table_debugger_state)
@@ -618,15 +619,15 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     pr_euc();
             }
             //  cut
-            curr_step1 = current_step;
-            prevk1 = prevk;
-            nextd1 = nextd;
-            if (pk->info.code == NULL)
-                dot1 = NULL;
+            current_step_ge = current_step;
+            previous_k_ge = previous_k;
+            next_dot_ge = next_dot;
+            if (k->info.code == NULL)
+                dot_ge = NULL;
             else
             {
-                dot1 = pk->info.codep;
-                pk->info.code = NULL;
+                dot_ge = k->info.codep;
+                k->info.code = NULL;
             }
             status_table_debugger_state = DB_ALREADY;
             break;
@@ -643,15 +644,15 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     pr_euc();
                 }
                 //   cut
-                curr_step2 = current_step;
-                prevk2 = prevk;
-                nextd2 = nextd;
-                if (pk->info.code == NULL)
-                    dot2 = NULL;
+                current_step_le = current_step;
+                previous_k_le = previous_k;
+                next_dot_le = next_dot;
+                if (k->info.code == NULL)
+                    dot_le = NULL;
                 else
                 {
-                    dot2 = pk->info.codep;
-                    pk->info.code = NULL;
+                    dot_le = k->info.codep;
+                    k->info.code = NULL;
                 }
                 // compute call entirely
                 bool quit = false;
@@ -683,9 +684,9 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     break;
                 //  joint
                 current_step = status_table->step;
-                status_table->dot = dot2;
+                status_table->dot = dot_le;
                 if (was_le)
-                    pr_finres(curr_step2, prevk2, nextd2);
+                    pr_finres(current_step_le, previous_k_le, next_dot_le);
             } // for label ALREADY
             else
             { // step in station "is already"
@@ -722,9 +723,9 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 break;
             }
             //  joint
-            status_table->dot = dot1;
+            status_table->dot = dot_ge;
             if (!ge_all && was_ge)
-                pr_finres(curr_step1, prevk1, nextd1);
+                pr_finres(current_step_ge, previous_k_ge, next_dot_ge);
             status_table_debugger_state = DB_NOT_YET;
             break;
         case DB_TRAP:
@@ -733,7 +734,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
             break;
         case DB_ABEND:
             printf("Leading functional term:\n");
-            print_expression_m("     ", prevk, nextd, true);
+            print_expression_m("     ", previous_k, next_dot, true);
             status_table_debugger_state = DB_EOJ;
             break;
         case DB_EOJ:
@@ -769,13 +770,13 @@ static void dbtry(T_STATUS_TABLE *status_table)
             return;
         case DB_DO:
         case DB_AB:
-            prevk = v1;
-            nextd = v2;
-            pk = v3;
-            nextk = v4;
+            previous_k = v1;
+            next_dot = v2;
+            k = v3;
+            next_k = v4;
             result_step = v5;
-            res_prevk = v6;
-            res_nextd = v7;
+            result_previous_k = v6;
+            result_next_dot = v7;
             return;
         }
 }
@@ -814,12 +815,12 @@ static void one_step(T_STATUS_TABLE *status_table)
         if (leading_step != current_step)
         {
             leading_step = current_step;
-            print_expression_m("       Leading term : ", prevk, nextd, true);
+            print_expression_m("       Leading term : ", previous_k, next_dot, true);
         }
         printf("*** Recognition impossible\n");
         printf("*** Change leading term by empty term and continue ***\n");
-        status_table->dot = pk->info.codep;
-        insert_to_free_memory_list(prevk, nextd);
+        status_table->dot = k->info.codep;
+        insert_to_free_memory_list(previous_k, next_dot);
         status_table->state = 1;
         status_table->step++;
     };
@@ -843,11 +844,11 @@ static void pr_euc(void)
     if (leading_step != current_step)
     {
         leading_step = current_step;
-        if (result_step != current_step - 1 || res_prevk != prevk ||
-            res_nextd != nextd)
+        if (result_step != current_step - 1 || result_previous_k != previous_k ||
+            result_next_dot != next_dot)
         {
             pr_step();
-            print_expression_m("      Leading term : ", prevk, nextd, true);
+            print_expression_m("      Leading term : ", previous_k, next_dot, true);
         }
     }
     return;
@@ -858,10 +859,10 @@ static void pr_imres(void)
     if (current_step > step_upto || current_step < step_from)
         return;
     pr_step();
-    print_expression_m("      Result : ", prevk, nextd, true);
+    print_expression_m("      Result : ", previous_k, next_dot, true);
     result_step = current_step;
-    res_prevk = prevk;
-    res_nextd = nextd;
+    result_previous_k = previous_k;
+    result_next_dot = next_dot;
     return;
 }
 
@@ -870,8 +871,8 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     if (current_step > step_upto || current_step < step_from)
         return;
     pr_step();
-    if (current_step == result_step && res_prevk == xprevk &&
-        res_nextd == xnextd)
+    if (current_step == result_step && result_previous_k == xprevk &&
+        result_next_dot == xnextd)
     {
         if (xstep == current_step)
             return;
@@ -887,8 +888,8 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
         printf("----- Result of call on step %u :\n", xstep);
         print_expression_m("     ", xprevk, xnextd, true);
         result_step = current_step;
-        res_prevk = xprevk;
-        res_nextd = xnextd;
+        result_previous_k = xprevk;
+        result_next_dot = xnextd;
     }
     return;
 }
@@ -896,21 +897,21 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
 static void getpf(const T_STATUS_TABLE *status_table)
 {
     current_step = status_table->step + 1;
-    pk = status_table->dot->info.codep;
-    prevk = pk->previous;
-    nextd = status_table->dot->next;
-    nextk = pk->next;
+    k = status_table->dot->info.codep;
+    previous_k = k->previous;
+    next_dot = status_table->dot->next;
+    next_k = k->next;
     size_t i;
     uint8_t id_l;
     const uint8_t *p_id;
-    if (nextk->tag != TAGF)
+    if (next_k->tag != TAGF)
     {
         identifier[0] = '%';
         identifier[1] = '\0';
     }
     else
     {
-        p_id = nextk->info.codef - 1;
+        p_id = next_k->info.codef - 1;
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
@@ -1018,7 +1019,6 @@ static bool get_det(void)
     }
     strncpy(current_determination->identifier, parameter, parameter_length);
     *(current_determination->identifier + parameter_length) = '\0';
-    printf("%s\n", current_determination->identifier);
     current_determination->next = last_determination;
     last_determination = current_determination;
     current_determination->ge = false;
