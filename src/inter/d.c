@@ -76,7 +76,7 @@ static char *parameter = NULL;
 static char identifier[256];
 static uint32_t printed_step;
 static uint32_t current_step;
-static uint32_t leading_step;
+static uint32_t leading_term_step;
 static uint32_t result_step;
 static T_LINKCB *k;
 static const T_LINKCB *next_k;
@@ -91,16 +91,16 @@ static uint32_t current_step_le;
 static T_LINKCB *dot_le;
 static const T_LINKCB *previous_k_le, *next_dot_le;
 
-static void init_det_flags(void);
+static void init_determinations_flags(void);
 static char *card(void);
-static void get_arg(void);
-static bool get_det(void);
-static bool get_numb(int32_t *numb);
-static bool get_yn(const char *b);
-static void dbtry(T_STATUS_TABLE *status_table);
-static void getpf(const T_STATUS_TABLE *status_table);
+static void get_parameter(void);
+static bool get_determination(void);
+static bool get_number(int32_t *number);
+static bool get_yes_no(const char *answer);
+static void debugger_status_table(T_STATUS_TABLE *status_table);
+static void get_identifier(const T_STATUS_TABLE *status_table);
 static void one_step(T_STATUS_TABLE *status_table);
-static void pr_euc(void);
+static void print_leading_term(void);
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
 static void pr_imres(void);
 static void pr_step(void);
@@ -110,7 +110,7 @@ void (*status_table_debugger)(T_STATUS_TABLE *) = NULL;
 void refal_debugger(T_STATUS_TABLE *status_table)
 {
     // read task for debugging
-    init_det_flags();
+    init_determinations_flags();
     //----------------------------------
     printf("\n ***** RefalAB debugger ***** \n");
     //----------------------------------
@@ -131,8 +131,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         ge_all = false;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->gt = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -154,8 +154,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         ge_all = false;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->ge = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -177,8 +177,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         eq_all = false;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->eq = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -199,8 +199,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         trace_condition = true;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->ne = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -221,8 +221,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         trace_condition = true;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->lt = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -243,8 +243,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         trace_condition = true;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->le = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -264,8 +264,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         parameter = parameters + i;
         while (*parameter != '\0')
         {
-            get_arg();
-            get_det();
+            get_parameter();
+            get_determination();
             current_determination->tr = true;
             parameter += parameter_length + parameter_delimiters;
         }
@@ -283,7 +283,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_numb((int32_t *)&step_stop))
+            if (!get_number((int32_t *)&step_stop))
                 continue;
         break;
     }
@@ -300,7 +300,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_numb((int32_t *)&step_from))
+            if (!get_number((int32_t *)&step_from))
                 continue;
         break;
     }
@@ -317,7 +317,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_numb((int32_t *)&step_upto))
+            if (!get_number((int32_t *)&step_upto))
                 continue;
         break;
     }
@@ -334,7 +334,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_yn(parameters + i))
+            if (!get_yes_no(parameters + i))
                 continue;
         break;
     }
@@ -346,9 +346,9 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         step_upto = 0x7FFFFFFF;
     //==================================
     //  initialization
-    status_table_debugger = dbtry;
+    status_table_debugger = debugger_status_table;
     printed_step = 0;
-    leading_step = 0;
+    leading_term_step = 0;
     result_step = 0;
     result_next_dot = NULL;
     result_previous_k = result_next_dot;
@@ -368,7 +368,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 debugger_state = DBG_ABEND;
                 break;
             }
-            getpf(status_table);
+            get_identifier(status_table);
             if (!ge_all && !current_determination->ge && !current_determination->gt)
             {
                 if (current_determination->tr)
@@ -392,7 +392,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             {
                 was_ge = true;
                 if (!ge_all)
-                    pr_euc();
+                    print_leading_term();
             }
             //  cut
             current_step_ge = current_step;
@@ -417,7 +417,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 else
                 {
                     was_le = true;
-                    pr_euc();
+                    print_leading_term();
                 }
                 //   cut
                 current_step_le = current_step;
@@ -434,7 +434,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 bool quit = false;
                 while (status_table->dot != NULL)
                 {
-                    getpf(status_table);
+                    get_identifier(status_table);
                     if (current_determination->tr)
                     {
                         debugger_state = DBG_TRAP;
@@ -476,7 +476,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 else
                 {
                     was_eq = true;
-                    pr_euc();
+                    print_leading_term();
                 }
                 if (current_determination->tr)
                 {
@@ -494,7 +494,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             }
             if (status_table->dot != NULL)
             {
-                getpf(status_table);
+                get_identifier(status_table);
                 debugger_state = DBG_ALREADY;
                 break;
             }
@@ -524,7 +524,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             case 3:
                 printf("Free memory exhausted\n");
             }
-            getpf(status_table);
+            get_identifier(status_table);
             debugger_state = DBG_ABEND1;
             break;
         case DBG_ABEND1:
@@ -568,7 +568,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         }
 }
 
-static void dbtry(T_STATUS_TABLE *status_table)
+static void debugger_status_table(T_STATUS_TABLE *status_table)
 {
     T_LINKCB *v1 = previous_k;
     T_LINKCB *v2 = next_dot;
@@ -592,7 +592,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 status_table_debugger_state = DB_ABEND;
                 break;
             }
-            getpf(status_table);
+            get_identifier(status_table);
             if (!ge_all && !current_determination->ge && !current_determination->gt)
             {
                 if (current_determination->tr)
@@ -616,7 +616,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
             {
                 was_ge = true;
                 if (!ge_all)
-                    pr_euc();
+                    print_leading_term();
             }
             //  cut
             current_step_ge = current_step;
@@ -641,7 +641,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 else
                 {
                     was_le = true;
-                    pr_euc();
+                    print_leading_term();
                 }
                 //   cut
                 current_step_le = current_step;
@@ -658,7 +658,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 bool quit = false;
                 while (status_table->dot != NULL)
                 {
-                    getpf(status_table);
+                    get_identifier(status_table);
                     if (current_determination->tr)
                     {
                         status_table_debugger_state = DB_TRAP;
@@ -700,7 +700,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 else
                 {
                     was_eq = true;
-                    pr_euc();
+                    print_leading_term();
                 }
                 if (current_determination->tr)
                 {
@@ -718,7 +718,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
             }
             if (status_table->dot != NULL)
             {
-                getpf(status_table);
+                get_identifier(status_table);
                 status_table_debugger_state = DB_ALREADY;
                 break;
             }
@@ -782,7 +782,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
 }
 
 //    procedures
-static void init_det_flags(void)
+static void init_determinations_flags(void)
 {
     for (T_DETERMINATION *det = last_determination; det != NULL;)
     {
@@ -812,9 +812,9 @@ static void one_step(T_STATUS_TABLE *status_table)
     if (e_empty && status_table->state == 2)
     {
         pr_step();
-        if (leading_step != current_step)
+        if (leading_term_step != current_step)
         {
-            leading_step = current_step;
+            leading_term_step = current_step;
             print_expression_m("       Leading term : ", previous_k, next_dot, true);
         }
         printf("*** Recognition impossible\n");
@@ -837,13 +837,13 @@ static void pr_step(void)
     return;
 }
 
-static void pr_euc(void)
+static void print_leading_term(void)
 {
     if (current_step > step_upto || current_step < step_from)
         return;
-    if (leading_step != current_step)
+    if (leading_term_step != current_step)
     {
-        leading_step = current_step;
+        leading_term_step = current_step;
         if (result_step != current_step - 1 || result_previous_k != previous_k ||
             result_next_dot != next_dot)
         {
@@ -894,7 +894,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
     return;
 }
 
-static void getpf(const T_STATUS_TABLE *status_table)
+static void get_identifier(const T_STATUS_TABLE *status_table)
 {
     current_step = status_table->step + 1;
     k = status_table->dot->info.codep;
@@ -978,7 +978,7 @@ static char *card(void)
     return buffer_length == 0 ? NULL : buffer;
 }
 
-static void get_arg(void)
+static void get_parameter(void)
 {
     for (parameter_length = 0;; parameter_length++)
     {
@@ -991,7 +991,7 @@ static void get_arg(void)
     return;
 }
 
-static bool get_det(void)
+static bool get_determination(void)
 {
     current_determination = last_determination;
     while (current_determination != NULL)
@@ -1031,9 +1031,9 @@ static bool get_det(void)
     return true;
 }
 
-static bool get_numb(int32_t *numb)
+static bool get_number(int32_t *number)
 {
-    if (sscanf(parameters, "%d", numb) == 0 || *numb < 1)
+    if (sscanf(parameters, "%d", number) == 0 || *number < 1)
     {
         printf("\n                        Invalid number; repeat please.\n");
         return false;
@@ -1041,14 +1041,14 @@ static bool get_numb(int32_t *numb)
     return true;
 }
 
-static bool get_yn(const char *b)
+static bool get_yes_no(const char *answer)
 {
-    if (*b != 'y' && *b != 'n')
+    if (*answer != 'y' && *answer != 'n')
     {
         printf("\n                        Answer is \"y/n\"; repeat please.\n");
         return false;
     }
-    if (*b == 'y')
+    if (*answer == 'y')
         e_empty = true;
     return true;
 }
