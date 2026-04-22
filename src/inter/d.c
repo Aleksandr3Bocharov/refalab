@@ -69,12 +69,12 @@ static uint32_t step_upto = 0;
 static uint32_t step_stop = MAX_STOP;
 static uint32_t garbage_collection_number = 0; // garbage collection counter
 static char *parameters = NULL;
-static size_t s_arg;
-static size_t l_arg;
+static size_t parameter_delimiters;
+static size_t parameter_length;
 static char *parameter = NULL;
-static char buff_id[100];
+static char identifier[256];
 static uint32_t printed_step;
-static uint32_t curr_step;
+static uint32_t current_step;
 static uint32_t euc_step;
 static uint32_t res_step;
 static uint32_t curr_step1;
@@ -133,7 +133,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->gt = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -156,7 +156,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->ge = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -179,7 +179,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->eq = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -201,7 +201,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->ne = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -223,7 +223,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->lt = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -245,7 +245,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->le = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -266,7 +266,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             get_arg();
             get_det();
             current_determination->tr = true;
-            parameter += l_arg + s_arg;
+            parameter += parameter_length + parameter_delimiters;
         }
     }
     //----------------------------------
@@ -349,7 +349,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     printed_step = 0;
     euc_step = 0;
     res_step = 0;
-    res_prevk = res_nextd = NULL;
+    res_nextd = NULL;
+    res_prevk = res_nextd;
     T_DEBUGGER_STATES debugger_state = DBG_NOT_YET;
     while (true)
         switch (debugger_state)
@@ -393,7 +394,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     pr_euc();
             }
             //  cut
-            curr_step1 = curr_step;
+            curr_step1 = current_step;
             prevk1 = prevk;
             nextd1 = nextd;
             if (pk->info.code == NULL)
@@ -418,7 +419,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     pr_euc();
                 }
                 //   cut
-                curr_step2 = curr_step;
+                curr_step2 = current_step;
                 prevk2 = prevk;
                 nextd2 = nextd;
                 if (pk->info.code == NULL)
@@ -446,7 +447,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                         quit = true;
                         break;
                     }
-                    curr_step = status_table->step + 1;
+                    current_step = status_table->step + 1;
                     if (status_table->state != 1)
                     {
                         debugger_state = DBG_ABEND;
@@ -457,7 +458,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 if (quit)
                     break;
                 //  joint
-                curr_step = status_table->step;
+                current_step = status_table->step;
                 status_table->dot = dot2;
                 if (was_le)
                     pr_finres(curr_step2, prevk2, nextd2);
@@ -617,7 +618,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     pr_euc();
             }
             //  cut
-            curr_step1 = curr_step;
+            curr_step1 = current_step;
             prevk1 = prevk;
             nextd1 = nextd;
             if (pk->info.code == NULL)
@@ -642,7 +643,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                     pr_euc();
                 }
                 //   cut
-                curr_step2 = curr_step;
+                curr_step2 = current_step;
                 prevk2 = prevk;
                 nextd2 = nextd;
                 if (pk->info.code == NULL)
@@ -670,7 +671,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                         quit = true;
                         break;
                     }
-                    curr_step = status_table->step + 1;
+                    current_step = status_table->step + 1;
                     if (status_table->state != 1)
                     {
                         status_table_debugger_state = DB_AB;
@@ -681,7 +682,7 @@ static void dbtry(T_STATUS_TABLE *status_table)
                 if (quit)
                     break;
                 //  joint
-                curr_step = status_table->step;
+                current_step = status_table->step;
                 status_table->dot = dot2;
                 if (was_le)
                     pr_finres(curr_step2, prevk2, nextd2);
@@ -810,9 +811,9 @@ static void one_step(T_STATUS_TABLE *status_table)
     if (e_empty && status_table->state == 2)
     {
         pr_step();
-        if (euc_step != curr_step)
+        if (euc_step != current_step)
         {
-            euc_step = curr_step;
+            euc_step = current_step;
             print_expression_m("       Leading term : ", prevk, nextd, true);
         }
         printf("*** Recognition impossible\n");
@@ -827,22 +828,22 @@ static void one_step(T_STATUS_TABLE *status_table)
 
 static void pr_step(void)
 {
-    if (curr_step != printed_step)
+    if (current_step != printed_step)
     {
-        printf("***** Step %u\n", curr_step);
-        printed_step = curr_step;
+        printf("***** Step %u\n", current_step);
+        printed_step = current_step;
     }
     return;
 }
 
 static void pr_euc(void)
 {
-    if (curr_step > step_upto || curr_step < step_from)
+    if (current_step > step_upto || current_step < step_from)
         return;
-    if (euc_step != curr_step)
+    if (euc_step != current_step)
     {
-        euc_step = curr_step;
-        if (res_step != curr_step - 1 || res_prevk != prevk ||
+        euc_step = current_step;
+        if (res_step != current_step - 1 || res_prevk != prevk ||
             res_nextd != nextd)
         {
             pr_step();
@@ -854,11 +855,11 @@ static void pr_euc(void)
 
 static void pr_imres(void)
 {
-    if (curr_step > step_upto || curr_step < step_from)
+    if (current_step > step_upto || current_step < step_from)
         return;
     pr_step();
     print_expression_m("      Result : ", prevk, nextd, true);
-    res_step = curr_step;
+    res_step = current_step;
     res_prevk = prevk;
     res_nextd = nextd;
     return;
@@ -866,26 +867,26 @@ static void pr_imres(void)
 
 static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
 {
-    if (curr_step > step_upto || curr_step < step_from)
+    if (current_step > step_upto || current_step < step_from)
         return;
     pr_step();
-    if (curr_step == res_step && res_prevk == xprevk &&
+    if (current_step == res_step && res_prevk == xprevk &&
         res_nextd == xnextd)
     {
-        if (xstep == curr_step)
+        if (xstep == current_step)
             return;
         printf("----- This is result of call on step %u\n", xstep);
     }
     else
     {
-        if (xstep == curr_step)
+        if (xstep == current_step)
         {
             pr_imres();
             return;
         }
         printf("----- Result of call on step %u :\n", xstep);
         print_expression_m("     ", xprevk, xnextd, true);
-        res_step = curr_step;
+        res_step = current_step;
         res_prevk = xprevk;
         res_nextd = xnextd;
     }
@@ -894,7 +895,7 @@ static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xn
 
 static void getpf(const T_STATUS_TABLE *status_table)
 {
-    curr_step = status_table->step + 1;
+    current_step = status_table->step + 1;
     pk = status_table->dot->info.codep;
     prevk = pk->previous;
     nextd = status_table->dot->next;
@@ -904,8 +905,8 @@ static void getpf(const T_STATUS_TABLE *status_table)
     const uint8_t *p_id;
     if (nextk->tag != TAGF)
     {
-        buff_id[0] = '%';
-        buff_id[1] = '\0';
+        identifier[0] = '%';
+        identifier[1] = '\0';
     }
     else
     {
@@ -913,19 +914,19 @@ static void getpf(const T_STATUS_TABLE *status_table)
         id_l = *p_id;
         p_id -= id_l;
         for (i = 0; i < id_l; i++)
-            buff_id[i] = (char)toupper(*(p_id + i));
-        buff_id[id_l] = '\0';
+            identifier[i] = (char)toupper(*(p_id + i));
+        identifier[id_l] = '\0';
     }
     current_determination = last_determination;
-    if (strlen(buff_id) == 0)
+    if (strlen(identifier) == 0)
         current_determination = NULL;
     else
         while (current_determination != NULL)
         {
-            for (i = 0; buff_id[i] != '\0'; i++)
-                if (*(current_determination->identifier + i) != buff_id[i])
+            for (i = 0; identifier[i] != '\0'; i++)
+                if (*(current_determination->identifier + i) != identifier[i])
                     break;
-            if (buff_id[i] == '\0' && *(current_determination->identifier + i) == '\0')
+            if (identifier[i] == '\0' && *(current_determination->identifier + i) == '\0')
                 break;
             current_determination = current_determination->next;
         }
@@ -978,13 +979,13 @@ static char *card(void)
 
 static void get_arg(void)
 {
-    for (l_arg = 0;; l_arg++)
+    for (parameter_length = 0;; parameter_length++)
     {
-        *(parameter + l_arg) = (char)toupper(*(parameter + l_arg));
-        if (*(parameter + l_arg) == '\0' || *(parameter + l_arg) == ' ' || *(parameter + l_arg) == ',')
+        *(parameter + parameter_length) = (char)toupper(*(parameter + parameter_length));
+        if (*(parameter + parameter_length) == '\0' || *(parameter + parameter_length) == ' ' || *(parameter + parameter_length) == ',')
             break;
     }
-    for (s_arg = 0; *(parameter + l_arg + s_arg) == ' ' || *(parameter + l_arg + s_arg) == ','; s_arg++)
+    for (parameter_delimiters = 0; *(parameter + parameter_length + parameter_delimiters) == ' ' || *(parameter + parameter_length + parameter_delimiters) == ','; parameter_delimiters++)
         ;
     return;
 }
@@ -994,8 +995,8 @@ static bool get_det(void)
     current_determination = last_determination;
     while (current_determination != NULL)
     {
-        if (strncmp(current_determination->identifier, parameter, l_arg) == 0)
-            if (*(current_determination->identifier + l_arg) == '\0')
+        if (strncmp(current_determination->identifier, parameter, parameter_length) == 0)
+            if (*(current_determination->identifier + parameter_length) == '\0')
                 return true;
         current_determination = current_determination->next;
     }
@@ -1005,7 +1006,7 @@ static bool get_det(void)
         ab = true;
     else
     {
-        current_determination->identifier = malloc(l_arg + 1);
+        current_determination->identifier = malloc(parameter_length + 1);
         if (current_determination->identifier == NULL)
             ab = true;
     }
@@ -1015,8 +1016,8 @@ static bool get_det(void)
         exit(1);
         return false;
     }
-    strncpy(current_determination->identifier, parameter, l_arg);
-    *(current_determination->identifier + l_arg) = '\0';
+    strncpy(current_determination->identifier, parameter, parameter_length);
+    *(current_determination->identifier + parameter_length) = '\0';
     printf("%s\n", current_determination->identifier);
     current_determination->next = last_determination;
     last_determination = current_determination;
