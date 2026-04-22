@@ -68,7 +68,6 @@ static uint32_t step_from = 0;
 static uint32_t step_upto = 0;
 static uint32_t step_stop = MAX_STOP;
 static uint32_t garbage_collection_number = 0; // garbage collection counter
-static size_t parameters_length;
 static char *parameters = NULL;
 static size_t s_arg;
 static size_t l_arg;
@@ -92,7 +91,7 @@ static T_LINKCB *dot2;
 static const T_LINKCB *prevk2, *nextd2;
 
 static void init_det_flags(void);
-static char *fgetline(FILE *file, size_t *line_length);
+static char *card(void);
 static void get_arg(void);
 static bool get_det(void);
 static bool get_numb(int32_t *numb);
@@ -115,21 +114,21 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     printf("\n ***** RefalAB debugger ***** \n");
     //----------------------------------
     printf("\n > (function list) : ");
-    parameters = fgetline(stdin, &parameters_length);
+    parameters = card();
     if (parameters == NULL)
     {
         printf("\nRefalAB debugger: no storage or EOF in stdin\n");
         exit(1);
     }
     size_t i;
-    for (i = 0; *(parameters + i) == ' '; i++)
+    for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
         ;
-    if (*(parameters + i) != '\n')
+    if (*(parameters + i) != '\n' && *(parameters + i) != '\0')
     {
         parameter = parameters + i;
         trace_condition = true;
         ge_all = false;
-        while (*parameter != '\n')
+        while (*parameter != '\n' && *parameter != '\0')
         {
             get_arg();
             get_det();
@@ -875,7 +874,7 @@ static void getpf(const T_STATUS_TABLE *status_table)
     return;
 }
 
-static char *fgetline(FILE *file, size_t *line_length)
+static char *card(void)
 {
     static char *buffer = NULL;
     static size_t buffer_size = 0;
@@ -887,10 +886,10 @@ static char *fgetline(FILE *file, size_t *line_length)
             return NULL;
     }
     buffer_length = 0;
-    int ch = fgetc(file);
+    int ch = getchar();
     while (ch != EOF)
     {
-        if (buffer_length >= buffer_size)
+        if (buffer_length + 1 == buffer_size)
         {
             size_t new_buffer_size = buffer_size + 128;
             char *new_buffer = realloc(buffer, new_buffer_size);
@@ -908,9 +907,9 @@ static char *fgetline(FILE *file, size_t *line_length)
         buffer[buffer_length++] = ch;
         if (ch == '\n')
             break;
-        ch = fgetc(file);
+        ch = getchar();
     }
-    *line_length = buffer_length;
+    buffer[buffer_length] = '\0';
     return buffer_length == 0 ? NULL : buffer;
 }
 
