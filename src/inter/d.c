@@ -994,17 +994,17 @@ static bool get_determination(void)
                 return true;
         current_determination = current_determination->next;
     }
-    bool ab = false;
+    bool no_memory = false;
     current_determination = (T_DETERMINATION *)malloc(sizeof(T_DETERMINATION));
     if (current_determination == NULL)
-        ab = true;
+        no_memory = true;
     else
     {
         current_determination->identifier = malloc(parameter_length + 1);
         if (current_determination->identifier == NULL)
-            ab = true;
+            no_memory = true;
     }
-    if (ab)
+    if (no_memory)
     {
         printf("\nRefalAB debugger: no memory\n");
         exit(1);
