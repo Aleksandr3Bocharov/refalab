@@ -570,13 +570,13 @@ void refal_debugger(T_STATUS_TABLE *status_table)
 
 static void debugger_status_table(T_STATUS_TABLE *status_table)
 {
-    T_LINKCB *v1 = previous_k;
-    T_LINKCB *v2 = next_dot;
-    T_LINKCB *v3 = k;
-    const T_LINKCB *v4 = next_k;
-    uint32_t v5 = result_step;
-    const T_LINKCB *v6 = result_previous_k;
-    const T_LINKCB *v7 = result_next_dot;
+    T_LINKCB *save_previous_k = previous_k;
+    T_LINKCB *save_next_dot = next_dot;
+    T_LINKCB *save_k = k;
+    const T_LINKCB *save_next_k = next_k;
+    uint32_t save_result_step = result_step;
+    const T_LINKCB *save_result_previous_k = result_previous_k;
+    const T_LINKCB *save_result_next_dot = result_next_dot;
     T_STATUS_TABLE_DEBUGGER_STATES status_table_debugger_state = DB_NOT_YET;
     while (true)
         switch (status_table_debugger_state)
@@ -655,32 +655,32 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
                     k->info.code = NULL;
                 }
                 // compute call entirely
-                bool quit = false;
+                bool next_state = false;
                 while (status_table->dot != NULL)
                 {
                     get_identifier(status_table);
                     if (current_determination->tr)
                     {
                         status_table_debugger_state = DB_TRAP;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                     one_step(status_table);
                     if (step_stop < status_table->step)
                     {
                         status_table_debugger_state = DB_ABEND;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                     current_step = status_table->step + 1;
                     if (status_table->state != 1)
                     {
                         status_table_debugger_state = DB_AB;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                 }
-                if (quit)
+                if (next_state)
                     break;
                 //  joint
                 current_step = status_table->step;
@@ -751,32 +751,32 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
-                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-                if (in < 0)
+                long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
+                if (nanoseconds < 0)
                 {
-                    in += 1000000000;
-                    is--;
+                    nanoseconds += 1000000000;
+                    seconds--;
                 }
-                long long int im = is / 60;
-                is %= 60;
-                const long long int ih = im / 60;
-                im %= 60;
-                char s[64];
-                sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-                printf("Elapsed time = %s\n", s);
+                long long int minutes = seconds / 60;
+                seconds %= 60;
+                const long long int hours = minutes / 60;
+                minutes %= 60;
+                char string_time[64];
+                sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+                printf("Elapsed time = %s\n", string_time);
             }
             exit(0);
             return;
         case DB_DO:
         case DB_AB:
-            previous_k = v1;
-            next_dot = v2;
-            k = v3;
-            next_k = v4;
-            result_step = v5;
-            result_previous_k = v6;
-            result_next_dot = v7;
+            previous_k = save_previous_k;
+            next_dot = save_next_dot;
+            k = save_k;
+            next_k = save_next_k;
+            result_step = save_result_step;
+            result_previous_k = save_result_previous_k;
+            result_next_dot = save_result_next_dot;
             return;
         }
 }
