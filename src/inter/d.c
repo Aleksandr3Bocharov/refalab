@@ -784,12 +784,12 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
 //    procedures
 static void init_determinations_flags(void)
 {
-    for (T_DETERMINATION *det = last_determination; det != NULL;)
+    for (T_DETERMINATION *determination = last_determination; determination != NULL;)
     {
-        free(det->identifier);
-        T_DETERMINATION *det1 = det;
-        det = det->next;
-        free(det1);
+        free(determination->identifier);
+        T_DETERMINATION *temp_determination = determination;
+        determination = determination->next;
+        free(temp_determination);
     }
     last_determination = NULL;
     return;
@@ -901,9 +901,6 @@ static void get_identifier(const T_STATUS_TABLE *status_table)
     previous_k = k->previous;
     next_dot = status_table->dot->next;
     next_k = k->next;
-    size_t i;
-    uint8_t id_l;
-    const uint8_t *p_id;
     if (next_k->tag != TAGF)
     {
         identifier[0] = '%';
@@ -911,12 +908,11 @@ static void get_identifier(const T_STATUS_TABLE *status_table)
     }
     else
     {
-        p_id = next_k->info.codef - 1;
-        id_l = *p_id;
-        p_id -= id_l;
-        for (i = 0; i < id_l; i++)
-            identifier[i] = (char)toupper(*(p_id + i));
-        identifier[id_l] = '\0';
+        const uint8_t *label_length = next_k->info.codef - 1;
+        const char *label = (char *)label_length - *label_length;
+        for (uint8_t i = 0; i < *label_length; i++)
+            identifier[i] = (char)toupper(*(label + i));
+        identifier[*label_length] = '\0';
     }
     current_determination = last_determination;
     if (strlen(identifier) == 0)
@@ -924,10 +920,7 @@ static void get_identifier(const T_STATUS_TABLE *status_table)
     else
         while (current_determination != NULL)
         {
-            for (i = 0; identifier[i] != '\0'; i++)
-                if (*(current_determination->identifier + i) != identifier[i])
-                    break;
-            if (identifier[i] == '\0' && *(current_determination->identifier + i) == '\0')
+            if (strcmp(identifier, current_determination->identifier) == 0)
                 break;
             current_determination = current_determination->next;
         }
