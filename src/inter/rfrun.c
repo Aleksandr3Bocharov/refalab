@@ -251,11 +251,11 @@ static T_LINKCB *temp_linkcb, *temp_linkcb_free_memory, *current_linkcb_free_mem
 static const uint8_t *virtual_program_counter2; // additional virtual program counter
 static uint8_t i, n, m;
 
-static void (*function_c_pointer)(void);
+static void (*function_c)(void);
 
-static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
-static bool letter(char s);
-static bool digit(char s);
+static bool specifier_interpretator(const T_LINKCB *linkcb);
+static bool letter(char symbol);
+static bool digit(char symbol);
 
 void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
 {
@@ -263,9 +263,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
     T_SAVE_AREA *save_process = malloc(sizeof(T_SAVE_AREA));
     if (save_process == NULL)
         refal_abort_end("refal_run: no memory");
-    if (!exist_status_table(ast))
+    if (!exist_status_table(status_table))
         refal_abort_end("refal_run: attempt to run unexisting process");
-    if (ast->state == 4)
+    if (status_table->state == 4)
         refal_abort_end("refal_run: attampt to run process in state 4");
     // saving part of refal-block
     save_process->upshot = refal.upshot;
@@ -274,10 +274,10 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
     save_process->previous_result = refal.previous_result;
     save_process->next_result = refal.next_result;
     save_process->current_status_table = refal.current_status_table;
-    refal.current_status_table = ast;
-    ast->state = 4;
-    T_LINKCB quasik; // quasi-sign '<'
-    quasik.info.codep = ast->dot;
+    refal.current_status_table = status_table;
+    status_table->state = 4;
+    T_LINKCB quasi_k; // quasi-sign '<'
+    quasi_k.info.codep = status_table->dot;
     // adress of free memory list head
     T_LINKCB *free_memory_list_head = refal.free_memory_list_head;
     T_INTERPRETATOR_STATES interpretator_state = START;
@@ -286,12 +286,12 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
         {
             // start of next step
         case START:
-            if (ast->step >= ast->stop)
+            if (status_table->step >= status_table->stop)
             {
                 interpretator_state = DONE;
                 break;
             }
-            right_board_hole = quasik.info.codep;
+            right_board_hole = quasi_k.info.codep;
             if (right_board_hole == NULL)
             {
                 interpretator_state = DONE;
@@ -316,7 +316,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // increase step number
         case ADVSTEP:
-            ast->step++;
+            status_table->step++;
             interpretator_state = START;
             break;
             // symbol - reference execution
@@ -335,21 +335,21 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             // interpreter exits
             // store state
         case DONE:
-            ast->state = 1; // normal end
+            status_table->state = 1; // normal end
             interpretator_state = EXIT;
             break;
         case RCGIMP:
-            ast->state = 2; // recognition impossible
+            status_table->state = 2; // recognition impossible
             interpretator_state = EXIT;
             break;
         case LACK:
-            ast->state = 3; // end of free memory
-            quasik.info.codep = table_elements[2];
+            status_table->state = 3; // end of free memory
+            quasi_k.info.codep = table_elements[2];
             interpretator_state = EXIT;
             break;
             // state remove from
         case EXIT:
-            ast->dot = quasik.info.codep;
+            status_table->dot = quasi_k.info.codep;
             // restore refal-block
             refal.upshot = save_process->upshot;
             refal.previous_argument = save_process->previous_argument;
@@ -1343,7 +1343,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // WSPC(L);
         case WSPC:
-            if (!spc(virtual_program_counter, table_elements[number_element - 1]))
+            if (!specifier_interpretator(table_elements[number_element - 1]))
             {
                 interpretator_state = FAIL;
                 break;
@@ -1360,7 +1360,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
                 temp_board_hole = temp_board_hole->next;
                 if (BRACKET(temp_board_hole))
                     temp_board_hole = temp_board_hole->info.codep;
-                if (!spc(virtual_program_counter, temp_board_hole))
+                if (!specifier_interpretator(temp_board_hole))
                 {
                     interpretator_state = FAIL;
                     fail = true;
@@ -1389,7 +1389,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             SHIFT_LEFT_BOARD_HOLE;
             if (BRACKET(left_board_hole))
                 left_board_hole = left_board_hole->info.codep;
-            if (!spc(virtual_program_counter, left_board_hole))
+            if (!specifier_interpretator(left_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -1417,7 +1417,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             SHIFT_RIGHT_BOARD_HOLE;
             if (BRACKET(right_board_hole))
                 right_board_hole = right_board_hole->info.codep;
-            if (!spc(virtual_program_counter, right_board_hole))
+            if (!specifier_interpretator(right_board_hole))
             {
                 interpretator_state = FAIL;
                 break;
@@ -1434,7 +1434,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             left_board_hole = left_board_hole->next;
             while (left_board_hole != right_board_hole)
             {
-                if (!spc(virtual_program_counter, left_board_hole))
+                if (!specifier_interpretator(left_board_hole))
                     break;
                 if (BRACKET(left_board_hole))
                     left_board_hole = left_board_hole->info.codep;
@@ -1452,7 +1452,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             right_board_hole = right_board_hole->previous;
             while (right_board_hole != left_board_hole)
             {
-                if (!spc(virtual_program_counter, right_board_hole))
+                if (!specifier_interpretator(right_board_hole))
                     break;
                 if (BRACKET(right_board_hole))
                     right_board_hole = right_board_hole->info.codep;
@@ -1467,7 +1467,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             // EOR;
         case EOR:
             current_linkcb_free_memory = free_memory_list_head;
-            last_acted_k = &quasik;
+            last_acted_k = &quasi_k;
             last_gen_left_bracket = NULL;
             transplantation_stack_pointer = transplantation_stack;
             interpretator_state = ADVANCE;
@@ -1701,7 +1701,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             interpretator_state = SWAPREF;
             break;
         case SWAPREF:
-            quasik.info.codep = table_elements[1]->info.codep;
+            quasi_k.info.codep = table_elements[1]->info.codep;
             if (current_linkcb_free_memory->next != current_linkcb_free_memory)
             {
                 LINK(current_linkcb_free_memory->previous, table_elements[2]->next);
@@ -1738,14 +1738,14 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // C-refal-function execution
         case CFUNC:
-            memcpy(&function_c_pointer, virtual_program_counter + NMBL + Z_0, LBLL);
+            memcpy(&function_c, virtual_program_counter + NMBL + Z_0, LBLL);
             refal.upshot = 1;
             refal.previous_result = temp_board_hole->previous;
             refal.next_result = temp_board_hole;
             refal.previous_argument = left_board_hole;
             refal.next_argument = right_board_hole;
             //        call  C - function
-            (*function_c_pointer)();
+            (*function_c)();
             switch (refal.upshot)
             {
             case 1:
@@ -1764,7 +1764,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             //        return from C - function
             //          step is done
         case CFDONE:
-            quasik.info.codep = refal.next_result->info.codep;
+            quasi_k.info.codep = refal.next_result->info.codep;
             LINK(refal.next_result->previous, refal.next_argument->next);
             LINK(refal.next_argument, free_memory_list_head->next);
             LINK(free_memory_list_head, refal.next_result);
@@ -1779,19 +1779,19 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
                 LINK(free_memory_list_head, refal.previous_result->next);
                 LINK(refal.previous_result, refal.next_result);
             }
-            ast->state = 3;
+            status_table->state = 3;
             interpretator_state = EXIT;
         }
 }
 
-static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
-// specifier interpreter
+static bool specifier_interpretator(const T_LINKCB *linkcb)
+// specifier interpretator
 {
-    // spcs-pointer
+    // specifier_stack_pointer
     T_SPECIFIER_STACK *specifier_stack_pointer = specifier_stack;
     uint8_t *specifier_virtual_program_counter; // virtual specifier counter
-    memcpy(&specifier_virtual_program_counter, virtual_program_counter_ + NMBL, LBLL);
-    uint8_t specifier_oeration_program_code;
+    memcpy(&specifier_virtual_program_counter, virtual_program_counter + NMBL, LBLL);
+    uint8_t specifier_operation_program_code;
     // positiveness feature of specifier element
     bool specifier_plus = true;
     T_SPECIFIER_STATES specifier_state = SPCNXT;
@@ -1815,11 +1815,11 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
         // return from specifier element if "NO"
         case SPCNXT:
             // specifier code
-            specifier_oeration_program_code = *specifier_virtual_program_counter;
+            specifier_operation_program_code = *specifier_virtual_program_counter;
             specifier_virtual_program_counter += NMBL;
             // switch
             // SPCOP
-            switch (specifier_oeration_program_code)
+            switch (specifier_operation_program_code)
             {
             case 0000:
                 specifier_state = SPCCLL;
@@ -1882,7 +1882,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCRET;
             break;
         case SPCSC:
-            if (memcmp(specifier_virtual_program_counter, &b->tag, SMBL) == 0)
+            if (memcmp(specifier_virtual_program_counter, &linkcb->tag, SMBL) == 0)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1891,7 +1891,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCS:
-            if (NOT_BRACKET(b))
+            if (NOT_BRACKET(linkcb))
             {
                 specifier_state = SPCRET;
                 break;
@@ -1899,7 +1899,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCB:
-            if (BRACKET(b))
+            if (BRACKET(linkcb))
             {
                 specifier_state = SPCRET;
                 break;
@@ -1907,7 +1907,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCF:
-            if (b->tag == TAGF)
+            if (linkcb->tag == TAGF)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1915,7 +1915,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCN:
-            if (b->tag == TAGN)
+            if (linkcb->tag == TAGN)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1923,7 +1923,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCR:
-            if (b->tag == TAGR)
+            if (linkcb->tag == TAGR)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1931,7 +1931,7 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCO:
-            if (b->tag == TAGO)
+            if (linkcb->tag == TAGO)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1939,12 +1939,12 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCD:
-            if (b->tag != TAGO)
+            if (linkcb->tag != TAGO)
             {
                 specifier_state = SPCNXT;
                 break;
             }
-            if (digit(b->info.infoc))
+            if (digit(linkcb->info.infoc))
             {
                 specifier_state = SPCRET;
                 break;
@@ -1952,31 +1952,31 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b)
             specifier_state = SPCNXT;
             break;
         case SPCL:
-            if (b->tag != TAGO)
+            if (linkcb->tag != TAGO)
             {
                 specifier_state = SPCNXT;
                 break;
             }
-            if (letter(b->info.infoc))
+            if (letter(linkcb->info.infoc))
             {
                 specifier_state = SPCRET;
                 break;
             }
             specifier_state = SPCNXT;
         }
-} //             end      spc
+} //             end      specifier_interpretator
 
-static bool letter(char s)
+static bool letter(char symbol)
 {
-    if ((s >= 'A' && s <= 'Z') || // A..Z
-        (s >= 'a' && s <= 'z'))   // a..z
+    if ((symbol >= 'A' && symbol <= 'Z') || // A..Z
+        (symbol >= 'a' && symbol <= 'z'))   // a..z
         return true;
     return false;
 }
 
-static bool digit(char s)
+static bool digit(char symbol)
 {
-    if (s >= '0' && s <= '9')
+    if (symbol >= '0' && symbol <= '9')
         return true;
     return false;
 }

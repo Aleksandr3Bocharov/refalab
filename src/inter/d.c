@@ -953,8 +953,8 @@ static char *card(void)
             return NULL;
     }
     buffer_length = 0;
-    int ch = getchar();
-    while (ch != EOF)
+    int symbol = getchar();
+    while (symbol != EOF)
     {
         if (buffer_length + 1 == buffer_size)
         {
@@ -971,13 +971,13 @@ static char *card(void)
             buffer = new_buffer;
             buffer_size = new_buffer_size;
         }
-        if (ch < ' ' && ch > '\0')
+        if (symbol < ' ' && symbol > '\0')
             buffer[buffer_length++] = ' ';
         else
-            buffer[buffer_length++] = (char)ch;
-        if (ch == '\n')
+            buffer[buffer_length++] = (char)symbol;
+        if (symbol == '\n')
             break;
-        ch = getchar();
+        symbol = getchar();
     }
     buffer[buffer_length] = '\0';
     return buffer_length == 0 ? NULL : buffer;
