@@ -118,7 +118,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     size_t i;
@@ -142,7 +142,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -165,7 +165,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -188,7 +188,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -210,7 +210,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -232,7 +232,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -254,7 +254,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     parameters = card();
     if (parameters == NULL)
     {
-        printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+        printf("\nRefalAB debugger: no memory or EOF in stdin\n");
         exit(1);
     }
     for (i = 0; *(parameters + i) == ' ' || *(parameters + i) == ','; i++)
@@ -277,7 +277,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         parameters = card();
         if (parameters == NULL)
         {
-            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            printf("\nRefalAB debugger: no memory or EOF in stdin\n");
             exit(1);
         }
         for (i = 0; *(parameters + i) == ' '; i++)
@@ -294,7 +294,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         parameters = card();
         if (parameters == NULL)
         {
-            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            printf("\nRefalAB debugger: no memory or EOF in stdin\n");
             exit(1);
         }
         for (i = 0; *(parameters + i) == ' '; i++)
@@ -311,7 +311,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         parameters = card();
         if (parameters == NULL)
         {
-            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            printf("\nRefalAB debugger: no memory or EOF in stdin\n");
             exit(1);
         }
         for (i = 0; *(parameters + i) == ' '; i++)
@@ -328,7 +328,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         parameters = card();
         if (parameters == NULL)
         {
-            printf("\nRefalAB debugger: no storage or EOF in stdin\n");
+            printf("\nRefalAB debugger: no memory or EOF in stdin\n");
             exit(1);
         }
         for (i = 0; *(parameters + i) == ' '; i++)
@@ -1013,7 +1013,7 @@ static bool get_determination(void)
     }
     if (ab)
     {
-        printf("\nRefalAB debugger: no storage\n");
+        printf("\nRefalAB debugger: no memory\n");
         exit(1);
         return false;
     }
