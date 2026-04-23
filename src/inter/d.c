@@ -431,32 +431,32 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     k->info.code = NULL;
                 }
                 // compute call entirely
-                bool quit = false;
+                bool next_state = false;
                 while (status_table->dot != NULL)
                 {
                     get_identifier(status_table);
                     if (current_determination->tr)
                     {
                         debugger_state = DBG_TRAP;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                     one_step(status_table);
                     if (step_stop < status_table->step)
                     {
                         debugger_state = DBG_ABEND;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                     current_step = status_table->step + 1;
                     if (status_table->state != 1)
                     {
                         debugger_state = DBG_ABEND;
-                        quit = true;
+                        next_state = true;
                         break;
                     }
                 }
-                if (quit)
+                if (next_state)
                     break;
                 //  joint
                 current_step = status_table->step;
@@ -546,20 +546,20 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
-                long int in = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-                long long int is = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-                if (in < 0)
+                long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+                long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
+                if (nanoseconds < 0)
                 {
-                    in += 1000000000;
-                    is--;
+                    nanoseconds += 1000000000;
+                    seconds--;
                 }
-                long long int im = is / 60;
-                is %= 60;
-                const long long int ih = im / 60;
-                im %= 60;
-                char s[64];
-                sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-                printf("Elapsed time = %s\n", s);
+                long long int minutes = seconds / 60;
+                seconds %= 60;
+                const long long int hours = minutes / 60;
+                minutes %= 60;
+                char string_time[64];
+                sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+                printf("Elapsed time = %s\n", string_time);
             }
             delete_status_table(status_table);
             refal_terminate_memory();
