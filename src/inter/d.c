@@ -95,7 +95,7 @@ static void init_determinations_flags(void);
 static char *card(void);
 static void get_parameter(void);
 static bool get_determination(void);
-static bool get_number(int32_t *number);
+static bool get_number(int32_t *number, char *string);
 static bool get_yes_no(const char *answer);
 static void debugger_status_table(T_STATUS_TABLE *status_table);
 static void get_identifier(const T_STATUS_TABLE *status_table);
@@ -283,8 +283,20 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_number((int32_t *)&step_stop))
+        {
+            if (!get_number((int32_t *)&step_stop, parameters))
+            {
+                printf("\n                        Invalid number; repeat please.\n");
                 continue;
+            }
+            for (i = 0; *(parameters + i) == ' '; i++)
+                ;
+            if (*(parameters + i) != '\0')
+            {
+                printf("\n                        Invalid number; repeat please.\n");
+                continue;
+            }
+        }
         break;
     }
     //----------------------------------
@@ -300,7 +312,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_number((int32_t *)&step_from))
+            if (!get_number((int32_t *)&step_from, parameters))
                 continue;
         break;
     }
@@ -317,7 +329,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_number((int32_t *)&step_upto))
+            if (!get_number((int32_t *)&step_upto, parameters))
                 continue;
         break;
     }
@@ -1024,13 +1036,10 @@ static bool get_determination(void)
     return true;
 }
 
-static bool get_number(int32_t *number)
+static bool get_number(int32_t *number, char *string)
 {
-    if (sscanf(parameters, "%d", number) == 0 || *number < 1)
-    {
-        printf("\n                        Invalid number; repeat please.\n");
+    if (sscanf(parameters, "%d%s", number, string) == 0 || *number < 1)
         return false;
-    }
     return true;
 }
 
