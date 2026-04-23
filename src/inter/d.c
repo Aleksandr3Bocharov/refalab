@@ -95,7 +95,7 @@ static void init_determinations_flags(void);
 static char *card(void);
 static void get_parameter(void);
 static bool get_determination(void);
-static bool get_number(int32_t *number, char *string);
+static bool get_number(int32_t *number);
 static bool get_yes_no(const char *answer);
 static void debugger_status_table(T_STATUS_TABLE *status_table);
 static void get_identifier(const T_STATUS_TABLE *status_table);
@@ -283,20 +283,11 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-        {
-            if (!get_number((int32_t *)&step_stop, parameters))
+            if (!get_number((int32_t *)&step_stop))
             {
                 printf("\n                        Invalid number; repeat please.\n");
                 continue;
             }
-            for (i = 0; *(parameters + i) == ' '; i++)
-                ;
-            if (*(parameters + i) != '\0')
-            {
-                printf("\n                        Invalid number; repeat please.\n");
-                continue;
-            }
-        }
         break;
     }
     //----------------------------------
@@ -312,8 +303,11 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_number((int32_t *)&step_from, parameters))
+            if (!get_number((int32_t *)&step_from))
+            {
+                printf("\n                        Invalid number; repeat please.\n");
                 continue;
+            }
         break;
     }
     //----------------------------------
@@ -329,8 +323,11 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         for (i = 0; *(parameters + i) == ' '; i++)
             ;
         if (*(parameters + i) != '\0')
-            if (!get_number((int32_t *)&step_upto, parameters))
+            if (!get_number((int32_t *)&step_upto))
+            {
+                printf("\n                        Invalid number; repeat please.\n");
                 continue;
+            }
         break;
     }
     //----------------------------------
@@ -347,7 +344,10 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             ;
         if (*(parameters + i) != '\0')
             if (!get_yes_no(parameters + i))
+            {
+                printf("\n                        Answer is \"y/n\"; repeat please.\n");
                 continue;
+            }
         break;
     }
     printf("\n");
@@ -1036,9 +1036,9 @@ static bool get_determination(void)
     return true;
 }
 
-static bool get_number(int32_t *number, char *string)
+static bool get_number(int32_t *number)
 {
-    if (sscanf(parameters, "%d%s", number, string) == 0 || *number < 1)
+    if (sscanf(parameters, "%d", number) == 0 || *number < 1)
         return false;
     return true;
 }
@@ -1046,10 +1046,7 @@ static bool get_number(int32_t *number, char *string)
 static bool get_yes_no(const char *answer)
 {
     if (*answer != 'y' && *answer != 'n')
-    {
-        printf("\n                        Answer is \"y/n\"; repeat please.\n");
         return false;
-    }
     if (*answer == 'y')
         e_empty = true;
     return true;
