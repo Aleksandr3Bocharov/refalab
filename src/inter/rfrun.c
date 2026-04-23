@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file RFRUN.C -------------------
@@ -257,16 +257,16 @@ static bool spc(const uint8_t *virtual_program_counter_, const T_LINKCB *b);
 static bool letter(char s);
 static bool digit(char s);
 
-void rfrun(T_STATUS_TABLE *ast) // adress of current state table
+void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
 {
     // dynamic area DSA
     T_SAVE_AREA *save_process = malloc(sizeof(T_SAVE_AREA));
     if (save_process == NULL)
-        refal_abort_end("rfrun: no memory");
+        refal_abort_end("refal_run: no memory");
     if (!exist_status_table(ast))
-        refal_abort_end("rfrun: attempt to run unexisting process");
+        refal_abort_end("refal_run: attempt to run unexisting process");
     if (ast->state == 4)
-        refal_abort_end("rfrun: attampt to run process in state 4");
+        refal_abort_end("refal_run: attampt to run process in state 4");
     // saving part of refal-block
     save_process->upshot = refal.upshot;
     save_process->previous_argument = refal.previous_argument;

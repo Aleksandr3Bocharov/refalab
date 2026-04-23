@@ -299,13 +299,13 @@ void refal_execute(uint8_t *refalab_function)
             const T_LINKCB *next_dot = status_table.dot->next;
             printf(" Step: %d\n", status_table.stop);
             print_expression_m(" Term: ", previous_k, next_dot, true);
-            rfrun(&status_table);
+            refal_run(&status_table);
             if (status_table.state == 1)
                 print_expression_m(" Result: ", previous_k, next_dot, true);
             break;
 #else
             // no debug info
-            rfrun(&status_table);
+            refal_run(&status_table);
             if (status_table.state == 3)
                 if (more_free_memory())
                     break;

@@ -812,7 +812,7 @@ static void one_step(T_STATUS_TABLE *status_table)
     status_table->stop = status_table->step + 1;
     while (true)
     {
-        rfrun(status_table);
+        refal_run(status_table);
         if (status_table->state != 3)
             break;
         if (refal.dynamic_boxes != NULL)

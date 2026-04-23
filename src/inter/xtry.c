@@ -74,11 +74,11 @@ static void try_(void)
             const T_LINKCB *nextd = s_st->dot->next;
             printf(" Step: %d\n", s_st->stop);
             print_expression_m(" Term: ", prevk, nextd, true);
-            rfrun(s_st);
+            refal_run(s_st);
             if (s_st->state == 1)
                 print_expression_m(" Result: ", prevk, nextd, true);
 #else
-            rfrun(s_st); // net prokrutki
+            refal_run(s_st); // net prokrutki
             if (s_st->state == 1 && s_st->dot != NULL)
             {
                 s_st->step = 0;
