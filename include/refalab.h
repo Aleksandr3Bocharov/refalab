@@ -147,7 +147,7 @@ extern bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *re
 extern T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate);
 extern bool check_count_free_memory_list(size_t count);
 
-extern void refal_run(T_STATUS_TABLE *ast);
+extern void refal_run(T_STATUS_TABLE *status_table);
 
 extern void (*status_table_debugger)(T_STATUS_TABLE *);
 extern void refal_debugger(T_STATUS_TABLE *status_table);
