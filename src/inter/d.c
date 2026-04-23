@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-20
+// 2026-04-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -101,9 +101,9 @@ static void debugger_status_table(T_STATUS_TABLE *status_table);
 static void get_identifier(const T_STATUS_TABLE *status_table);
 static void one_step(T_STATUS_TABLE *status_table);
 static void print_leading_term(void);
-static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd);
-static void pr_imres(void);
-static void pr_step(void);
+static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, const T_LINKCB *x_next_dot);
+static void print_immediate_result(void);
+static void print_step(void);
 
 void (*status_table_debugger)(T_STATUS_TABLE *) = NULL;
 
@@ -462,7 +462,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 current_step = status_table->step;
                 status_table->dot = dot_le;
                 if (was_le)
-                    pr_finres(current_step_le, previous_k_le, next_dot_le);
+                    print_final_result(current_step_le, previous_k_le, next_dot_le);
             } // for label ALREADY
             else
             { // step in station "is already"
@@ -490,7 +490,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                     break;
                 }
                 if (was_eq)
-                    pr_imres();
+                    print_immediate_result();
             }
             if (status_table->dot != NULL)
             {
@@ -501,7 +501,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             //  joint
             status_table->dot = dot_ge;
             if (!ge_all && was_ge)
-                pr_finres(current_step_ge, previous_k_ge, next_dot_ge);
+                print_final_result(current_step_ge, previous_k_ge, next_dot_ge);
             debugger_state = DBG_NOT_YET;
             break;
         case DBG_DONE:
@@ -686,7 +686,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
                 current_step = status_table->step;
                 status_table->dot = dot_le;
                 if (was_le)
-                    pr_finres(current_step_le, previous_k_le, next_dot_le);
+                    print_final_result(current_step_le, previous_k_le, next_dot_le);
             } // for label ALREADY
             else
             { // step in station "is already"
@@ -714,7 +714,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
                     break;
                 }
                 if (was_eq)
-                    pr_imres();
+                    print_immediate_result();
             }
             if (status_table->dot != NULL)
             {
@@ -725,7 +725,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
             //  joint
             status_table->dot = dot_ge;
             if (!ge_all && was_ge)
-                pr_finres(current_step_ge, previous_k_ge, next_dot_ge);
+                print_final_result(current_step_ge, previous_k_ge, next_dot_ge);
             status_table_debugger_state = DB_NOT_YET;
             break;
         case DB_TRAP:
@@ -811,7 +811,7 @@ static void one_step(T_STATUS_TABLE *status_table)
     }
     if (e_empty && status_table->state == 2)
     {
-        pr_step();
+        print_step();
         if (leading_term_step != current_step)
         {
             leading_term_step = current_step;
@@ -827,7 +827,7 @@ static void one_step(T_STATUS_TABLE *status_table)
     return;
 }
 
-static void pr_step(void)
+static void print_step(void)
 {
     if (current_step != printed_step)
     {
@@ -847,18 +847,18 @@ static void print_leading_term(void)
         if (result_step != current_step - 1 || result_previous_k != previous_k ||
             result_next_dot != next_dot)
         {
-            pr_step();
+            print_step();
             print_expression_m("      Leading term : ", previous_k, next_dot, true);
         }
     }
     return;
 }
 
-static void pr_imres(void)
+static void print_immediate_result(void)
 {
     if (current_step > step_upto || current_step < step_from)
         return;
-    pr_step();
+    print_step();
     print_expression_m("      Result : ", previous_k, next_dot, true);
     result_step = current_step;
     result_previous_k = previous_k;
@@ -866,30 +866,30 @@ static void pr_imres(void)
     return;
 }
 
-static void pr_finres(uint32_t xstep, const T_LINKCB *xprevk, const T_LINKCB *xnextd)
+static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, const T_LINKCB *x_next_dot)
 {
     if (current_step > step_upto || current_step < step_from)
         return;
-    pr_step();
-    if (current_step == result_step && result_previous_k == xprevk &&
-        result_next_dot == xnextd)
+    print_step();
+    if (current_step == result_step && result_previous_k == x_previous_k &&
+        result_next_dot == x_next_dot)
     {
-        if (xstep == current_step)
+        if (x_step == current_step)
             return;
-        printf("----- This is result of call on step %u\n", xstep);
+        printf("----- This is result of call on step %u\n", x_step);
     }
     else
     {
-        if (xstep == current_step)
+        if (x_step == current_step)
         {
-            pr_imres();
+            print_immediate_result();
             return;
         }
-        printf("----- Result of call on step %u :\n", xstep);
-        print_expression_m("     ", xprevk, xnextd, true);
+        printf("----- Result of call on step %u :\n", x_step);
+        print_expression_m("     ", x_previous_k, x_next_dot, true);
         result_step = current_step;
-        result_previous_k = xprevk;
-        result_next_dot = xnextd;
+        result_previous_k = x_previous_k;
+        result_next_dot = x_next_dot;
     }
     return;
 }
