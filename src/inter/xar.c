@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -23,159 +23,159 @@
 #define Odr 5
 
 #define HMAX 65536
-#define SMAX 32
+#define SHIFT_MAX 32
 
-static void oper(uint32_t o, uint32_t prn);
+static void operate(uint32_t operation, uint32_t type);
 
-static void add_(void) { oper(Oadd, 0); }
+static void add_(void) { operate(Oadd, 0); }
 char add_0[] = {Z3 'A', 'D', 'D', (char)3};
 G_L_B uint8_t refalab_add = '\122';
 void (*add_1)(void) = add_;
 
-static void sub_(void) { oper(Osub, 0); }
+static void sub_(void) { operate(Osub, 0); }
 char sub_0[] = {Z3 'S', 'U', 'B', (char)3};
 G_L_B uint8_t refalab_sub = '\122';
 void (*sub_1)(void) = sub_;
 
-static void mul_(void) { oper(Omul, 0); }
+static void mul_(void) { operate(Omul, 0); }
 char mul_0[] = {Z3 'M', 'U', 'L', (char)3};
 G_L_B uint8_t refalab_mul = '\122';
 void (*mul_1)(void) = mul_;
 
-static void dr_(void) { oper(Odr, 0); }
+static void dr_(void) { operate(Odr, 0); }
 char dr_0[] = {Z2 'D', 'R', (char)2};
 G_L_B uint8_t refalab_dr = '\122';
 void (*dr_1)(void) = dr_;
 
-static void div_(void) { oper(Odr, 2); }
+static void div_(void) { operate(Odr, 2); }
 char div_0[] = {Z3 'D', 'I', 'V', (char)3};
 G_L_B uint8_t refalab_div = '\122';
 void (*div_1)(void) = div_;
 
-static void addn_(void) { oper(Oadd, 1); }
+static void addn_(void) { operate(Oadd, 1); }
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_addn = '\122';
 void (*addn_1)(void) = addn_;
 
-static void subn_(void) { oper(Osub, 1); }
+static void subn_(void) { operate(Osub, 1); }
 char subn_0[] = {Z4 'S', 'U', 'B', 'N', (char)4};
 G_L_B uint8_t refalab_subn = '\122';
 void (*subn_1)(void) = subn_;
 
-static void muln_(void) { oper(Omul, 1); }
+static void muln_(void) { operate(Omul, 1); }
 char muln_0[] = {Z4 'M', 'U', 'L', 'N', (char)4};
 G_L_B uint8_t refalab_muln = '\122';
 void (*muln_1)(void) = muln_;
 
-static void drn_(void) { oper(Odr, 1); }
+static void drn_(void) { operate(Odr, 1); }
 char drn_0[] = {Z3 'D', 'R', 'N', (char)3};
 G_L_B uint8_t refalab_drn = '\122';
 void (*drn_1)(void) = drn_;
 
-static void divn_(void) { oper(Odr, 3); }
+static void divn_(void) { operate(Odr, 3); }
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
-static size_t dl, Xdl, Ydl;
-static char zn, Xzn, Yzn;
+static T_LINKCB *x_current, *y_current, *X_begin, *X_end, *begin, *end, *Y_begin, *Y_end;
+static size_t length, X_length, Y_length;
+static char sign, X_sign, Y_sign;
 
-static bool dajch(void)
+static bool read_number(void)
 {
-    zn = '+';
-    kon = y->previous;
-    if (x == kon)
+    sign = '+';
+    end = y_current->previous;
+    if (x_current == end)
     { // pustoe chislo
-        dl = 0;
+        length = 0;
         return true;
     }
-    x = x->next;
-    if (x->tag == TAGO &&
-        (x->info.infoc == '+' || x->info.infoc == '-'))
+    x_current = x_current->next;
+    if (x_current->tag == TAGO &&
+        (x_current->info.infoc == '+' || x_current->info.infoc == '-'))
     {
-        zn = x->info.infoc;
-        x = x->next;
-        if (x == y)
+        sign = x_current->info.infoc;
+        x_current = x_current->next;
+        if (x_current == y_current)
             return false; //  w chisle - lish znak
     }
-    for (; x->tag == TAGN && gcoden(x) == 0; x = x->next)
+    for (; x_current->tag == TAGN && gcoden(x_current) == 0; x_current = x_current->next)
         ;
-    if (x == y)
-        dl = 0; //  wse cifry - nuli
+    if (x_current == y_current)
+        length = 0; //  wse cifry - nuli
     else
     {
-        for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
+        for (length = 0, begin = x_current; x_current->tag == TAGN; x_current = x_current->next, length++)
             ;
-        if (x != y)
+        if (x_current != y_current)
             return false; // ne makrocifra
     }
     return true;
 }
 
-static bool dajarg(void)
+static bool read_numbers(void)
 {
-    x = refal.previous_argument->next;
-    if (x->tag != TAGLB)
+    x_current = refal.previous_argument->next;
+    if (x_current->tag != TAGLB)
         return false;
-    y = x->info.codep;
-    if (dajch())
+    y_current = x_current->info.codep;
+    if (read_number())
     {
-        Xn = nach;
-        Xk = kon;
-        Xzn = zn;
-        Xdl = dl;
+        X_begin = begin;
+        X_end = end;
+        X_sign = sign;
+        X_length = length;
     }
     else
         return false;
-    x = y;
-    y = refal.next_argument;
-    if (dajch())
+    x_current = y_current;
+    y_current = refal.next_argument;
+    if (read_number())
     {
-        Yn = nach;
-        Yk = kon;
-        Yzn = zn;
-        Ydl = dl;
+        Y_begin = begin;
+        Y_end = end;
+        Y_sign = sign;
+        Y_length = length;
         return true;
     }
     else
         return false;
 }
 
-static void obmen(void)
+static void exchange(void)
 {
-    T_LINKCB *p = Xn;
-    Xn = Yn;
-    Yn = p;
-    p = Xk;
-    Xk = Yk;
-    Yk = p;
-    const size_t i = Xdl;
-    Xdl = Ydl;
-    Ydl = i;
-    const char c = Xzn;
-    Xzn = Yzn;
-    Yzn = c;
+    T_LINKCB *temp_linkcb = X_begin;
+    X_begin = Y_begin;
+    Y_begin = temp_linkcb;
+    temp_linkcb = X_end;
+    X_end = Y_end;
+    Y_end = temp_linkcb;
+    const size_t temp_length = X_length;
+    X_length = Y_length;
+    Y_length = temp_length;
+    const char temp_sign = X_sign;
+    X_sign = Y_sign;
+    Y_sign = temp_sign;
     return;
 }
 
-static uint32_t xmy(void)
+static uint32_t compare(void)
 { //  if X < Y then true  ( po modulju)
-    if (Xdl < Ydl)
+    if (X_length < Y_length)
         return 1;
-    if (Xdl > Ydl)
+    if (X_length > Y_length)
         return 0;
-    for (x = Xn, y = Yn; x != Xk->next; x = x->next, y = y->next)
+    for (x_current = X_begin, y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
     {
-        if (gcoden(x) < gcoden(y))
+        if (gcoden(x_current) < gcoden(y_current))
             return 1;
-        if (gcoden(x) > gcoden(y))
+        if (gcoden(x_current) > gcoden(y_current))
             return 0;
     }
-    return 2; // x=y
+    return 2; // X=Y
 }
 
-static void ymn(int64_t *a, int64_t *b)
+static void multiply(int64_t *a, int64_t *b)
 { // rez.: a - st., b - ml
     if (*a == 0)
     {
@@ -212,7 +212,7 @@ static void ymn(int64_t *a, int64_t *b)
 static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
 {                                                   //  X - ukaz. na konec
     int64_t peren = 0;
-    const size_t ip = SMAX - j;
+    const size_t ip = SHIFT_MAX - j;
     const int64_t m = MAX_NUMBER >> j; // maska
     for (size_t i = 0; i < dls; i++)
     {
@@ -225,9 +225,9 @@ static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makr
     return;
 }
 
-static void oper(uint32_t o, uint32_t prn)
+static void operate(uint32_t operation, uint32_t type)
 {
-    if (!dajarg())
+    if (!read_numbers())
     {
         refal.upshot = 2;
         return;
@@ -235,45 +235,45 @@ static void oper(uint32_t o, uint32_t prn)
     int64_t a, b, j, peren;
     bool rez0 = false;
     bool odnc = false;
-    switch (o)
+    switch (operation)
     {
     case Osub: // izmenim znak i skladywaem
-        if (Yzn == '-')
-            Yzn = '+';
+        if (Y_sign == '-')
+            Y_sign = '+';
         else
-            Yzn = '-';
+            Y_sign = '-';
     case Oadd:
-        if (Xdl == 0 && Ydl == 0)
+        if (X_length == 0 && Y_length == 0)
         {
             rez0 = true;
             break;
         }
-        if (Xdl == 0)
+        if (X_length == 0)
         { //  rezult - wtoroe chislo
-            Xn = Yn;
-            Xk = Yk;
-            Xzn = Yzn;
+            X_begin = Y_begin;
+            X_end = Y_end;
+            X_sign = Y_sign;
         }
-        else if (Ydl != 0)
+        else if (Y_length != 0)
         { // summiruem
-            if (Xzn == Yzn)
+            if (X_sign == Y_sign)
             { //  skladywaem
-                if (Xdl < Ydl)
-                    obmen();
+                if (X_length < Y_length)
+                    exchange();
                 //  X  dlinnee  Y  (ili =)
-                Xn = Xn->previous; //  pripisywaem  0
-                Xn->tag = TAGN;
-                Xn->info.code = NULL;
+                X_begin = X_begin->previous; //  pripisywaem  0
+                X_begin->tag = TAGN;
+                X_begin->info.code = NULL;
                 peren = 0;
-                for (x = Xk, y = Yk; x != Xn->previous; x = x->previous)
+                for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
                 {
-                    if (y != Yn->previous)
+                    if (y_current != Y_begin->previous)
                     {
-                        j = (int64_t)gcoden(x) + gcoden(y) + peren;
-                        y = y->previous;
+                        j = (int64_t)gcoden(x_current) + gcoden(y_current) + peren;
+                        y_current = y_current->previous;
                     }
                     else
-                        j = (int64_t)gcoden(x) + peren;
+                        j = (int64_t)gcoden(x_current) + peren;
                     if (j >= MAX_NUMBER + 1)
                     {
                         j -= MAX_NUMBER + 1;
@@ -281,29 +281,29 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     else
                         peren = 0;
-                    pcoden(x, (uint32_t)j);
+                    pcoden(x_current, (uint32_t)j);
                 } // for
             }
             else
             { // wychitaem
-                if (xmy() == 2)
+                if (compare() == 2)
                 {
                     rez0 = true;
                     break;
                 }
-                if (xmy() == 1)
-                    obmen();       //  menjaem x i y
-                Xn = Xn->previous; //  pripisywaem 0
-                Xn->tag = TAGN;
-                Xn->info.code = NULL;
+                if (compare() == 1)
+                    exchange();       //  menjaem x i y
+                X_begin = X_begin->previous; //  pripisywaem 0
+                X_begin->tag = TAGN;
+                X_begin->info.code = NULL;
                 peren = 0;
-                for (x = Xk, y = Yk; x != Xn->previous; x = x->previous)
+                for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
                 {
-                    j = gcoden(x);
-                    if (y != Yn->previous)
+                    j = gcoden(x_current);
+                    if (y_current != Y_begin->previous)
                     {
-                        j -= (int64_t)gcoden(y) + peren;
-                        y = y->previous;
+                        j -= (int64_t)gcoden(y_current) + peren;
+                        y_current = y_current->previous;
                     }
                     else
                         j -= peren;
@@ -314,51 +314,51 @@ static void oper(uint32_t o, uint32_t prn)
                     }
                     else
                         peren = 0;
-                    pcoden(x, (uint32_t)j);
+                    pcoden(x_current, (uint32_t)j);
                 } // for
             } // if
         }
         break;
     case Omul:
-        if (Xdl == 0 || Ydl == 0)
+        if (X_length == 0 || Y_length == 0)
         {
             rez0 = true;
             break;
         }
-        if (!check_count_free_memory_list(Xdl + Ydl + 1))
+        if (!check_count_free_memory_list(X_length + Y_length + 1))
         {
             refal.upshot = 3;
             return;
         }
         T_LINKCB *p = refal.previous_argument;
         T_LINKCB *r = p->next;
-        insert_from_free_memory_list(p, Xdl + Ydl + 1); //  1 zweno dlja znaka
+        insert_from_free_memory_list(p, X_length + Y_length + 1); //  1 zweno dlja znaka
         p = p->next;
         r = r->previous;
-        for (x = p; x != r->next; x = x->next)
+        for (x_current = p; x_current != r->next; x_current = x_current->next)
         {
-            x->tag = TAGN;
-            x->info.code = NULL;
+            x_current->tag = TAGN;
+            x_current->info.code = NULL;
         } //  zanulen rezultat
-        if (Xdl < Ydl)
-            obmen();
+        if (X_length < Y_length)
+            exchange();
         //  dobawim 0 k X dlja summir. s perenosom
-        Xn = Xn->previous;
-        Xn->tag = TAGN;
-        Xn->info.code = NULL;
+        X_begin = X_begin->previous;
+        X_begin->tag = TAGN;
+        X_begin->info.code = NULL;
         T_LINKCB *f;
         int64_t c;
-        for (f = r, y = Yk; y != Yn->previous; y = y->previous, f = f->previous)
+        for (f = r, y_current = Y_end; y_current != Y_begin->previous; y_current = y_current->previous, f = f->previous)
         {
-            const uint32_t d = gcoden(y);
+            const uint32_t d = gcoden(y_current);
             if (d != 0)
             { // umn. na 1 cifru
                 peren = 0;
                 const int64_t b11 = d >> 16;
                 const int64_t b22 = d & 0xFFFF;
-                for (x = Xk, p = f; x != Xn->previous; x = x->previous, p = p->previous)
+                for (x_current = X_end, p = f; x_current != X_begin->previous; x_current = x_current->previous, p = p->previous)
                 {
-                    a = gcoden(x);
+                    a = gcoden(x_current);
                     if (a == 0)
                         b = 0;
                     else
@@ -393,115 +393,115 @@ static void oper(uint32_t o, uint32_t prn)
                 } // for
             }
         }
-        if (Xzn != Yzn)
-            Xzn = '-';
+        if (X_sign != Y_sign)
+            X_sign = '-';
         else
-            Xzn = '+';
-        Xn = p;
-        Xk = r;
+            X_sign = '+';
+        X_begin = p;
+        X_end = r;
         break;
     case Odr:
-        if (Ydl == 0)
+        if (Y_length == 0)
         {
             refal.upshot = 2;
             return;
         }
-        if (Xdl == 0)
+        if (X_length == 0)
         {
             a = 0;
             b = 0;
-            Xzn = '+';
-            Yzn = '+';
+            X_sign = '+';
+            Y_sign = '+';
             odnc = true;
             break;
         }
-        if (xmy() == 2)
+        if (compare() == 2)
         { //  rawny
             a = 0;
             b = 1;
             odnc = true;
             break;
         }
-        if (xmy() == 1)
+        if (compare() == 1)
         { //  delimoe < delitelja
-            if ((prn & 2) == 2)
+            if ((type & 2) == 2)
             { // DIV, DIVN
                 a = 0;
                 b = 0;
-                Xzn = '+';
-                Yzn = '+';
+                X_sign = '+';
+                Y_sign = '+';
                 odnc = true;
                 break;
             }
-            if (Xzn == '-')
+            if (X_sign == '-')
             {
-                Xn = Xn->previous;
-                Xn->tag = TAGO;
-                Xn->info.code = NULL;
-                Xn->info.infoc = '-';
+                X_begin = X_begin->previous;
+                X_begin->tag = TAGO;
+                X_begin->info.code = NULL;
+                X_begin->info.infoc = '-';
             }
-            Xn = Xn->previous;
-            Xk = Xk->next;
-            Xn->tag = TAGLB;
-            Xk->tag = TAGRB;
-            Xn->info.codep = Xk;
-            Xk->info.codep = Xn;
-            if (prn == 0)
+            X_begin = X_begin->previous;
+            X_end = X_end->next;
+            X_begin->tag = TAGLB;
+            X_end->tag = TAGRB;
+            X_begin->info.codep = X_end;
+            X_end->info.codep = X_begin;
+            if (type == 0)
             {
-                Xn = Xn->previous;
-                Xn->tag = TAGN;
-                Xn->info.code = NULL;
+                X_begin = X_begin->previous;
+                X_begin->tag = TAGN;
+                X_begin->info.code = NULL;
             }
-            transplantation(refal.previous_result, Xn->previous, Xk->next);
+            transplantation(refal.previous_result, X_begin->previous, X_end->next);
             return;
         }
         //   delimoe > delitelja
-        if (Xdl == 1)
+        if (X_length == 1)
         { //  oba po odnoj cifre
-            a = gcoden(Xn) % gcoden(Yn);
-            b = gcoden(Xn) / gcoden(Yn);
+            a = gcoden(X_begin) % gcoden(Y_begin);
+            b = gcoden(X_begin) / gcoden(Y_begin);
             odnc = true;
             break;
         }
         //  delenie mnogih  cifr
-        if (!check_count_free_memory_list(Xdl - Ydl + 2))
+        if (!check_count_free_memory_list(X_length - Y_length + 2))
         {
             refal.upshot = 3;
             return;
         }
         // t.k. k chastnomu dob. 0 i zweno na znak
         p = refal.previous_argument;
-        insert_from_free_memory_list(p, Xdl - Ydl + 2);
+        insert_from_free_memory_list(p, X_length - Y_length + 2);
         p = p->next; //  dlja znaka
         r = p->next; //  dlja  perwoj  cifry
-        nach = r;
-        Xn = Xn->previous;
-        Xn->tag = TAGN;
-        Xn->info.code = NULL;
-        Xdl++;
+        begin = r;
+        X_begin = X_begin->previous;
+        X_begin->tag = TAGN;
+        X_begin->info.code = NULL;
+        X_length++;
         size_t i;
-        for (i = 0, x = Xn; i < Ydl; i++, x = x->next)
+        for (i = 0, x_current = X_begin; i < Y_length; i++, x_current = x_current->next)
             ;
-        y = Yn->previous;
-        y->tag = TAGN;
-        y->info.code = NULL;
+        y_current = Y_begin->previous;
+        y_current->tag = TAGN;
+        y_current->info.code = NULL;
         size_t n = 0;
-        if (Ydl != 0)
+        if (Y_length != 0)
         { // wozmovna normalizacija
-            b = gcoden(Yn);
+            b = gcoden(Y_begin);
             for (n = 0; b < 2147483648; n++, b += b)
                 ;
             if (n != 0)
             {
-                norm(Xk, Xdl, n);
-                norm(Yk, Ydl, n);
+                norm(X_end, X_length, n);
+                norm(Y_end, Y_length, n);
             }
         }
         do
         {
-            a = gcoden(Xn);
-            const int64_t a1 = gcoden(Xn->next);
-            b = gcoden(Yn);
+            a = gcoden(X_begin);
+            const int64_t a1 = gcoden(X_begin->next);
+            b = gcoden(Y_begin);
             if (a == 0 && a1 < b)
                 c = 0;
             else
@@ -528,14 +528,14 @@ static void oper(uint32_t o, uint32_t prn)
                     a = (a % b << 4) + (a1 & 0xF);
                     c += a / b;
                 }
-                b1 = gcoden(Yn->next);
-                if (Ydl > 1 && b1 != 0)
+                b1 = gcoden(Y_begin->next);
+                if (Y_length > 1 && b1 != 0)
                 {
                     int64_t x1 = b1;
                     int64_t x2 = c;
-                    ymn(&x1, &x2);
+                    multiply(&x1, &x2);
                     int64_t y1 = a % b;
-                    const int64_t y2 = gcoden(Xn->next->next);
+                    const int64_t y2 = gcoden(X_begin->next->next);
                     i = 0;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
@@ -543,7 +543,7 @@ static void oper(uint32_t o, uint32_t prn)
                         i = 1;
                         x1 = b1;
                         x2 = c;
-                        ymn(&x1, &x2);
+                        multiply(&x1, &x2);
                         y1 += b;
                     }
                     if (i == 1)
@@ -553,16 +553,16 @@ static void oper(uint32_t o, uint32_t prn)
             // umnovenie  delitelja  na 'c' i wychit. iz X
             if (c != 0)
             {
-                const T_LINKCB *Yt = Yk;
-                T_LINKCB *Xt = x;
+                const T_LINKCB *Yt = Y_end;
+                T_LINKCB *Xt = x_current;
                 peren = 0;
-                for (; Yt != y->previous; Xt = Xt->previous, Yt = Yt->previous)
+                for (; Yt != y_current->previous; Xt = Xt->previous, Yt = Yt->previous)
                 {
                     b = gcoden(Yt);
                     a = c;
-                    ymn(&a, &b);
+                    multiply(&a, &b);
                     b += peren;
-                    peren = b >> SMAX;
+                    peren = b >> SHIFT_MAX;
                     b &= MAX_NUMBER;
                     j = gcoden(Xt);
                     if (j < b)
@@ -577,10 +577,10 @@ static void oper(uint32_t o, uint32_t prn)
                     do
                     {
                         c -= 1;
-                        Xt = x;
-                        Yt = Yk;
+                        Xt = x_current;
+                        Yt = Y_end;
                         j = 0;
-                        for (; Yt != y->previous; Xt = Xt->previous, Yt = Yt->previous)
+                        for (; Yt != y_current->previous; Xt = Xt->previous, Yt = Yt->previous)
                         {
                             a = (int64_t)gcoden(Xt) + gcoden(Yt) + j;
                             j = 0;
@@ -598,90 +598,90 @@ static void oper(uint32_t o, uint32_t prn)
             r->info.code = NULL;
             pcoden(r, (uint32_t)c);
             r = r->next;
-            x = x->next;
-            Xn = Xn->next;
-        } while (x != Xk->next);
-        Xn = Xn->previous;
+            x_current = x_current->next;
+            X_begin = X_begin->next;
+        } while (x_current != X_end->next);
+        X_begin = X_begin->previous;
         r = r->previous;
         if (n != 0)
         { // denormalizacija ostatka
             peren = 0;
-            i = SMAX - n;
+            i = SHIFT_MAX - n;
             c = MAX_NUMBER >> i;
-            for (x = Xn; x != Xk->next; x = x->next)
+            for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next)
             {
-                a = gcoden(x);
+                a = gcoden(x_current);
                 b = a >> n | peren << i;
                 peren = a & c;
-                pcoden(x, (uint32_t)b);
+                pcoden(x_current, (uint32_t)b);
             }
         }
-        for (x = Xn; x != Xk->next && gcoden(x) == 0; x = x->next)
+        for (x_current = X_begin; x_current != X_end->next && gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        x = x->previous;
-        if (x != Xk)
+        x_current = x_current->previous;
+        if (x_current != X_end)
         {
-            if (Xzn != Yzn)
+            if (X_sign != Y_sign)
             {
-                x->tag = TAGO;
-                x->info.code = NULL;
-                x->info.infoc = '-';
+                x_current->tag = TAGO;
+                x_current->info.code = NULL;
+                x_current->info.infoc = '-';
             }
             else
-                x = x->next;
+                x_current = x_current->next;
         }
-        Xn = x;
-        for (x = nach; gcoden(x) == 0; x = x->next)
+        X_begin = x_current;
+        for (x_current = begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (Xzn == '-')
+        if (X_sign == '-')
         {
-            x = x->previous;
-            x->tag = TAGO;
-            x->info.code = NULL;
-            x->info.infoc = '-';
+            x_current = x_current->previous;
+            x_current->tag = TAGO;
+            x_current->info.code = NULL;
+            x_current->info.infoc = '-';
         }
-        if ((prn & 1) == 0 || Xn != Xk || gcoden(Xn) != 0)
-            Xn = Xn->previous;
-        Xn->tag = TAGLB;
-        Xn->info.codep = Xk->next;
-        Xk = Xk->next;
-        Xk->tag = TAGRB;
-        Xk->info.codep = Xn;
-        if (r->next != Xn)
-            transplantation(r, Xn->previous, Xk->next);
-        if ((prn & 2) == 0)
-            transplantation(refal.previous_result, x->previous, Xk->next);
+        if ((type & 1) == 0 || X_begin != X_end || gcoden(X_begin) != 0)
+            X_begin = X_begin->previous;
+        X_begin->tag = TAGLB;
+        X_begin->info.codep = X_end->next;
+        X_end = X_end->next;
+        X_end->tag = TAGRB;
+        X_end->info.codep = X_begin;
+        if (r->next != X_begin)
+            transplantation(r, X_begin->previous, X_end->next);
+        if ((type & 2) == 0)
+            transplantation(refal.previous_result, x_current->previous, X_end->next);
         else
-            transplantation(refal.previous_result, x->previous, Xn);
+            transplantation(refal.previous_result, x_current->previous, X_begin);
         return;
     } // end case
     if (rez0)
     {
-        if (prn == 1)
+        if (type == 1)
             return; // dlja n-operacij
-        x = refal.previous_argument->next;
-        x->tag = TAGN;
-        x->info.code = NULL;
-        transplantation(refal.previous_result, x->previous, x->next);
+        x_current = refal.previous_argument->next;
+        x_current->tag = TAGN;
+        x_current->info.code = NULL;
+        transplantation(refal.previous_result, x_current->previous, x_current->next);
         return;
     }
     if (!odnc)
     {
         //  wozwratim X
         // podawim wed. nuli
-        for (x = Xn; gcoden(x) == 0; x = x->next)
+        for (x_current = X_begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (prn == 1 && x == Xk && gcoden(x) == 0)
+        if (type == 1 && x_current == X_end && gcoden(x_current) == 0)
             return;
-        if (Xzn == '-')
+        if (X_sign == '-')
         {
-            x = x->previous;
-            x->tag = TAGO;
-            x->info.code = NULL;
-            x->info.infoc = '-';
+            x_current = x_current->previous;
+            x_current->tag = TAGO;
+            x_current->info.code = NULL;
+            x_current->info.infoc = '-';
         }
         //  perenosim reultat
-        transplantation(refal.previous_result, x->previous, Xk->next);
+        transplantation(refal.previous_result, x_current->previous, X_end->next);
         return;
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
@@ -692,47 +692,47 @@ static void oper(uint32_t o, uint32_t prn)
         return;
     }
     // in bad case: /1/() - 3 zwena est uje + name
-    x = refal.previous_argument;
-    if (Xzn != Yzn)
+    x_current = refal.previous_argument;
+    if (X_sign != Y_sign)
     {
-        x->tag = TAGO;
-        x->info.code = NULL;
-        x->info.infoc = '-';
-        x = x->next;
+        x_current->tag = TAGO;
+        x_current->info.code = NULL;
+        x_current->info.infoc = '-';
+        x_current = x_current->next;
     }
-    if (b != 0 || (prn & 1) == 0)
+    if (b != 0 || (type & 1) == 0)
     { // div/dr
-        x->tag = TAGN;
-        x->info.code = NULL;
-        pcoden(x, (uint32_t)b);
-        x = x->next;
+        x_current->tag = TAGN;
+        x_current->info.code = NULL;
+        pcoden(x_current, (uint32_t)b);
+        x_current = x_current->next;
     }
-    y = x->next;
+    y_current = x_current->next;
     if (a != 0)
-        if (Xzn != '+')
+        if (X_sign != '+')
         {
-            y->tag = TAGO;
-            y->info.code = NULL;
-            y->info.infoc = '-';
-            y = y->next;
+            y_current->tag = TAGO;
+            y_current->info.code = NULL;
+            y_current->info.infoc = '-';
+            y_current = y_current->next;
         }
-    if (a != 0 || (prn & 1) == 0)
+    if (a != 0 || (type & 1) == 0)
     { // div/dr
-        y->tag = TAGN;
-        y->info.code = NULL;
-        pcoden(y, (uint32_t)a);
-        y = y->next;
+        y_current->tag = TAGN;
+        y_current->info.code = NULL;
+        pcoden(y_current, (uint32_t)a);
+        y_current = y_current->next;
     }
-    x->tag = TAGLB;
-    y->tag = TAGRB;
-    x->info.codep = y;
-    y->info.codep = x;
-    if ((prn & 2) == 0)
+    x_current->tag = TAGLB;
+    y_current->tag = TAGRB;
+    x_current->info.codep = y_current;
+    y_current->info.codep = x_current;
+    if ((type & 2) == 0)
         // dr/n
-        transplantation(refal.previous_result, refal.previous_argument->previous, y->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, y_current->next);
     else
         // div/n
-        transplantation(refal.previous_result, refal.previous_argument->previous, x);
+        transplantation(refal.previous_result, refal.previous_argument->previous, x_current);
     return;
 }
 
@@ -871,7 +871,7 @@ static void gcd_(void)
             {
                 if (A >= 128)
                     break;
-                A <<= SMAX;
+                A <<= SHIFT_MAX;
                 A += gcoden(pr);
                 pr = pr->next;
             }
@@ -884,7 +884,7 @@ static void gcd_(void)
                 pr = hd[1];
                 for (k = 0; k < l[1]; k++)
                 {
-                    B <<= SMAX;
+                    B <<= SHIFT_MAX;
                     B += gcoden(pr);
                     pr = pr->next;
                 }
@@ -897,7 +897,7 @@ static void gcd_(void)
                 }
                 // UTV: rez v A
                 pr = refal.previous_argument->next;
-                v1 = A >> SMAX;
+                v1 = A >> SHIFT_MAX;
                 if (v1 != 0)
                 {
                     pr->tag = TAGN;
@@ -929,7 +929,7 @@ static void gcd_(void)
             pr = hd[1];
             for (k = 0; k < (size_t)lb; k++)
             {
-                B <<= SMAX;
+                B <<= SHIFT_MAX;
                 B += gcoden(pr);
                 pr = pr->next;
             }
@@ -999,8 +999,8 @@ static void gcd_(void)
                         vs3 = xi[i];
                         vs4 = 0 - yi[i];
                     }
-                    ymn(&vs1, &vs3);
-                    ymn(&vs2, &vs4);
+                    multiply(&vs1, &vs3);
+                    multiply(&vs2, &vs4);
                     if (xi[i] < 0)
                     {
                         vs1 = 0 - vs1;
@@ -1019,7 +1019,7 @@ static void gcd_(void)
                     }
                     else
                     {
-                        vs3 = r0 >> SMAX;
+                        vs3 = r0 >> SHIFT_MAX;
                         r0 &= MAX_NUMBER;
                     }
                     r[i] = vs1 + vs2 + vs3;
@@ -1102,7 +1102,7 @@ static void gcd_(void)
                     {
                         xi[0] = b1;
                         xi[1] = c;
-                        ymn(&xi[0], &xi[1]);
+                        multiply(&xi[0], &xi[1]);
                         yi[0] = a % b;
                         yi[1] = gcoden(hd[0]->next->next);
                         i = 0;
@@ -1112,7 +1112,7 @@ static void gcd_(void)
                             i = 1;
                             xi[0] = b1;
                             xi[1] = c;
-                            ymn(&xi[0], &xi[1]);
+                            multiply(&xi[0], &xi[1]);
                             yi[0] += b;
                         }
                         if (i == 1)
@@ -1130,9 +1130,9 @@ static void gcd_(void)
                     {
                         b = gcoden(Yt);
                         a = c;
-                        ymn(&a, &b);
+                        multiply(&a, &b);
                         b += peren;
-                        peren = b >> SMAX;
+                        peren = b >> SHIFT_MAX;
                         b &= MAX_NUMBER;
                         J = gcoden(Xt);
                         if (J < b)
@@ -1175,7 +1175,7 @@ static void gcd_(void)
             if (n != 0)
             {
                 peren = 0;
-                i = SMAX - n;
+                i = SHIFT_MAX - n;
                 c = MAX_NUMBER >> i;
                 // denormalizacija ostatka
                 for (px = hd[0]; px != tl[0]->next; px = px->next)
