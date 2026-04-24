@@ -22,7 +22,6 @@
 #define Omul 3
 #define Odr 5
 
-#define HMAX 65536
 #define SHIFT_MAX 32
 
 static void operate(uint32_t operation, uint32_t type);
@@ -204,8 +203,8 @@ static void multiply(int64_t *a, int64_t *b)
     r2 += r & 0xFFFF;
     const int64_t r1 = r >> 16;
     const int64_t r4 = r3 >> 16;
-    *a = r1 * HMAX + r2 + r4;
-    *b += (r3 & 0xFFFF) * HMAX;
+    *a = (r1 << 16) + r2 + r4;
+    *b += (r3 & 0xFFFF) << 16;
     return;
 }
 
@@ -378,8 +377,8 @@ static void operate(uint32_t operation, uint32_t type)
                         r2 += c & 0xFFFF;
                         const int64_t r1 = c >> 16;
                         const int64_t r4 = r3 >> 16;
-                        a = r1 * HMAX + r2 + r4;
-                        b += (r3 & 0xFFFF) * HMAX;
+                        a = (r1 << 16) + r2 + r4;
+                        b += (r3 & 0xFFFF) << 16;
                     }
                     j = (int64_t)gcoden(p) + b + peren;
                     peren = 0;
