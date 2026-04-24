@@ -190,16 +190,16 @@ static void multiply(int64_t *a, int64_t *b)
     const int64_t b1 = *b >> 16;
     const int64_t a0 = *a & 0xFFFF;
     const int64_t b0 = *b & 0xFFFF;
-    int64_t a0b0 = a0 * b0;
+    const int64_t a0b0 = a0 * b0;
     *b = a0b0 & 0xFFFF;
     int64_t r3 = a0b0 >> 16;
-    int64_t a1b0 = a1 * b0;
+    const int64_t a1b0 = a1 * b0;
     r3 += a1b0 & 0xFFFF;
     int64_t r2 = a1b0 >> 16;
-    int64_t a0b1 = a0 * b1;
+    const int64_t a0b1 = a0 * b1;
     r3 += a0b1 & 0xFFFF;
     r2 += a0b1 >> 16;
-    int64_t a1b1 = a1 * b1;
+    const int64_t a1b1 = a1 * b1;
     r2 += a1b1 & 0xFFFF;
     const int64_t r1 = a1b1 >> 16;
     *a = (r1 << 16) + r2 + (r3 >> 16);
@@ -207,18 +207,19 @@ static void multiply(int64_t *a, int64_t *b)
     return;
 }
 
-static void norm(T_LINKCB *X, size_t dls, size_t j) //  normaliz. posledov. makrocifr
-{                                                   //  X - ukaz. na konec
+static void normalization(T_LINKCB *Number_end, size_t Number_length, size_t j) //  normaliz. posledov. makrocifr
+{                                                   //  Number_end - ukaz. na konec
     int64_t peren = 0;
     const size_t ip = SHIFT_MAX - j;
     const int64_t m = MAX_NUMBER >> j; // maska
-    for (size_t i = 0; i < dls; i++)
+    T_LINKCB *number_current = Number_end;
+    for (size_t i = 0; i < Number_length; i++)
     {
-        const int64_t g = gcoden(X);
+        const int64_t g = gcoden(number_current);
         const int64_t a = (g & m) << j;
-        pcoden(X, (uint32_t)(a | peren));
+        pcoden(number_current, (uint32_t)(a | peren));
         peren = g >> ip;
-        X = X->previous;
+        number_current = number_current->previous;
     }
     return;
 }
@@ -290,7 +291,7 @@ static void operate(uint32_t operation, uint32_t type)
                     break;
                 }
                 if (compare() == 1)
-                    exchange();       //  menjaem x i y
+                    exchange();              //  menjaem x i y
                 X_begin = X_begin->previous; //  pripisywaem 0
                 X_begin->tag = TAGN;
                 X_begin->info.code = NULL;
@@ -345,7 +346,6 @@ static void operate(uint32_t operation, uint32_t type)
         X_begin->tag = TAGN;
         X_begin->info.code = NULL;
         T_LINKCB *f;
-        int64_t c;
         for (f = r, y_current = Y_end; y_current != Y_begin->previous; y_current = y_current->previous, f = f->previous)
         {
             const uint32_t d = gcoden(y_current);
@@ -353,7 +353,7 @@ static void operate(uint32_t operation, uint32_t type)
             { // umn. na 1 cifru
                 peren = 0;
                 const int64_t b11 = d >> 16;
-                const int64_t b22 = d & 0xFFFF;
+                const int64_t b00 = d & 0xFFFF;
                 for (x_current = X_end, p = f; x_current != X_begin->previous; x_current = x_current->previous, p = p->previous)
                 {
                     a = gcoden(x_current);
@@ -362,21 +362,20 @@ static void operate(uint32_t operation, uint32_t type)
                     else
                     {
                         const int64_t a11 = a >> 16;
-                        const int64_t a22 = a & 0xFFFF;
-                        c = a22 * b22;
-                        b = c & 0xFFFF;
-                        int64_t r3 = c >> 16;
-                        c = a11 * b22;
-                        r3 += c & 0xFFFF;
-                        int64_t r2 = c >> 16;
-                        c = a22 * b11;
-                        r3 += c & 0xFFFF;
-                        r2 += c >> 16;
-                        c = a11 * b11;
-                        r2 += c & 0xFFFF;
-                        const int64_t r1 = c >> 16;
-                        const int64_t r4 = r3 >> 16;
-                        a = (r1 << 16) + r2 + r4;
+                        const int64_t a00 =  a & 0xFFFF;
+                        const int64_t a0b0 = a00 * b00;
+                        b = a0b0 & 0xFFFF;
+                        int64_t r3 = a0b0 >> 16;
+                        const int64_t a1b0 = a11 * b00;
+                        r3 += a1b0 & 0xFFFF;
+                        int64_t r2 = a1b0 >> 16;
+                        const int64_t a0b1 = a00 * b11;
+                        r3 += a0b1 & 0xFFFF;
+                        r2 += a0b1 >> 16;
+                        const int64_t a1b1 = a11 * b11;
+                        r2 += a1b1 & 0xFFFF;
+                        const int64_t r1 = a1b1 >> 16;
+                        a = (r1 << 16) + r2 + (r3 >> 16);
                         b += (r3 & 0xFFFF) << 16;
                     }
                     j = (int64_t)gcoden(p) + b + peren;
@@ -491,10 +490,11 @@ static void operate(uint32_t operation, uint32_t type)
                 ;
             if (n != 0)
             {
-                norm(X_end, X_length, n);
-                norm(Y_end, Y_length, n);
+                normalization(X_end, X_length, n);
+                normalization(Y_end, Y_length, n);
             }
         }
+        int64_t c;
         do
         {
             a = gcoden(X_begin);
@@ -1058,8 +1058,8 @@ static void gcd_(void)
                     ;
                 if (n != 0)
                 {
-                    norm(tl[0], l[0], n);
-                    norm(tl[1], l[1], n);
+                    normalization(tl[0], l[0], n);
+                    normalization(tl[1], l[1], n);
                 }
             }
             int64_t peren = 0;
