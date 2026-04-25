@@ -208,7 +208,7 @@ static void multiply(int64_t *a, int64_t *b)
 }
 
 static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t shift) //  normaliz. posledov. makrocifr
-{                                                   //  Number_end - ukaz. na konec
+{                                                                                    //  Number_end - ukaz. na konec
     int64_t transfer = 0;
     const uint8_t transfer_shift = SHIFT_MAX - shift;
     const int64_t mask = MAX_NUMBER >> shift; // maska
@@ -231,9 +231,9 @@ static void operate(uint32_t operation, uint32_t type)
         refal.upshot = 2;
         return;
     }
-    int64_t a, b, j, transfer;
+    int64_t remainder, quotient;
     bool rezult_zero = false;
-    bool odnc = false;
+    bool dr_one_remainder_one_quotient = false;
     switch (operation)
     {
     case Osub: // izmenim znak i skladywaem
@@ -263,24 +263,24 @@ static void operate(uint32_t operation, uint32_t type)
                 X_begin = X_begin->previous; //  pripisywaem  0
                 X_begin->tag = TAGN;
                 X_begin->info.code = NULL;
-                transfer = 0;
+                int64_t transfer = 0, sum;
                 for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
                 {
                     if (y_current != Y_begin->previous)
                     {
-                        j = (int64_t)gcoden(x_current) + gcoden(y_current) + transfer;
+                        sum = (int64_t)gcoden(x_current) + gcoden(y_current) + transfer;
                         y_current = y_current->previous;
                     }
                     else
-                        j = (int64_t)gcoden(x_current) + transfer;
-                    if (j >= MAX_NUMBER + 1)
+                        sum = (int64_t)gcoden(x_current) + transfer;
+                    if (sum >= MAX_NUMBER + 1)
                     {
-                        j -= MAX_NUMBER + 1;
+                        sum -= MAX_NUMBER + 1;
                         transfer = 1;
                     }
                     else
                         transfer = 0;
-                    pcoden(x_current, (uint32_t)j);
+                    pcoden(x_current, (uint32_t)sum);
                 } // for
             }
             else
@@ -295,25 +295,25 @@ static void operate(uint32_t operation, uint32_t type)
                 X_begin = X_begin->previous; //  pripisywaem 0
                 X_begin->tag = TAGN;
                 X_begin->info.code = NULL;
-                transfer = 0;
+                int64_t transfer = 0, substraction;
                 for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
                 {
-                    j = gcoden(x_current);
+                    substraction = gcoden(x_current);
                     if (y_current != Y_begin->previous)
                     {
-                        j -= (int64_t)gcoden(y_current) + transfer;
+                        substraction -= (int64_t)gcoden(y_current) + transfer;
                         y_current = y_current->previous;
                     }
                     else
-                        j -= transfer;
-                    if (j < 0)
+                        substraction -= transfer;
+                    if (substraction < 0)
                     {
-                        j += MAX_NUMBER + 1;
+                        substraction += MAX_NUMBER + 1;
                         transfer = 1;
                     }
                     else
                         transfer = 0;
-                    pcoden(x_current, (uint32_t)j);
+                    pcoden(x_current, (uint32_t)substraction);
                 } // for
             } // if
         }
@@ -324,17 +324,13 @@ static void operate(uint32_t operation, uint32_t type)
             rezult_zero = true;
             break;
         }
-        if (!check_count_free_memory_list(X_length + Y_length + 1))
-        {
-            refal.upshot = 3;
+        T_LINKCB *result_begin = refal.previous_argument;
+        T_LINKCB *result_end = result_begin->next;
+        if (!extended_insert_from_free_memory_list(result_begin, X_length + Y_length + 1)) //  1 zweno dlja znaka
             return;
-        }
-        T_LINKCB *p = refal.previous_argument;
-        T_LINKCB *r = p->next;
-        insert_from_free_memory_list(p, X_length + Y_length + 1); //  1 zweno dlja znaka
-        p = p->next;
-        r = r->previous;
-        for (x_current = p; x_current != r->next; x_current = x_current->next)
+        result_begin = result_begin->next;
+        result_end = result_end->previous;
+        for (x_current = result_begin; x_current != result_end->next; x_current = x_current->next)
         {
             x_current->tag = TAGN;
             x_current->info.code = NULL;
@@ -345,24 +341,24 @@ static void operate(uint32_t operation, uint32_t type)
         X_begin = X_begin->previous;
         X_begin->tag = TAGN;
         X_begin->info.code = NULL;
-        T_LINKCB *f;
-        for (f = r, y_current = Y_end; y_current != Y_begin->previous; y_current = y_current->previous, f = f->previous)
+        T_LINKCB *result_current;
+        for (result_current = result_end, y_current = Y_end; y_current != Y_begin->previous; y_current = y_current->previous, result_current = result_current->previous)
         {
-            const uint32_t d = gcoden(y_current);
-            if (d != 0)
+            int64_t b = gcoden(y_current);
+            if (b != 0)
             { // umn. na 1 cifru
-                transfer = 0;
-                const int64_t b11 = d >> 16;
-                const int64_t b00 = d & 0xFFFF;
-                for (x_current = X_end, p = f; x_current != X_begin->previous; x_current = x_current->previous, p = p->previous)
+                int64_t transfer = 0;
+                const int64_t b11 = b >> 16;
+                const int64_t b00 = b & 0xFFFF;
+                for (x_current = X_end, result_begin = result_current; x_current != X_begin->previous; x_current = x_current->previous, result_begin = result_begin->previous)
                 {
-                    a = gcoden(x_current);
+                    int64_t a = gcoden(x_current);
                     if (a == 0)
                         b = 0;
                     else
                     {
                         const int64_t a11 = a >> 16;
-                        const int64_t a00 =  a & 0xFFFF;
+                        const int64_t a00 = a & 0xFFFF;
                         const int64_t a0b0 = a00 * b00;
                         b = a0b0 & 0xFFFF;
                         int64_t r3 = a0b0 >> 16;
@@ -378,15 +374,15 @@ static void operate(uint32_t operation, uint32_t type)
                         a = (r1 << 16) + r2 + (r3 >> 16);
                         b += (r3 & 0xFFFF) << 16;
                     }
-                    j = (int64_t)gcoden(p) + b + transfer;
+                    int64_t sum = (int64_t)gcoden(result_begin) + b + transfer;
                     transfer = 0;
-                    if (j >= MAX_NUMBER + 1)
+                    if (sum >= MAX_NUMBER + 1)
                     {
-                        j -= MAX_NUMBER + 1;
+                        sum -= MAX_NUMBER + 1;
                         transfer++;
                     }
                     transfer += a;
-                    pcoden(p, (uint32_t)j);
+                    pcoden(result_begin, (uint32_t)sum);
                 } // for
             }
         }
@@ -394,8 +390,8 @@ static void operate(uint32_t operation, uint32_t type)
             X_sign = '-';
         else
             X_sign = '+';
-        X_begin = p;
-        X_end = r;
+        X_begin = result_begin;
+        X_end = result_end;
         break;
     case Odr:
         if (Y_length == 0)
@@ -405,29 +401,29 @@ static void operate(uint32_t operation, uint32_t type)
         }
         if (X_length == 0)
         {
-            a = 0;
-            b = 0;
+            remainder = 0;
+            quotient = 0;
             X_sign = '+';
             Y_sign = '+';
-            odnc = true;
+            dr_one_remainder_one_quotient = true;
             break;
         }
         if (compare() == 2)
         { //  rawny
-            a = 0;
-            b = 1;
-            odnc = true;
+            remainder = 0;
+            quotient = 1;
+            dr_one_remainder_one_quotient = true;
             break;
         }
         if (compare() == 1)
         { //  delimoe < delitelja
             if ((type & 2) == 2)
             { // DIV, DIVN
-                a = 0;
-                b = 0;
+                remainder = 0;
+                quotient = 0;
                 X_sign = '+';
                 Y_sign = '+';
-                odnc = true;
+                dr_one_remainder_one_quotient = true;
                 break;
             }
             if (X_sign == '-')
@@ -455,9 +451,9 @@ static void operate(uint32_t operation, uint32_t type)
         //   delimoe > delitelja
         if (X_length == 1)
         { //  oba po odnoj cifre
-            a = gcoden(X_begin) % gcoden(Y_begin);
-            b = gcoden(X_begin) / gcoden(Y_begin);
-            odnc = true;
+            remainder = gcoden(X_begin) % gcoden(Y_begin);
+            quotient = gcoden(X_begin) / gcoden(Y_begin);
+            dr_one_remainder_one_quotient = true;
             break;
         }
         //  delenie mnogih  cifr
@@ -663,7 +659,7 @@ static void operate(uint32_t operation, uint32_t type)
         transplantation(refal.previous_result, x_current->previous, x_current->next);
         return;
     }
-    if (!odnc)
+    if (!dr_one_remainder_one_quotient)
     {
         //  wozwratim X
         // podawim wed. nuli
@@ -683,7 +679,7 @@ static void operate(uint32_t operation, uint32_t type)
         return;
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
-    // rawno po odnoj makrocifre a - ost., b - chastnoe
+    // rawno po odnoj makrocifre remainder - ost., quotient - chastnoe
     if (!extended_insert_from_free_memory_list(refal.previous_argument, 2))
     {
         refal.upshot = 3;
@@ -698,15 +694,15 @@ static void operate(uint32_t operation, uint32_t type)
         x_current->info.infoc = '-';
         x_current = x_current->next;
     }
-    if (b != 0 || (type & 1) == 0)
+    if (quotient != 0 || (type & 1) == 0)
     { // div/dr
         x_current->tag = TAGN;
         x_current->info.code = NULL;
-        pcoden(x_current, (uint32_t)b);
+        pcoden(x_current, (uint32_t)quotient);
         x_current = x_current->next;
     }
     y_current = x_current->next;
-    if (a != 0)
+    if (remainder != 0)
         if (X_sign != '+')
         {
             y_current->tag = TAGO;
@@ -714,11 +710,11 @@ static void operate(uint32_t operation, uint32_t type)
             y_current->info.infoc = '-';
             y_current = y_current->next;
         }
-    if (a != 0 || (type & 1) == 0)
+    if (remainder != 0 || (type & 1) == 0)
     { // div/dr
         y_current->tag = TAGN;
         y_current->info.code = NULL;
-        pcoden(y_current, (uint32_t)a);
+        pcoden(y_current, (uint32_t)remainder);
         y_current = y_current->next;
     }
     x_current->tag = TAGLB;
