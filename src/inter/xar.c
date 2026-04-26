@@ -207,16 +207,16 @@ static void multiply(int64_t *a, int64_t *b)
     return;
 }
 
-static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t shift) //  normaliz. posledov. makrocifr
+static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t power) //  normaliz. posledov. makrocifr
 {                                                                                    //  Number_end - ukaz. na konec
     int64_t transfer = 0;
-    const uint8_t transfer_shift = SHIFT_MAX - shift;
-    const int64_t mask = MAX_NUMBER >> shift; // maska
+    const uint8_t transfer_shift = SHIFT_MAX - power;
+    const int64_t mask = MAX_NUMBER >> power; // maska
     T_LINKCB *number_current = Number_end;
     for (size_t i = 0; i < Number_length; i++)
     {
         const int64_t number = gcoden(number_current);
-        const int64_t new_number = (number & mask) << shift | transfer;
+        const int64_t new_number = (number & mask) << power | transfer;
         pcoden(number_current, (uint32_t)new_number);
         transfer = number >> transfer_shift;
         number_current = number_current->previous;
@@ -457,17 +457,12 @@ static void operate(uint32_t operation, uint32_t type)
             break;
         }
         //  delenie mnogih  cifr
-        if (!check_count_free_memory_list(X_length - Y_length + 2))
-        {
-            refal.upshot = 3;
+        T_LINKCB *linkcb = refal.previous_argument;
+        if (!extended_insert_from_free_memory_list(linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
             return;
-        }
-        // t.k. k chastnomu dob. 0 i zweno na znak
-        p = refal.previous_argument;
-        insert_from_free_memory_list(p, X_length - Y_length + 2);
-        p = p->next; //  dlja znaka
-        r = p->next; //  dlja  perwoj  cifry
-        begin = r;
+        linkcb = linkcb->next;                 //  dlja znaka
+        result_begin = linkcb->next; //  dlja  perwoj  cifry
+        begin = result_begin;
         X_begin = X_begin->previous;
         X_begin->tag = TAGN;
         X_begin->info.code = NULL;
@@ -478,29 +473,28 @@ static void operate(uint32_t operation, uint32_t type)
         y_current = Y_begin->previous;
         y_current->tag = TAGN;
         y_current->info.code = NULL;
-        size_t n = 0;
+        uint8_t power = 0;
         if (Y_length != 0)
         { // wozmovna normalizacija
-            b = gcoden(Y_begin);
-            for (n = 0; b < 2147483648; n++, b += b)
+            int64_t exponentation = gcoden(Y_begin);
+            for (power = 0; exponentation < 2147483648; power++, exponentation += exponentation)
                 ;
-            if (n != 0)
+            if (power != 0)
             {
-                normalization(X_end, X_length, n);
-                normalization(Y_end, Y_length, n);
+                normalization(X_end, X_length, power);
+                normalization(Y_end, Y_length, power);
             }
         }
-        int64_t c;
         do
         {
-            a = gcoden(X_begin);
+            int64_t a = gcoden(X_begin);
             const int64_t a1 = gcoden(X_begin->next);
-            b = gcoden(Y_begin);
+            int64_t b = gcoden(Y_begin);
+            int64_t c;
             if (a == 0 && a1 < b)
                 c = 0;
             else
             {
-                int64_t b1;
                 if (a == 0 && a1 >= b)
                 {
                     c = 1; //  t.k. b - normalizowano
@@ -510,19 +504,16 @@ static void operate(uint32_t operation, uint32_t type)
                 { // delim a,a1 na b
                     a = (a << 7) + (a1 >> 25);
                     c = a / b << 25;
-                    b1 = a1 >> 18;
-                    a = (a % b << 7) + (b1 & 0x7F);
+                    a = (a % b << 7) + (a1 >> 18 & 0x7F);
                     c += a / b << 18;
-                    b1 = a1 >> 11;
-                    a = (a % b << 7) + (b1 & 0x7F);
+                    a = (a % b << 7) + (a1 >> 11 & 0x7F);
                     c += a / b << 11;
-                    b1 = a1 >> 4;
-                    a = (a % b << 7) + (b1 & 0x7F);
+                    a = (a % b << 7) + (a1 >> 4 & 0x7F);
                     c += a / b << 4;
                     a = (a % b << 4) + (a1 & 0xF);
                     c += a / b;
                 }
-                b1 = gcoden(Y_begin->next);
+                const int64_t b1 = gcoden(Y_begin->next);
                 if (Y_length > 1 && b1 != 0)
                 {
                     int64_t x1 = b1;
@@ -530,84 +521,84 @@ static void operate(uint32_t operation, uint32_t type)
                     multiply(&x1, &x2);
                     int64_t y1 = a % b;
                     const int64_t y2 = gcoden(X_begin->next->next);
-                    i = 0;
+                    bool state = false;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
                         c--;
-                        i = 1;
+                        state = true;
                         x1 = b1;
                         x2 = c;
                         multiply(&x1, &x2);
                         y1 += b;
                     }
-                    if (i == 1)
+                    if (state == true)
                         c++; // na wcjakij sluchaj
                 }
             }
             // umnovenie  delitelja  na 'c' i wychit. iz X
             if (c != 0)
             {
-                const T_LINKCB *Yt = Y_end;
-                T_LINKCB *Xt = x_current;
-                transfer = 0;
-                for (; Yt != y_current->previous; Xt = Xt->previous, Yt = Yt->previous)
+                const T_LINKCB *Y_temp = Y_end;
+                T_LINKCB *X_temp = x_current;
+                int64_t transfer = 0;
+                for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                 {
-                    b = gcoden(Yt);
+                    b = gcoden(Y_temp);
                     a = c;
                     multiply(&a, &b);
                     b += transfer;
                     transfer = b >> SHIFT_MAX;
                     b &= MAX_NUMBER;
-                    j = gcoden(Xt);
-                    if (j < b)
+                    int64_t x_temp = gcoden(X_temp);
+                    if (x_temp < b)
                     {
-                        j += MAX_NUMBER + 1;
-                        transfer += 1;
+                        x_temp += MAX_NUMBER + 1;
+                        transfer++;
                     }
-                    pcoden(Xt, (uint32_t)(j - b));
+                    pcoden(X_temp, (uint32_t)(x_temp - b));
                     transfer += a;
                 }
                 if (transfer != 0)
                     do
                     {
-                        c -= 1;
-                        Xt = x_current;
-                        Yt = Y_end;
-                        j = 0;
-                        for (; Yt != y_current->previous; Xt = Xt->previous, Yt = Yt->previous)
+                        c--;
+                        X_temp = x_current;
+                        Y_temp = Y_end;
+                        int64_t new_transfer = 0;
+                        for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                         {
-                            a = (int64_t)gcoden(Xt) + gcoden(Yt) + j;
-                            j = 0;
-                            if (a >= MAX_NUMBER + 1)
+                            int64_t sum = (int64_t)gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
+                            new_transfer = 0;
+                            if (sum >= MAX_NUMBER + 1)
                             {
-                                a -= MAX_NUMBER + 1;
-                                j = 1;
+                                sum -= MAX_NUMBER + 1;
+                                new_transfer = 1;
                             }
-                            pcoden(Xt, (uint32_t)a);
+                            pcoden(X_temp, (uint32_t)sum);
                         }
-                        transfer -= j;
+                        transfer -= new_transfer;
                     } while (transfer != 0);
             }
-            r->tag = TAGN;
-            r->info.code = NULL;
-            pcoden(r, (uint32_t)c);
-            r = r->next;
+            result_begin->tag = TAGN;
+            result_begin->info.code = NULL;
+            pcoden(result_begin, (uint32_t)c);
+            result_begin = result_begin->next;
             x_current = x_current->next;
             X_begin = X_begin->next;
         } while (x_current != X_end->next);
         X_begin = X_begin->previous;
-        r = r->previous;
-        if (n != 0)
+        result_begin = result_begin->previous;
+        if (power != 0)
         { // denormalizacija ostatka
-            transfer = 0;
-            i = SHIFT_MAX - n;
-            c = MAX_NUMBER >> i;
+            int64_t transfer = 0;
+            const uint8_t transfer_shift = SHIFT_MAX - power;
+            const int64_t mask = MAX_NUMBER >> transfer_shift;
             for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next)
             {
-                a = gcoden(x_current);
-                b = a >> n | transfer << i;
-                transfer = a & c;
-                pcoden(x_current, (uint32_t)b);
+                const int64_t number = gcoden(x_current);
+                const int64_t new_number = number >> power | transfer << transfer_shift;
+                transfer = number & mask;
+                pcoden(x_current, (uint32_t)new_number);
             }
         }
         for (x_current = X_begin; x_current != X_end->next && gcoden(x_current) == 0; x_current = x_current->next)
@@ -641,8 +632,8 @@ static void operate(uint32_t operation, uint32_t type)
         X_end = X_end->next;
         X_end->tag = TAGRB;
         X_end->info.codep = X_begin;
-        if (r->next != X_begin)
-            transplantation(r, X_begin->previous, X_end->next);
+        if (result_begin->next != X_begin)
+            transplantation(result_begin, X_begin->previous, X_end->next);
         if ((type & 2) == 0)
             transplantation(refal.previous_result, x_current->previous, X_end->next);
         else
@@ -681,10 +672,7 @@ static void operate(uint32_t operation, uint32_t type)
     // wywod rezultata delenija, kogda ostatok i chastnoe
     // rawno po odnoj makrocifre remainder - ost., quotient - chastnoe
     if (!extended_insert_from_free_memory_list(refal.previous_argument, 2))
-    {
-        refal.upshot = 3;
         return;
-    }
     // in bad case: /1/() - 3 zwena est uje + name
     x_current = refal.previous_argument;
     if (X_sign != Y_sign)
