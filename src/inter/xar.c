@@ -488,35 +488,35 @@ static void operate(uint32_t operation, uint32_t type)
         do
         {
             int64_t a = gcoden(X_begin);
-            const int64_t a1 = gcoden(X_begin->next);
+            const int64_t a0 = gcoden(X_begin->next);
             int64_t b = gcoden(Y_begin);
             int64_t c;
-            if (a == 0 && a1 < b)
+            if (a == 0 && a0 < b)
                 c = 0;
             else
             {
-                if (a == 0 && a1 >= b)
+                if (a == 0 && a0 >= b)
                 {
                     c = 1; //  t.k. b - normalizowano
-                    a = a1;
+                    a = a0;
                 }
                 else
-                { // delim a,a1 na b
-                    a = (a << 7) + (a1 >> 25);
+                { // delim a,a0 na b
+                    a = (a << 7) + (a0 >> 25);
                     c = a / b << 25;
-                    a = (a % b << 7) + (a1 >> 18 & 0x7F);
+                    a = (a % b << 7) + (a0 >> 18 & 0x7F);
                     c += a / b << 18;
-                    a = (a % b << 7) + (a1 >> 11 & 0x7F);
+                    a = (a % b << 7) + (a0 >> 11 & 0x7F);
                     c += a / b << 11;
-                    a = (a % b << 7) + (a1 >> 4 & 0x7F);
+                    a = (a % b << 7) + (a0 >> 4 & 0x7F);
                     c += a / b << 4;
-                    a = (a % b << 4) + (a1 & 0xF);
+                    a = (a % b << 4) + (a0 & 0xF);
                     c += a / b;
                 }
-                const int64_t b1 = gcoden(Y_begin->next);
-                if (Y_length > 1 && b1 != 0)
+                const int64_t b0 = gcoden(Y_begin->next);
+                if (Y_length > 1 && b0 != 0)
                 {
-                    int64_t x1 = b1;
+                    int64_t x1 = b0;
                     int64_t x2 = c;
                     multiply(&x1, &x2);
                     int64_t y1 = a % b;
@@ -526,7 +526,7 @@ static void operate(uint32_t operation, uint32_t type)
                     {
                         c--;
                         state = true;
-                        x1 = b1;
+                        x1 = b0;
                         x2 = c;
                         multiply(&x1, &x2);
                         y1 += b;
