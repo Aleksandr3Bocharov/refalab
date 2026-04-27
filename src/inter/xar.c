@@ -457,11 +457,11 @@ static void operate(uint32_t operation, uint32_t type)
             break;
         }
         //  delenie mnogih  cifr
-        T_LINKCB *linkcb = refal.previous_argument;
-        if (!extended_insert_from_free_memory_list(linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
+        T_LINKCB *temp_linkcb = refal.previous_argument;
+        if (!extended_insert_from_free_memory_list(temp_linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
             return;
-        linkcb = linkcb->next;                 //  dlja znaka
-        result_begin = linkcb->next; //  dlja  perwoj  cifry
+        temp_linkcb = temp_linkcb->next;                 //  dlja znaka
+        result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
         begin = result_begin;
         X_begin = X_begin->previous;
         X_begin->tag = TAGN;
@@ -721,7 +721,7 @@ static void operate(uint32_t operation, uint32_t type)
 static void gcd_(void)
 {
     //   sint. control
-    T_LINKCB *linkcb = refal.previous_argument->next;
+    T_LINKCB *temp_linkcb = refal.previous_argument->next;
     T_LINKCB *number_tail[2], *number_current[2], *number_head[2];
     size_t number_length[2];
     enum
@@ -733,13 +733,13 @@ static void gcd_(void)
         FIN1,
         NEOT
     } gcd_state = OC;
-    if (linkcb->tag != TAGLB)
+    if (temp_linkcb->tag != TAGLB)
         gcd_state = NEOT;
     else
     {
-        number_tail[0] = linkcb->info.codep;
+        number_tail[0] = temp_linkcb->info.codep;
         number_tail[1] = refal.next_argument;
-        number_current[0] = linkcb;
+        number_current[0] = temp_linkcb;
         number_current[1] = number_tail[0];
         for (uint8_t i = 0; i < 2; i++)
         {
@@ -763,8 +763,6 @@ static void gcd_(void)
             number_tail[i] = number_current[i]->previous;
         }
     }
-    int64_t A;
-    uint8_t rezult = 0;
     while (true)
         switch (gcd_state)
         {
@@ -783,34 +781,34 @@ static void gcd_(void)
                     number_head[1] = number_head[1]->next;
                     number_length[1]--;
                 }
+            uint8_t number = 0;
             if (number_length[0] == 0)
             {
-                rezult = 1;
+                number = 1;
                 gcd_state = FIN1;
                 break;
             }
             if (number_length[1] == 0)
             {
-                rezult = 0;
+                number = 0;
                 gcd_state = FIN1;
                 break;
             }
             //   delaem 1 > 2
-            int64_t v1, v2;
             if (number_length[0] == number_length[1])
             {
                 number_current[0] = number_head[0];
                 number_current[1] = number_head[1];
-                for (i = 0; i < number_length[0]; i++)
+                for (size_t i = 0; i < number_length[0]; i++)
                 {
-                    v1 = gcoden(number_current[0]);
-                    v2 = gcoden(number_current[1]);
-                    if (v1 < v2)
+                    const int64_t number1 = gcoden(number_current[0]);
+                    const int64_t number2 = gcoden(number_current[1]);
+                    if (number1 < number2)
                     {
                         gcd_state = M12;
                         break;
                     }
-                    if (v1 > v2)
+                    if (number1 > number2)
                     {
                         gcd_state = M21;
                         break;
@@ -820,7 +818,7 @@ static void gcd_(void)
                 }
                 if (gcd_state != OC)
                     break;
-                rezult = 0;
+                number = 0;
                 gcd_state = FIN1;
                 break;
             }
@@ -832,29 +830,29 @@ static void gcd_(void)
             gcd_state = M21;
             break;
         case M12:
-            linkcb = number_head[0];
+            temp_linkcb = number_head[0];
             number_head[0] = number_head[1];
-            number_head[1] = linkcb;
-            linkcb = number_tail[0];
+            number_head[1] = temp_linkcb;
+            temp_linkcb = number_tail[0];
             number_tail[0] = number_tail[1];
-            number_tail[1] = linkcb;
-            i = number_length[0];
+            number_tail[1] = temp_linkcb;
+            const size_t temp_length = number_length[0];
             number_length[0] = number_length[1];
-            number_length[1] = i;
+            number_length[1] = temp_length;
             gcd_state = M21;
             break;
         case M21:
             //   wybor metoda
-            A = 0;
-            linkcb = number_head[0];
+            int64_t A = 0;
+            temp_linkcb = number_head[0];
             size_t k;
             for (k = 0; k < number_length[0]; k++)
             {
                 if (A >= 128)
                     break;
                 A <<= SHIFT_MAX;
-                A += gcoden(linkcb);
-                linkcb = linkcb->next;
+                A += gcoden(temp_linkcb);
+                temp_linkcb = temp_linkcb->next;
             }
             int64_t B;
             if (number_length[0] == 1 || (number_length[0] == 2 && k == 2))
@@ -862,12 +860,12 @@ static void gcd_(void)
                 // Evklid nad korotkimi
                 // UTV: number_length[0] >= number_length[1]
                 B = 0;
-                linkcb = number_head[1];
+                temp_linkcb = number_head[1];
                 for (k = 0; k < number_length[1]; k++)
                 {
                     B <<= SHIFT_MAX;
-                    B += gcoden(linkcb);
-                    linkcb = linkcb->next;
+                    B += gcoden(temp_linkcb);
+                    temp_linkcb = temp_linkcb->next;
                 }
                 while (B != 0)
                 {
@@ -877,21 +875,21 @@ static void gcd_(void)
                     B = v2;
                 }
                 // UTV: rezult v A
-                linkcb = refal.previous_argument->next;
+                temp_linkcb = refal.previous_argument->next;
                 v1 = A >> SHIFT_MAX;
                 if (v1 != 0)
                 {
-                    linkcb->tag = TAGN;
-                    linkcb->info.code = NULL;
-                    pcoden(linkcb, (uint32_t)v1);
-                    linkcb = linkcb->next;
+                    temp_linkcb->tag = TAGN;
+                    temp_linkcb->info.code = NULL;
+                    pcoden(temp_linkcb, (uint32_t)v1);
+                    temp_linkcb = temp_linkcb->next;
                     A &= MAX_NUMBER;
                 }
-                linkcb->tag = TAGN;
-                linkcb->info.code = NULL;
-                pcoden(linkcb, (uint32_t)A);
-                linkcb = linkcb->next;
-                transplantation(refal.previous_result, refal.previous_argument, linkcb);
+                temp_linkcb->tag = TAGN;
+                temp_linkcb->info.code = NULL;
+                pcoden(temp_linkcb, (uint32_t)A);
+                temp_linkcb = temp_linkcb->next;
+                transplantation(refal.previous_result, refal.previous_argument, temp_linkcb);
                 return;
             }
             //    A - pribligenie
@@ -907,12 +905,12 @@ static void gcd_(void)
             // UTV:  number_length[1] > hvosta,
             // UTV:  number_length[0] = {1/2}
             B = 0;
-            linkcb = number_head[1];
+            temp_linkcb = number_head[1];
             for (k = 0; k < (size_t)lb; k++)
             {
                 B <<= SHIFT_MAX;
-                B += gcoden(linkcb);
-                linkcb = linkcb->next;
+                B += gcoden(temp_linkcb);
+                temp_linkcb = temp_linkcb->next;
             }
             if (A / (B + 1) != (A + 1) / B)
             {
@@ -1179,13 +1177,13 @@ static void gcd_(void)
             gcd_state = OC;
             break;
         case FIN1:
-            // rezult: odno iz chisel
-            if (number_length[rezult] == 0)
+            // number: odno iz chisel
+            if (number_length[number] == 0)
             {
                 gcd_state = NEOT;
                 break;
             }
-            transplantation(refal.previous_result, number_head[rezult]->previous, number_tail[rezult]->next);
+            transplantation(refal.previous_result, number_head[number]->previous, number_tail[number]->next);
             return;
         case NEOT:
             refal.upshot = 2;
