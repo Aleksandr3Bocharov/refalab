@@ -743,24 +743,24 @@ static void gcd_(void)
         number_current[1] = number_tail[0];
         for (uint8_t i = 0; i < 2; i++)
         {
-            linkcb = number_current[i]->next;
-            if (linkcb->tag == TAGO && (linkcb->info.infoc == '+' || linkcb->info.infoc == '-'))
-                linkcb = linkcb->next;
-            number_head[i] = linkcb;
+            number_current[i] = number_current[i]->next;
+            if (number_current[i]->tag == TAGO && (number_current[i]->info.infoc == '+' || number_current[i]->info.infoc == '-'))
+                number_current[i] = number_current[i]->next;
+            number_head[i] = number_current[i];
             number_length[i] = 0;
-            while (linkcb != number_tail[i])
+            while (number_current[i] != number_tail[i])
             {
-                if (linkcb->tag != TAGN)
+                if (number_current[i]->tag != TAGN)
                 {
                     gcd_state = NEOT;
                     break;
                 }
                 number_length[i]++;
-                linkcb = linkcb->next;
+                number_current[i] = number_current[i]->next;
             }
             if (gcd_state == NEOT)
                 break;
-            number_tail[i] = linkcb->previous;
+            number_tail[i] = number_current[i]->previous;
         }
     }
     int64_t A;
