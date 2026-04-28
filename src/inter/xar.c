@@ -24,54 +24,54 @@
 
 #define SHIFT_MAX 32
 
-static void operate(uint32_t operation, uint32_t type);
+static void arithmetic_operate(uint32_t operation, uint32_t type);
 
-static void add_(void) { operate(Oadd, 0); }
+static void add_(void) { arithmetic_operate(Oadd, 0); }
 char add_0[] = {Z3 'A', 'D', 'D', (char)3};
 G_L_B uint8_t refalab_add = '\122';
 void (*add_1)(void) = add_;
 
-static void sub_(void) { operate(Osub, 0); }
+static void sub_(void) { arithmetic_operate(Osub, 0); }
 char sub_0[] = {Z3 'S', 'U', 'B', (char)3};
 G_L_B uint8_t refalab_sub = '\122';
 void (*sub_1)(void) = sub_;
 
-static void mul_(void) { operate(Omul, 0); }
+static void mul_(void) { arithmetic_operate(Omul, 0); }
 char mul_0[] = {Z3 'M', 'U', 'L', (char)3};
 G_L_B uint8_t refalab_mul = '\122';
 void (*mul_1)(void) = mul_;
 
-static void dr_(void) { operate(Odr, 0); }
+static void dr_(void) { arithmetic_operate(Odr, 0); }
 char dr_0[] = {Z2 'D', 'R', (char)2};
 G_L_B uint8_t refalab_dr = '\122';
 void (*dr_1)(void) = dr_;
 
-static void div_(void) { operate(Odr, 2); }
+static void div_(void) { arithmetic_operate(Odr, 2); }
 char div_0[] = {Z3 'D', 'I', 'V', (char)3};
 G_L_B uint8_t refalab_div = '\122';
 void (*div_1)(void) = div_;
 
-static void addn_(void) { operate(Oadd, 1); }
+static void addn_(void) { arithmetic_operate(Oadd, 1); }
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_addn = '\122';
 void (*addn_1)(void) = addn_;
 
-static void subn_(void) { operate(Osub, 1); }
+static void subn_(void) { arithmetic_operate(Osub, 1); }
 char subn_0[] = {Z4 'S', 'U', 'B', 'N', (char)4};
 G_L_B uint8_t refalab_subn = '\122';
 void (*subn_1)(void) = subn_;
 
-static void muln_(void) { operate(Omul, 1); }
+static void muln_(void) { arithmetic_operate(Omul, 1); }
 char muln_0[] = {Z4 'M', 'U', 'L', 'N', (char)4};
 G_L_B uint8_t refalab_muln = '\122';
 void (*muln_1)(void) = muln_;
 
-static void drn_(void) { operate(Odr, 1); }
+static void drn_(void) { arithmetic_operate(Odr, 1); }
 char drn_0[] = {Z3 'D', 'R', 'N', (char)3};
 G_L_B uint8_t refalab_drn = '\122';
 void (*drn_1)(void) = drn_;
 
-static void divn_(void) { operate(Odr, 3); }
+static void divn_(void) { arithmetic_operate(Odr, 3); }
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
@@ -224,7 +224,7 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
     return;
 }
 
-static void operate(uint32_t operation, uint32_t type)
+static void arithmetic_operate(uint32_t operation, uint32_t type)
 {
     if (!read_numbers())
     {
