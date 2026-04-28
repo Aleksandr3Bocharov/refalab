@@ -24,7 +24,7 @@
 
 #define SHIFT_MAX 32
 
-static void arithmetic_operate(uint32_t operation, uint32_t type);
+static void arithmetic_operate(uint8_t operation, uint8_t type);
 
 static void add_(void) { arithmetic_operate(Oadd, 0); }
 char add_0[] = {Z3 'A', 'D', 'D', (char)3};
@@ -224,7 +224,7 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
     return;
 }
 
-static void arithmetic_operate(uint32_t operation, uint32_t type)
+static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
     if (!read_numbers())
     {
