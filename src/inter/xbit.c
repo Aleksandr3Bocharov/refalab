@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XBIT.C -----------
@@ -22,369 +22,369 @@
 #define Oshl 1
 #define Oshr 2
 
-static void boper(uint32_t o);
-static void shoper(uint32_t o);
+static void bit_operate(uint8_t operation);
+static void shift_operate(uint8_t operation);
 
-static void band_(void) { boper(Oand); }
+static void band_(void) { bit_operate(Oand); }
 char band_0[] = {Z4 'B', 'A', 'N', 'D', (char)4};
 G_L_B uint8_t refalab_band = '\122';
 void (*band_1)(void) = band_;
 
-static void bor_(void) { boper(Oor); }
+static void bor_(void) { bit_operate(Oor); }
 char bor_0[] = {Z3 'B', 'O', 'R', (char)3};
 G_L_B uint8_t refalab_bor = '\122';
 void (*bor_1)(void) = bor_;
 
-static void bxor_(void) { boper(Oxor); }
+static void bxor_(void) { bit_operate(Oxor); }
 char bxor_0[] = {Z4 'B', 'X', 'O', 'R', (char)4};
 G_L_B uint8_t refalab_bxor = '\122';
 void (*bxor_1)(void) = bxor_;
 
-static void bnot_(void) { boper(Onot); }
+static void bnot_(void) { bit_operate(Onot); }
 char bnot_0[] = {Z4 'B', 'N', 'O', 'T', (char)4};
 G_L_B uint8_t refalab_bnot = '\122';
 void (*bnot_1)(void) = bnot_;
 
-static void shl_(void) { shoper(Oshl); }
+static void shl_(void) { shift_operate(Oshl); }
 char shl_0[] = {Z3 'S', 'H', 'L', (char)3};
 G_L_B uint8_t refalab_shl = '\122';
 void (*shl_1)(void) = shl_;
 
-static void shr_(void) { shoper(Oshr); }
+static void shr_(void) { shift_operate(Oshr); }
 char shr_0[] = {Z3 'S', 'H', 'R', (char)3};
 G_L_B uint8_t refalab_shr = '\122';
 void (*shr_1)(void) = shr_;
 
-static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
-static size_t dl, Xdl, Ydl;
-static char zn, Xzn, Yzn;
+static T_LINKCB *x_current, *y_current, *X_begin, *X_end, *begin, *end, *Y_begin, *Y_end;
+static size_t length, X_length, Y_length;
+static char sign, X_sign, Y_sign;
 
-static bool dajch(void)
+static bool read_number(void)
 {
-    zn = '+';
-    kon = y->previous;
-    if (x == kon)
+    sign = '+';
+    end = y_current->previous;
+    if (x_current == end)
     { // pustoe chislo
-        dl = 0;
+        length = 0;
         return true;
     }
-    x = x->next;
-    if (x->tag == TAGO &&
-        (x->info.infoc == '+' || x->info.infoc == '-'))
+    x_current = x_current->next;
+    if (x_current->tag == TAGO &&
+        (x_current->info.infoc == '+' || x_current->info.infoc == '-'))
     {
-        zn = x->info.infoc;
-        x = x->next;
-        if (x == y)
+        sign = x_current->info.infoc;
+        x_current = x_current->next;
+        if (x_current == y_current)
             return false; //  w chisle - lish znak
     }
-    for (; x->tag == TAGN && gcoden(x) == 0; x = x->next)
+    for (; x_current->tag == TAGN && gcoden(x_current) == 0; x_current = x_current->next)
         ;
-    if (x == y)
-        dl = 0; //  wse cifry - nuli
+    if (x_current == y_current)
+        length = 0; //  wse cifry - nuli
     else
     {
-        for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
+        for (length = 0, begin = x_current; x_current->tag == TAGN; x_current = x_current->next, length++)
             ;
-        if (x != y)
+        if (x_current != y_current)
             return false; // ne makrocifra
     }
     return true;
 }
 
-static bool dajarg(void)
+static bool read_numbers(void)
 {
-    x = refal.previous_argument->next;
-    if (x->tag != TAGLB)
+    x_current = refal.previous_argument->next;
+    if (x_current->tag != TAGLB)
         return false;
-    y = x->info.codep;
-    if (dajch())
+    y_current = x_current->info.codep;
+    if (read_number())
     {
-        Xn = nach;
-        Xk = kon;
-        Xzn = zn;
-        Xdl = dl;
+        X_begin = begin;
+        X_end = end;
+        X_sign = sign;
+        X_length = length;
     }
     else
         return false;
-    x = y;
-    y = refal.next_argument;
-    if (dajch())
+    x_current = y_current;
+    y_current = refal.next_argument;
+    if (read_number())
     {
-        Yn = nach;
-        Yk = kon;
-        Yzn = zn;
-        Ydl = dl;
+        Y_begin = begin;
+        Y_end = end;
+        Y_sign = sign;
+        Y_length = length;
         return true;
     }
     else
         return false;
 }
 
-static void obmen(void)
+static void exchange_numbers(void)
 {
-    T_LINKCB *p = Xn;
-    Xn = Yn;
-    Yn = p;
-    p = Xk;
-    Xk = Yk;
-    Yk = p;
-    const size_t i = Xdl;
-    Xdl = Ydl;
-    Ydl = i;
-    const char c = Xzn;
-    Xzn = Yzn;
-    Yzn = c;
+    T_LINKCB *temp_linkcb = X_begin;
+    X_begin = Y_begin;
+    Y_begin = temp_linkcb;
+    temp_linkcb = X_end;
+    X_end = Y_end;
+    Y_end = temp_linkcb;
+    const size_t temp_length = X_length;
+    X_length = Y_length;
+    Y_length = temp_length;
+    const char temp_sign = X_sign;
+    X_sign = Y_sign;
+    Y_sign = temp_sign;
     return;
 }
 
-static void boper(uint32_t o)
+static void bit_operate(uint8_t operation)
 {
     do
     {
-        if (o != Onot)
+        if (operation != Onot)
         {
-            if (!dajarg())
+            if (!read_numbers())
                 break;
         }
         else
         {
-            x = refal.previous_argument;
-            y = refal.next_argument;
-            if (dajch())
+            x_current = refal.previous_argument;
+            y_current = refal.next_argument;
+            if (read_number())
             {
-                Xn = nach;
-                Xk = kon;
-                Xzn = zn;
-                Xdl = dl;
+                X_begin = begin;
+                X_end = end;
+                X_sign = sign;
+                X_length = length;
             }
             else
                 break;
         }
-        bool rez0 = true;
-        switch (o)
+        bool rezult_zero = true;
+        switch (operation)
         {
         case Oand:
-            if (Ydl < Xdl)
-                obmen();
-            if (Xdl == 0)
+            if (Y_length < X_length)
+                exchange_numbers();
+            if (X_length == 0)
                 break;
-            if (Xzn == '-' && Yzn == '+')
-                Xzn = '+';
-            for (dl = 0, y = Yn; dl < Ydl - Xdl; dl++, y = y->next)
+            if (X_sign == '-' && Y_sign == '+')
+                X_sign = '+';
+            for (length = 0, y_current = Y_begin; length < Y_length - X_length; length++, y_current = y_current->next)
                 ;
-            for (x = Xn; x != Xk->next; x = x->next, y = y->next)
+            for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
             {
-                pcoden(x, gcoden(x) & gcoden(y));
-                if (rez0 && gcoden(x) != 0)
-                    rez0 = false;
+                pcoden(x_current, gcoden(x_current) & gcoden(y_current));
+                if (rezult_zero && gcoden(x_current) != 0)
+                    rezult_zero = false;
             }
             break;
         case Oor:
-            if (Ydl > Xdl)
-                obmen();
-            if (Xdl == 0)
+            if (Y_length > X_length)
+                exchange_numbers();
+            if (X_length == 0)
                 break;
-            rez0 = false;
-            if (Ydl == 0)
+            rezult_zero = false;
+            if (Y_length == 0)
                 break;
-            if (Xzn == '+' && Yzn == '-')
-                Xzn = '-';
-            for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+            if (X_sign == '+' && Y_sign == '-')
+                X_sign = '-';
+            for (length = 0, x_current = X_begin; length < X_length - Y_length; length++, x_current = x_current->next)
                 ;
-            for (y = Yn; x != Xk->next; x = x->next, y = y->next)
-                pcoden(x, gcoden(x) | gcoden(y));
+            for (y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
+                pcoden(x_current, gcoden(x_current) | gcoden(y_current));
             break;
         case Oxor:
-            if (Ydl > Xdl)
-                obmen();
-            if (Xdl == 0)
+            if (Y_length > X_length)
+                exchange_numbers();
+            if (X_length == 0)
                 break;
-            if (Xdl > Ydl)
-                rez0 = false;
-            if (Ydl == 0)
+            if (X_length > Y_length)
+                rezult_zero = false;
+            if (Y_length == 0)
                 break;
-            if (Xzn == '+' && Yzn == '-')
-                Xzn = '-';
-            else if (Xzn == '-' && Yzn == '-')
-                Xzn = '+';
-            for (dl = 0, x = Xn; dl < Xdl - Ydl; dl++, x = x->next)
+            if (X_sign == '+' && Y_sign == '-')
+                X_sign = '-';
+            else if (X_sign == '-' && Y_sign == '-')
+                X_sign = '+';
+            for (length = 0, x_current = X_begin; length < X_length - Y_length; length++, x_current = x_current->next)
                 ;
-            for (y = Yn; x != Xk->next; x = x->next, y = y->next)
+            for (y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
             {
-                pcoden(x, gcoden(x) ^ gcoden(y));
-                if (rez0 && gcoden(x) != 0)
-                    rez0 = false;
+                pcoden(x_current, gcoden(x_current) ^ gcoden(y_current));
+                if (rezult_zero && gcoden(x_current) != 0)
+                    rezult_zero = false;
             }
             break;
         case Onot:
-            if (Xdl == 0)
+            if (X_length == 0)
             {
                 if (refal.previous_argument->next == refal.next_argument)
                     if (!extended_insert_from_free_memory_list(refal.previous_argument, 1))
                         return;
-                rez0 = false;
-                Xzn = '-';
-                Xn = refal.previous_argument->next;
-                Xk = refal.previous_argument->next;
-                Xn->tag = TAGN;
-                Xn->info.code = NULL;
-                pcoden(Xn, MAX_NUMBER);
+                rezult_zero = false;
+                X_sign = '-';
+                X_begin = refal.previous_argument->next;
+                X_end = refal.previous_argument->next;
+                X_begin->tag = TAGN;
+                X_begin->info.code = NULL;
+                pcoden(X_begin, MAX_NUMBER);
                 break;
             }
-            if (Xzn == '+')
-                Xzn = '-';
+            if (X_sign == '+')
+                X_sign = '-';
             else
-                Xzn = '+';
-            for (x = Xn; x != Xk->next; x = x->next)
+                X_sign = '+';
+            for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next)
             {
-                pcoden(x, ~gcoden(x));
-                if (rez0 && gcoden(x) != 0)
-                    rez0 = false;
+                pcoden(x_current, ~gcoden(x_current));
+                if (rezult_zero && gcoden(x_current) != 0)
+                    rezult_zero = false;
             }
         }
-        if (rez0)
+        if (rezult_zero)
         {
-            x = refal.previous_argument->next;
-            x->tag = TAGN;
-            x->info.code = NULL;
-            transplantation(refal.previous_result, x->previous, x->next);
+            x_current = refal.previous_argument->next;
+            x_current->tag = TAGN;
+            x_current->info.code = NULL;
+            transplantation(refal.previous_result, x_current->previous, x_current->next);
             return;
         }
         //  wozwratim X
         // podawim wed. nuli
-        for (x = Xn; gcoden(x) == 0; x = x->next)
+        for (x_current = X_begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (Xzn == '-')
+        if (X_sign == '-')
         {
-            x = x->previous;
-            x->tag = TAGO;
-            x->info.code = NULL;
-            x->info.infoc = '-';
+            x_current = x_current->previous;
+            x_current->tag = TAGO;
+            x_current->info.code = NULL;
+            x_current->info.infoc = '-';
         }
         //  perenosim reultat
-        transplantation(refal.previous_result, x->previous, Xk->next);
+        transplantation(refal.previous_result, x_current->previous, X_end->next);
         return;
     } while (false);
     refal.upshot = 2;
     return;
 }
 
-static void shoper(uint32_t o)
+static void shift_operate(uint8_t operation)
 {
     do
     {
-        x = refal.previous_argument->next;
-        if (x->tag != TAGLB)
+        x_current = refal.previous_argument->next;
+        if (x_current->tag != TAGLB)
             break;
-        y = x->info.codep;
-        if (dajch())
+        y_current = x_current->info.codep;
+        if (read_number())
         {
-            Xn = nach;
-            Xk = kon;
-            Xzn = zn;
-            Xdl = dl;
+            X_begin = begin;
+            X_end = end;
+            X_sign = sign;
+            X_length = length;
         }
         else
             break;
-        y = y->next;
-        if (y->next != refal.next_argument || y->tag != TAGN)
+        y_current = y_current->next;
+        if (y_current->next != refal.next_argument || y_current->tag != TAGN)
             break;
-        uint32_t sh = gcoden(y);
-        dl = sh / 32;
-        sh %= 32;
-        const uint32_t sh1 = 32 - sh;
-        bool rez0 = true;
-        switch (o)
+        uint32_t shift_bits = gcoden(y_current);
+        length = shift_bits / 32;
+        shift_bits %= 32;
+        const uint32_t transfer_shift_bits = 32 - shift_bits;
+        bool rezult_zero = true;
+        switch (operation)
         {
         case Oshl:
-            if (Xdl == 0)
+            if (X_length == 0)
                 break;
-            rez0 = false;
-            const size_t n = dl + (sh == 0 ? 0 : 1) + (Xzn == '-' ? 1 : 0);
+            rezult_zero = false;
+            const size_t n = length + (shift_bits == 0 ? 0 : 1) + (X_sign == '-' ? 1 : 0);
             size_t e = 4;
-            for (x = Xn->previous; x->tag != TAGLB && n > e; x = x->previous, e++)
+            for (x_current = X_begin->previous; x_current->tag != TAGLB && n > e; x_current = x_current->previous, e++)
                 ;
             if (n > e)
                 if (!extended_insert_from_free_memory_list(refal.next_result, n - e))
                     return;
-            transplantation(refal.next_result, Xk, refal.next_argument);
-            if (dl != 0)
+            transplantation(refal.next_result, X_end, refal.next_argument);
+            if (length != 0)
             {
-                y = Xn;
-                for (Ydl = 0; Ydl < dl; Ydl++)
+                y_current = X_begin;
+                for (Y_length = 0; Y_length < length; Y_length++)
                 {
-                    Xn = Xn->previous;
-                    Xn->tag = TAGN;
-                    Xn->info.code = NULL;
+                    X_begin = X_begin->previous;
+                    X_begin->tag = TAGN;
+                    X_begin->info.code = NULL;
                 }
-                for (x = Xn; y != Xk->next; x = x->next, y = y->next)
+                for (x_current = X_begin; y_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
                 {
-                    pcoden(x, gcoden(y));
-                    y->info.code = NULL;
+                    pcoden(x_current, gcoden(y_current));
+                    y_current->info.code = NULL;
                 }
-                Yk = x->previous;
+                Y_end = x_current->previous;
             }
             else
-                Yk = Xk;
-            if (sh == 0)
+                Y_end = X_end;
+            if (shift_bits == 0)
                 break;
-            Xn = Xn->previous;
-            Xn->tag = TAGN;
-            Xn->info.code = NULL;
-            for (x = Xn->next; x != Yk->next; x = x->next)
+            X_begin = X_begin->previous;
+            X_begin->tag = TAGN;
+            X_begin->info.code = NULL;
+            for (x_current = X_begin->next; x_current != Y_end->next; x_current = x_current->next)
             {
-                const uint32_t t = gcoden(x) >> sh1;
-                pcoden(x->previous, gcoden(x->previous) | t);
-                pcoden(x, gcoden(x) << sh);
+                const uint32_t t = gcoden(x_current) >> transfer_shift_bits;
+                pcoden(x_current->previous, gcoden(x_current->previous) | t);
+                pcoden(x_current, gcoden(x_current) << shift_bits);
             }
             break;
         case Oshr:
-            if (dl >= Xdl)
+            if (length >= X_length)
                 break;
-            if (dl != 0)
+            if (length != 0)
             {
-                for (x = Xk, Ydl = 0; Ydl < dl; x = x->previous, Ydl++)
+                for (x_current = X_end, Y_length = 0; Y_length < length; x_current = x_current->previous, Y_length++)
                     ;
-                for (y = Xk; x != Xn->previous; x = x->previous, y = y->previous)
-                    pcoden(y, gcoden(x));
-                Xn = y->next;
+                for (y_current = X_end; x_current != X_begin->previous; x_current = x_current->previous, y_current = y_current->previous)
+                    pcoden(y_current, gcoden(x_current));
+                X_begin = y_current->next;
             }
-            if (sh == 0)
+            if (shift_bits == 0)
             {
-                rez0 = false;
+                rezult_zero = false;
                 break;
             }
-            for (x = Xk; x != Xn; x = x->previous)
+            for (x_current = X_end; x_current != X_begin; x_current = x_current->previous)
             {
-                pcoden(x, gcoden(x) >> sh);
-                const uint32_t t = gcoden(x->previous) << sh1;
-                pcoden(x, gcoden(x) | t);
+                pcoden(x_current, gcoden(x_current) >> shift_bits);
+                const uint32_t t = gcoden(x_current->previous) << transfer_shift_bits;
+                pcoden(x_current, gcoden(x_current) | t);
             }
-            pcoden(Xn, gcoden(Xn) >> sh);
-            if (Xn != Xk || gcoden(Xn) != 0)
-                rez0 = false;
+            pcoden(X_begin, gcoden(X_begin) >> shift_bits);
+            if (X_begin != X_end || gcoden(X_begin) != 0)
+                rezult_zero = false;
         }
-        if (rez0)
+        if (rezult_zero)
         {
-            x = refal.previous_argument->next;
-            x->tag = TAGN;
-            x->info.code = NULL;
-            transplantation(refal.previous_result, x->previous, x->next);
+            x_current = refal.previous_argument->next;
+            x_current->tag = TAGN;
+            x_current->info.code = NULL;
+            transplantation(refal.previous_result, x_current->previous, x_current->next);
             return;
         }
         //  wozwratim X
         // podawim wed. nuli
-        for (x = Xn; gcoden(x) == 0; x = x->next)
+        for (x_current = X_begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (Xzn == '-')
+        if (X_sign == '-')
         {
-            x = x->previous;
-            x->tag = TAGO;
-            x->info.code = NULL;
-            x->info.infoc = '-';
+            x_current = x_current->previous;
+            x_current->tag = TAGO;
+            x_current->info.code = NULL;
+            x_current->info.infoc = '-';
         }
         //  perenosim reultat
-        transplantation(refal.previous_result, x->previous, Xk->next);
+        transplantation(refal.previous_result, x_current->previous, X_end->next);
         return;
     } while (false);
     refal.upshot = 2;
