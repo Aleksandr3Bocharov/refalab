@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-25
+// 2026-04-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -1190,13 +1190,13 @@ static void p1_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.next_argument || p->tag != TAGN)
+        T_LINKCB *number = refal.previous_argument->next;
+        if (number->next != refal.next_argument || number->tag != TAGN)
             break;
-        uint32_t l = gcoden(p) + 1;
-        if (l == 0)
+        uint32_t next_number = gcoden(number) + 1;
+        if (next_number == 0)
             break;
-        pcoden(p, l);
+        pcoden(number, next_number);
         transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
@@ -1211,13 +1211,13 @@ static void m1_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.next_argument || p->tag != TAGN)
+        T_LINKCB *number = refal.previous_argument->next;
+        if (number->next != refal.next_argument || number->tag != TAGN)
             break;
-        uint32_t l = gcoden(p) - 1;
-        if (l == MAX_NUMBER)
+        uint32_t previous_number = gcoden(number) - 1;
+        if (previous_number == MAX_NUMBER)
             break;
-        pcoden(p, l);
+        pcoden(number, previous_number);
         transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
         return;
     } while (false);
