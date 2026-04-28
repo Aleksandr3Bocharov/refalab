@@ -291,7 +291,7 @@ static void operate(uint32_t operation, uint32_t type)
                     break;
                 }
                 if (compare_numbers() == 1)
-                    exchange_numbers();              //  menjaem x i y
+                    exchange_numbers();      //  menjaem x i y
                 X_begin = X_begin->previous; //  pripisywaem 0
                 X_begin->tag = TAGN;
                 X_begin->info.code = NULL;
@@ -460,7 +460,7 @@ static void operate(uint32_t operation, uint32_t type)
         T_LINKCB *temp_linkcb = refal.previous_argument;
         if (!extended_insert_from_free_memory_list(temp_linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
             return;
-        temp_linkcb = temp_linkcb->next;                 //  dlja znaka
+        temp_linkcb = temp_linkcb->next;  //  dlja znaka
         result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
         begin = result_begin;
         X_begin = X_begin->previous;
@@ -960,33 +960,33 @@ static void gcd_(void)
             int64_t r[] = {0, 0};
             for (k = 0; k < number_length[0]; k++)
             {
-                const int64_t s[] = {gcoden(number_current[0]), gcoden(number_current[1])};
+                const int64_t current_number[] = {gcoden(number_current[0]), gcoden(number_current[1])};
                 for (uint8_t i = 0; i < 2; i++)
                 {
-                    int64_t vs1 = s[0];
-                    int64_t vs2 = s[1];
+                    int64_t vs1 = current_number[0];
+                    int64_t vs2 = current_number[1];
                     int64_t vs3, vs4;
                     if (xi[i] < 0)
                     {
-                        vs3 = 0 - xi[i];
+                        vs3 = -xi[i];
                         vs4 = yi[i];
                     }
                     else
                     {
                         vs3 = xi[i];
-                        vs4 = 0 - yi[i];
+                        vs4 = -yi[i];
                     }
                     multiply(&vs1, &vs3);
                     multiply(&vs2, &vs4);
                     if (xi[i] < 0)
                     {
-                        vs1 = 0 - vs1;
-                        vs3 = 0 - vs3;
+                        vs1 = -vs1;
+                        vs3 = -vs3;
                     }
                     else
                     {
-                        vs2 = 0 - vs2;
-                        vs4 = 0 - vs4;
+                        vs2 = -vs2;
+                        vs4 = -vs4;
                     }
                     int64_t r0 = r[i] + vs3 + vs4;
                     if (r0 < 0)
