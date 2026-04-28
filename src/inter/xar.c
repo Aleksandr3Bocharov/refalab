@@ -844,44 +844,43 @@ static void gcd_(void)
         case M21:
             //   wybor metoda
             int64_t A = 0;
-            temp_linkcb = number_head[0];
+            number_current[0] = number_head[0];
             size_t k;
             for (k = 0; k < number_length[0]; k++)
             {
-                if (A >= 128)
+                if (A >= 2147483648)
                     break;
                 A <<= SHIFT_MAX;
-                A += gcoden(temp_linkcb);
-                temp_linkcb = temp_linkcb->next;
+                A += gcoden(number_current[0]);
+                number_current[0] = number_current[0]->next;
             }
-            int64_t B;
             if (number_length[0] == 1 || (number_length[0] == 2 && k == 2))
             {
                 // Evklid nad korotkimi
                 // UTV: number_length[0] >= number_length[1]
-                B = 0;
-                temp_linkcb = number_head[1];
+                int64_t B = 0;
+                number_current[1] = number_head[1];
                 for (k = 0; k < number_length[1]; k++)
                 {
                     B <<= SHIFT_MAX;
-                    B += gcoden(temp_linkcb);
-                    temp_linkcb = temp_linkcb->next;
+                    B += gcoden(number_current[1]);
+                    number_current[1] = number_current[1]->next;
                 }
                 while (B != 0)
                 {
-                    v1 = A / B;
-                    v2 = A - v1 * B;
+                    const int64_t q = A / B;
+                    const int64_t r = A - q * B;
                     A = B;
-                    B = v2;
+                    B = r;
                 }
                 // UTV: rezult v A
                 temp_linkcb = refal.previous_argument->next;
-                v1 = A >> SHIFT_MAX;
-                if (v1 != 0)
+                const int64_t a1 = A >> SHIFT_MAX;
+                if (a1 != 0)
                 {
                     temp_linkcb->tag = TAGN;
                     temp_linkcb->info.code = NULL;
-                    pcoden(temp_linkcb, (uint32_t)v1);
+                    pcoden(temp_linkcb, (uint32_t)a1);
                     temp_linkcb = temp_linkcb->next;
                     A &= MAX_NUMBER;
                 }
@@ -894,23 +893,22 @@ static void gcd_(void)
             }
             //    A - pribligenie
             //    k={ 1/2 }
-            const size_t la = k;
-            const int64_t lb = (int64_t)number_length[1] - (int64_t)number_length[0] + (int64_t)la;
+            const int64_t length_difference = (int64_t)number_length[1] - (int64_t)number_length[0] + (int64_t)k;
             int64_t xi[2], yi[2];
-            if (lb <= 0)
+            if (length_difference <= 0)
             {
                 gcd_state = SHD;
                 break;
             }
             // UTV:  number_length[1] > hvosta,
             // UTV:  number_length[0] = {1/2}
-            B = 0;
-            temp_linkcb = number_head[1];
-            for (k = 0; k < (size_t)lb; k++)
+            int64_t B = 0;
+            number_current[1] = number_head[1];
+            for (k = 0; k < (size_t)length_difference; k++)
             {
                 B <<= SHIFT_MAX;
-                B += gcoden(temp_linkcb);
-                temp_linkcb = temp_linkcb->next;
+                B += gcoden(number_current[1]);
+                number_current[1] = number_current[1]->next;
             }
             if (A / (B + 1) != (A + 1) / B)
             {
@@ -963,11 +961,11 @@ static void gcd_(void)
             for (k = 0; k < number_length[0]; k++)
             {
                 const int64_t s[] = {gcoden(number_current[0]), gcoden(number_current[1])};
-                int64_t vs3, vs4;
-                for (i = 0; i < 2; i++)
+                for (uint8_t i = 0; i < 2; i++)
                 {
                     int64_t vs1 = s[0];
                     int64_t vs2 = s[1];
+                    int64_t vs3, vs4;
                     if (xi[i] < 0)
                     {
                         vs3 = 0 - xi[i];
