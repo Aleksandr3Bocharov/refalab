@@ -841,7 +841,7 @@ static void gcd_(void)
             number_length[1] = temp_length;
             gcd_state = M21;
             break;
-        case M21:
+        case M21:;
             //   wybor metoda
             int64_t A = 0;
             number_current[0] = number_head[0];
@@ -1022,154 +1022,148 @@ static void gcd_(void)
             number_head[0]->tag = TAGN;
             number_head[0]->info.code = NULL;
             number_length[0]++;
-            T_LINKCB *px;
-            for (i = 0, px = number_head[0]; i < number_length[1]; i++, px = px->next)
+            size_t i;
+            for (i = 0, number_current[0] = number_head[0]; i < number_length[1]; i++, number_current[0] = number_current[0]->next)
                 ;
-            T_LINKCB *py = number_head[1]->previous;
-            py->tag = TAGN;
-            py->info.code = NULL;
-            size_t n = 0;
-            int64_t b;
+            number_current[1] = number_head[1]->previous;
+            number_current[1]->tag = TAGN;
+            number_current[1]->info.code = NULL;
+            uint8_t power = 0;
             if (number_length[1] != 0)
             { // wozmovna normalizacija
-                b = gcoden(number_head[1]);
-                for (n = 0; b < 2147483648; n++, b += b)
+                int64_t exponentation = gcoden(number_head[1]);
+                for (power = 0; exponentation < 2147483648; power++, exponentation += exponentation)
                     ;
-                if (n != 0)
+                if (power != 0)
                 {
-                    normalization(number_tail[0], number_length[0], n);
-                    normalization(number_tail[1], number_length[1], n);
+                    normalization(number_tail[0], number_length[0], power);
+                    normalization(number_tail[1], number_length[1], power);
                 }
             }
-            int64_t transfer = 0;
-            int64_t a, c;
             do
             {
-                a = gcoden(number_head[0]);
-                const int64_t a1 = gcoden(number_head[0]->next);
-                b = gcoden(number_head[1]);
-                if (a == 0 && a1 < b)
+                int64_t a = gcoden(number_head[0]);
+                const int64_t a0 = gcoden(number_head[0]->next);
+                int64_t b = gcoden(number_head[1]);
+                int64_t c;
+                if (a == 0 && a0 < b)
                     c = 0;
                 else
                 {
-                    int64_t b1;
-                    if (a == 0 && a1 >= b)
+                    if (a == 0 && a0 >= b)
                     {
                         c = 1; //  t.k. b - normalizowano
-                        a = a1;
+                        a = a0;
                     }
                     else
-                    { // delim a,a1 na b
-                        a = (a << 7) + (a1 >> 25);
+                    { // delim a,a0 na b
+                        a = (a << 7) + (a0 >> 25);
                         c = a / b << 25;
-                        b1 = a1 >> 18;
-                        a = (a % b << 7) + (b1 & 0x7F);
+                        a = (a % b << 7) + (a0 >> 18 & 0x7F);
                         c += a / b << 18;
-                        b1 = a1 >> 11;
-                        a = (a % b << 7) + (b1 & 0x7F);
+                        a = (a % b << 7) + (a0 >> 11 & 0x7F);
                         c += a / b << 11;
-                        b1 = a1 >> 4;
-                        a = (a % b << 7) + (b1 & 0x7F);
+                        a = (a % b << 7) + (a0 >> 4 & 0x7F);
                         c += a / b << 4;
-                        a = (a % b << 4) + (a1 & 0xF);
+                        a = (a % b << 4) + (a0 & 0xF);
                         c += a / b;
                     }
-                    b1 = gcoden(number_head[1]->next);
-                    if (number_length[1] > 1 && b1 != 0)
+                    const int64_t b0 = gcoden(number_head[1]->next);
+                    if (number_length[1] > 1 && b0 != 0)
                     {
-                        xi[0] = b1;
+                        xi[0] = b0;
                         xi[1] = c;
                         multiply(&xi[0], &xi[1]);
                         yi[0] = a % b;
                         yi[1] = gcoden(number_head[0]->next->next);
-                        i = 0;
+                        bool state = false;
                         while (xi[0] > yi[0] || (xi[0] == yi[0] && xi[1] > yi[1]))
                         {
                             c--;
-                            i = 1;
-                            xi[0] = b1;
+                            state = true;
+                            xi[0] = b0;
                             xi[1] = c;
                             multiply(&xi[0], &xi[1]);
                             yi[0] += b;
                         }
-                        if (i == 1)
+                        if (state == true)
                             c++; // na wcjakij sluchaj
                     }
                 }
                 // umnovenie  delitelja  na 'c' i wychit. iz X
                 if (c != 0)
                 {
-                    const T_LINKCB *Yt = number_tail[1];
-                    T_LINKCB *Xt = px;
-                    transfer = 0;
-                    int64_t J;
-                    for (; Yt != py->previous; Xt = Xt->previous, Yt = Yt->previous)
+                    T_LINKCB *number_temp[2];
+                    number_temp[1] = number_tail[1];
+                    number_temp[0] = number_current[0];
+                    int64_t transfer = 0;
+                    for (; number_temp[1] != number_current[1]->previous; number_temp[0] = number_temp[0]->previous, number_temp[1] = number_temp[1]->previous)
                     {
-                        b = gcoden(Yt);
+                        b = gcoden(number_temp[1]);
                         a = c;
                         multiply(&a, &b);
                         b += transfer;
                         transfer = b >> SHIFT_MAX;
                         b &= MAX_NUMBER;
-                        J = gcoden(Xt);
-                        if (J < b)
+                        int64_t number0_temp = gcoden(number_temp[0]);
+                        if (number0_temp < b)
                         {
-                            J += MAX_NUMBER + 1;
-                            transfer += 1;
+                            number0_temp += MAX_NUMBER + 1;
+                            transfer++;
                         }
-                        pcoden(Xt, (uint32_t)(J - b));
+                        pcoden(number_temp[0], (uint32_t)(number0_temp - b));
                         transfer += a;
                     }
                     if (transfer != 0)
                     { // cifra welika
                         do
                         {
-                            c -= 1;
-                            Xt = px;
-                            Yt = number_tail[1];
-                            J = 0;
-                            for (; Yt != py->previous; Xt = Xt->previous, Yt = Yt->previous)
+                            c--;
+                            number_temp[0] = number_current[0];
+                            number_temp[1] = number_tail[1];
+                            int64_t new_transfer = 0;
+                            for (; number_temp[1] != number_current[1]->previous; number_temp[0] = number_temp[0]->previous, number_temp[1] = number_temp[1]->previous)
                             {
-                                a = (int64_t)gcoden(Xt) + gcoden(Yt) + J;
-                                J = 0;
-                                if (a >= MAX_NUMBER + 1)
+                                int64_t sum = (int64_t)gcoden(number_temp[0]) + gcoden(number_temp[1]) + new_transfer;
+                                new_transfer = 0;
+                                if (sum >= MAX_NUMBER + 1)
                                 {
-                                    a -= MAX_NUMBER + 1;
-                                    J = 1;
+                                    sum -= MAX_NUMBER + 1;
+                                    new_transfer = 1;
                                 }
-                                pcoden(Xt, (uint32_t)a);
+                                pcoden(number_temp[0], (uint32_t)sum);
                             }
-                            transfer -= J;
+                            transfer -= new_transfer;
                         } while (transfer != 0);
                     }
                 }
-                px = px->next;
+                number_current[0] = number_current[0]->next;
                 number_head[0] = number_head[0]->next;
                 number_length[0]--;
-            } while (px != number_tail[0]->next);
+            } while (number_current[0] != number_tail[0]->next);
             number_head[0] = number_head[0]->previous;
             number_length[0]++;
-            if (n != 0)
+            if (power != 0)
             {
-                transfer = 0;
-                i = SHIFT_MAX - n;
-                c = MAX_NUMBER >> i;
+                int64_t transfer = 0;
+                const uint8_t transfer_shift = SHIFT_MAX - power;
+                const int64_t mask = MAX_NUMBER >> transfer_shift;
                 // denormalizacija ostatka
-                for (px = number_head[0]; px != number_tail[0]->next; px = px->next)
+                for (number_current[0] = number_head[0]; number_current[0] != number_tail[0]->next; number_current[0] = number_current[0]->next)
                 {
-                    a = gcoden(px);
-                    b = a >> n | transfer << i;
-                    transfer = a & c;
-                    pcoden(px, (uint32_t)b);
+                    const int64_t current_number0 = gcoden(number_current[0]);
+                    const int64_t new_current_number0 = current_number0 >> power | transfer << transfer_shift;
+                    transfer = current_number0 & mask;
+                    pcoden(number_current[0], (uint32_t)new_current_number0);
                 }
                 // denormalizacija delitelja
                 transfer = 0;
-                for (px = number_head[1]; px != number_tail[1]->next; px = px->next)
+                for (number_current[1] = number_head[1]; number_current[1] != number_tail[1]->next; number_current[1] = number_current[1]->next)
                 {
-                    a = gcoden(px);
-                    b = a >> n | transfer << i;
-                    transfer = a & c;
-                    pcoden(px, (uint32_t)b);
+                    const int64_t current_number1 = gcoden(number_current[1]);
+                    const int64_t new_current_number1 = current_number1 >> power | transfer << transfer_shift;
+                    transfer = current_number1 & mask;
+                    pcoden(number_current[1], (uint32_t)new_current_number1);
                 }
             }
             gcd_state = OC;
