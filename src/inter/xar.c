@@ -1197,7 +1197,7 @@ static void p1_(void)
         if (next_number == 0)
             break;
         pcoden(number, next_number);
-        transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+        transplantation(refal.previous_result, number->previous, number->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -1218,7 +1218,7 @@ static void m1_(void)
         if (previous_number == MAX_NUMBER)
             break;
         pcoden(number, previous_number);
-        transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+        transplantation(refal.previous_result, number->previous, number->next);
         return;
     } while (false);
     refal.upshot = 2;
