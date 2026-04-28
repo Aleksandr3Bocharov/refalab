@@ -1151,19 +1151,19 @@ static void gcd_(void)
                 // denormalizacija ostatka
                 for (number_current[0] = number_head[0]; number_current[0] != number_tail[0]->next; number_current[0] = number_current[0]->next)
                 {
-                    const int64_t current_number0 = gcoden(number_current[0]);
-                    const int64_t new_current_number0 = current_number0 >> power | transfer << transfer_shift;
-                    transfer = current_number0 & mask;
-                    pcoden(number_current[0], (uint32_t)new_current_number0);
+                    const int64_t number1 = gcoden(number_current[0]);
+                    const int64_t new_number1 = number1 >> power | transfer << transfer_shift;
+                    transfer = number1 & mask;
+                    pcoden(number_current[0], (uint32_t)new_number1);
                 }
                 // denormalizacija delitelja
                 transfer = 0;
                 for (number_current[1] = number_head[1]; number_current[1] != number_tail[1]->next; number_current[1] = number_current[1]->next)
                 {
-                    const int64_t current_number1 = gcoden(number_current[1]);
-                    const int64_t new_current_number1 = current_number1 >> power | transfer << transfer_shift;
-                    transfer = current_number1 & mask;
-                    pcoden(number_current[1], (uint32_t)new_current_number1);
+                    const int64_t number2 = gcoden(number_current[1]);
+                    const int64_t new_number2 = number2 >> power | transfer << transfer_shift;
+                    transfer = number2 & mask;
+                    pcoden(number_current[1], (uint32_t)new_number2);
                 }
             }
             gcd_state = OC;
