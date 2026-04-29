@@ -35,15 +35,16 @@ static void delf_(void)
         break;
     }
     const T_LINKCB *current_delete_dot = refal.next_result->info.codep;
+    T_LINKCB *temp_dot;
     while (current_delete_dot != delete_dot)
     {
         temp_k = current_delete_dot->info.codep;
-        const T_LINKCB *temp_dot = temp_k->info.codep;
+        temp_dot = temp_k->info.codep;
         insert_to_free_memory_list(temp_k->previous, current_delete_dot->next);
         current_delete_dot = temp_dot;
     }
     temp_k = current_delete_dot->info.codep;
-    T_LINKCB *temp_dot = temp_k->info.codep;
+    temp_dot = temp_k->info.codep;
     insert_to_free_memory_list(temp_k->previous, delete_dot_next->next);
     refal.next_result->info.codep = temp_dot;
     return;
