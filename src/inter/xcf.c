@@ -114,9 +114,8 @@ static void chartof_(void)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
-            T_LINKCB *symbol_label = refal.previous_argument;
-            symbol_label->info.codef = functions_table[k];
-            transplantation(refal.previous_result, symbol_label->previous, symbol_label->next);
+            refal.previous_argument->info.codef = functions_table[k];
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             free(label);
             return;
         }
@@ -132,9 +131,8 @@ static void chartof_(void)
     uint8_t *function = (uint8_t *)(label + i);
     functions_table[functions_count] = function;
     functions_count++;
-    T_LINKCB *symbol_label = refal.previous_argument;
-    symbol_label->info.codef = function;
-    transplantation(refal.previous_result, symbol_label->previous, symbol_label->next);
+    refal.previous_argument->info.codef = function;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};

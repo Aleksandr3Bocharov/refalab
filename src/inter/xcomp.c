@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-04-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCOMP.C ---------------
@@ -14,114 +14,115 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-static T_LINKCB *x, *y, *Xn, *Xk, *nach, *kon, *Yn, *Yk;
-static size_t dl, Xdl, Ydl;
-static char zn, Xzn, Yzn;
+static T_LINKCB *x_current, *y_current, *X_begin, *X_end, *begin, *end, *Y_begin, *Y_end;
+static size_t length, X_length, Y_length;
+static char sign, X_sign, Y_sign;
 
-static bool dajch(void)
+static bool read_number(void)
 {
-    zn = '+';
-    kon = y->previous;
-    if (x == kon)
+    sign = '+';
+    end = y_current->previous;
+    if (x_current == end)
     { // pustoe chislo
-        dl = 0;
+        length = 0;
         return true;
     }
-    x = x->next;
-    if (x->tag == TAGO &&
-        (x->info.infoc == '+' || x->info.infoc == '-'))
+    x_current = x_current->next;
+    if (x_current->tag == TAGO &&
+        (x_current->info.infoc == '+' || x_current->info.infoc == '-'))
     {
-        zn = x->info.infoc;
-        x = x->next;
-        if (x == y)
+        sign = x_current->info.infoc;
+        x_current = x_current->next;
+        if (x_current == y_current)
             return false; //  w chisle - lish znak
     }
-    for (; x->tag == TAGN && gcoden(x) == 0; x = x->next)
+    for (; x_current->tag == TAGN && gcoden(x_current) == 0; x_current = x_current->next)
         ;
-    if (x == y)
-        dl = 0; //  wse cifry - nuli
+    if (x_current == y_current)
+        length = 0; //  wse cifry - nuli
     else
     {
-        for (dl = 0, nach = x; x->tag == TAGN; x = x->next, dl++)
+        for (length = 0, begin = x_current; x_current->tag == TAGN; x_current = x_current->next, length++)
             ;
-        if (x != y)
+        if (x_current != y_current)
             return false; // ne makrocifra
     }
     return true;
 }
 
-static bool dajarg(void)
+static bool read_numbers(void)
 {
-    x = refal.previous_argument->next;
-    if (x->tag != TAGLB)
+    x_current = refal.previous_argument->next;
+    if (x_current->tag != TAGLB)
         return false;
-    y = x->info.codep;
-    if (dajch())
+    y_current = x_current->info.codep;
+    if (read_number())
     {
-        Xn = nach;
-        Xk = kon;
-        Xzn = zn;
-        Xdl = dl;
+        X_begin = begin;
+        X_end = end;
+        X_sign = sign;
+        X_length = length;
     }
     else
         return false;
-    x = y;
-    y = refal.next_argument;
-    if (dajch())
+    x_current = y_current;
+    y_current = refal.next_argument;
+    if (read_number())
     {
-        Yn = nach;
-        Yk = kon;
-        Yzn = zn;
-        Ydl = dl;
+        Y_begin = begin;
+        Y_end = end;
+        Y_sign = sign;
+        Y_length = length;
         return true;
     }
     else
         return false;
 }
 
-static uint32_t xmy(void)
+static uint32_t compare_numbers(void)
 { //  if X < Y then true  ( po modulju)
-    if (Xdl < Ydl)
+    if (X_length < Y_length)
         return 1;
-    if (Xdl > Ydl)
+    if (X_length > Y_length)
         return 0;
-    for (x = Xn, y = Yn; x != Xk->next; x = x->next, y = y->next)
+    for (x_current = X_begin, y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
     {
-        if (gcoden(x) < gcoden(y))
+        if (gcoden(x_current) < gcoden(y_current))
             return 1;
-        if (gcoden(x) > gcoden(y))
+        if (gcoden(x_current) > gcoden(y_current))
             return 0;
     }
-    return 2; // x=y
+    return 2; // X=Y
 }
 
 static void nrel_(void)
 {
-    if (!dajarg())
+    if (!read_numbers())
     {
         refal.upshot = 2;
         return;
     }
-    char c;
-    if (Xdl == 0 && Ydl == 0)
-        c = '=';
+    char compare_result;
+    if (X_length == 0 && Y_length == 0)
+        compare_result = '=';
     else
     {
-        if (Xzn == Yzn && xmy() == 2)
-            c = '=';
+        const uint32_t compare = compare_numbers();
+        if (X_sign == Y_sign && compare == 2)
+            compare_result = '=';
         else
         {
-            if ((Xzn == '-' && Yzn == '+') ||
-                (Xzn == '-' && Yzn == '-' && xmy() == 0) ||
-                (Xzn == '+' && Yzn == '+' && xmy() == 1))
-                c = '<';
+            if ((X_sign == '-' && Y_sign == '+') ||
+                (X_sign == '-' && Y_sign == '-' && compare == 0) ||
+                (X_sign == '+' && Y_sign == '+' && compare == 1))
+                compare_result = '<';
             else
-                c = '>';
+                compare_result = '>';
         }
     }
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
-    refal.previous_argument->info.infoc = c;
+    refal.previous_argument->info.infoc = compare_result;
     transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
@@ -131,46 +132,43 @@ void (*nrel_1)(void) = nrel_;
 
 static void lrel_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    if (p->tag != TAGLB)
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
     {
         refal.upshot = 2;
         return;
     }
-    const T_LINKCB *pp = p->info.codep;
-    p = p->next;
-    T_LINKCB *q = pp->next;
-    const T_LINKCB *q1 = refal.next_argument;
-    char c = '=';
-    for (; c == '=' && p != pp && q != q1; p = p->next, q = q->next)
-        if ((p->tag == TAGLB && q->tag == TAGLB) ||
-            (p->tag == TAGRB && q->tag == TAGRB))
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const T_LINKCB *first_current = first_begin->next;
+    const T_LINKCB *second_current = second_begin->next;
+    char compare_result = '=';
+    for (; compare_result == '=' && first_current != second_begin && second_current != refal.next_argument; first_current = first_current->next, second_current = second_current->next)
+        if ((first_current->tag == TAGLB && second_current->tag == TAGLB) ||
+            (first_current->tag == TAGRB && second_current->tag == TAGRB))
             continue;
-        else if (p->tag == TAGLB || q->tag == TAGRB)
-            c = '>';
-        else if (p->tag == TAGRB || q->tag == TAGLB)
-            c = '<';
-        else if (p->tag > q->tag)
-            c = '>';
-        else if (p->tag < q->tag)
-            c = '<';
-        else if ((size_t)p->info.code > (size_t)q->info.code)
-            c = '>';
-        else if ((size_t)p->info.code < (size_t)q->info.code)
-            c = '<';
-    if (c == '=')
+        else if (first_current->tag == TAGLB || second_current->tag == TAGRB)
+            compare_result = '>';
+        else if (first_current->tag == TAGRB || second_current->tag == TAGLB)
+            compare_result = '<';
+        else if (first_current->tag > second_current->tag)
+            compare_result = '>';
+        else if (first_current->tag < second_current->tag)
+            compare_result = '<';
+        else if ((size_t)first_current->info.code > (size_t)second_current->info.code)
+            compare_result = '>';
+        else if ((size_t)first_current->info.code < (size_t)second_current->info.code)
+            compare_result = '<';
+    if (compare_result == '=')
     {
-        if (p == pp && q != q1)
-            c = '<';
-        else if (q == q1 && p != pp)
-            c = '>';
+        if (first_current == second_begin && second_current != refal.next_argument)
+            compare_result = '<';
+        else if (second_current == refal.next_argument && first_current != second_begin)
+            compare_result = '>';
     }
-    p = refal.previous_argument->next;
-    p->tag = TAGO;
-    p->info.code = NULL;
-    p->info.infoc = c;
-    q = p->next;
-    transplantation(refal.previous_result, refal.previous_argument, q);
+    refal.previous_argument->tag = TAGO;
+    refal.previous_argument->info.code = NULL;
+    refal.previous_argument->info.infoc = compare_result;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
