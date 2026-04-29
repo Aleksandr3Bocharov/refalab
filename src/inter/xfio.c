@@ -110,24 +110,24 @@ static void fclose_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGN)
+        T_LINKCB *symbol_number = refal.previous_argument->next;
+        if (symbol_number->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= FILES_MAX)
+        const uint32_t file_number = gcoden(symbol_number);
+        if (file_number >= FILES_MAX)
             break;
-        if (p->next != refal.next_argument)
+        if (symbol_number->next != refal.next_argument)
             break;
-        file = files[j];
-        files[j] = NULL;
+        file = files[file_number];
+        files[file_number] = NULL;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        const int cl = fclose(file);
-        if (cl == EOF)
+        const int close_result = fclose(file);
+        if (close_result == EOF)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
@@ -152,10 +152,10 @@ static void fgets_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -203,10 +203,10 @@ static void fputs_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -266,10 +266,10 @@ static void fprint_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -355,10 +355,10 @@ static void fprints_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -443,10 +443,10 @@ static void fprintm_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -564,10 +564,10 @@ static void fread_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= FILES_MAX)
+        const uint32_t file_number = gcoden(p);
+        if (file_number >= FILES_MAX)
             break;
-        file = files[j];
+        file = files[file_number];
         p = p->next;
         if (p->tag != TAGN)
             break;
@@ -612,10 +612,10 @@ static void fwrite_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= FILES_MAX)
+        const uint32_t file_number = gcoden(p);
+        if (file_number >= FILES_MAX)
             break;
-        file = files[j];
+        file = files[file_number];
         const T_LINKCB *q = p->next;
         bool neot = false;
         while (q != refal.next_argument)
@@ -667,10 +667,10 @@ static void fseek_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= FILES_MAX)
+        const uint32_t file_number = gcoden(p);
+        if (file_number >= FILES_MAX)
             break;
-        file = files[j];
+        file = files[file_number];
         p = p->next;
         const char zn = p->info.infoc;
         int64_t z = 1;
@@ -732,12 +732,12 @@ static void ftell_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= FILES_MAX)
+        const uint32_t file_number = gcoden(p);
+        if (file_number >= FILES_MAX)
             break;
         if (p->next != refal.next_argument)
             break;
-        file = files[j];
+        file = files[file_number];
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
@@ -773,10 +773,10 @@ static void is_eof_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -820,10 +820,10 @@ static void is_feof_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
@@ -867,10 +867,10 @@ static void is_ferror_(void)
         T_LINKCB *p = refal.previous_argument->next;
         if (p->tag == TAGN)
         {
-            const uint32_t j = gcoden(p);
-            if (j >= FILES_MAX)
+            const uint32_t file_number = gcoden(p);
+            if (file_number >= FILES_MAX)
                 break;
-            file = files[j];
+            file = files[file_number];
         }
         else if (p->tag == TAGF)
         {
