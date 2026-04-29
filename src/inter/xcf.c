@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-21
+// 2026-04-28
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCF.C ---------------
@@ -16,37 +16,34 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-typedef uint8_t *adr;
-
-static size_t func_n = 0;
-static adr *func_f = NULL;
+static size_t functions_count = 0;
+static uint8_t *functions_table = NULL;
 
 static void ftochar_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.next_argument || p->tag != TAGF)
+    const T_LINKCB *function = refal.previous_argument->next;
+    if (function->next != refal.next_argument || function->tag != TAGF)
     {
         refal.upshot = 2;
         return;
     }
-    const uint8_t *lp = p->info.codef - 1;
-    const uint8_t l = *lp;
-    const char *u = (char *)lp - l;
-    p = refal.previous_result;
-    if (!check_count_free_memory_list(l))
+    const uint8_t *label_length = function->info.codef - 1;
+    const char *label = (char *)label_length - *label_length;
+    T_LINKCB *current_result = refal.previous_result;
+    if (!check_count_free_memory_list(*label_length))
         if (!more_free_memory())
         {
             insert_to_free_memory_list(refal.previous_result, refal.next_result);
             refal.upshot = 3;
             return;
         }
-    insert_from_free_memory_list(p, l);
-    for (uint8_t i = 0; i < l; i++)
+    insert_from_free_memory_list(current_result, *label_length);
+    for (uint8_t i = 0; i < *label_length; i++)
     {
-        p = p->next;
-        p->tag = TAGO;
-        p->info.code = NULL;
-        p->info.infoc = *(u + i);
+        current_result = current_result->next;
+        current_result->tag = TAGO;
+        current_result->info.code = NULL;
+        current_result->info.infoc = *(label + i);
     }
     return;
 }
@@ -63,19 +60,19 @@ static void functab_(void)
         return;
     }
     uint8_t *u = p->info.codef;
-    for (size_t i = 0; i < func_n; i++)
-        if (u == func_f[i])
+    for (size_t i = 0; i < functions_count; i++)
+        if (u == functions_table[i])
             return;
-    adr *temp_func_f = NULL;
-    if (func_n == 0)
-        temp_func_f = (adr *)malloc(sizeof(adr));
+    uint8_t *temp_func_f = NULL;
+    if (functions_count == 0)
+        temp_func_f = (uint8_t *)malloc(sizeof(uint8_t));
     else
-        temp_func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+        temp_func_f = (uint8_t *)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t));
     if (temp_func_f == NULL)
         refal_abort_end("functab: malloc or realloc error");
-    func_f = temp_func_f;
-    func_f[func_n] = u;
-    func_n++;
+    functions_table = temp_func_f;
+    functions_table[functions_count] = u;
+    functions_count++;
     return;
 }
 char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', (char)7};
@@ -117,9 +114,9 @@ static void chartof_(void)
     uint8_t *j = (uint8_t *)(u + i);
     uint8_t l;
     const uint8_t *lp;
-    for (size_t k = 0; k < func_n; k++)
+    for (size_t k = 0; k < functions_count; k++)
     {
-        lp = func_f[k] - 1;
+        lp = functions_table[k] - 1;
         l = *lp;
         if (i == (size_t)l + 1 && strncmp(u, (char *)lp - l, l) == 0)
         {
@@ -127,7 +124,7 @@ static void chartof_(void)
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
             p = refal.previous_argument->next;
             p->tag = TAGF;
-            p->info.codef = func_f[k];
+            p->info.codef = functions_table[k];
             if (p->next != refal.next_argument)
                 insert_to_free_memory_list(p, refal.next_argument);
             transplantation(refal.previous_result, p->previous, p->next);
@@ -135,16 +132,16 @@ static void chartof_(void)
             return;
         }
     }
-    adr *temp_func_f = NULL;
-    if (func_n == 0)
-        temp_func_f = (adr *)malloc(sizeof(adr));
+    uint8_t *temp_func_f = NULL;
+    if (functions_count == 0)
+        temp_func_f = (uint8_t *)malloc(sizeof(uint8_t));
     else
-        temp_func_f = (adr *)realloc(func_f, (func_n + 1) * sizeof(adr));
+        temp_func_f = (uint8_t *)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t));
     if (temp_func_f == NULL)
         refal_abort_end("chartof: malloc or realloc error");
-    func_f = temp_func_f;
-    func_f[func_n] = j;
-    func_n++;
+    functions_table = temp_func_f;
+    functions_table[functions_count] = j;
+    functions_count++;
     p = refal.previous_argument->next;
     p->tag = TAGF;
     p->info.codef = j;
