@@ -232,7 +232,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         return;
     }
     int64_t remainder, quotient;
-    bool rezult_zero = false;
+    bool result_zero = false;
     bool dr_one_remainder_one_quotient = false;
     switch (operation)
     {
@@ -244,7 +244,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     case Oadd:
         if (X_length == 0 && Y_length == 0)
         {
-            rezult_zero = true;
+            result_zero = true;
             break;
         }
         if (X_length == 0)
@@ -287,7 +287,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             { // wychitaem
                 if (compare_numbers() == 2)
                 {
-                    rezult_zero = true;
+                    result_zero = true;
                     break;
                 }
                 if (compare_numbers() == 1)
@@ -321,7 +321,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     case Omul:
         if (X_length == 0 || Y_length == 0)
         {
-            rezult_zero = true;
+            result_zero = true;
             break;
         }
         T_LINKCB *result_begin = refal.previous_argument;
@@ -640,7 +640,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             transplantation(refal.previous_result, x_current->previous, X_begin);
         return;
     } // end case
-    if (rezult_zero)
+    if (result_zero)
     {
         if (type == 1)
             return; // dlja n-operacij

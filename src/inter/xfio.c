@@ -21,14 +21,14 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define fmax 10
+#define FILES_MAX 10
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_cur;
 
-static FILE *f;
-static FILE *files[fmax] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+static FILE *file;
+static FILE *files[FILES_MAX] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
@@ -49,53 +49,53 @@ static void fopen_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGO)
+        T_LINKCB *argument_current = refal.previous_argument->next;
+        if (argument_current->tag != TAGO)
             break;
-        char c = p->info.infoc;
-        char s[3];
-        s[1] = '\0';
-        s[2] = '\0';
-        if (c == 'R' || c == 'r')
-            s[0] = 'r';
-        else if (c == 'W' || c == 'w')
-            s[0] = 'w';
-        else if (c == 'A' || c == 'a')
-            s[0] = 'a';
+        char symbol = argument_current->info.infoc;
+        char file_mode[3];
+        file_mode[1] = '\0';
+        file_mode[2] = '\0';
+        if (symbol == 'R' || symbol == 'r')
+            file_mode[0] = 'r';
+        else if (symbol == 'W' || symbol == 'w')
+            file_mode[0] = 'w';
+        else if (symbol == 'A' || symbol == 'a')
+            file_mode[0] = 'a';
         else
             break;
-        p = p->next;
-        if (p->tag == TAGO)
+        argument_current = argument_current->next;
+        if (argument_current->tag == TAGO)
         {
-            c = p->info.infoc;
-            if (c == 'B' || c == 'b')
-                s[1] = 'b';
+            symbol = argument_current->info.infoc;
+            if (symbol == 'B' || symbol == 'b')
+                file_mode[1] = 'b';
             else
                 break;
-            p = p->next;
+            argument_current = argument_current->next;
         }
-        if (p->tag != TAGN)
+        if (argument_current->tag != TAGN)
             break;
-        const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        const uint32_t file_number = gcoden(argument_current);
+        if (file_number >= FILES_MAX)
             break;
-        p = p->next;
-        char namf[MAX_PATHFILENAME + 1];
-        p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
-        if (p != refal.next_argument)
+        argument_current = argument_current->next;
+        char file_name[MAX_PATHFILENAME + 1];
+        argument_current = get_string_expression(file_name, MAX_PATHFILENAME, argument_current, refal.next_argument);
+        if (argument_current != refal.next_argument)
             break;
-        f = fopen(namf, s);
-        const int err = errno;
-        files[j] = f;
-        if (f == NULL)
+        file = fopen(file_name, file_mode);
+        files[file_number] = file;
+        if (file == NULL)
         {
-            const char *serr = strerror(err);
-            const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(s) + (int32_t)strlen(namf) + 2);
-            if (d > 0)
-                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
+            const int error = errno;
+            const char *string_error = strerror(error);
+            const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_mode) + (int32_t)strlen(file_name) + 2);
+            if (result_yet_need > 0)
+                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
                     return;
-            p = set_string_expression(serr, refal.next_result);
-            transplantation(refal.previous_result, refal.next_result, p->next);
+            argument_current = set_string_expression(string_error, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, argument_current->next);
         }
         return;
     } while (false);
@@ -114,26 +114,26 @@ static void fclose_(void)
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (j >= FILES_MAX)
             break;
         if (p->next != refal.next_argument)
             break;
-        f = files[j];
+        file = files[j];
         files[j] = NULL;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        const int cl = fclose(f);
-        const int err = errno;
+        const int cl = fclose(file);
         if (cl == EOF)
         {
-            const char *serr = strerror(err);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
+            const int err = errno;
+            const char *string_error = strerror(err);
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
                 return;
-            set_string_expression(serr, refal.next_result);
+            set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         return;
@@ -153,39 +153,39 @@ static void fgets_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef != &refalab_stdin)
                 break;
-            f = stdin;
+            file = stdin;
         }
         else
             break;
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
         p = refal.previous_result;
-        int c = getc(f);
+        int c = getc(file);
         while (c != '\n')
         {
             if (!extended_insert_from_free_memory_list(p, 1))
                 return;
             p = p->next;
             p->info.code = NULL;
-            if (set_eof_linkcb(c, f, p))
+            if (set_eof_linkcb(c, file, p))
                 return;
             p->tag = TAGO;
             p->info.infoc = (char)c;
-            c = getc(f);
+            c = getc(file);
         }
         return;
     } while (false);
@@ -204,16 +204,16 @@ static void fputs_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
@@ -232,7 +232,7 @@ static void fputs_(void)
         }
         if (neot)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -242,8 +242,8 @@ static void fputs_(void)
         while (p != refal.next_argument)
         {
             const int cc = p->info.infoc;
-            const int pcc = putc(cc, f);
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            const int pcc = putc(cc, file);
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -267,22 +267,22 @@ static void fprint_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
         else
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -294,15 +294,15 @@ static void fprint_(void)
             int pcc = 0;
             char s[512];
             if (p->tag == TAGO)
-                pcc = putc(p->info.infoc, f);
+                pcc = putc(p->info.infoc, file);
             else if (p->tag == TAGLB)
-                pcc = putc('(', f);
+                pcc = putc('(', file);
             else if (p->tag == TAGRB)
-                pcc = putc(')', f);
+                pcc = putc(')', file);
             else if (p->tag == TAGN)
             {
                 sprintf(s, "'%u'", gcoden(p));
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (p->tag == TAGF)
             {
@@ -318,21 +318,21 @@ static void fprint_(void)
                     strcat(s, ch);
                 }
                 strcat(s, "'");
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (p->tag == TAGR)
             {
                 sprintf(s, "'%%%p'", (void *)p->info.codep);
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (BRACKET(p))
                 refal_abort_end("fprint: unknown bracket type");
             else
             {
                 sprintf(s, "'%x,%p'", p->tag, p->info.code);
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -356,22 +356,22 @@ static void fprints_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
         else
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -383,15 +383,15 @@ static void fprints_(void)
             int pcc = 0;
             char s[512];
             if (p->tag == TAGO)
-                pcc = putc(p->info.infoc, f);
+                pcc = putc(p->info.infoc, file);
             else if (p->tag == TAGLB)
-                pcc = putc('(', f);
+                pcc = putc('(', file);
             else if (p->tag == TAGRB)
-                pcc = putc(')', f);
+                pcc = putc(')', file);
             else if (p->tag == TAGN)
             {
                 sprintf(s, "%u", gcoden(p));
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (p->tag == TAGF)
             {
@@ -406,21 +406,21 @@ static void fprints_(void)
                     ch[0] = (char)toupper(*n);
                     strcat(s, ch);
                 }
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (p->tag == TAGR)
             {
                 sprintf(s, "%%%p", (void *)p->info.codep);
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
             else if (BRACKET(p))
                 refal_abort_end("fprints: unknown bracket type");
             else
             {
                 sprintf(s, "%x,%p", p->tag, p->info.code);
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -444,22 +444,22 @@ static void fprintm_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
         else
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -477,10 +477,10 @@ static void fprintm_(void)
                 {
                     fr = true;
                     sprintf(s, "'%c", p->info.infoc);
-                    pcc = fputs(s, f);
+                    pcc = fputs(s, file);
                 }
                 else
-                    pcc = putc(p->info.infoc, f);
+                    pcc = putc(p->info.infoc, file);
             }
             else
             {
@@ -533,9 +533,9 @@ static void fprintm_(void)
                     sprintf(sp, "/%x,%p/", p->tag, p->info.code);
                     strcat(s, sp);
                 }
-                pcc = fputs(s, f);
+                pcc = fputs(s, file);
             }
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -544,8 +544,8 @@ static void fprintm_(void)
         }
         if (fr)
         {
-            const int pcc = putc('\'', f);
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            const int pcc = putc('\'', file);
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
         }
         return;
@@ -565,16 +565,16 @@ static void fread_(void)
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (j >= FILES_MAX)
             break;
-        f = files[j];
+        file = files[j];
         p = p->next;
         if (p->tag != TAGN)
             break;
         uint32_t count = gcoden(p);
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -587,8 +587,8 @@ static void fread_(void)
         {
             p = p->next;
             p->info.code = NULL;
-            const int c = getc(f);
-            if (set_eof_linkcb(c, f, p))
+            const int c = getc(file);
+            if (set_eof_linkcb(c, file, p))
             {
                 insert_to_free_memory_list(p, refal.next_result);
                 return;
@@ -613,9 +613,9 @@ static void fwrite_(void)
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (j >= FILES_MAX)
             break;
-        f = files[j];
+        file = files[j];
         const T_LINKCB *q = p->next;
         bool neot = false;
         while (q != refal.next_argument)
@@ -629,7 +629,7 @@ static void fwrite_(void)
         }
         if (neot)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
@@ -643,8 +643,8 @@ static void fwrite_(void)
                 cc = p->info.infoc;
             else
                 cc = (uint8_t)gcoden(p);
-            const int pcc = putc(cc, f);
-            if (set_eof_linkcb(pcc, f, refal.previous_argument))
+            const int pcc = putc(cc, file);
+            if (set_eof_linkcb(pcc, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
@@ -668,9 +668,9 @@ static void fseek_(void)
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (j >= FILES_MAX)
             break;
-        f = files[j];
+        file = files[j];
         p = p->next;
         const char zn = p->info.infoc;
         int64_t z = 1;
@@ -700,20 +700,20 @@ static void fseek_(void)
             break;
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        const int res = fseek(f, offset, origin);
-        const int err = errno;
+        const int res = fseek(file, offset, origin);
         if (res == -1)
         {
-            const char *serr = strerror(err);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 3 - (z == 1 ? 1 : 2)))
+            const int err = errno;
+            const char *string_error = strerror(err);
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 3 - (z == 1 ? 1 : 2)))
                 return;
-            set_string_expression(serr, refal.next_result);
+            set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         return;
@@ -733,25 +733,25 @@ static void ftell_(void)
         if (p->tag != TAGN)
             break;
         const uint32_t j = gcoden(p);
-        if (j >= fmax)
+        if (j >= FILES_MAX)
             break;
         if (p->next != refal.next_argument)
             break;
-        f = files[j];
-        if (f == NULL)
+        file = files[j];
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        long int res = ftell(f);
-        const int err = errno;
+        long int res = ftell(file);
         if (res == -1)
         {
-            const char *serr = strerror(err);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(serr) - 2))
+            const int err = errno;
+            const char *string_error = strerror(err);
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
                 return;
-            set_string_expression(serr, refal.next_result);
+            set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
             return;
         }
@@ -774,18 +774,18 @@ static void is_eof_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdin)
-                f = stdin;
+                file = stdin;
             else if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
@@ -793,13 +793,13 @@ static void is_eof_(void)
             break;
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        if (feof(f) != 0 || ferror(f) != 0)
+        if (feof(file) != 0 || ferror(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
@@ -821,18 +821,18 @@ static void is_feof_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdin)
-                f = stdin;
+                file = stdin;
             else if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
@@ -840,13 +840,13 @@ static void is_feof_(void)
             break;
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        if (feof(f) != 0)
+        if (feof(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
@@ -868,18 +868,18 @@ static void is_ferror_(void)
         if (p->tag == TAGN)
         {
             const uint32_t j = gcoden(p);
-            if (j >= fmax)
+            if (j >= FILES_MAX)
                 break;
-            f = files[j];
+            file = files[j];
         }
         else if (p->tag == TAGF)
         {
             if (p->info.codef == &refalab_stdin)
-                f = stdin;
+                file = stdin;
             else if (p->info.codef == &refalab_stdout)
-                f = stdout;
+                file = stdout;
             else if (p->info.codef == &refalab_stderr)
-                f = stderr;
+                file = stderr;
             else
                 break;
         }
@@ -887,13 +887,13 @@ static void is_ferror_(void)
             break;
         if (p->next != refal.next_argument)
             break;
-        if (f == NULL)
+        if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        if (ferror(f) != 0)
+        if (ferror(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
@@ -910,23 +910,23 @@ void (*is_ferror_1)(void) = is_ferror_;
 static void remove_file_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
-    char namf[MAX_PATHFILENAME + 1];
-    p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
+    char file_name[MAX_PATHFILENAME + 1];
+    p = get_string_expression(file_name, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    const int u = unlink(namf);
-    const int err = errno;
+    const int u = unlink(file_name);
     if (u == -1)
     {
-        const char *serr = strerror(err);
-        const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + 1);
+        const int err = errno;
+        const char *string_error = strerror(err);
+        const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name) + 1);
         if (d > 0)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                 return;
-        p = set_string_expression(serr, refal.next_result);
+        p = set_string_expression(string_error, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, p->next);
     }
     return;
@@ -950,15 +950,15 @@ static void rename_(void)
         if (p != refal.next_argument)
             break;
         const int r = rename(namf, namt);
-        const int err = errno;
         if (r == -1)
         {
-            const char *serr = strerror(err);
-            const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
+            const int err = errno;
+            const char *string_error = strerror(err);
+            const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
             if (d > 0)
                 if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
                     return;
-            p = set_string_expression(serr, refal.next_result);
+            p = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, p->next);
         }
         return;
@@ -973,15 +973,15 @@ void (*rename_1)(void) = rename_;
 static void exist_file_(void)
 {
     T_LINKCB *p = refal.previous_argument->next;
-    char namf[MAX_PATHFILENAME + 1];
-    p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
+    char file_name[MAX_PATHFILENAME + 1];
+    p = get_string_expression(file_name, MAX_PATHFILENAME, p, refal.next_argument);
     if (p != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
     struct stat st_buf;
-    if (stat(namf, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
+    if (stat(file_name, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;

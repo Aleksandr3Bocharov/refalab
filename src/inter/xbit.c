@@ -160,7 +160,7 @@ static void bit_operate(uint8_t operation)
             else
                 break;
         }
-        bool rezult_zero = true;
+        bool result_zero = true;
         switch (operation)
         {
         case Oand:
@@ -175,8 +175,8 @@ static void bit_operate(uint8_t operation)
             for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
             {
                 pcoden(x_current, gcoden(x_current) & gcoden(y_current));
-                if (rezult_zero && gcoden(x_current) != 0)
-                    rezult_zero = false;
+                if (result_zero && gcoden(x_current) != 0)
+                    result_zero = false;
             }
             break;
         case Oor:
@@ -184,7 +184,7 @@ static void bit_operate(uint8_t operation)
                 exchange_numbers();
             if (X_length == 0)
                 break;
-            rezult_zero = false;
+            result_zero = false;
             if (Y_length == 0)
                 break;
             if (X_sign == '+' && Y_sign == '-')
@@ -200,7 +200,7 @@ static void bit_operate(uint8_t operation)
             if (X_length == 0)
                 break;
             if (X_length > Y_length)
-                rezult_zero = false;
+                result_zero = false;
             if (Y_length == 0)
                 break;
             if (X_sign == '+' && Y_sign == '-')
@@ -212,8 +212,8 @@ static void bit_operate(uint8_t operation)
             for (y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
             {
                 pcoden(x_current, gcoden(x_current) ^ gcoden(y_current));
-                if (rezult_zero && gcoden(x_current) != 0)
-                    rezult_zero = false;
+                if (result_zero && gcoden(x_current) != 0)
+                    result_zero = false;
             }
             break;
         case Onot:
@@ -222,7 +222,7 @@ static void bit_operate(uint8_t operation)
                 if (refal.previous_argument->next == refal.next_argument)
                     if (!extended_insert_from_free_memory_list(refal.previous_argument, 1))
                         return;
-                rezult_zero = false;
+                result_zero = false;
                 X_sign = '-';
                 X_begin = refal.previous_argument->next;
                 X_end = refal.previous_argument->next;
@@ -238,11 +238,11 @@ static void bit_operate(uint8_t operation)
             for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next)
             {
                 pcoden(x_current, ~gcoden(x_current));
-                if (rezult_zero && gcoden(x_current) != 0)
-                    rezult_zero = false;
+                if (result_zero && gcoden(x_current) != 0)
+                    result_zero = false;
             }
         }
-        if (rezult_zero)
+        if (result_zero)
         {
             x_current = refal.previous_argument->next;
             x_current->tag = TAGN;
@@ -293,19 +293,19 @@ static void shift_operate(uint8_t operation)
         length = shift_bits / 32;
         shift_bits %= 32;
         const uint32_t transfer_shift_bits = 32 - shift_bits;
-        bool rezult_zero = true;
+        bool result_zero = true;
         switch (operation)
         {
         case Oshl:
             if (X_length == 0)
                 break;
-            rezult_zero = false;
-            const size_t rezult_need = length + (shift_bits == 0 ? 0 : 1) + (X_sign == '-' ? 1 : 0);
+            result_zero = false;
+            const size_t result_need = length + (shift_bits == 0 ? 0 : 1) + (X_sign == '-' ? 1 : 0);
             size_t argument_length = 4;
-            for (x_current = X_begin->previous; x_current->tag != TAGLB && rezult_need > argument_length; x_current = x_current->previous, argument_length++)
+            for (x_current = X_begin->previous; x_current->tag != TAGLB && result_need > argument_length; x_current = x_current->previous, argument_length++)
                 ;
-            if (rezult_need > argument_length)
-                if (!extended_insert_from_free_memory_list(refal.next_result, rezult_need - argument_length))
+            if (result_need > argument_length)
+                if (!extended_insert_from_free_memory_list(refal.next_result, result_need - argument_length))
                     return;
             transplantation(refal.next_result, X_end, refal.next_argument);
             if (length != 0)
@@ -351,7 +351,7 @@ static void shift_operate(uint8_t operation)
             }
             if (shift_bits == 0)
             {
-                rezult_zero = false;
+                result_zero = false;
                 break;
             }
             for (x_current = X_end; x_current != X_begin; x_current = x_current->previous)
@@ -362,9 +362,9 @@ static void shift_operate(uint8_t operation)
             }
             pcoden(X_begin, gcoden(X_begin) >> shift_bits);
             if (X_begin != X_end || gcoden(X_begin) != 0)
-                rezult_zero = false;
+                result_zero = false;
         }
-        if (rezult_zero)
+        if (result_zero)
         {
             x_current = refal.previous_argument->next;
             x_current->tag = TAGN;
