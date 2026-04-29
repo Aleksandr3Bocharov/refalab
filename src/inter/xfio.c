@@ -49,10 +49,10 @@ static void fopen_(void)
 {
     do
     {
-        T_LINKCB *argument_current = refal.previous_argument->next;
-        if (argument_current->tag != TAGO)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag != TAGO)
             break;
-        char symbol = argument_current->info.infoc;
+        char symbol = current_argument->info.infoc;
         char file_mode[3];
         file_mode[1] = '\0';
         file_mode[2] = '\0';
@@ -64,38 +64,38 @@ static void fopen_(void)
             file_mode[0] = 'a';
         else
             break;
-        argument_current = argument_current->next;
-        if (argument_current->tag == TAGO)
+        current_argument = current_argument->next;
+        if (current_argument->tag == TAGO)
         {
-            symbol = argument_current->info.infoc;
+            symbol = current_argument->info.infoc;
             if (symbol == 'B' || symbol == 'b')
                 file_mode[1] = 'b';
             else
                 break;
-            argument_current = argument_current->next;
+            current_argument = current_argument->next;
         }
-        if (argument_current->tag != TAGN)
+        if (current_argument->tag != TAGN)
             break;
-        const uint32_t file_number = gcoden(argument_current);
+        const uint32_t file_number = gcoden(current_argument);
         if (file_number >= FILES_MAX)
             break;
-        argument_current = argument_current->next;
+        current_argument = current_argument->next;
         char file_name[MAX_PATHFILENAME + 1];
-        argument_current = get_string_expression(file_name, MAX_PATHFILENAME, argument_current, refal.next_argument);
-        if (argument_current != refal.next_argument)
+        current_argument = get_string_expression(file_name, MAX_PATHFILENAME, current_argument, refal.next_argument);
+        if (current_argument != refal.next_argument)
             break;
         file = fopen(file_name, file_mode);
         files[file_number] = file;
         if (file == NULL)
         {
-            const int error = errno;
-            const char *string_error = strerror(error);
+            const int error_number = errno;
+            const char *string_error = strerror(error_number);
             const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_mode) + (int32_t)strlen(file_name) + 2);
             if (result_yet_need > 0)
                 if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
                     return;
-            argument_current = set_string_expression(string_error, refal.next_result);
-            transplantation(refal.previous_result, refal.next_result, argument_current->next);
+            current_argument = set_string_expression(string_error, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, current_argument->next);
         }
         return;
     } while (false);
@@ -129,8 +129,8 @@ static void fclose_(void)
         const int cl = fclose(file);
         if (cl == EOF)
         {
-            const int err = errno;
-            const char *string_error = strerror(err);
+            const int error_number = errno;
+            const char *string_error = strerror(error_number);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
                 return;
             set_string_expression(string_error, refal.next_result);
@@ -709,8 +709,8 @@ static void fseek_(void)
         const int res = fseek(file, offset, origin);
         if (res == -1)
         {
-            const int err = errno;
-            const char *string_error = strerror(err);
+            const int error_number = errno;
+            const char *string_error = strerror(error_number);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 3 - (z == 1 ? 1 : 2)))
                 return;
             set_string_expression(string_error, refal.next_result);
@@ -747,8 +747,8 @@ static void ftell_(void)
         long int res = ftell(file);
         if (res == -1)
         {
-            const int err = errno;
-            const char *string_error = strerror(err);
+            const int error_number = errno;
+            const char *string_error = strerror(error_number);
             if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
                 return;
             set_string_expression(string_error, refal.next_result);
@@ -920,8 +920,8 @@ static void remove_file_(void)
     const int u = unlink(file_name);
     if (u == -1)
     {
-        const int err = errno;
-        const char *string_error = strerror(err);
+        const int error_number = errno;
+        const char *string_error = strerror(error_number);
         const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name) + 1);
         if (d > 0)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
@@ -952,8 +952,8 @@ static void rename_(void)
         const int r = rename(namf, namt);
         if (r == -1)
         {
-            const int err = errno;
-            const char *string_error = strerror(err);
+            const int error_number = errno;
+            const char *string_error = strerror(error_number);
             const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
             if (d > 0)
                 if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
