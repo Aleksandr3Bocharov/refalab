@@ -300,12 +300,12 @@ static void shift_operate(uint8_t operation)
             if (X_length == 0)
                 break;
             rezult_zero = false;
-            const size_t n = length + (shift_bits == 0 ? 0 : 1) + (X_sign == '-' ? 1 : 0);
-            size_t e = 4;
-            for (x_current = X_begin->previous; x_current->tag != TAGLB && n > e; x_current = x_current->previous, e++)
+            const size_t rezult_need = length + (shift_bits == 0 ? 0 : 1) + (X_sign == '-' ? 1 : 0);
+            size_t argument_length = 4;
+            for (x_current = X_begin->previous; x_current->tag != TAGLB && rezult_need > argument_length; x_current = x_current->previous, argument_length++)
                 ;
-            if (n > e)
-                if (!extended_insert_from_free_memory_list(refal.next_result, n - e))
+            if (rezult_need > argument_length)
+                if (!extended_insert_from_free_memory_list(refal.next_result, rezult_need - argument_length))
                     return;
             transplantation(refal.next_result, X_end, refal.next_argument);
             if (length != 0)
@@ -333,8 +333,8 @@ static void shift_operate(uint8_t operation)
             X_begin->info.code = NULL;
             for (x_current = X_begin->next; x_current != Y_end->next; x_current = x_current->next)
             {
-                const uint32_t t = gcoden(x_current) >> transfer_shift_bits;
-                pcoden(x_current->previous, gcoden(x_current->previous) | t);
+                const uint32_t transfer = gcoden(x_current) >> transfer_shift_bits;
+                pcoden(x_current->previous, gcoden(x_current->previous) | transfer);
                 pcoden(x_current, gcoden(x_current) << shift_bits);
             }
             break;
@@ -357,8 +357,8 @@ static void shift_operate(uint8_t operation)
             for (x_current = X_end; x_current != X_begin; x_current = x_current->previous)
             {
                 pcoden(x_current, gcoden(x_current) >> shift_bits);
-                const uint32_t t = gcoden(x_current->previous) << transfer_shift_bits;
-                pcoden(x_current, gcoden(x_current) | t);
+                const uint32_t transfer = gcoden(x_current->previous) << transfer_shift_bits;
+                pcoden(x_current, gcoden(x_current) | transfer);
             }
             pcoden(X_begin, gcoden(X_begin) >> shift_bits);
             if (X_begin != X_end || gcoden(X_begin) != 0)
