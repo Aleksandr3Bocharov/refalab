@@ -17,21 +17,22 @@
 #include "rfintf.h"
 
 static size_t functions_count = 0;
-static uint8_t *functions_table = NULL;
+static uint8_t **functions_table = NULL;
 
 static void ftochar_(void)
 {
-    const T_LINKCB *function = refal.previous_argument->next;
-    if (function->next != refal.next_argument || function->tag != TAGF)
+    const T_LINKCB *symbol_label = refal.previous_argument->next;
+    if (symbol_label->next != refal.next_argument || symbol_label->tag != TAGF)
     {
         refal.upshot = 2;
         return;
     }
-    const uint8_t *label_length = function->info.codef - 1;
+    const uint8_t *label_length = symbol_label->info.codef - 1;
     const char *label = (char *)label_length - *label_length;
-    if (!extended_insert_from_free_memory_list(refal.previous_result, *label_length))
-        return;
-    T_LINKCB *current_result = refal.previous_result;
+    if (*label_length > 2)
+        if (!extended_insert_from_free_memory_list(refal.next_result, *label_length - 2))
+            return;
+    T_LINKCB *current_result = refal.next_result;
     for (uint8_t i = 0; i < *label_length; i++)
     {
         current_result = current_result->next;
@@ -39,6 +40,7 @@ static void ftochar_(void)
         current_result->info.code = NULL;
         current_result->info.infoc = *(label + i);
     }
+    transplantation(refal.previous_result, refal.next_result, current_result->next);
     return;
 }
 char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', (char)7};
@@ -47,25 +49,25 @@ void (*ftochar_1)(void) = ftochar_;
 
 static void functab_(void)
 {
-    const T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.next_argument || p->tag != TAGF)
+    const T_LINKCB *symbol_label = refal.previous_argument->next;
+    if (symbol_label->next != refal.next_argument || symbol_label->tag != TAGF)
     {
         refal.upshot = 2;
         return;
     }
-    uint8_t *u = p->info.codef;
+    uint8_t *function = symbol_label->info.codef;
     for (size_t i = 0; i < functions_count; i++)
-        if (u == functions_table[i])
+        if (function == functions_table[i])
             return;
-    uint8_t *temp_func_f = NULL;
+    uint8_t **temp_functions_table = NULL;
     if (functions_count == 0)
-        temp_func_f = (uint8_t *)malloc(sizeof(uint8_t));
+        temp_functions_table = (uint8_t **)malloc(sizeof(uint8_t *));
     else
-        temp_func_f = (uint8_t *)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t));
-    if (temp_func_f == NULL)
+        temp_functions_table = (uint8_t **)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t *));
+    if (temp_functions_table == NULL)
         refal_abort_end("functab: malloc or realloc error");
-    functions_table = temp_func_f;
-    functions_table[functions_count] = u;
+    functions_table = temp_functions_table;
+    functions_table[functions_count] = function;
     functions_count++;
     return;
 }
