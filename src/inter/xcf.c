@@ -77,73 +77,64 @@ void (*functab_1)(void) = functab_;
 
 static void chartof_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
+    T_LINKCB *symbol_char = refal.previous_argument->next;
     size_t i;
-    bool heot = false;
-    if (p == refal.next_argument)
-        heot = true;
+    bool impossible = false;
+    if (symbol_char == refal.next_argument)
+        impossible = true;
     else
     {
-        for (i = 0; p != refal.next_argument; i++, p = p->next)
-            if (p->tag != TAGO)
+        for (i = 0; symbol_char != refal.next_argument; i++, symbol_char = symbol_char->next)
+            if (symbol_char->tag != TAGO)
             {
-                heot = true;
+                impossible = true;
                 break;
             }
         if (i > 255)
-            heot = true;
+            impossible = true;
     }
-    if (heot)
+    if (impossible)
     {
         refal.upshot = 2;
         return;
     }
-    p = refal.previous_argument->next;
-    char *u = (char *)malloc(i + 2);
-    if (u == NULL)
+    symbol_char = refal.previous_argument->next;
+    char *label = (char *)malloc(i + 2);
+    if (label == NULL)
         refal_abort_end("chartof: malloc error");
-    for (i = 0; p != refal.next_argument; i++, p = p->next)
-        u[i] = (char)toupper(p->info.infoc);
-    u[i] = (char)i;
-    ++i;
-    u[i] = 2; // HEOT
-    uint8_t *j = (uint8_t *)(u + i);
-    uint8_t l;
-    const uint8_t *lp;
+    for (i = 0; symbol_char != refal.next_argument; i++, symbol_char = symbol_char->next)
+        label[i] = (char)toupper(symbol_char->info.infoc);
+    label[i] = (char)i;
+    i++;
+    label[i] = '\002'; // EMPTY
     for (size_t k = 0; k < functions_count; k++)
     {
-        lp = functions_table[k] - 1;
-        l = *lp;
-        if (i == (size_t)l + 1 && strncmp(u, (char *)lp - l, l) == 0)
+        const uint8_t *label_length = functions_table[k] - 1;
+        if (i == (size_t)*label_length + 1 && strncmp(label, (char *)label_length - *label_length, *label_length) == 0)
         {
             // identificator iz tablicy ne preobr. w zaglawnye!!!
             // poetomu w m.o. imja d.b. napisano zaglawnymi!
-            p = refal.previous_argument->next;
-            p->tag = TAGF;
-            p->info.codef = functions_table[k];
-            if (p->next != refal.next_argument)
-                insert_to_free_memory_list(p, refal.next_argument);
-            transplantation(refal.previous_result, p->previous, p->next);
-            free(u);
+            T_LINKCB *symbol_label = refal.previous_argument;
+            symbol_label->info.codef = functions_table[k];
+            transplantation(refal.previous_result, symbol_label->previous, symbol_label->next);
+            free(label);
             return;
         }
     }
-    uint8_t *temp_func_f = NULL;
+    uint8_t **temp_functions_table = NULL;
     if (functions_count == 0)
-        temp_func_f = (uint8_t *)malloc(sizeof(uint8_t));
+        temp_functions_table = (uint8_t **)malloc(sizeof(uint8_t *));
     else
-        temp_func_f = (uint8_t *)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t));
-    if (temp_func_f == NULL)
+        temp_functions_table = (uint8_t **)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t *));
+    if (temp_functions_table == NULL)
         refal_abort_end("chartof: malloc or realloc error");
-    functions_table = temp_func_f;
-    functions_table[functions_count] = j;
+    functions_table = temp_functions_table;
+    uint8_t *function = (uint8_t *)(label + i);
+    functions_table[functions_count] = function;
     functions_count++;
-    p = refal.previous_argument->next;
-    p->tag = TAGF;
-    p->info.codef = j;
-    if (p->next != refal.next_argument)
-        insert_to_free_memory_list(p, refal.next_argument);
-    transplantation(refal.previous_result, p->previous, p->next);
+    T_LINKCB *symbol_label = refal.previous_argument;
+    symbol_label->info.codef = function;
+    transplantation(refal.previous_result, symbol_label->previous, symbol_label->next);
     return;
 }
 char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};
