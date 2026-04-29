@@ -29,15 +29,9 @@ static void ftochar_(void)
     }
     const uint8_t *label_length = function->info.codef - 1;
     const char *label = (char *)label_length - *label_length;
+    if (!extended_insert_from_free_memory_list(refal.previous_result, *label_length))
+        return;
     T_LINKCB *current_result = refal.previous_result;
-    if (!check_count_free_memory_list(*label_length))
-        if (!more_free_memory())
-        {
-            insert_to_free_memory_list(refal.previous_result, refal.next_result);
-            refal.upshot = 3;
-            return;
-        }
-    insert_from_free_memory_list(current_result, *label_length);
     for (uint8_t i = 0; i < *label_length; i++)
     {
         current_result = current_result->next;
