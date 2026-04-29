@@ -77,15 +77,15 @@ void (*functab_1)(void) = functab_;
 
 static void chartof_(void)
 {
-    T_LINKCB *symbol_char = refal.previous_argument->next;
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
     size_t i;
     bool impossible = false;
-    if (symbol_char == refal.next_argument)
+    if (current_symbol_char == refal.next_argument)
         impossible = true;
     else
     {
-        for (i = 0; symbol_char != refal.next_argument; i++, symbol_char = symbol_char->next)
-            if (symbol_char->tag != TAGO)
+        for (i = 0; current_symbol_char != refal.next_argument; i++, current_symbol_char = current_symbol_char->next)
+            if (current_symbol_char->tag != TAGO)
             {
                 impossible = true;
                 break;
@@ -98,12 +98,12 @@ static void chartof_(void)
         refal.upshot = 2;
         return;
     }
-    symbol_char = refal.previous_argument->next;
+    current_symbol_char = refal.previous_argument->next;
     char *label = (char *)malloc(i + 2);
     if (label == NULL)
         refal_abort_end("chartof: malloc error");
-    for (i = 0; symbol_char != refal.next_argument; i++, symbol_char = symbol_char->next)
-        label[i] = (char)toupper(symbol_char->info.infoc);
+    for (i = 0; current_symbol_char != refal.next_argument; i++, current_symbol_char = current_symbol_char->next)
+        label[i] = (char)toupper(current_symbol_char->info.infoc);
     label[i] = (char)i;
     i++;
     label[i] = '\002'; // EMPTY
