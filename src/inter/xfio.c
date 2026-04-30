@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-20
+// 2026-04-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XFIO.C ---------------
@@ -149,43 +149,43 @@ static void fgets_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        const T_LINKCB *argument = refal.previous_argument->next;
+        if (argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (argument->tag == TAGF)
         {
-            if (p->info.codef != &refalab_stdin)
+            if (argument->info.codef != &refalab_stdin)
                 break;
             file = stdin;
         }
         else
             break;
-        if (p->next != refal.next_argument)
+        if (argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        p = refal.previous_result;
-        int c = getc(file);
-        while (c != '\n')
+        T_LINKCB *current_result = refal.previous_result;
+        int get_result = getc(file);
+        while (get_result != '\n')
         {
-            if (!extended_insert_from_free_memory_list(p, 1))
+            if (!extended_insert_from_free_memory_list(current_result, 1))
                 return;
-            p = p->next;
-            p->info.code = NULL;
-            if (set_eof_linkcb(c, file, p))
+            current_result = current_result->next;
+            current_result->info.code = NULL;
+            if (set_eof_linkcb(get_result, file, current_result))
                 return;
-            p->tag = TAGO;
-            p->info.infoc = (char)c;
-            c = getc(file);
+            current_result->tag = TAGO;
+            current_result->info.infoc = (char)get_result;
+            get_result = getc(file);
         }
         return;
     } while (false);
