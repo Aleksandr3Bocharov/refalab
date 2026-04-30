@@ -200,7 +200,7 @@ static void fputs_(void)
 {
     do
     {
-        T_LINKCB *current_argument = refal.previous_argument->next;
+        const T_LINKCB *current_argument = refal.previous_argument->next;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
@@ -263,7 +263,7 @@ static void fprint_(void)
 {
     do
     {
-        T_LINKCB *current_argument = refal.previous_argument->next;
+        const T_LINKCB *current_argument = refal.previous_argument->next;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
@@ -351,7 +351,7 @@ static void fprints_(void)
 {
     do
     {
-        T_LINKCB *current_argument = refal.previous_argument->next;
+        const T_LINKCB *current_argument = refal.previous_argument->next;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
@@ -438,7 +438,7 @@ static void fprintm_(void)
 {
     do
     {
-        T_LINKCB *current_argument = refal.previous_argument->next;
+        const T_LINKCB *current_argument = refal.previous_argument->next;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
@@ -558,40 +558,40 @@ static void fread_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGN)
+        const T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag != TAGN)
             break;
-        const uint32_t file_number = gcoden(p);
+        const uint32_t file_number = gcoden(current_argument);
         if (file_number >= FILES_MAX)
             break;
         file = files[file_number];
-        p = p->next;
-        if (p->tag != TAGN)
+        current_argument = current_argument->next;
+        if (current_argument->tag != TAGN)
             break;
-        uint32_t count = gcoden(p);
-        if (p->next != refal.next_argument)
+        uint32_t symbols_count = gcoden(current_argument);
+        if (current_argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        p = refal.previous_result;
-        if (!extended_insert_from_free_memory_list(p, count))
+        T_LINKCB *current_result = refal.previous_result;
+        if (!extended_insert_from_free_memory_list(current_result, symbols_count))
             return;
-        for (; count > 0; count--)
+        for (; symbols_count > 0; symbols_count--)
         {
-            p = p->next;
-            p->info.code = NULL;
-            const int c = getc(file);
-            if (set_eof_linkcb(c, file, p))
+            current_result = current_result->next;
+            current_result->info.code = NULL;
+            const int get_result = getc(file);
+            if (set_eof_linkcb(get_result, file, current_result))
             {
-                insert_to_free_memory_list(p, refal.next_result);
+                insert_to_free_memory_list(current_result, refal.next_result);
                 return;
             }
-            p->tag = TAGN;
-            pcoden(p, (uint8_t)c);
+            current_result->tag = TAGN;
+            pcoden(current_result, (uint8_t)get_result);
         }
         return;
     } while (false);
@@ -629,7 +629,7 @@ static void fwrite_(void)
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
         p = p->next;
@@ -643,7 +643,7 @@ static void fwrite_(void)
             const int put_result = putc(cc, file);
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
-                transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+                transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
                 return;
             }
             p = p->next;
