@@ -200,55 +200,55 @@ static void fputs_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(current_argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (current_argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdout)
+            if (current_argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (current_argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
         }
         else
             break;
-        const T_LINKCB *q = p->next;
-        bool neot = false;
-        while (q != refal.next_argument)
+        const T_LINKCB *temp_argument = current_argument->next;
+        bool impossible = false;
+        while (temp_argument != refal.next_argument)
         {
-            if (q->tag != TAGO)
+            if (temp_argument->tag != TAGO)
             {
-                neot = true;
+                impossible = true;
                 break;
             }
-            q = q->next;
+            temp_argument = temp_argument->next;
         }
-        if (neot)
+        if (impossible)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        p = p->next;
-        while (p != refal.next_argument)
+        current_argument = current_argument->next;
+        while (current_argument != refal.next_argument)
         {
-            const int cc = p->info.infoc;
-            const int pcc = putc(cc, file);
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            const int symbol = current_argument->info.infoc;
+            const int put_result = putc(symbol, file);
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
-                transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+                transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
                 return;
             }
-            p = p->next;
+            current_argument = current_argument->next;
         }
         return;
     } while (false);
@@ -617,17 +617,17 @@ static void fwrite_(void)
             break;
         file = files[file_number];
         const T_LINKCB *q = p->next;
-        bool neot = false;
+        bool impossible = false;
         while (q != refal.next_argument)
         {
             if (q->tag != TAGO && q->tag != TAGN)
             {
-                neot = true;
+                impossible = true;
                 break;
             }
             q = q->next;
         }
-        if (neot)
+        if (impossible)
             break;
         if (file == NULL)
         {
