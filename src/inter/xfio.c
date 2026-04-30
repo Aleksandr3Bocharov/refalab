@@ -906,10 +906,10 @@ void (*is_ferror_1)(void) = is_ferror_;
 
 static void remove_file_(void)
 {
-    const T_LINKCB *current_argument = refal.previous_argument->next;
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
     char file_name[MAX_PATHFILENAME + 1];
-    current_argument = get_string_expression(file_name, MAX_PATHFILENAME, current_argument, refal.next_argument);
-    if (current_argument != refal.next_argument)
+    current_symbol_char = get_string_expression(file_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -923,8 +923,8 @@ static void remove_file_(void)
         if (result_yet_need > 0)
             if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
                 return;
-        current_argument = set_string_expression(string_error, refal.next_result);
-        transplantation(refal.previous_result, refal.next_result, current_argument->next);
+        current_symbol_char = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, current_symbol_char->next);
     }
     return;
 }
@@ -936,27 +936,27 @@ static void rename_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        char namf[MAX_PATHFILENAME + 1];
-        p = get_string_expression(namf, MAX_PATHFILENAME, p, refal.next_argument);
-        if (p->tag != TAGN || gcoden(p) != 0)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        char file_name_old[MAX_PATHFILENAME + 1];
+        current_argument = get_string_expression(file_name_old, MAX_PATHFILENAME, current_argument, refal.next_argument);
+        if (current_argument->tag != TAGN || gcoden(current_argument) != 0)
             break;
-        p = p->next;
-        char namt[MAX_PATHFILENAME + 1];
-        p = get_string_expression(namt, MAX_PATHFILENAME, p, refal.next_argument);
-        if (p != refal.next_argument)
+        current_argument = current_argument->next;
+        char file_name_new[MAX_PATHFILENAME + 1];
+        current_argument = get_string_expression(file_name_new, MAX_PATHFILENAME, current_argument, refal.next_argument);
+        if (current_argument != refal.next_argument)
             break;
-        const int r = rename(namf, namt);
-        if (r == -1)
+        const int rename_result = rename(file_name_old, file_name_new);
+        if (rename_result == -1)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(namf) + (int32_t)strlen(namt) + 2);
-            if (d > 0)
-                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
+            const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name_old) + (int32_t)strlen(file_name_new) + 2);
+            if (result_yet_need > 0)
+                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
                     return;
-            p = set_string_expression(string_error, refal.next_result);
-            transplantation(refal.previous_result, refal.next_result, p->next);
+            current_argument = set_string_expression(string_error, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, current_argument->next);
         }
         return;
     } while (false);
@@ -969,20 +969,20 @@ void (*rename_1)(void) = rename_;
 
 static void exist_file_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
     char file_name[MAX_PATHFILENAME + 1];
-    p = get_string_expression(file_name, MAX_PATHFILENAME, p, refal.next_argument);
-    if (p != refal.next_argument)
+    current_symbol_char = get_string_expression(file_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    struct stat st_buf;
-    if (stat(file_name, &st_buf) == 0 && S_ISREG(st_buf.st_mode))
+    struct stat state_file_buffer;
+    if (stat(file_name, &state_file_buffer) == 0 && S_ISREG(state_file_buffer.st_mode))
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (char)10};
@@ -991,20 +991,20 @@ void (*exist_file_1)(void) = exist_file_;
 
 static void exist_dir_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    char namd[MAX_PATHFILENAME + 1];
-    p = get_string_expression(namd, MAX_PATHFILENAME, p, refal.next_argument);
-    if (p != refal.next_argument)
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
+    char directory_name[MAX_PATHFILENAME + 1];
+    current_symbol_char = get_string_expression(directory_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    struct stat st_buf;
-    if (stat(namd, &st_buf) == 0 && S_ISDIR(st_buf.st_mode))
+    struct stat state_directory_buffer;
+    if (stat(directory_name, &state_directory_buffer) == 0 && S_ISDIR(state_directory_buffer.st_mode))
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
