@@ -670,19 +670,19 @@ static void fseek_(void)
         file = files[file_number];
         current_argument = current_argument->next;
         const char sign = current_argument->info.infoc;
-        int64_t z = 1;
+        int64_t sign_digit = 1;
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
             current_argument = current_argument->next;
             if (sign == '-')
-                z = -1;
+                sign_digit = -1;
         }
         if (current_argument->tag != TAGN)
             break;
-        const int64_t offset_abs = gcoden(current_argument);
-        if (z == 1 ? offset_abs > 2147483647 : offset_abs > 2147483648)
+        const int64_t offset_absolute = gcoden(current_argument);
+        if (sign_digit == 1 ? offset_absolute > 2147483647 : offset_absolute > 2147483648)
             break;
-        const long int offset = (long int)(z * offset_abs);
+        const long int offset = (long int)(sign_digit * offset_absolute);
         current_argument = current_argument->next;
         if (current_argument->tag != TAGF)
             break;
@@ -700,15 +700,15 @@ static void fseek_(void)
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        const int res = fseek(file, offset, origin);
-        if (res == -1)
+        const int seek_result = fseek(file, offset, origin);
+        if (seek_result == -1)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 3 - (z == 1 ? 1 : 2)))
+            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 3 - (sign_digit == 1 ? 1 : 2)))
                 return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -726,23 +726,23 @@ static void ftell_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGN)
+        T_LINKCB *symbol_number = refal.previous_argument->next;
+        if (symbol_number->tag != TAGN)
             break;
-        const uint32_t file_number = gcoden(p);
+        const uint32_t file_number = gcoden(symbol_number);
         if (file_number >= FILES_MAX)
             break;
-        if (p->next != refal.next_argument)
+        if (symbol_number->next != refal.next_argument)
             break;
         file = files[file_number];
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        long int res = ftell(file);
-        if (res == -1)
+        long int tell_result = ftell(file);
+        if (tell_result == -1)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
@@ -752,8 +752,8 @@ static void ftell_(void)
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
             return;
         }
-        pcoden(p, (uint32_t)res);
-        transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+        pcoden(symbol_number, (uint32_t)tell_result);
+        transplantation(refal.previous_result, symbol_number->previous, symbol_number->next);
         return;
     } while (false);
     refal.upshot = 2;
