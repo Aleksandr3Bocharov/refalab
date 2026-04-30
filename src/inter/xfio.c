@@ -606,23 +606,23 @@ static void fwrite_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGN)
+        const T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag != TAGN)
             break;
-        const uint32_t file_number = gcoden(p);
+        const uint32_t file_number = gcoden(current_argument);
         if (file_number >= FILES_MAX)
             break;
         file = files[file_number];
-        const T_LINKCB *q = p->next;
+        const T_LINKCB *temp_argument = current_argument->next;
         bool impossible = false;
-        while (q != refal.next_argument)
+        while (temp_argument != refal.next_argument)
         {
-            if (q->tag != TAGO && q->tag != TAGN)
+            if (temp_argument->tag != TAGO && temp_argument->tag != TAGN)
             {
                 impossible = true;
                 break;
             }
-            q = q->next;
+            temp_argument = temp_argument->next;
         }
         if (impossible)
             break;
@@ -632,21 +632,21 @@ static void fwrite_(void)
             transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        p = p->next;
-        while (p != refal.next_argument)
+        current_argument = current_argument->next;
+        while (current_argument != refal.next_argument)
         {
-            int cc;
-            if (p->tag == TAGO)
-                cc = p->info.infoc;
+            int symbol;
+            if (current_argument->tag == TAGO)
+                symbol = current_argument->info.infoc;
             else
-                cc = (uint8_t)gcoden(p);
-            const int put_result = putc(cc, file);
+                symbol = (uint8_t)gcoden(current_argument);
+            const int put_result = putc(symbol, file);
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
                 return;
             }
-            p = p->next;
+            current_argument = current_argument->next;
         }
         return;
     } while (false);
