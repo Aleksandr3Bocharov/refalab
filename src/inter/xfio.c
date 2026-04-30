@@ -661,7 +661,7 @@ static void fseek_(void)
 {
     do
     {
-        T_LINKCB *current_argument = refal.previous_argument->next;
+        const T_LINKCB *current_argument = refal.previous_argument->next;
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
@@ -767,40 +767,40 @@ static void is_eof_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        const T_LINKCB *argument = refal.previous_argument->next;
+        if (argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdin)
+            if (argument->info.codef == &refalab_stdin)
                 file = stdin;
-            else if (p->info.codef == &refalab_stdout)
+            else if (argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
         }
         else
             break;
-        if (p->next != refal.next_argument)
+        if (argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
         if (feof(file) != 0 || ferror(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -814,40 +814,40 @@ static void is_feof_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        const T_LINKCB *argument = refal.previous_argument->next;
+        if (argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdin)
+            if (argument->info.codef == &refalab_stdin)
                 file = stdin;
-            else if (p->info.codef == &refalab_stdout)
+            else if (argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
         }
         else
             break;
-        if (p->next != refal.next_argument)
+        if (argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
         if (feof(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -861,40 +861,40 @@ static void is_ferror_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        const T_LINKCB *argument = refal.previous_argument->next;
+        if (argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdin)
+            if (argument->info.codef == &refalab_stdin)
                 file = stdin;
-            else if (p->info.codef == &refalab_stdout)
+            else if (argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
         }
         else
             break;
-        if (p->next != refal.next_argument)
+        if (argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
         if (ferror(file) != 0)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
