@@ -661,41 +661,41 @@ static void fseek_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag != TAGN)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag != TAGN)
             break;
-        const uint32_t file_number = gcoden(p);
+        const uint32_t file_number = gcoden(current_argument);
         if (file_number >= FILES_MAX)
             break;
         file = files[file_number];
-        p = p->next;
-        const char zn = p->info.infoc;
+        current_argument = current_argument->next;
+        const char sign = current_argument->info.infoc;
         int64_t z = 1;
-        if (p->tag == TAGO && (zn == '-' || zn == '+'))
+        if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
-            p = p->next;
-            if (zn == '-')
+            current_argument = current_argument->next;
+            if (sign == '-')
                 z = -1;
         }
-        if (p->tag != TAGN)
+        if (current_argument->tag != TAGN)
             break;
-        const int64_t offset_abs = gcoden(p);
+        const int64_t offset_abs = gcoden(current_argument);
         if (z == 1 ? offset_abs > 2147483647 : offset_abs > 2147483648)
             break;
         const long int offset = (long int)(z * offset_abs);
-        p = p->next;
-        if (p->tag != TAGF)
+        current_argument = current_argument->next;
+        if (current_argument->tag != TAGF)
             break;
         int origin;
-        if (p->info.codef == &refalab_begin)
+        if (current_argument->info.codef == &refalab_begin)
             origin = SEEK_SET;
-        else if (p->info.codef == &refalab_end)
+        else if (current_argument->info.codef == &refalab_end)
             origin = SEEK_END;
-        else if (p->info.codef == &refalab_cur)
+        else if (current_argument->info.codef == &refalab_cur)
             origin = SEEK_CUR;
         else
             break;
-        if (p->next != refal.next_argument)
+        if (current_argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
