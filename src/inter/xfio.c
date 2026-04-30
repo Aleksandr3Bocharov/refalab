@@ -263,19 +263,19 @@ static void fprint_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(current_argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (current_argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdout)
+            if (current_argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (current_argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
@@ -285,59 +285,58 @@ static void fprint_(void)
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        p = p->next;
-        while (p != refal.next_argument)
+        current_argument = current_argument->next;
+        while (current_argument != refal.next_argument)
         {
-            int pcc = 0;
-            char s[512];
-            if (p->tag == TAGO)
-                pcc = putc(p->info.infoc, file);
-            else if (p->tag == TAGLB)
-                pcc = putc('(', file);
-            else if (p->tag == TAGRB)
-                pcc = putc(')', file);
-            else if (p->tag == TAGN)
+            int put_result = 0;
+            char string[512];
+            if (current_argument->tag == TAGO)
+                put_result = putc(current_argument->info.infoc, file);
+            else if (current_argument->tag == TAGLB)
+                put_result = putc('(', file);
+            else if (current_argument->tag == TAGRB)
+                put_result = putc(')', file);
+            else if (current_argument->tag == TAGN)
             {
-                sprintf(s, "'%u'", gcoden(p));
-                pcc = fputs(s, file);
+                sprintf(string, "'%u'", gcoden(current_argument));
+                put_result = fputs(string, file);
             }
-            else if (p->tag == TAGF)
+            else if (current_argument->tag == TAGF)
             {
-                sprintf(s, "'");
-                const char *n = (char *)(p->info.codef) - 1;
-                const uint8_t l = (uint8_t)*n;
-                n -= l;
-                char ch[2];
-                ch[1] = '\0';
-                for (size_t k = 1; k <= l; k++, n++)
+                sprintf(string, "'");
+                const uint8_t *label_length = current_argument->info.codef - 1;
+                const char *label = (char *)label_length - *label_length;
+                char symbol[2];
+                symbol[1] = '\0';
+                for (uint8_t i = 1; i <= *label_length; i++, label++)
                 {
-                    ch[0] = (char)toupper(*n);
-                    strcat(s, ch);
+                    symbol[0] = (char)toupper(*label);
+                    strcat(string, symbol);
                 }
-                strcat(s, "'");
-                pcc = fputs(s, file);
+                strcat(string, "'");
+                put_result = fputs(string, file);
             }
-            else if (p->tag == TAGR)
+            else if (current_argument->tag == TAGR)
             {
-                sprintf(s, "'%%%p'", (void *)p->info.codep);
-                pcc = fputs(s, file);
+                sprintf(string, "'%%%p'", (void *)current_argument->info.codep);
+                put_result = fputs(string, file);
             }
-            else if (BRACKET(p))
+            else if (BRACKET(current_argument))
                 refal_abort_end("fprint: unknown bracket type");
             else
             {
-                sprintf(s, "'%x,%p'", p->tag, p->info.code);
-                pcc = fputs(s, file);
+                sprintf(string, "'%x,%p'", current_argument->tag, current_argument->info.code);
+                put_result = fputs(string, file);
             }
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
-                transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+                transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
                 return;
             }
-            p = p->next;
+            current_argument = current_argument->next;
         }
         return;
     } while (false);
@@ -352,19 +351,19 @@ static void fprints_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(current_argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (current_argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdout)
+            if (current_argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (current_argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
@@ -377,26 +376,26 @@ static void fprints_(void)
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        p = p->next;
-        while (p != refal.next_argument)
+        current_argument = current_argument->next;
+        while (current_argument != refal.next_argument)
         {
-            int pcc = 0;
-            char s[512];
-            if (p->tag == TAGO)
-                pcc = putc(p->info.infoc, file);
-            else if (p->tag == TAGLB)
-                pcc = putc('(', file);
-            else if (p->tag == TAGRB)
-                pcc = putc(')', file);
-            else if (p->tag == TAGN)
+            int put_result = 0;
+            char string[512];
+            if (current_argument->tag == TAGO)
+                put_result = putc(current_argument->info.infoc, file);
+            else if (current_argument->tag == TAGLB)
+                put_result = putc('(', file);
+            else if (current_argument->tag == TAGRB)
+                put_result = putc(')', file);
+            else if (current_argument->tag == TAGN)
             {
-                sprintf(s, "%u", gcoden(p));
-                pcc = fputs(s, file);
+                sprintf(string, "%u", gcoden(current_argument));
+                put_result = fputs(string, file);
             }
-            else if (p->tag == TAGF)
+            else if (current_argument->tag == TAGF)
             {
-                s[0] = '\0';
-                const char *n = (char *)(p->info.codef) - 1;
+                string[0] = '\0';
+                const char *n = (char *)(current_argument->info.codef) - 1;
                 const uint8_t l = (uint8_t)*n;
                 n -= l;
                 char ch[2];
@@ -404,28 +403,28 @@ static void fprints_(void)
                 for (size_t k = 1; k <= l; k++, n++)
                 {
                     ch[0] = (char)toupper(*n);
-                    strcat(s, ch);
+                    strcat(string, ch);
                 }
-                pcc = fputs(s, file);
+                put_result = fputs(string, file);
             }
-            else if (p->tag == TAGR)
+            else if (current_argument->tag == TAGR)
             {
-                sprintf(s, "%%%p", (void *)p->info.codep);
-                pcc = fputs(s, file);
+                sprintf(string, "%%%p", (void *)current_argument->info.codep);
+                put_result = fputs(string, file);
             }
-            else if (BRACKET(p))
+            else if (BRACKET(current_argument))
                 refal_abort_end("fprints: unknown bracket type");
             else
             {
-                sprintf(s, "%x,%p", p->tag, p->info.code);
-                pcc = fputs(s, file);
+                sprintf(string, "%x,%p", current_argument->tag, current_argument->info.code);
+                put_result = fputs(string, file);
             }
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
             }
-            p = p->next;
+            current_argument = current_argument->next;
         }
         return;
     } while (false);
@@ -440,19 +439,19 @@ static void fprintm_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->tag == TAGN)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument->tag == TAGN)
         {
-            const uint32_t file_number = gcoden(p);
+            const uint32_t file_number = gcoden(current_argument);
             if (file_number >= FILES_MAX)
                 break;
             file = files[file_number];
         }
-        else if (p->tag == TAGF)
+        else if (current_argument->tag == TAGF)
         {
-            if (p->info.codef == &refalab_stdout)
+            if (current_argument->info.codef == &refalab_stdout)
                 file = stdout;
-            else if (p->info.codef == &refalab_stderr)
+            else if (current_argument->info.codef == &refalab_stderr)
                 file = stderr;
             else
                 break;
@@ -465,48 +464,48 @@ static void fprintm_(void)
             transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
             return;
         }
-        p = p->next;
-        bool fr = false;
-        while (p != refal.next_argument)
+        current_argument = current_argument->next;
+        bool tago = false;
+        while (current_argument != refal.next_argument)
         {
-            int pcc = 0;
-            char s[512];
-            if (p->tag == TAGO)
+            int put_result = 0;
+            char string[512];
+            if (current_argument->tag == TAGO)
             {
-                if (!fr)
+                if (!tago)
                 {
-                    fr = true;
-                    sprintf(s, "'%c", p->info.infoc);
-                    pcc = fputs(s, file);
+                    tago = true;
+                    sprintf(string, "'%c", current_argument->info.infoc);
+                    put_result = fputs(string, file);
                 }
                 else
-                    pcc = putc(p->info.infoc, file);
+                    put_result = putc(current_argument->info.infoc, file);
             }
             else
             {
-                if (fr)
+                if (tago)
                 {
-                    fr = false;
-                    sprintf(s, "'");
+                    tago = false;
+                    sprintf(string, "'");
                 }
                 else
-                    s[0] = '\0';
-                if (p->tag == TAGLB)
-                    strcat(s, "(");
-                else if (p->tag == TAGRB)
-                    strcat(s, ")");
-                else if (p->tag == TAGN)
+                    string[0] = '\0';
+                if (current_argument->tag == TAGLB)
+                    strcat(string, "(");
+                else if (current_argument->tag == TAGRB)
+                    strcat(string, ")");
+                else if (current_argument->tag == TAGN)
                 {
                     char sn[512];
-                    sprintf(sn, "%u", gcoden(p));
-                    strcat(s, sn);
-                    if (p->next->tag == TAGN)
-                        strcat(s, " ");
+                    sprintf(sn, "%u", gcoden(current_argument));
+                    strcat(string, sn);
+                    if (current_argument->next->tag == TAGN)
+                        strcat(string, " ");
                 }
-                else if (p->tag == TAGF)
+                else if (current_argument->tag == TAGF)
                 {
-                    strcat(s, "&");
-                    const char *n = (char *)(p->info.codef) - 1;
+                    strcat(string, "&");
+                    const char *n = (char *)(current_argument->info.codef) - 1;
                     const uint8_t l = (uint8_t)*n;
                     n -= l;
                     char ch[2];
@@ -514,38 +513,38 @@ static void fprintm_(void)
                     for (size_t k = 1; k <= l; k++, n++)
                     {
                         ch[0] = (char)toupper(*n);
-                        strcat(s, ch);
+                        strcat(string, ch);
                     }
-                    if (p->next->tag == TAGN)
-                        strcat(s, " ");
+                    if (current_argument->next->tag == TAGN)
+                        strcat(string, " ");
                 }
-                else if (p->tag == TAGR)
+                else if (current_argument->tag == TAGR)
                 {
                     char sr[512];
-                    sprintf(sr, "/%%%p/", (void *)p->info.codep);
-                    strcat(s, sr);
+                    sprintf(sr, "/%%%p/", (void *)current_argument->info.codep);
+                    strcat(string, sr);
                 }
-                else if (BRACKET(p))
+                else if (BRACKET(current_argument))
                     refal_abort_end("fprintm: unknown bracket type");
                 else
                 {
                     char sp[512];
-                    sprintf(sp, "/%x,%p/", p->tag, p->info.code);
-                    strcat(s, sp);
+                    sprintf(sp, "/%x,%p/", current_argument->tag, current_argument->info.code);
+                    strcat(string, sp);
                 }
-                pcc = fputs(s, file);
+                put_result = fputs(string, file);
             }
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
             }
-            p = p->next;
+            current_argument = current_argument->next;
         }
-        if (fr)
+        if (tago)
         {
-            const int pcc = putc('\'', file);
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            const int put_result = putc('\'', file);
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
         }
         return;
@@ -643,8 +642,8 @@ static void fwrite_(void)
                 cc = p->info.infoc;
             else
                 cc = (uint8_t)gcoden(p);
-            const int pcc = putc(cc, file);
-            if (set_eof_linkcb(pcc, file, refal.previous_argument))
+            const int put_result = putc(cc, file);
+            if (set_eof_linkcb(put_result, file, refal.previous_argument))
             {
                 transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
                 return;
