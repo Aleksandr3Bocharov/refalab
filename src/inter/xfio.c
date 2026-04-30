@@ -110,7 +110,7 @@ static void fclose_(void)
 {
     do
     {
-        T_LINKCB *symbol_number = refal.previous_argument->next;
+        const T_LINKCB *symbol_number = refal.previous_argument->next;
         if (symbol_number->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(symbol_number);
@@ -906,25 +906,25 @@ void (*is_ferror_1)(void) = is_ferror_;
 
 static void remove_file_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
+    const T_LINKCB *current_argument = refal.previous_argument->next;
     char file_name[MAX_PATHFILENAME + 1];
-    p = get_string_expression(file_name, MAX_PATHFILENAME, p, refal.next_argument);
-    if (p != refal.next_argument)
+    current_argument = get_string_expression(file_name, MAX_PATHFILENAME, current_argument, refal.next_argument);
+    if (current_argument != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    const int u = unlink(file_name);
-    if (u == -1)
+    const int remove_result = unlink(file_name);
+    if (remove_result == -1)
     {
         const int error_number = errno;
         const char *string_error = strerror(error_number);
-        const int32_t d = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name) + 1);
-        if (d > 0)
-            if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)d))
+        const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name) + 1);
+        if (result_yet_need > 0)
+            if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
                 return;
-        p = set_string_expression(string_error, refal.next_result);
-        transplantation(refal.previous_result, refal.next_result, p->next);
+        current_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, current_argument->next);
     }
     return;
 }
