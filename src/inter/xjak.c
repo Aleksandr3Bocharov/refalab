@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-05-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XJAK.C ------------
@@ -16,44 +16,43 @@
 
 #define N_SWAP 0116
 
-static bool enter(bool emp, T_LINKCB **pp, T_LINKCB **rp)
+static bool enter(bool empty_expression, T_LINKCB **head_box_pointer, T_LINKCB **first_argument_pointer)
 {
-    T_LINKCB *r = refal.previous_argument->next;
-    if (r == refal.next_argument)
+    T_LINKCB *first_argument = refal.previous_argument->next;
+    if (first_argument == refal.next_argument)
         return false;
-    if (emp && r->next != refal.next_argument)
-        return true;
-    T_LINKCB *p;
-    if (r->tag == TAGR)
-        p = r->info.codep;
-    else if (r->tag == TAGF)
+    if (empty_expression && first_argument->next != refal.next_argument)
+        return false;
+    T_LINKCB *head_box;
+    if (first_argument->tag == TAGR)
+        head_box = first_argument->info.codep;
+    else if (first_argument->tag == TAGF)
     {
-        const uint8_t *q = r->info.codef;
-        if (*q != N_SWAP)
+        const uint8_t *swap = first_argument->info.codef;
+        if (*swap != N_SWAP)
             return false;
-        q++;
-        p = (T_LINKCB *)q;
-        if (p->previous == NULL)
+        head_box = (T_LINKCB *)(swap + 1);
+        if (head_box->previous == NULL)
         {
-            p->next = p;
-            p->previous = p->next;
-            p->info.codep = refal.static_boxes;
-            p->tag = TAGO;
-            refal.static_boxes = p;
+            head_box->next = head_box;
+            head_box->previous = head_box->next;
+            head_box->info.codep = refal.static_boxes;
+            head_box->tag = TAGO;
+            refal.static_boxes = head_box;
         }
     }
     else
         return false;
-    *pp = p;
-    *rp = r;
+    *head_box_pointer = head_box;
+    *first_argument_pointer = first_argument;
     return true;
 }
 
 static void gtr_(void)
 {
-    const bool emp = true;
+    const bool empty_expression = true;
     T_LINKCB *p = NULL, *r;
-    if (!enter(emp, &p, &r))
+    if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
         return;
@@ -67,9 +66,9 @@ void (*gtr_1)(void) = gtr_;
 
 static void rdr_(void)
 {
-    const bool emp = true;
+    const bool empty_expression = true;
     T_LINKCB *p = NULL, *r;
-    if (!enter(emp, &p, &r))
+    if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
         return;
@@ -87,9 +86,9 @@ void (*rdr_1)(void) = rdr_;
 
 static void ptr_(void)
 {
-    const bool emp = false;
+    const bool empty_expression = false;
     T_LINKCB *p, *r;
-    if (!enter(emp, &p, &r))
+    if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
         return;
@@ -104,9 +103,9 @@ void (*ptr_1)(void) = ptr_;
 
 static void wtr_(void)
 {
-    const bool emp = false;
+    const bool empty_expression = false;
     T_LINKCB *p, *r;
-    if (!enter(emp, &p, &r))
+    if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
         return;
@@ -121,9 +120,9 @@ void (*wtr_1)(void) = wtr_;
 
 static void swr_(void)
 {
-    const bool emp = false;
+    const bool empty_expression = false;
     T_LINKCB *p, *r;
-    if (!enter(emp, &p, &r))
+    if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
         return;
