@@ -138,12 +138,12 @@ static void new_(void)
 {
     if (!extended_insert_from_free_memory(refal.previous_result, 1))
         return; // LACK
-    T_LINKCB *r = refal.previous_result->next;
-    r->info.codep = refal.previous_argument;
-    r->tag = TAGR;
-    T_LINKCB *p = refal.next_argument->previous;
-    p->next = refal.previous_argument;
-    refal.previous_argument->previous = p;
+    T_LINKCB *result_symbol_reference = refal.previous_result->next;
+    result_symbol_reference->info.codep = refal.previous_argument;
+    result_symbol_reference->tag = TAGR;
+    T_LINKCB *last_argument = refal.next_argument->previous;
+    last_argument->next = refal.previous_argument;
+    refal.previous_argument->previous = last_argument;
     refal.next_result->next = refal.next_argument;
     refal.next_argument->previous = refal.next_result;
     refal.previous_argument->info.codep = refal.dynamic_boxes;
