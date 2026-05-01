@@ -51,7 +51,7 @@ static bool enter(bool empty_expression, T_LINKCB **head_box_pointer, T_LINKCB *
 static void gtr_(void)
 {
     const bool empty_expression = true;
-    T_LINKCB *p = NULL, *r;
+    T_LINKCB *p, *r;
     if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
@@ -67,7 +67,7 @@ void (*gtr_1)(void) = gtr_;
 static void rdr_(void)
 {
     const bool empty_expression = true;
-    T_LINKCB *p = NULL, *r;
+    T_LINKCB *p, *r;
     if (!enter(empty_expression, &p, &r))
     {
         refal.upshot = 2;
