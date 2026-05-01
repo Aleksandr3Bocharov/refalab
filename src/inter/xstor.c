@@ -27,7 +27,7 @@ static void br_(void)
             return;
         }; // FAIL
     }
-    if (!insert_from_free_memory_list(ast->store, 2))
+    if (!insert_from_free_memory(ast->store, 2))
     {
         refal.upshot = 3;
         return;
@@ -71,7 +71,7 @@ static void dg_(void)
     transplantation(refal.previous_result, q, pr);
     pl = pl->previous;
     pr = pr->next;
-    insert_to_free_memory_list(pl, pr);
+    insert_to_free_memory(pl, pr);
     return;
 }
 char dg_0[] = {Z2 'D', 'G', (char)2};
@@ -113,7 +113,7 @@ static void rp_(void)
             T_LINKCB *pl = pr->next;
             if (pl == ast->store)
             {
-                if (!insert_from_free_memory_list(ast->store, 2))
+                if (!insert_from_free_memory(ast->store, 2))
                 {
                     refal.upshot = 3;
                     return;
@@ -136,7 +136,7 @@ static void rp_(void)
                     continue;
                 if (q->tag != TAGO || q->info.infoc != '=')
                     continue;
-                insert_to_free_memory_list(q, pr);
+                insert_to_free_memory(q, pr);
                 transplantation(q, p, refal.next_argument);
             }
             return;

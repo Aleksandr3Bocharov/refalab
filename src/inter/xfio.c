@@ -92,7 +92,7 @@ static void fopen_(void)
             const char *string_error = strerror(error_number);
             const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_mode) + (int32_t)strlen(file_name) + 2);
             if (result_yet_need > 0)
-                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
+                if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                     return;
             current_argument = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, current_argument->next);
@@ -131,7 +131,7 @@ static void fclose_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 2))
                 return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -177,7 +177,7 @@ static void fgets_(void)
         int get_result = getc(file);
         while (get_result != '\n')
         {
-            if (!extended_insert_from_free_memory_list(current_result, 1))
+            if (!extended_insert_from_free_memory(current_result, 1))
                 return;
             current_result = current_result->next;
             current_result->info.code = NULL;
@@ -578,7 +578,7 @@ static void fread_(void)
             return;
         }
         T_LINKCB *current_result = refal.previous_result;
-        if (!extended_insert_from_free_memory_list(current_result, symbols_count))
+        if (!extended_insert_from_free_memory(current_result, symbols_count))
             return;
         for (; symbols_count > 0; symbols_count--)
         {
@@ -587,7 +587,7 @@ static void fread_(void)
             const int get_result = getc(file);
             if (set_eof_linkcb(get_result, file, current_result))
             {
-                insert_to_free_memory_list(current_result, refal.next_result);
+                insert_to_free_memory(current_result, refal.next_result);
                 return;
             }
             current_result->tag = TAGN;
@@ -708,7 +708,7 @@ static void fseek_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 3 - (sign_digit == 1 ? 1 : 2)))
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 3 - (sign_digit == 1 ? 1 : 2)))
                 return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -746,7 +746,7 @@ static void ftell_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(string_error) - 2))
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 2))
                 return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -921,7 +921,7 @@ static void remove_file_(void)
         const char *string_error = strerror(error_number);
         const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name) + 1);
         if (result_yet_need > 0)
-            if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
+            if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                 return;
         current_symbol_char = set_string_expression(string_error, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, current_symbol_char->next);
@@ -953,7 +953,7 @@ static void rename_(void)
             const char *string_error = strerror(error_number);
             const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_name_old) + (int32_t)strlen(file_name_new) + 2);
             if (result_yet_need > 0)
-                if (!extended_insert_from_free_memory_list(refal.next_result, (size_t)result_yet_need))
+                if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                     return;
             current_argument = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, current_argument->next);

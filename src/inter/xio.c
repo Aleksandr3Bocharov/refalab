@@ -22,7 +22,7 @@ static void card_(void)
     int get_result = getchar();
     while (get_result != '\n')
     {
-        if (!extended_insert_from_free_memory_list(current_result, 1))
+        if (!extended_insert_from_free_memory(current_result, 1))
             return;
         current_result = current_result->next;
         current_result->info.code = NULL;

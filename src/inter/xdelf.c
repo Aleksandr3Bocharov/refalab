@@ -40,12 +40,12 @@ static void delf_(void)
     {
         temp_k = current_delete_dot->info.codep;
         temp_dot = temp_k->info.codep;
-        insert_to_free_memory_list(temp_k->previous, current_delete_dot->next);
+        insert_to_free_memory(temp_k->previous, current_delete_dot->next);
         current_delete_dot = temp_dot;
     }
     temp_k = current_delete_dot->info.codep;
     temp_dot = temp_k->info.codep;
-    insert_to_free_memory_list(temp_k->previous, delete_dot_next->next);
+    insert_to_free_memory(temp_k->previous, delete_dot_next->next);
     refal.next_result->info.codep = temp_dot;
     return;
 }

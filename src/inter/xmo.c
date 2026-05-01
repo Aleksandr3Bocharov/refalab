@@ -65,7 +65,7 @@ static void numb_(void)
     str[i] = '\0';
     if (strlen(str) == 0)
     {
-        if (!extended_insert_from_free_memory_list(refal.next_argument->previous, 1))
+        if (!extended_insert_from_free_memory(refal.next_argument->previous, 1))
             return;
         pp = refal.next_argument->previous;
         pz = pp;
@@ -111,18 +111,18 @@ static void symb_(void)
     char str[12];
     sprintf(str, "%u", l);
     const size_t j = strlen(str);
-    if (!check_count_free_memory_list(j))
+    if (!check_count_free_memory(j))
         if (!more_free_memory())
         {
             refal.upshot = 3;
             return;
         }
     if (pz != refal.next_argument)
-        insert_from_free_memory_list(pp, j);
+        insert_from_free_memory(pp, j);
     else
     {
         pz = pz->previous;
-        insert_from_free_memory_list(pz, j);
+        insert_from_free_memory(pz, j);
         pz = pz->next;
         pp = pz;
     }
@@ -286,7 +286,7 @@ static void multe_(void)
     }
     else
     {
-        if (!extended_insert_from_free_memory_list(refal.previous_result, n))
+        if (!extended_insert_from_free_memory(refal.previous_result, n))
             return; //  LACK
         T_LINKCB *q = refal.previous_result;
         for (uint32_t k = 0; k < n; k++)

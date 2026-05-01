@@ -30,7 +30,7 @@ static void ftochar_(void)
     const uint8_t *label_length = symbol_label->info.codef - 1;
     const char *label = (char *)label_length - *label_length;
     if (*label_length > 2)
-        if (!extended_insert_from_free_memory_list(refal.next_result, *label_length - 2))
+        if (!extended_insert_from_free_memory(refal.next_result, *label_length - 2))
             return;
     T_LINKCB *current_result = refal.next_result;
     for (uint8_t i = 0; i < *label_length; i++)

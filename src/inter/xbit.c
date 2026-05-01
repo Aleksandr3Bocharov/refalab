@@ -220,7 +220,7 @@ static void bit_operate(uint8_t operation)
             if (X_length == 0)
             {
                 if (refal.previous_argument->next == refal.next_argument)
-                    if (!extended_insert_from_free_memory_list(refal.previous_argument, 1))
+                    if (!extended_insert_from_free_memory(refal.previous_argument, 1))
                         return;
                 result_zero = false;
                 X_sign = '-';
@@ -305,7 +305,7 @@ static void shift_operate(uint8_t operation)
             for (x_current = X_begin->previous; x_current->tag != TAGLB && result_need > argument_length; x_current = x_current->previous, argument_length++)
                 ;
             if (result_need > argument_length)
-                if (!extended_insert_from_free_memory_list(refal.next_result, result_need - argument_length))
+                if (!extended_insert_from_free_memory(refal.next_result, result_need - argument_length))
                     return;
             transplantation(refal.next_result, X_end, refal.next_argument);
             if (length != 0)

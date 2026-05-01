@@ -16,7 +16,7 @@
 
 #define N_SWAP 0116
 
-static bool enter(bool empty_expression, T_LINKCB **head_box_pointer, T_LINKCB **first_argument_pointer)
+static bool legal_argument_box(bool empty_expression, T_LINKCB **head_box_pointer, T_LINKCB **first_argument_pointer)
 {
     T_LINKCB *first_argument = refal.previous_argument->next;
     if (first_argument == refal.next_argument)
@@ -51,13 +51,13 @@ static bool enter(bool empty_expression, T_LINKCB **head_box_pointer, T_LINKCB *
 static void gtr_(void)
 {
     const bool empty_expression = true;
-    T_LINKCB *p, *r;
-    if (!enter(empty_expression, &p, &r))
+    T_LINKCB *head_box, *first_argument;
+    if (!legal_argument_box(empty_expression, &head_box, &first_argument))
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    transplantation(refal.previous_result, p, p);
+    transplantation(refal.previous_result, head_box, head_box);
     return;
 }
 char gtr_0[] = {Z3 'G', 'T', 'R', (char)3};
@@ -67,13 +67,13 @@ void (*gtr_1)(void) = gtr_;
 static void rdr_(void)
 {
     const bool empty_expression = true;
-    T_LINKCB *p, *r;
-    if (!enter(empty_expression, &p, &r))
+    T_LINKCB *head_box, *first_argument;
+    if (!legal_argument_box(empty_expression, &head_box, &first_argument))
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    if (!copy_expression(refal.previous_result, p, p))
+    if (!copy_expression(refal.previous_result, head_box, head_box))
     {
         refal.upshot = 3;
         return;
@@ -87,14 +87,13 @@ void (*rdr_1)(void) = rdr_;
 static void ptr_(void)
 {
     const bool empty_expression = false;
-    T_LINKCB *p, *r;
-    if (!enter(empty_expression, &p, &r))
+    T_LINKCB *head_box, *first_argument;
+    if (!legal_argument_box(empty_expression, &head_box, &first_argument))
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    T_LINKCB *q = p->previous;
-    transplantation(q, r, refal.next_argument);
+    transplantation(head_box->previous, first_argument, refal.next_argument);
     return;
 }
 char ptr_0[] = {Z3 'P', 'T', 'R', (char)3};
@@ -104,14 +103,14 @@ void (*ptr_1)(void) = ptr_;
 static void wtr_(void)
 {
     const bool empty_expression = false;
-    T_LINKCB *p, *r;
-    if (!enter(empty_expression, &p, &r))
+    T_LINKCB *head_box, *first_argument;
+    if (!legal_argument_box(empty_expression, &head_box, &first_argument))
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    insert_to_free_memory_list(p, p);
-    transplantation(p, r, refal.next_argument);
+    insert_to_free_memory(head_box, head_box);
+    transplantation(head_box, first_argument, refal.next_argument);
     return;
 }
 char wtr_0[] = {Z3 'W', 'T', 'R', (char)3};
@@ -121,14 +120,14 @@ void (*wtr_1)(void) = wtr_;
 static void swr_(void)
 {
     const bool empty_expression = false;
-    T_LINKCB *p, *r;
-    if (!enter(empty_expression, &p, &r))
+    T_LINKCB *head_box, *first_argument;
+    if (!legal_argument_box(empty_expression, &head_box, &first_argument))
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    transplantation(refal.previous_result, p, p);
-    transplantation(p, r, refal.next_argument);
+    transplantation(refal.previous_result, head_box, head_box);
+    transplantation(head_box, first_argument, refal.next_argument);
     return;
 }
 char swr_0[] = {Z3 'S', 'W', 'R', (char)3};
@@ -137,11 +136,8 @@ void (*swr_1)(void) = swr_;
 
 static void new_(void)
 {
-    if (!insert_from_free_memory_list(refal.previous_result, 1))
-    {
-        refal.upshot = 3;
-        return;
-    }; // LACK
+    if (!extended_insert_from_free_memory(refal.previous_result, 1))
+        return; // LACK
     T_LINKCB *r = refal.previous_result->next;
     r->info.codep = refal.previous_argument;
     r->tag = TAGR;

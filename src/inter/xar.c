@@ -326,7 +326,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         T_LINKCB *result_begin = refal.previous_argument;
         T_LINKCB *result_end = result_begin->next;
-        if (!extended_insert_from_free_memory_list(result_begin, X_length + Y_length + 1)) //  1 zweno dlja znaka
+        if (!extended_insert_from_free_memory(result_begin, X_length + Y_length + 1)) //  1 zweno dlja znaka
             return;
         result_begin = result_begin->next;
         result_end = result_end->previous;
@@ -458,7 +458,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         //  delenie mnogih  cifr
         T_LINKCB *temp_linkcb = refal.previous_argument;
-        if (!extended_insert_from_free_memory_list(temp_linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
+        if (!extended_insert_from_free_memory(temp_linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
             return;
         temp_linkcb = temp_linkcb->next;  //  dlja znaka
         result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
@@ -671,7 +671,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
     // rawno po odnoj makrocifre remainder - ost., quotient - chastnoe
-    if (!extended_insert_from_free_memory_list(refal.previous_argument, 2))
+    if (!extended_insert_from_free_memory(refal.previous_argument, 2))
         return;
     // in bad case: /1/() - 3 zwena est uje + name
     x_current = refal.previous_argument;

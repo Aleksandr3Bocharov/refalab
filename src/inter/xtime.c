@@ -42,7 +42,7 @@ static void time_(void)
     const size_t sl = strftime(s, sizeof(s), "%c", lt);
     if (sl == 0)
         return;
-    if (!extended_insert_from_free_memory_list(refal.next_result, sl - 1))
+    if (!extended_insert_from_free_memory(refal.next_result, sl - 1))
         return;
     set_string_expression(s, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -78,7 +78,7 @@ static void tm_(void)
             im %= 60;
             char s[64];
             sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-            if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 2))
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(s) - 2))
                 return;
             set_string_expression(s, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
@@ -117,7 +117,7 @@ static void tm_elapsed_(void)
     im %= 60;
     char s[64];
     sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-    if (!extended_insert_from_free_memory_list(refal.next_result, strlen(s) - 1))
+    if (!extended_insert_from_free_memory(refal.next_result, strlen(s) - 1))
         return;
     set_string_expression(s, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);

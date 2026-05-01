@@ -37,7 +37,7 @@
 
 #define SHIFT_CURRENT_LINKCB_FREE_MEMORY                           \
     current_linkcb_free_memory = current_linkcb_free_memory->next; \
-    if (current_linkcb_free_memory == free_memory_list_head)       \
+    if (current_linkcb_free_memory == free_memory_head)       \
     {                                                              \
         interpretator_state = LACK;                                \
         break;                                                     \
@@ -279,7 +279,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
     T_LINKCB quasi_k; // quasi-sign '<'
     quasi_k.info.codep = status_table->dot;
     // adress of free memory list head
-    T_LINKCB *free_memory_list_head = refal.free_memory_list_head;
+    T_LINKCB *free_memory_head = refal.free_memory_head;
     T_INTERPRETATOR_STATES interpretator_state = START;
     while (true)
         switch (interpretator_state)
@@ -1466,7 +1466,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // EOR;
         case EOR:
-            current_linkcb_free_memory = free_memory_list_head;
+            current_linkcb_free_memory = free_memory_head;
             last_acted_k = &quasi_k;
             last_gen_left_bracket = NULL;
             transplantation_stack_pointer = transplantation_stack;
@@ -1496,7 +1496,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             for (i = 1; i <= n; i++)
             {
                 current_linkcb_free_memory = current_linkcb_free_memory->next;
-                if (current_linkcb_free_memory == free_memory_list_head)
+                if (current_linkcb_free_memory == free_memory_head)
                 {
                     interpretator_state = LACK;
                     lack = true;
@@ -1569,7 +1569,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             {
                 temp_linkcb = temp_linkcb->next;
                 current_linkcb_free_memory = current_linkcb_free_memory->next;
-                if (current_linkcb_free_memory == free_memory_list_head)
+                if (current_linkcb_free_memory == free_memory_head)
                 {
                     interpretator_state = LACK;
                     lack = true;
@@ -1669,19 +1669,19 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             }
             // include replace result
             // INSRES:
-            if (free_memory_list_head->next == next_result)
+            if (free_memory_head->next == next_result)
             {
                 LINK(table_elements[1]->previous, table_elements[2]->next);
             }
             else
             {
                 LINK(next_result->previous, table_elements[2]->next);
-                LINK(table_elements[1]->previous, free_memory_list_head->next);
+                LINK(table_elements[1]->previous, free_memory_head->next);
             };
             //  delete < and >
             // DELKD:
             LINK(table_elements[2], next_result);
-            LINK(free_memory_list_head, table_elements[1]);
+            LINK(free_memory_head, table_elements[1]);
             interpretator_state = ADVSTEP;
             break;
             // SWAP;
@@ -1721,8 +1721,8 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             {
                 LINK(current_linkcb_free_memory, current_linkcb_free_memory);
             }
-            LINK(table_elements[2], free_memory_list_head->next);
-            LINK(free_memory_list_head, table_elements[1]);
+            LINK(table_elements[2], free_memory_head->next);
+            LINK(free_memory_head, table_elements[1]);
             interpretator_state = ADVSTEP;
             break;
             // BLF(L);
@@ -1766,8 +1766,8 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
         case CFDONE:
             quasi_k.info.codep = refal.next_result->info.codep;
             LINK(refal.next_result->previous, refal.next_argument->next);
-            LINK(refal.next_argument, free_memory_list_head->next);
-            LINK(free_memory_list_head, refal.next_result);
+            LINK(refal.next_argument, free_memory_head->next);
+            LINK(free_memory_head, refal.next_result);
             interpretator_state = ADVSTEP;
             break;
             //        return from C - function
@@ -1775,8 +1775,8 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
         case CFLACK:
             if (refal.previous_result->next != refal.next_result)
             {
-                LINK(refal.next_result->previous, free_memory_list_head->next);
-                LINK(free_memory_list_head, refal.previous_result->next);
+                LINK(refal.next_result->previous, free_memory_head->next);
+                LINK(free_memory_head, refal.previous_result->next);
                 LINK(refal.previous_result, refal.next_result);
             }
             status_table->state = 3;

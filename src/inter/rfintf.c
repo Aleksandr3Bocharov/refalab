@@ -33,10 +33,10 @@ static char **gargv = NULL;
 
 static T_LINKCB *last_block_free_memory = NULL;
 static bool refal_init = true;
-static T_LINKCB free_memory_list_head;
+static T_LINKCB free_memory_head;
 
 static bool collect_garbage(void);
-static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_free_memory);
+static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_memory);
 
 void refal_get_args(int argc, char *argv[])
 {
@@ -64,11 +64,11 @@ bool more_free_memory(void)
     size_t collected_garbage_count = 0;
     if (last_block_free_memory != NULL)
     {
-        const T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
+        const T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
         const bool was_collected_garbage = collect_garbage();
         if (was_collected_garbage)
         {
-            const T_LINKCB *linkcb_free_memory = refal.free_memory_list_head->next;
+            const T_LINKCB *linkcb_free_memory = refal.free_memory_head->next;
             while (linkcb_free_memory != first_linkcb_free_memory && collected_garbage_count != 1000)
             {
                 collected_garbage_count++;
@@ -86,40 +86,40 @@ bool more_free_memory(void)
         return false;
     new_block_free_memory->previous = last_block_free_memory;
     last_block_free_memory = new_block_free_memory;
-    add_free_memory_list(new_block_free_memory + 1, 1000);
+    add_free_memory(new_block_free_memory + 1, 1000);
     return true;
 }
 
 //  check a number of items in free items list
-bool check_count_free_memory_list(size_t count)
+bool check_count_free_memory(size_t count)
 {
-    const T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    const T_LINKCB *linkcb_free_memory = refal.free_memory_head;
     for (size_t i = 0; i < count; i++)
     {
         linkcb_free_memory = linkcb_free_memory->next;
-        if (linkcb_free_memory == refal.free_memory_list_head)
+        if (linkcb_free_memory == refal.free_memory_head)
             return false;
     }
     return true;
 }
 
-bool insert_from_free_memory_list(T_LINKCB *where, size_t count)
+bool insert_from_free_memory(T_LINKCB *where, size_t count)
 {
     if (count == 0)
         return true;
-    T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    T_LINKCB *linkcb_free_memory = refal.free_memory_head;
     for (size_t i = 0; i < count; i++)
     {
         linkcb_free_memory = linkcb_free_memory->next;
-        if (linkcb_free_memory == refal.free_memory_list_head)
+        if (linkcb_free_memory == refal.free_memory_head)
             return false;
         linkcb_free_memory->tag = TAGO;
         linkcb_free_memory->info.code = NULL;
     }
     T_LINKCB *next_linkcb_free_memory = linkcb_free_memory->next;
-    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
-    refal.free_memory_list_head->next = next_linkcb_free_memory;
-    next_linkcb_free_memory->previous = refal.free_memory_list_head;
+    T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
+    refal.free_memory_head->next = next_linkcb_free_memory;
+    next_linkcb_free_memory->previous = refal.free_memory_head;
     T_LINKCB *next_where = where->next;
     linkcb_free_memory->next = next_where;
     next_where->previous = linkcb_free_memory;
@@ -128,15 +128,15 @@ bool insert_from_free_memory_list(T_LINKCB *where, size_t count)
     return true;
 }
 
-bool extended_insert_from_free_memory_list(T_LINKCB *where, size_t count)
+bool extended_insert_from_free_memory(T_LINKCB *where, size_t count)
 {
-    while (!check_count_free_memory_list(count))
+    while (!check_count_free_memory(count))
         if (!more_free_memory())
         {
             refal.upshot = 3;
             return false;
         }
-    return insert_from_free_memory_list(where, count);
+    return insert_from_free_memory(where, count);
 }
 
 bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
@@ -145,7 +145,7 @@ bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_f
         refal_abort_end("insert_view_k_function_dot: process doesn't exist still");
     if (status_table->dot != NULL)
         refal_abort_end("insert_view_k_function_dot: there are '<'-signes in view field");
-    if (!extended_insert_from_free_memory_list(status_table->view, 3))
+    if (!extended_insert_from_free_memory(status_table->view, 3))
         return false;
     T_LINKCB *k = status_table->view->next;
     T_LINKCB *symbol_label = k->next;
@@ -170,11 +170,11 @@ void refal_initiate(void)
     refal.current_status_table = NULL;
     refal.static_boxes = NULL;
     refal.dynamic_boxes = NULL;
-    refal.free_memory_list_head = &free_memory_list_head;
-    refal.free_memory_list_head->previous = &free_memory_list_head;
-    refal.free_memory_list_head->next = &free_memory_list_head;
-    refal.free_memory_list_head->tag = TAGO;
-    refal.free_memory_list_head->info.code = NULL;
+    refal.free_memory_head = &free_memory_head;
+    refal.free_memory_head->previous = &free_memory_head;
+    refal.free_memory_head->next = &free_memory_head;
+    refal.free_memory_head->tag = TAGO;
+    refal.free_memory_head->info.code = NULL;
     refal.arg.argc = gargc;
     refal.arg.argv = gargv;
     refal.timer.mode = options.timer_on;
@@ -193,30 +193,30 @@ void delete_status_table(const T_STATUS_TABLE *status_table)
         refal_abort_end("delete_status_table: process is in job yet");
     status_table->previous->next = status_table->next;
     status_table->next->previous = status_table->previous;
-    T_LINKCB *last_linkcb_free_memory = refal.free_memory_list_head->previous;
+    T_LINKCB *last_linkcb_free_memory = refal.free_memory_head->previous;
     T_LINKCB *last_view = status_table->view->previous;
     T_LINKCB *last_store = status_table->store->previous;
     last_linkcb_free_memory->next = status_table->view;
     status_table->view->previous = last_linkcb_free_memory;
     last_view->next = status_table->store;
     status_table->store->previous = last_view;
-    last_store->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = last_store;
+    last_store->next = refal.free_memory_head;
+    refal.free_memory_head->previous = last_store;
     return;
 }
 
 //    delete part of list and add it to free memory list
-void insert_to_free_memory_list(T_LINKCB *before, T_LINKCB *after)
+void insert_to_free_memory(T_LINKCB *before, T_LINKCB *after)
 {
     T_LINKCB *first = before->next;
     if (first == after)
         return;
     T_LINKCB *last = after->previous;
-    T_LINKCB *where = refal.free_memory_list_head->previous;
+    T_LINKCB *where = refal.free_memory_head->previous;
     before->next = after;
     after->previous = before;
-    last->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = last;
+    last->next = refal.free_memory_head;
+    refal.free_memory_head->previous = last;
     where->next = first;
     first->previous = where;
     return;
@@ -549,13 +549,13 @@ void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 //  copy expression and add it to nessecary place
 bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
-    T_LINKCB *linkcb_free_memory = refal.free_memory_list_head;
+    T_LINKCB *linkcb_free_memory = refal.free_memory_head;
     const T_LINKCB *current = before->next;
     T_LINKCB *last_bracket = NULL;
     while (current != after)
     {
         linkcb_free_memory = linkcb_free_memory->next;
-        if (linkcb_free_memory == refal.free_memory_list_head)
+        if (linkcb_free_memory == refal.free_memory_head)
             return false;
         switch (current->tag)
         {
@@ -577,12 +577,12 @@ bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
         }
         current = current->next;
     }
-    if (refal.free_memory_list_head == linkcb_free_memory)
+    if (refal.free_memory_head == linkcb_free_memory)
         return true;
-    T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
+    T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
     T_LINKCB *next_linkcb_free_memory = linkcb_free_memory->next;
-    refal.free_memory_list_head->next = next_linkcb_free_memory;
-    next_linkcb_free_memory->previous = refal.free_memory_list_head;
+    refal.free_memory_head->next = next_linkcb_free_memory;
+    next_linkcb_free_memory->previous = refal.free_memory_head;
     T_LINKCB *next_where = where->next;
     linkcb_free_memory->next = next_where;
     next_where->previous = linkcb_free_memory;
@@ -609,15 +609,15 @@ bool create_status_table(T_STATUS_TABLE *status_table)
         refal_initiate();
     if (exist_status_table(status_table))
         refal_abort_end("create_status_table: process already exists");
-    status_table->view = refal.free_memory_list_head->next;
-    if (status_table->view == refal.free_memory_list_head)
+    status_table->view = refal.free_memory_head->next;
+    if (status_table->view == refal.free_memory_head)
         return false;
     status_table->store = status_table->view->next;
-    if (status_table->store == refal.free_memory_list_head)
+    if (status_table->store == refal.free_memory_head)
         return false;
-    T_LINKCB *next_free_memory_list_head = status_table->store->next;
-    refal.free_memory_list_head->next = next_free_memory_list_head;
-    next_free_memory_list_head->previous = refal.free_memory_list_head;
+    T_LINKCB *next_free_memory_head = status_table->store->next;
+    refal.free_memory_head->next = next_free_memory_head;
+    next_free_memory_head->previous = refal.free_memory_head;
     status_table->view->next = status_table->view;
     status_table->view->previous = status_table->view;
     status_table->store->next = status_table->store;
@@ -710,11 +710,11 @@ static bool collect_garbage(void)
             temp_dynamic_box_head->info.code = dynamic_box_head->info.code;
             temp_dynamic_box_head->tag = dynamic_box_head->tag;
             T_LINKCB *last_linkcb_dynamic_box = dynamic_box_head->previous;
-            T_LINKCB *first_linkcb_free_memory = refal.free_memory_list_head->next;
+            T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
             last_linkcb_dynamic_box->next = first_linkcb_free_memory;
             first_linkcb_free_memory->previous = last_linkcb_dynamic_box;
-            refal.free_memory_list_head->next = dynamic_box_head;
-            dynamic_box_head->previous = refal.free_memory_list_head;
+            refal.free_memory_head->next = dynamic_box_head;
+            dynamic_box_head->previous = refal.free_memory_head;
         }
         dynamic_box_head = temp_dynamic_box_head->info.codep;
     } while (dynamic_box_head != NULL);
@@ -725,12 +725,12 @@ static bool collect_garbage(void)
     return was_collected_garbage;
 }
 
-static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_free_memory)
+static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_memory)
 {
     if (refal_init)
         refal_initiate();
     T_LINKCB *linkcb_block_free_memory = block_free_memory;
-    T_LINKCB *last_linkcb_free_memory = refal.free_memory_list_head->previous;
+    T_LINKCB *last_linkcb_free_memory = refal.free_memory_head->previous;
     for (size_t i = 0; i < size_block_free_memory; i++)
     {
         last_linkcb_free_memory->next = linkcb_block_free_memory;
@@ -740,8 +740,8 @@ static void add_free_memory_list(T_LINKCB *block_free_memory, size_t size_block_
         last_linkcb_free_memory = linkcb_block_free_memory;
         linkcb_block_free_memory++;
     }
-    last_linkcb_free_memory->next = refal.free_memory_list_head;
-    refal.free_memory_list_head->previous = last_linkcb_free_memory;
+    last_linkcb_free_memory->next = refal.free_memory_head;
+    refal.free_memory_head->previous = last_linkcb_free_memory;
     return;
 }
 

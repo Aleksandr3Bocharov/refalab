@@ -68,7 +68,7 @@ static void random_(void)
             break;
         count = random_number_in_range(count) + 1;
         p = refal.previous_result;
-        if (!extended_insert_from_free_memory_list(p, count))
+        if (!extended_insert_from_free_memory(p, count))
             return;
         while (count > 0)
         {
