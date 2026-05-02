@@ -215,16 +215,16 @@ void (*last_1)(void) = last_;
 
 static void lengr_(void)
 {
-    uint32_t n = 0;
+    uint32_t length = 0;
     const T_LINKCB *current_argument = refal.previous_argument->next;
     while (current_argument != refal.next_argument)
     {
-        n++;
+        length++;
         current_argument = current_argument->next;
     }
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
-    pcoden(refal.previous_argument, n);
+    pcoden(refal.previous_argument, length);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
@@ -234,18 +234,18 @@ void (*lengr_1)(void) = lengr_;
 
 static void lengw_(void)
 {
-    uint32_t n = 0;
+    uint32_t length = 0;
     const T_LINKCB *current_argument = refal.previous_argument->next;
     while (current_argument != refal.next_argument)
     {
-        n++;
+        length++;
         if (current_argument->tag == TAGLB)
             current_argument = current_argument->info.codep;
         current_argument = current_argument->next;
     }
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
-    pcoden(refal.previous_argument, n);
+    pcoden(refal.previous_argument, length);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
