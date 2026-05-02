@@ -139,34 +139,34 @@ void (*symb_1)(void) = symb_;
 
 static void first_(void)
 {
-    T_LINKCB *pn = refal.previous_argument->next;
-    if (pn == refal.next_argument || pn->tag != TAGN)
+    T_LINKCB *first_argument = refal.previous_argument->next;
+    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    const uint32_t n = gcoden(pn);
-    T_LINKCB *p = pn;
-    for (size_t k = 1; k <= n; k++)
+    const uint32_t number = gcoden(first_argument);
+    T_LINKCB *current_argument = first_argument;
+    for (uint32_t k = 1; k <= number; k++)
     {
-        p = p->next;
-        if (p == refal.next_argument)
+        current_argument = current_argument->next;
+        if (current_argument == refal.next_argument)
         {
-            pn->info.code = NULL;
-            pn->info.infoc = '*';
-            pn->tag = TAGO;
+            first_argument->info.code = NULL;
+            first_argument->info.infoc = '*';
+            first_argument->tag = TAGO;
             transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
             return;
         }
-        if (p->tag == TAGLB)
-            p = p->info.codep;
+        if (current_argument->tag == TAGLB)
+            current_argument = current_argument->info.codep;
     }
-    p = p->next;
+    current_argument = current_argument->next;
     refal.previous_argument->tag = TAGLB;
-    refal.previous_argument->info.codep = pn;
-    pn->tag = TAGRB;
-    pn->info.codep = refal.previous_argument;
-    transplantation(refal.previous_argument, pn, p);
+    refal.previous_argument->info.codep = first_argument;
+    first_argument->tag = TAGRB;
+    first_argument->info.codep = refal.previous_argument;
+    transplantation(refal.previous_argument, first_argument, current_argument);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
@@ -176,39 +176,37 @@ void (*first_1)(void) = first_;
 
 static void last_(void)
 {
-    T_LINKCB *pn = refal.previous_argument->next;
-    if (pn == refal.next_argument || pn->tag != TAGN)
+    T_LINKCB *first_argument = refal.previous_argument->next;
+    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    const uint32_t n = gcoden(pn);
-    T_LINKCB *p = refal.next_argument;
-    for (size_t k = 1; k <= n; k++)
+    const uint32_t number = gcoden(first_argument);
+    T_LINKCB *current_argument = refal.next_argument;
+    for (uint32_t k = 1; k <= number; k++)
     {
-        p = p->previous;
-        if (p == pn)
+        current_argument = current_argument->previous;
+        if (current_argument == first_argument)
         {
-            pn->tag = TAGO;
-            pn->info.code = NULL;
-            pn->info.infoc = '*';
-            transplantation(refal.previous_result, pn, refal.next_argument);
-            p = refal.next_result->previous;
-            transplantation(p, refal.previous_argument, refal.next_argument);
+            first_argument->tag = TAGO;
+            first_argument->info.code = NULL;
+            first_argument->info.infoc = '*';
+            transplantation(refal.previous_result, first_argument, refal.next_argument);
+            transplantation(refal.next_result->previous, first_argument->previous, first_argument->next);
             return;
         }
-        if (p->tag == TAGRB)
-            p = p->info.codep;
+        if (current_argument->tag == TAGRB)
+            current_argument = current_argument->info.codep;
     }
-    p = p->previous;
+    current_argument = current_argument->previous;
     refal.previous_argument->tag = TAGLB;
-    refal.previous_argument->info.codep = pn;
-    pn->tag = TAGRB;
-    pn->info.codep = refal.previous_argument;
-    transplantation(refal.previous_argument, p, refal.next_argument);
-    transplantation(refal.previous_result, pn, refal.next_argument);
-    p = refal.next_result->previous;
-    transplantation(p, refal.next_result, refal.next_argument);
+    refal.previous_argument->info.codep = first_argument;
+    first_argument->tag = TAGRB;
+    first_argument->info.codep = refal.previous_argument;
+    transplantation(refal.previous_argument, current_argument, refal.next_argument);
+    transplantation(refal.previous_result, first_argument, refal.next_argument);
+    transplantation(refal.next_result->previous, refal.next_result, refal.next_argument);
     return;
 }
 char last_0[] = {Z4 'L', 'A', 'S', 'T', (char)4};
@@ -218,11 +216,11 @@ void (*last_1)(void) = last_;
 static void lengr_(void)
 {
     uint32_t n = 0;
-    const T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    const T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
         n++;
-        p = p->next;
+        current_argument = current_argument->next;
     }
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
@@ -237,13 +235,13 @@ void (*lengr_1)(void) = lengr_;
 static void lengw_(void)
 {
     uint32_t n = 0;
-    const T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    const T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
         n++;
-        if (p->tag == TAGLB)
-            p = p->info.codep;
-        p = p->next;
+        if (current_argument->tag == TAGLB)
+            current_argument = current_argument->info.codep;
+        current_argument = current_argument->next;
     }
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
@@ -257,16 +255,16 @@ void (*lengw_1)(void) = lengw_;
 
 static void multe_(void)
 {
-    T_LINKCB *pn = refal.previous_argument->next;
-    if (pn == refal.next_argument || pn->tag != TAGN)
+    T_LINKCB *symbol_number = refal.previous_argument->next;
+    if (symbol_number == refal.next_argument || symbol_number->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    uint32_t n = gcoden(pn);
+    uint32_t n = gcoden(symbol_number);
     if (n == 0)
         return;
-    T_LINKCB *p = pn->next;
+    T_LINKCB *p = symbol_number->next;
     if (p == refal.next_argument)
         return;
     if (p->next != refal.next_argument)
@@ -274,7 +272,7 @@ static void multe_(void)
         do
         {
             p = refal.next_result->previous;
-            if (!copy_expression(p, pn, refal.next_argument))
+            if (!copy_expression(p, symbol_number, refal.next_argument))
             {
                 refal.upshot = 3;
                 return;
