@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-05-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
@@ -22,58 +22,56 @@
 
 static void numb_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    const char zn = p->info.infoc;
-    const T_LINKCB *pz = p;
-    if (p->tag == TAGO && (zn == '-' || zn == '+'))
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    const char sign = current_argument->info.infoc;
+    const T_LINKCB *sign_argument = current_argument;
+    if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
     {
-        p = p->next;
-        if (zn == '+')
-            pz = p;
+        current_argument = current_argument->next;
+        if (sign == '+')
+            sign_argument = current_argument;
     }
-    T_LINKCB *pp = p;
-    while (p->tag == TAGO && p->info.infoc == '0')
-        p = p->next;
-    char str[11];
-    size_t i;
-    bool neot = false;
-    for (i = 0; p != refal.next_argument; i++)
+    T_LINKCB *number_argument = current_argument;
+    while (current_argument->tag == TAGO && current_argument->info.infoc == '0')
+        current_argument = current_argument->next;
+    char number_string[11];
+    uint8_t i;
+    bool impossible = false;
+    for (i = 0; current_argument != refal.next_argument; i++)
     {
-        if (p->tag != TAGO || i == 10)
+        if (current_argument->tag != TAGO || i == 10)
         {
-            neot = true;
+            impossible = true;
             break;
         }
-        str[i] = p->info.infoc;
-        if (str[i] < '0' || str[i] > '9')
+        number_string[i] = current_argument->info.infoc;
+        if (number_string[i] < '0' || number_string[i] > '9')
         {
-            neot = true;
+            impossible = true;
             break;
         }
-        if (i == 9 && strncmp(str, "4294967295", i + 1) > 0)
+        if (i == 9 && strncmp(number_string, "4294967295", i + 1) > 0)
         {
-            neot = true;
+            impossible = true;
             break;
         }
-        p = p->next;
+        current_argument = current_argument->next;
     }
-    if (neot)
+    if (impossible)
     {
         refal.upshot = 2;
         return;
     }
-    str[i] = '\0';
-    if (strlen(str) == 0)
+    number_string[i] = '\0';
+    if (strlen(number_string) == 0)
     {
-        if (!extended_insert_from_free_memory(refal.next_argument->previous, 1))
-            return;
-        pp = refal.next_argument->previous;
-        pz = pp;
+        number_argument = refal.previous_argument;
+        sign_argument = number_argument;
     }
-    pp->tag = TAGN;
-    pp->info.code = NULL;
-    pcoden(pp, (uint32_t)atoll(str));
-    transplantation(refal.previous_result, pz->previous, pp->next);
+    number_argument->tag = TAGN;
+    number_argument->info.code = NULL;
+    pcoden(number_argument, (uint32_t)atoll(number_string));
+    transplantation(refal.previous_result, sign_argument->previous, number_argument->next);
     return;
 }
 char numb_0[] = {Z4 'N', 'U', 'M', 'B', (char)4};
@@ -82,57 +80,57 @@ void (*numb_1)(void) = numb_;
 
 static void symb_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    const char zn = p->info.infoc;
-    T_LINKCB *pz = p;
-    if (p->tag == TAGO && (zn == '-' || zn == '+'))
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    const char sign = current_argument->info.infoc;
+    T_LINKCB *sign_argument = current_argument;
+    if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
     {
-        p = p->next;
-        if (zn == '+')
-            pz = p;
+        current_argument = current_argument->next;
+        if (sign == '+')
+            sign_argument = current_argument;
     }
-    T_LINKCB *pp = p;
-    while (p->tag == TAGN && gcoden(p) == 0)
-        p = p->next;
-    size_t i;
-    for (i = 0; p != refal.next_argument; i++, p = p->next)
-        if (p->tag != TAGN || i == 1)
+    T_LINKCB *begin_number_argument = current_argument;
+    while (current_argument->tag == TAGN && gcoden(current_argument) == 0)
+        current_argument = current_argument->next;
+    uint8_t i;
+    for (i = 0; current_argument != refal.next_argument; i++, current_argument = current_argument->next)
+        if (current_argument->tag != TAGN || i == 1)
         {
             refal.upshot = 2;
             return;
         }
-    p = p->previous;
-    uint32_t l = gcoden(p);
-    if (i == 0 || l == 0)
+    current_argument = current_argument->previous;
+    uint32_t number = gcoden(current_argument);
+    if (i == 0 || number == 0)
     {
-        pz = pp;
-        l = 0;
+        sign_argument = begin_number_argument;
+        number = 0;
     }
-    char str[12];
-    sprintf(str, "%u", l);
-    const size_t j = strlen(str);
-    if (!check_count_free_memory(j))
+    char number_string[11];
+    sprintf(number_string, "%u", number);
+    const uint8_t number_length = (uint8_t)strlen(number_string);
+    if (!check_count_free_memory(number_length))
         if (!more_free_memory())
         {
             refal.upshot = 3;
             return;
         }
-    if (pz != refal.next_argument)
-        insert_from_free_memory(pp, j);
+    if (sign_argument != refal.next_argument)
+        insert_from_free_memory(begin_number_argument, number_length);
     else
     {
-        pz = pz->previous;
-        insert_from_free_memory(pz, j);
-        pz = pz->next;
-        pp = pz;
+        sign_argument = sign_argument->previous;
+        insert_from_free_memory(sign_argument, number_length);
+        sign_argument = sign_argument->next;
+        begin_number_argument = sign_argument;
     }
-    for (i = 0, p = pp; i < j; i++, p = p->next)
+    for (i = 0, current_argument = begin_number_argument; i < number_length; i++, current_argument = current_argument->next)
     {
-        p->tag = TAGO;
-        p->info.code = NULL;
-        p->info.infoc = str[i];
+        current_argument->tag = TAGO;
+        current_argument->info.code = NULL;
+        current_argument->info.infoc = number_string[i];
     }
-    transplantation(refal.previous_result, pz->previous, p);
+    transplantation(refal.previous_result, sign_argument->previous, current_argument);
     return;
 }
 char symb_0[] = {Z4 'S', 'Y', 'M', 'B', (char)4};
