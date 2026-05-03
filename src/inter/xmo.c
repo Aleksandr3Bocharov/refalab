@@ -303,17 +303,16 @@ void (*multe_1)(void) = multe_;
 
 static void chr_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
-        if (p->tag == TAGN)
+        if (current_argument->tag == TAGN)
         {
-            p->tag = TAGO;
-            const char c = (char)gcoden(p);
-            p->info.code = NULL;
-            p->info.infoc = c;
+            current_argument->tag = TAGO;
+            current_argument->info.code = NULL;
+            current_argument->info.infoc = (char)gcoden(current_argument);
         }
-        p = p->next;
+        current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
@@ -324,15 +323,12 @@ void (*chr_1)(void) = chr_;
 
 static void ord_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
-        if (p->tag == TAGO)
-        {
-            p->tag = TAGN;
-            pcoden(p, (uint8_t)p->info.infoc);
-        }
-        p = p->next;
+        if (current_argument->tag == TAGO)
+            current_argument->tag = TAGN;
+        current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
@@ -343,12 +339,12 @@ void (*ord_1)(void) = ord_;
 
 static void upper_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
-        if (p->tag == TAGO)
-            p->info.infoc = (char)toupper(p->info.infoc);
-        p = p->next;
+        if (current_argument->tag == TAGO)
+            current_argument->info.infoc = (char)toupper(current_argument->info.infoc);
+        current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
@@ -359,12 +355,12 @@ void (*upper_1)(void) = upper_;
 
 static void lower_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    while (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
     {
-        if (p->tag == TAGO)
-            p->info.infoc = (char)tolower(p->info.infoc);
-        p = p->next;
+        if (current_argument->tag == TAGO)
+            current_argument->info.infoc = (char)tolower(current_argument->info.infoc);
+        current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
     return;
