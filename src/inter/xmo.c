@@ -255,42 +255,45 @@ void (*lengw_1)(void) = lengw_;
 
 static void multe_(void)
 {
-    T_LINKCB *symbol_number = refal.previous_argument->next;
+    const T_LINKCB *symbol_number = refal.previous_argument->next;
     if (symbol_number == refal.next_argument || symbol_number->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }; // FAIL
-    uint32_t n = gcoden(symbol_number);
-    if (n == 0)
+    uint32_t number = gcoden(symbol_number);
+    if (number == 0)
         return;
-    T_LINKCB *p = symbol_number->next;
-    if (p == refal.next_argument)
+    const T_LINKCB *first_expression = symbol_number->next;
+    if (first_expression == refal.next_argument)
         return;
-    if (p->next != refal.next_argument)
+    if (first_expression->next != refal.next_argument)
     {
         do
         {
-            p = refal.next_result->previous;
-            if (!copy_expression(p, symbol_number, refal.next_argument))
+            if (!copy_expression(refal.next_result->previous, first_expression->previous, refal.next_argument))
             {
                 refal.upshot = 3;
                 return;
             }; // LACK
-            n--;
-        } while (n >= 1);
+            number--;
+        } while (number >= 1);
     }
     else
     {
-        if (!extended_insert_from_free_memory(refal.previous_result, n))
-            return; //  LACK
-        T_LINKCB *q = refal.previous_result;
-        for (uint32_t k = 0; k < n; k++)
+        if (number > 3)
+            if (!extended_insert_from_free_memory(refal.next_result, number - 3))
+                return; //  LACK
+        const uint16_t expression_tag = first_expression->tag;
+        void *expression_code = first_expression->info.code;
+        T_LINKCB *current_result = refal.next_result;
+        for (uint32_t i = 0; i < number; i++)
         {
-            q = q->next;
-            q->tag = p->tag;
-            q->info.code = p->info.code;
+            current_result = current_result->next;
+            current_result->tag = expression_tag;
+            current_result->info.code = expression_code;
         }
+        transplantation(refal.previous_result, refal.next_result, current_result->next);
     }
     return;
 }
