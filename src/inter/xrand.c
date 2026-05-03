@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-05-03
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XRAND.C ------------
@@ -9,36 +9,34 @@
 //            random_number
 //-------------------------------------------
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
 #include "refalab.h"
 #include "rfintf.h"
 
-#define CMINDELAY 24
-#define CMAXDELAY 55
+#define J 33
+#define K 97
 
 static bool init = false;
-static size_t k = CMAXDELAY - 1;
-static size_t j = CMINDELAY - 1;
-static uint32_t y[CMAXDELAY];
+static uint8_t n_sub_k = K - 1;
+static uint8_t n_sub_j = J - 1;
+static uint32_t y[K];
 
 static uint32_t random_number(void)
 {
     if (!init)
     {
-        uint32_t seed = (uint32_t)time(NULL);
-        for (size_t i = 0; i < CMAXDELAY; ++i)
-        {
-            seed = seed * 1103515245 + 12345;
-            y[i] = seed;
-        }
+        srand((unsigned int)time(NULL));
+        for(uint8_t i = 0; i < K; i++)
+            y[i] = (uint32_t)((double)rand() / RAND_MAX * MAX_NUMBER);
         init = true;
     }
-    y[k] += y[j];
-    const uint32_t result = y[k];
-    k = (k + CMAXDELAY - 1) % CMAXDELAY;
-    j = (j + CMAXDELAY - 1) % CMAXDELAY;
+    y[n_sub_k] += y[n_sub_j];
+    const uint32_t result = y[n_sub_k];
+    n_sub_k = (n_sub_k + K - 1) % K;
+    n_sub_j = (n_sub_j + K - 1) % K;
     return result % (MAX_NUMBER + 1);
 }
 
@@ -46,8 +44,7 @@ static uint32_t random_number_in_range(uint32_t limit)
 {
     if (limit == 0)
         return 0;
-    const uint32_t max = MAX_NUMBER;
-    const uint32_t max_valid = max - max % limit;
+    const uint32_t max_valid = MAX_NUMBER - MAX_NUMBER % limit;
     uint32_t random;
     do
     {
