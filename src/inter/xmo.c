@@ -81,49 +81,49 @@ void (*numb_1)(void) = numb_;
 static void symb_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
-    const char sign = current_argument->info.infoc;
+    size_t argument_length = 1;
+    char sign = current_argument->info.infoc;
     T_LINKCB *sign_argument = current_argument;
     if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
     {
+        argument_length++;
         current_argument = current_argument->next;
         if (sign == '+')
             sign_argument = current_argument;
     }
+    else
+        sign = '+';
     T_LINKCB *begin_number_argument = current_argument;
     while (current_argument->tag == TAGN && gcoden(current_argument) == 0)
+    {
+        argument_length++;
         current_argument = current_argument->next;
+    }
     uint8_t i;
-    for (i = 0; current_argument != refal.next_argument; i++, current_argument = current_argument->next)
+    for (i = 0; current_argument != refal.next_argument; i++, argument_length++, current_argument = current_argument->next)
         if (current_argument->tag != TAGN || i == 1)
         {
             refal.upshot = 2;
             return;
         }
+    if (i == 0)
+    {
+        refal.previous_argument->tag = TAGO;
+        refal.previous_argument->info.code = NULL;
+        refal.previous_argument->info.infoc = '0';
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+        return;
+    }
     current_argument = current_argument->previous;
     uint32_t number = gcoden(current_argument);
-    if (i == 0 || number == 0)
-    {
-        sign_argument = begin_number_argument;
-        number = 0;
-    }
     char number_string[11];
     sprintf(number_string, "%u", number);
-    const uint8_t number_length = (uint8_t)strlen(number_string);
-    if (!check_count_free_memory(number_length))
-        if (!more_free_memory())
-        {
-            refal.upshot = 3;
+    const size_t number_length = strlen(number_string);
+    const size_t result_need = number_length + (sign == '-' ? 1 : 0);
+    if (result_need > argument_length)
+        if (!extended_insert_from_free_memory(refal.next_result, result_need - argument_length))
             return;
-        }
-    if (sign_argument != refal.next_argument)
-        insert_from_free_memory(begin_number_argument, number_length);
-    else
-    {
-        sign_argument = sign_argument->previous;
-        insert_from_free_memory(sign_argument, number_length);
-        sign_argument = sign_argument->next;
-        begin_number_argument = sign_argument;
-    }
+    transplantation(refal.next_argument->previous, refal.next_result, sign_argument);
     for (i = 0, current_argument = begin_number_argument; i < number_length; i++, current_argument = current_argument->next)
     {
         current_argument->tag = TAGO;
