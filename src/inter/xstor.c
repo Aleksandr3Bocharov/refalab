@@ -54,11 +54,6 @@ static void dg_(void)
         left_bracket = right_bracket->next;
         if (left_bracket == status_table->store)
             return;
-        if (left_bracket->tag != TAGLB)
-        {
-            refal.upshot = 2;
-            return;
-        }; // FAIL
         right_bracket = left_bracket->info.codep;
         after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
         if (after_duplicate == NULL)
@@ -123,8 +118,6 @@ static void rp_(void)
             }
             else
             {
-                if (left_bracket->tag != TAGLB)
-                    break;
                 right_bracket = left_bracket->info.codep;
                 T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, current_argument, left_bracket);
                 if (after_duplicate == NULL)
@@ -154,11 +147,6 @@ static void cp_(void)
         const T_LINKCB *left_bracket = right_bracket->next;
         if (left_bracket == status_table->store)
             return;
-        if (left_bracket->tag != TAGLB)
-        {
-            refal.upshot = 2;
-            return;
-        }; // FAIL
         right_bracket = left_bracket->info.codep;
         after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
         if (after_duplicate == NULL)
