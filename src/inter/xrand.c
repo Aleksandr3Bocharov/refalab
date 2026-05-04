@@ -16,28 +16,28 @@
 #include "refalab.h"
 #include "rfintf.h"
 
-#define J 33
-#define K 97
+#define MIN_DELAY 33
+#define MAX_DELAY 97
 
 static bool init = false;
-static uint8_t n_sub_k = K - 1;
-static uint8_t n_sub_j = J - 1;
-static uint32_t y[K];
+static uint8_t n_sub_max_delay = MAX_DELAY - 1;
+static uint8_t n_sub_min_delay = MIN_DELAY - 1;
+static uint32_t y[MAX_DELAY];
 
 static uint32_t random_number(void)
 {
     if (!init)
     {
         srand((unsigned int)time(NULL));
-        for(uint8_t i = 0; i < K; i++)
+        for(uint8_t i = 0; i < MAX_DELAY; i++)
             y[i] = (uint32_t)((double)rand() / RAND_MAX * MAX_NUMBER);
         init = true;
     }
-    y[n_sub_k] += y[n_sub_j];
-    const uint32_t result = y[n_sub_k];
-    n_sub_k = (n_sub_k + K - 1) % K;
-    n_sub_j = (n_sub_j + K - 1) % K;
-    return result % (MAX_NUMBER + 1);
+    y[n_sub_max_delay] += y[n_sub_min_delay];
+    const uint32_t result = y[n_sub_max_delay];
+    n_sub_max_delay = (n_sub_max_delay + MAX_DELAY - 1) % MAX_DELAY;
+    n_sub_min_delay = (n_sub_min_delay + MAX_DELAY - 1) % MAX_DELAY;
+    return result;
 }
 
 static uint32_t random_number_in_range(uint32_t limit)
