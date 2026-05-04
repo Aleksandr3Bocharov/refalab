@@ -27,15 +27,16 @@ static void br_(void)
             return;
         }; // FAIL
     }
-    if (!extended_insert_from_free_memory(status_table->store, 2))
+    if (!extended_insert_from_free_memory(refal.next_result, 1))
         return; // LACK
-    T_LINKCB *left_bracket = status_table->store->next;
-    T_LINKCB *right_bracket = left_bracket->next;
+    T_LINKCB *left_bracket = refal.next_result->next;
+    T_LINKCB *right_bracket = refal.previous_argument;
     left_bracket->info.codep = right_bracket;
     left_bracket->tag = TAGLB;
     right_bracket->info.codep = left_bracket;
     right_bracket->tag = TAGRB;
     transplantation(left_bracket, refal.previous_argument, refal.next_argument);
+    transplantation(status_table->store, refal.next_result, right_bracket->next);
     return;
 }
 char br_0[] = {Z2 'B', 'R', (char)2};
@@ -109,15 +110,16 @@ static void rp_(void)
             T_LINKCB *left_bracket = right_bracket->next;
             if (left_bracket == status_table->store)
             {
-                if (!extended_insert_from_free_memory(status_table->store, 2))
+                if (!extended_insert_from_free_memory(refal.next_result, 1))
                     return; // LACK
-                left_bracket = status_table->store->next;
-                right_bracket = left_bracket->next;
+                T_LINKCB *left_bracket = refal.next_result->next;
+                T_LINKCB *right_bracket = refal.previous_argument;
                 left_bracket->info.codep = right_bracket;
                 left_bracket->tag = TAGLB;
                 right_bracket->info.codep = left_bracket;
                 right_bracket->tag = TAGRB;
                 transplantation(left_bracket, refal.previous_argument, refal.next_argument);
+                transplantation(status_table->store, refal.next_result, right_bracket->next);
             }
             else
             {
