@@ -90,18 +90,18 @@ void (*dgall_1)(void) = dgall_;
 static void rp_(void)
 {
     const T_STATUS_TABLE *status_table = refal.current_status_table;
-    T_LINKCB *p = refal.previous_argument;
-    bool fail = false;
-    while (p->tag != TAGO || p->info.infoc != '=')
+    T_LINKCB *current_argument = refal.previous_argument;
+    bool impossible = false;
+    while (current_argument->tag != TAGO || current_argument->info.infoc != '=')
     {
-        p = p->next;
-        if (p == refal.next_argument)
+        current_argument = current_argument->next;
+        if (current_argument == refal.next_argument)
         {
-            fail = true;
+            impossible = true;
             break;
         }
     };
-    if (!fail)
+    if (!impossible)
     {
         T_LINKCB *right_bracket = status_table->store;
         while (true)
@@ -109,11 +109,8 @@ static void rp_(void)
             T_LINKCB *left_bracket = right_bracket->next;
             if (left_bracket == status_table->store)
             {
-                if (!insert_from_free_memory(status_table->store, 2))
-                {
-                    refal.upshot = 3;
-                    return;
-                }; // LACK
+                if (!extended_insert_from_free_memory(status_table->store, 2))
+                    return; // LACK
                 left_bracket = status_table->store->next;
                 right_bracket = left_bracket->next;
                 left_bracket->info.codep = right_bracket;
@@ -127,13 +124,13 @@ static void rp_(void)
                 if (left_bracket->tag != TAGLB)
                     break;
                 right_bracket = left_bracket->info.codep;
-                T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, p, left_bracket);
+                T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, current_argument, left_bracket);
                 if (after_duplicate == NULL)
                     continue;
                 if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
                     continue;
                 insert_to_free_memory(after_duplicate, right_bracket);
-                transplantation(after_duplicate, p, refal.next_argument);
+                transplantation(after_duplicate, current_argument, refal.next_argument);
             }
             return;
         }
