@@ -286,14 +286,14 @@ static void multe_(void)
                 return; //  LACK
         const uint16_t expression_tag = first_expression->tag;
         void *expression_code = first_expression->info.code;
-        T_LINKCB *current_result = refal.next_result;
+        T_LINKCB *current_argument = refal.next_result;
         for (uint32_t i = 0; i < number; i++)
         {
-            current_result = current_result->next;
-            current_result->tag = expression_tag;
-            current_result->info.code = expression_code;
+            current_argument = current_argument->next;
+            current_argument->tag = expression_tag;
+            current_argument->info.code = expression_code;
         }
-        transplantation(refal.previous_result, refal.next_result, current_result->next);
+        transplantation(refal.previous_result, refal.next_result, current_argument->next);
     }
     return;
 }

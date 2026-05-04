@@ -29,7 +29,7 @@ static uint32_t random_number(void)
     if (!randomizer_init)
     {
         srand((unsigned int)time(NULL));
-        for(uint8_t i = 0; i < MAX_DELAY; i++)
+        for (uint8_t i = 0; i < MAX_DELAY; i++)
             x[i] = (uint32_t)((double)rand() / RAND_MAX * MAX_NUMBER);
         randomizer_init = true;
     }
@@ -55,26 +55,28 @@ static uint32_t random_number_in_range(uint32_t limit)
 
 static void random_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
     do
     {
-        if (p->next != refal.next_argument || p->tag != TAGN)
+        const T_LINKCB *symbol_number = refal.previous_argument->next;
+        if (symbol_number->next != refal.next_argument || symbol_number->tag != TAGN)
             break;
-        uint32_t count = gcoden(p);
-        if (count == 0)
+        const uint32_t numbers_max_count = gcoden(symbol_number);
+        if (numbers_max_count == 0)
             break;
-        count = random_number_in_range(count) + 1;
-        p = refal.previous_result;
-        if (!extended_insert_from_free_memory(p, count))
-            return;
-        while (count > 0)
+        uint32_t numbers_count = random_number_in_range(numbers_max_count) + 1;
+        if (numbers_count > 2)
+            if (!extended_insert_from_free_memory(refal.next_result, numbers_count - 2))
+                return;
+        T_LINKCB *current_argument = refal.next_result;
+        while (numbers_count > 0)
         {
-            p = p->next;
-            p->tag = TAGN;
-            p->info.code = NULL;
-            pcoden(p, random_number());
-            count--;
+            current_argument = current_argument->next;
+            current_argument->tag = TAGN;
+            current_argument->info.code = NULL;
+            pcoden(current_argument, random_number());
+            numbers_count--;
         }
+        transplantation(refal.previous_result, refal.next_result, current_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
@@ -86,20 +88,20 @@ void (*random_1)(void) = random_;
 
 static void random_number_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.next_argument || p->tag != TAGN)
+    T_LINKCB *symbol_number = refal.previous_argument->next;
+    if (symbol_number->next != refal.next_argument || symbol_number->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }
-    const uint32_t max = gcoden(p);
-    uint32_t res;
-    if (max != MAX_NUMBER)
-        res = random_number_in_range(max + 1);
+    const uint32_t max_number = gcoden(symbol_number);
+    uint32_t number_random;
+    if (max_number != MAX_NUMBER)
+        number_random = random_number_in_range(max_number + 1);
     else
-        res = random_number();
-    pcoden(p, res);
-    transplantation(refal.previous_result, p->previous, p->next);
+        number_random = random_number();
+    pcoden(symbol_number, number_random);
+    transplantation(refal.previous_result, symbol_number->previous, symbol_number->next);
     return;
 }
 char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)13};
