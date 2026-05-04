@@ -46,7 +46,8 @@ static void dg_(void)
 {
     const T_STATUS_TABLE *status_table = refal.current_status_table;
     T_LINKCB *right_bracket = status_table->store;
-    T_LINKCB *q, *left_bracket;
+    T_LINKCB *after_duplicate;
+    const T_LINKCB *left_bracket;
     while (true)
     {
         left_bracket = right_bracket->next;
@@ -58,17 +59,15 @@ static void dg_(void)
             return;
         }; // FAIL
         right_bracket = left_bracket->info.codep;
-        q = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
-        if (q == NULL)
+        after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
+        if (after_duplicate == NULL)
             continue;
-        if (q->tag != TAGO || q->info.infoc != '=')
+        if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
             continue;
         break;
     }
-    transplantation(refal.previous_result, q, right_bracket);
-    left_bracket = left_bracket->previous;
-    right_bracket = right_bracket->next;
-    insert_to_free_memory(left_bracket, right_bracket);
+    transplantation(refal.previous_result, after_duplicate, right_bracket);
+    insert_to_free_memory(left_bracket->previous, right_bracket->next);
     return;
 }
 char dg_0[] = {Z2 'D', 'G', (char)2};
@@ -84,9 +83,9 @@ static void dgall_(void)
         transplantation(refal.previous_result, status_table->store, status_table->store);
     return;
 }
-char dgal_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
+char dgall_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_dgall = '\122';
-void (*dgal_1)(void) = dgall_;
+void (*dgall_1)(void) = dgall_;
 
 static void rp_(void)
 {
@@ -128,13 +127,13 @@ static void rp_(void)
                 if (left_bracket->tag != TAGLB)
                     break;
                 right_bracket = left_bracket->info.codep;
-                T_LINKCB *q = find_duplicate(refal.previous_argument, p, left_bracket);
-                if (q == NULL)
+                T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, p, left_bracket);
+                if (after_duplicate == NULL)
                     continue;
-                if (q->tag != TAGO || q->info.infoc != '=')
+                if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
                     continue;
-                insert_to_free_memory(q, right_bracket);
-                transplantation(q, p, refal.next_argument);
+                insert_to_free_memory(after_duplicate, right_bracket);
+                transplantation(after_duplicate, p, refal.next_argument);
             }
             return;
         }
@@ -150,7 +149,7 @@ static void cp_(void)
 {
     const T_STATUS_TABLE *status_table = refal.current_status_table;
     T_LINKCB *right_bracket = status_table->store;
-    T_LINKCB *q;
+    T_LINKCB *after_duplicate;
     while (true)
     {
         const T_LINKCB *left_bracket = right_bracket->next;
@@ -162,14 +161,14 @@ static void cp_(void)
             return;
         }; // FAIL
         right_bracket = left_bracket->info.codep;
-        q = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
-        if (q == NULL)
+        after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
+        if (after_duplicate == NULL)
             continue;
-        if (q->tag != TAGO || q->info.infoc != '=')
+        if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
             continue;
         break;
     }
-    if (!copy_expression(refal.previous_result, q, right_bracket))
+    if (!copy_expression(refal.previous_result, after_duplicate, right_bracket))
         refal.upshot = 3; // LACK
     return;
 }
