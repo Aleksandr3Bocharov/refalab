@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-03
+// 2026-05-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XSTOR.C -----------
@@ -14,19 +14,43 @@
 #include "refalab.h"
 #include "rfintf.h"
 
+static bool legal_argument_store(bool only_expression_name, T_LINKCB **after_expression_name_pointer)
+{
+    T_LINKCB *current_expression_name = refal.previous_argument->next;
+    while (true)
+    {
+        if (current_expression_name == refal.next_argument)
+        {
+            if (!only_expression_name)
+                return false;
+            else
+                break;
+        }
+        if (current_expression_name->tag == TAGO && current_expression_name->info.infoc == '=')
+        {
+            if (only_expression_name)
+                return false;
+            else
+                break;
+        }
+        if (current_expression_name->tag == TAGLB)
+            current_expression_name = current_expression_name->info.codep;
+        else
+            current_expression_name = current_expression_name->next;
+    }
+    *after_expression_name_pointer = current_expression_name;
+    return true;
+}
+
 static void br_(void)
 {
-    const T_STATUS_TABLE *status_table = refal.current_status_table;
-    const T_LINKCB *current_argument = refal.previous_argument;
-    while (current_argument->tag != TAGO || current_argument->info.infoc != '=')
+    const bool only_expression_name = false;
+    T_LINKCB *after_expression_name;
+    if (!legal_argument_store(only_expression_name, &after_expression_name))
     {
-        current_argument = current_argument->next;
-        if (current_argument == refal.next_argument)
-        {
-            refal.upshot = 2;
-            return;
-        }; // FAIL
-    }
+        refal.upshot = 2;
+        return;
+    }; // FAIL
     if (!extended_insert_from_free_memory(refal.next_result, 1))
         return; // LACK
     T_LINKCB *left_bracket = refal.next_result->next;
@@ -36,7 +60,7 @@ static void br_(void)
     right_bracket->info.codep = left_bracket;
     right_bracket->tag = TAGRB;
     transplantation(left_bracket, refal.previous_argument, refal.next_argument);
-    transplantation(status_table->store, refal.next_result, right_bracket->next);
+    transplantation(refal.current_status_table->store, refal.next_result, right_bracket->next);
     return;
 }
 char br_0[] = {Z2 'B', 'R', (char)2};
@@ -45,6 +69,13 @@ void (*br_1)(void) = br_;
 
 static void dg_(void)
 {
+    const bool only_expression_name = true;
+    T_LINKCB *after_expression_name;
+    if (!legal_argument_store(only_expression_name, &after_expression_name))
+    {
+        refal.upshot = 2;
+        return;
+    }; // FAIL
     const T_STATUS_TABLE *status_table = refal.current_status_table;
     T_LINKCB *right_bracket = status_table->store;
     T_LINKCB *after_duplicate;
@@ -55,7 +86,7 @@ static void dg_(void)
         if (left_bracket == status_table->store)
             return;
         right_bracket = left_bracket->info.codep;
-        after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
+        after_duplicate = find_duplicate(refal.previous_argument, after_expression_name, left_bracket);
         if (after_duplicate == NULL)
             continue;
         if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
@@ -85,52 +116,44 @@ void (*dgall_1)(void) = dgall_;
 
 static void rp_(void)
 {
+    const bool only_expression_name = false;
+    T_LINKCB *after_expression_name;
+    if (!legal_argument_store(only_expression_name, &after_expression_name))
+    {
+        refal.upshot = 2;
+        return;
+    }; // FAIL
     const T_STATUS_TABLE *status_table = refal.current_status_table;
-    T_LINKCB *current_argument = refal.previous_argument;
-    bool impossible = false;
-    while (current_argument->tag != TAGO || current_argument->info.infoc != '=')
+    T_LINKCB *right_bracket = status_table->store;
+    while (true)
     {
-        current_argument = current_argument->next;
-        if (current_argument == refal.next_argument)
+        T_LINKCB *left_bracket = right_bracket->next;
+        if (left_bracket == status_table->store)
         {
-            impossible = true;
-            break;
+            if (!extended_insert_from_free_memory(refal.next_result, 1))
+                return; // LACK
+            T_LINKCB *left_bracket = refal.next_result->next;
+            T_LINKCB *right_bracket = refal.previous_argument;
+            left_bracket->info.codep = right_bracket;
+            left_bracket->tag = TAGLB;
+            right_bracket->info.codep = left_bracket;
+            right_bracket->tag = TAGRB;
+            transplantation(left_bracket, refal.previous_argument, refal.next_argument);
+            transplantation(status_table->store, refal.next_result, right_bracket->next);
         }
-    };
-    if (!impossible)
-    {
-        T_LINKCB *right_bracket = status_table->store;
-        while (true)
+        else
         {
-            T_LINKCB *left_bracket = right_bracket->next;
-            if (left_bracket == status_table->store)
-            {
-                if (!extended_insert_from_free_memory(refal.next_result, 1))
-                    return; // LACK
-                T_LINKCB *left_bracket = refal.next_result->next;
-                T_LINKCB *right_bracket = refal.previous_argument;
-                left_bracket->info.codep = right_bracket;
-                left_bracket->tag = TAGLB;
-                right_bracket->info.codep = left_bracket;
-                right_bracket->tag = TAGRB;
-                transplantation(left_bracket, refal.previous_argument, refal.next_argument);
-                transplantation(status_table->store, refal.next_result, right_bracket->next);
-            }
-            else
-            {
-                right_bracket = left_bracket->info.codep;
-                T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, current_argument, left_bracket);
-                if (after_duplicate == NULL)
-                    continue;
-                if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
-                    continue;
-                insert_to_free_memory(after_duplicate, right_bracket);
-                transplantation(after_duplicate, current_argument, refal.next_argument);
-            }
-            return;
+            right_bracket = left_bracket->info.codep;
+            T_LINKCB *after_duplicate = find_duplicate(refal.previous_argument, after_expression_name, left_bracket);
+            if (after_duplicate == NULL)
+                continue;
+            if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
+                continue;
+            insert_to_free_memory(after_duplicate, right_bracket);
+            transplantation(after_duplicate, after_expression_name, refal.next_argument);
         }
+        break;
     }
-    refal.upshot = 2;
     return;
 }
 char rp_0[] = {Z2 'R', 'P', (char)2};
@@ -139,6 +162,13 @@ void (*rp_1)(void) = rp_;
 
 static void cp_(void)
 {
+    const bool only_expression_name = true;
+    T_LINKCB *after_expression_name;
+    if (!legal_argument_store(only_expression_name, &after_expression_name))
+    {
+        refal.upshot = 2;
+        return;
+    }; // FAIL
     const T_STATUS_TABLE *status_table = refal.current_status_table;
     T_LINKCB *right_bracket = status_table->store;
     T_LINKCB *after_duplicate;
@@ -148,7 +178,7 @@ static void cp_(void)
         if (left_bracket == status_table->store)
             return;
         right_bracket = left_bracket->info.codep;
-        after_duplicate = find_duplicate(refal.previous_argument, refal.next_argument, left_bracket);
+        after_duplicate = find_duplicate(refal.previous_argument, after_expression_name, left_bracket);
         if (after_duplicate == NULL)
             continue;
         if (after_duplicate->tag != TAGO || after_duplicate->info.infoc != '=')
