@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-20
+// 2026-05-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XSYS.C --------------------
@@ -23,21 +23,21 @@ extern uint8_t refalab_null;
 
 static void arg_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    if (p->next != refal.next_argument || p->tag != TAGN)
+    T_LINKCB *symbol_number = refal.previous_argument->next;
+    if (symbol_number->next != refal.next_argument || symbol_number->tag != TAGN)
     {
         refal.upshot = 2;
         return;
     }
-    const size_t argn = gcoden(p);
+    const size_t argn = gcoden(symbol_number);
     if (argn >= refal.arg.argc || *refal.arg.argv[argn] == '\0')
         return;
-    const int32_t d = (int32_t)strlen(refal.arg.argv[argn]) - 2;
-    if (d > 0)
-        if (!extended_insert_from_free_memory(refal.next_result, (size_t)d))
+    const size_t arg_length = strlen(refal.arg.argv[argn]);
+    if (arg_length > 2)
+        if (!extended_insert_from_free_memory(refal.next_result, arg_length - 2))
             return;
-    p = set_string_expression(refal.arg.argv[argn], refal.next_result);
-    transplantation(refal.previous_result, refal.next_result, p->next);
+    T_LINKCB *last_arg_argument = set_string_expression(refal.arg.argv[argn], refal.next_result);
+    transplantation(refal.previous_result, refal.next_result, last_arg_argument->next);
     return;
 }
 char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
