@@ -103,11 +103,10 @@ void (*dg_1)(void) = dg_;
 
 static void dgall_(void)
 {
-    const T_STATUS_TABLE *status_table = refal.current_status_table;
     if (refal.previous_argument->next != refal.next_argument)
         refal.upshot = 2; // FAIL
     else
-        transplantation(refal.previous_result, status_table->store, status_table->store);
+        transplantation(refal.previous_result, refal.current_status_table->store, refal.current_status_table->store);
     return;
 }
 char dgall_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
