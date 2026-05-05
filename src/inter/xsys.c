@@ -29,14 +29,14 @@ static void arg_(void)
         refal.upshot = 2;
         return;
     }
-    const size_t argn = gcoden(symbol_number);
-    if (argn >= refal.arg.argc || *refal.arg.argv[argn] == '\0')
+    const size_t arg_number = gcoden(symbol_number);
+    if (arg_number >= refal.arg.argc || *refal.arg.argv[arg_number] == '\0')
         return;
-    const size_t arg_length = strlen(refal.arg.argv[argn]);
+    const size_t arg_length = strlen(refal.arg.argv[arg_number]);
     if (arg_length > 2)
         if (!extended_insert_from_free_memory(refal.next_result, arg_length - 2))
             return;
-    T_LINKCB *last_arg_argument = set_string_expression(refal.arg.argv[argn], refal.next_result);
+    T_LINKCB *last_arg_argument = set_string_expression(refal.arg.argv[arg_number], refal.next_result);
     transplantation(refal.previous_result, refal.next_result, last_arg_argument->next);
     return;
 }
