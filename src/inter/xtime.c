@@ -20,7 +20,7 @@
 
 extern uint8_t refalab_null;
 
-static T_TIMESPEC time_start, time_current, tm_e;
+static T_TIMESPEC time_start, time_current, time_elapsed;
 
 static void time_(void)
 {
@@ -103,9 +103,9 @@ static void tm_elapsed_(void)
     }
     if (!refal.timer.mode)
         return;
-    timespec_get(&tm_e, TIME_UTC);
-    long int in = tm_e.tv_nsec - refal.timer.start_time.tv_nsec;
-    long long int is = (long long int)difftime(tm_e.tv_sec, refal.timer.start_time.tv_sec);
+    timespec_get(&time_elapsed, TIME_UTC);
+    long int in = time_elapsed.tv_nsec - refal.timer.start_time.tv_nsec;
+    long long int is = (long long int)difftime(time_elapsed.tv_sec, refal.timer.start_time.tv_sec);
     if (in < 0)
     {
         in += 1000000000;
