@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-20
+// 2026-05-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XTIME.C -----------------------
@@ -30,21 +30,21 @@ static void time_(void)
         return;
     }
     setlocale(LC_TIME, "");
-    const time_t tim = time(NULL);
-    const struct tm *lt = localtime(&tim);
-    if (lt == NULL)
+    const time_t current_time = time(NULL);
+    const struct tm *current_local_time = localtime(&current_time);
+    if (current_local_time == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
         return;
     }
-    char s[256];
-    const size_t sl = strftime(s, sizeof(s), "%c", lt);
-    if (sl == 0)
+    char string_time[256];
+    const size_t string_time_length = strftime(string_time, sizeof(string_time), "%c", current_local_time);
+    if (string_time_length == 0)
         return;
-    if (!extended_insert_from_free_memory(refal.next_result, sl - 1))
+    if (!extended_insert_from_free_memory(refal.next_result, string_time_length - 1))
         return;
-    set_string_expression(s, refal.next_result);
+    set_string_expression(string_time, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
