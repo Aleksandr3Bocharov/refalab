@@ -115,10 +115,10 @@ void (*exit_1)(void) = exit_;
 
 static void get_env_(void)
 {
-    T_LINKCB *current_expression = refal.previous_argument->next;
+    T_LINKCB *current_argument = refal.previous_argument->next;
     char environment_name[32768];
-    current_expression = get_string_expression(environment_name, 32767, current_expression, refal.next_argument);
-    if (current_expression != refal.next_argument)
+    current_argument = get_string_expression(environment_name, 32767, current_argument, refal.next_argument);
+    if (current_argument != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -145,25 +145,25 @@ void (*get_env_1)(void) = get_env_;
 
 static void change_dir_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    char namd[MAX_PATHFILENAME + 1];
-    p = get_string_expression(namd, MAX_PATHFILENAME, p, refal.next_argument);
-    if (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    char directory_name[MAX_PATHFILENAME + 1];
+    current_argument = get_string_expression(directory_name, MAX_PATHFILENAME, current_argument, refal.next_argument);
+    if (current_argument != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    const int ch = chdir(namd);
-    const int err = errno;
-    if (ch == -1)
+    const int change_directory_result = chdir(directory_name);
+    if (change_directory_result == -1)
     {
-        const char *serr = strerror(err);
-        const int32_t d = (int32_t)strlen(serr) - ((int32_t)strlen(namd) + 1);
-        if (d > 0)
-            if (!extended_insert_from_free_memory(refal.next_result, (size_t)d))
+        const int error_number = errno;
+        const char *string_error = strerror(error_number);
+        const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(directory_name) + 1);
+        if (result_yet_need > 0)
+            if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                 return;
-        p = set_string_expression(serr, refal.next_result);
-        transplantation(refal.previous_result, refal.next_result, p->next);
+        T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
     }
     return;
 }

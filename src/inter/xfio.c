@@ -94,8 +94,8 @@ static void fopen_(void)
             if (result_yet_need > 0)
                 if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                     return;
-            current_argument = set_string_expression(string_error, refal.next_result);
-            transplantation(refal.previous_result, refal.next_result, current_argument->next);
+            T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
         }
         return;
     } while (false);
@@ -923,8 +923,8 @@ static void remove_file_(void)
         if (result_yet_need > 0)
             if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                 return;
-        current_symbol_char = set_string_expression(string_error, refal.next_result);
-        transplantation(refal.previous_result, refal.next_result, current_symbol_char->next);
+        T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
     }
     return;
 }
@@ -955,8 +955,8 @@ static void rename_(void)
             if (result_yet_need > 0)
                 if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                     return;
-            current_argument = set_string_expression(string_error, refal.next_result);
-            transplantation(refal.previous_result, refal.next_result, current_argument->next);
+            T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
         }
         return;
     } while (false);
