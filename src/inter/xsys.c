@@ -178,15 +178,15 @@ static void get_current_dir_(void)
         refal.upshot = 2;
         return;
     }
-    char *cwd = getcwd(NULL, 0);
-    if (cwd == NULL)
+    char *get_current_directory_result = getcwd(NULL, 0);
+    if (get_current_directory_result == NULL)
         return;
-    if (extended_insert_from_free_memory(refal.next_result, strlen(cwd) - 1))
+    if (extended_insert_from_free_memory(refal.next_result, strlen(get_current_directory_result) - 1))
     {
-        set_string_expression(cwd, refal.next_result);
+        set_string_expression(get_current_directory_result, refal.next_result);
         transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     }
-    free(cwd);
+    free(get_current_directory_result);
     return;
 }
 char get_current_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N', 'T', '_', 'D', 'I', 'R', (char)15};
@@ -203,7 +203,7 @@ static void step_(void)
     refal.previous_argument->tag = TAGN;
     refal.previous_argument->info.code = NULL;
     pcoden(refal.previous_argument, refal.current_status_table->step);
-    transplantation(refal.previous_result, refal.next_result, refal.next_argument);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
