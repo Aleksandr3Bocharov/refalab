@@ -115,28 +115,28 @@ void (*exit_1)(void) = exit_;
 
 static void get_env_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    char env_name[32768];
-    p = get_string_expression(env_name, 32767, p, refal.next_argument);
-    if (p != refal.next_argument)
+    T_LINKCB *current_expression = refal.previous_argument->next;
+    char environment_name[32768];
+    current_expression = get_string_expression(environment_name, 32767, current_expression, refal.next_argument);
+    if (current_expression != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    const char *env_value = getenv(env_name);
-    if (env_value == NULL)
+    const char *environment_value = getenv(environment_name);
+    if (environment_value == NULL)
     {
         refal.previous_argument->info.codef = &refalab_null;
-        transplantation(refal.previous_result, refal.next_result, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
         return;
     }
-    const int32_t d = (int32_t)strlen(env_value) - ((int32_t)strlen(env_name) + 1);
-    if (d > 0)
-        if (!extended_insert_from_free_memory(refal.next_result, (size_t)d))
+    const int32_t need_yet_result = (int32_t)strlen(environment_value) - ((int32_t)strlen(environment_name) + 1);
+    if (need_yet_result > 0)
+        if (!extended_insert_from_free_memory(refal.next_result, (size_t)need_yet_result))
             return;
-    p = set_string_expression(env_value, refal.next_result);
-    if (p != NULL)
-        transplantation(refal.previous_result, refal.next_result, p->next);
+    T_LINKCB *last_environment_value_argument = set_string_expression(environment_value, refal.next_result);
+    if (last_environment_value_argument != NULL)
+        transplantation(refal.previous_result, refal.next_result, last_environment_value_argument->next);
     return;
 }
 char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
