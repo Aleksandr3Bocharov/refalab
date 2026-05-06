@@ -56,31 +56,31 @@ static void tm_(void)
 {
     do
     {
-        T_LINKCB *p = refal.previous_argument->next;
-        if (p->next != refal.next_argument || p->tag != TAGO)
+        T_LINKCB *symbol_char = refal.previous_argument->next;
+        if (symbol_char->next != refal.next_argument || symbol_char->tag != TAGO)
             break;
-        const char c = p->info.infoc;
-        if (c == 'S' || c == 's')
+        const char timer_command = symbol_char->info.infoc;
+        if (timer_command == 'S' || timer_command == 's')
             timespec_get(&time_start, TIME_UTC);
-        else if (c == 'G' || c == 'g')
+        else if (timer_command == 'G' || timer_command == 'g')
         {
             timespec_get(&time_current, TIME_UTC);
-            long int in = time_current.tv_nsec - time_start.tv_nsec;
-            long long int is = (long long int)difftime(time_current.tv_sec, time_start.tv_sec);
-            if (in < 0)
+            long int nanoseconds = time_current.tv_nsec - time_start.tv_nsec;
+            long long int seconds = (long long int)difftime(time_current.tv_sec, time_start.tv_sec);
+            if (nanoseconds < 0)
             {
-                in += 1000000000;
-                is--;
+                nanoseconds += 1000000000;
+                seconds--;
             }
-            long long int im = is / 60;
-            is %= 60;
-            const long long int ih = im / 60;
-            im %= 60;
-            char s[64];
-            sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-            if (!extended_insert_from_free_memory(refal.next_result, strlen(s) - 2))
+            long long int minutes = seconds / 60;
+            seconds %= 60;
+            const long long int hours = minutes / 60;
+            minutes %= 60;
+            char string_time[64];
+            sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_time) - 2))
                 return;
-            set_string_expression(s, refal.next_result);
+            set_string_expression(string_time, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
         else
@@ -104,22 +104,22 @@ static void tm_elapsed_(void)
     if (!refal.timer.mode)
         return;
     timespec_get(&time_elapsed, TIME_UTC);
-    long int in = time_elapsed.tv_nsec - refal.timer.start_time.tv_nsec;
-    long long int is = (long long int)difftime(time_elapsed.tv_sec, refal.timer.start_time.tv_sec);
-    if (in < 0)
+    long int nanoseconds = time_elapsed.tv_nsec - refal.timer.start_time.tv_nsec;
+    long long int seconds = (long long int)difftime(time_elapsed.tv_sec, refal.timer.start_time.tv_sec);
+    if (nanoseconds < 0)
     {
-        in += 1000000000;
-        is--;
+        nanoseconds += 1000000000;
+        seconds--;
     }
-    long long int im = is / 60;
-    is %= 60;
-    const long long int ih = im / 60;
-    im %= 60;
-    char s[64];
-    sprintf(s, "%02lld:%02lld:%02lld.%09ld", ih, im, is, in);
-    if (!extended_insert_from_free_memory(refal.next_result, strlen(s) - 1))
+    long long int minutes = seconds / 60;
+    seconds %= 60;
+    const long long int hours = minutes / 60;
+    minutes %= 60;
+    char string_time[64];
+    sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+    if (!extended_insert_from_free_memory(refal.next_result, strlen(string_time) - 1))
         return;
-    set_string_expression(s, refal.next_result);
+    set_string_expression(string_time, refal.next_result);
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
 }
 char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (char)10};
