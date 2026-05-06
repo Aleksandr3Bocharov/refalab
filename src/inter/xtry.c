@@ -18,7 +18,7 @@
 
 static void try_(void)
 {
-    T_STATUS_TABLE *new_status_table;
+    T_STATUS_TABLE *new_status_table = NULL;
     size_t new_status_table_pointer_number = (size_t)&new_status_table;
     bool lack_memory = false;
     if ((new_status_table_pointer_number & 0xffff) < 200)
@@ -33,12 +33,13 @@ static void try_(void)
         else if (!extended_insert_from_free_memory(new_status_table->view, 2))
         {
             delete_status_table(new_status_table);
-            return;
+            lack_memory = true;
         }
     }
     if (lack_memory)
     {
         refal.upshot = 3;
+        free(new_status_table);
         return;
     }
     T_LINKCB *k = new_status_table->view->next;
