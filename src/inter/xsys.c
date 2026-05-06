@@ -46,38 +46,38 @@ void (*arg_1)(void) = arg_;
 
 static void system_(void)
 {
-    T_LINKCB *p = refal.previous_argument->next;
-    char cmd[8192];
-    p = get_string_expression(cmd, 8191, p, refal.next_argument);
-    if (p != refal.next_argument)
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    char command[8192];
+    current_argument = get_string_expression(command, 8191, current_argument, refal.next_argument);
+    if (current_argument != refal.next_argument)
     {
         refal.upshot = 2;
         return;
     }
-    int sys = system(cmd);
+    int system_result = system(command);
 #if defined POSIX
-    if (WIFEXITED(sys) != 0)
-        sys = WEXITSTATUS(sys);
+    if (WIFEXITED(system_result) != 0)
+        system_result = WEXITSTATUS(system_result);
     else
-        sys = -1;
+        system_result = -1;
 #endif
-    int64_t sys_64 = sys;
-    p = refal.previous_argument;
-    if (sys_64 < 0)
+    int64_t system_result_x64 = system_result;
+    T_LINKCB *number_argument = refal.previous_argument;
+    if (system_result_x64 < 0)
     {
-        if (p->next == refal.next_argument)
-            if (!extended_insert_from_free_memory(p, 1))
+        if (number_argument->next == refal.next_argument)
+            if (!extended_insert_from_free_memory(number_argument, 1))
                 return;
-        p->tag = TAGO;
-        p->info.code = NULL;
-        p->info.infoc = '-';
-        p = p->next;
-        sys_64 = -sys_64;
+        number_argument->tag = TAGO;
+        number_argument->info.code = NULL;
+        number_argument->info.infoc = '-';
+        number_argument = number_argument->next;
+        system_result_x64 = -system_result_x64;
     }
-    p->tag = TAGN;
-    p->info.code = NULL;
-    pcoden(p, (uint32_t)sys_64);
-    transplantation(refal.previous_result, refal.next_result, p->next);
+    number_argument->tag = TAGN;
+    number_argument->info.code = NULL;
+    pcoden(number_argument, (uint32_t)system_result_x64);
+    transplantation(refal.previous_result, refal.next_result, number_argument->next);
     return;
 }
 char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
