@@ -88,21 +88,21 @@ static void exit_(void)
 {
     do
     {
-        const T_LINKCB *p = refal.previous_argument->next;
-        const char zn = p->info.infoc;
-        int z = 1;
-        if (p->tag == TAGO && (zn == '-' || zn == '+'))
+        const T_LINKCB *current_argument = refal.previous_argument->next;
+        const char sign = current_argument->info.infoc;
+        int sign_digit = 1;
+        if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
-            p = p->next;
-            if (zn == '-')
-                z = -1;
+            current_argument = current_argument->next;
+            if (sign == '-')
+                sign_digit = -1;
         }
-        if (p->next != refal.next_argument || p->tag != TAGN)
+        if (current_argument->next != refal.next_argument || current_argument->tag != TAGN)
             break;
-        const int64_t exit_code_abs = gcoden(p);
-        if (z == 1 ? exit_code_abs > 2147483647 : exit_code_abs > 2147483648)
+        const int64_t exit_code_absolute = gcoden(current_argument);
+        if (sign_digit == 1 ? exit_code_absolute > 2147483647 : exit_code_absolute > 2147483648)
             break;
-        const int exit_code = (int)(z * exit_code_abs);
+        const int exit_code = (int)(sign_digit * exit_code_absolute);
         exit(exit_code);
         return;
     } while (false);
