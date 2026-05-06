@@ -21,7 +21,7 @@ static void try_(void)
     T_STATUS_TABLE *new_status_table;
     size_t new_status_table_pointer_number = (size_t)&new_status_table;
     bool lack_memory = false;
-    if ((new_status_table_pointer_number & 0xffff) < 200) //??????????????????????
+    if ((new_status_table_pointer_number & 0xffff) < 200)
         lack_memory = true;
     else
     {
