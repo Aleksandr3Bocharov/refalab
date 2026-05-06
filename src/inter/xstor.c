@@ -131,8 +131,8 @@ static void rp_(void)
         {
             if (!extended_insert_from_free_memory(refal.next_result, 1))
                 return; // LACK
-            T_LINKCB *left_bracket = refal.next_result->next;
-            T_LINKCB *right_bracket = refal.previous_argument;
+            left_bracket = refal.next_result->next;
+            right_bracket = refal.previous_argument;
             left_bracket->info.codep = right_bracket;
             left_bracket->tag = TAGLB;
             right_bracket->info.codep = left_bracket;

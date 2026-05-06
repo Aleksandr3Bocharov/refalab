@@ -35,8 +35,8 @@ static uint32_t random_number(void)
     }
     x[n_sub_max_delay] += x[n_sub_min_delay];
     const uint32_t number = x[n_sub_max_delay];
-    n_sub_max_delay = (n_sub_max_delay + MAX_DELAY - 1) % MAX_DELAY;
-    n_sub_min_delay = (n_sub_min_delay + MAX_DELAY - 1) % MAX_DELAY;
+    n_sub_max_delay = (uint8_t)((n_sub_max_delay + MAX_DELAY - 1) % MAX_DELAY);
+    n_sub_min_delay = (uint8_t)((n_sub_min_delay + MAX_DELAY - 1) % MAX_DELAY);
     return number;
 }
 
