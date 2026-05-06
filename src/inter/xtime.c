@@ -20,7 +20,7 @@
 
 extern uint8_t refalab_null;
 
-static T_TIMESPEC t0, t1, tm_e;
+static T_TIMESPEC time_start, time_current, tm_e;
 
 static void time_(void)
 {
@@ -61,12 +61,12 @@ static void tm_(void)
             break;
         const char c = p->info.infoc;
         if (c == 'S' || c == 's')
-            timespec_get(&t0, TIME_UTC);
+            timespec_get(&time_start, TIME_UTC);
         else if (c == 'G' || c == 'g')
         {
-            timespec_get(&t1, TIME_UTC);
-            long int in = t1.tv_nsec - t0.tv_nsec;
-            long long int is = (long long int)difftime(t1.tv_sec, t0.tv_sec);
+            timespec_get(&time_current, TIME_UTC);
+            long int in = time_current.tv_nsec - time_start.tv_nsec;
+            long long int is = (long long int)difftime(time_current.tv_sec, time_start.tv_sec);
             if (in < 0)
             {
                 in += 1000000000;
