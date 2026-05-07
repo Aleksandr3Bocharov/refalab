@@ -122,6 +122,14 @@ typedef struct refal
 
 extern T_REFAL refal;
 
+typedef struct big_number
+{
+    char sign;
+    T_LINKCB *begin;
+    T_LINKCB *end;
+    size_t length;
+} T_BIG_NUMBER;
+
 extern void refal_abort_end(const char *abort_message);
 extern void delete_status_table(const T_STATUS_TABLE *status_table);
 extern void insert_to_free_memory(T_LINKCB *before, T_LINKCB *after);
