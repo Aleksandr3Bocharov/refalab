@@ -76,9 +76,9 @@ char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static T_LINKCB *x_current, *y_current, *X_begin, *X_end, *begin, *end, *Y_begin, *Y_end;
-static size_t length, X_length, Y_length;
-static char sign, X_sign, Y_sign;
+static T_LINKCB *x_current, *X_begin, *X_end, *y_current, *Y_begin, *Y_end;
+static size_t X_length, Y_length;
+static char X_sign, Y_sign;
 
 static bool read_numbers(void)
 {
@@ -86,27 +86,13 @@ static bool read_numbers(void)
     if (x_current->tag != TAGLB)
         return false;
     y_current = x_current->info.codep;
-    if (read_number())
-    {
-        X_begin = begin;
-        X_end = end;
-        X_sign = sign;
-        X_length = length;
-    }
-    else
+    if (!read_number_expression(&X_sign, &X_begin, &X_end, &X_length, x_current, y_current))
         return false;
     x_current = y_current;
     y_current = refal.next_argument;
-    if (read_number())
-    {
-        Y_begin = begin;
-        Y_end = end;
-        Y_sign = sign;
-        Y_length = length;
-        return true;
-    }
-    else
+    if (!read_number_expression(&Y_sign, &Y_begin, &Y_end, &Y_length, x_current, y_current))
         return false;
+    return true;
 }
 
 static void exchange_numbers(void)
@@ -432,7 +418,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             return;
         temp_linkcb = temp_linkcb->next;  //  dlja znaka
         result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
-        begin = result_begin;
+        T_LINKCB *begin = result_begin;
         X_begin = X_begin->previous;
         X_begin->tag = TAGN;
         X_begin->info.code = NULL;
