@@ -79,23 +79,6 @@ void (*divn_1)(void) = divn_;
 static T_BIG_NUMBER X, Y;
 static T_LINKCB *x_current, *y_current;
 
-static void exchange_numbers(void)
-{
-    T_LINKCB *temp_linkcb = X.begin;
-    X.begin = Y.begin;
-    Y.begin = temp_linkcb;
-    temp_linkcb = X.end;
-    X.end = Y.end;
-    Y.end = temp_linkcb;
-    const size_t temp_length = X.length;
-    X.length = Y.length;
-    Y.length = temp_length;
-    const char temp_sign = X.sign;
-    X.sign = Y.sign;
-    Y.sign = temp_sign;
-    return;
-}
-
 static uint8_t compare_numbers(void)
 { //  if X < Y then true  ( po modulju)
     if (X.length < Y.length)
@@ -166,7 +149,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
     x_current = refal.previous_argument->next;
     y_current = x_current->info.codep;
-    if (x_current->tag != TAGLB || !read_two_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
     {
         refal.upshot = 2;
         return;

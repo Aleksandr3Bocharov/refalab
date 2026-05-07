@@ -851,13 +851,21 @@ bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before
     return true;
 }
 
-bool read_two_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
+bool read_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     if (!read_big_number_expression(big_number1, before, middle))
         return false;
     if (!read_big_number_expression(big_number2, middle, after))
         return false;
     return true;
+}
+
+void exchange_big_numbers(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2)
+{
+    T_BIG_NUMBER temp_big_number = *big_number1;
+    *big_number1 = *big_number2;
+    *big_number2 = temp_big_number;
+    return;
 }
 
 //----------- end of file  RFINTF.C ------------
