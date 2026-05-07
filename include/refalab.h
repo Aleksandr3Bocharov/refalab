@@ -145,6 +145,7 @@ extern T_LINKCB *set_string_expression(const char *string, T_LINKCB *before);
 extern void refal_terminate_memory(void);
 extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after);
+extern bool read_two_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after);
 
 extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool create_status_table(T_STATUS_TABLE *status_table);
