@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-23
+// 2026-05-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.H ------------------
@@ -33,6 +33,7 @@ extern bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb);
 extern T_LINKCB *set_string_expression(const char *string, T_LINKCB *before);
 extern void refal_terminate_memory(void);
 extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
+extern bool read_number_expression(char *number_sign, T_LINKCB **number_begin, T_LINKCB **number_end, size_t *number_length, const T_LINKCB *before, const T_LINKCB *after);
 
 extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool create_status_table(T_STATUS_TABLE *status_table);

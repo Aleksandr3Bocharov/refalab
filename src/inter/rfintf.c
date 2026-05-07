@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-20
+// 2026-05-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.C ------------------
@@ -817,6 +817,46 @@ T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *
     }
     *(string + i) = '\0';
     return current;
+}
+
+bool read_number_expression(char *number_sign, T_LINKCB **number_begin, T_LINKCB **number_end, size_t *number_length, const T_LINKCB *before, const T_LINKCB *after)
+{
+    if (before == after->previous)
+    { // pustoe chislo
+        *number_sign = NULL;
+        *number_begin = NULL;
+        *number_end = NULL;
+        *number_length = 0;
+        return true;
+    }
+    const T_LINKCB *current = before->next;
+    char sign = '+';
+    if (current->tag == TAGO &&
+        (current->info.infoc == '+' || current->info.infoc == '-'))
+    {
+        sign = current->info.infoc;
+        current = current->next;
+        if (current == after)
+            return false; //  w chisle - lish znak
+    }
+    const T_LINKCB *begin = current;
+    for (; current->tag == TAGN && gcoden(current) == 0; current = current->next)
+        ;
+    size_t length;
+    if (current == after)
+        length = 0; //  wse cifry - nuli
+    else
+    {
+        for (length = 0, begin = current; current->tag == TAGN; current = current->next, length++)
+            ;
+        if (current != after)
+            return false; // ne makrocifra
+    }
+    *number_sign = sign;
+    *number_begin = begin;
+    *number_end = after->previous;
+    *number_length = length;
+    return true;
 }
 
 //----------- end of file  RFINTF.C ------------

@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-28
+// 2026-05-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -79,38 +79,6 @@ void (*divn_1)(void) = divn_;
 static T_LINKCB *x_current, *y_current, *X_begin, *X_end, *begin, *end, *Y_begin, *Y_end;
 static size_t length, X_length, Y_length;
 static char sign, X_sign, Y_sign;
-
-static bool read_number(void)
-{
-    sign = '+';
-    end = y_current->previous;
-    if (x_current == end)
-    { // pustoe chislo
-        length = 0;
-        return true;
-    }
-    x_current = x_current->next;
-    if (x_current->tag == TAGO &&
-        (x_current->info.infoc == '+' || x_current->info.infoc == '-'))
-    {
-        sign = x_current->info.infoc;
-        x_current = x_current->next;
-        if (x_current == y_current)
-            return false; //  w chisle - lish znak
-    }
-    for (; x_current->tag == TAGN && gcoden(x_current) == 0; x_current = x_current->next)
-        ;
-    if (x_current == y_current)
-        length = 0; //  wse cifry - nuli
-    else
-    {
-        for (length = 0, begin = x_current; x_current->tag == TAGN; x_current = x_current->next, length++)
-            ;
-        if (x_current != y_current)
-            return false; // ne makrocifra
-    }
-    return true;
-}
 
 static bool read_numbers(void)
 {
