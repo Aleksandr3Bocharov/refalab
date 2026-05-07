@@ -822,7 +822,6 @@ T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *
 bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after)
 {
     big_number->sign = '+';
-    big_number->end = after->previous;
     if (before == after->previous)
     { // pustoe chislo
         big_number->length = 0;
@@ -847,7 +846,21 @@ bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before
             ;
         if (current != after)
             return false; // ne makrocifra
+        big_number->end = after->previous;
     }
+    return true;
+}
+
+bool read_two_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
+{
+    x_current = refal.previous_argument->next;
+    if (x_current->tag != TAGLB)
+        return false;
+    y_current = x_current->info.codep;
+    if (!read_big_number_expression(big_number1, before, middle))
+        return false;
+    if (!read_big_number_expression(big_number2, middle, after))
+        return false;
     return true;
 }
 

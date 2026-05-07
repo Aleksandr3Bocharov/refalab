@@ -76,49 +76,33 @@ char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static T_LINKCB *x_current, *X_begin, *X_end, *y_current, *Y_begin, *Y_end;
-static size_t X_length, Y_length;
-static char X_sign, Y_sign;
-
-static bool read_numbers(void)
-{
-    x_current = refal.previous_argument->next;
-    if (x_current->tag != TAGLB)
-        return false;
-    y_current = x_current->info.codep;
-    if (!read_big_number_expression(&X_sign, &X_begin, &X_end, &X_length, x_current, y_current))
-        return false;
-    x_current = y_current;
-    y_current = refal.next_argument;
-    if (!read_big_number_expression(&Y_sign, &Y_begin, &Y_end, &Y_length, x_current, y_current))
-        return false;
-    return true;
-}
+static T_BIG_NUMBER X, Y;
+static T_LINKCB *x_current, *y_current;
 
 static void exchange_numbers(void)
 {
-    T_LINKCB *temp_linkcb = X_begin;
-    X_begin = Y_begin;
-    Y_begin = temp_linkcb;
-    temp_linkcb = X_end;
-    X_end = Y_end;
-    Y_end = temp_linkcb;
-    const size_t temp_length = X_length;
-    X_length = Y_length;
-    Y_length = temp_length;
-    const char temp_sign = X_sign;
-    X_sign = Y_sign;
-    Y_sign = temp_sign;
+    T_LINKCB *temp_linkcb = X.begin;
+    X.begin = Y.begin;
+    Y.begin = temp_linkcb;
+    temp_linkcb = X.end;
+    X.end = Y.end;
+    Y.end = temp_linkcb;
+    const size_t temp_length = X.length;
+    X.length = Y.length;
+    Y.length = temp_length;
+    const char temp_sign = X.sign;
+    X.sign = Y.sign;
+    Y.sign = temp_sign;
     return;
 }
 
 static uint8_t compare_numbers(void)
 { //  if X < Y then true  ( po modulju)
-    if (X_length < Y_length)
+    if (X.length < Y.length)
         return 1;
-    if (X_length > Y_length)
+    if (X.length > Y.length)
         return 0;
-    for (x_current = X_begin, y_current = Y_begin; x_current != X_end->next; x_current = x_current->next, y_current = y_current->next)
+    for (x_current = X.begin, y_current = Y.begin; x_current != X.end->next; x_current = x_current->next, y_current = y_current->next)
     {
         if (gcoden(x_current) < gcoden(y_current))
             return 1;
@@ -180,7 +164,8 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
 
 static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
-    if (!read_numbers())
+    
+    if (!read_())
     {
         refal.upshot = 2;
         return;
@@ -191,36 +176,36 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     switch (operation)
     {
     case Osub: // izmenim znak i skladywaem
-        if (Y_sign == '-')
-            Y_sign = '+';
+        if (Y.sign == '-')
+            Y.sign = '+';
         else
-            Y_sign = '-';
+            Y.sign = '-';
     case Oadd:
-        if (X_length == 0 && Y_length == 0)
+        if (X.length == 0 && Y.length == 0)
         {
             result_zero = true;
             break;
         }
-        if (X_length == 0)
+        if (X.length == 0)
         { //  rezult - wtoroe chislo
-            X_begin = Y_begin;
-            X_end = Y_end;
-            X_sign = Y_sign;
+            X.begin = Y.begin;
+            X.end = Y.end;
+            X.sign = Y.sign;
         }
-        else if (Y_length != 0)
+        else if (Y.length != 0)
         { // summiruem
-            if (X_sign == Y_sign)
+            if (X.sign == Y.sign)
             { //  skladywaem
-                if (X_length < Y_length)
+                if (X.length < Y.length)
                     exchange_numbers();
                 //  X  dlinnee  Y  (ili =)
-                X_begin = X_begin->previous; //  pripisywaem  0
-                X_begin->tag = TAGN;
-                X_begin->info.code = NULL;
+                X.begin = X.begin->previous; //  pripisywaem  0
+                X.begin->tag = TAGN;
+                X.begin->info.code = NULL;
                 int64_t transfer = 0, sum;
-                for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
+                for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
-                    if (y_current != Y_begin->previous)
+                    if (y_current != Y.begin->previous)
                     {
                         sum = (int64_t)gcoden(x_current) + gcoden(y_current) + transfer;
                         y_current = y_current->previous;
@@ -247,14 +232,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 }
                 if (compare == 1)
                     exchange_numbers();      //  menjaem x i y
-                X_begin = X_begin->previous; //  pripisywaem 0
-                X_begin->tag = TAGN;
-                X_begin->info.code = NULL;
+                X.begin = X.begin->previous; //  pripisywaem 0
+                X.begin->tag = TAGN;
+                X.begin->info.code = NULL;
                 int64_t transfer = 0, substraction;
-                for (x_current = X_end, y_current = Y_end; x_current != X_begin->previous; x_current = x_current->previous)
+                for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
                     substraction = gcoden(x_current);
-                    if (y_current != Y_begin->previous)
+                    if (y_current != Y.begin->previous)
                     {
                         substraction -= (int64_t)gcoden(y_current) + transfer;
                         y_current = y_current->previous;
@@ -274,14 +259,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         break;
     case Omul:
-        if (X_length == 0 || Y_length == 0)
+        if (X.length == 0 || Y.length == 0)
         {
             result_zero = true;
             break;
         }
         T_LINKCB *result_begin = refal.previous_argument;
         T_LINKCB *result_end = result_begin->next;
-        if (!extended_insert_from_free_memory(result_begin, X_length + Y_length + 1)) //  1 zweno dlja znaka
+        if (!extended_insert_from_free_memory(result_begin, X.length + Y.length + 1)) //  1 zweno dlja znaka
             return;
         result_begin = result_begin->next;
         result_end = result_end->previous;
@@ -290,14 +275,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             x_current->tag = TAGN;
             x_current->info.code = NULL;
         } //  zanulen rezultat
-        if (X_length < Y_length)
+        if (X.length < Y.length)
             exchange_numbers();
         //  dobawim 0 k X dlja summir. s perenosom
-        X_begin = X_begin->previous;
-        X_begin->tag = TAGN;
-        X_begin->info.code = NULL;
+        X.begin = X.begin->previous;
+        X.begin->tag = TAGN;
+        X.begin->info.code = NULL;
         T_LINKCB *result_current;
-        for (result_current = result_end, y_current = Y_end; y_current != Y_begin->previous; y_current = y_current->previous, result_current = result_current->previous)
+        for (result_current = result_end, y_current = Y.end; y_current != Y.begin->previous; y_current = y_current->previous, result_current = result_current->previous)
         {
             int64_t b = gcoden(y_current);
             if (b != 0)
@@ -305,7 +290,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 int64_t transfer = 0;
                 const int64_t b11 = b >> 16;
                 const int64_t b00 = b & 0xFFFF;
-                for (x_current = X_end, result_begin = result_current; x_current != X_begin->previous; x_current = x_current->previous, result_begin = result_begin->previous)
+                for (x_current = X.end, result_begin = result_current; x_current != X.begin->previous; x_current = x_current->previous, result_begin = result_begin->previous)
                 {
                     int64_t a = gcoden(x_current);
                     if (a == 0)
@@ -341,25 +326,25 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 } // for
             }
         }
-        if (X_sign != Y_sign)
-            X_sign = '-';
+        if (X.sign != Y.sign)
+            X.sign = '-';
         else
-            X_sign = '+';
-        X_begin = result_begin;
-        X_end = result_end;
+            X.sign = '+';
+        X.begin = result_begin;
+        X.end = result_end;
         break;
     case Odr:
-        if (Y_length == 0)
+        if (Y.length == 0)
         {
             refal.upshot = 2;
             return;
         }
-        if (X_length == 0)
+        if (X.length == 0)
         {
             remainder = 0;
             quotient = 0;
-            X_sign = '+';
-            Y_sign = '+';
+            X.sign = '+';
+            Y.sign = '+';
             dr_one_remainder_one_quotient = true;
             break;
         }
@@ -377,75 +362,75 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             { // DIV, DIVN
                 remainder = 0;
                 quotient = 0;
-                X_sign = '+';
-                Y_sign = '+';
+                X.sign = '+';
+                Y.sign = '+';
                 dr_one_remainder_one_quotient = true;
                 break;
             }
-            if (X_sign == '-')
+            if (X.sign == '-')
             {
-                X_begin = X_begin->previous;
-                X_begin->tag = TAGO;
-                X_begin->info.code = NULL;
-                X_begin->info.infoc = '-';
+                X.begin = X.begin->previous;
+                X.begin->tag = TAGO;
+                X.begin->info.code = NULL;
+                X.begin->info.infoc = '-';
             }
-            X_begin = X_begin->previous;
-            X_end = X_end->next;
-            X_begin->tag = TAGLB;
-            X_end->tag = TAGRB;
-            X_begin->info.codep = X_end;
-            X_end->info.codep = X_begin;
+            X.begin = X.begin->previous;
+            X.end = X.end->next;
+            X.begin->tag = TAGLB;
+            X.end->tag = TAGRB;
+            X.begin->info.codep = X.end;
+            X.end->info.codep = X.begin;
             if (type == 0)
             {
-                X_begin = X_begin->previous;
-                X_begin->tag = TAGN;
-                X_begin->info.code = NULL;
+                X.begin = X.begin->previous;
+                X.begin->tag = TAGN;
+                X.begin->info.code = NULL;
             }
-            transplantation(refal.previous_result, X_begin->previous, X_end->next);
+            transplantation(refal.previous_result, X.begin->previous, X.end->next);
             return;
         }
         //   delimoe > delitelja
-        if (X_length == 1)
+        if (X.length == 1)
         { //  oba po odnoj cifre
-            remainder = gcoden(X_begin) % gcoden(Y_begin);
-            quotient = gcoden(X_begin) / gcoden(Y_begin);
+            remainder = gcoden(X.begin) % gcoden(Y.begin);
+            quotient = gcoden(X.begin) / gcoden(Y.begin);
             dr_one_remainder_one_quotient = true;
             break;
         }
         //  delenie mnogih  cifr
         T_LINKCB *temp_linkcb = refal.previous_argument;
-        if (!extended_insert_from_free_memory(temp_linkcb, X_length - Y_length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
+        if (!extended_insert_from_free_memory(temp_linkcb, X.length - Y.length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
             return;
         temp_linkcb = temp_linkcb->next;  //  dlja znaka
         result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
         T_LINKCB *begin = result_begin;
-        X_begin = X_begin->previous;
-        X_begin->tag = TAGN;
-        X_begin->info.code = NULL;
-        X_length++;
+        X.begin = X.begin->previous;
+        X.begin->tag = TAGN;
+        X.begin->info.code = NULL;
+        X.length++;
         size_t i;
-        for (i = 0, x_current = X_begin; i < Y_length; i++, x_current = x_current->next)
+        for (i = 0, x_current = X.begin; i < Y.length; i++, x_current = x_current->next)
             ;
-        y_current = Y_begin->previous;
+        y_current = Y.begin->previous;
         y_current->tag = TAGN;
         y_current->info.code = NULL;
         uint8_t power = 0;
-        if (Y_length != 0)
+        if (Y.length != 0)
         { // wozmovna normalizacija
-            int64_t exponentation = gcoden(Y_begin);
+            int64_t exponentation = gcoden(Y.begin);
             for (power = 0; exponentation < 2147483648; power++, exponentation += exponentation)
                 ;
             if (power != 0)
             {
-                normalization(X_end, X_length, power);
-                normalization(Y_end, Y_length, power);
+                normalization(X.end, X.length, power);
+                normalization(Y.end, Y.length, power);
             }
         }
         do
         {
-            int64_t a = gcoden(X_begin);
-            const int64_t a0 = gcoden(X_begin->next);
-            int64_t b = gcoden(Y_begin);
+            int64_t a = gcoden(X.begin);
+            const int64_t a0 = gcoden(X.begin->next);
+            int64_t b = gcoden(Y.begin);
             int64_t c;
             if (a == 0 && a0 < b)
                 c = 0;
@@ -469,14 +454,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     a = (a % b << 4) + (a0 & 0xF);
                     c += a / b;
                 }
-                const int64_t b0 = gcoden(Y_begin->next);
-                if (Y_length > 1 && b0 != 0)
+                const int64_t b0 = gcoden(Y.begin->next);
+                if (Y.length > 1 && b0 != 0)
                 {
                     int64_t x1 = b0;
                     int64_t x2 = c;
                     multiply(&x1, &x2);
                     int64_t y1 = a % b;
-                    const int64_t y2 = gcoden(X_begin->next->next);
+                    const int64_t y2 = gcoden(X.begin->next->next);
                     bool state = false;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
@@ -494,7 +479,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             // umnovenie  delitelja  na 'c' i wychit. iz X
             if (c != 0)
             {
-                const T_LINKCB *Y_temp = Y_end;
+                const T_LINKCB *Y_temp = Y.end;
                 T_LINKCB *X_temp = x_current;
                 int64_t transfer = 0;
                 for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
@@ -519,7 +504,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     {
                         c--;
                         X_temp = x_current;
-                        Y_temp = Y_end;
+                        Y_temp = Y.end;
                         int64_t new_transfer = 0;
                         for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                         {
@@ -540,16 +525,16 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             pcoden(result_begin, (uint32_t)c);
             result_begin = result_begin->next;
             x_current = x_current->next;
-            X_begin = X_begin->next;
-        } while (x_current != X_end->next);
-        X_begin = X_begin->previous;
+            X.begin = X.begin->next;
+        } while (x_current != X.end->next);
+        X.begin = X.begin->previous;
         result_begin = result_begin->previous;
         if (power != 0)
         { // denormalizacija ostatka
             int64_t transfer = 0;
             const uint8_t transfer_shift = SHIFT_MAX - power;
             const int64_t mask = MAX_NUMBER >> transfer_shift;
-            for (x_current = X_begin; x_current != X_end->next; x_current = x_current->next)
+            for (x_current = X.begin; x_current != X.end->next; x_current = x_current->next)
             {
                 const int64_t number = gcoden(x_current);
                 const int64_t new_number = number >> power | transfer << transfer_shift;
@@ -557,12 +542,12 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 pcoden(x_current, (uint32_t)new_number);
             }
         }
-        for (x_current = X_begin; x_current != X_end->next && gcoden(x_current) == 0; x_current = x_current->next)
+        for (x_current = X.begin; x_current != X.end->next && gcoden(x_current) == 0; x_current = x_current->next)
             ;
         x_current = x_current->previous;
-        if (x_current != X_end)
+        if (x_current != X.end)
         {
-            if (X_sign != Y_sign)
+            if (X.sign != Y.sign)
             {
                 x_current->tag = TAGO;
                 x_current->info.code = NULL;
@@ -571,29 +556,29 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             else
                 x_current = x_current->next;
         }
-        X_begin = x_current;
+        X.begin = x_current;
         for (x_current = begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (X_sign == '-')
+        if (X.sign == '-')
         {
             x_current = x_current->previous;
             x_current->tag = TAGO;
             x_current->info.code = NULL;
             x_current->info.infoc = '-';
         }
-        if ((type & 1) == 0 || X_begin != X_end || gcoden(X_begin) != 0)
-            X_begin = X_begin->previous;
-        X_begin->tag = TAGLB;
-        X_begin->info.codep = X_end->next;
-        X_end = X_end->next;
-        X_end->tag = TAGRB;
-        X_end->info.codep = X_begin;
-        if (result_begin->next != X_begin)
-            transplantation(result_begin, X_begin->previous, X_end->next);
+        if ((type & 1) == 0 || X.begin != X.end || gcoden(X.begin) != 0)
+            X.begin = X.begin->previous;
+        X.begin->tag = TAGLB;
+        X.begin->info.codep = X.end->next;
+        X.end = X.end->next;
+        X.end->tag = TAGRB;
+        X.end->info.codep = X.begin;
+        if (result_begin->next != X.begin)
+            transplantation(result_begin, X.begin->previous, X.end->next);
         if ((type & 2) == 0)
-            transplantation(refal.previous_result, x_current->previous, X_end->next);
+            transplantation(refal.previous_result, x_current->previous, X.end->next);
         else
-            transplantation(refal.previous_result, x_current->previous, X_begin);
+            transplantation(refal.previous_result, x_current->previous, X.begin);
         return;
     } // end case
     if (result_zero)
@@ -610,11 +595,11 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     {
         //  wozwratim X
         // podawim wed. nuli
-        for (x_current = X_begin; gcoden(x_current) == 0; x_current = x_current->next)
+        for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
-        if (type == 1 && x_current == X_end && gcoden(x_current) == 0)
+        if (type == 1 && x_current == X.end && gcoden(x_current) == 0)
             return;
-        if (X_sign == '-')
+        if (X.sign == '-')
         {
             x_current = x_current->previous;
             x_current->tag = TAGO;
@@ -622,7 +607,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             x_current->info.infoc = '-';
         }
         //  perenosim reultat
-        transplantation(refal.previous_result, x_current->previous, X_end->next);
+        transplantation(refal.previous_result, x_current->previous, X.end->next);
         return;
     }
     // wywod rezultata delenija, kogda ostatok i chastnoe
@@ -631,7 +616,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         return;
     // in bad case: /1/() - 3 zwena est uje + name
     x_current = refal.previous_argument;
-    if (X_sign != Y_sign)
+    if (X.sign != Y.sign)
     {
         x_current->tag = TAGO;
         x_current->info.code = NULL;
@@ -647,7 +632,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     }
     y_current = x_current->next;
     if (remainder != 0)
-        if (X_sign != '+')
+        if (X.sign != '+')
         {
             y_current->tag = TAGO;
             y_current->info.code = NULL;
