@@ -79,22 +79,6 @@ void (*divn_1)(void) = divn_;
 static T_BIG_NUMBER X, Y;
 static T_LINKCB *x_current, *y_current;
 
-static uint8_t compare_numbers(void)
-{ //  if X < Y then true  ( po modulju)
-    if (X.length < Y.length)
-        return 1;
-    if (X.length > Y.length)
-        return 0;
-    for (x_current = X.begin, y_current = Y.begin; x_current != X.end->next; x_current = x_current->next, y_current = y_current->next)
-    {
-        if (gcoden(x_current) < gcoden(y_current))
-            return 1;
-        if (gcoden(x_current) > gcoden(y_current))
-            return 0;
-    }
-    return 2; // X=Y
-}
-
 static void multiply(int64_t *a, int64_t *b)
 { // rezult: a - starshy, b - mladshy
     if (*a == 0)
@@ -208,7 +192,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             }
             else
             { // wychitaem
-                const uint8_t compare = compare_numbers();
+                const uint8_t compare = compare_big_numbers();
                 if (compare == 2)
                 {
                     result_zero = true;
@@ -332,7 +316,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             dr_one_remainder_one_quotient = true;
             break;
         }
-        const uint8_t compare = compare_numbers();
+        const uint8_t compare = compare_big_numbers();
         if (compare == 2)
         { //  rawny
             remainder = 0;
