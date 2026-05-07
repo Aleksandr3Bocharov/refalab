@@ -181,7 +181,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             if (X.sign == Y.sign)
             { //  skladywaem
                 if (X.length < Y.length)
-                    exchange_numbers();
+                    exchange_big_numbers(&X, &Y);
                 //  X  dlinnee  Y  (ili =)
                 X.begin = X.begin->previous; //  pripisywaem  0
                 X.begin->tag = TAGN;
@@ -215,8 +215,8 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     break;
                 }
                 if (compare == 1)
-                    exchange_numbers();      //  menjaem x i y
-                X.begin = X.begin->previous; //  pripisywaem 0
+                    exchange_big_numbers(&X, &Y); //  menjaem x i y
+                X.begin = X.begin->previous;      //  pripisywaem 0
                 X.begin->tag = TAGN;
                 X.begin->info.code = NULL;
                 int64_t transfer = 0, substraction;
@@ -260,7 +260,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             x_current->info.code = NULL;
         } //  zanulen rezultat
         if (X.length < Y.length)
-            exchange_numbers();
+            exchange_big_numbers(&X, &Y);
         //  dobawim 0 k X dlja summir. s perenosom
         X.begin = X.begin->previous;
         X.begin->tag = TAGN;
