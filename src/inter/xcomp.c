@@ -79,7 +79,7 @@ static bool read_numbers(void)
         return false;
 }
 
-static uint32_t compare_numbers(void)
+static uint8_t compare_numbers(void)
 { //  if X < Y then true  ( po modulju)
     if (X_length < Y_length)
         return 1;
@@ -107,7 +107,7 @@ static void nrel_(void)
         compare_result = '=';
     else
     {
-        const uint32_t compare = compare_numbers();
+        const uint8_t compare = compare_numbers();
         if (X_sign == Y_sign && compare == 2)
             compare_result = '=';
         else

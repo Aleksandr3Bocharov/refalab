@@ -158,7 +158,7 @@ static void exchange_numbers(void)
     return;
 }
 
-static uint32_t compare_numbers(void)
+static uint8_t compare_numbers(void)
 { //  if X < Y then true  ( po modulju)
     if (X_length < Y_length)
         return 1;
@@ -285,12 +285,13 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             }
             else
             { // wychitaem
-                if (compare_numbers() == 2)
+                const uint8_t compare = compare_numbers();
+                if (compare == 2)
                 {
                     result_zero = true;
                     break;
                 }
-                if (compare_numbers() == 1)
+                if (compare == 1)
                     exchange_numbers();      //  menjaem x i y
                 X_begin = X_begin->previous; //  pripisywaem 0
                 X_begin->tag = TAGN;
@@ -408,14 +409,15 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             dr_one_remainder_one_quotient = true;
             break;
         }
-        if (compare_numbers() == 2)
+        const uint8_t compare = compare_numbers();
+        if (compare == 2)
         { //  rawny
             remainder = 0;
             quotient = 1;
             dr_one_remainder_one_quotient = true;
             break;
         }
-        if (compare_numbers() == 1)
+        if (compare == 1)
         { //  delimoe < delitelja
             if ((type & 2) == 2)
             { // DIV, DIVN
