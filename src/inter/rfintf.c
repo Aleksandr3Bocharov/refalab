@@ -821,41 +821,33 @@ T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *
 
 bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after)
 {
+    big_number->sign = '+';
+    big_number->end = after->previous;
     if (before == after->previous)
     { // pustoe chislo
-        *number_sign = '+';
-        *number_begin = NULL;
-        *number_end = NULL;
-        *number_length = 0;
+        big_number->length = 0;
         return true;
     }
     T_LINKCB *current = before->next;
-    char sign = '+';
     if (current->tag == TAGO &&
         (current->info.infoc == '+' || current->info.infoc == '-'))
     {
-        sign = current->info.infoc;
+        big_number->sign = current->info.infoc;
         current = current->next;
         if (current == after)
             return false; //  w chisle - lish znak
     }
-    T_LINKCB *begin = current;
     for (; current->tag == TAGN && gcoden(current) == 0; current = current->next)
         ;
-    size_t length;
     if (current == after)
-        length = 0; //  wse cifry - nuli
+        big_number->length = 0; //  wse cifry - nuli
     else
     {
-        for (length = 0, begin = current; current->tag == TAGN; current = current->next, length++)
+        for (big_number->length = 0, big_number->begin = current; current->tag == TAGN; current = current->next, big_number->length++)
             ;
         if (current != after)
             return false; // ne makrocifra
     }
-    *number_sign = sign;
-    *number_begin = begin;
-    *number_end = after->previous;
-    *number_length = length;
     return true;
 }
 
