@@ -164,8 +164,9 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
 
 static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
-    
-    if (!read_())
+    x_current = refal.previous_argument->next;
+    y_current = x_current->info.codep;
+    if (x_current->tag != TAGLB || !read_two_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
     {
         refal.upshot = 2;
         return;

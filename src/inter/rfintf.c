@@ -853,10 +853,6 @@ bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before
 
 bool read_two_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
-    x_current = refal.previous_argument->next;
-    if (x_current->tag != TAGLB)
-        return false;
-    y_current = x_current->info.codep;
     if (!read_big_number_expression(big_number1, before, middle))
         return false;
     if (!read_big_number_expression(big_number2, middle, after))
