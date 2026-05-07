@@ -86,11 +86,11 @@ static bool read_numbers(void)
     if (x_current->tag != TAGLB)
         return false;
     y_current = x_current->info.codep;
-    if (!read_number_expression(&X_sign, &X_begin, &X_end, &X_length, x_current, y_current))
+    if (!read_big_number_expression(&X_sign, &X_begin, &X_end, &X_length, x_current, y_current))
         return false;
     x_current = y_current;
     y_current = refal.next_argument;
-    if (!read_number_expression(&Y_sign, &Y_begin, &Y_end, &Y_length, x_current, y_current))
+    if (!read_big_number_expression(&Y_sign, &Y_begin, &Y_end, &Y_length, x_current, y_current))
         return false;
     return true;
 }

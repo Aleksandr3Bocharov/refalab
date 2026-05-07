@@ -819,17 +819,17 @@ T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *
     return current;
 }
 
-bool read_number_expression(char *number_sign, T_LINKCB **number_begin, T_LINKCB **number_end, size_t *number_length, const T_LINKCB *before, const T_LINKCB *after)
+bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after)
 {
     if (before == after->previous)
     { // pustoe chislo
-        *number_sign = NULL;
+        *number_sign = '+';
         *number_begin = NULL;
         *number_end = NULL;
         *number_length = 0;
         return true;
     }
-    const T_LINKCB *current = before->next;
+    T_LINKCB *current = before->next;
     char sign = '+';
     if (current->tag == TAGO &&
         (current->info.infoc == '+' || current->info.infoc == '-'))
@@ -839,7 +839,7 @@ bool read_number_expression(char *number_sign, T_LINKCB **number_begin, T_LINKCB
         if (current == after)
             return false; //  w chisle - lish znak
     }
-    const T_LINKCB *begin = current;
+    T_LINKCB *begin = current;
     for (; current->tag == TAGN && gcoden(current) == 0; current = current->next)
         ;
     size_t length;
