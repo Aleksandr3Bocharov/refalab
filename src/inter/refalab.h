@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-14
+// 2026-05-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -117,6 +117,14 @@ typedef struct refal
         T_TIMESPEC stop_time;
     } timer;
 } T_REFAL;
+
+typedef struct big_number
+{
+    char sign;
+    T_LINKCB *begin;
+    T_LINKCB *end;
+    size_t length;
+} T_BIG_NUMBER;
 
 #endif
 
