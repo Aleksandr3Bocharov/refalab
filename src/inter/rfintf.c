@@ -900,4 +900,22 @@ uint8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER 
     return 0;     // X>Y
 }
 
+uint8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2)
+{
+    if (big_number1->length == 0 && big_number2->length == 0)
+        return 2; // X=Y
+    if (big_number1->length < big_number2->length)
+        return 1; // X<Y
+    if (big_number1->length > big_number2->length)
+        return 0; // X>Y
+    for (T_LINKCB *big_number1_current = big_number1->begin, *big_number2_current = big_number2->begin; big_number1_current != big_number1->end->next; big_number1_current = big_number1_current->next, big_number2_current = big_number2_current->next)
+    {
+        if (gcoden(big_number1_current) < gcoden(big_number2_current))
+            return 1; // X<Y
+        if (gcoden(big_number1_current) > gcoden(big_number2_current))
+            return 0; // X>Y
+    }
+    return 2; // X=Y;
+}
+
 //----------- end of file  RFINTF.C ------------
