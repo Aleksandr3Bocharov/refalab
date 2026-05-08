@@ -876,22 +876,7 @@ uint8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER 
         return 1; // X<Y
     if (big_number1->sign == '+' && big_number2->sign == '-')
         return 0; // X>Y
-    uint8_t compare_absolute = 2;
-    if (big_number1->length < big_number2->length)
-        compare_absolute = 1;
-    else if (big_number1->length > big_number2->length)
-        compare_absolute = 0;
-    else
-        for (T_LINKCB *big_number1_current = big_number1->begin, *big_number2_current = big_number2->begin; big_number1_current != big_number1->end->next; big_number1_current = big_number1_current->next, big_number2_current = big_number2_current->next)
-        {
-            if (gcoden(big_number1_current) < gcoden(big_number2_current))
-                compare_absolute = 1;
-            else if (gcoden(big_number1_current) > gcoden(big_number2_current))
-                compare_absolute = 0;
-            else
-                continue;
-            break;
-        }
+    const uint8_t compare_absolute = compare_big_numbers_absolute(big_number1, big_number2);
     if (compare_absolute == 2)
         return 2; // X=Y;
     if ((big_number1->sign == '-' && compare_absolute == 0) ||
