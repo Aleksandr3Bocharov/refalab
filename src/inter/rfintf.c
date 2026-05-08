@@ -872,6 +872,10 @@ uint8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER 
 {
     if (big_number1->length == 0 && big_number2->length == 0)
         return 2; // X=Y
+    if (big_number1->sign == '-' && big_number2->sign == '+')
+        return 1; // X<Y
+    if (big_number1->sign == '+' && big_number2->sign == '-')
+        return 0; // X>Y
     uint8_t compare_absolute = 2;
     if (big_number1->length < big_number2->length)
         compare_absolute = 1;
@@ -888,13 +892,12 @@ uint8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER 
                 continue;
             break;
         }
-    if (big_number1->sign == big_number2->sign && compare_absolute == 2)
+    if (compare_absolute == 2)
         return 2; // X=Y;
-    if ((big_number1->sign == '-' && big_number2->sign == '+') ||
-        (big_number1->sign == '-' && big_number2->sign == '-' && compare_absolute == 0) ||
-        (big_number1->sign == '+' && big_number2->sign == '+' && compare_absolute == 1))
+    if ((big_number1->sign == '-' && compare_absolute == 0) ||
+        (big_number1->sign == '+' && compare_absolute == 1))
         return 1; // X<Y
-    return 0;     // X>Y;
+    return 0;     // X>Y
 }
 
 //----------- end of file  RFINTF.C ------------
