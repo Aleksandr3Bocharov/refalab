@@ -60,7 +60,7 @@ static void bit_operate(uint8_t operation)
     do
     {
         T_LINKCB *x_current = refal.previous_argument->next;
-        T_LINKCB *y_current = x_current->info.codep;
+        const T_LINKCB *y_current = x_current->info.codep;
         T_BIG_NUMBER X, Y;
         if (operation != Onot)
         {
