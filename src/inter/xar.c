@@ -76,9 +76,6 @@ char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static T_BIG_NUMBER X, Y;
-static T_LINKCB *x_current, *y_current;
-
 static void multiply(int64_t *a, int64_t *b)
 { // rezult: a - starshy, b - mladshy
     if (*a == 0)
@@ -131,8 +128,9 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
 
 static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
-    x_current = refal.previous_argument->next;
-    y_current = x_current->info.codep;
+    T_LINKCB *x_current = refal.previous_argument->next;
+    T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
     if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
     {
         refal.upshot = 2;
@@ -192,13 +190,13 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             }
             else
             { // wychitaem
-                const uint8_t compare = compare_big_numbers();
-                if (compare == 2)
+                const uint8_t compare_absolute = compare_big_numbers(&X, &Y);
+                if (compare_absolute == 2)
                 {
                     result_zero = true;
                     break;
                 }
-                if (compare == 1)
+                if (compare_absolute == 1)
                     exchange_big_numbers(&X, &Y); //  menjaem x i y
                 X.begin = X.begin->previous;      //  pripisywaem 0
                 X.begin->tag = TAGN;
@@ -316,15 +314,15 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             dr_one_remainder_one_quotient = true;
             break;
         }
-        const uint8_t compare = compare_big_numbers();
-        if (compare == 2)
+        const uint8_t compare_absolute = compare_big_numbers();
+        if (compare_absolute == 2)
         { //  rawny
             remainder = 0;
             quotient = 1;
             dr_one_remainder_one_quotient = true;
             break;
         }
-        if (compare == 1)
+        if (compare_absolute == 1)
         { //  delimoe < delitelja
             if ((type & 2) == 2)
             { // DIV, DIVN
