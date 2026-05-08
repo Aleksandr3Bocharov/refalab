@@ -184,9 +184,11 @@ static void shift_operate(uint8_t operation)
     do
     {
         T_LINKCB *x_current = refal.previous_argument->next;
+        if (x_current->tag != TAGLB)
+            break;
         T_LINKCB *current = x_current->info.codep;
         T_BIG_NUMBER X;
-        if (x_current->tag != TAGLB || !read_big_number_expression(&X, x_current, current))
+        if (!read_big_number_expression(&X, x_current, current))
             break;
         current = current->next;
         if (current->next != refal.next_argument || current->tag != TAGN)
