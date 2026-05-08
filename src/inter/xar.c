@@ -190,7 +190,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             }
             else
             { // wychitaem
-                const uint8_t compare_absolute = compare_big_numbers(&X, &Y);
+                const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
                 if (compare_absolute == 2)
                 {
                     result_zero = true;
@@ -314,7 +314,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             dr_one_remainder_one_quotient = true;
             break;
         }
-        const uint8_t compare_absolute = compare_big_numbers();
+        const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
         if (compare_absolute == 2)
         { //  rawny
             remainder = 0;
