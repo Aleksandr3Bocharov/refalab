@@ -879,8 +879,7 @@ uint8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER 
     const uint8_t compare_absolute = compare_big_numbers_absolute(big_number1, big_number2);
     if (compare_absolute == 2)
         return 2; // X=Y;
-    if ((big_number1->sign == '-' && compare_absolute == 0) ||
-        (big_number1->sign == '+' && compare_absolute == 1))
+    if ((big_number1->sign == '-' && compare_absolute == 0) || (big_number1->sign == '+' && compare_absolute == 1))
         return 1; // X<Y
     return 0;     // X>Y
 }
