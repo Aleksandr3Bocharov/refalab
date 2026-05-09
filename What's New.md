@@ -5,6 +5,10 @@
 
 **09-03-2026**
 
+Добавлены новые интерфейсные функции для работы с целыми числами:
+read_big_number_expression, read_big_numbers_expression,
+exchange_big_numbers, compare_big_numbers, compare_big_numbers_absolute.
+
 Исправлены ошибки и произведены оптимизации в работе компилятора,
 интерпретатора, отладчика, первичных функций библиотеки РефалАБ.
 
