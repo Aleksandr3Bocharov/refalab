@@ -411,7 +411,7 @@ char del_lastw_0[] = {Z1 'D', 'E', 'L', '_', 'L', 'A', 'S', 'T', 'W', (char)9};
 G_L_B uint8_t refalab_del_lastw = '\122';
 void (*del_lastw_1)(void) = del_lastw_;
 
-static void del_unbrackets_(void)
+static void unbrackets_(void)
 {
     T_LINKCB *left_bracket = refal.previous_argument->next;
     T_LINKCB *right_bracket = left_bracket->info.codep;
@@ -423,8 +423,8 @@ static void del_unbrackets_(void)
     transplantation(refal.previous_result, left_bracket, right_bracket);
     return;
 }
-char del_unbrackets_0[] = {Z2 'U', 'N', 'B', 'R', 'A', 'C', 'K', 'E', 'T', 'S', (char)10};
+char unbrackets_0[] = {Z2 'U', 'N', 'B', 'R', 'A', 'C', 'K', 'E', 'T', 'S', (char)10};
 G_L_B uint8_t refalab_unbrackets = '\122';
-void (*unbrackets_1)(void) = del_unbrackets_;
+void (*unbrackets_1)(void) = unbrackets_;
 
 //-------------------- end of file  XMO.C ----------------
