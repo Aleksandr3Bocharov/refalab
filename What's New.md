@@ -6,7 +6,7 @@
 **09-03-2026**
 
 Следующие рефал-функции библиотеки РефалАБ переделаны в первичные:
-empty, del_firstw, del_lastw.
+empty, del_firstw, del_lastw, unbrackets.
 
 
 Добавлена новая структура целого числа T_BIG_NUMBER и
