@@ -394,4 +394,21 @@ char del_firstw_0[] = {Z2 'D', 'E', 'L', '_', 'F', 'I', 'R', 'S', 'T', 'W', (cha
 G_L_B uint8_t refalab_del_firstw = '\122';
 void (*del_firstw_1)(void) = del_firstw_;
 
+static void del_lastw_(void)
+{
+    T_LINKCB *last_term = refal.next_argument->previous;
+    if (refal.previous_argument == last_term)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (last_term->tag == TAGRB)
+        last_term = last_term->info.codep;
+    transplantation(refal.previous_result, refal.previous_argument, last_term);
+    return;
+}
+char del_lastw_0[] = {Z1 'D', 'E', 'L', '_', 'L', 'A', 'S', 'T', 'W', (char)9};
+G_L_B uint8_t refalab_del_lastw = '\122';
+void (*del_lastw_1)(void) = del_lastw_;
+
 //-------------------- end of file  XMO.C ----------------
