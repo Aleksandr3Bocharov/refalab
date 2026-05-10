@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-01
+// 2026-05-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
@@ -368,5 +368,13 @@ static void lower_(void)
 char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_lower = '\122';
 void (*lower_1)(void) = lower_;
+
+static void empty_(void)
+{
+    return;
+}
+char empty_0[] = {Z5 'E', 'M', 'P', 'T', 'Y', (char)5};
+G_L_B uint8_t refalab_empty = '\122';
+void (*empty_1)(void) = empty_;
 
 //-------------------- end of file  XMO.C ----------------

@@ -2,7 +2,7 @@
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-11-05
+* 2026-05-10
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -15,7 +15,7 @@ MO2 START
 
     ENTRY Cvb, Cvd
     ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR
-    ENTRY Exist, Set, Empty, Type, Is_Type, Del_FirstW, Del_LastW, UnBrackets
+    ENTRY Exist, Set, Type, Is_Type, Del_FirstW, Del_LastW, UnBrackets
     ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT
     EXTRN Numb, Symb, Add, Mul, DrN
     EXTRN True, False
@@ -100,10 +100,6 @@ Exist
 Set R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques +
         = <Set E.Items_B W.Repeated E.Items_E> E.Uniques
     E._ = E._
-
-* <Empty E.Any> ==
-Empty
-    E._ =
 
 * <Type E.Any> == S.Type E.SubType E.Any
 * S.Type ::= &Void | &Label | &Number | &Reference | &Char | &Brackets | &OtherT
