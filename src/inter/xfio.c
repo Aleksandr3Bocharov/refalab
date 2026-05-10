@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-30
+// 2026-05-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XFIO.C ---------------
@@ -25,7 +25,7 @@
 
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
-extern uint8_t refalab_begin, refalab_end, refalab_cur;
+extern uint8_t refalab_begin, refalab_end, refalab_current;
 
 static FILE *file;
 static FILE *files[FILES_MAX] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -691,7 +691,7 @@ static void fseek_(void)
             origin = SEEK_SET;
         else if (current_argument->info.codef == &refalab_end)
             origin = SEEK_END;
-        else if (current_argument->info.codef == &refalab_cur)
+        else if (current_argument->info.codef == &refalab_current)
             origin = SEEK_CUR;
         else
             break;
