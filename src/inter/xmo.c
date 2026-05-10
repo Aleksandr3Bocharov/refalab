@@ -377,4 +377,21 @@ char empty_0[] = {Z5 'E', 'M', 'P', 'T', 'Y', (char)5};
 G_L_B uint8_t refalab_empty = '\122';
 void (*empty_1)(void) = empty_;
 
+static void del_firstw_(void)
+{
+    T_LINKCB *first_term = refal.previous_argument->next;
+    if (first_term == refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (first_term->tag == TAGLB)
+        first_term = first_term->info.codep;
+    transplantation(refal.previous_result, first_term, refal.next_argument);
+    return;
+}
+char del_firstw_0[] = {Z2 'D', 'E', 'L', '_', 'F', 'I', 'R', 'S', 'T', 'W', (char)10};
+G_L_B uint8_t refalab_del_firstw = '\122';
+void (*del_firstw_1)(void) = del_firstw_;
+
 //-------------------- end of file  XMO.C ----------------
