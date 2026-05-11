@@ -14,7 +14,7 @@ AR2 START
 
     ENTRY Inc, Dec
     ENTRY Max_Number, Is_Max_Number
-    ENTRY NNorm, Abs, Minus
+    ENTRY Abs, Minus
     EXTRN Add, Sub
     EXTRN True, False
 
@@ -40,17 +40,6 @@ Is_Max_Number
     S(:Max_Number:)._ +
         = &True
     S._ = &False
-
-* <NNorm E.Number> = V.NormNumber
-NNorm   = 0
-    '-' V(0).Zeros +
-        = 0
-    R '-' E(0).Zeros V(N).Number +
-        = '-' V.Number
-    R '+' E(0).Zeros V(N).Number +
-        = V.Number
-    R E(0).Zeros V(N).Number +
-        = V.Number
 
 * <Abs E.Number> = V.AbsNumber
 Abs     = 0
