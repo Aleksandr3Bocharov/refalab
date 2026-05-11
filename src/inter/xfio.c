@@ -758,7 +758,7 @@ static void ftell_(void)
             T_LINKCB *second_symbol_number = symbol_number->previous;
             second_symbol_number->tag = TAGN;
             second_symbol_number->info.code = NULL;
-            pcoden(second_symbol_number, tell_result >> 32);
+            pcoden(second_symbol_number, (uint32_t)(tell_result >> 32));
             transplantation(refal.previous_result, second_symbol_number->previous, symbol_number->next);
         }
         else
