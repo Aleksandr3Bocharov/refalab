@@ -14,7 +14,7 @@ AR2 START
 
     ENTRY Inc, Dec
     ENTRY Max_Number, Is_Max_Number
-    ENTRY NNorm, NCheck, Abs, Minus
+    ENTRY NNorm, Abs, Minus
     EXTRN Add, Sub
     EXTRN True, False
 
@@ -51,13 +51,6 @@ NNorm   = 0
         = V.Number
     R E(0).Zeros V(N).Number +
         = V.Number
-
-* <NCheck E.Number> = E.Number
-NCheck
-    S('+-').Znak V(N).Number +
-        = S.Znak V.Number
-    E(N).Number +
-        = E.Number
 
 * <Abs E.Number> = V.AbsNumber
 Abs     = 0

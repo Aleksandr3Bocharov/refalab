@@ -1093,6 +1093,21 @@ char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
 
+static void ncheck_(void)
+{
+    T_BIG_NUMBER X;
+    if (!read_big_number_expression(&X, refal.previous_argument, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+    return;
+}
+char ncheck_0[] = {Z6 'N', 'C', 'H', 'E', 'C', 'K', (char)6};
+G_L_B uint8_t refalab_ncheck = '\122';
+void (*ncheck_1)(void) = ncheck_;
+
 static void get_max_number_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
