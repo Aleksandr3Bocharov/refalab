@@ -1,13 +1,15 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-10
+// 2026-05-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  XFIO.C ---------------
 //           MO: file input/output
 //           MO: file/dir remove/rename/exist
 //---------------------------------------------
+
+#define _FILE_OFFSET_BITS 64
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -670,7 +672,7 @@ static void fseek_(void)
         file = files[file_number];
         current_argument = current_argument->next;
         const char sign = current_argument->info.infoc;
-        int64_t sign_digit = 1;
+        off_t sign_digit = 1;
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
             current_argument = current_argument->next;
@@ -679,10 +681,8 @@ static void fseek_(void)
         }
         if (current_argument->tag != TAGN)
             break;
-        const int64_t offset_absolute = gcoden(current_argument);
-        if (sign_digit == 1 ? offset_absolute > 2147483647 : offset_absolute > 2147483648)
-            break;
-        const long int offset = (long int)(sign_digit * offset_absolute);
+        const off_t offset_absolute = gcoden(current_argument);
+        const off_t offset = sign_digit * offset_absolute;
         current_argument = current_argument->next;
         if (current_argument->tag != TAGF)
             break;
@@ -703,7 +703,7 @@ static void fseek_(void)
             transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        const int seek_result = fseek(file, offset, origin);
+        const int seek_result = fseeko(file, offset, origin);
         if (seek_result == -1)
         {
             const int error_number = errno;
@@ -741,7 +741,7 @@ static void ftell_(void)
             transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
-        long int tell_result = ftell(file);
+        off_t tell_result = ftello(file);
         if (tell_result == -1)
         {
             const int error_number = errno;
