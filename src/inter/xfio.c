@@ -664,6 +664,7 @@ static void fseek_(void)
     do
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
+        size_t argument_length = 4;
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
@@ -676,14 +677,26 @@ static void fseek_(void)
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
             current_argument = current_argument->next;
+            argument_length++;
             if (sign == '-')
                 sign_digit = -1;
         }
         if (current_argument->tag != TAGN)
             break;
-        const off_t offset_absolute = gcoden(current_argument);
-        const off_t offset = sign_digit * offset_absolute;
+        off_t offset_absolute = gcoden(current_argument);
         current_argument = current_argument->next;
+        if (current_argument->tag == TAGN)
+        {
+            if (sign_digit == 1 ? offset_absolute > 2147483647 : offset_absolute > 2147483648)
+                break;
+            if (offset_absolute == 2147483648 && gcoden(current_argument) > 0)
+                break;
+            offset_absolute <<= 32;
+            offset_absolute |= gcoden(current_argument);
+            argument_length++;
+            current_argument = current_argument->next;
+        }
+        const off_t offset = sign_digit * offset_absolute;
         if (current_argument->tag != TAGF)
             break;
         int origin;
@@ -708,7 +721,7 @@ static void fseek_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 3 - (sign_digit == 1 ? 1 : 2)))
+            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - argument_length))
                 return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
