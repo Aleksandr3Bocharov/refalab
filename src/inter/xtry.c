@@ -22,12 +22,12 @@ static void try_(void)
     size_t new_status_table_pointer_number = (size_t)&new_status_table;
     bool lack_memory = false;
     if ((new_status_table_pointer_number & 0xffff) < 200)
-        lack_memory = true;
+        refal_abort_end("try: stack overflow");
     else
     {
         new_status_table = malloc(sizeof(T_STATUS_TABLE));
         if (new_status_table == NULL)
-            lack_memory = true;
+            refal_abort_end("try: malloc error");
         else if (!create_status_table(new_status_table))
             lack_memory = true;
         else if (!extended_insert_from_free_memory(new_status_table->view, 2))
