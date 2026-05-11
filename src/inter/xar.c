@@ -1162,6 +1162,37 @@ char abs_0[] = {Z3 'A', 'B', 'S', (char)3};
 G_L_B uint8_t refalab_abs = '\122';
 void (*abs_1)(void) = abs_;
 
+static void minus_(void)
+{
+    T_BIG_NUMBER X;
+    if (!read_big_number_expression(&X, refal.previous_argument, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (X.length == 0)
+    {
+        refal.previous_argument->tag = TAGN;
+        refal.previous_argument->info.code = NULL;
+        pcoden(refal.previous_argument, 0);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    }
+    else if (X.sign == '+')
+    {
+        T_LINKCB *X_sign = X.begin->previous;
+        X_sign->tag = TAGO;
+        X_sign->info.code = NULL;
+        X_sign->info.infoc = '-';
+        transplantation(refal.previous_result, X_sign->previous, X.end->next);
+    }
+    else
+        transplantation(refal.previous_result, X.begin->previous, X.end->next);
+    return;
+}
+char minus_0[] = {Z5 'M', 'I', 'N', 'U', 'S', (char)5};
+G_L_B uint8_t refalab_minus = '\122';
+void (*minus_1)(void) = minus_;
+
 static void get_max_number_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
