@@ -5,8 +5,8 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCOMP.C ---------------
-//   MO: nrel, ltn,
-//   lrel
+//   MO: nrel, ltn, len, eqn, nen, gen, gtn
+//   lrel, ltl, lel, eql, nel, gel, gtl
 //--------------------------------------------
 
 #include <stddef.h>
@@ -225,5 +225,131 @@ static void lrel_(void)
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
 G_L_B uint8_t refalab_lrel = '\122';
 void (*lrel_1)(void) = lrel_;
+
+static void ltl_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 1)
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char ltl_0[] = {Z3 'L', 'T', 'L', (char)3};
+G_L_B uint8_t refalab_ltl = '\122';
+void (*ltl_1)(void) = ltl_;
+
+static void lel_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 0)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char lel_0[] = {Z3 'L', 'E', 'L', (char)3};
+G_L_B uint8_t refalab_lel = '\122';
+void (*lel_1)(void) = lel_;
+
+static void eql_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 2)
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char eql_0[] = {Z3 'E', 'Q', 'L', (char)3};
+G_L_B uint8_t refalab_eql = '\122';
+void (*eql_1)(void) = eql_;
+
+static void nel_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 2)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char nel_0[] = {Z3 'N', 'E', 'L', (char)3};
+G_L_B uint8_t refalab_nel = '\122';
+void (*nel_1)(void) = nel_;
+
+static void gel_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 1)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char gel_0[] = {Z3 'G', 'E', 'L', (char)3};
+G_L_B uint8_t refalab_gel = '\122';
+void (*gel_1)(void) = gel_;
+
+static void gtl_(void)
+{
+    const T_LINKCB *first_begin = refal.previous_argument->next;
+    if (first_begin->tag != TAGLB)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const T_LINKCB *second_begin = first_begin->info.codep;
+    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 0)
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
+G_L_B uint8_t refalab_gtl = '\122';
+void (*gtl_1)(void) = gtl_;
 
 //------------------ end of file  XCOMP.C ----------------
