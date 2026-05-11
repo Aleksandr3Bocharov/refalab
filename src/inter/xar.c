@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-07
+// 2026-05-11
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -1092,6 +1092,23 @@ static void gcd_(void)
 char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
+
+static void get_max_number_(void)
+{
+    if (refal.previous_argument->next != refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    refal.previous_argument->tag = TAGN;
+    refal.previous_argument->info.code = NULL;
+    pcoden(refal.previous_argument, MAX_NUMBER);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char get_max_number_0[] = {Z6 'G', 'E', 'T', '_', 'M', 'A', 'X', '_', 'N', 'U', 'M', 'B', 'E', 'R', (char)14};
+G_L_B uint8_t refalab_get_max_number = '\122';
+void (*get_max_number_1)(void) = get_max_number_;
 
 static void p1_(void)
 {

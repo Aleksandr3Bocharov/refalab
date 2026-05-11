@@ -1,8 +1,8 @@
-* Copyright 2025 Aleksandr Bocharov
+* Copyright 2026 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-12
+* 2026-05-11
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -13,7 +13,7 @@
 AR2 START
 
     ENTRY Inc, Dec
-    ENTRY Max_Number, Get_Max_Number, Is_Max_Number
+    ENTRY Max_Number, Is_Max_Number
     ENTRY NNorm, NCheck, Abs, Minus
     EXTRN Add, Sub
     EXTRN True, False
@@ -34,10 +34,6 @@ Inc E.Number +
 * V.Number1 ::= '-'? S(N).Number+
 Dec E.Number +
         = <Sub (E.Number) 1>
-
-* <Get_Max_Number> == 4294967295
-Get_Max_Number
-        = 4294967295
 
 * <Is_Max_Number S.Any> == &True | &False
 Is_Max_Number
