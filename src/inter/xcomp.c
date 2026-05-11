@@ -5,7 +5,8 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------ file -- XCOMP.C ---------------
-//   MO: nrel, lrel
+//   MO: nrel, ltn,
+//   lrel
 //--------------------------------------------
 
 #include <stddef.h>
@@ -52,16 +53,12 @@ static void ltn_(void)
         refal.upshot = 2;
         return;
     }
-    char compare_result = '=';
     const uint8_t compare = compare_big_numbers(&X, &Y);
     if (compare == 1)
-        compare_result = '<';
-    else if (compare == 0)
-        compare_result = '>';
-    refal.previous_argument->tag = TAGO;
-    refal.previous_argument->info.code = NULL;
-    refal.previous_argument->info.infoc = compare_result;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
 char ltn_0[] = {Z3 'L', 'T', 'N', (char)3};
@@ -76,22 +73,22 @@ static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T
         if ((first_current->tag == TAGLB && second_current->tag == TAGLB) || (first_current->tag == TAGRB && second_current->tag == TAGRB))
             continue;
         else if (first_current->tag == TAGLB || second_current->tag == TAGRB)
-            return 0; //X>Y
+            return 0; // X>Y
         else if (first_current->tag == TAGRB || second_current->tag == TAGLB)
-            return 1; //X<Y
+            return 1; // X<Y
         else if (first_current->tag > second_current->tag)
-            return 0; //X>Y
+            return 0; // X>Y
         else if (first_current->tag < second_current->tag)
-            return 1; //X<Y
+            return 1; // X<Y
         else if ((size_t)first_current->info.code > (size_t)second_current->info.code)
-            return 0; //X>Y
+            return 0; // X>Y
         else if ((size_t)first_current->info.code < (size_t)second_current->info.code)
-            return 1; //X<Y
+            return 1; // X<Y
     if (first_current == middle && second_current != after)
-        return 1; //X<Y
+        return 1; // X<Y
     if (second_current == after && first_current != middle)
-        return 0; //X>Y
-    return 2; //X=Y
+        return 0; // X>Y
+    return 2;     // X=Y
 }
 
 static void lrel_(void)
