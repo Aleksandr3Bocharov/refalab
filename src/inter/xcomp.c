@@ -87,6 +87,94 @@ char len_0[] = {Z3 'L', 'E', 'N', (char)3};
 G_L_B uint8_t refalab_len = '\122';
 void (*len_1)(void) = len_;
 
+static void eqn_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 2)
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char eqn_0[] = {Z3 'E', 'Q', 'N', (char)3};
+G_L_B uint8_t refalab_eqn = '\122';
+void (*eqn_1)(void) = eqn_;
+
+static void nen_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 2)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char nen_0[] = {Z3 'N', 'E', 'N', (char)3};
+G_L_B uint8_t refalab_nen = '\122';
+void (*nen_1)(void) = nen_;
+
+static void gen_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 1)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char gen_0[] = {Z3 'G', 'E', 'N', (char)3};
+G_L_B uint8_t refalab_gen = '\122';
+void (*gen_1)(void) = gen_;
+
+static void gtn_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 0)
+        refal.previous_argument->info.codef = &refalab_true;
+    else
+        refal.previous_argument->info.codef = &refalab_false;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char gtn_0[] = {Z3 'G', 'T', 'N', (char)3};
+G_L_B uint8_t refalab_gtn = '\122';
+void (*gtn_1)(void) = gtn_;
+
 static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     const T_LINKCB *first_current = before->next;
