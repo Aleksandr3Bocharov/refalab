@@ -8,7 +8,8 @@
 Пустая функция Cur из библиотеки РефалАБ переименована в Current.
 
 Следующие рефал-функции библиотеки РефалАБ переделаны в первичные:
-empty, del_firstw, del_lastw, unbrackets, get_max_number.
+empty, del_firstw, del_lastw, unbrackets, get_max_number,
+ncheck.
 
 Добавлена новая структура целого числа T_BIG_NUMBER и
 добавлены новые интерфейсные функции для работы с целыми числами:
