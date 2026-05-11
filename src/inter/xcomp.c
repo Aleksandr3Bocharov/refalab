@@ -14,6 +14,8 @@
 #include "refalab.h"
 #include "rfintf.h"
 
+extern uint8_t refalab_true, refalab_false;
+
 static void nrel_(void)
 {
     const T_LINKCB *x_current = refal.previous_argument->next;
@@ -39,6 +41,32 @@ static void nrel_(void)
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};
 G_L_B uint8_t refalab_nrel = '\122';
 void (*nrel_1)(void) = nrel_;
+
+static void ltn_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    char compare_result = '=';
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 1)
+        compare_result = '<';
+    else if (compare == 0)
+        compare_result = '>';
+    refal.previous_argument->tag = TAGO;
+    refal.previous_argument->info.code = NULL;
+    refal.previous_argument->info.infoc = compare_result;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
+    return;
+}
+char ltn_0[] = {Z3 'L', 'T', 'N', (char)3};
+G_L_B uint8_t refalab_ltn = '\122';
+void (*ltn_1)(void) = ltn_;
 
 static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {

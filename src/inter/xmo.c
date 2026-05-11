@@ -8,7 +8,9 @@
 //                 Lexical MO:
 //     numb, symb, first, last,
 //     lengr, lengw, multe,
-//     chr, ord, upper, lower
+//     chr, ord, upper, lower,
+//     empty, del_first2, del_lastw,
+//     unbrackets
 //------------------------------------------
 
 #include <stdio.h>

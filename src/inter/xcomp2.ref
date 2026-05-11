@@ -1,8 +1,8 @@
-* Copyright 2025 Aleksandr Bocharov
+* Copyright 2026 Aleksandr Bocharov
 * Distributed under the Boost Software License, Version 1.0.
 * See accompanying file LICENSE_1_0.txt
 * or copy at http://www.boost.org/LICENSE_1_0.txt
-* 2025-12-29
+* 2026-05-11
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -12,22 +12,13 @@
 COMP2 +
     START
 
-    ENTRY LTN, LEN, EQN, NEN, GEN, GTN
+    ENTRY LEN, EQN, NEN, GEN, GTN
     ENTRY QSortN, MinN, MaxN
     ENTRY LTL, LEL, EQL, NEL, GEL, GTL
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
 
     IMPL
-
-* <LTN (E.N1) E.N2> = &True | &False
-LTN E._ +
-        = <LTN_Aux <NRel E._>>
-
-LTN_Aux
-    '<' E._ +
-        = &True
-    E._ = &False
 
 * <LEN (E.N1) E.N2> = &True | &False
 LEN E._ +

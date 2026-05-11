@@ -8,7 +8,8 @@
 //              Ariphmetics MO:
 //       add, sub, mul, dr, div,
 //       addn, subn, muln, drn, divn,
-//       gcd, p1, m1
+//       gcd, ncheck, nnorm, abs, minus,
+//       get_max_number, p1, m1
 //------------------------------------------
 
 #include <stddef.h>
