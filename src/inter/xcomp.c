@@ -65,6 +65,28 @@ char ltn_0[] = {Z3 'L', 'T', 'N', (char)3};
 G_L_B uint8_t refalab_ltn = '\122';
 void (*ltn_1)(void) = ltn_;
 
+static void len_(void)
+{
+    const T_LINKCB *x_current = refal.previous_argument->next;
+    const T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const uint8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 0)
+        refal.previous_argument->info.codef = &refalab_false;
+    else
+        refal.previous_argument->info.codef = &refalab_true;
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char len_0[] = {Z3 'L', 'E', 'N', (char)3};
+G_L_B uint8_t refalab_len = '\122';
+void (*len_1)(void) = len_;
+
 static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     const T_LINKCB *first_current = before->next;

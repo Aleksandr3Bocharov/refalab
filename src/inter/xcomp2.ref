@@ -12,22 +12,13 @@
 COMP2 +
     START
 
-    ENTRY LEN, EQN, NEN, GEN, GTN
+    ENTRY EQN, NEN, GEN, GTN
     ENTRY QSortN, MinN, MaxN
     ENTRY LTL, LEL, EQL, NEL, GEL, GTL
     ENTRY QSortW, MinW, MaxW
     EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel, True, False
 
     IMPL
-
-* <LEN (E.N1) E.N2> = &True | &False
-LEN E._ +
-        = <LEN_Aux <NRel E._>>
-
-LEN_Aux
-    '>' E._ +
-        = &False
-    E._ = &True
 
 * <EQN (E.N1) E.N2> = &True | &False
 EQN E._ +
