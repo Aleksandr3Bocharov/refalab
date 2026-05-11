@@ -1122,9 +1122,8 @@ static void nnorm_(void)
         refal.previous_argument->info.code = NULL;
         pcoden(refal.previous_argument, 0);
         transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
-        return;
     }
-    if (X.sign == '-')
+    else if (X.sign == '-')
     {
         T_LINKCB *X_sign = X.begin->previous;
         X_sign->tag = TAGO;
@@ -1139,6 +1138,29 @@ static void nnorm_(void)
 char nnorm_0[] = {Z5 'N', 'N', 'O', 'R', 'M', (char)5};
 G_L_B uint8_t refalab_nnorm = '\122';
 void (*nnorm_1)(void) = nnorm_;
+
+static void abs_(void)
+{
+    T_BIG_NUMBER X;
+    if (!read_big_number_expression(&X, refal.previous_argument, refal.next_argument))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (X.length == 0)
+    {
+        refal.previous_argument->tag = TAGN;
+        refal.previous_argument->info.code = NULL;
+        pcoden(refal.previous_argument, 0);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    }
+    else
+        transplantation(refal.previous_result, X.begin->previous, X.end->next);
+    return;
+}
+char abs_0[] = {Z3 'A', 'B', 'S', (char)3};
+G_L_B uint8_t refalab_abs = '\122';
+void (*abs_1)(void) = abs_;
 
 static void get_max_number_(void)
 {
