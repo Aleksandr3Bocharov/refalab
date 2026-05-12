@@ -9,6 +9,7 @@
 //           MO: file/dir remove/rename/exist
 //---------------------------------------------
 
+#define _POSIX_C_SOURCE 200112L
 #define _FILE_OFFSET_BITS 64
 
 #include <stdio.h>
@@ -18,6 +19,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include "refalab.h"
