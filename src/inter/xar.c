@@ -1106,13 +1106,12 @@ static void gcd1_(void)
     }
     enum
     {
-        OC,
-        M12,
-        M21,
-        SHD,
-        FIN1,
-        NEOT
-    } gcd_state = OC;
+        FIN,
+        COND,
+        TWO_EVEN,
+        ONE_ODD,
+        TWO_ODD
+    } gcd_state = FIN;
     return;
 }
 char gcd1_0[] = {Z3 'G', 'C', 'D', (char)3};
