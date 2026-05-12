@@ -1094,6 +1094,31 @@ char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
 
+static void gcd1_(void)
+{
+    T_LINKCB *x_current = refal.previous_argument->next;
+    T_LINKCB *y_current = x_current->info.codep;
+    T_BIG_NUMBER X, Y;
+    if (x_current->tag != TAGLB || !read_big_numbers_expression(&X, &Y, x_current, y_current, refal.next_argument) || (X.length == 0 && Y.length == 0))
+    {
+        refal.upshot = 2;
+        return;
+    }
+    enum
+    {
+        OC,
+        M12,
+        M21,
+        SHD,
+        FIN1,
+        NEOT
+    } gcd_state = OC;
+    return;
+}
+char gcd1_0[] = {Z3 'G', 'C', 'D', (char)3};
+G_L_B uint8_t refalab_gcd1 = '\122';
+void (*gcd1_1)(void) = gcd1_;
+
 static void ncheck_(void)
 {
     T_BIG_NUMBER X;
