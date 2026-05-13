@@ -199,13 +199,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 }
                 if (compare_absolute == -1)
                     exchange_big_numbers(&X, &Y); //  menjaem x i y
-                X.begin = X.begin->previous;      //  pripisywaem 0
-                X.begin->tag = TAGN;
-                X.begin->info.code = NULL;
-                int64_t transfer = 0, substraction;
+                int64_t transfer = 0;
                 for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
-                    substraction = gcoden(x_current);
+                    int64_t substraction = gcoden(x_current);
                     if (y_current != Y.begin->previous)
                     {
                         substraction -= (int64_t)gcoden(y_current) + transfer;
@@ -1096,6 +1093,13 @@ void (*gcd_1)(void) = gcd_;
 
 static void shift_right_one(T_BIG_NUMBER *big_number)
 {
+    for (T_LINKCB *x_current = big_number->end; x_current != big_number->begin; x_current = x_current->previous)
+    {
+        pcoden(x_current, gcoden(x_current) >> 1);
+        const uint32_t transfer = gcoden(x_current->previous) << 31;
+        pcoden(x_current, gcoden(x_current) | transfer);
+    }
+    pcoden(big_number->begin, gcoden(big_number->begin) >> 1);
     return;
 }
 
@@ -1163,14 +1167,36 @@ static void gcd1_(void)
             shift_right_one(&X);
             gcd_state = IS_FIN;
             break;
-        case TWO_ODD:
+        case TWO_ODD:;
+            int64_t transfer = 0; // wychitaem
+            for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
+            {
+                int64_t substraction = gcoden(x_current);
+                if (y_current != Y.begin->previous)
+                {
+                    substraction -= (int64_t)gcoden(y_current) + transfer;
+                    y_current = y_current->previous;
+                }
+                else
+                    substraction -= transfer;
+                if (substraction < 0)
+                {
+                    substraction += MAX_NUMBER + 1;
+                    transfer = 1;
+                }
+                else
+                    transfer = 0;
+                pcoden(x_current, (uint32_t)substraction);
+            } // for
+            // podawim wed. nuli
+            for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
+                ;
             shift_right_one(&X);
             gcd_state = IS_FIN;
             break;
         case FIN:
             if (shifts_left != 0)
             {
-
             }
             transplantation(refal.previous_result, X.begin->previous, X.end->next);
             return;
