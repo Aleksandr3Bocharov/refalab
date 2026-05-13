@@ -1104,14 +1104,34 @@ static void gcd1_(void)
         refal.upshot = 2;
         return;
     }
+    uint64_t shifts_left = 0;
     enum
     {
-        FIN,
+        IS_FIN,
         COND,
         TWO_EVEN,
         ONE_ODD,
-        TWO_ODD
+        TWO_ODD,
+        FIN
     } gcd_state = FIN;
+    while (true)
+        switch (gcd_state)
+        {
+        case IS_FIN:
+            const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
+            if (X.length == 0 || Y.length == 0 || compare_absolute == 2)
+                exchange_big_numbers(&X, &Y) else if (X.length == 0) break;
+        case COND:
+            break;
+        case TWO_EVEN:
+            break;
+        case ONE_ODD:
+            break;
+        case TWO_ODD:
+            break;
+        case FIN:
+            return;
+        }
     return;
 }
 char gcd1_0[] = {Z3 'G', 'C', 'D', (char)3};
