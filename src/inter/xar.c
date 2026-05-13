@@ -1100,6 +1100,12 @@ static void shift_right_one(T_BIG_NUMBER *big_number)
         pcoden(x_current, gcoden(x_current) | transfer);
     }
     pcoden(big_number->begin, gcoden(big_number->begin) >> 1);
+    // podawim wed. nul
+    if (gcoden(big_number->begin) == 0)
+    {
+        big_number->begin = big_number->begin->next;
+        big_number->length--;
+    }
     return;
 }
 
@@ -1189,7 +1195,7 @@ static void gcd1_(void)
                 pcoden(x_current, (uint32_t)substraction);
             } // for
             // podawim wed. nuli
-            for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
+            for (; gcoden(X.begin) == 0; X.begin = X.begin->next, X.length--)
                 ;
             shift_right_one(&X);
             gcd_state = IS_FIN;
@@ -1197,6 +1203,41 @@ static void gcd1_(void)
         case FIN:
             if (shifts_left != 0)
             {
+                const uint64_t numbers_count = shifts_left >> 5;
+                shifts_left %= 32;
+                const uint64_t transfer_shift_bits = 32 - shifts_left;
+                size_t length;
+                const T_LINKCB *end;
+                if (numbers_count != 0)
+                {
+                    current = X.begin;
+                    for (length = 0; length < numbers_count; length++)
+                    {
+                        X.begin = X.begin->previous;
+                        X.begin->tag = TAGN;
+                        X.begin->info.code = NULL;
+                    }
+                    for (x_current = X.begin; current != X.end->next; x_current = x_current->next, current = current->next)
+                    {
+                        pcoden(x_current, gcoden(current));
+                        current->info.code = NULL;
+                    }
+                    end = x_current->previous;
+                }
+                else
+                    end = X.end;
+                if (shifts_left != 0)
+                {
+                    X.begin = X.begin->previous;
+                    X.begin->tag = TAGN;
+                    X.begin->info.code = NULL;
+                    for (x_current = X.begin->next; x_current != end->next; x_current = x_current->next)
+                    {
+                        const uint32_t transfer = gcoden(x_current) >> transfer_shift_bits;
+                        pcoden(x_current->previous, gcoden(x_current->previous) | transfer);
+                        pcoden(x_current, gcoden(x_current) << shift_bits);
+                    }
+                }
             }
             transplantation(refal.previous_result, X.begin->previous, X.end->next);
             return;
