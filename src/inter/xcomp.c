@@ -28,10 +28,10 @@ static void nrel_(void)
         return;
     }
     char compare_result = '=';
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 1)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == -1)
         compare_result = '<';
-    else if (compare == 0)
+    else if (compare == 1)
         compare_result = '>';
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
@@ -53,8 +53,8 @@ static void ltn_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 1)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == -1)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
@@ -75,8 +75,8 @@ static void len_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 0)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 1)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -97,8 +97,8 @@ static void eqn_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 2)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 0)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
@@ -119,8 +119,8 @@ static void nen_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 2)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 0)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -141,8 +141,8 @@ static void gen_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 1)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == -1)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -163,8 +163,8 @@ static void gtn_(void)
         refal.upshot = 2;
         return;
     }
-    const uint8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == 0)
+    const int8_t compare = compare_big_numbers(&X, &Y);
+    if (compare == 1)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
@@ -175,7 +175,7 @@ char gtn_0[] = {Z3 'G', 'T', 'N', (char)3};
 G_L_B uint8_t refalab_gtn = '\122';
 void (*gtn_1)(void) = gtn_;
 
-static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
+static int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     const T_LINKCB *first_current = before->next;
     const T_LINKCB *second_current = middle->next;
@@ -183,22 +183,22 @@ static uint8_t compare_expressions_lexicographic(const T_LINKCB *before, const T
         if ((first_current->tag == TAGLB && second_current->tag == TAGLB) || (first_current->tag == TAGRB && second_current->tag == TAGRB))
             continue;
         else if (first_current->tag == TAGLB || second_current->tag == TAGRB)
-            return 0; // X>Y
+            return 1; // X>Y
         else if (first_current->tag == TAGRB || second_current->tag == TAGLB)
-            return 1; // X<Y
+            return -1; // X<Y
         else if (first_current->tag > second_current->tag)
-            return 0; // X>Y
+            return 1; // X>Y
         else if (first_current->tag < second_current->tag)
-            return 1; // X<Y
+            return -1; // X<Y
         else if ((size_t)first_current->info.code > (size_t)second_current->info.code)
-            return 0; // X>Y
+            return 1; // X>Y
         else if ((size_t)first_current->info.code < (size_t)second_current->info.code)
-            return 1; // X<Y
+            return -1; // X<Y
     if (first_current == middle && second_current != after)
-        return 1; // X<Y
+        return -1; // X<Y
     if (second_current == after && first_current != middle)
-        return 0; // X>Y
-    return 2;     // X=Y
+        return 1; // X>Y
+    return 0;     // X=Y
 }
 
 static void lrel_(void)
@@ -211,10 +211,10 @@ static void lrel_(void)
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
     char compare_result = '=';
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 0)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 1)
         compare_result = '>';
-    else if (compare == 1)
+    else if (compare == -1)
         compare_result = '<';
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
@@ -235,8 +235,8 @@ static void ltl_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 1)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == -1)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
@@ -256,8 +256,8 @@ static void lel_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 0)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 1)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -277,8 +277,8 @@ static void eql_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 2)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 0)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
@@ -298,8 +298,8 @@ static void nel_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 2)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 0)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -319,8 +319,8 @@ static void gel_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 1)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == -1)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
@@ -340,8 +340,8 @@ static void gtl_(void)
         return;
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
-    const uint8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    if (compare == 0)
+    const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
+    if (compare == 1)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;

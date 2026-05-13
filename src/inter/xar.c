@@ -191,7 +191,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             }
             else
             { // wychitaem
-                const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
+                const int8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
                 if (compare_absolute == 0)
                 {
                     result_zero = true;
@@ -315,7 +315,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             dr_one_remainder_one_quotient = true;
             break;
         }
-        const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
+        const int8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
         if (compare_absolute == 0)
         { //  rawny
             remainder = 0;
@@ -1105,6 +1105,7 @@ static void gcd1_(void)
         return;
     }
     uint64_t shifts_left = 0;
+    int8_t compare_absolute;
     enum
     {
         IS_FIN,
@@ -1113,15 +1114,39 @@ static void gcd1_(void)
         ONE_ODD,
         TWO_ODD,
         FIN
-    } gcd_state = FIN;
+    } gcd_state = IS_FIN;
     while (true)
         switch (gcd_state)
         {
         case IS_FIN:
-            const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
-            if (X.length == 0 || Y.length == 0 || compare_absolute == 0)
-                exchange_big_numbers(&X, &Y) else if (X.length == 0) break;
+            compare_absolute = compare_big_numbers_absolute(&X, &Y);
+            if (X.length == 0 || (Y.length == 1 && gcoden(Y.end) == 1))
+            {
+                exchange_big_numbers(&X, &Y);
+                gcd_state = FIN;
+            }
+            else if (Y.length == 0 || compare_absolute == 0 || (X.length == 1 && gcoden(X.end) == 1))
+                gcd_state = FIN;
+            else
+                gcd_state = COND;
+            break;
         case COND:
+            if ((gcoden(X.end) & 1) == 0 && (gcoden(Y.end) & 1) == 0)
+                gcd_state = TWO_EVEN;
+            else if ((gcoden(X.end) & 1) == 0)
+                gcd_state = ONE_ODD;
+            else if ((gcoden(Y.end) & 1) == 0)
+            {
+                exchange_big_numbers(&X, &Y);
+                gcd_state = ONE_ODD;
+            }
+            else if (compare_absolute == 1)
+                gcd_state = TWO_ODD;
+            else
+            {
+                exchange_big_numbers(&X, &Y);
+                gcd_state = TWO_ODD;
+            }
             break;
         case TWO_EVEN:
             break;
