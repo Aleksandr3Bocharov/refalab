@@ -1094,6 +1094,11 @@ char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
 
+static void shift_right_one(T_BIG_NUMBER *big_number)
+{
+    return;
+}
+
 static void gcd1_(void)
 {
     T_LINKCB *x_current = refal.previous_argument->next;
@@ -1149,10 +1154,18 @@ static void gcd1_(void)
             }
             break;
         case TWO_EVEN:
+            shift_right_one(&X);
+            shift_right_one(&Y);
+            shifts_left++;
+            gcd_state = IS_FIN;
             break;
         case ONE_ODD:
+            shift_right_one(&X);
+            gcd_state = IS_FIN;
             break;
         case TWO_ODD:
+            shift_right_one(&X);
+            gcd_state = IS_FIN;
             break;
         case FIN:
             return;
