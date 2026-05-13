@@ -1168,6 +1168,11 @@ static void gcd1_(void)
             gcd_state = IS_FIN;
             break;
         case FIN:
+            if (shifts_left != 0)
+            {
+
+            }
+            transplantation(refal.previous_result, X.begin->previous, X.end->next);
             return;
         }
     return;
