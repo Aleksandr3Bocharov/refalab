@@ -192,12 +192,12 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             else
             { // wychitaem
                 const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
-                if (compare_absolute == 2)
+                if (compare_absolute == 0)
                 {
                     result_zero = true;
                     break;
                 }
-                if (compare_absolute == 1)
+                if (compare_absolute == -1)
                     exchange_big_numbers(&X, &Y); //  menjaem x i y
                 X.begin = X.begin->previous;      //  pripisywaem 0
                 X.begin->tag = TAGN;
@@ -316,14 +316,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             break;
         }
         const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
-        if (compare_absolute == 2)
+        if (compare_absolute == 0)
         { //  rawny
             remainder = 0;
             quotient = 1;
             dr_one_remainder_one_quotient = true;
             break;
         }
-        if (compare_absolute == 1)
+        if (compare_absolute == -1)
         { //  delimoe < delitelja
             if ((type & 2) == 2)
             { // DIV, DIVN
@@ -1119,7 +1119,7 @@ static void gcd1_(void)
         {
         case IS_FIN:
             const uint8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
-            if (X.length == 0 || Y.length == 0 || compare_absolute == 2)
+            if (X.length == 0 || Y.length == 0 || compare_absolute == 0)
                 exchange_big_numbers(&X, &Y) else if (X.length == 0) break;
         case COND:
             break;
