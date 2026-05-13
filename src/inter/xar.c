@@ -1173,7 +1173,8 @@ static void gcd1_(void)
             shift_right_one(&X);
             gcd_state = IS_FIN;
             break;
-        case TWO_ODD:;
+        case TWO_ODD:
+        {
             int64_t transfer = 0; // wychitaem
             for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
             {
@@ -1194,6 +1195,7 @@ static void gcd1_(void)
                     transfer = 0;
                 pcoden(x_current, (uint32_t)substraction);
             } // for
+        }
             // podawim wed. nuli
             for (; gcoden(X.begin) == 0; X.begin = X.begin->next, X.length--)
                 ;
@@ -1206,17 +1208,13 @@ static void gcd1_(void)
                 const uint64_t numbers_count = shifts_left >> 5;
                 shifts_left %= 32;
                 const uint64_t transfer_shift_bits = 32 - shifts_left;
-                size_t length;
+                uint64_t length;
                 const T_LINKCB *end;
                 if (numbers_count != 0)
                 {
-                    current = X.begin;
+                    T_LINKCB *current = X.begin;
                     for (length = 0; length < numbers_count; length++)
-                    {
                         X.begin = X.begin->previous;
-                        X.begin->tag = TAGN;
-                        X.begin->info.code = NULL;
-                    }
                     for (x_current = X.begin; current != X.end->next; x_current = x_current->next, current = current->next)
                     {
                         pcoden(x_current, gcoden(current));
@@ -1235,8 +1233,10 @@ static void gcd1_(void)
                     {
                         const uint32_t transfer = gcoden(x_current) >> transfer_shift_bits;
                         pcoden(x_current->previous, gcoden(x_current->previous) | transfer);
-                        pcoden(x_current, gcoden(x_current) << shift_bits);
+                        pcoden(x_current, gcoden(x_current) << shifts_left);
                     }
+                    if (gcoden(X.begin) == 0)
+                        X.begin = X.begin->next;
                 }
             }
             transplantation(refal.previous_result, X.begin->previous, X.end->next);
