@@ -169,9 +169,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 X.begin = X.begin->previous; //  pripisywaem  0
                 X.begin->tag = TAGN;
                 X.begin->info.code = NULL;
-                int64_t transfer = 0, sum;
+                int64_t transfer = 0;
                 for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
+                    int64_t sum;
                     if (y_current != Y.begin->previous)
                     {
                         sum = (int64_t)gcoden(x_current) + gcoden(y_current) + transfer;
@@ -179,14 +180,8 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     }
                     else
                         sum = (int64_t)gcoden(x_current) + transfer;
-                    if (sum >= MAX_NUMBER + 1)
-                    {
-                        sum -= MAX_NUMBER + 1;
-                        transfer = 1;
-                    }
-                    else
-                        transfer = 0;
-                    pcoden(x_current, (uint32_t)sum);
+                    transfer = sum / (MAX_NUMBER + 1);
+                    pcoden(x_current, (uint32_t)(sum % (MAX_NUMBER + 1)));
                 } // for
             }
             else
@@ -625,7 +620,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
 
 static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
 {
-    const uint64_t numbers_count = shifts >> 5;
+    const uint64_t numbers_count = shifts / 32;
     const uint64_t shifts_right = shifts % 32;
     uint64_t length;
     T_LINKCB *big_number_current;
@@ -799,7 +794,7 @@ static void gcd_(void)
         case FIN:
             if (shifts_left != 0)
             {
-                const uint64_t numbers_count = shifts_left >> 5;
+                const uint64_t numbers_count = shifts_left / 32;
                 shifts_left %= 32;
                 uint64_t length;
                 const T_LINKCB *end;
