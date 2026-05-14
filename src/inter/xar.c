@@ -467,14 +467,9 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                         int64_t new_transfer = 0;
                         for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                         {
-                            int64_t sum = (int64_t)gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
-                            new_transfer = 0;
-                            if (sum >= MAX_NUMBER + 1)
-                            {
-                                sum -= MAX_NUMBER + 1;
-                                new_transfer = 1;
-                            }
-                            pcoden(X_temp, (uint32_t)sum);
+                            const int64_t sum = (int64_t)gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
+                            new_transfer = sum / (MAX_NUMBER + 1);
+                            pcoden(X_temp, (uint32_t)(sum % (MAX_NUMBER + 1)));
                         }
                         transfer -= new_transfer;
                     } while (transfer != 0);
