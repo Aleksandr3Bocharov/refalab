@@ -627,7 +627,6 @@ static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
 {
     const uint64_t numbers_count = shifts >> 5;
     const uint64_t shifts_right = shifts % 32;
-    const uint64_t transfer_shift_bits = 32 - shifts_right;
     uint64_t length;
     T_LINKCB *big_number_current;
     if (numbers_count != 0)
@@ -641,6 +640,7 @@ static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
     }
     if (shifts_right != 0)
     {
+        const uint64_t transfer_shift_bits = 32 - shifts_right;
         for (big_number_current = big_number->end; big_number_current != big_number->begin; big_number_current = big_number_current->previous)
         {
             pcoden(big_number_current, gcoden(big_number_current) >> shifts_right);
@@ -666,11 +666,30 @@ static uint64_t count_trailing_zeros(const T_BIG_NUMBER *big_number)
             trailing_zeros_count += 32;
             continue;
         }
-        while ((number & 1) == 0)
+        uint64_t count_number_trailing_zeros = 0;
+        if ((number & 0xFFFF) == 0)
         {
-            trailing_zeros_count++;
-            number >>= 1;
+            count_number_trailing_zeros += 16;
+            number >>= 16;
         }
+        if ((number & 0xFF) == 0)
+        {
+            count_number_trailing_zeros += 8;
+            number >>= 8;
+        }
+        if ((number & 0xF) == 0)
+        {
+            count_number_trailing_zeros += 4;
+            number >>= 4;
+        }
+        if ((number & 0x3) == 0)
+        {
+            count_number_trailing_zeros += 2;
+            number >>= 2;
+        }
+        if ((number & 0x1) == 0)
+            count_number_trailing_zeros += 1;
+        trailing_zeros_count += count_number_trailing_zeros;
         return trailing_zeros_count;
     }
 }
@@ -782,7 +801,6 @@ static void gcd_(void)
             {
                 const uint64_t numbers_count = shifts_left >> 5;
                 shifts_left %= 32;
-                const uint64_t transfer_shift_bits = 32 - shifts_left;
                 uint64_t length;
                 const T_LINKCB *end;
                 if (numbers_count != 0)
@@ -804,6 +822,7 @@ static void gcd_(void)
                     X.begin = X.begin->previous;
                     X.begin->tag = TAGN;
                     X.begin->info.code = NULL;
+                    const uint64_t transfer_shift_bits = 32 - shifts_left;
                     for (x_current = X.begin->next; x_current != end->next; x_current = x_current->next)
                     {
                         const uint32_t transfer = gcoden(x_current) >> transfer_shift_bits;
