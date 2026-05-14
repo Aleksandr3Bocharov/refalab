@@ -655,6 +655,26 @@ static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
     return;
 }
 
+static uint64_t count_trailing_zeros(const T_BIG_NUMBER *big_number)
+{
+    uint64_t trailing_zeros_count = 0;
+    for (T_LINKCB *big_number_current = big_number->end;; big_number_current = big_number_current->previous)
+    {
+        uint32_t number = gcoden(big_number_current);
+        if (number == 0)
+        {
+            trailing_zeros_count += 32;
+            continue;
+        }
+        while ((number & 1) == 0)
+        {
+            trailing_zeros_count++;
+            number >>= 1;
+        }
+        return trailing_zeros_count;
+    }
+}
+
 static void gcd_(void)
 {
     T_LINKCB *x_current = refal.previous_argument->next;
@@ -710,14 +730,21 @@ static void gcd_(void)
             }
             break;
         case TWO_EVEN:
-        
-            shift_right(&X);
-            shift_right(&Y);
-            shifts_left++;
+        {
+            const uint64_t X_count_trailing_zeros = count_trailing_zeros(&X);
+            const uint64_t Y_count_trailing_zeros = count_trailing_zeros(&Y);
+            const uint64_t min_count_trailing_zeros = X_count_trailing_zeros < Y_count_trailing_zeros ? X_count_trailing_zeros : Y_count_trailing_zeros;
+            shift_right(&X, min_count_trailing_zeros);
+            shift_right(&Y, min_count_trailing_zeros);
+            shifts_left += min_count_trailing_zeros;
+        }
             gcd_state = IS_FIN;
             break;
         case ONE_ODD:
-            shift_right(&X);
+        {
+            const uint64_t X_count_trailing_zeros = count_trailing_zeros(&X);
+            shift_right(&X, X_count_trailing_zeros);
+        }
             gcd_state = IS_FIN;
             break;
         case TWO_ODD:
@@ -746,7 +773,8 @@ static void gcd_(void)
             // podawim wed. nuli
             for (; gcoden(X.begin) == 0; X.begin = X.begin->next, X.length--)
                 ;
-            shift_right_one(&X);
+            const uint64_t X_count_trailing_zeros = count_trailing_zeros(&X);
+            shift_right(&X, X_count_trailing_zeros);
             gcd_state = IS_FIN;
             break;
         case FIN:

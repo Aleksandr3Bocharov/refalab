@@ -876,10 +876,10 @@ int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *
         return -1; // X<Y
     if (big_number1->sign == '+' && big_number2->sign == '-')
         return 1; // X>Y
-    const uint8_t compare_absolute = compare_big_numbers_absolute(big_number1, big_number2);
+    const int8_t compare_absolute = compare_big_numbers_absolute(big_number1, big_number2);
     if (compare_absolute == 0)
         return 0; // X=Y;
-    if ((big_number1->sign == '-' && compare_absolute == 0) || (big_number1->sign == '+' && compare_absolute == 1))
+    if ((big_number1->sign == '-' && compare_absolute == 1) || (big_number1->sign == '+' && compare_absolute == -1))
         return -1; // X<Y
     return 1;     // X>Y
 }
