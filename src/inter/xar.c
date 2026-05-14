@@ -77,36 +77,11 @@ char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static void multiply(int64_t *a, int64_t *b)
+static inline void multiply(int64_t *a, int64_t *b)
 { // rezult: a - starshy, b - mladshy
-    if (*a == 0)
-    {
-        *b = 0;
-        return;
-    }
-    if (*b == 0)
-    {
-        *a = 0;
-        return;
-    }
-    const int64_t a1 = *a >> 16;
-    const int64_t b1 = *b >> 16;
-    const int64_t a0 = *a & 0xFFFF;
-    const int64_t b0 = *b & 0xFFFF;
-    const int64_t a0b0 = a0 * b0;
-    *b = a0b0 & 0xFFFF;
-    int64_t r3 = a0b0 >> 16;
-    const int64_t a1b0 = a1 * b0;
-    r3 += a1b0 & 0xFFFF;
-    int64_t r2 = a1b0 >> 16;
-    const int64_t a0b1 = a0 * b1;
-    r3 += a0b1 & 0xFFFF;
-    r2 += a0b1 >> 16;
-    const int64_t a1b1 = a1 * b1;
-    r2 += a1b1 & 0xFFFF;
-    const int64_t r1 = a1b1 >> 16;
-    *a = (r1 << 16) + r2 + (r3 >> 16);
-    *b += (r3 & 0xFFFF) << 16;
+    uint64_t result = (uint64_t)*a * (uint64_t)*b;
+    *b = (int64_t)(result & MAX_NUMBER);
+    *a = (int64_t)(result >> SHIFT_MAX);         
     return;
 }
 
