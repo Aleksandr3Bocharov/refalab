@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-11
+// 2026-05-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //---------------- file -- XAR.C -----------
@@ -377,16 +377,9 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 }
                 else
                 { // delim a,a0 na b
-                    a = (a << 7) + (a0 >> 25);
-                    c = a / b << 25;
-                    a = (a % b << 7) + (a0 >> 18 & 0x7F);
-                    c += a / b << 18;
-                    a = (a % b << 7) + (a0 >> 11 & 0x7F);
-                    c += a / b << 11;
-                    a = (a % b << 7) + (a0 >> 4 & 0x7F);
-                    c += a / b << 4;
-                    a = (a % b << 4) + (a0 & 0xF);
-                    c += a / b;
+                    const uint64_t aa0 = ((uint64_t)a << 32) | (uint64_t)a0;
+                    c = (int64_t)aa0 / b;
+                    a = (int64_t)aa0 % b;
                 }
                 const int64_t b0 = gcoden(Y.begin->next);
                 if (Y.length > 1 && b0 != 0)
