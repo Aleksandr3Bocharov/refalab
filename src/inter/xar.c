@@ -87,15 +87,15 @@ static inline void multiply(uint64_t *a, uint64_t *b)
 
 static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t power) //  normaliz. posledov. makrocifr
 {                                                                                    //  Number_end - ukaz. na konec
-    uint64_t transfer = 0;
+    uint32_t transfer = 0;
     const uint8_t transfer_shift = SHIFT_MAX - power;
-    const uint64_t mask = MAX_NUMBER >> power; // maska
+    const uint32_t mask = MAX_NUMBER >> power; // maska
     T_LINKCB *number_current = Number_end;
     for (size_t i = 0; i < Number_length; i++)
     {
-        const uint64_t number = gcoden(number_current);
-        const uint64_t new_number = (number & mask) << power | transfer;
-        pcoden(number_current, (uint32_t)new_number);
+        const uint32_t number = gcoden(number_current);
+        const uint32_t new_number = (number & mask) << power | transfer;
+        pcoden(number_current, new_number);
         transfer = number >> transfer_shift;
         number_current = number_current->previous;
     }
@@ -112,7 +112,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         refal.upshot = 2;
         return;
     }
-    uint64_t remainder, quotient;
+    uint32_t remainder, quotient;
     bool result_zero = false;
     bool dr_one_remainder_one_quotient = false;
     switch (operation)
@@ -453,15 +453,15 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         result_begin = result_begin->previous;
         if (power != 0)
         { // denormalizacija ostatka
-            uint64_t transfer = 0;
+            uint32_t transfer = 0;
             const uint8_t transfer_shift = SHIFT_MAX - power;
-            const uint64_t mask = MAX_NUMBER >> transfer_shift;
+            const uint32_t mask = MAX_NUMBER >> transfer_shift;
             for (x_current = X.begin; x_current != X.end->next; x_current = x_current->next)
             {
-                const uint64_t number = gcoden(x_current);
-                const uint64_t new_number = number >> power | transfer << transfer_shift;
+                const uint32_t number = gcoden(x_current);
+                const uint32_t new_number = number >> power | transfer << transfer_shift;
                 transfer = number & mask;
-                pcoden(x_current, (uint32_t)new_number);
+                pcoden(x_current, new_number);
             }
         }
         for (x_current = X.begin; x_current != X.end->next && gcoden(x_current) == 0; x_current = x_current->next)
@@ -549,7 +549,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     { // div/dr
         x_current->tag = TAGN;
         x_current->info.code = NULL;
-        pcoden(x_current, (uint32_t)quotient);
+        pcoden(x_current, quotient);
         x_current = x_current->next;
     }
     y_current = x_current->next;
@@ -565,7 +565,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     { // div/dr
         y_current->tag = TAGN;
         y_current->info.code = NULL;
-        pcoden(y_current, (uint32_t)remainder);
+        pcoden(y_current, remainder);
         y_current = y_current->next;
     }
     x_current->tag = TAGLB;
