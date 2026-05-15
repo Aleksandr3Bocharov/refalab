@@ -250,9 +250,9 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     }
                     int64_t sum = (int64_t)gcoden(result_begin) + b + transfer;
                     transfer = 0;
-                    if (sum >= MAX_NUMBER + 1)
+                    if (sum >= (int64_t)MAX_NUMBER + 1)
                     {
-                        sum -= MAX_NUMBER + 1;
+                        sum -= (int64_t)MAX_NUMBER + 1;
                         transfer++;
                     }
                     transfer += a;
