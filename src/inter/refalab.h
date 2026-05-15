@@ -45,7 +45,7 @@
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
-#define MAX_NUMBER 0xFFFFFFFFLL
+#define MAX_NUMBER UINT32_MAX
 
 #define MAX_STOP 0x7FFFFFFF
 

@@ -77,24 +77,24 @@ char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static inline void multiply(int64_t *a, int64_t *b)
+static inline void multiply(uint64_t *a, uint64_t *b)
 { // rezult: a - starshy, b - mladshy
-    uint64_t result = (uint64_t)*a * (uint64_t)*b;
-    *b = (int64_t)(result & MAX_NUMBER);
-    *a = (int64_t)(result >> SHIFT_MAX);         
+    uint64_t result = *a * *b;
+    *b = result & MAX_NUMBER;
+    *a = result >> SHIFT_MAX;         
     return;
 }
 
 static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t power) //  normaliz. posledov. makrocifr
 {                                                                                    //  Number_end - ukaz. na konec
-    int64_t transfer = 0;
+    uint64_t transfer = 0;
     const uint8_t transfer_shift = SHIFT_MAX - power;
-    const int64_t mask = MAX_NUMBER >> power; // maska
+    const uint64_t mask = MAX_NUMBER >> power; // maska
     T_LINKCB *number_current = Number_end;
     for (size_t i = 0; i < Number_length; i++)
     {
-        const int64_t number = gcoden(number_current);
-        const int64_t new_number = (number & mask) << power | transfer;
+        const uint64_t number = gcoden(number_current);
+        const uint64_t new_number = (number & mask) << power | transfer;
         pcoden(number_current, (uint32_t)new_number);
         transfer = number >> transfer_shift;
         number_current = number_current->previous;
@@ -112,7 +112,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         refal.upshot = 2;
         return;
     }
-    int64_t remainder, quotient;
+    uint64_t remainder, quotient;
     bool result_zero = false;
     bool dr_one_remainder_one_quotient = false;
     switch (operation)
@@ -144,19 +144,19 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 X.begin = X.begin->previous; //  pripisywaem  0
                 X.begin->tag = TAGN;
                 X.begin->info.code = NULL;
-                int64_t transfer = 0;
+                uint64_t transfer = 0;
                 for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
-                    int64_t sum;
+                    uint64_t sum;
                     if (y_current != Y.begin->previous)
                     {
-                        sum = (int64_t)gcoden(x_current) + gcoden(y_current) + transfer;
+                        sum = gcoden(x_current) + gcoden(y_current) + transfer;
                         y_current = y_current->previous;
                     }
                     else
-                        sum = (int64_t)gcoden(x_current) + transfer;
-                    transfer = sum / (MAX_NUMBER + 1);
-                    pcoden(x_current, (uint32_t)(sum % (MAX_NUMBER + 1)));
+                        sum = gcoden(x_current) + transfer;
+                    transfer = sum / ((uint64_t)MAX_NUMBER + 1);
+                    pcoden(x_current, sum % ((uint64_t)MAX_NUMBER + 1));
                 } // for
             }
             else
@@ -351,7 +351,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         uint8_t power = 0;
         if (Y.length != 0)
         { // wozmovna normalizacija
-            int64_t exponentation = gcoden(Y.begin);
+            uint64_t exponentation = gcoden(Y.begin);
             for (power = 0; exponentation < 2147483648; power++, exponentation += exponentation)
                 ;
             if (power != 0)
@@ -362,10 +362,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         do
         {
-            int64_t a = gcoden(X.begin);
-            const int64_t a0 = gcoden(X.begin->next);
-            int64_t b = gcoden(Y.begin);
-            int64_t c;
+            uint64_t a = gcoden(X.begin);
+            const uint64_t a0 = gcoden(X.begin->next);
+            uint64_t b = gcoden(Y.begin);
+            uint64_t c;
             if (a == 0 && a0 < b)
                 c = 0;
             else
@@ -377,18 +377,18 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 }
                 else
                 { // delim a,a0 na b
-                    const uint64_t aa0 = ((uint64_t)a << 32) | (uint64_t)a0;
-                    c = (int64_t)aa0 / b;
-                    a = (int64_t)aa0 % b;
+                    const uint64_t aa0 = a << 32 | a0;
+                    c = aa0 / b;
+                    a = aa0 % b;
                 }
-                const int64_t b0 = gcoden(Y.begin->next);
+                const uint64_t b0 = gcoden(Y.begin->next);
                 if (Y.length > 1 && b0 != 0)
                 {
-                    int64_t x1 = b0;
-                    int64_t x2 = c;
+                    uint64_t x1 = b0;
+                    uint64_t x2 = c;
                     multiply(&x1, &x2);
-                    int64_t y1 = a % b;
-                    const int64_t y2 = gcoden(X.begin->next->next);
+                    uint64_t y1 = a % b;
+                    const uint64_t y2 = gcoden(X.begin->next->next);
                     bool state = false;
                     while (x1 > y1 || (x1 == y1 && x2 > y2))
                     {
@@ -408,7 +408,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             {
                 const T_LINKCB *Y_temp = Y.end;
                 T_LINKCB *X_temp = x_current;
-                int64_t transfer = 0;
+                uint64_t transfer = 0;
                 for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                 {
                     b = gcoden(Y_temp);
@@ -417,7 +417,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     b += transfer;
                     transfer = b >> SHIFT_MAX;
                     b &= MAX_NUMBER;
-                    int64_t x_temp = gcoden(X_temp);
+                    uint64_t x_temp = gcoden(X_temp);
                     if (x_temp < b)
                     {
                         x_temp += MAX_NUMBER + 1;
@@ -432,12 +432,12 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                         c--;
                         X_temp = x_current;
                         Y_temp = Y.end;
-                        int64_t new_transfer = 0;
+                        uint64_t new_transfer = 0;
                         for (; Y_temp != y_current->previous; X_temp = X_temp->previous, Y_temp = Y_temp->previous)
                         {
-                            const int64_t sum = (int64_t)gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
-                            new_transfer = sum / (MAX_NUMBER + 1);
-                            pcoden(X_temp, (uint32_t)(sum % (MAX_NUMBER + 1)));
+                            const uint64_t sum = gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
+                            new_transfer = sum / ((uint64_t)MAX_NUMBER + 1);
+                            pcoden(X_temp, sum % ((uint64_t)MAX_NUMBER + 1));
                         }
                         transfer -= new_transfer;
                     } while (transfer != 0);
@@ -453,13 +453,13 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         result_begin = result_begin->previous;
         if (power != 0)
         { // denormalizacija ostatka
-            int64_t transfer = 0;
+            uint64_t transfer = 0;
             const uint8_t transfer_shift = SHIFT_MAX - power;
-            const int64_t mask = MAX_NUMBER >> transfer_shift;
+            const uint64_t mask = MAX_NUMBER >> transfer_shift;
             for (x_current = X.begin; x_current != X.end->next; x_current = x_current->next)
             {
-                const int64_t number = gcoden(x_current);
-                const int64_t new_number = number >> power | transfer << transfer_shift;
+                const uint64_t number = gcoden(x_current);
+                const uint64_t new_number = number >> power | transfer << transfer_shift;
                 transfer = number & mask;
                 pcoden(x_current, (uint32_t)new_number);
             }
