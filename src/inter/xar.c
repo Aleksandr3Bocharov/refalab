@@ -182,7 +182,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                         substraction -= transfer;
                     if (substraction < 0)
                     {
-                        substraction += MAX_NUMBER + 1;
+                        substraction += (int64_t)MAX_NUMBER + 1;
                         transfer = 1;
                     }
                     else
@@ -420,7 +420,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     uint64_t x_temp = gcoden(X_temp);
                     if (x_temp < b)
                     {
-                        x_temp += MAX_NUMBER + 1;
+                        x_temp += (uint64_t)MAX_NUMBER + 1;
                         transfer++;
                     }
                     pcoden(X_temp, (uint32_t)(x_temp - b));
@@ -739,7 +739,7 @@ static void gcd_(void)
                     substraction -= transfer;
                 if (substraction < 0)
                 {
-                    substraction += MAX_NUMBER + 1;
+                    substraction += (int64_t)MAX_NUMBER + 1;
                     transfer = 1;
                 }
                 else
