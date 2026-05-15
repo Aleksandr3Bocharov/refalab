@@ -156,7 +156,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     else
                         sum = gcoden(x_current) + transfer;
                     transfer = sum / ((uint64_t)MAX_NUMBER + 1);
-                    pcoden(x_current, sum % ((uint64_t)MAX_NUMBER + 1));
+                    pcoden(x_current, (uint32_t)sum);
                 } // for
             }
             else
@@ -218,43 +218,17 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         T_LINKCB *result_current;
         for (result_current = result_end, y_current = Y.end; y_current != Y.begin->previous; y_current = y_current->previous, result_current = result_current->previous)
         {
-            int64_t b = gcoden(y_current);
+            const uint64_t b = gcoden(y_current);
             if (b != 0)
             { // umn. na 1 cifru
-                int64_t transfer = 0;
-                const int64_t b11 = b >> 16;
-                const int64_t b00 = b & 0xFFFF;
+                uint64_t transfer = 0;
                 for (x_current = X.end, result_begin = result_current; x_current != X.begin->previous; x_current = x_current->previous, result_begin = result_begin->previous)
                 {
-                    int64_t a = gcoden(x_current);
-                    if (a == 0)
-                        b = 0;
-                    else
-                    {
-                        const int64_t a11 = a >> 16;
-                        const int64_t a00 = a & 0xFFFF;
-                        const int64_t a0b0 = a00 * b00;
-                        b = a0b0 & 0xFFFF;
-                        int64_t r3 = a0b0 >> 16;
-                        const int64_t a1b0 = a11 * b00;
-                        r3 += a1b0 & 0xFFFF;
-                        int64_t r2 = a1b0 >> 16;
-                        const int64_t a0b1 = a00 * b11;
-                        r3 += a0b1 & 0xFFFF;
-                        r2 += a0b1 >> 16;
-                        const int64_t a1b1 = a11 * b11;
-                        r2 += a1b1 & 0xFFFF;
-                        const int64_t r1 = a1b1 >> 16;
-                        a = (r1 << 16) + r2 + (r3 >> 16);
-                        b += (r3 & 0xFFFF) << 16;
-                    }
-                    int64_t sum = (int64_t)gcoden(result_begin) + b + transfer;
-                    transfer = 0;
-                    if (sum >= (int64_t)MAX_NUMBER + 1)
-                    {
-                        sum -= (int64_t)MAX_NUMBER + 1;
-                        transfer++;
-                    }
+                    uint64_t a = gcoden(x_current);
+                    uint64_t b_temp = b;
+                    multiply(&a, &b_temp);
+                    uint64_t sum = gcoden(result_begin) + b_temp + transfer;
+                    transfer = sum / ((uint64_t)MAX_NUMBER + 1);
                     transfer += a;
                     pcoden(result_begin, (uint32_t)sum);
                 } // for
@@ -437,7 +411,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                         {
                             const uint64_t sum = gcoden(X_temp) + gcoden(Y_temp) + new_transfer;
                             new_transfer = sum / ((uint64_t)MAX_NUMBER + 1);
-                            pcoden(X_temp, sum % ((uint64_t)MAX_NUMBER + 1));
+                            pcoden(X_temp, (uint32_t)sum);
                         }
                         transfer -= new_transfer;
                     } while (transfer != 0);
