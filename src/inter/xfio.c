@@ -699,7 +699,7 @@ static void fseek_(void)
             current_argument = current_argument->next;
         }
         const off_t offset = sign_digit * offset_absolute;
-        if (current_argument->tag != TAGF)
+        if (current_argument->tag != TAGF || current_argument->next != refal.next_argument)
             break;
         int origin;
         if (current_argument->info.codef == &refalab_begin)
@@ -709,8 +709,6 @@ static void fseek_(void)
         else if (current_argument->info.codef == &refalab_current)
             origin = SEEK_CUR;
         else
-            break;
-        if (current_argument->next != refal.next_argument)
             break;
         if (file == NULL)
         {
