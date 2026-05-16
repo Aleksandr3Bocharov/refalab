@@ -223,7 +223,7 @@ static void shift_operate(uint8_t operation)
             for (x_current = X.begin->previous; x_current->tag != TAGLB && result_need > argument_length; x_current = x_current->previous, argument_length++)
                 ;
             if (result_need > argument_length)
-                if (!extended_insert_from_free_memory(refal.next_result, result_need - argument_length))
+                if (!extended_insert_from_free_memory(refal.next_result, (size_t)(result_need - argument_length)))
                     return;
             transplantation(refal.next_result, X.end, refal.next_argument);
             uint64_t length;
