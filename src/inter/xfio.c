@@ -693,8 +693,7 @@ static void fseek_(void)
                 break;
             if (offset_absolute == 2147483648 && gcoden(current_argument) > 0)
                 break;
-            offset_absolute <<= 32;
-            offset_absolute |= gcoden(current_argument);
+            offset_absolute = offset_absolute << 32 | gcoden(current_argument);
             argument_length++;
             current_argument = current_argument->next;
         }
