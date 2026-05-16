@@ -198,11 +198,15 @@ static void shift_operate(uint8_t operation)
         {
             current_argument = current_argument->next;
             if (current_argument->tag == TAGN)
+            {
                 shift_bits = shift_bits << 32 | gcoden(current_argument);
-            else
+                if (current_argument->next != refal.next_argument)
+                    break;
+            }
+            else if (current_argument != refal.next_argument)
                 break;
         }
-        if (current_argument->next != refal.next_argument)
+        else if (current_argument->next != refal.next_argument)
             break;
         const uint64_t numbers_count = shift_bits / 32;
         shift_bits %= 32;
