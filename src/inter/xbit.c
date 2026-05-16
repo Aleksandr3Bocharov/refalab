@@ -186,17 +186,27 @@ static void shift_operate(uint8_t operation)
         T_LINKCB *x_current = refal.previous_argument->next;
         if (x_current->tag != TAGLB)
             break;
-        T_LINKCB *current = x_current->info.codep;
+        const T_LINKCB *current_argument = x_current->info.codep;
         T_BIG_NUMBER X;
-        if (!read_big_number_expression(&X, x_current, current))
+        if (!read_big_number_expression(&X, x_current, current_argument))
             break;
-        current = current->next;
-        if (current->next != refal.next_argument || current->tag != TAGN)
+        current_argument = current_argument->next;
+        if (current_argument->tag != TAGN)
             break;
-        uint32_t shift_bits = gcoden(current);
-        const size_t numbers_count = shift_bits / 32;
+        uint64_t shift_bits = gcoden(current_argument);
+        if (operation == Oshr || sizeof(size_t) == 8)
+        {
+            current_argument = current_argument->next;
+            if (current_argument->tag == TAGN)
+                shift_bits = shift_bits << 32 | gcoden(current_argument);
+            else
+                break;
+        }
+        if (current_argument->next != refal.next_argument)
+            break;
+        const uint64_t numbers_count = shift_bits / 32;
         shift_bits %= 32;
-        const uint32_t transfer_shift_bits = 32 - shift_bits;
+        const uint64_t transfer_shift_bits = 32 - shift_bits;
         bool result_zero = true;
         switch (operation)
         {
@@ -204,19 +214,19 @@ static void shift_operate(uint8_t operation)
             if (X.length == 0)
                 break;
             result_zero = false;
-            const size_t result_need = numbers_count + (shift_bits == 0 ? 0 : 1) + (X.sign == '-' ? 1 : 0);
-            size_t argument_length = 4;
+            const uint64_t result_need = numbers_count + (shift_bits == 0 ? 0 : 1) + (X.sign == '-' ? 1 : 0);
+            uint64_t argument_length = 4;
             for (x_current = X.begin->previous; x_current->tag != TAGLB && result_need > argument_length; x_current = x_current->previous, argument_length++)
                 ;
             if (result_need > argument_length)
                 if (!extended_insert_from_free_memory(refal.next_result, result_need - argument_length))
                     return;
             transplantation(refal.next_result, X.end, refal.next_argument);
-            size_t length;
+            uint64_t length;
             const T_LINKCB *end;
             if (numbers_count != 0)
             {
-                current = X.begin;
+                T_LINKCB *current = X.begin;
                 for (length = 0; length < numbers_count; length++)
                 {
                     X.begin = X.begin->previous;
@@ -251,6 +261,7 @@ static void shift_operate(uint8_t operation)
             {
                 for (x_current = X.end, length = 0; length < numbers_count; x_current = x_current->previous, length++)
                     ;
+                T_LINKCB *current;
                 for (current = X.end; x_current != X.begin->previous; x_current = x_current->previous, current = current->previous)
                     pcoden(current, gcoden(x_current));
                 X.begin = current->next;
