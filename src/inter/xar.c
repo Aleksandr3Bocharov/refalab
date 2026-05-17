@@ -81,7 +81,7 @@ static inline void multiply(uint64_t *a, uint64_t *b)
 { // rezult: a - starshy, b - mladshy
     uint64_t result = *a * *b;
     *b = result & MAX_NUMBER;
-    *a = result >> SHIFT_MAX;         
+    *a = result >> SHIFT_MAX;
     return;
 }
 
@@ -728,31 +728,27 @@ static void gcd_(void)
                 const uint64_t numbers_count = shifts_left / 32;
                 shifts_left %= 32;
                 uint64_t length;
-                const T_LINKCB *end;
                 if (numbers_count != 0)
                 {
-                    T_LINKCB *current = X.begin;
+                    x_current = X.begin;
                     for (length = 0; length < numbers_count; length++)
-                        X.begin = X.begin->previous;
-                    for (x_current = X.begin; current != X.end->next; x_current = x_current->next, current = current->next)
                     {
-                        pcoden(x_current, gcoden(current));
-                        current->info.code = NULL;
+                        x_current = x_current->previous;
+                        x_current->info.code = NULL;
                     }
-                    end = x_current->previous;
+                    T_LINKCB *new_end = X.begin->previous;
+                    transplantation(X.end, x_current->previous, X.begin);
+                    X.end = new_end;
                 }
-                else
-                    end = X.end;
                 if (shifts_left != 0)
                 {
                     X.begin = X.begin->previous;
                     X.begin->tag = TAGN;
                     X.begin->info.code = NULL;
                     const uint64_t transfer_shift_bits = 32 - shifts_left;
-                    for (x_current = X.begin->next; x_current != end->next; x_current = x_current->next)
+                    for (x_current = X.begin->next; x_current != X.end->next; x_current = x_current->next)
                     {
-                        const uint32_t transfer = gcoden(x_current) >> transfer_shift_bits;
-                        pcoden(x_current->previous, gcoden(x_current->previous) | transfer);
+                        pcoden(x_current->previous, gcoden(x_current->previous) | gcoden(x_current) >> transfer_shift_bits);
                         pcoden(x_current, gcoden(x_current) << shifts_left);
                     }
                     if (gcoden(X.begin) == 0)
