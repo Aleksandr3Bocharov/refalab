@@ -565,20 +565,14 @@ static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
     {
         for (big_number_current = big_number->end, length = 0; length < numbers_count; big_number_current = big_number_current->previous, length++, big_number->length--)
             ;
-        T_LINKCB *current;
-        for (current = big_number->end; big_number_current != big_number->begin->previous; big_number_current = big_number_current->previous, current = current->previous)
-            pcoden(current, gcoden(big_number_current));
-        big_number->begin = current->next;
+        transplantation(big_number->begin->previous, big_number_current, big_number->end->next);
+        big_number->end = big_number_current;
     }
     if (shifts_right != 0)
     {
         const uint64_t transfer_shift_bits = 32 - shifts_right;
         for (big_number_current = big_number->end; big_number_current != big_number->begin; big_number_current = big_number_current->previous)
-        {
-            pcoden(big_number_current, gcoden(big_number_current) >> shifts_right);
-            const uint32_t transfer = gcoden(big_number_current->previous) << transfer_shift_bits;
-            pcoden(big_number_current, gcoden(big_number_current) | transfer);
-        }
+            pcoden(big_number_current, gcoden(big_number_current) >> shifts_right | gcoden(big_number_current->previous) << transfer_shift_bits);
         pcoden(big_number->begin, gcoden(big_number->begin) >> shifts_right);
     }
     // podawim wed. nuli

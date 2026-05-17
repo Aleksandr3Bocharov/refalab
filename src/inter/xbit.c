@@ -265,10 +265,7 @@ static void shift_operate(uint8_t operation)
             {
                 for (x_current = X.end, length = 0; length < numbers_count; x_current = x_current->previous, length++)
                     ;
-                T_LINKCB *current;
-                for (current = X.end; x_current != X.begin->previous; x_current = x_current->previous, current = current->previous)
-                    pcoden(current, gcoden(x_current));
-                X.begin = current->next;
+                X.end = x_current;
             }
             if (shift_bits == 0)
             {
@@ -276,11 +273,7 @@ static void shift_operate(uint8_t operation)
                 break;
             }
             for (x_current = X.end; x_current != X.begin; x_current = x_current->previous)
-            {
-                pcoden(x_current, gcoden(x_current) >> shift_bits);
-                const uint32_t transfer = gcoden(x_current->previous) << transfer_shift_bits;
-                pcoden(x_current, gcoden(x_current) | transfer);
-            }
+                pcoden(x_current, gcoden(x_current) >> shift_bits | gcoden(x_current->previous) << transfer_shift_bits);
             pcoden(X.begin, gcoden(X.begin) >> shift_bits);
             if (X.begin != X.end || gcoden(X.begin) != 0)
                 result_zero = false;
