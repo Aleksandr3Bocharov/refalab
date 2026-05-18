@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-07
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //------------------file----CGOP.C--------------------
@@ -18,6 +18,8 @@ typedef struct _TAG
 {
     uint8_t byte1;
     uint8_t byte2;
+    uint8_t byte3;
+    uint8_t byte4;
 } T_TAG;
 
 void generate_operator_n(uint8_t operator, uint8_t n)
@@ -47,6 +49,8 @@ void generate_symbol(const T_LINKTI *code)
     const T_TAG *code_tag = (T_TAG *)&(code->tag);
     jit_byte(code_tag->byte1);
     jit_byte(code_tag->byte2);
+    jit_byte(code_tag->byte3);
+    jit_byte(code_tag->byte4);
     if (code->tag == TAGF)
     {
         jit_address(code->info.codef);

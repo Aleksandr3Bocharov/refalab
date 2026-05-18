@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-09
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -25,7 +25,7 @@
 #define Wbin "wb"
 #define Rbin "rb"
 
-#define ZBLL 2 // sizeof(uint16_t)
+#define ZBLL 4 // sizeof(uint32_t)
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
