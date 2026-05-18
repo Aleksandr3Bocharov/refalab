@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-07
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.C ------------------
@@ -649,7 +649,7 @@ static void mark_dynamic_box_heads(T_LINKCB *root)
             dynamic_box_head = current_linkcb->info.codep;
             if (dynamic_box_head->tag != TAGO)
                 continue;
-            dynamic_box_head->tag = 0xFFFF;
+            dynamic_box_head->tag = 0xFFFFFFFF;
             current_linkcb->info.codep = head;
             dynamic_box_head->previous = current_linkcb;
             current_linkcb = dynamic_box_head;

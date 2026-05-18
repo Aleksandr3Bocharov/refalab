@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-10
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XMO.C -------------
@@ -286,7 +286,7 @@ static void multe_(void)
         if (number > 3)
             if (!extended_insert_from_free_memory(refal.next_result, number - 3))
                 return; //  LACK
-        const uint16_t expression_tag = first_expression->tag;
+        const uint32_t expression_tag = first_expression->tag;
         void *expression_code = first_expression->info.code;
         T_LINKCB *current_argument = refal.next_result;
         for (uint32_t i = 0; i < number; i++)

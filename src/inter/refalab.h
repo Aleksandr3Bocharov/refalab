@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-07
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -41,7 +41,7 @@
 #define NOT_BRACKET(b) (b->tag & 0001) == 0
 
 #define NMBL 1 // sizeof(uint8_t)
-#define ZBLL 2 // sizeof(uint16_t)
+#define ZBLL 4 // sizeof(uint32_t)
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
@@ -62,7 +62,7 @@ typedef struct linkcb
 {
     struct linkcb *previous;
     struct linkcb *next;
-    uint16_t tag;
+    uint32_t tag;
     union
     {
         char infoc;
