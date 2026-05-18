@@ -631,7 +631,6 @@ static void gcd_(void)
         return;
     }
     uint64_t shifts_left = 0;
-    int8_t compare_absolute;
     enum
     {
         IS_FIN,
@@ -645,13 +644,12 @@ static void gcd_(void)
         switch (gcd_state)
         {
         case IS_FIN:
-            compare_absolute = compare_big_numbers_absolute(&X, &Y);
             if (X.length == 0 || (Y.length == 1 && gcoden(Y.end) == 1))
             {
                 exchange_big_numbers(&X, &Y);
                 gcd_state = FIN;
             }
-            else if (Y.length == 0 || compare_absolute == 0 || (X.length == 1 && gcoden(X.end) == 1))
+            else if (Y.length == 0 || (X.length == 1 && gcoden(X.end) == 1))
                 gcd_state = FIN;
             else
                 gcd_state = COND;
@@ -666,12 +664,18 @@ static void gcd_(void)
                 exchange_big_numbers(&X, &Y);
                 gcd_state = ONE_ODD;
             }
-            else if (compare_absolute == 1)
-                gcd_state = TWO_ODD;
             else
             {
-                exchange_big_numbers(&X, &Y);
-                gcd_state = TWO_ODD;
+                const int8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
+                if (compare_absolute == 1)
+                    gcd_state = TWO_ODD;
+                else if (compare_absolute == -1)
+                {
+                    exchange_big_numbers(&X, &Y);
+                    gcd_state = TWO_ODD;
+                }
+                else
+                    gcd_state = FIN;
             }
             break;
         case TWO_EVEN:
