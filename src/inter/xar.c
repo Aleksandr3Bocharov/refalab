@@ -122,6 +122,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             Y.sign = '+';
         else
             Y.sign = '-';
+        /* fallthrough */
     case Oadd:
         if (X.length == 0 && Y.length == 0)
         {
