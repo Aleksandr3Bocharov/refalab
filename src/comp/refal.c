@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-09
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -552,7 +552,7 @@ static void previous_label_to_statement_label(void)
     uint8_t previous_label_length = (uint8_t)strlen(previous_label);
     if (previous_label_length != 0 && statement_label_length == 0)
     {
-        strncpy(statement_label, previous_label, previous_label_length);
+        memcpy(statement_label, previous_label, previous_label_length);
         statement_label_length = previous_label_length;
     }
     else if (previous_label_length != 0)
@@ -635,7 +635,7 @@ static void read_card(void)
     while (true)
     {
         read_line(card);
-        strncpy(symbols, card_cut, CUT);
+        memcpy(symbols, card_cut, CUT);
         classificate_string(card_cut, class_symbols);
         ++scanner.carriage_number;
         ++card_number;
@@ -1588,7 +1588,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
         else
         {
             identifier_extern_length = identifier_length > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : identifier_length;
-            strncpy(identifier_extern, identifier, identifier_extern_length);
+            memcpy(identifier_extern, identifier, identifier_extern_length);
             (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
         }
         blanks_out();
