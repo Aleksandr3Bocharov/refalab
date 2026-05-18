@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-05
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XTIME.C -----------------------
@@ -39,7 +39,10 @@ static void time_(void)
         return;
     }
     char string_time[256];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-y2k"
     const size_t string_time_length = strftime(string_time, sizeof(string_time), "%c", current_local_time);
+#pragma GCC diagnostic pop
     if (string_time_length == 0)
         return;
     if (!extended_insert_from_free_memory(refal.next_result, string_time_length - 1))
