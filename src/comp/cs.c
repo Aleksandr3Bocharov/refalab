@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-09
+// 2026-05-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------  file  --  CS.C  ---------------
@@ -142,7 +142,10 @@ void set_swap(const char *identifier, uint8_t identifier_length)
     { //  align box head on the 8-byte board
         uint8_t name_length;
         if (options.full_name)
-            name_length = 255 > scanner.module_name_length + identifier_length + 1 ? scanner.module_name_length + identifier_length + 1 : 255;
+        {
+            const int full_length = (int)scanner.module_name_length + (int)identifier_length + 1;
+            name_length = (uint8_t)(full_length > 255 ? 255 : full_length);
+        }
         else
             name_length = identifier_length;
         uint8_t align_bytes = (jit_where() + name_length + 2) % 8;
@@ -250,19 +253,20 @@ static void function_head(const char *identifier, uint8_t identifier_length)
 {
     if (options.names)
     {
-        uint8_t name_length_add;
+        int name_length_add;
         if (options.full_name)
         {
             for (uint8_t i = 0; i < scanner.module_name_length; i++)
                 jit_byte((uint8_t)*(scanner.module_name + i));
             jit_byte(':');
-            name_length_add = scanner.module_name_length + 1;
+            name_length_add = (int)scanner.module_name_length + 1;
         }
         else
             name_length_add = 0;
         for (uint8_t i = 0; i < identifier_length; i++)
             jit_byte((uint8_t)*(identifier + i));
-        jit_byte(255 < name_length_add + identifier_length ? 255 : name_length_add + identifier_length);
+        const int full_length = name_length_add + identifier_length;
+        jit_byte((uint8_t)(full_length > 255 ? 255 : full_length));
     }
     else
         jit_byte(0);
