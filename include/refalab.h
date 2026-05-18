@@ -58,7 +58,7 @@
 #endif
 
 // pragma for 1 byte aligniment structure ------------
-#pragma pack(1)
+#pragma pack(push, 1)
 
 typedef struct linkcb
 {
@@ -75,8 +75,7 @@ typedef struct linkcb
     } info;
 } T_LINKCB;
 
-// #pragma pack(pop)
-#pragma pack()
+#pragma pack(pop)
 
 // ------------ end of pragma ------------------------------------
 
