@@ -95,8 +95,8 @@ bool more_free_memory(void)
         {
             if (list_memory_count == options.max_list_memory)
                 return false;
-            const uint32_t up_increase_limit = options.max_list_memory - (uint32_t)list_memory_count;
-            increase_list_memory = up_increase_limit >= options.increase_list_memory ? options.increase_list_memory : up_increase_limit;
+            const uint32_t up_increase_limit_list_memory = options.max_list_memory - (uint32_t)list_memory_count;
+            increase_list_memory = up_increase_limit_list_memory >= options.increase_list_memory ? options.increase_list_memory : up_increase_limit_list_memory;
         }
     }
     T_LINKCB *new_block_list_memory = malloc((increase_list_memory + 1) * sizeof(T_LINKCB));
