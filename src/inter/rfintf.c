@@ -27,7 +27,7 @@ static struct
 {
     bool timer_on;
     uint32_t min_free_memory;
-    uint32_t limit_free_memory;
+    uint32_t max_free_memory;
     uint32_t increase_free_memory;
     uint32_t collected_free_memory;
 } options = {true, 500, 0, 200, 200};
@@ -70,7 +70,7 @@ bool more_free_memory(void)
     uint32_t collected_garbage_count = 0;
     if (last_block_free_memory == NULL)
     {
-        if (options.limit_free_memory != 0 && options.limit_free_memory < options.min_free_memory)
+        if (options.max_free_memory != 0 && options.max_free_memory < options.min_free_memory)
             return false;
         increase_free_memory = options.min_free_memory;
     }
@@ -89,13 +89,13 @@ bool more_free_memory(void)
             if (collected_garbage_count == options.collected_free_memory)
                 return true;
         }
-        if (options.limit_free_memory == 0)
+        if (options.max_free_memory == 0)
             increase_free_memory = options.increase_free_memory;
         else
         {
-            if (count_free_memory == options.limit_free_memory)
+            if (count_free_memory == options.max_free_memory)
                 return false;
-            const uint32_t up_increase_limit = options.limit_free_memory - (uint32_t)count_free_memory;
+            const uint32_t up_increase_limit = options.max_free_memory - (uint32_t)count_free_memory;
             increase_free_memory = up_increase_limit >= options.increase_free_memory ? options.increase_free_memory : up_increase_limit;
         }
     }
