@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-23
+// 2026-05-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -1038,8 +1038,18 @@ static bool get_determination(void)
 
 static bool get_number(int32_t *number)
 {
-    if (sscanf(parameters, "%d", number) == 0 || *number < 1)
+    char *end_parameters;
+    errno = 0;
+    long int value = strtol(parameters, &end_parameters, 10);
+    if (errno == ERANGE || value < 1 || value > INT32_MAX)
         return false;
+    while (*end_parameters != '\0')
+    {
+        if (*end_parameters != ' ')
+            return false;
+        end_parameters++;
+    }
+    *number = (int32_t)value;
     return true;
 }
 
@@ -1047,6 +1057,13 @@ static bool get_yes_no(const char *answer)
 {
     if (*answer != 'y' && *answer != 'n')
         return false;
+    const char *answer_end = answer + 1;
+    while (*answer_end != '\0')
+    {
+        if (*answer_end != ' ')
+            return false;
+        answer_end++;
+    }
     if (*answer == 'y')
         e_empty = true;
     return true;
