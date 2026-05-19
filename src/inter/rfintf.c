@@ -77,8 +77,7 @@ bool more_free_memory(void)
     else
     {
         const T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
-        const bool was_collected_garbage = collect_garbage();
-        if (was_collected_garbage)
+        if (collect_garbage())
         {
             const T_LINKCB *linkcb_free_memory = refal.free_memory_head->next;
             while (linkcb_free_memory != first_linkcb_free_memory && free_memory_count != options.free_memory_count)
