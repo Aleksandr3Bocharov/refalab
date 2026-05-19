@@ -66,12 +66,13 @@ void refal_abort_end(const char *abort_message)
 
 bool more_free_memory(void)
 {
-    uint32_t increase_free_memory = options.increase_free_memory;
+    uint32_t increase_free_memory;
     uint32_t collected_garbage_count = 0;
     if (last_block_free_memory == NULL)
     {
         if (options.limit_free_memory != 0 && options.limit_free_memory < options.min_free_memory)
             return false;
+        increase_free_memory = options.min_free_memory;
     }
     else
     {
@@ -88,25 +89,26 @@ bool more_free_memory(void)
             if (collected_garbage_count == options.collected_free_memory)
                 return true;
         }
-        if (options.limit_free_memory != 0)
+        if (options.limit_free_memory == 0)
+            increase_free_memory = options.increase_free_memory;
+        else
         {
             if (count_free_memory == options.limit_free_memory)
                 return false;
-            const uint32_t up_increase_limit = options.limit_free_memory - count_free_memory;
-            if (up_increase_limit < options.increase_free_memory)
-                increase_free_memory = up_increase_limit;
+            const uint32_t up_increase_limit = options.limit_free_memory - (uint32_t)count_free_memory;
+            increase_free_memory = up_increase_limit >= options.increase_free_memory ? options.increase_free_memory : up_increase_limit;
         }
     }
-    T_LINKCB *new_block_free_memory = malloc(1001 * sizeof(T_LINKCB));
+    T_LINKCB *new_block_free_memory = malloc((increase_free_memory + 1) * sizeof(T_LINKCB));
 #if defined mdebug
-    fprintf(stderr, "more_free_memory: collected_garbage_count=%zu after new_block_free_memory=%p\n", collected_garbage_count, (void *)new_block_free_memory);
+    fprintf(stderr, "more_free_memory: collected_garbage_count=%u after new_block_free_memory=%p\n", collected_garbage_count, (void *)new_block_free_memory);
 #endif
     if (new_block_free_memory == NULL)
         return false;
     new_block_free_memory->previous = last_block_free_memory;
     last_block_free_memory = new_block_free_memory;
     count_free_memory += increase_free_memory;
-    add_free_memory(new_block_free_memory + 1, 1000);
+    add_free_memory(new_block_free_memory + 1, increase_free_memory);
     return true;
 }
 
