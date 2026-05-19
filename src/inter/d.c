@@ -554,7 +554,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
             if (garbage_collection_number != 0)
-                printf("Garbage collection number = %d\n", garbage_collection_number);
+                printf("Garbage collection number = %u\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
