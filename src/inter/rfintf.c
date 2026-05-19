@@ -67,6 +67,7 @@ void refal_abort_end(const char *abort_message)
 bool more_free_memory(void)
 {
     uint32_t increase_free_memory = options.increase_free_memory;
+    uint32_t collected_garbage_count = 0;
     if (last_block_free_memory == NULL)
     {
         if (options.limit_free_memory != 0 && options.limit_free_memory < options.min_free_memory)
@@ -74,7 +75,6 @@ bool more_free_memory(void)
     }
     else
     {
-        uint32_t collected_garbage_count = 0;
         const T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
         const bool was_collected_garbage = collect_garbage();
         if (was_collected_garbage)
