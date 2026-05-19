@@ -26,17 +26,17 @@ T_REFAL refal;
 static struct
 {
     bool timer_on;
-    uint32_t min_free_memory;
-    uint32_t max_free_memory;
-    uint32_t increase_free_memory;
-    uint32_t collected_free_memory;
+    uint32_t min_list_memory;
+    uint32_t max_list_memory;
+    uint32_t increase_list_memory;
+    uint32_t free_memory_count;
 } options = {true, 500, 0, 200, 200};
 
 static size_t gargc = 0;
 static char **gargv = NULL;
 
-static T_LINKCB *last_block_free_memory = NULL;
-static size_t count_free_memory = 0;
+static T_LINKCB *last_block_list_memory = NULL;
+static size_t list_memory_count = 0;
 static bool refal_init = true;
 static T_LINKCB free_memory_head;
 
@@ -66,13 +66,13 @@ void refal_abort_end(const char *abort_message)
 
 bool more_free_memory(void)
 {
-    uint32_t increase_free_memory;
-    uint32_t collected_garbage_count = 0;
-    if (last_block_free_memory == NULL)
+    uint32_t increase_list_memory;
+    uint32_t free_memory_count = 0;
+    if (last_block_list_memory == NULL)
     {
-        if (options.max_free_memory != 0 && options.max_free_memory < options.min_free_memory)
+        if (options.max_list_memory != 0 && options.max_list_memory < options.min_list_memory)
             return false;
-        increase_free_memory = options.min_free_memory;
+        increase_list_memory = options.min_list_memory;
     }
     else
     {
@@ -81,34 +81,34 @@ bool more_free_memory(void)
         if (was_collected_garbage)
         {
             const T_LINKCB *linkcb_free_memory = refal.free_memory_head->next;
-            while (linkcb_free_memory != first_linkcb_free_memory && collected_garbage_count != options.collected_free_memory)
+            while (linkcb_free_memory != first_linkcb_free_memory && free_memory_count != options.free_memory_count)
             {
-                collected_garbage_count++;
+                free_memory_count++;
                 linkcb_free_memory = linkcb_free_memory->next;
             }
-            if (collected_garbage_count == options.collected_free_memory)
+            if (free_memory_count == options.free_memory_count)
                 return true;
         }
-        if (options.max_free_memory == 0)
-            increase_free_memory = options.increase_free_memory;
+        if (options.max_list_memory == 0)
+            increase_list_memory = options.increase_list_memory;
         else
         {
-            if (count_free_memory == options.max_free_memory)
+            if (list_memory_count == options.max_list_memory)
                 return false;
-            const uint32_t up_increase_limit = options.max_free_memory - (uint32_t)count_free_memory;
-            increase_free_memory = up_increase_limit >= options.increase_free_memory ? options.increase_free_memory : up_increase_limit;
+            const uint32_t up_increase_limit = options.max_list_memory - (uint32_t)list_memory_count;
+            increase_list_memory = up_increase_limit >= options.increase_list_memory ? options.increase_list_memory : up_increase_limit;
         }
     }
-    T_LINKCB *new_block_free_memory = malloc((increase_free_memory + 1) * sizeof(T_LINKCB));
+    T_LINKCB *new_block_list_memory = malloc((increase_list_memory + 1) * sizeof(T_LINKCB));
 #if defined mdebug
-    fprintf(stderr, "more_free_memory: collected_garbage_count=%u after new_block_free_memory=%p\n", collected_garbage_count, (void *)new_block_free_memory);
+    fprintf(stderr, "more_free_memory: free_memory_count=%u after new_block_list_memory=%p\n", free_memory_count, (void *)new_block_list_memory);
 #endif
-    if (new_block_free_memory == NULL)
+    if (new_block_list_memory == NULL)
         return false;
-    new_block_free_memory->previous = last_block_free_memory;
-    last_block_free_memory = new_block_free_memory;
-    count_free_memory += increase_free_memory;
-    add_free_memory(new_block_free_memory + 1, increase_free_memory);
+    new_block_list_memory->previous = last_block_list_memory;
+    last_block_list_memory = new_block_list_memory;
+    list_memory_count += increase_list_memory;
+    add_free_memory(new_block_list_memory + 1, increase_list_memory);
     return true;
 }
 
@@ -246,16 +246,16 @@ void insert_to_free_memory(T_LINKCB *before, T_LINKCB *after)
 
 void refal_terminate_memory(void)
 {
-    while (last_block_free_memory != NULL)
+    while (last_block_list_memory != NULL)
     {
-        T_LINKCB *delete_block_free_memory = last_block_free_memory;
-        last_block_free_memory = delete_block_free_memory->previous;
+        T_LINKCB *delete_block_list_memory = last_block_list_memory;
+        last_block_list_memory = delete_block_list_memory->previous;
 #if defined mdebug
-        fprintf(stderr, "refal_terminate_memory: free delete_block_free_memory=%p\n", (void *)delete_block_free_memory);
+        fprintf(stderr, "refal_terminate_memory: free delete_block_list_memory=%p\n", (void *)delete_block_list_memory);
 #endif
-        free(delete_block_free_memory);
+        free(delete_block_list_memory);
     }
-    count_free_memory = 0;
+    list_memory_count = 0;
 }
 
 void refal_execute(uint8_t *refalab_function)
