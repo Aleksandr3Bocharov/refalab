@@ -26,12 +26,17 @@ T_REFAL refal;
 static struct
 {
     bool timer_on;
-} options = {true};
+    uint32_t min_free_memory;
+    uint32_t limit_free_memory;
+    uint32_t increase_free_memory;
+    uint32_t collected_free_memory;
+} options = {true, 500, 0, 200, 200};
 
 static size_t gargc = 0;
 static char **gargv = NULL;
 
 static T_LINKCB *last_block_free_memory = NULL;
+static size_t count_free_memory = 0;
 static bool refal_init = true;
 static T_LINKCB free_memory_head;
 
@@ -61,21 +66,34 @@ void refal_abort_end(const char *abort_message)
 
 bool more_free_memory(void)
 {
-    size_t collected_garbage_count = 0;
-    if (last_block_free_memory != NULL)
+    uint32_t increase_free_memory;
+    if (last_block_free_memory == NULL)
     {
+    }
+    else
+    {
+        uint32_t collected_garbage_count = 0;
         const T_LINKCB *first_linkcb_free_memory = refal.free_memory_head->next;
         const bool was_collected_garbage = collect_garbage();
         if (was_collected_garbage)
         {
             const T_LINKCB *linkcb_free_memory = refal.free_memory_head->next;
-            while (linkcb_free_memory != first_linkcb_free_memory && collected_garbage_count != 1000)
+            while (linkcb_free_memory != first_linkcb_free_memory && collected_garbage_count != options.collected_free_memory)
             {
                 collected_garbage_count++;
                 linkcb_free_memory = linkcb_free_memory->next;
             }
-            if (collected_garbage_count == 1000)
+            if (collected_garbage_count == options.collected_free_memory)
                 return true;
+        }
+        if (options.limit_free_memory == 0)
+            increase_free_memory = options.increase_free_memory;
+        else
+        {
+            if (count_free_memory == options.limit_free_memory)
+                return false;
+            const uint32_t up_increase_limit = options.limit_free_memory - count_free_memory;
+            increase_free_memory = up_increase_limit >= options.increase_free_memory ? options.increase_free_memory : up_increase_limit;
         }
     }
     T_LINKCB *new_block_free_memory = malloc(1001 * sizeof(T_LINKCB));
@@ -86,6 +104,7 @@ bool more_free_memory(void)
         return false;
     new_block_free_memory->previous = last_block_free_memory;
     last_block_free_memory = new_block_free_memory;
+    count_free_memory += increase_free_memory;
     add_free_memory(new_block_free_memory + 1, 1000);
     return true;
 }
@@ -233,6 +252,7 @@ void refal_terminate_memory(void)
 #endif
         free(delete_block_free_memory);
     }
+    count_free_memory = 0;
 }
 
 void refal_execute(uint8_t *refalab_function)
@@ -881,7 +901,7 @@ int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *
         return 0; // X=Y;
     if ((big_number1->sign == '-' && compare_absolute == 1) || (big_number1->sign == '+' && compare_absolute == -1))
         return -1; // X<Y
-    return 1;     // X>Y
+    return 1;      // X>Y
 }
 
 int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2)
