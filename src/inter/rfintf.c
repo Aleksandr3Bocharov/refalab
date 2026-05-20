@@ -64,7 +64,6 @@ void refal_get_args(int argc, char *argv[])
                     ;
                 else
                     options.min_list_memory = (uint32_t)value;
-                printf("\nminsz = %u\n", options.min_list_memory);
             }
             const char *maxsz = strstr(gargv[i], "-maxsz=");
             if (maxsz != NULL)
@@ -76,7 +75,6 @@ void refal_get_args(int argc, char *argv[])
                     ;
                 else
                     options.max_list_memory = (uint32_t)value;
-                printf("\nmaxsz = %u\n", options.max_list_memory);
             }
             const char *incrsz = strstr(gargv[i], "-incrsz=");
             if (incrsz != NULL)
@@ -88,7 +86,6 @@ void refal_get_args(int argc, char *argv[])
                     ;
                 else
                     options.increase_list_memory = (uint32_t)value;
-                printf("\nincrsz = %u\n", options.increase_list_memory);
             }
             const char *freesz = strstr(gargv[i], "-freesz=");
             if (freesz != NULL)
@@ -100,7 +97,6 @@ void refal_get_args(int argc, char *argv[])
                     ;
                 else
                     options.free_memory_count = (uint32_t)value;
-                printf("\nfreesz = %u\n", options.free_memory_count);
             }
             break;
         }
