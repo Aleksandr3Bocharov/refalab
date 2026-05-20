@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
 #include "clu.h"
@@ -29,7 +30,7 @@ static T_LABEL *new_label(const char *identifier, uint8_t identifier_length)
 {
     T_LABEL *label = (T_LABEL *)calloc(1, sizeof(T_LABEL));
 #if defined mdebug
-    fprintf(stderr, "calloc(clu): label=%p identifier_length=%u type=%o\n", (void *)label, label->identifier_length, label->type);
+    fprintf(stderr, "calloc(clu): label=%p identifier_length=%" PRIu8 " type=%" PRIo8 "\n", (void *)label, label->identifier_length, label->type);
 #endif
     if (label == NULL)
         error_no_memory_labels();

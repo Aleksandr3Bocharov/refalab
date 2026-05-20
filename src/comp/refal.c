@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
@@ -1497,7 +1498,7 @@ static void print_card_refalab_source_listing(void)
         if (!flags.end_refalab_source)
         {
             char temp_string[CUT + 28];
-            sprintf(temp_string, "%4d %s", card_number, card);
+            sprintf(temp_string, "%4" PRIu32 " %s", card_number, card);
             uint8_t i;
             for (i = CUT + 4; i > 4; i--)
                 if (temp_string[i] != ' ')
@@ -1521,7 +1522,7 @@ static void print_card_terminal(void)
         if (!flags.end_refalab_source)
         {
             char temp_string[CUT + 28];
-            sprintf(temp_string, "%4d %s\n", card_number, card);
+            sprintf(temp_string, "%4" PRIu32 " %s\n", card_number, card);
             fputs(temp_string, terminal);
         }
     }
@@ -1763,7 +1764,7 @@ static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
     sprintf(print_line,
-            "module_name = %-40s    module_length(lines) = %d\n", module_name, card_number);
+            "module_name = %-40s    module_length(lines) = %" PRIu32 "\n", module_name, card_number);
     if (options.source_listing)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);

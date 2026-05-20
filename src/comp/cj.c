@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include "refalab.h"
@@ -463,7 +464,7 @@ void jit_end(void)
     // heading generating
     write_assembler_source(fputs(".data\n", assembler_source));
     char buffer_string[81];
-    sprintf(buffer_string, "_d%d$:\n", scanner.module_number);
+    sprintf(buffer_string, "_d%" PRIu32 "$:\n", scanner.module_number);
     write_assembler_source(fputs(buffer_string, assembler_source));
     //  empty module test
     if (module_length != 0)
@@ -484,7 +485,7 @@ void jit_end(void)
                         write_assembler_source(fputc('\n', assembler_source));
                     write_assembler_source(fputs("\t.byte\t", assembler_source));
                 }
-                sprintf(buffer_string, "%d", byte);
+                sprintf(buffer_string, "%" PRIu8, byte);
                 write_assembler_source(fputs(buffer_string, assembler_source));
                 if (k % 60 != 59 && k != delta - 1)
                     write_assembler_source(fputc(',', assembler_source));
@@ -499,9 +500,9 @@ void jit_end(void)
                 {
                     //    nonexternal label
                     if (LBLL == 4)
-                        sprintf(buffer_string, "\t.long\t_d%d$+%zu\n", scanner.module_number, label->info.infon);
+                        sprintf(buffer_string, "\t.long\t_d%" PRIu32 "$+%zu\n", scanner.module_number, label->info.infon);
                     else
-                        sprintf(buffer_string, "\t.quad\t_d%d$+%zu\n", scanner.module_number, label->info.infon);
+                        sprintf(buffer_string, "\t.quad\t_d%" PRIu32 "$+%zu\n", scanner.module_number, label->info.infon);
                     write_assembler_source(fputs(buffer_string, assembler_source));
                 }
                 else
@@ -568,12 +569,12 @@ void jit_end(void)
                 label = label->info.infop;
 #if defined POSIX
             // begin name without underlining _
-            sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
+            sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
 #else // Windows
             if (LBLL == 4)
-                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\t_refalab_", scanner.module_number, label->info.infon);
+                sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\t_refalab_", scanner.module_number, label->info.infon);
             else
-                sprintf(buffer_string, "\t=_d%d$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
+                sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
 #endif
             write_assembler_source(fputs(buffer_string, assembler_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
