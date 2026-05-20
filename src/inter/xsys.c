@@ -58,6 +58,8 @@ static void system_(void)
 #if defined POSIX
     if (WIFEXITED(system_result) != 0)
         system_result = WEXITSTATUS(system_result);
+    else if (WIFSIGNALED(system_result) != 0)
+        system_result = 128 + WTERMSIG(system_result);
     else
         system_result = -1;
 #endif
