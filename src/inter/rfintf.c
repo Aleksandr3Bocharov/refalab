@@ -13,7 +13,9 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
+#include <errno.h>
 #include <time.h>
 #include "refalab.h"
 #include "rfintf.h"
@@ -50,8 +52,56 @@ void refal_get_args(int argc, char *argv[])
     for (size_t i = 1; i < gargc; i++)
         if (strncmp(gargv[i], "--rfinteropt", 12) == 0)
         {
-            if (strstr(&gargv[i][12], "-timer_off") != NULL)
+            if (strstr(gargv[i], "-timer_off") != NULL)
                 options.timer_on = false;
+            const char *minsz = strstr(gargv[i], "-minsz=");
+            if (minsz != NULL)
+            {
+                char *end_minsz;
+                errno = 0;
+                long int value = strtol(minsz + 7, &end_minsz, 10);
+                if (errno == ERANGE || value < 1 || value > INT32_MAX)
+                    ;
+                else
+                    options.min_list_memory = (uint32_t)value;
+                printf("\nminsz = %u\n", options.min_list_memory);
+            }
+            const char *maxsz = strstr(gargv[i], "-maxsz=");
+            if (maxsz != NULL)
+            {
+                char *end_maxsz;
+                errno = 0;
+                long int value = strtol(maxsz + 7, &end_maxsz, 10);
+                if (errno == ERANGE || value < 1 || value > INT32_MAX)
+                    ;
+                else
+                    options.max_list_memory = (uint32_t)value;
+                printf("\nmaxsz = %u\n", options.max_list_memory);
+            }
+            const char *incrsz = strstr(gargv[i], "-incrsz=");
+            if (incrsz != NULL)
+            {
+                char *end_incrsz;
+                errno = 0;
+                long int value = strtol(incrsz + 8, &end_incrsz, 10);
+                if (errno == ERANGE || value < 1 || value > INT32_MAX)
+                    ;
+                else
+                    options.increase_list_memory = (uint32_t)value;
+                printf("\nincrsz = %u\n", options.increase_list_memory);
+            }
+            const char *freesz = strstr(gargv[i], "-freesz=");
+            if (freesz != NULL)
+            {
+                char *end_freesz;
+                errno = 0;
+                long int value = strtol(freesz + 8, &end_freesz, 10);
+                if (errno == ERANGE || value < 1 || value > INT32_MAX)
+                    ;
+                else
+                    options.free_memory_count = (uint32_t)value;
+                printf("\nfreesz = %u\n", options.free_memory_count);
+            }
             break;
         }
     return;
