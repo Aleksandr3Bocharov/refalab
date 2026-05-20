@@ -356,7 +356,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     if (!step_from && (step_upto || trace_condition))
         step_from = 1;
     if (!step_upto && step_from)
-        step_upto = 0x7FFFFFFF;
+        step_upto = MAX_STOP;
     //==================================
     //  initialization
     status_table_debugger = debugger_status_table;
