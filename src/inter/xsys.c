@@ -90,7 +90,7 @@ static void exit_(void)
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
         const char sign = current_argument->info.infoc;
-        int sign_digit = 1;
+        int64_t sign_digit = 1;
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
             current_argument = current_argument->next;
@@ -100,8 +100,6 @@ static void exit_(void)
         if (current_argument->next != refal.next_argument || current_argument->tag != TAGN)
             break;
         const int64_t exit_code = sign_digit * gcoden(current_argument);
-        if (exit_code < INT_MIN || exit_code > INT_MAX)
-            break;
         exit((int)exit_code);
         return;
     } while (false);
