@@ -690,9 +690,9 @@ static void fseek_(void)
         current_argument = current_argument->next;
         if (current_argument->tag == TAGN)
         {
-            if (sign_digit == 1 ? offset_absolute > 2147483647 : offset_absolute > 2147483648)
+            if (sign_digit == 1 ? offset_absolute > INT32_MAX : offset_absolute > INT32_MAX + 1)
                 break;
-            if (offset_absolute == 2147483648 && gcoden(current_argument) > 0)
+            if (offset_absolute == INT32_MAX + 1 && gcoden(current_argument) > 0)
                 break;
             offset_absolute = offset_absolute << 32 | gcoden(current_argument);
             argument_length++;

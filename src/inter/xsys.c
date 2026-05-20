@@ -99,11 +99,10 @@ static void exit_(void)
         }
         if (current_argument->next != refal.next_argument || current_argument->tag != TAGN)
             break;
-        const int64_t exit_code_absolute = gcoden(current_argument);
-        if (sign_digit == 1 ? exit_code_absolute > 2147483647 : exit_code_absolute > 2147483648)
+        const int64_t exit_code = sign_digit * gcoden(current_argument);
+        if (exit_code < INT_MIN || exit_code > INT_MAX)
             break;
-        const int exit_code = (int)(sign_digit * exit_code_absolute);
-        exit(exit_code);
+        exit((int)exit_code);
         return;
     } while (false);
     refal.upshot = 2;

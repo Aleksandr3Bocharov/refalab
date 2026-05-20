@@ -47,7 +47,7 @@
 
 #define MAX_NUMBER UINT32_MAX
 
-#define MAX_STOP 0x7FFFFFFF
+#define MAX_STOP INT32_MAX
 
 #if defined POSIX
 #define MAX_PATHFILENAME 4096
