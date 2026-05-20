@@ -97,7 +97,7 @@ static void fopen_(void)
             const char *string_error = strerror(error_number);
             const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_mode) + (int32_t)strlen(file_name) + 2);
             if (result_yet_need > 0)
-                if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
+                if (!(refal.next_result, (size_t)result_yet_need))
                     return;
             T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
@@ -136,8 +136,10 @@ static void fclose_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 2))
-                return;
+            const size_t string_error_length = strlen(string_error);
+            if (string_error_length > 2)
+                if (!extended_insert_from_free_memory(refal.next_result, string_error_length - 2))
+                    return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
@@ -690,9 +692,9 @@ static void fseek_(void)
         current_argument = current_argument->next;
         if (current_argument->tag == TAGN)
         {
-            if (sign_digit == 1 ? offset_absolute > INT32_MAX : offset_absolute > INT32_MAX + 1)
+            if (sign_digit == 1 ? offset_absolute > INT32_MAX : offset_absolute > (off_t)INT32_MAX + 1)
                 break;
-            if (offset_absolute == INT32_MAX + 1 && gcoden(current_argument) > 0)
+            if (offset_absolute == (off_t)INT32_MAX + 1 && gcoden(current_argument) > 0)
                 break;
             offset_absolute = offset_absolute << 32 | gcoden(current_argument);
             argument_length++;
@@ -721,8 +723,10 @@ static void fseek_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - argument_length))
-                return;
+            const size_t string_error_length = strlen(string_error);
+            if (string_error_length > argument_length)
+                if (!extended_insert_from_free_memory(refal.next_result, string_error_length - argument_length))
+                    return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
         }
@@ -759,8 +763,10 @@ static void ftell_(void)
         {
             const int error_number = errno;
             const char *string_error = strerror(error_number);
-            if (!extended_insert_from_free_memory(refal.next_result, strlen(string_error) - 2))
-                return;
+            const size_t string_error_length = strlen(string_error);
+            if (string_error_length > 2)
+                if (!extended_insert_from_free_memory(refal.next_result, string_error_length - 2))
+                    return;
             set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, refal.next_argument);
             return;
