@@ -1042,7 +1042,7 @@ static bool get_number(int32_t *number)
     char *end_parameters;
     errno = 0;
     long int value = strtol(parameters, &end_parameters, 10);
-    if (errno == ERANGE || value < 1 || value > INT32_MAX)
+    if (errno == ERANGE || value < 1 || value > MAX_STOP)
         return false;
     while (*end_parameters != '\0')
     {
