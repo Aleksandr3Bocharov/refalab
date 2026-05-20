@@ -97,7 +97,7 @@ static void fopen_(void)
             const char *string_error = strerror(error_number);
             const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(file_mode) + (int32_t)strlen(file_name) + 2);
             if (result_yet_need > 0)
-                if (!(refal.next_result, (size_t)result_yet_need))
+                if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
                     return;
             T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
