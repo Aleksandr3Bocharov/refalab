@@ -18,6 +18,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
 #include "rfintf.h"
@@ -119,7 +120,7 @@ static void symb_(void)
     current_argument = current_argument->previous;
     uint32_t number = gcoden(current_argument);
     char number_string[11];
-    sprintf(number_string, "%u", number);
+    sprintf(number_string, "%" PRIu32, number);
     const size_t number_length = strlen(number_string);
     const size_t result_need = number_length + (sign == '-' ? 1 : 0);
     if (result_need > argument_length)

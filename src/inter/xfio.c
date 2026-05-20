@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -305,7 +306,7 @@ static void fprint_(void)
                 put_result = putc(')', file);
             else if (current_argument->tag == TAGN)
             {
-                sprintf(string, "'%u'", gcoden(current_argument));
+                sprintf(string, "'%" PRIu32 "'", gcoden(current_argument));
                 put_result = fputs(string, file);
             }
             else if (current_argument->tag == TAGF)
@@ -332,7 +333,7 @@ static void fprint_(void)
                 refal_abort_end("fprint: unknown bracket type");
             else
             {
-                sprintf(string, "'%x,%p'", current_argument->tag, current_argument->info.code);
+                sprintf(string, "'%" PRIx32 ",%p'", current_argument->tag, current_argument->info.code);
                 put_result = fputs(string, file);
             }
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
@@ -393,7 +394,7 @@ static void fprints_(void)
                 put_result = putc(')', file);
             else if (current_argument->tag == TAGN)
             {
-                sprintf(string, "%u", gcoden(current_argument));
+                sprintf(string, "%" PRIu32, gcoden(current_argument));
                 put_result = fputs(string, file);
             }
             else if (current_argument->tag == TAGF)
@@ -419,7 +420,7 @@ static void fprints_(void)
                 refal_abort_end("fprints: unknown bracket type");
             else
             {
-                sprintf(string, "%x,%p", current_argument->tag, current_argument->info.code);
+                sprintf(string, "%" PRIu32 ",%p", current_argument->tag, current_argument->info.code);
                 put_result = fputs(string, file);
             }
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
@@ -500,7 +501,7 @@ static void fprintm_(void)
                 else if (current_argument->tag == TAGN)
                 {
                     char string_number[512];
-                    sprintf(string_number, "%u", gcoden(current_argument));
+                    sprintf(string_number, "%" PRIu32, gcoden(current_argument));
                     strcat(string, string_number);
                     if (current_argument->next->tag == TAGN)
                         strcat(string, " ");
@@ -531,7 +532,7 @@ static void fprintm_(void)
                 else
                 {
                     char string_symbol[512];
-                    sprintf(string_symbol, "/%x,%p/", current_argument->tag, current_argument->info.code);
+                    sprintf(string_symbol, "/%" PRIu32 ",%p/", current_argument->tag, current_argument->info.code);
                     strcat(string, string_symbol);
                 }
                 put_result = fputs(string, file);

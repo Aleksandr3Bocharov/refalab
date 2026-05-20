@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
 #include "rfrun.h"
@@ -363,7 +364,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             operation_program_code = *virtual_program_counter;
 #if defined mdebug
             fprintf(stderr, " Switcher");
-            fprintf(stderr, " code8=%o\t(D=%d,H=%x)\n", operation_program_code, operation_program_code, operation_program_code);
+            fprintf(stderr, " code8=%" PRIo8 "\t(D=%" PRIu8 ",H=%" PRIx8 ")\n", operation_program_code, operation_program_code, operation_program_code);
 #endif
             // operation switcher
             switch (operation_program_code)

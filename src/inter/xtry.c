@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include "refalab.h"
 #include "rfintf.h"
 #include "rfrun.h"
@@ -68,7 +69,7 @@ static void try_(void)
             const T_LINKCB *current_k = new_status_table->dot->info.codep;
             const T_LINKCB *previous_current_k = current_k->previous;
             const T_LINKCB *next_current_dot = new_status_table->dot->next;
-            printf(" Step: %d\n", new_status_table->stop);
+            printf(" Step: %" PRIu32 "\n", new_status_table->stop);
             print_expression_m(" Term: ", previous_current_k, next_current_dot, true);
             refal_run(new_status_table);
             if (new_status_table->state == 1)

@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <errno.h>
 #include "refalab.h"
@@ -545,7 +546,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             debugger_state = DBG_EOJ;
             break;
         case DBG_EOJ:
-            printf("Completed steps number = %u\n", status_table->step);
+            printf("Completed steps number = %" PRIu32 "\n", status_table->step);
             printf("View field:\n");
             print_expression_m("     ", status_table->view, status_table->view, true);
             if (status_table->store->next != status_table->store)
@@ -554,7 +555,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
             if (garbage_collection_number != 0)
-                printf("Garbage collection number = %u\n", garbage_collection_number);
+                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
@@ -750,7 +751,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
             status_table_debugger_state = DB_EOJ;
             break;
         case DB_EOJ:
-            printf("Completed steps number = %u\n", status_table->step);
+            printf("Completed steps number = %" PRIu32 "\n", status_table->step);
             printf("View field:\n");
             print_expression_m("     ", status_table->view, status_table->view, true);
             if (status_table->store->next != status_table->store)
@@ -759,7 +760,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
             if (garbage_collection_number != 0)
-                printf("Garbage collection number = %d\n", garbage_collection_number);
+                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
@@ -843,7 +844,7 @@ static void print_step(void)
 {
     if (current_step != printed_step)
     {
-        printf("***** Step %u\n", current_step);
+        printf("***** Step %" PRIu32 "\n", current_step);
         printed_step = current_step;
     }
     return;
@@ -888,7 +889,7 @@ static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, co
     {
         if (x_step == current_step)
             return;
-        printf("----- This is result of call on step %u\n", x_step);
+        printf("----- This is result of call on step %" PRIu32 "\n", x_step);
     }
     else
     {
@@ -897,7 +898,7 @@ static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, co
             print_immediate_result();
             return;
         }
-        printf("----- Result of call on step %u :\n", x_step);
+        printf("----- Result of call on step %" PRIu32 " :\n", x_step);
         print_expression_m("     ", x_previous_k, x_next_dot, true);
         result_step = current_step;
         result_previous_k = x_previous_k;

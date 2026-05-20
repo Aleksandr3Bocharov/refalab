@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include <errno.h>
 #include <time.h>
@@ -146,7 +147,7 @@ bool more_free_memory(void)
     }
     T_LINKCB *new_block_list_memory = malloc((increase_list_memory + 1) * sizeof(T_LINKCB));
 #if defined mdebug
-    fprintf(stderr, "more_free_memory: free_memory_count=%u after new_block_list_memory=%p\n", free_memory_count, (void *)new_block_list_memory);
+    fprintf(stderr, "more_free_memory: free_memory_count=%" PRIu32 " after new_block_list_memory=%p\n", free_memory_count, (void *)new_block_list_memory);
 #endif
     if (new_block_list_memory == NULL)
         return false;
@@ -365,7 +366,7 @@ void refal_execute(uint8_t *refalab_function)
             const T_LINKCB *k = status_table.dot->info.codep;
             const T_LINKCB *previous_k = k->previous;
             const T_LINKCB *next_dot = status_table.dot->next;
-            printf(" Step: %d\n", status_table.stop);
+            printf(" Step: %" PRIu32 "\n", status_table.stop);
             print_expression_m(" Term: ", previous_k, next_dot, true);
             refal_run(&status_table);
             if (status_table.state == 1)
@@ -410,7 +411,7 @@ void refal_execute(uint8_t *refalab_function)
             execute_state = EOJ;
             break;
         case EOJ:
-            printf("Total steps number = %u\n", status_table.step);
+            printf("Total steps number = %" PRIu32 "\n", status_table.step);
             if (status_table.view->next != status_table.view)
             {
                 printf("View field:\n");
@@ -469,7 +470,7 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
         else if (print->tag == TAGRB)
             putchar(')');
         else if (print->tag == TAGN)
-            printf("'%u'", gcoden(print));
+            printf("'%" PRIu32 "'", gcoden(print));
         else if (print->tag == TAGF)
         {
             putchar('\'');
@@ -484,7 +485,7 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
         else if (BRACKET(print))
             refal_abort_end("print_expression: unknown bracket type");
         else
-            printf("'%x,%p'", print->tag, print->info.code);
+            printf("'%" PRIx32 ",%p'", print->tag, print->info.code);
     }
     if (new_line)
         printf("\n");
@@ -512,7 +513,7 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
         else if (prints->tag == TAGRB)
             putchar(')');
         else if (prints->tag == TAGN)
-            printf("%u", gcoden(prints));
+            printf("%" PRIu32, gcoden(prints));
         else if (prints->tag == TAGF)
         {
             const uint8_t *label_length = prints->info.codef - 1;
@@ -525,7 +526,7 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
         else if (BRACKET(prints))
             refal_abort_end("print_expression_s: unknown bracket type");
         else
-            printf("%x,%p", prints->tag, prints->info.code);
+            printf("%" PRIx32 ",%p", prints->tag, prints->info.code);
     }
     if (new_line)
         printf("\n");
@@ -569,7 +570,7 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
                 putchar(')');
             else if (printm->tag == TAGN)
             {
-                printf("%u", gcoden(printm));
+                printf("%" PRIu32, gcoden(printm));
                 if (printm->next->tag == TAGN)
                     putchar(' ');
             }
@@ -588,7 +589,7 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
             else if (BRACKET(printm))
                 refal_abort_end("print_expression_m: unknown bracket type");
             else
-                printf("/%x,%p/", printm->tag, printm->info.code);
+                printf("/%" PRIu32 ",%p/", printm->tag, printm->info.code);
         }
     }
     if (tago)
