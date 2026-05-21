@@ -546,6 +546,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
             debugger_state = DBG_EOJ;
             break;
         case DBG_EOJ:
+            if (garbage_collection_number != 0)
+                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             printf("Completed steps number = %" PRIu32 "\n", status_table->step);
             printf("View field:\n");
             print_expression_m("     ", status_table->view, status_table->view, true);
@@ -554,8 +556,6 @@ void refal_debugger(T_STATUS_TABLE *status_table)
                 printf("Burried:\n");
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
-            if (garbage_collection_number != 0)
-                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
@@ -751,6 +751,8 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
             status_table_debugger_state = DB_EOJ;
             break;
         case DB_EOJ:
+            if (garbage_collection_number != 0)
+                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             printf("Completed steps number = %" PRIu32 "\n", status_table->step);
             printf("View field:\n");
             print_expression_m("     ", status_table->view, status_table->view, true);
@@ -759,8 +761,6 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
                 printf("Burried:\n");
                 print_expression_m("     ", status_table->store, status_table->store, true);
             }
-            if (garbage_collection_number != 0)
-                printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
