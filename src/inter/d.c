@@ -548,7 +548,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         case DBG_EOJ:
             if (garbage_collection_number != 0)
                 printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
-            print_eoj(status_table);
+            print_status_table(&status_table, true);
             delete_status_table(status_table);
             refal_terminate_memory();
             exit(0);
@@ -728,7 +728,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
         case DB_EOJ:
             if (garbage_collection_number != 0)
                 printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
-            print_eoj(status_table);
+            print_status_table(&status_table, true);
             exit(0);
             return;
         case DB_DO:

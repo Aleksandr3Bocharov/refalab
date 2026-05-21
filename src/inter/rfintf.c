@@ -411,7 +411,7 @@ void refal_execute(uint8_t *refalab_function)
             execute_state = EOJ;
             break;
         case EOJ:
-            print_eoj(&status_table);
+            print_status_table(&status_table, true);
             execute_state = RET;
             break;
         case RET:
@@ -421,7 +421,7 @@ void refal_execute(uint8_t *refalab_function)
         }
 }
 
-void print_eoj(T_STATUS_TABLE *status_table)
+void print_status_table(T_STATUS_TABLE *status_table, bool additional_info)
 {
     printf("Completed steps number = %" PRIu32 "\n", status_table->step);
     printf("View field:\n");
@@ -431,24 +431,27 @@ void print_eoj(T_STATUS_TABLE *status_table)
         printf("Burried:\n");
         print_expression_m("     ", status_table->store, status_table->store, true);
     }
-    printf("List memory count = %zu (%zu bytes)\n", list_memory_count, list_memory_count * sizeof(T_LINKCB));
-    if (refal.timer.mode)
+    if (additional_info)
     {
-        timespec_get(&refal.timer.stop_time, TIME_UTC);
-        long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-        long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-        if (nanoseconds < 0)
+        printf("List memory count = %zu (%zu bytes)\n", list_memory_count, list_memory_count * sizeof(T_LINKCB));
+        if (refal.timer.mode)
         {
-            nanoseconds += 1000000000;
-            seconds--;
+            timespec_get(&refal.timer.stop_time, TIME_UTC);
+            long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
+            long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
+            if (nanoseconds < 0)
+            {
+                nanoseconds += 1000000000;
+                seconds--;
+            }
+            long long int minutes = seconds / 60;
+            seconds %= 60;
+            const long long int hours = minutes / 60;
+            minutes %= 60;
+            char string_time[64];
+            sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
+            printf("Elapsed time = %s\n", string_time);
         }
-        long long int minutes = seconds / 60;
-        seconds %= 60;
-        const long long int hours = minutes / 60;
-        minutes %= 60;
-        char string_time[64];
-        sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
-        printf("Elapsed time = %s\n", string_time);
     }
 }
 
