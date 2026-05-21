@@ -132,6 +132,9 @@ bool more_free_memory(void)
                 free_memory_count++;
                 linkcb_free_memory = linkcb_free_memory->next;
             }
+#if defined mdebug
+    fprintf(stderr, "more_free_memory: free_memory_count=%" PRIu32 " after collect_garbage\n", free_memory_count);
+#endif
             if (free_memory_count == options.free_memory_count)
                 return true;
         }
@@ -146,11 +149,11 @@ bool more_free_memory(void)
         }
     }
     T_LINKCB *new_block_list_memory = malloc((increase_list_memory + 1) * sizeof(T_LINKCB));
-#if defined mdebug
-    fprintf(stderr, "more_free_memory: free_memory_count=%" PRIu32 " after new_block_list_memory=%p\n", free_memory_count, (void *)new_block_list_memory);
-#endif
     if (new_block_list_memory == NULL)
         return false;
+#if defined mdebug
+    fprintf(stderr, "more_free_memory: increase_list_memory=%" PRIu32 " after new_block_list_memory=%p\n", increase_list_memory, (void *)new_block_list_memory);
+#endif
     new_block_list_memory->previous = last_block_list_memory;
     last_block_list_memory = new_block_list_memory;
     list_memory_count += increase_list_memory;
@@ -724,7 +727,7 @@ static void mark_dynamic_box_heads(T_LINKCB *root)
             dynamic_box_head = current_linkcb->info.codep;
             if (dynamic_box_head->tag != TAGO)
                 continue;
-            dynamic_box_head->tag = 0xFFFFFFFF;
+            dynamic_box_head->tag = UINT32_MAX;
             current_linkcb->info.codep = head;
             dynamic_box_head->previous = current_linkcb;
             current_linkcb = dynamic_box_head;
