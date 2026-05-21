@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-20
+// 2026-05-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------- file -- D.C ------------------
@@ -548,32 +548,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         case DBG_EOJ:
             if (garbage_collection_number != 0)
                 printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
-            printf("Completed steps number = %" PRIu32 "\n", status_table->step);
-            printf("View field:\n");
-            print_expression_m("     ", status_table->view, status_table->view, true);
-            if (status_table->store->next != status_table->store)
-            {
-                printf("Burried:\n");
-                print_expression_m("     ", status_table->store, status_table->store, true);
-            }
-            if (refal.timer.mode)
-            {
-                timespec_get(&refal.timer.stop_time, TIME_UTC);
-                long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-                long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-                if (nanoseconds < 0)
-                {
-                    nanoseconds += 1000000000;
-                    seconds--;
-                }
-                long long int minutes = seconds / 60;
-                seconds %= 60;
-                const long long int hours = minutes / 60;
-                minutes %= 60;
-                char string_time[64];
-                sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
-                printf("Elapsed time = %s\n", string_time);
-            }
+            print_eoj(status_table);
             delete_status_table(status_table);
             refal_terminate_memory();
             exit(0);
@@ -753,32 +728,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
         case DB_EOJ:
             if (garbage_collection_number != 0)
                 printf("Garbage collection number = %" PRIu32 "\n", garbage_collection_number);
-            printf("Completed steps number = %" PRIu32 "\n", status_table->step);
-            printf("View field:\n");
-            print_expression_m("     ", status_table->view, status_table->view, true);
-            if (status_table->store->next != status_table->store)
-            {
-                printf("Burried:\n");
-                print_expression_m("     ", status_table->store, status_table->store, true);
-            }
-            if (refal.timer.mode)
-            {
-                timespec_get(&refal.timer.stop_time, TIME_UTC);
-                long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
-                long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
-                if (nanoseconds < 0)
-                {
-                    nanoseconds += 1000000000;
-                    seconds--;
-                }
-                long long int minutes = seconds / 60;
-                seconds %= 60;
-                const long long int hours = minutes / 60;
-                minutes %= 60;
-                char string_time[64];
-                sprintf(string_time, "%02lld:%02lld:%02lld.%09ld", hours, minutes, seconds, nanoseconds);
-                printf("Elapsed time = %s\n", string_time);
-            }
+            print_eoj(status_table);
             exit(0);
             return;
         case DB_DO:
