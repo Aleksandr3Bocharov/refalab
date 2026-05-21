@@ -422,6 +422,7 @@ void refal_execute(uint8_t *refalab_function)
                 printf("Burried:\n");
                 print_expression_m("         ", status_table.store, status_table.store, true);
             }
+            printf("List memory count = %zu (%zu bytes)\n", list_memory_count, list_memory_count * sizeof(T_LINKCB));
             if (refal.timer.mode)
             {
                 timespec_get(&refal.timer.stop_time, TIME_UTC);
