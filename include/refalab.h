@@ -136,7 +136,7 @@ extern void refal_execute(uint8_t *refalab_function);
 extern void refal_get_args(int argc, char *argv[]);
 extern T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *begin, const T_LINKCB *max_after);
 extern void refal_initiate(void);
-extern void print_eoj(T_STATUS_TABLE *status_table);
+extern void print_status_table(T_STATUS_TABLE *status_table, bool additional_info);
 extern void print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern void print_expression_m(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
 extern void print_expression_s(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line);
