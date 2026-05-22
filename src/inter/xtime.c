@@ -10,6 +10,8 @@
 //            tm_elapsed (current interpretator time)
 //------------------------------------------------------
 
+#define _POSIX_C_SOURCE 199309L
+
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
