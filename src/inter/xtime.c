@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-18
+// 2026-05-22
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-------------- file -- XTIME.C -----------------------
@@ -64,10 +64,10 @@ static void tm_(void)
             break;
         const char timer_command = symbol_char->info.infoc;
         if (timer_command == 'S' || timer_command == 's')
-            timespec_get(&time_start, TIME_UTC);
+        clock_gettime(CLOCK_MONOTONIC, &time_start);
         else if (timer_command == 'G' || timer_command == 'g')
         {
-            timespec_get(&time_current, TIME_UTC);
+            clock_gettime(CLOCK_MONOTONIC, &time_current);
             long int nanoseconds = time_current.tv_nsec - time_start.tv_nsec;
             long long int seconds = (long long int)difftime(time_current.tv_sec, time_start.tv_sec);
             if (nanoseconds < 0)
@@ -106,7 +106,7 @@ static void tm_elapsed_(void)
     }
     if (!refal.timer.mode)
         return;
-    timespec_get(&time_elapsed, TIME_UTC);
+    clock_gettime(CLOCK_MONOTONIC, &time_elapsed);
     long int nanoseconds = time_elapsed.tv_nsec - refal.timer.start_time.tv_nsec;
     long long int seconds = (long long int)difftime(time_elapsed.tv_sec, refal.timer.start_time.tv_sec);
     if (nanoseconds < 0)

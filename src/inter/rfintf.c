@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-21
+// 2026-05-22
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  RFINTF.C ------------------
@@ -250,7 +250,7 @@ void refal_initiate(void)
     refal.arg.argv = gargv;
     refal.timer.mode = options.timer_on;
     if (refal.timer.mode)
-        timespec_get(&refal.timer.start_time, TIME_UTC);
+        clock_gettime(CLOCK_MONOTONIC, &refal.timer.start_time);
     return;
 }
 
@@ -439,7 +439,7 @@ void print_status_table(T_STATUS_TABLE *status_table, bool additional_info)
         printf("List memory count = %zu (%zu bytes)\n", list_memory_count, list_memory_count * sizeof(T_LINKCB));
         if (refal.timer.mode)
         {
-            timespec_get(&refal.timer.stop_time, TIME_UTC);
+            clock_gettime(CLOCK_MONOTONIC, &refal.timer.stop_time);
             long int nanoseconds = refal.timer.stop_time.tv_nsec - refal.timer.start_time.tv_nsec;
             long long int seconds = (long long int)difftime(refal.timer.stop_time.tv_sec, refal.timer.start_time.tv_sec);
             if (nanoseconds < 0)
