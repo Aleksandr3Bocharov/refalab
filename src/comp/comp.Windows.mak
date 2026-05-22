@@ -18,6 +18,7 @@
 CC = clang
 CFLAGS = -pipe -Wall -O2
 LINK = clang
+LFLAGS = -pthread -static
 
 S = src\comp
 BIN_DIR = bin
@@ -54,7 +55,7 @@ TARGET = refalabc
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)  
-	$(LINK) $(LFLAGS) -o $(BIN_DIR)\$(TARGET) $(OBJECTS) -pthread
+	$(LINK) $(LFLAGS) -o $(BIN_DIR)\$(TARGET) $(OBJECTS)
 
 ####### Dependences
 
