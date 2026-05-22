@@ -1,7 +1,7 @@
-# Copyright 2025 Aleksandr Bocharov
+# Copyright 2026 Aleksandr Bocharov
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-# 2025-10-14
+# 2026-05-23
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -54,7 +54,7 @@ TARGET = refalabc_dbg
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)  
-	$(LINK) $(LFLAGS) -o $(BIN_DIR)\$(TARGET) $(OBJECTS) 
+	$(LINK) $(LFLAGS) -o $(BIN_DIR)\$(TARGET) $(OBJECTS) -pthread
 
 ####### Dependences
 

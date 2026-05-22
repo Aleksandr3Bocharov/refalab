@@ -1,12 +1,14 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-18
+// 2026-05-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
 //      The main file of RefalAB compiler
 //--------------------------------------------
+
+#define _POSIX_C_SOURCE 199309L
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -179,7 +181,7 @@ static struct
 } flags;
 
 // Aleksandr Bocharov   // compiler version
-static const char *version = "RefalAB Version 1.4-dev 20260309 (c) Aleksandr Bocharov";
+static const char *version = "RefalAB Version 1.4 20260523 (c) Aleksandr Bocharov";
 
 static FILE *refalab_source;
 static int8_t current_symbol_number; // current symbol number
@@ -219,14 +221,14 @@ static T_TIMESPEC time_begin;
 
 static void SET_time(void)
 {
-    timespec_get(&time_begin, TIME_UTC);
+    clock_gettime(CLOCK_MONOTONIC, &time_begin);
     return;
 }
 
 static void GET_time(void)
 {
     T_TIMESPEC time_end;
-    timespec_get(&time_end, TIME_UTC);
+    clock_gettime(CLOCK_MONOTONIC, &time_end);
     long int nanoseconds = time_end.tv_nsec - time_begin.tv_nsec;
     long long int seconds = (long long int)difftime(time_end.tv_sec, time_begin.tv_sec);
     if (nanoseconds < 0)
