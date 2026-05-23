@@ -20,7 +20,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
-#if defined(POSIX)
+#if defined POSIX
 #include <sys/wait.h>
 #endif
 #include "refalab.h"
