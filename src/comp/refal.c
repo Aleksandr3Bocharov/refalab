@@ -13,12 +13,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <time.h>
 #include <unistd.h>
+#if defined(POSIX)
+#include <sys/wait.h>
+#endif
 #include "refalab.h"
 #include "refal.h"
 #include "cerr.h"
