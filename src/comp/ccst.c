@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-04-03
+// 2026-05-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------   file  CCST.C  ---------------
@@ -1814,9 +1814,9 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
 static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
-        jit_byte(operator_e);
-    else
         jit_byte(operator_v);
+    else
+        jit_byte(operator_e);
 }
 
 //----------  end of file CCST.C  -------------------
