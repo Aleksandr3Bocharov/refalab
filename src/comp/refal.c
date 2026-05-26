@@ -185,7 +185,7 @@ static struct
 } flags;
 
 // Aleksandr Bocharov   // compiler version
-static const char *version = "RefalAB Version 1.4 20260523 (c) Aleksandr Bocharov";
+static const char *version = "RefalAB Version 1.4 20260527 (c) Aleksandr Bocharov";
 
 static FILE *refalab_source;
 static int8_t current_symbol_number; // current symbol number
