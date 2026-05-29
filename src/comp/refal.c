@@ -1,7 +1,7 @@
 // Copyright 2026 Aleksandr Bocharov
 // Distributed under the Boost Software License, Version 1.0.
 // See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt
-// 2026-05-27
+// 2026-05-29
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file  --  REFAL.C -------------
@@ -185,7 +185,7 @@ static struct
 } flags;
 
 // Aleksandr Bocharov   // compiler version
-static const char *version = "RefalAB Version 1.4 20260527 (c) Aleksandr Bocharov";
+static const char *version = "RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov";
 
 static FILE *refalab_source;
 static int8_t current_symbol_number; // current symbol number
