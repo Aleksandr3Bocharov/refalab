@@ -14,7 +14,7 @@ ifdef OS
     CC = clang
     LINK = clang
     LFLAGS = -pthread -static
-    PLATFORM_FLAGS = -DWindows
+    PLATFORM_FLAGS =
 else
     # Linux / macOS (POSIX) Settings (Based on comp.POSIX.mak and delbin)
     RM = rm -f
@@ -32,7 +32,7 @@ REFALABINCLUDE ?= ..$(SLASH)..$(SLASH)include
 REFALABCFLAGS  ?= -pipe -Wall -O2
 
 # Base compiler flags shared between both versions
-BASE_CFLAGS = $(REFALABCFLAGS) $(PLATFORM_FLAGS) -I$(REFALABINCLUDE)
+BASE_CFLAGS = $(REFALABCFLAGS) $(PLATFORM_FLAGS)
 
 # ====================================================================
 # 2. TARGET DEFINITIONS
@@ -85,9 +85,7 @@ clean_objs:
 
 # Complete cleanup of all build artifacts and temporary files
 clean: clean_objs
-	@echo Cleaning compiler build artifacts and temporary files...
-	$(RM) *.s
-	$(RM) *.log
+	@echo Cleaning compiler build artifacts...
 	$(RM) $(TARGET_RELEASE)
 	$(RM) $(TARGET_DEBUG)
 
