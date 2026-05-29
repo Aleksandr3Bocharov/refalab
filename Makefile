@@ -59,13 +59,12 @@ all: comp inter
 # Build compiler module only (src/comp)
 comp:
 	@echo >>> Building compiler (comp)...
-	$(MAKE_SUB) $(DIR_COMP)$(SLASH)comp.$(MAK_EXT) -C $(DIR_COMP)
+	$(MAKE) -C $(DIR_COMP)
 
 # Build interpreter module only (src/inter)
 inter:
 	@echo >>> Building interpreter (inter)...
-	$(MAKE_SUB) $(DIR_INTER)$(SLASH)inter_lib.$(MAK_EXT) -C $(DIR_INTER)
-	$(MAKE_SUB) $(DIR_INTER)$(SLASH)inter_o.$(MAK_EXT) -C $(DIR_INTER)
+	$(MAKE) -C $(DIR_INTER)
 
 # ====================================================================
 # 3. AUTOMATION & CLEANUP
@@ -74,9 +73,8 @@ inter:
 # Centralized clean: invokes inner clean targets from author's subfolders
 clean:
 	@echo >>> Cleaning temporary files and binaries...
-	$(MAKE_SUB) $(DIR_COMP)$(SLASH)comp.$(MAK_EXT) -C $(DIR_COMP) clean
-	$(MAKE_SUB) $(DIR_INTER)$(SLASH)inter_lib.$(MAK_EXT) -C $(DIR_INTER) clean
-	$(MAKE_SUB) $(DIR_INTER)$(SLASH)inter_o.$(MAK_EXT) -C $(DIR_INTER) clean
+	$(MAKE) -C $(DIR_COMP) clean
+	$(MAKE) -C $(DIR_INTER) clean
 	@echo >>> Clean completed.
 
 # Display environment variables for path verification
