@@ -13,11 +13,7 @@
 # ====================================================================
 ifdef OS
     # Windows Environment Settings
-    RM = del /Q /F
-    EXE = .exe
     SLASH = \\
-    MAKE_SUB = $(MAKE) -f
-    MAK_EXT = Windows.mak
     
     # Dynamically parse environment variables from set_env.bat to avoid code duplication
     GET_WIN_VAR = $(subst %~dp0,$(CURDIR)$(SLASH),$(lastword $(subst =, ,$(shell findstr /B /C:"setx $1" set_env.bat))))
@@ -28,11 +24,7 @@ ifdef OS
     export REFALABCFLAGS  := -pipe -Wall -O2
 else
     # Linux / macOS (POSIX) Environment Settings
-    RM = rm -f
-    EXE =
     SLASH = /
-    MAKE_SUB = $(MAKE) -f
-    MAK_EXT = POSIX.mak
     
     # Dynamically import environment variables from the original set_env bash script
     export REFALABBIN     := $(shell . ./set_env && echo $$REFALABBIN)
@@ -80,7 +72,7 @@ clean:
 # Display environment variables for path verification
 env:
 	@echo === Environment variables loaded from set_env ===
-	@echo Operating System     : $(if $(OS),Windows,POSIX/Linux)
+	@echo Operating System     : $(if $(OS),Windows,POSIX)
 	@echo REFALABBIN           : $(REFALABBIN)
 	@echo REFALABLIB           : $(REFALABLIB)
 	@echo REFALABINCLUDE       : $(REFALABINCLUDE)
