@@ -30,8 +30,8 @@ else
 endif
 
 CC = clang
-CFLAGS = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
-DEBUG_FLAGS = -g -Dmdebug
+CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
+CFLAGS_DEBUG  = -pipe -Wall -O2 -g -Dmdebug $(PLATFORM_CFLAGS)
 LINK = clang
 REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 
@@ -54,6 +54,7 @@ OBJS = $(SRCS:.c=.o)
 all: release debug
 
 # --- RELEASE VERSION BUILD ---
+release: CFLAGS := $(CFLAGS_COMMON)
 release: $(TARGET_RELEASE)
 
 $(TARGET_RELEASE): $(OBJS)
@@ -63,7 +64,7 @@ $(TARGET_RELEASE): $(OBJS)
 # --- DEBUG VERSION BUILD ---
 # Add debugging flags specifically for this target.
 # Forces object file cleanup before building to ensure re-compilation with debug flags.
-debug: CFLAGS := $(CFLAGS) $(DEBUG_CFLAGS)
+debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: clean_objs $(TARGET_DEBUG)
 
 $(TARGET_DEBUG): $(OBJS)
