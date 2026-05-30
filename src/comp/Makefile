@@ -7,7 +7,7 @@
 # 1. CROSS-PLATFORM & ENVIRONMENT DETECTION
 # ====================================================================
 ifdef OS
-    # Windows Settings (Based on comp.Windows.mak and delbin.bat)
+    # Windows Settings
     RM = del /Q /F
     EXE = .exe
     SLASH = \\
@@ -16,7 +16,7 @@ ifdef OS
     LFLAGS = -pthread -static
     PLATFORM_FLAGS =
 else
-    # Linux / macOS (POSIX) Settings (Based on comp.POSIX.mak and delbin)
+    # Linux / macOS (POSIX) Settings
     RM = rm -f
     EXE =
     SLASH = /
@@ -77,7 +77,7 @@ $(TARGET_DEBUG): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # ====================================================================
-# 4. CLEANUP (Integration of delbin / delbin.bat)
+# 4. CLEANUP
 # ====================================================================
 # Helper target to clear object files between release and debug builds
 clean_objs:
