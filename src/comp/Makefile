@@ -11,10 +11,6 @@ ifdef OS
     RM = del /Q /F
     EXE = .exe
     SLASH = \\
-    CC = clang
-    CFLAGS = -pipe -Wall -O2
-    CFLAGS_DBG = -g -Dmdebug
-    LINK = clang
     LFLAGS = -pthread -static
     PLATFORM_FLAGS =
 else
@@ -22,18 +18,16 @@ else
     RM = rm -f
     EXE =
     SLASH = /
-    CC = clang
     CFLAGS = -pipe -Wall -O2
-    CFLAGS_DBG = -g -Dmdebug
-    LINK = clang
     LFLAGS = 
     PLATFORM_FLAGS = -DPOSIX
 endif
 
-REFALABBIN     = ..$(SLASH)..$(SLASH)bin
-
-# Base compiler flags shared between both versions
-BASE_CFLAGS = $(CFLAGS) $(PLATFORM_FLAGS)
+CC = clang
+CFLAGS = -pipe -Wall -O2 $(PLATFORM_FLAGS)
+DEBUG_FLAGS = -g -Dmdebug
+LINK = clang
+REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 
 # ====================================================================
 # 2. TARGET DEFINITIONS
@@ -54,8 +48,6 @@ OBJS = $(SRCS:.c=.o)
 all: release debug
 
 # --- RELEASE VERSION BUILD ---
-# Override CFLAGS specifically for this target and its prerequisites
-release: CFLAGS := $(BASE_CFLAGS)
 release: $(TARGET_RELEASE)
 
 $(TARGET_RELEASE): $(OBJS)
@@ -65,7 +57,7 @@ $(TARGET_RELEASE): $(OBJS)
 # --- DEBUG VERSION BUILD ---
 # Add debugging flags specifically for this target.
 # Forces object file cleanup before building to ensure re-compilation with debug flags.
-debug: CFLAGS := $(BASE_CFLAGS) $(CFLAGS_DBG)
+debug: CFLAGS := $(CFLAGS) $(DEBUG_FLAGS)
 debug: clean_objs $(TARGET_DEBUG)
 
 $(TARGET_DEBUG): $(OBJS)
