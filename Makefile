@@ -64,14 +64,14 @@ inter:
 # 3. AUTOMATION & CLEANUP
 # ====================================================================
 
-# Centralized clean: invokes inner clean targets from author's subfolders
+# Centralized clean: invokes inner clean targets from subfolders
 clean:
 	@echo >>> Cleaning temporary files and binaries...
 	$(MAKE) -C $(DIR_COMP) clean
 	$(MAKE) -C $(DIR_INTER) clean
 	@echo >>> Clean completed.
 
-# Display environment variables for path verification
+# Display environment variables
 env:
 	@echo === Environment variables loaded from set_env ===
 	@echo Operating System     : $(if $(OS),Windows,POSIX)
