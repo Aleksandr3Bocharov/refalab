@@ -2,7 +2,7 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-05-29
+rem 2026-05-30
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
@@ -14,3 +14,4 @@ setx REFALABBIN %~dp0bin
 setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include
 setx REFALABCFLAGS "-pipe -Wall -O2"
+setx REFALABCFLAGS_DBG "-pipe -Wall -O2 -g -Dmdebug"

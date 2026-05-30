@@ -2,7 +2,7 @@
 
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-05-29
+# 2026-05-30
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
@@ -14,3 +14,4 @@ export REFALABBIN=$PWD/bin
 export REFALABLIB=$PWD/lib
 export REFALABINCLUDE=$PWD/include
 export REFALABCFLAGS="-pipe -Wall -O2"
+export REFALABCFLAGS_DBG="-pipe -Wall -O2 -g -Dmdebug"
