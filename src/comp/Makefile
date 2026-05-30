@@ -12,6 +12,8 @@ ifdef OS
     EXE = .exe
     SLASH = \\
     CC = clang
+    CFLAGS = -pipe -Wall -O2
+    CFLAGS_DBG = -g -Dmdebug
     LINK = clang
     LFLAGS = -pthread -static
     PLATFORM_FLAGS =
@@ -21,18 +23,17 @@ else
     EXE =
     SLASH = /
     CC = clang
+    CFLAGS = -pipe -Wall -O2
+    CFLAGS_DBG = -g -Dmdebug
     LINK = clang
     LFLAGS = 
     PLATFORM_FLAGS = -DPOSIX
 endif
 
-# Fallback absolute paths relative to src/comp directory if not inherited from root
-REFALABBIN     ?= ..$(SLASH)..$(SLASH)bin
-REFALABINCLUDE ?= ..$(SLASH)..$(SLASH)include
-REFALABCFLAGS  ?= -pipe -Wall -O2
+REFALABBIN     = ..$(SLASH)..$(SLASH)bin
 
 # Base compiler flags shared between both versions
-BASE_CFLAGS = $(REFALABCFLAGS) $(PLATFORM_FLAGS)
+BASE_CFLAGS = $(CFLAGS) $(PLATFORM_FLAGS)
 
 # ====================================================================
 # 2. TARGET DEFINITIONS
@@ -64,7 +65,7 @@ $(TARGET_RELEASE): $(OBJS)
 # --- DEBUG VERSION BUILD ---
 # Add debugging flags specifically for this target.
 # Forces object file cleanup before building to ensure re-compilation with debug flags.
-debug: CFLAGS := $(BASE_CFLAGS) -g -Dmdebug
+debug: CFLAGS := $(BASE_CFLAGS) $(CFLAGS_DBG)
 debug: clean_objs $(TARGET_DEBUG)
 
 $(TARGET_DEBUG): $(OBJS)
