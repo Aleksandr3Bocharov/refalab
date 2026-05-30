@@ -1,7 +1,14 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-05-29
+# 2026-05-30
 # https://github.com/Aleksandr3Bocharov/refalab
+
+#############################################################################
+# Makefile
+# Makefile for building of the compiler from RefalAB language
+# result - bin/refalabc executable module
+# result - bin/refalabc_dbg executable module
+#############################################################################
 
 # ====================================================================
 # 1. CROSS-PLATFORM & ENVIRONMENT DETECTION
