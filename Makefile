@@ -22,6 +22,7 @@ ifdef OS
     export REFALABLIB     := $(call GET_WIN_VAR,REFALABLIB)
     export REFALABINCLUDE := $(call GET_WIN_VAR,REFALABINCLUDE)
     export REFALABCFLAGS  := $(call GET_WIN_VAR,REFALABCFLAGS)
+    export REFALABCFLAGS_DBG    := $(call GET_WIN_VAR,REFALABCFLAGS_DBG)
 else
     # Linux / macOS (POSIX) Environment Settings
     SLASH = /
@@ -31,6 +32,7 @@ else
     export REFALABLIB     := $(shell . ./set_env && echo $$REFALABLIB)
     export REFALABINCLUDE := $(shell . ./set_env && echo $$REFALABINCLUDE)
     export REFALABCFLAGS  := $(shell . ./set_env && echo $$REFALABCFLAGS)
+    export REFALABCFLAGS_DBG    := $(shell . ./set_env && echo $$REFALABCFLAGS_DBG)
 endif
 
 # Internal source paths for Sub-Makes
