@@ -12,19 +12,18 @@ ifdef OS
     EXE = .exe
     SLASH = \\
     LFLAGS = -pthread -static
-    PLATFORM_FLAGS =
+    PLATFORM_CFLAGS =
 else
     # Linux / macOS (POSIX) Settings
     RM = rm -f
     EXE =
     SLASH = /
-    CFLAGS = -pipe -Wall -O2
     LFLAGS = 
-    PLATFORM_FLAGS = -DPOSIX
+    PLATFORM_CFLAGS = -DPOSIX
 endif
 
 CC = clang
-CFLAGS = -pipe -Wall -O2 $(PLATFORM_FLAGS)
+CFLAGS = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
 DEBUG_FLAGS = -g -Dmdebug
 LINK = clang
 REFALABBIN  = ..$(SLASH)..$(SLASH)bin
@@ -57,7 +56,7 @@ $(TARGET_RELEASE): $(OBJS)
 # --- DEBUG VERSION BUILD ---
 # Add debugging flags specifically for this target.
 # Forces object file cleanup before building to ensure re-compilation with debug flags.
-debug: CFLAGS := $(CFLAGS) $(DEBUG_FLAGS)
+debug: CFLAGS := $(CFLAGS) $(DEBUG_CFLAGS)
 debug: clean_objs $(TARGET_DEBUG)
 
 $(TARGET_DEBUG): $(OBJS)
