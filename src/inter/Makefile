@@ -5,10 +5,11 @@
 
 #############################################################################
 # Makefile
-# Makefile for interpreter library creation
+# Makefile for interpreter from "jazyk sborki" creation
 # result - lib/librefalab.a library
 # result - lib/librefalab_dbg.a library
-# result - mainrf.o mainrf_dbg.o rfdbg.o rfdbg_dbg.o
+# result - lib/obj/mainrf.o lib/obj/mainrf_dbg.o
+# result - lib/obj/rfdbg.o lib/obj/rfdbg_dbg.o
 #############################################################################
 
 # ==============================================================================
