@@ -79,6 +79,7 @@ env:
 	@echo REFALABLIB           : $(REFALABLIB)
 	@echo REFALABINCLUDE       : $(REFALABINCLUDE)
 	@echo REFALABCFLAGS        : $(REFALABCFLAGS)
+	@echo REFALABCFLAGS_DBG    : $(REFALABCFLAGS_DBG)
 
 # Built-in help instructions
 help:
@@ -87,4 +88,4 @@ help:
 	@echo   make comp  - Build the compiler only
 	@echo   make inter - Build the interpreter only
 	@echo   make clean - Run clean target in all subdirectories
-	@echo   make env   - Check how Make loaded paths from set_env
+	@echo   make env   - Check how Make loaded environments from set_env
