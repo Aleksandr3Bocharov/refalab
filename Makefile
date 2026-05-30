@@ -21,7 +21,7 @@ ifdef OS
     export REFALABBIN     := $(call GET_WIN_VAR,REFALABBIN)
     export REFALABLIB     := $(call GET_WIN_VAR,REFALABLIB)
     export REFALABINCLUDE := $(call GET_WIN_VAR,REFALABINCLUDE)
-    export REFALABCFLAGS  := -pipe -Wall -O2
+    export REFALABCFLAGS  := $(call GET_WIN_VAR,REFALABCFLAGS)
 else
     # Linux / macOS (POSIX) Environment Settings
     SLASH = /
