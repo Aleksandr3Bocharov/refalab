@@ -46,9 +46,9 @@ DIR_INTER = src$(SLASH)inter
 
 # Default target: Builds the entire project
 all: comp inter
-	@echo ==================================================
-	@echo  Refalab build successfully completed for $(if $(OS),Windows,POSIX)!
-	@echo ==================================================
+	@echo =======================================================
+	@echo  RefalAB build successfully completed for $(if $(OS),Windows,POSIX)!
+	@echo =======================================================
 
 # Build compiler from RefalAB language only (src/comp)
 comp:
