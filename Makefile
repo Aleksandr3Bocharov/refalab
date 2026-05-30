@@ -50,12 +50,12 @@ all: comp inter
 	@echo  Refalab build successfully completed for $(if $(OS),Windows,POSIX)!
 	@echo ==================================================
 
-# Build compiler module only (src/comp)
+# Build compiler from RefalAB language only (src/comp)
 comp:
 	@echo >>> Building compiler (comp)...
 	$(MAKE) -C $(DIR_COMP)
 
-# Build interpreter module only (src/inter)
+# Build interpreter from "jazyk sborki" (src/inter)
 inter:
 	@echo >>> Building interpreter (inter)...
 	$(MAKE) -C $(DIR_INTER)
