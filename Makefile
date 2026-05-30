@@ -88,4 +88,4 @@ help:
 	@echo   make comp  - Build the compiler only
 	@echo   make inter - Build the interpreter only
 	@echo   make clean - Run clean target in all subdirectories
-	@echo   make env   - Check how Make loaded environments from set_env
+	@echo   make env   - Check how Make loaded environment variables from set_env
