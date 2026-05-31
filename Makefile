@@ -25,8 +25,8 @@ endif
 DIR_COMP  = src$(SLASH)comp
 DIR_INTER = src$(SLASH)inter
 
-BIN_DIR = bin
-LIB_DIR = lib
+DIR_BIN = bin
+DIR_LIB = lib
 
 # ====================================================================
 # 2. MAIN TARGETS
@@ -42,13 +42,13 @@ all: comp inter
 # Build compiler from RefalAB language only (src/comp)
 comp:
 	@echo === Building compiler (comp) ===
-	@$(call MKDIR,$(BIN_DIR))
+	@$(call MKDIR,$(DIR_BIN))
 	$(MAKE) -C $(DIR_COMP)
 
 # Build interpreter from "jazyk sborki" (src/inter)
 inter:
 	@echo === Building interpreter (inter) ===
-	@$(call MKDIR,$(LIB_DIR))
+	@$(call MKDIR,$(DIR_LIB))
 	$(MAKE) -C $(DIR_INTER)
 
 # ====================================================================
