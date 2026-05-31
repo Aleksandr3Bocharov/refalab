@@ -129,12 +129,13 @@ endif
 # ------------------------------------------------------------------------------
 clean_objs:
 	-$(RM) *.o
-	@# Remove garbage and temporary listings of the Refal compiler
+	@# Remove garbage and temporary listings of the RefalAB compiler
 	-$(RM) *.s
 	-$(RM) *.log
 	-$(RM) *.lst
 
 clean: clean_objs
+	@echo Cleaning interpreter build artifacts...
 	-$(RM) $(REFLIB_RELEASE)
 	-$(RM) $(REFLIB_DEBUG)
 	-$(call RMDIR,$(OBJ_DIR))
