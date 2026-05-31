@@ -14,4 +14,4 @@ export REFALABBIN=$PWD/bin
 export REFALABLIB=$PWD/lib
 export REFALABINCLUDE=$PWD/include
 export REFALABCFLAGS="-pipe -Wall -O2"
-export REFALABCFLAGS_DBG="-pipe -Wall -O2 -g -Dmdebug"
+export REFALABCFLAGS_DBG="-pipe -Wall -O0 -g -Dmdebug"

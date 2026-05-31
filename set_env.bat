@@ -14,4 +14,4 @@ setx REFALABBIN %~dp0bin
 setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include
 setx REFALABCFLAGS "-pipe -Wall -O2"
-setx REFALABCFLAGS_DBG "-pipe -Wall -O2 -g -Dmdebug"
+setx REFALABCFLAGS_DBG "-pipe -Wall -O0 -g -Dmdebug"
