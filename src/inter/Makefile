@@ -119,7 +119,7 @@ $(LIB_REF_OBJS): xar2 xbool xcomp2 xext xfio2 xhof xmo2 $(XPLATFORM_SRC) xsys2
 	$(REFALABC) xhof -a,"-o xhof.o" > xhof.log
 	$(REFALABC) xmo2 -a,"-o xmo2.o" > xmo2.log
 	$(REFALABC) $(XPLATFORM_SRC) -a,"-o xplatform.o" > xplatform.log
-	$(REFALABC) xsys2 -a,"-o xsys2.o" > xsyd2.log
+	$(REFALABC) xsys2 -a,"-o xsys2.o" > xsys2.log
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
