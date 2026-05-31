@@ -14,14 +14,19 @@
 ifdef OS
     # Windows Environment Settings
     SLASH = \\
+	MKDIR = if not exist $(1) mkdir $(1)
 else
     # Linux / macOS (POSIX) Environment Settings
     SLASH = /
+	MKDIR = mkdir -p $(1)
 endif
 
 # Internal source paths for Sub-Makes
 DIR_COMP  = src$(SLASH)comp
 DIR_INTER = src$(SLASH)inter
+
+BIN_DIR = bin
+LIB_DIR = lib
 
 # ====================================================================
 # 2. MAIN TARGETS
@@ -37,11 +42,13 @@ all: comp inter
 # Build compiler from RefalAB language only (src/comp)
 comp:
 	@echo === Building compiler (comp) ===
+	@$(call MKDIR,$(BIN_DIR))
 	$(MAKE) -C $(DIR_COMP)
 
 # Build interpreter from "jazyk sborki" (src/inter)
 inter:
 	@echo === Building interpreter (inter) ===
+	@$(call MKDIR,$(LIB_DIR))
 	$(MAKE) -C $(DIR_INTER)
 
 # ====================================================================
