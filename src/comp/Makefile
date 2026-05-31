@@ -31,7 +31,7 @@ endif
 
 CC = clang
 CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
-CFLAGS_DEBUG  = -pipe -Wall -O2 -g -Dmdebug $(PLATFORM_CFLAGS)
+CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(PLATFORM_CFLAGS)
 LINK = clang
 REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 
