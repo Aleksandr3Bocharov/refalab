@@ -64,7 +64,6 @@ $(TARGET_RELEASE): $(OBJS)
 
 # --- DEBUG VERSION BUILD ---
 # Add debugging flags specifically for this target.
-# Forces object file cleanup before building to ensure re-compilation with debug flags.
 debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: $(TARGET_DEBUG)
 
@@ -89,9 +88,11 @@ $(TARGET_DEBUG): $(OBJS_DBG)
 clean_objs:
 	$(RM) *.o
 
-# Complete cleanup of all build artifacts and temporary files
+# Complete cleanup of all build artifacts and temporary files src/comp
 clean: clean_objs
 	@echo Cleaning compiler build artifacts...
 	$(RM) $(TARGET_RELEASE)
 	$(RM) $(TARGET_DEBUG)
-
+	@echo ==================================================
+	@echo Full cleanup of src/comp directory completed.
+	@echo ==================================================
