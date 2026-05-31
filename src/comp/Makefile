@@ -44,6 +44,7 @@ TARGET_DEBUG   = $(REFALABBIN)$(SLASH)refalabc_dbg$(EXE)
 # Source and object files automation
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
+OBJS_DBG = $(SRCS:.c=_dbg.o)
 
 # ====================================================================
 # 3. TARGETS & RULES
@@ -67,12 +68,17 @@ $(TARGET_RELEASE): $(OBJS)
 debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: clean_objs $(TARGET_DEBUG)
 
-$(TARGET_DEBUG): $(OBJS)
+$(TARGET_DEBUG): $(OBJS_DBG)
 	@echo Linking Debug binary: $(TARGET_DEBUG)...
 	$(LINK) $(LFLAGS) -o $@ $^
 
 # Template rule to compile any local .c file into .o
 %.o: %.c
+	@echo Compiling $<...
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Template rule to compile any local .c file into _dbg.o
+%_dbg.o: %.c
 	@echo Compiling $<...
 	$(CC) $(CFLAGS) -c $< -o $@
 
