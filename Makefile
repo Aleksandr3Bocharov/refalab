@@ -14,25 +14,9 @@
 ifdef OS
     # Windows Environment Settings
     SLASH = \\
-    
-    # Dynamically parse environment variables from set_env.bat to avoid code duplication
-    GET_WIN_VAR = $(subst %~dp0,$(CURDIR)$(SLASH),$(lastword $(subst =, ,$(shell findstr /B /C:"setx $1" set_env.bat))))
-    
-    export REFALABBIN     := $(call GET_WIN_VAR,REFALABBIN)
-    export REFALABLIB     := $(call GET_WIN_VAR,REFALABLIB)
-    export REFALABINCLUDE := $(call GET_WIN_VAR,REFALABINCLUDE)
-    export REFALABCFLAGS  := $(call GET_WIN_VAR,REFALABCFLAGS)
-    export REFALABCFLAGS_DBG    := $(call GET_WIN_VAR,REFALABCFLAGS_DBG)
 else
     # Linux / macOS (POSIX) Environment Settings
     SLASH = /
-    
-    # Dynamically import environment variables from the original set_env bash script
-    export REFALABBIN     := $(shell . ./set_env && echo $$REFALABBIN)
-    export REFALABLIB     := $(shell . ./set_env && echo $$REFALABLIB)
-    export REFALABINCLUDE := $(shell . ./set_env && echo $$REFALABINCLUDE)
-    export REFALABCFLAGS  := $(shell . ./set_env && echo $$REFALABCFLAGS)
-    export REFALABCFLAGS_DBG    := $(shell . ./set_env && echo $$REFALABCFLAGS_DBG)
 endif
 
 # Internal source paths for Sub-Makes
@@ -71,16 +55,6 @@ clean:
 	$(MAKE) -C $(DIR_INTER) clean
 	@echo >>> Clean completed.
 
-# Display environment variables
-env:
-	@echo === Environment variables loaded from set_env ===
-	@echo Operating System     : $(if $(OS),Windows,POSIX)
-	@echo REFALABBIN           : $(REFALABBIN)
-	@echo REFALABLIB           : $(REFALABLIB)
-	@echo REFALABINCLUDE       : $(REFALABINCLUDE)
-	@echo REFALABCFLAGS        : $(REFALABCFLAGS)
-	@echo REFALABCFLAGS_DBG    : $(REFALABCFLAGS_DBG)
-
 # Built-in help instructions
 help:
 	@echo Available commands:
@@ -88,4 +62,3 @@ help:
 	@echo   make comp  - Build the compiler only
 	@echo   make inter - Build the interpreter only
 	@echo   make clean - Run clean target in all subdirectories
-	@echo   make env   - Check how Make loaded environment variables from set_env
