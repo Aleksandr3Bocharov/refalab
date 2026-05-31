@@ -18,6 +18,7 @@
 ifdef OS
     SLASH = \\
     RM = del /Q /F
+    CP = copy /Y
     MKDIR = if not exist $(1) mkdir $(1)
     RMDIR = rmdir /S /Q
     PLATFORM_CFLAGS =
@@ -25,6 +26,7 @@ ifdef OS
 else
     SLASH = /
     RM = rm -f
+    CP = cp -f
     MKDIR = mkdir -p $(1)
     RMDIR = rm -rf
     PLATFORM_CFLAGS = -DPOSIX
@@ -44,7 +46,8 @@ OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
 # ------------------------------------------------------------------------------
 # A. Objects for building libraries (interpreter as a library)
 LIB_CORE_OBJS = d.o rfintf.o rfrun.o xar.o xbit.o xcf.o xcomp.o xdelf.o xfio.o xio.o xjak.o xmo.o xrand.o xstor.o xsys.o xtime.o xtry.o
-LIB_REF_OBJS  = xar2.o xbool.o xcomp2.o xext.o xfio2.o xhof.o xmo2.o xplatform.o xsys2.o
+REF_MODULES  := xar2 xbool xcomp2 xext xfio2 xhof xmo2 xsys2
+LIB_REF_OBJS := $(REF_MODULES:%=%.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
 
 REFLIB_RELEASE = $(REFALAB_LIB)$(SLASH)librefalab.a
@@ -108,18 +111,18 @@ $(OBJ_DIR)$(SLASH)rfdbg_dbg.o: rfdbg.c
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Group rule for modules generation from .ref files via Refal compiler
-$(LIB_REF_OBJS): xar2 xbool xcomp2 xext xfio2 xhof xmo2 $(XPLATFORM_SRC) xsys2
-	@echo [Refal-Compiler] Full generation of Refal modules...
-	$(REFALABC) xar2 -a,"-o xar2.o" > xar2.log
-	$(REFALABC) xbool -a,"-o xbool.o" > xbool.log
-	$(REFALABC) xcomp2 -a,"-o xcomp2.o" > xcomp2.log
-	$(REFALABC) xext -a,"-o xext.o" > xext.log
-	$(REFALABC) xfio2 -a,"-o xfio2.o" > xfio2.log
-	$(REFALABC) xhof -a,"-o xhof.o" > xhof.log
-	$(REFALABC) xmo2 -a,"-o xmo2.o" > xmo2.log
-	$(REFALABC) $(XPLATFORM_SRC) -a,"-o xplatform.o" > xplatform.log
-	$(REFALABC) xsys2 -a,"-o xsys2.o" > xsys2.log
+# Pattern rule for all standard Refal modules
+%.o: %.ref
+	$(REFALABC) $* -a,"-o $@" > $*.log
+
+# Special rule for platform-dependent xplatform.o
+xplatform.o: $(XPLATFORM_SRC).ref
+	$(REFALABC) $(XPLATFORM_SRC) -a,"-o $@" > xplatform.log
+ifdef OS
+	@if exist $(XPLATFORM_SRC).o $(CP) $(XPLATFORM_SRC).o $@ >nul
+else
+	@if [ -f $(XPLATFORM_SRC).o ]; then $(CP) $(XPLATFORM_SRC).o $@; fi
+endif
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
