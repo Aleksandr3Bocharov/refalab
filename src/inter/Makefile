@@ -20,7 +20,7 @@ ifdef OS
     RM = del /Q /F
     CP = copy /Y
     MKDIR = if not exist $(1) mkdir $(1)
-    RMDIR = rmdir /S /Q
+    RMDIR = rmdir /S /Q $(1)
     PLATFORM_CFLAGS =
     XPLATFORM_SRC = xplatformwin
 else
@@ -28,7 +28,7 @@ else
     RM = rm -f
     CP = cp -f
     MKDIR = mkdir -p $(1)
-    RMDIR = rm -rf
+    RMDIR = rm -rf $(1)
     PLATFORM_CFLAGS = -DPOSIX
     XPLATFORM_SRC = xplatformposix
 endif
@@ -46,9 +46,11 @@ OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
 # ------------------------------------------------------------------------------
 # A. Objects for building libraries (interpreter as a library)
 LIB_CORE_OBJS = d.o rfintf.o rfrun.o xar.o xbit.o xcf.o xcomp.o xdelf.o xfio.o xio.o xjak.o xmo.o xrand.o xstor.o xsys.o xtime.o xtry.o
+LIB_CORE_OBJS_DBG = d_dbg.o rfintf_dbg.o rfrun_dbg.o xar_dbg.o xbit_dbg.o xcf_dbg.o xcomp_dbg.o xdelf_dbg.o xfio_dbg.o xio_dbg.o xjak_dbg.o xmo_dbg.o xrand_dbg.o xstor_dbg.o xsys_dbg.o xtime_dbg.o xtry_dbg.o
 REF_MODULES  := xar2 xbool xcomp2 xext xfio2 xhof xmo2 xsys2
 LIB_REF_OBJS := $(REF_MODULES:%=%.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
+ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS)
 
 REFLIB_RELEASE = $(REFALAB_LIB)$(SLASH)librefalab.a
 REFLIB_DEBUG   = $(REFALAB_LIB)$(SLASH)librefalab_dbg.a
@@ -77,8 +79,8 @@ release: $(ALL_LIB_OBJS) $(RELEASE_STANDALONE_OBJS)
 
 # Full debug build (Debug library + Standalone debug object files in lib/obj)
 debug: CFLAGS := $(CFLAGS_DEBUG)
-debug: clean_objs $(ALL_LIB_OBJS) $(DEBUG_STANDALONE_OBJS)
-	$(AR) $(REFLIB_DEBUG) $(ALL_LIB_OBJS)
+debug: $(ALL_LIB_OBJS_DBG) $(DEBUG_STANDALONE_OBJS)
+	$(AR) $(REFLIB_DEBUG) $(ALL_LIB_OBJS_DBG)
 	@echo ==================================================
 	@echo Interpreter debug components successfully built.
 	@echo Debug Library: $(REFLIB_DEBUG)
@@ -91,6 +93,10 @@ debug: clean_objs $(ALL_LIB_OBJS) $(DEBUG_STANDALONE_OBJS)
 
 # Standard rule for library C files compilation (creates objects locally)
 %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Standard rule for library C files compilation (creates _dbg objects locally)
+%_dbg.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone release objects (compiled directly into lib/obj)
@@ -129,7 +135,7 @@ endif
 # ------------------------------------------------------------------------------
 clean_objs:
 	-$(RM) *.o
-	@# Remove garbage and temporary listings of the RefalAB compiler
+	@echo Remove garbage and temporary listings of the RefalAB compiler
 	-$(RM) *.s
 	-$(RM) *.log
 	-$(RM) *.lst
