@@ -35,7 +35,6 @@ CC = clang
 CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
 CFLAGS_DEBUG  = -pipe -Wall -O2 -g -Dmdebug $(PLATFORM_CFLAGS)
 REFALABC = ..$(SLASH)..$(SLASH)bin$(SLASH)refalabc
-REFALABCFLAGS = 
 AR = ar rcs
 REFALAB_LIB = ..$(SLASH)..$(SLASH)lib
 OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
@@ -110,23 +109,17 @@ $(OBJ_DIR)$(SLASH)rfdbg_dbg.o: rfdbg.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Group rule for modules generation from .ref files via Refal compiler
-$(LIB_REF_OBJS): xar2 xbool xcomp2 xext xfio2 xhof xmo2 xplatformposix xplatformwin xsys2
+$(LIB_REF_OBJS): xar2 xbool xcomp2 xext xfio2 xhof xmo2 $(XPLATFORM_SRC) xsys2
 	@echo [Refal-Compiler] Full generation of Refal modules...
-	$(REFALABC) xar2 $(REFALABCFLAGS)
-	$(REFALABC) xbool $(REFALABCFLAGS)
-	$(REFALABC) xcomp2 $(REFALABCFLAGS)
-	$(REFALABC) xext $(REFALABCFLAGS)
-	$(REFALABC) xfio2 $(REFALABCFLAGS)
-	$(REFALABC) xhof $(REFALABCFLAGS)
-	$(REFALABC) xmo2 $(REFALABCFLAGS)
-	$(REFALABC) $(XPLATFORM_SRC) $(REFALABCFLAGS)
-	$(REFALABC) xsys2 $(REFALABCFLAGS)
-	@# Copying the platform object depending on the current OS
-ifdef OS
-	if exist xplatformwin.o copy /Y xplatformwin.o xplatform.o >nul
-else
-	@if [ -f xplatformposix.o ]; then cp -f xplatformposix.o xplatform.o; fi
-endif
+	$(REFALABC) xar2 -a,"-o xar2.o" > xar2.log
+	$(REFALABC) xbool -a,"-o xbool.o" > xbool.log
+	$(REFALABC) xcomp2 -a,"-o xcomp2.o" > xcomp2.log
+	$(REFALABC) xext -a,"-o xext.o" > xext.log
+	$(REFALABC) xfio2 -a,"-o xfio2.o" > xfio2.log
+	$(REFALABC) xhof -a,"-o xhof.o" > xhof.log
+	$(REFALABC) xmo2 -a,"-o xmo2.o" > xmo2.log
+	$(REFALABC) $(XPLATFORM_SRC) -a,"-o xplatform.o" > xplatform.log
+	$(REFALABC) xsys2 -a,"-o xsys2.o" > xsyd2.log
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
