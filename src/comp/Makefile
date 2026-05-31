@@ -66,7 +66,7 @@ $(TARGET_RELEASE): $(OBJS)
 # Add debugging flags specifically for this target.
 # Forces object file cleanup before building to ensure re-compilation with debug flags.
 debug: CFLAGS := $(CFLAGS_DEBUG)
-debug: clean_objs $(TARGET_DEBUG)
+debug: $(TARGET_DEBUG)
 
 $(TARGET_DEBUG): $(OBJS_DBG)
 	@echo Linking Debug binary: $(TARGET_DEBUG)...
