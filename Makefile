@@ -36,12 +36,12 @@ all: comp inter
 
 # Build compiler from RefalAB language only (src/comp)
 comp:
-	@echo >>> Building compiler (comp)...
+	@echo === Building compiler (comp) ===
 	$(MAKE) -C $(DIR_COMP)
 
 # Build interpreter from "jazyk sborki" (src/inter)
 inter:
-	@echo >>> Building interpreter (inter)...
+	@echo === Building interpreter (inter) ===
 	$(MAKE) -C $(DIR_INTER)
 
 # ====================================================================
@@ -50,10 +50,10 @@ inter:
 
 # Centralized clean: invokes inner clean targets from subfolders
 clean:
-	@echo >>> Cleaning temporary files and binaries...
+	@echo === Cleaning temporary files and binaries ===
 	$(MAKE) -C $(DIR_COMP) clean
 	$(MAKE) -C $(DIR_INTER) clean
-	@echo >>> Clean completed.
+	@echo === Clean completed. ===
 
 # Built-in help instructions
 help:
