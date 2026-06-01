@@ -51,6 +51,7 @@ REF_MODULES  := xar2 xbool xcomp2 xext xfio2 xhof xmo2 xsys2
 LIB_REF_OBJS := $(REF_MODULES:%=%.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
 ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS)
+HEADERS = $(wildcard *.h)
 
 REFLIB_RELEASE = $(REFALAB_LIB)$(SLASH)librefalab.a
 REFLIB_DEBUG   = $(REFALAB_LIB)$(SLASH)librefalab_dbg.a
@@ -92,28 +93,28 @@ debug: $(ALL_LIB_OBJS_DBG) $(DEBUG_STANDALONE_OBJS)
 # ------------------------------------------------------------------------------
 
 # Standard rule for library C files compilation (creates objects locally)
-%.o: %.c
+%.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Standard rule for library C files compilation (creates _dbg objects locally)
-%_dbg.o: %.c
+%_dbg.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone release objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf.o: mainrf.c
+$(OBJ_DIR)$(SLASH)mainrf.o: mainrf.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg.o: rfdbg.c
+$(OBJ_DIR)$(SLASH)rfdbg.o: rfdbg.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone debug objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf_dbg.o: mainrf.c
+$(OBJ_DIR)$(SLASH)mainrf_dbg.o: mainrf.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg_dbg.o: rfdbg.c
+$(OBJ_DIR)$(SLASH)rfdbg_dbg.o: rfdbg.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
