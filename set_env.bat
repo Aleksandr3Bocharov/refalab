@@ -7,26 +7,24 @@ rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
 rem set_env.bat
-rem set environments variables for RefalAB
+rem set environment variables for RefalAB
 rem *******************************************************************
 
-@echo off
-
-:: Check for spaces in the folder path
-echo %~dp0 | findstr /c:" " >nul
-if %errorlevel%==0 (
+rem Check for spaces in the folder path
+echo "%~dp0" | findstr /c:" " > nul
+if "%errorlevel%"=="0" (
     echo ============================================================
     echo [ERROR] The folder path contains spaces!
     echo Current path: %~dp0
     echo.
     echo Please rename the folders or move the project to a path
-    echo without spaces (for example, C:\refalab\).
+    echo without spaces ^(for example, C:\refalab\^).
     echo ============================================================
     pause
     exit /b
 )
 
-:: If there are no spaces, set environment variables
+rem If there are no spaces, set environment variables
 setx REFALABBIN %~dp0bin
 setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include
