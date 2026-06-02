@@ -31,6 +31,9 @@ setx REFALABINCLUDE %~dp0include
 setx REFALABCFLAGS "-pipe -Wall -O2"
 setx REFALABCFLAGS_DBG "-pipe -Wall -O0 -g -Dmdebug"
 setx REFALABLFLAGS "%~dp0lib\obj\mainrf.o -L%~dp0lib -lrefalab -pthread"
+setx REFALABLFLAGS_DBG "%~dp0lib\obj\mainrf_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
+setx REFALABLFLAGS_DEBUGGER "%~dp0lib\obj\rfdbg.o -L%~dp0lib -lrefalab -pthread"
+setx REFALABLFLAGS_DEBUGGER_DBG "%~dp0lib\obj\rfdbg_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
 
 echo ============================================================
 echo [SUCCESS] All environment variables for RefalAB are set!
