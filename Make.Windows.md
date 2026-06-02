@@ -15,14 +15,9 @@
 
     cd X\refalab
 
-Запустите процесс сборки одним из  двух способов:
-- Переименуйте сборочный файл для Windows Makefile.Windows в Makefile. Выполните
+Запустите процесс сборки:
 
     mingw32-make
-  
-- Выполните
-
-    mingw32-make --file=Makefile.Windows
 
 Результатом сборки будут:
 1. РефалАБ-компиляторы bin\refalabc.exe и bin\refalabc_dbg.exe (режим отладки).
