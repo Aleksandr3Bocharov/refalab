@@ -11,8 +11,8 @@ rem set environment variables for RefalAB
 rem *******************************************************************
 
 rem Check for spaces in the folder path
-echo "%~dp0" | findstr /c:" " > nul
-if "%errorlevel%"=="0" (
+set "current_dir=%~dp0"
+if not "%current_dir%"=="%current_dir: =%" (
     echo ============================================================
     echo [ERROR] The folder path contains spaces!
     echo Current path: %~dp0
