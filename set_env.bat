@@ -35,6 +35,33 @@ setx REFALABLFLAGS_DBG "%~dp0lib\obj\mainrf_dbg.o -L%~dp0lib -lrefalab_dbg -pthr
 setx REFALABLFLAGS_DEBUGGER "%~dp0lib\obj\rfdbg.o -L%~dp0lib -lrefalab -pthread"
 setx REFALABLFLAGS_DEBUGGER_DBG "%~dp0lib\obj\rfdbg_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
 
+rem Prompt block to ask for adding to PATH
+echo.
+choice /M "Do you want to add the bin folder to your user PATH?"
+if %errorlevel% equ 1 (
+rem Turn on delayed expansion to safely handle paths with parentheses (like x86)
+    setlocal enabledelayedexpansion
+    
+    echo !PATH! | findstr /I /C:"%~dp0bin" >nul
+    if !errorlevel! neq 0 (
+rem Extract the exact current user PATH safely
+        for /f "tokens=2*" %%A in ('reg query HKCU\Environment /v PATH 2^>nul') do set "USERPATH=%%B"
+        
+        if defined USERPATH (
+            setx PATH "!USERPATH!;%~dp0bin"
+        ) else (
+            setx PATH "%PATH%;%~dp0bin"
+        )
+        echo [SUCCESS] Path to bin folder added to PATH.
+    ) else (
+        echo [INFO] Path to bin folder is already in PATH.
+    )
+    
+    endlocal
+) else (
+    echo [INFO] Skipping PATH modification.
+)
+
 echo ============================================================
 echo [SUCCESS] All environment variables for RefalAB are set!
 echo Please restart your command prompt (cmd) for changes to take effect.
