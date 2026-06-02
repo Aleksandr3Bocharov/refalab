@@ -41,14 +41,14 @@ all: comp inter
 
 # Build compiler from RefalAB language only (src/comp)
 comp:
-	@echo === Building compiler (comp) ===
+	@echo '=== Building compiler (comp) ==='
 	@$(call MKDIR,$(DIR_BIN))
 	$(MAKE) -C $(DIR_COMP)
 
 # Build compiler from RefalAB language only (src/comp)
 # --- RELEASE VERSION BUILD ONLY ---
 comp-release:
-	@echo === Building compiler (comp) ===
+	@echo '=== Building compiler (comp) ==='
 	@echo === Building Release binary ===
 	@$(call MKDIR,$(DIR_BIN))
 	$(MAKE) -C $(DIR_COMP) release
@@ -56,21 +56,21 @@ comp-release:
 # Build compiler from RefalAB language only (src/comp)
 # --- DEBUG VERSION BUILD ONLY ---
 comp-debug:
-	@echo === Building compiler (comp) ===
+	@echo '=== Building compiler (comp) ==='
 	@echo === Building Debug binary ===
 	@$(call MKDIR,$(DIR_BIN))
 	$(MAKE) -C $(DIR_COMP) debug
 
 # Build interpreter from "jazyk sborki" only (src/inter)
 inter:
-	@echo === Building interpreter (inter) ===
+	@echo '=== Building interpreter (inter) ==='
 	@$(call MKDIR,$(DIR_LIB))
 	$(MAKE) -C $(DIR_INTER)
 
 # Build interpreter from "jazyk sborki" only (src/inter)
 # --- RELEASE VERSION BUILD ONLY ---
 inter-release:
-	@echo === Building interpreter (inter) ===
+	@echo '=== Building interpreter (inter) ==='
 	@echo === Building Release components ===
 	@$(call MKDIR,$(DIR_LIB))
 	$(MAKE) -C $(DIR_INTER) release
@@ -78,7 +78,7 @@ inter-release:
 # Build interpreter from "jazyk sborki" only (src/inter)
 # --- DEBUG VERSION BUILD ONLY ---
 inter-debug:
-	@echo === Building interpreter (inter) ===
+	@echo '=== Building interpreter (inter) ==='
 	@echo === Building Debug components ===
 	@$(call MKDIR,$(DIR_LIB))
 	$(MAKE) -C $(DIR_INTER) debug
