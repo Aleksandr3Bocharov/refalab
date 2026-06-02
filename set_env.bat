@@ -40,3 +40,4 @@ echo [SUCCESS] All environment variables for RefalAB are set!
 echo Please restart your command prompt (cmd) for changes to take effect.
 echo ============================================================
 pause
+exit /b 0
