@@ -38,7 +38,32 @@ export REFALABLFLAGS_DBG="$CURRENT_DIR/lib/obj/mainrf_dbg.o -L$CURRENT_DIR/lib -
 export REFALABLFLAGS_DEBUGGER="$CURRENT_DIR/lib/obj/rfdbg.o -L$CURRENT_DIR/lib -lrefalab"
 export REFALABLFLAGS_DEBUGGER_DBG="$CURRENT_DIR/lib/obj/rfdbg_dbg.o -L$CURRENT_DIR/lib -lrefalab_dbg"
 
+# Ask the user if they want to add the bin folder to PATH
+echo ""
+printf "Do you want to add the bin folder to your PATH? (y/N): "
+read -r answer
+
+case "$answer" in
+    [yY][eE][sS]|[yY])
+        # Check if already in PATH
+        case ":$PATH:" in
+            *":$CURRENT_DIR/bin:"*)
+                echo "[INFO] Path to bin folder is already in PATH."
+                ;;
+            *)
+                # Add to current session
+                export PATH="$CURRENT_DIR/bin:$PATH"
+                echo "[SUCCESS] Path to bin folder added to current session PATH."
+                                ;;
+        esac
+        ;;
+    *)
+        echo "[INFO] Skipping PATH modification."
+        ;;
+esac
+
 echo "============================================================"
 echo "[SUCCESS] All environment variables for RefalAB are set!"
+echo "[IMPORTANT] If you ran this script normally, use 'source ./set_env' to apply changes to current terminal."
 echo "============================================================"
 
