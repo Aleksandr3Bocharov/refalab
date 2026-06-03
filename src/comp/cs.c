@@ -1,17 +1,17 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------  file  --  CS.C  ---------------
+//----------  file identifiers.c  ----------
 //         Work with identifier table
-//----------------------------------------------
+//------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "refalab.h"
-#include "cs.h"
+#include "identifiers.h"
 #include "print_errors.h"
 #include "cj.h"
 #include "generate_operators.h"
@@ -318,4 +318,4 @@ void module_terminate(void)
     return;
 }
 
-//----------  end of file CS.C  -------------------
+//----------  end of file identifiers.c  ----------
