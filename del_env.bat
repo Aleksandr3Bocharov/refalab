@@ -23,9 +23,24 @@ reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DBG >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DEBUGGER >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DEBUGGER_DBG >nul 2>&1
 
-echo [SUCCESS] Variables removed from Registry.
+echo [SUCCESS] Basic variables removed from Registry.
 
-rem 2. Clear variables in the current session (for immediate effect)
+rem 2. Safe removal of the bin folder from the User PATH using PowerShell
+echo Cleaning up User PATH...
+set "target_bin=%~dp0bin"
+
+powershell -NoProfile -Command ^
+    "$path = [Environment]::GetEnvironmentVariable('PATH', 'User'); " ^
+    "if ($path) { " ^
+    "  $target = '%target_bin%'.TrimEnd('\'); " ^
+    "  $elements = $path -split ';' | Where-Object { $_.TrimEnd('\') -ne $target }; " ^
+    "  $newPath = $elements -join ';'; " ^
+    "  [Environment]::SetEnvironmentVariable('PATH', $newPath, 'User'); " ^
+    "}"
+
+echo [SUCCESS] Folder removed from PATH.
+
+rem 3. Clear variables in the current session (for immediate effect)
 set REFALABBIN=
 set REFALABLIB=
 set REFALABINCLUDE=
