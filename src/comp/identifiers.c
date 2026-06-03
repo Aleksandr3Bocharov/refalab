@@ -82,14 +82,14 @@ void function_definition(const char *identifier, uint8_t identifier_length)
         {
             function_head(identifier, identifier_length);
             label->carriage_number_defined = scanner.carriage_number;
-            jit_label(label);
+            macrocode_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
     }
     else
     { //  next sentence in function
         if (next_sentence != NULL)
-            jit_label((T_LABEL *)next_sentence);
+            macrocode_label((T_LABEL *)next_sentence);
         else
             PRINT_ERROR_500;
         next_sentence = allocate_info_label();
@@ -103,12 +103,12 @@ static void function_end(void)
     if (next_sentence != NULL)
     {
         if (fail_sentence != NULL)
-            jit_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
+            macrocode_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
         else
         {
             fail_sentence = next_sentence;
-            jit_label((T_LABEL *)next_sentence);
-            jit_byte(n_fail);
+            macrocode_label((T_LABEL *)next_sentence);
+            macrocode_byte(n_fail);
         }
         next_sentence = NULL;
     }
@@ -125,8 +125,8 @@ void set_empty(const char *identifier, uint8_t identifier_length)
     {
         function_head(identifier, identifier_length);
         label->carriage_number_defined = scanner.carriage_number;
-        jit_label(label);
-        jit_byte(n_fail);
+        macrocode_label(label);
+        macrocode_byte(n_fail);
     }
     return;
 }
@@ -147,18 +147,18 @@ void set_swap(const char *identifier, uint8_t identifier_length)
         }
         else
             name_length = identifier_length;
-        uint8_t align_bytes = (jit_where() + name_length + 2) % 8;
+        uint8_t align_bytes = (macrocode_where() + name_length + 2) % 8;
         if (align_bytes != 0)
             align_bytes = 8 - align_bytes;
         for (uint8_t i = 1; i <= align_bytes; i++)
-            jit_byte(' ');
+            macrocode_byte(' ');
         function_head(identifier, identifier_length);
         label->carriage_number_defined = scanner.carriage_number;
-        jit_label(label);
-        jit_byte(n_swap);
+        macrocode_label(label);
+        macrocode_byte(n_swap);
         const uint8_t swap_length = SMBL + LBLL * 2;
         for (uint8_t i = 1; i <= swap_length; i++)
-            jit_byte(0);
+            macrocode_byte(0);
     }
     return;
 }
@@ -166,7 +166,7 @@ void set_swap(const char *identifier, uint8_t identifier_length)
 void set_entry(const char *identifier, uint8_t identifier_length, const char *identifier_extern, uint8_t identifier_extern_length)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length);
-    jit_entry(label, identifier_extern, identifier_extern_length);
+    macrocode_entry(label, identifier_extern, identifier_extern_length);
     return;
 }
 
@@ -180,7 +180,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, const char *id
     else
     {
         label->carriage_number_defined = scanner.carriage_number;
-        jit_extrn(label, identifier_extern, identifier_extern_length);
+        macrocode_extrn(label, identifier_extern, identifier_extern_length);
     }
     return;
 }
@@ -214,7 +214,7 @@ void specifier_definition(const char *identifier, uint8_t identifier_length)
         else
         {
             label->carriage_number_defined = scanner.carriage_number;
-            jit_label(label);
+            macrocode_label(label);
         }
     }
     return;
@@ -235,13 +235,13 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, const char *id
     {
         label2->type |= label1->type;
         label1->carriage_number_defined = scanner.carriage_number;
-        jit_equ(label1, label2);
+        macrocode_equ(label1, label2);
     }
     else if ((label2->mode & 0300) == 0)
     {
         label1->type |= label2->type;
         label2->carriage_number_defined = scanner.carriage_number;
-        jit_equ(label2, label1);
+        macrocode_equ(label2, label1);
     }
     else
         print_error_string("501 both labels already defined");
@@ -256,19 +256,19 @@ static void function_head(const char *identifier, uint8_t identifier_length)
         if (options.full_name)
         {
             for (uint8_t i = 0; i < scanner.module_name_length; i++)
-                jit_byte((uint8_t)*(scanner.module_name + i));
-            jit_byte(':');
+                macrocode_byte((uint8_t)*(scanner.module_name + i));
+            macrocode_byte(':');
             name_length_add = (int)scanner.module_name_length + 1;
         }
         else
             name_length_add = 0;
         for (uint8_t i = 0; i < identifier_length; i++)
-            jit_byte((uint8_t)*(identifier + i));
+            macrocode_byte((uint8_t)*(identifier + i));
         const int full_length = name_length_add + identifier_length;
-        jit_byte((uint8_t)(full_length > 255 ? 255 : full_length));
+        macrocode_byte((uint8_t)(full_length > 255 ? 255 : full_length));
     }
     else
-        jit_byte(0);
+        macrocode_byte(0);
     return;
 }
 

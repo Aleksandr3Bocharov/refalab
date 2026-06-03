@@ -13,14 +13,14 @@
 #include <stddef.h>
 #include "avl_identifiers.h"
 
-extern void jit_address(T_LABEL *label);
-extern void jit_byte(uint8_t byte);
-extern void jit_end(void);
-extern void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length);
-extern void jit_equ(T_LABEL *equ_label, T_LABEL *label);
-extern void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length);
-extern void jit_label(T_LABEL *label);
-extern void jit_start(void);
-extern size_t jit_where(void);
+extern void macrocode_address(T_LABEL *label);
+extern void macrocode_byte(uint8_t byte);
+extern void macrocode_end(void);
+extern void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length);
+extern void macrocode_equ(T_LABEL *equ_label, T_LABEL *label);
+extern void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length);
+extern void macrocode_label(T_LABEL *label);
+extern void macrocode_start(void);
+extern size_t macrocode_where(void);
 
 #endif

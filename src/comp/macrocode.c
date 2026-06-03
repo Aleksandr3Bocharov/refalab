@@ -256,7 +256,7 @@ static void stream_nodes_read(void)
     } // while
 } // stream_nodes_read
 
-void jit_start(void)
+void macrocode_start(void)
 {
     delta = 0;
     stream_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
@@ -280,9 +280,9 @@ void jit_start(void)
     current_address = 0;
     extrn_count = 1;
     return;
-} // jit_start
+} // macrocode_start
 
-size_t jit_where(void)
+size_t macrocode_where(void)
 {
     size_t max_address;
     if (LBLL == 4)
@@ -297,7 +297,7 @@ size_t jit_where(void)
     return current_address;
 }
 
-void jit_byte(uint8_t byte)
+void macrocode_byte(uint8_t byte)
 {
     if (stream_bytes.current != stream_bytes.length)
     {
@@ -326,9 +326,9 @@ void jit_byte(uint8_t byte)
     delta++;
     current_address++;
     return;
-} // jit_byte
+} // macrocode_byte
 
-void jit_address(T_LABEL *label)
+void macrocode_address(T_LABEL *label)
 {
     relay.label = label;
     relay.delta = delta;
@@ -338,7 +338,7 @@ void jit_address(T_LABEL *label)
     return;
 }
 
-void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -376,9 +376,9 @@ void jit_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
     strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
     label->mode |= 0040;
     return;
-} // jit_entry
+} // macrocode_entry
 
-void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -419,16 +419,16 @@ void jit_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier
     extrn_count++;
     label->info.infon = extrn_count;
     return;
-} // jit_extrn
+} // macrocode_extrn
 
-void jit_label(T_LABEL *label)
+void macrocode_label(T_LABEL *label)
 {
     label->mode |= 0120;
     label->info.infon = current_address;
     return;
 }
 
-void jit_equ(T_LABEL *equ_label, T_LABEL *label)
+void macrocode_equ(T_LABEL *equ_label, T_LABEL *label)
 {
     equ_label->info.infop = label;
     equ_label->mode |= 0320;
@@ -456,7 +456,7 @@ static void write_assembler_source(int put_result)
         }
 }
 
-void jit_end(void)
+void macrocode_end(void)
 {
     ending();
     uint8_t byte = 0;
@@ -610,6 +610,6 @@ void jit_end(void)
         extrn = extrn2;
     }
     return;
-} // jit_end
+} // macrocode_end
 
 //----------  end of file macrocode.c  ----------

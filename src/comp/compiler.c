@@ -361,14 +361,14 @@ int main(int argc, char *argv[])
             {
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
-                jit_start();
+                macrocode_start();
                 module_state = KEYS;
                 break;
             }
             strncpy(module_name, statement_label, statement_label_length);
             strncpy(scanner.module_name, statement_label, statement_label_length);
             scanner.module_name_length = statement_label_length;
-            jit_start();
+            macrocode_start();
             blanks_out();
             if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
                 PRINT_ERROR_130;
@@ -513,8 +513,8 @@ int main(int argc, char *argv[])
             }
             else
             {
-                jit_end();
-                module_length = jit_where();
+                macrocode_end();
+                module_length = macrocode_where();
             }
             module_terminate();
             print_conclusion();
@@ -524,7 +524,7 @@ int main(int argc, char *argv[])
             fclose(refalab_source);
             if (options.source_listing)
                 fclose(refalab_source_listing);
-            module_length = jit_where();
+            module_length = macrocode_where();
             fclose(assembler_source);
             if (module_length == 0 || flags.was_error)
                 unlink(filename);
@@ -874,7 +874,7 @@ void scan_sentence_element(void)
                 if (flags.left_part_sentence)
                 {
                     current_sentence_element.specifier.info.codef = (T_LABEL *)generate_info_label();
-                    jit_label(current_sentence_element.specifier.info.codef);
+                    macrocode_label(current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
                 {
@@ -1090,7 +1090,7 @@ void scan_sentence_element(void)
                 if (*(specifier_abbreviated + specifier_code) == NULL)
                 {
                     *(specifier_abbreviated + specifier_code) = (T_LABEL *)generate_info_label();
-                    jit_label(*(specifier_abbreviated + specifier_code));
+                    macrocode_label(*(specifier_abbreviated + specifier_code));
                     generate_specifier(specifier_code + 7);
                     generate_specifier(ns_ngw);
                 };
@@ -1131,7 +1131,7 @@ void scan_sentence_element(void)
 static void generate_specifier(uint8_t n)
 {
     if (flags.left_part_sentence)
-        jit_byte(n);
+        macrocode_byte(n);
     return;
 }
 
@@ -1310,7 +1310,7 @@ static bool compile_specifer(char tail)
             T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
-                jit_address(identifier_specifier);
+                macrocode_address(identifier_specifier);
             if (symbols[current_symbol_number] == ':')
             {
                 specifier_state = SPCGC;
