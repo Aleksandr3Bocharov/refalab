@@ -18,7 +18,7 @@
 #include "refalab.h"
 #include "cj.h"
 #include "print_errors.h"
-#include "refal.h"
+#include "compiler.h"
 #include "clu.h"
 
 #define PRINT_ERROR_604 \
