@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  REFAL.C -------------
+//----------  file compiler.c  ----------
 //      The main file of RefalAB compiler
-//--------------------------------------------
+//---------------------------------------
 
 #define _POSIX_C_SOURCE 199309L
 
@@ -23,7 +23,7 @@
 #include <sys/wait.h>
 #endif
 #include "refalab.h"
-#include "refal.h"
+#include "compiler.h"
 #include "print_errors.h"
 #include "cj.h"
 #include "generate_operators.h"
@@ -1795,4 +1795,4 @@ void processing_error(void)
     return;
 }
 
-//----------  end of file REFAL.C  -------------------
+//----------  end of file compiler.c  ----------
