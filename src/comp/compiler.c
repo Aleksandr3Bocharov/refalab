@@ -27,7 +27,7 @@
 #include "print_errors.h"
 #include "cj.h"
 #include "generate_operators.h"
-#include "cs.h"
+#include "identifiers.h"
 #include "compile_sentence.h"
 
 #define CUT 88
