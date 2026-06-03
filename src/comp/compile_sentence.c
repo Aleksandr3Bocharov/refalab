@@ -17,7 +17,7 @@
 #include "print_errors.h"
 #include "identifiers.h"
 #include "generate_operators.h"
-#include "cj.h"
+#include "macrocode.h"
 #include "compiler.h"
 
 #define PRINT_ERROR_303 \
