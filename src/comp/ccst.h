@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------   file  CCST.H  ---------------
+//----------  file  compile_sentence.h  ----------
 //      Compiler file
-//------------------------------------------
+//------------------------------------------------
 
-#ifndef CCST_H
-#define CCST_H
+#ifndef COMPILER_SENTENCE_H
+#define COMPILER_SENTENCE_H
 
 #include <stddef.h>
 #include <stdbool.h>
