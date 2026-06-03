@@ -13,7 +13,7 @@
 #include "refalab.h"
 #include "identifiers.h"
 #include "print_errors.h"
-#include "cj.h"
+#include "macrocode.h"
 #include "generate_operators.h"
 #include "avl_identifiers.h"
 #include "compiler.h"
