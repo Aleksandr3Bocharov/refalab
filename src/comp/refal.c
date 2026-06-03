@@ -28,7 +28,7 @@
 #include "cj.h"
 #include "cgop.h"
 #include "cs.h"
-#include "ccst.h"
+#include "compile_sentence.h"
 
 #define CUT 88
 

@@ -17,7 +17,7 @@
 #include "cgop.h"
 #include "clu.h"
 #include "refal.h"
-#include "ccst.h"
+#include "compile_sentence.h"
 
 #define PRINT_ERROR_504 \
     print_error_three_strings("504 label", identifier, identifier_length, " is already defined")
