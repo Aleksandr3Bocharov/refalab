@@ -15,7 +15,7 @@
 #include "print_errors.h"
 #include "cj.h"
 #include "generate_operators.h"
-#include "clu.h"
+#include "avl_identifiers.h"
 #include "compiler.h"
 #include "compile_sentence.h"
 
