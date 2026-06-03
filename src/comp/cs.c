@@ -14,7 +14,7 @@
 #include "cs.h"
 #include "print_errors.h"
 #include "cj.h"
-#include "cgop.h"
+#include "generate_operators.h"
 #include "clu.h"
 #include "refal.h"
 #include "compile_sentence.h"
