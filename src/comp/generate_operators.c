@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "refalab.h"
 #include "generate_operators.h"
-#include "cj.h"
+#include "macrocode.h"
 
 typedef struct _TAG
 {
