@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include "refalab.h"
 #include "clu.h"
-#include "refal.h"
+#include "compiler.h"
 
 static T_LABEL *root = NULL; // tree root
 
