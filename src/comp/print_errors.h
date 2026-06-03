@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------  file  --  CERR.H  --------------- 
+//----------  file print_errors.h  ---------- 
 //               Print error file                           
-//------------------------------------------------ 
+//------------------------------------------- 
 
-#ifndef CERR_H
-#define CERR_H
+#ifndef PRINT_ERRORS_H
+#define PRINT_ERRORS_H
 
 #include <stddef.h>
 
