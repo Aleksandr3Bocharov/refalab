@@ -16,7 +16,7 @@
 #include "compile_sentence.h"
 #include "print_errors.h"
 #include "cs.h"
-#include "cgop.h"
+#include "generate_operators.h"
 #include "cj.h"
 #include "refal.h"
 
