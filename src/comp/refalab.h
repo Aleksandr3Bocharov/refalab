@@ -3,9 +3,9 @@
 // 2026-05-29
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//--------------- file -- REFALAB.H -----------------
+//----------  file refalab.h  ----------
 //          Compiler version
-//---------------------------------------------------
+//--------------------------------------
 
 #ifndef REFALAB_H
 #define REFALAB_H
@@ -35,4 +35,4 @@
 
 #endif
 
-//-------  end of file REFALAB.H ---------
+//----------  end of file refalab.h  ----------
