@@ -26,7 +26,7 @@
 #include "refal.h"
 #include "print_errors.h"
 #include "cj.h"
-#include "cgop.h"
+#include "generate_operators.h"
 #include "cs.h"
 #include "compile_sentence.h"
 
