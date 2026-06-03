@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------------  file  --  cj.h  -------------------
-//             generator of assembler text
-//------------------------------------------------------
+//----------  file macrocode.h  ----------
+//             generator of macrocode text
+//----------------------------------------
 
-#ifndef CJ_H
-#define CJ_H
+#ifndef MACROCODE_H
+#define MACROCODE_H
 
 #include <stddef.h>
 #include "avl_identifiers.h"
