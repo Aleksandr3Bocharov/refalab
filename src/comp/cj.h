@@ -11,7 +11,7 @@
 #define CJ_H
 
 #include <stddef.h>
-#include "clu.h"
+#include "avl_identifiers.h"
 
 extern void jit_address(T_LABEL *label);
 extern void jit_byte(uint8_t byte);
