@@ -3,7 +3,7 @@
 // 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------  file  compile_sentence.h  ----------
+//----------  file compile_sentence.h  ----------
 //      Compiler file
 //------------------------------------------------
 
