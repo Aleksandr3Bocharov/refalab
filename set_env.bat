@@ -50,7 +50,7 @@ rem Extract the exact current user PATH safely
         if defined USERPATH (
             setx PATH "!USERPATH!;%~dp0bin"
         ) else (
-            setx PATH "%PATH%;%~dp0bin"
+            setx PATH %~dp0bin
         )
         echo [SUCCESS] Path to bin folder added to PATH.
     ) else (
