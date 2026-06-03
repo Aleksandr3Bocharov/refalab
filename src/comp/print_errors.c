@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "refalab.h"
 #include "print_errors.h"
-#include "refal.h"
+#include "compiler.h"
 
 void print_error_string(const char *error_string)
 {
