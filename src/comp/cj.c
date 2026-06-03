@@ -19,7 +19,7 @@
 #include "cj.h"
 #include "print_errors.h"
 #include "compiler.h"
-#include "clu.h"
+#include "avl_identifiers.h"
 
 #define PRINT_ERROR_604 \
     print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined")
