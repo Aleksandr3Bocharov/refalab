@@ -64,4 +64,4 @@ void print_error_string_symbol(const char *error_string, const char symbol)
     return;
 }
 
-//----------  end  of  file  print_errors.c  ---------- 
+//----------  end of file print_errors.c  ---------- 
