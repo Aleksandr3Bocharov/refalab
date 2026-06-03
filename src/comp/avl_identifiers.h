@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------------  file  --  CLU.H  -------------------
+//----------  file avl_identifiers.h  -----------
 //    AVL-tree construction for identifier table
-//------------------------------------------------------
+//-----------------------------------------------
 
-#ifndef CLU_H
-#define CLU_H
+#ifndef AVL_IDENTIFIERS_H
+#define AVL_IDENTIFIERS_H
 
 #include <stddef.h>
 #include <stdint.h>
