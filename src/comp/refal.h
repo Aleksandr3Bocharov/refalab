@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "cgop.h"
+#include "generate_operators.h"
 
 typedef struct options_
 { // compiling   options
