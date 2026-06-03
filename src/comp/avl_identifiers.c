@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------------  file  --  CLU.C  -------------------
+//----------  file avl_identifiers.c  -----------
 //    AVL-tree construction for identifier table
-//------------------------------------------------------
+//-----------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "clu.h"
+#include "avl_identifiers.h"
 #include "compiler.h"
 
 static T_LABEL *root = NULL; // tree root
@@ -295,4 +295,4 @@ void labels_terminate(void)
     return;
 }
 
-//-----------  end of file CLU.C  ----------
+//----------  end of file avl_identifiers.c  -----------
