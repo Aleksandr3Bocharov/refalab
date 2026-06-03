@@ -3,13 +3,13 @@
 // 2026-05-29
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------  file  --  CERR.C  --------------- 
+//----------  file print_errors.c  ---------- 
 //               Print error file                           
-//------------------------------------------------ 
+//------------------------------------------- 
 
 #include <stdio.h>
 #include "refalab.h"
-#include "cerr.h"
+#include "print_errors.h"
 #include "refal.h"
 
 void print_error_string(const char *error_string)
@@ -64,4 +64,4 @@ void print_error_string_symbol(const char *error_string, const char symbol)
     return;
 }
 
-//--------  end  of  file  CERR.C  --------- 
+//----------  end  of  file  print_errors.c  ---------- 
