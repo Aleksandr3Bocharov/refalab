@@ -25,7 +25,7 @@
 #include "refalab.h"
 #include "compiler.h"
 #include "print_errors.h"
-#include "cj.h"
+#include "macrocode.h"
 #include "generate_operators.h"
 #include "identifiers.h"
 #include "compile_sentence.h"
