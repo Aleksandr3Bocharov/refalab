@@ -10,6 +10,33 @@ rem del_env.bat
 rem delete environment variables for RefalAB
 rem *******************************************************************
 
+echo Deleting RefalAB environment variables...
 
+rem 1. Permanently delete user environment variables from the Windows Registry
+reg delete "HKCU\Environment" /f /v REFALABBIN >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLIB >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABINCLUDE >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABCFLAGS >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABCFLAGS_DBG >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLFLAGS >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DBG >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DEBUGGER >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLFLAGS_DEBUGGER_DBG >nul 2>&1
+
+echo [SUCCESS] Variables removed from Registry.
+
+rem 2. Clear variables in the current session (for immediate effect)
+set REFALABBIN=
+set REFALABLIB=
+set REFALABINCLUDE=
+set REFALABCFLAGS=
+set REFALABCFLAGS_DBG=
+set REFALABLFLAGS=
+set REFALABLFLAGS_DBG=
+set REFALABLFLAGS_DEBUGGER=
+set REFALABLFLAGS_DEBUGGER_DBG=
+
+echo [INFO] Done.
+echo [IMPORTANT] Please restart your command prompt to apply changes fully.
 pause
 exit /b 0
