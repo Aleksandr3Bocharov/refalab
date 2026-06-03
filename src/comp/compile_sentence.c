@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
-
-//----------   file  CCST.C  ---------------
++
+//----------  file  compile_sentence.c  ----------
 //      Compiler file
-//------------------------------------------
+//------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "ccst.h"
+#include "compile_sentence.h"
 #include "cerr.h"
 #include "cs.h"
 #include "cgop.h"
@@ -1818,4 +1818,4 @@ static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
         jit_byte(operator_e);
 }
 
-//----------  end of file CCST.C  -------------------
+//----------  end of file compile_sentence.c  ----------
