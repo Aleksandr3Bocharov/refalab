@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------------  file  --  cj.C  -------------------
-//             generator of assembler text
-//------------------------------------------------------
+//----------  file macrocode.c  ----------
+//             generator of macrocode text
+//----------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include "refalab.h"
-#include "cj.h"
+#include "macrocode.h"
 #include "print_errors.h"
 #include "compiler.h"
 #include "avl_identifiers.h"
@@ -612,4 +612,4 @@ void jit_end(void)
     return;
 } // jit_end
 
-//----------  end of file CJ.C  -------------------
+//----------  end of file macrocode.c  ----------
