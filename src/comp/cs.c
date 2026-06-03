@@ -16,7 +16,7 @@
 #include "cj.h"
 #include "generate_operators.h"
 #include "clu.h"
-#include "refal.h"
+#include "compiler.h"
 #include "compile_sentence.h"
 
 #define PRINT_ERROR_504 \
