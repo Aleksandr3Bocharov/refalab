@@ -18,7 +18,7 @@
 #include "cs.h"
 #include "generate_operators.h"
 #include "cj.h"
-#include "refal.h"
+#include "compiler.h"
 
 #define PRINT_ERROR_303 \
     print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
