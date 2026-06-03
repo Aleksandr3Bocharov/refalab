@@ -1,16 +1,16 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//------------------file----CGOP.C--------------------
+//----------  file generate_operators.c  ----------
 //    generation of the assembly language operators
-//----------------------------------------------------
+//-------------------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
 #include "refalab.h"
-#include "cgop.h"
+#include "generate_operators.h"
 #include "cj.h"
 
 typedef struct _TAG
@@ -80,4 +80,4 @@ void generate_operator_s(uint8_t operator, const T_LINKTI *code)
     return;
 }
 
-//----------  end of file CGOP.C  -------------------
+//----------  end of file generate_operators.c  ----------
