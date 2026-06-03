@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------  file  --  CS.H  ---------------
+//----------  file identifiers.h  ----------
 //         Work with identifier table
-//----------------------------------------------
+//------------------------------------------
 
-#ifndef CH_H
-#define CH_H
+#ifndef IDENTIFIERS_H
+#define IDENTIFIERS_H
 
 #include <stddef.h>
 #include "clu.h"
