@@ -3,9 +3,9 @@
 // 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------  file  compile_sentence.c  ----------
+//----------  file compile_sentence.c  ----------
 //      Compiler file
-//------------------------------------------------
+//-----------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
