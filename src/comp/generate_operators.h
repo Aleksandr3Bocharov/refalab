@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//------------------file----CGOP.H--------------------
+//----------  file generate_operators.h  ----------
 //    generation of the assembly language operators
-//----------------------------------------------------
+//-------------------------------------------------
 
-#ifndef CGOP_H
-#define CGOP_H
+#ifndef GENERATE_OPERATORS_H
+#define GENERATE_OPERATORS_H
 
 #include <stdint.h>
 #include "clu.h"
