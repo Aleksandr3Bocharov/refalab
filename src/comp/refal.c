@@ -24,7 +24,7 @@
 #endif
 #include "refalab.h"
 #include "refal.h"
-#include "cerr.h"
+#include "print_errors.h"
 #include "cj.h"
 #include "cgop.h"
 #include "cs.h"

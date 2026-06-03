@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include "refalab.h"
 #include "compile_sentence.h"
-#include "cerr.h"
+#include "print_errors.h"
 #include "cs.h"
 #include "cgop.h"
 #include "cj.h"

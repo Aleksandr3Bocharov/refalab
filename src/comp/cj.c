@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include "refalab.h"
 #include "cj.h"
-#include "cerr.h"
+#include "print_errors.h"
 #include "refal.h"
 #include "clu.h"
 
