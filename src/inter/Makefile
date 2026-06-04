@@ -18,7 +18,6 @@
 ifdef OS
     SLASH = \\
     RM = del /Q /F
-    CP = copy /Y
     MKDIR = if not exist $(1) mkdir $(1)
     RMDIR = rmdir /S /Q $(1)
     PLATFORM_CFLAGS =
@@ -26,7 +25,6 @@ ifdef OS
 else
     SLASH = /
     RM = rm -f
-    CP = cp -f
     MKDIR = mkdir -p $(1)
     RMDIR = rm -rf $(1)
     PLATFORM_CFLAGS = -DPOSIX
@@ -45,10 +43,11 @@ OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
 # 2. OBJECT FILES LISTS
 # ------------------------------------------------------------------------------
 # A. Objects for building libraries (interpreter as a library)
-LIB_CORE_OBJS = debugger_interface.o interface.o interpreter.o xar.o xbit.o xcf.o xcomp.o xdelf.o xfio.o xio.o xjak.o xmo.o xrand.o xstor.o xsys.o xtime.o xtry.o
-LIB_CORE_OBJS_DBG = debugger_interface_dbg.o interface_dbg.o interpreter_dbg.o xar_dbg.o xbit_dbg.o xcf_dbg.o xcomp_dbg.o xdelf_dbg.o xfio_dbg.o xio_dbg.o xjak_dbg.o xmo_dbg.o xrand_dbg.o xstor_dbg.o xsys_dbg.o xtime_dbg.o xtry_dbg.o
-REF_MODULES  := xar2 xbool xcomp2 xext xfio2 xhof xmo2 xsys2
-LIB_REF_OBJS := $(REF_MODULES:%=%.o) xplatform.o
+LIB_CORE_SRCS = $(filter-out initiator.c debugger.c, $(wildcard *.c))
+LIB_CORE_OBJS = $(LIB_CORE_SRCS:.c=.o)
+LIB_CORE_OBJS_DBG = $(LIB_CORE_SRCS:.c=_dbg.o)
+REF_MODULES  := $(filter-out xplatformwin.ref xplatformposix.ref, $(wildcard *.ref))
+LIB_REF_OBJS := $(REF_MODULES:.ref=.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
 ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS)
 HEADERS = $(wildcard *.h)
@@ -125,11 +124,6 @@ $(OBJ_DIR)$(SLASH)rfdbg_dbg.o: debugger.c $(HEADERS)
 # Special rule for platform-dependent xplatform.o
 xplatform.o: $(XPLATFORM_SRC).ref
 	$(REFALABC) $(XPLATFORM_SRC) -a,"-o $@" > xplatform.log
-ifdef OS
-	@if exist $(XPLATFORM_SRC).o $(CP) $(XPLATFORM_SRC).o $@ >nul
-else
-	@if [ -f $(XPLATFORM_SRC).o ]; then $(CP) $(XPLATFORM_SRC).o $@; fi
-endif
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
