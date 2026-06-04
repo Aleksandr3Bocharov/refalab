@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  XTRY.C --------------
+//----------  file xtry.c  ---------
 //                 MO: try
-//--------------------------------------------
+//----------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -122,4 +122,4 @@ char try_0[] = {Z3 'T', 'R', 'Y', (char)3};
 G_L_B uint8_t refalab_try = '\122';
 void (*try_1)(void) = try_;
 
-//----------  end of file XTRY.C  ---------------
+//---------  end of file xtry.c  ---------
