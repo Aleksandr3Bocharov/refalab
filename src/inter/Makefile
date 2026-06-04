@@ -21,14 +21,14 @@ ifdef OS
     MKDIR = if not exist $(1) mkdir $(1)
     RMDIR = rmdir /S /Q $(1)
     PLATFORM_CFLAGS =
-    XPLATFORM_SRC = xplatformwin
+    XPLATFORM_SRC = xplatform_win
 else
     SLASH = /
     RM = rm -f
     MKDIR = mkdir -p $(1)
     RMDIR = rm -rf $(1)
     PLATFORM_CFLAGS = -DPOSIX
-    XPLATFORM_SRC = xplatformposix
+    XPLATFORM_SRC = xplatform_posix
 endif
 
 CC = clang
