@@ -14,7 +14,7 @@
 #include "refalab.h"
 #include "rfintf.h"
 #include "rfrun.h"
-#include "d.h"
+#include "debugger_interface.h"
 
 static void try_(void)
 {
