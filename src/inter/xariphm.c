@@ -1,15 +1,15 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//---------------- file -- XAR.C -----------
+//----------  file xariphm.c ----------
 //              Ariphmetics MO:
 //       add, sub, mul, dr, div,
 //       addn, subn, muln, drn, divn,
 //       gcd, ncheck, nnorm, abs, minus,
 //       get_max_number, p1, m1
-//------------------------------------------
+//-------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -927,4 +927,4 @@ char m1_0[] = {Z2 'M', '1', (char)2};
 G_L_B uint8_t refalab_m1 = '\122';
 void (*m1_1)(void) = m1_;
 
-//-------------------- end of file  XAR.C ----------------
+//----------  end of file xariphm.c  ------------
