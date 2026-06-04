@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  RFINTF.C ------------------
+//----------  file interface.c  ----------
 //           C-interface functions
-//--------------------------------------------------
+//----------------------------------------
 
 #define _POSIX_C_SOURCE 199309L
 
@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <time.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 #include "rfrun.h"
 
 extern uint8_t refalab_feof, refalab_ferror;
@@ -981,4 +981,4 @@ int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG
     return 0; // |X|=|Y|
 }
 
-//----------- end of file  RFINTF.C ------------
+//----------- end of file interface.c ------------
