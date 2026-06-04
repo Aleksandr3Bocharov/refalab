@@ -20,7 +20,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static void numb_(void)
 {
