@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  RFINTF.H ------------------
+//----------  file interface.h  ----------
 //           C-interface functions
-//--------------------------------------------------
+//----------------------------------------
 
-#ifndef RFINTF_H
-#define RFINTF_H
+#ifndef INTERFACE_H
+#define INTERFACE_H
 
 #include <stdio.h>
 #include <stddef.h>
