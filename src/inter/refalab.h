@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//--------------- file -- REFALAB.H -----------------
+//----------  file refalab.h  ----------
 //          Interpretator version
-//---------------------------------------------------
+//--------------------------------------
 
 #ifndef REFALAB_H
 #define REFALAB_H
@@ -74,7 +74,7 @@ typedef struct linkcb
 
 #pragma pack(pop)
 
-// ------------ end of pragma ------------------------------------
+// ---------- end of pragma ----------
 
 typedef struct status_table
 {
@@ -126,4 +126,4 @@ typedef struct big_number
 
 #endif
 
-//-------  end of file REFALAB.H ---------
+//----------  end of file refalab.h ----------
