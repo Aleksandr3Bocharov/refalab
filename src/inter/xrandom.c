@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XRAND.C ------------
+//----------  file xrandom.c  ---------
 //        MO: random,
 //            random_number
-//-------------------------------------------
+//-------------------------------------
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -107,4 +107,4 @@ char random_number_0[] = {Z5 'R', 'A', 'N', 'D', 'O', 'M', '_', 'N', 'U', 'M', '
 G_L_B uint8_t refalab_random_number = '\122';
 void (*random_number_1)(void) = random_number_;
 
-//--------------- end of file  XRAND.C -------------
+//-----------  end of file xrandom.c  -----------
