@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XIO.C ------------
+//----------  file xio.c  ----------
 //           MO: input/output
-//-----------------------------------------
+//----------------------------------
 
 #include <stdio.h>
 #include <stdint.h>
@@ -154,4 +154,4 @@ char wroutm_0[] = {Z6 'W', 'R', 'O', 'U', 'T', 'M', (char)6};
 G_L_B uint8_t refalab_wroutm = '\122';
 void (*wroutm_1)(void) = wroutm_;
 
-//------------------ end of file  XIO.C ----------------
+//----------  end of file xio.c  ------------
