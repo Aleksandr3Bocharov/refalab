@@ -17,8 +17,8 @@
 #include <errno.h>
 #include "refalab.h"
 #include "debugger_interface.h"
-#include "rfintf.h"
-#include "rfrun.h"
+#include "interface.h"
+#include "interpreter.h"
 
 typedef enum debugger_states
 {
