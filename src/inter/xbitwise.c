@@ -3,10 +3,10 @@
 // 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------  file xbit.c  ----------
+//----------  file xbitwise.c  ----------
 //                Bitwise MO:
 //      band, bor, bxor, bnot, shl, shr
-//-----------------------------------
+//---------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -297,4 +297,4 @@ static void shift_operate(uint8_t operation)
     return;
 }
 
-//----------  end of file xbit.c  ----------
+//----------  end of file xbitwise.c  ----------
