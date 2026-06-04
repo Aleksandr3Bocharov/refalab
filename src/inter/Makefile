@@ -8,8 +8,8 @@
 # Makefile for interpreter from "jazyk sborki" creation
 # result - lib/librefalab.a library
 # result - lib/librefalab_dbg.a library
-# result - lib/obj/mainrf.o lib/obj/mainrf_dbg.o
-# result - lib/obj/rfdbg.o lib/obj/rfdbg_dbg.o
+# result - lib/obj/refalab_initiator.o lib/obj/refalab_initiator_dbg.o
+# result - lib/obj/refalab_debugger.o lib/obj/refalab_debugger_dbg.o
 #############################################################################
 
 # ------------------------------------------------------------------------------
@@ -58,8 +58,8 @@ REFLIB_RELEASE = $(REFALAB_LIB)$(SLASH)librefalab.a
 REFLIB_DEBUG   = $(REFALAB_LIB)$(SLASH)librefalab_dbg.a
 
 # B. Standalone release and debug object files (written directly into lib/obj)
-RELEASE_STANDALONE_OBJS = $(OBJ_DIR)$(SLASH)mainrf.o $(OBJ_DIR)$(SLASH)rfdbg.o
-DEBUG_STANDALONE_OBJS   = $(OBJ_DIR)$(SLASH)mainrf_dbg.o $(OBJ_DIR)$(SLASH)rfdbg_dbg.o
+RELEASE_STANDALONE_OBJS = $(OBJ_DIR)$(SLASH)refalab_initiator.o $(OBJ_DIR)$(SLASH)refalab_debugger.o
+DEBUG_STANDALONE_OBJS   = $(OBJ_DIR)$(SLASH)refalab_initiator_dbg.o $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o
 
 # ------------------------------------------------------------------------------
 # 3. MAIN TARGETS
@@ -102,20 +102,20 @@ debug: $(ALL_LIB_OBJS_DBG) $(DEBUG_STANDALONE_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone release objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf.o: initiator.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)refalab_initiator.o: initiator.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg.o: debugger.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)refalab_debugger.o: debugger.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone debug objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf_dbg.o: initiator.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)refalab_initiator_dbg.o: initiator.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg_dbg.o: debugger.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
