@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static void card_(void)
 {
