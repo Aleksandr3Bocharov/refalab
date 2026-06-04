@@ -2,7 +2,7 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-05-29
+rem 2026-06-05
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
@@ -13,5 +13,5 @@ rem result: running of %1.exe
 rem *******************************************************************
 
 bin\refalabc %1 -a,"-o %1.o" > %1.log
-clang -o %1.exe %1.o lib\obj\mainrf.o -Llib -lrefalab -pthread -static >> %1.log
+clang -o %1.exe %1.o lib\obj\refalab_initiator.o -Llib -lrefalab -pthread -static >> %1.log
 %1.exe
