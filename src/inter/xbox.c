@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XJAK.C ------------
+//----------  file xbox.c  ---------
 //       MO: gtr, rdr, wtr, swr, new
-//------------------------------------------
+//----------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -154,4 +154,4 @@ char new_0[] = {Z3 'N', 'E', 'W', (char)3};
 G_L_B uint8_t refalab_new = '\122';
 void (*new_1)(void) = new_;
 
-//----------------- end of file  XJAK.C ----------------
+//-----------  end of file xbox.c  ----------
