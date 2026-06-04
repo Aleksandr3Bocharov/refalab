@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 #define FILES_MAX 10
 
