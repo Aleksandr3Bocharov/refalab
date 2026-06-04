@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XSTOR.C -----------
+//----------  file xstore.c  ----------
 //       MO: br, dg, dgall, rp, cp
-//------------------------------------------
+//-------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -191,4 +191,4 @@ char cp_0[] = {Z2 'C', 'P', (char)2};
 G_L_B uint8_t refalab_cp = '\122';
 void (*cp_1)(void) = cp_;
 
-//----------------- end of file  XSTOR.C ---------------
+//----------  end of file xstore.c  ----------
