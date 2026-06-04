@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  XSYS.C --------------------
-//                 MO: arg, system, exit, get_env,
-//                     change_dir, get_current_dir,
-//                     step
-//--------------------------------------------------
+//----------  file xsystem.c  ---------
+//     MO: arg, system, exit, get_env,
+//     change_dir, get_current_dir,
+//     step
+//-------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -208,4 +208,4 @@ char step_0[] = {Z4 'S', 'T', 'E', 'P', (char)4};
 G_L_B uint8_t refalab_step = '\122';
 void (*step_1)(void) = step_;
 
-//----------  end of file XSYS.C  ---------------
+//---------  end of file xsystem.c  -----------
