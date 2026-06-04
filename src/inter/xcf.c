@@ -13,7 +13,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static size_t functions_count = 0;
 static uint8_t **functions_table = NULL;
