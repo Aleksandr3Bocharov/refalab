@@ -5,6 +5,12 @@
 
 **29-05-2026**
 
+Объектные файлы переименованы:
+1. mainrf -> refalab_initiator;
+2. mainrf_dbg -> refalab_initiator_dbg;
+3. rfdbg -> refalab_debugger;
+4. rfdbg_dbg -> refalab_debugger_dbg.
+
 Добавлен командный файл del_env.bat для удаления переменных окружения РефалАБ
 в Windows. 
 
