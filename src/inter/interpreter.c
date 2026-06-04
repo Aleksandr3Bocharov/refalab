@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------- file RFRUN.C -------------------
+//----------  file interpeter.c  ----------
 //      Refal-interpretator
-//---------------------------------------------
+//-----------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfrun.h"
+#include "interpreter.h"
 #include "interface.h"
 
 // for unlooping:
@@ -1981,4 +1981,4 @@ static bool digit(char symbol)
     return false;
 }
 
-//------------ end of file RFRUN.C ----------
+//----------  end of file interpreter.с  -----------
