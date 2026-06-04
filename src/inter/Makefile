@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-05-30
+# 2026-06-05
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -45,8 +45,8 @@ OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
 # 2. OBJECT FILES LISTS
 # ------------------------------------------------------------------------------
 # A. Objects for building libraries (interpreter as a library)
-LIB_CORE_OBJS = d.o rfintf.o rfrun.o xar.o xbit.o xcf.o xcomp.o xdelf.o xfio.o xio.o xjak.o xmo.o xrand.o xstor.o xsys.o xtime.o xtry.o
-LIB_CORE_OBJS_DBG = d_dbg.o rfintf_dbg.o rfrun_dbg.o xar_dbg.o xbit_dbg.o xcf_dbg.o xcomp_dbg.o xdelf_dbg.o xfio_dbg.o xio_dbg.o xjak_dbg.o xmo_dbg.o xrand_dbg.o xstor_dbg.o xsys_dbg.o xtime_dbg.o xtry_dbg.o
+LIB_CORE_OBJS = debugger_interface.o interface.o interpreter.o xar.o xbit.o xcf.o xcomp.o xdelf.o xfio.o xio.o xjak.o xmo.o xrand.o xstor.o xsys.o xtime.o xtry.o
+LIB_CORE_OBJS_DBG = debugger_interface_dbg.o interface_dbg.o interpreter_dbg.o xar_dbg.o xbit_dbg.o xcf_dbg.o xcomp_dbg.o xdelf_dbg.o xfio_dbg.o xio_dbg.o xjak_dbg.o xmo_dbg.o xrand_dbg.o xstor_dbg.o xsys_dbg.o xtime_dbg.o xtry_dbg.o
 REF_MODULES  := xar2 xbool xcomp2 xext xfio2 xhof xmo2 xsys2
 LIB_REF_OBJS := $(REF_MODULES:%=%.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
@@ -101,20 +101,20 @@ debug: $(ALL_LIB_OBJS_DBG) $(DEBUG_STANDALONE_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone release objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf.o: mainrf.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)mainrf.o: initiator.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg.o: rfdbg.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)rfdbg.o: debugger.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Explicit rules for standalone debug objects (compiled directly into lib/obj)
-$(OBJ_DIR)$(SLASH)mainrf_dbg.o: mainrf.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)mainrf_dbg.o: initiator.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)$(SLASH)rfdbg_dbg.o: rfdbg.c $(HEADERS)
+$(OBJ_DIR)$(SLASH)rfdbg_dbg.o: debugger.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
