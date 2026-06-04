@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "rfintf.h"
+#include "interface.h"
 
 // GO -> go
 extern uint8_t refalab_go;
