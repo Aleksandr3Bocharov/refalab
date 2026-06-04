@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 #include "rfrun.h"
 #include "debugger_interface.h"
 
