@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include "refalab.h"
 #include "debugger_interface.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static T_STATUS_TABLE status_table;
 extern uint8_t refalab_go;
