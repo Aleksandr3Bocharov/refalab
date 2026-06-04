@@ -15,7 +15,7 @@
 #include <stdbool.h>
 #include "refalab.h"
 #include "rfrun.h"
-#include "rfintf.h"
+#include "interface.h"
 
 // for unlooping:
 
