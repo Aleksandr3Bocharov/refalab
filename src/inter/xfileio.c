@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-----------  file  --  XFIO.C ---------------
+//----------  file xfileio.c  ----------
 //           MO: file input/output
 //           MO: file/dir remove/rename/exist
-//---------------------------------------------
+//--------------------------------------
 
 #define _POSIX_C_SOURCE 200112L
 #define _FILE_OFFSET_BITS 64
@@ -1038,4 +1038,4 @@ char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
 G_L_B uint8_t refalab_exist_dir = '\122';
 void (*exist_dir_1)(void) = exist_dir_;
 
-//----------  end of file XFIO.C  -----------
+//----------  end of file xfileio.c  -----------
