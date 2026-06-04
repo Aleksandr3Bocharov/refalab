@@ -1,16 +1,16 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XMO.C -------------
+//-----------  file xlexical.c  ----------
 //                 Lexical MO:
 //     numb, symb, first, last,
 //     lengr, lengw, multe,
 //     chr, ord, upper, lower,
 //     empty, del_first2, del_lastw,
 //     unbrackets
-//------------------------------------------
+//----------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -429,4 +429,4 @@ char unbrackets_0[] = {Z2 'U', 'N', 'B', 'R', 'A', 'C', 'K', 'E', 'T', 'S', (cha
 G_L_B uint8_t refalab_unbrackets = '\122';
 void (*unbrackets_1)(void) = unbrackets_;
 
-//-------------------- end of file  XMO.C ----------------
+//----------  end of file xlexical.c  ----------
