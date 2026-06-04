@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XTIME.C -----------------------
+//----------  file xtime.c  ---------
 //        MO: time (date and time),
 //            tm (timer),
 //            tm_elapsed (current interpretator time)
-//------------------------------------------------------
+//-----------------------------------
 
 #define _POSIX_C_SOURCE 199309L
 
@@ -130,4 +130,4 @@ char tm_elapsed_0[] = {Z2 'T', 'M', '_', 'E', 'L', 'A', 'P', 'S', 'E', 'D', (cha
 G_L_B uint8_t refalab_tm_elapsed = '\122';
 void (*tm_elapsed_1)(void) = tm_elapsed_;
 
-//-------------- end of file  XTIME.C --------------
+//----------- end of file xtime.c  ---------
