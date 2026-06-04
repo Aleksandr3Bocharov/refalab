@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static void delf_(void)
 {
