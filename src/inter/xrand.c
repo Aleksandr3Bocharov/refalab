@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 #define MIN_DELAY 33
 #define MAX_DELAY 97
