@@ -21,7 +21,7 @@
 #include <time.h>
 #include "refalab.h"
 #include "interface.h"
-#include "rfrun.h"
+#include "interpreter.h"
 
 extern uint8_t refalab_feof, refalab_ferror;
 
