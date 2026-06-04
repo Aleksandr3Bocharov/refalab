@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//------------ file -- XCOMP.C ---------------
+//----------  file xcompare.c  ----------
 //   MO: nrel, ltn, len, eqn, nen, gen, gtn
 //   lrel, ltl, lel, eql, nel, gel, gtl
-//--------------------------------------------
+//---------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -351,4 +351,4 @@ char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
 G_L_B uint8_t refalab_gtl = '\122';
 void (*gtl_1)(void) = gtl_;
 
-//------------------ end of file  XCOMP.C ----------------
+//----------  end of file xcompare.c  ----------
