@@ -5,7 +5,7 @@
 
 **29-05-2026**
 
-Объектные файлы в сборке переименованы:
+Объектные файлы в РефалАБ-системе переименованы:
 1. mainrf.o -> refalab_initiator.o;
 2. mainrf_dbg.o -> refalab_initiator_dbg.o;
 3. rfdbg.o -> refalab_debugger.o;
