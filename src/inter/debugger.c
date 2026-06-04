@@ -1,18 +1,18 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//------------ file -- RFDBG.C -------------
+//----------  file debugger.c  -----------
 //          Standard RefalAB debugger
-//------------------------------------------
+//----------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "d.h"
+#include "debugger_interface.h"
 #include "rfintf.h"
 
 static T_STATUS_TABLE status_table;
@@ -38,4 +38,4 @@ int main(int argc, char *argv[])
     exit(1);
 }
 
-//---------  end of file RFDBG.C -----------
+//----------  end of file debugger.c ----------
