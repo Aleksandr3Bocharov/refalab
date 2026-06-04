@@ -2,7 +2,7 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-05-31
+rem 2026-06-05
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
@@ -30,10 +30,10 @@ setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include
 setx REFALABCFLAGS "-pipe -Wall -O2"
 setx REFALABCFLAGS_DBG "-pipe -Wall -O0 -g -Dmdebug"
-setx REFALABLFLAGS "%~dp0lib\obj\mainrf.o -L%~dp0lib -lrefalab -pthread"
-setx REFALABLFLAGS_DBG "%~dp0lib\obj\mainrf_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
-setx REFALABLFLAGS_DEBUGGER "%~dp0lib\obj\rfdbg.o -L%~dp0lib -lrefalab -pthread"
-setx REFALABLFLAGS_DEBUGGER_DBG "%~dp0lib\obj\rfdbg_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
+setx REFALABLFLAGS "%~dp0lib\obj\refalab_initiator.o -L%~dp0lib -lrefalab -pthread"
+setx REFALABLFLAGS_DBG "%~dp0lib\obj\refalab_initiator_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
+setx REFALABLFLAGS_DEBUGGER "%~dp0lib\obj\refalab_debugger.o -L%~dp0lib -lrefalab -pthread"
+setx REFALABLFLAGS_DEBUGGER_DBG "%~dp0lib\obj\refalab_debugger_dbg.o -L%~dp0lib -lrefalab_dbg -pthread"
 
 rem Prompt block to ask for adding to PATH
 echo.

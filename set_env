@@ -2,7 +2,7 @@
 
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-05-31
+# 2026-06-05
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
@@ -33,10 +33,10 @@ export REFALABLIB=$CURRENT_DIR/lib
 export REFALABINCLUDE=$CURRENT_DIR/include
 export REFALABCFLAGS="-pipe -Wall -O2"
 export REFALABCFLAGS_DBG="-pipe -Wall -O0 -g -Dmdebug"
-export REFALABLFLAGS="$CURRENT_DIR/lib/obj/mainrf.o -L$CURRENT_DIR/lib -lrefalab"
-export REFALABLFLAGS_DBG="$CURRENT_DIR/lib/obj/mainrf_dbg.o -L$CURRENT_DIR/lib -lrefalab_dbg"
-export REFALABLFLAGS_DEBUGGER="$CURRENT_DIR/lib/obj/rfdbg.o -L$CURRENT_DIR/lib -lrefalab"
-export REFALABLFLAGS_DEBUGGER_DBG="$CURRENT_DIR/lib/obj/rfdbg_dbg.o -L$CURRENT_DIR/lib -lrefalab_dbg"
+export REFALABLFLAGS="$CURRENT_DIR/lib/obj/refalab_initiator.o -L$CURRENT_DIR/lib -lrefalab"
+export REFALABLFLAGS_DBG="$CURRENT_DIR/lib/obj/refalab_initiator_dbg.o -L$CURRENT_DIR/lib -lrefalab_dbg"
+export REFALABLFLAGS_DEBUGGER="$CURRENT_DIR/lib/obj/refalab_debugger.o -L$CURRENT_DIR/lib -lrefalab"
+export REFALABLFLAGS_DEBUGGER_DBG="$CURRENT_DIR/lib/obj/refalab_debugger_dbg.o -L$CURRENT_DIR/lib -lrefalab_dbg"
 
 # Ask the user if they want to add the bin folder to PATH
 echo ""
