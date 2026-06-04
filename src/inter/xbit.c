@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 #define Oand 1
 #define Oor 2
