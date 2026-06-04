@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 extern uint8_t refalab_null;
 
