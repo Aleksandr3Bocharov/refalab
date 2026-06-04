@@ -43,10 +43,12 @@ OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
 # 2. OBJECT FILES LISTS
 # ------------------------------------------------------------------------------
 # A. Objects for building libraries (interpreter as a library)
-LIB_CORE_SRCS = $(filter-out initiator.c debugger.c, $(wildcard *.c))
+STANDALONE_SRCS = initiator.c debugger.c
+LIB_CORE_SRCS = $(filter-out $(STANDALONE_SRCS), $(wildcard *.c))
 LIB_CORE_OBJS = $(LIB_CORE_SRCS:.c=.o)
 LIB_CORE_OBJS_DBG = $(LIB_CORE_SRCS:.c=_dbg.o)
-REF_MODULES  := $(filter-out xplatformwin.ref xplatformposix.ref, $(wildcard *.ref))
+XPLATFORM_SRCS = xplatform_win.ref xplatform_posix.ref
+REF_MODULES  := $(filter-out $(XPLATFORM_SRCS), $(wildcard *.ref))
 LIB_REF_OBJS := $(REF_MODULES:.ref=.o) xplatform.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
 ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS)
