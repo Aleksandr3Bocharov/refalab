@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 extern uint8_t refalab_true, refalab_false;
 
