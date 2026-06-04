@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------- file -- MAINRF.C -------------------
+//----------  file initiator.c  ----------
 //          Standard REFAL-initiator
-//------------------------------------------------
+//----------------------------------------
 
 #include <stdio.h>
 #include <stdint.h>
@@ -20,4 +20,4 @@ int main(int argc, char *argv[])
     refal_execute(&refalab_go);
 }
 
-//---------  end of file MAINRF.C  ---------
+//----------  end of file initiator.c  ----------
