@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------- file -- D.C ------------------
+//----------  file debugger_interface.c  ----------
 //       RefalAB debugger functions
-//------------------------------------------
+//-------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@
 #include <stdbool.h>
 #include <errno.h>
 #include "refalab.h"
-#include "d.h"
+#include "debugger_interface.h"
 #include "rfintf.h"
 #include "rfrun.h"
 
@@ -1019,4 +1019,4 @@ static bool get_yes_no(const char *answer)
     return true;
 }
 
-//-----------  end of file D.C -------------
+//----------  end of file debugger_interface.c  ----------
