@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//-------------- file -- XDELF.C ------------
+//----------  file xdelf.c  ----------
 //               MO: delf
-//-------------------------------------------
+//------------------------------------
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -52,4 +52,4 @@ char delf_0[] = {Z4 'D', 'E', 'L', 'F', (char)4};
 G_L_B uint8_t refalab_delf = '\122';
 void (*delf_1)(void) = delf_;
 
-//-------------------- end of file  XDELF.C ---------------
+//-----------  end of file xdelf.c  ----------
