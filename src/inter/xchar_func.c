@@ -1,9 +1,9 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//------------ file -- XCF.C ---------------
+//----------  file xchar_func.c  -----------
 //   MO: ftochar, functab, chartof
 //------------------------------------------
 
@@ -138,4 +138,4 @@ char chartof_0[] = {Z7 'C', 'H', 'A', 'R', 'T', 'O', 'F', (char)7};
 G_L_B uint8_t refalab_chartof = '\122';
 void (*chartof_1)(void) = chartof_;
 
-//------------------ end of file  XCF.C ----------------
+//----------  end of file xchar_func.c  -----------
