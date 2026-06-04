@@ -13,7 +13,7 @@
 #include <inttypes.h>
 #include "refalab.h"
 #include "interface.h"
-#include "rfrun.h"
+#include "interpreter.h"
 #include "debugger_interface.h"
 
 static void try_(void)
