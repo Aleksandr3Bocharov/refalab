@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 #define Oadd 1
 #define Osub 2
