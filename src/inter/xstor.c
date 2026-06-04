@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
-#include "rfintf.h"
+#include "interface.h"
 
 static bool legal_argument_store(bool only_expression_name, T_LINKCB **after_expression_name_pointer)
 {
