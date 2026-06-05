@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-05-30
+# 2026-06-05
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -30,8 +30,10 @@ else
 endif
 
 CC = clang
-CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
-CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(PLATFORM_CFLAGS)
+CLANG_TARGET := $(shell $(CC) -v 2>&1 | awk '/Target:/ {print $$2}')
+CLANG_THREAD_MODEL := $(shell $(CC) -v 2>&1 | awk '/Thread model:/ {print $$3}')
+CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS) -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
+CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(PLATFORM_CFLAGS) -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
 LINK = clang
 REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 

@@ -252,20 +252,6 @@ int main(int argc, char *argv[])
     // Aleksandr Bocharov   // compiler version
     printf("RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov\n");
     printf("https://github.com/Aleksandr3Bocharov/refalab\n");
-    FILE *pipe = popen("clang -dumpmachine", "r");
-    char target[64];
-    if (!pipe)
-        strcpy(target, "unknown");
-    else if (fgets(target, sizeof(target), pipe) != NULL)
-    {
-        const size_t target_length = strlen(target);
-        if (target_length > 0 && target[target_length - 1] == '\n')
-            target[target_length - 1] = '\0';
-    }
-    else
-        strcpy(target, "unknown");
-    pclose(pipe);
-    printf("Target: %s", target);
     printf("\n");
     if (argc < 2)
     {
