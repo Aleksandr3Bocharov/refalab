@@ -252,16 +252,15 @@ int main(int argc, char *argv[])
     // Aleksandr Bocharov   // compiler version
     const char *version = "RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov";
     printf("%s", version);
+    printf("\n");
     if (argc < 2)
     {
-        printf("\n");
-        printf("\nSyntax: ");
 #if defined mdebug
-        printf("refalabc_dbg ");
+        const char *compiler_name = "refalabc_dbg";
 #else
-        printf("refalabc ");
+        const char *compiler_name = "refalabc";
 #endif
-        printf("source_file [option ... option]");
+        printf("\nSyntax: %s source_file [option ... option]", compiler_name);
         printf("\nOptions:");
         printf("\n   -nn  No function names");
         printf("\n   -ns  No source listing");
