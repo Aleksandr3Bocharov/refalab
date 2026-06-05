@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
     printf("RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov\n");
     printf("https://github.com/Aleksandr3Bocharov/refalab\n");
     FILE *pipe = popen("clang -dumpmachine", "r");
-    char target[65];
+    char target[64];
     if (!pipe)
         strcpy(target, "unknown");
     else if (fgets(target, sizeof(target), pipe) != NULL)
