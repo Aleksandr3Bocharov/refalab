@@ -183,9 +183,6 @@ static struct
     bool end_refalab_source; // "refalab_source" end flag
 } flags;
 
-// Aleksandr Bocharov   // compiler version
-static const char *version = "RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov";
-
 static FILE *refalab_source;
 static int8_t current_symbol_number; // current symbol number
 static char card[CUT + 9];           // card buffer (input)
@@ -252,15 +249,19 @@ int main(int argc, char *argv[])
     terminal = NULL;
     scanner.module_number = 0;
     printf("\n");
+    // Aleksandr Bocharov   // compiler version
+    const char *version = "RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov";
     printf("%s", version);
     if (argc < 2)
     {
         printf("\n");
+        printf("\nSyntax: ");
 #if defined mdebug
-        printf("\nSyntax: RefalABc_dbg source_file [option ... option]");
+        printf("refalabc_dbg ");
 #else
-        printf("\nSyntax: RefalABc source_file [option ... option]");
+        printf("refalabc ");
 #endif
+        printf("source_file [option ... option]");
         printf("\nOptions:");
         printf("\n   -nn  No function names");
         printf("\n   -ns  No source listing");
