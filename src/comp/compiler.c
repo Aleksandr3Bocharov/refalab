@@ -531,7 +531,7 @@ int main(int argc, char *argv[])
             else if (!options.assembler_source_only)
             {
                 char string_assembler[3 + 8191 + 1 + MAX_PATHFILENAME - 2 + 1];
-                sprintf(string_assembler, "as %s %s", options.assembler_options, filename);
+                sprintf(string_assembler, "clang -с %s %s", filename, options.assembler_options);
                 int result_as = system(string_assembler);
 #if defined POSIX
                 if (WIFEXITED(result_as) != 0)
