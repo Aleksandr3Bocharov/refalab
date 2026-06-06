@@ -20,6 +20,7 @@ ifdef OS
     SLASH = \\
     LFLAGS = -pthread -static
     PLATFORM_CFLAGS =
+	CLANG_VERSION := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'clang version' | ForEach-Object { ($$_ -split ' ')[2] }")
 	CLANG_TARGET := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'Target:' | ForEach-Object { ($$_ -split ' ')[1] }")
     CLANG_THREAD_MODEL := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'Thread model:' | ForEach-Object { ($$_ -split ' ')[2] }")
 else
@@ -29,13 +30,15 @@ else
     SLASH = /
     LFLAGS = 
     PLATFORM_CFLAGS = -DPOSIX
+	CLANG_VERSION := $(shell $(CC) -v 2>&1 | sed -n 's/.*clang version \([^ ]*\).*/\1/p')
 	CLANG_TARGET := $(shell $(CC) -v 2>&1 | sed -n 's/^Target: //p')
     CLANG_THREAD_MODEL := $(shell $(CC) -v 2>&1 | sed -n 's/^Thread model: //p')
 endif
 
 CC = clang
-CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS) -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
-CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(PLATFORM_CFLAGS) -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
+CFLAGS_D = $(PLATFORM_CFLAGS) -DCLANG_VERSION="\"$(CLANG_VERSION)\"" -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
+CFLAGS_COMMON = -pipe -Wall -O2 $(CFLAGS_D)
+CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(CFLAGS_D)
 LINK = clang
 REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 
