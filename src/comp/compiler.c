@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
     // Aleksandr Bocharov   // compiler version
     printf("RefalAB Version 2.0-dev 20260529 (c) Aleksandr Bocharov\n");
     printf("https://github.com/Aleksandr3Bocharov/refalab\n");
-    printf("Compiled with сlang version: %s\n", CLANG_VERSION);
+    printf("Compiled with clang version: %s\n", CLANG_VERSION);
     printf("Target: %s\n", CLANG_TARGET_TRIPLE);
     printf("Thread model: %s", CLANG_THREAD_MODEL);
     printf("\n");
