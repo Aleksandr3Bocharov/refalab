@@ -13,6 +13,8 @@
 # ====================================================================
 # 1. CROSS-PLATFORM & ENVIRONMENT DETECTION
 # ====================================================================
+CC = clang
+
 ifdef OS
     # Windows Settings
     RM = del /Q /F
@@ -35,7 +37,6 @@ else
     CLANG_THREAD_MODEL := $(shell $(CC) -v 2>&1 | sed -n 's/^Thread model: //p')
 endif
 
-CC = clang
 CFLAGS_D = $(PLATFORM_CFLAGS) -DCLANG_VERSION="\"$(CLANG_VERSION)\"" -DCLANG_TARGET_TRIPLE=\"$(CLANG_TARGET)\" -DCLANG_THREAD_MODEL=\"$(CLANG_THREAD_MODEL)\"
 CFLAGS_COMMON = -pipe -Wall -O2 $(CFLAGS_D)
 CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(CFLAGS_D)
