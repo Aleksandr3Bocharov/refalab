@@ -155,21 +155,7 @@ static void stream_nodes_write(void)
             stream_nodes.current += SMBL;
             return;
         }
-        if (stream_nodes.file == NULL)
-        {
-            stream_nodes.file = fopen(stream_nodes.file_name, Wbin);
-            if (stream_nodes.file == NULL)
-            {
-                printf("Can't open for write sysut2\n");
-                exit(8);
-            }
-        }
-        if (fwrite(stream_nodes.buffer, stream_nodes.length, 1, stream_nodes.file) == 0)
-        {
-            printf("Write i/o error in sysut2\n");
-            exit(8);
-        }
-        stream_nodes.current = 0;
+        // stream_bytes_nodes_append
     } // while
 } // stream_nodes_write
 
@@ -209,8 +195,8 @@ static void stream_nodes_read(void)
 void macrocode_start(void)
 {
     delta = 0;
-    stream_bytes_nodes_open_write("sysut1.rf", &stream_bytes);
-    stream_bytes_nodes_open_write("sysut2.rf", &stream_nodes);
+    stream_bytes_nodes_open_write(&stream_bytes);
+    stream_bytes_nodes_open_write(&stream_nodes);
     first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_entry == NULL)
         error_no_memory();
@@ -234,16 +220,6 @@ void macrocode_start(void)
 
 size_t macrocode_where(void)
 {
-    size_t max_address;
-    if (LBLL == 4)
-        max_address = 65535;
-    else
-        max_address = 98303;
-    if (current_address > max_address)
-    {
-        printf("Module too long\n");
-        exit(1);
-    }
     return current_address;
 }
 
@@ -256,22 +232,9 @@ void macrocode_byte(uint8_t byte)
     }
     else
     {
-        if (stream_bytes.file == NULL)
-        {
-            stream_bytes.file = fopen(stream_bytes.file_name, Wbin);
-            if (stream_bytes.file == NULL)
-            {
-                printf("Can't open for write sysut1\n");
-                exit(8);
-            }
-        }
-        if (fwrite(stream_bytes.buffer, stream_bytes.length, 1, stream_bytes.file) == 0)
-        {
-            printf("Write i/o error in sysut1\n");
-            exit(8);
-        }
-        *stream_bytes.buffer = byte;
-        stream_bytes.current = 1;
+        // stream_bytes_nodes_append
+        *(stream_bytes.buffer + stream_bytes.current) = byte;
+        stream_bytes.current++;
     }
     delta++;
     current_address++;
