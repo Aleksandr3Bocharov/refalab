@@ -83,6 +83,8 @@ static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     fprintf(stderr, "free(stream_bytes_nodes_clear): stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
     stream_bytes_nodes->buffer = NULL;
+    stream_bytes_nodes->length = 0;
+    stream_bytes_nodes->current = 0;
     return;
 }
 
