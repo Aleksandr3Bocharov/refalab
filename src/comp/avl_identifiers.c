@@ -270,14 +270,14 @@ static void kill_tree(T_LABEL *label)
         {
             T_USAGE_LIST *temp_usage_list = usage_list->next;
 #if defined mdebug
-            fprintf(stderr, "free(clu): usage_list=%p\n", (void *)usage_list);
+            fprintf(stderr, "free(kill_tree): usage_list=%p\n", (void *)usage_list);
 #endif
             free(usage_list);
             usage_list = temp_usage_list;
         }
         child_traverse_label = traverse_label->right_label;
 #if defined mdebug
-        fprintf(stderr, "free(clu): traverse_label=%p\n", (void *)traverse_label);
+        fprintf(stderr, "free(kill_tree): traverse_label=%p\n", (void *)traverse_label);
 #endif
         free(traverse_label);
         traverse_label = child_traverse_label;

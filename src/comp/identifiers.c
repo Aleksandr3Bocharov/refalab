@@ -309,7 +309,7 @@ void module_terminate(void)
     {
         T_ARRAY_INFO_LABELS *temp_array_info_labels = array_info_labels->next;
 #if defined mdebug
-        fprintf(stderr, "free(cs): array_info_labels=%p\n", (void *)array_info_labels);
+        fprintf(stderr, "free(module_terminate): array_info_labels=%p\n", (void *)array_info_labels);
 #endif
         free(array_info_labels);
         array_info_labels = temp_array_info_labels;

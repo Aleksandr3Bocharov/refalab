@@ -80,7 +80,7 @@ static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     free(stream_bytes_nodes->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(cj): stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
+    fprintf(stderr, "free(stream_bytes_nodes_clear): stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
     stream_bytes_nodes->buffer = NULL;
     return;
@@ -116,7 +116,7 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
         if (stream_bytes_nodes->buffer != NULL)
         {
 #if defined mdebug
-            fprintf(stderr, "malloc(cj): stream_bytes_nodes->buffer=%p stream_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes_length);
+            fprintf(stderr, "malloc(stream_bytes_nodes_open_write): stream_bytes_nodes->buffer=%p stream_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes_length);
 #endif
             break;
         }
@@ -205,7 +205,7 @@ void macrocode_start(void)
     if (first_entry == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): first_entry=%p\n", (void *)first_entry);
+    fprintf(stderr, "malloc(macrocode_start): first_entry=%p\n", (void *)first_entry);
 #endif
     last_entry = first_entry;
     first_entry->next = NULL;
@@ -213,7 +213,7 @@ void macrocode_start(void)
     if (first_extrn == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): first_extrn=%p\n", (void *)first_extrn);
+    fprintf(stderr, "malloc(macrocode_start): first_extrn=%p\n", (void *)first_extrn);
 #endif
     last_extrn = first_extrn;
     first_extrn->next = NULL;
@@ -283,7 +283,7 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     if (entry2 == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): entry2=%p\n", (void *)entry2);
+    fprintf(stderr, "malloc(macrocode_entry): entry2=%p\n", (void *)entry2);
 #endif
     last_entry->next = entry2;
     last_entry = entry2;
@@ -324,7 +324,7 @@ void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     if (extrn2 == NULL)
         error_no_memory();
 #if defined mdebug
-    fprintf(stderr, "malloc(cj): extrn2=%p\n", (void *)extrn2);
+    fprintf(stderr, "malloc(macrocode_extrn): extrn2=%p\n", (void *)extrn2);
 #endif
     last_extrn->next = extrn2;
     last_extrn = extrn2;
@@ -509,7 +509,7 @@ void macrocode_end(void)
     {
         entry2 = entry->next;
 #if defined mdebug
-        fprintf(stderr, "free(cj) entry=%p\n", (void *)entry);
+        fprintf(stderr, "free(macrocode_end) entry=%p\n", (void *)entry);
 #endif
         free(entry);
         entry = entry2;
@@ -519,7 +519,7 @@ void macrocode_end(void)
     {
         extrn2 = extrn->next;
 #if defined mdebug
-        fprintf(stderr, "free(cj) extrn=%p\n", (void *)extrn);
+        fprintf(stderr, "free(macrocode_end) extrn=%p\n", (void *)extrn);
 #endif
         free(extrn);
         extrn = extrn2;
