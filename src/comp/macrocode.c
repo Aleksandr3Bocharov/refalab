@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file macrocode.c  ----------
@@ -50,13 +50,11 @@ typedef struct stream_bytes_nodes
 {
     size_t length;
     size_t current;
-    char *file_name;
     uint8_t *buffer;
-    FILE *file;
 } T_STREAM_BYTES_NODES;
 
-static T_STREAM_BYTES_NODES stream_bytes = {0, 0, NULL, NULL, NULL};
-static T_STREAM_BYTES_NODES stream_nodes = {0, 0, NULL, NULL, NULL};
+static T_STREAM_BYTES_NODES stream_bytes = {0, 0, NULL};
+static T_STREAM_BYTES_NODES stream_nodes = {0, 0, NULL};
 
 static T_ENTRY *entry, *entry2;
 static T_EXTRN *extrn, *extrn2;
@@ -78,22 +76,8 @@ static void error_no_memory(void)
     return;
 }
 
-static void stream_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (stream_bytes_nodes->file_name != NULL)
-    {
-        free(stream_bytes_nodes->file_name);
-#if defined mdebug
-        fprintf(stderr, "free(cj) stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
-#endif
-    }
-    stream_bytes_nodes->file_name = (char *)malloc(strlen(file_name) + 1);
-    if (stream_bytes_nodes->file_name == NULL)
-        error_no_memory();
-#if defined mdebug
-    fprintf(stderr, "malloc(cj): stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
-#endif
-    strcpy(stream_bytes_nodes->file_name, file_name);
     size_t stream_bytes_nodes_length = 0;
     if (stream_bytes_nodes->buffer == NULL)
     {
@@ -141,55 +125,21 @@ static void stream_bytes_nodes_open_write(const char *file_name, T_STREAM_BYTES_
     }
     stream_bytes_nodes->current = 0;
     stream_bytes_nodes->length = stream_bytes_nodes_length;
-    stream_bytes_nodes->file = NULL;
     return;
 }
 
 static void stream_bytes_nodes_open_read(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (stream_bytes_nodes->file != NULL)
-    {
-        stream_bytes_nodes->file = fopen(stream_bytes_nodes->file_name, Rbin);
-        if (stream_bytes_nodes->file == NULL)
-        {
-            printf("Can't open for read %s\n", stream_bytes_nodes->file_name);
-            exit(8);
-        }
-        if (fread(stream_bytes_nodes->buffer, stream_bytes_nodes->length, 1, stream_bytes_nodes->file) == 0)
-        {
-            printf("Read i/o error in %s\n", stream_bytes_nodes->file_name);
-            exit(8);
-        }
-    }
     stream_bytes_nodes->current = 0;
-    return;
-}
-
-static void stream_bytes_nodes_close(const T_STREAM_BYTES_NODES *stream_bytes_nodes)
-{
-    if (stream_bytes_nodes->file != NULL)
-    {
-        if (fwrite(stream_bytes_nodes->buffer, stream_bytes_nodes->current, 1, stream_bytes_nodes->file) == 0)
-        {
-            printf("Write i/o error in %s\n", stream_bytes_nodes->file_name);
-            exit(8);
-        }
-        fclose(stream_bytes_nodes->file);
-    }
     return;
 }
 
 static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (stream_bytes_nodes->file != NULL)
-        unlink(stream_bytes_nodes->file_name);
-    free(stream_bytes_nodes->file_name);
     free(stream_bytes_nodes->buffer);
 #if defined mdebug
-    fprintf(stderr, "free(cj)    stream_bytes_nodes->file_name=%p\n", (void *)stream_bytes_nodes->file_name);
     fprintf(stderr, "            stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
-    stream_bytes_nodes->file_name = NULL;
     stream_bytes_nodes->buffer = NULL;
     return;
 }
@@ -440,8 +390,6 @@ static void ending(void)
     relay.delta = delta;
     relay.label = NULL;
     stream_nodes_write();
-    stream_bytes_nodes_close(&stream_bytes);
-    stream_bytes_nodes_close(&stream_nodes);
     module_length = current_address;
     return;
 } // ending
