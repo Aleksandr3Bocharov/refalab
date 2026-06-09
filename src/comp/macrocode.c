@@ -93,27 +93,9 @@ static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes_clear(stream_bytes_nodes);
-    size_t max_stream_bytes_nodes_length;
-    if (stream_bytes_nodes == &stream_nodes)
-    {
-        if (LBLL == 4)
-            max_stream_bytes_nodes_length = 49152; // 8192*6
-        else
-            max_stream_bytes_nodes_length = 81920; // 8192*10
-    }
-    else
-    {
-        if (LBLL == 4)
-            max_stream_bytes_nodes_length = 65528; // 65536-8
-        else
-            max_stream_bytes_nodes_length = 98292; // 98304-12
-    }
+    const size_t max_stream_bytes_nodes_length = 8192 * SZRLY;
+    const size_t min_stream_bytes_nodes_length = 2 * SZRLY;
     size_t stream_bytes_nodes_length = max_stream_bytes_nodes_length;
-    size_t min_stream_bytes_nodes_length;
-    if (LBLL == 4)
-        min_stream_bytes_nodes_length = 16;
-    else
-        min_stream_bytes_nodes_length = 24;
     while (true)
     {
         stream_bytes_nodes->buffer = (uint8_t *)malloc(stream_bytes_nodes_length);
@@ -126,10 +108,7 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
         }
         else
         {
-            if (stream_bytes_nodes == &stream_nodes)
-                stream_bytes_nodes_length /= 2;
-            else
-                stream_bytes_nodes_length = (stream_bytes_nodes_length + LBLL + 4) / 2 - LBLL - 4;
+            stream_bytes_nodes_length /= 2;
             if (stream_bytes_nodes_length < min_stream_bytes_nodes_length)
                 error_no_memory();
         }
