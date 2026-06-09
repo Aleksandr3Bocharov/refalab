@@ -21,8 +21,6 @@
 #include "compiler.h"
 #include "avl_identifiers.h"
 
-#define SZRLY sizeof(size_t) + sizeof(void *)
-
 #define PRINT_ERROR_604 \
     print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined")
 
@@ -90,11 +88,11 @@ static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
-static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_new(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes_clear(stream_bytes_nodes);
-    const size_t max_stream_bytes_nodes_length = 8192 * SZRLY;
-    const size_t min_stream_bytes_nodes_length = 2 * SZRLY;
+    const size_t max_stream_bytes_nodes_length = 8192 * sizeof(T_RELAY);
+    const size_t min_stream_bytes_nodes_length = 2 * sizeof(T_RELAY);
     size_t stream_bytes_nodes_length = max_stream_bytes_nodes_length;
     while (true)
     {
@@ -103,7 +101,7 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
         {
             stream_bytes_nodes->length = stream_bytes_nodes_length;
 #if defined mdebug
-            fprintf(stderr, "malloc(stream_bytes_nodes_open_write): stream_bytes_nodes->buffer=%p stream_bytes_nodes->length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes->length);
+            fprintf(stderr, "malloc(stream_bytes_nodes_new): stream_bytes_nodes->buffer=%p stream_bytes_nodes->length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes->length);
 #endif
             break;
         }
@@ -114,16 +112,13 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
                 error_no_memory();
         }
     } // while
-    stream_bytes_nodes->current = 0;
     return;
 }
 
 static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    if (stream_bytes_nodes->buffer == NULL)
-        return;
-    const size_t max_stream_bytes_nodes_append_length = 8192 * SZRLY;
-    const size_t min_stream_bytes_nodes_append_length = 2 * SZRLY;
+    const size_t max_stream_bytes_nodes_append_length = 8192 * sizeof(T_RELAY);
+    const size_t min_stream_bytes_nodes_append_length = 2 * sizeof(T_RELAY);
     size_t stream_bytes_nodes_append_length = max_stream_bytes_nodes_append_length;
     while (true)
     {
@@ -148,7 +143,7 @@ static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
-static void stream_bytes_nodes_open_read(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static void stream_bytes_nodes_begin(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes->current = 0;
     return;
@@ -159,10 +154,10 @@ static void stream_nodes_write(void)
     while (true)
     {
         const size_t residual = stream_nodes.length - stream_nodes.current;
-        if (residual >= SZRLY)
+        if (residual >= sizeof(T_RELAY))
         {
-            memcpy(stream_nodes.buffer + stream_nodes.current, &relay, SZRLY);
-            stream_nodes.current += SZRLY;
+            memcpy(stream_nodes.buffer + stream_nodes.current, &relay, sizeof(T_RELAY));
+            stream_nodes.current += sizeof(T_RELAY);
             return;
         }
         stream_bytes_nodes_append(&stream_nodes);
@@ -171,42 +166,36 @@ static void stream_nodes_write(void)
 
 static void stream_bytes_read(uint8_t *buffer, size_t count)
 {
-    while (true)
+    const size_t residual = stream_bytes.length - stream_bytes.current;
+    if (residual >= count)
     {
-        const size_t residual = stream_bytes.length - stream_bytes.current;
-        if (residual >= count)
-        {
-            memcpy(buffer, stream_bytes.buffer + stream_bytes.current, count);
-            stream_bytes.current += count;
-            return;
-        }
+        memcpy(buffer, stream_bytes.buffer + stream_bytes.current, count);
+        stream_bytes.current += count;
+    }
+    else
+    {
         memcpy(buffer, stream_bytes.buffer + stream_bytes.current, residual);
-        stream_bytes.current = 0;
-        count -= residual;
-        buffer += residual;
-    } // while
+        stream_bytes.current += residual;
+    }
+    return;
 } // stream_bytes_read
 
 static void stream_nodes_read(void)
 {
-    while (true)
+    const size_t residual = stream_nodes.length - stream_nodes.current;
+    if (residual >= sizeof(T_RELAY))
     {
-        const size_t residual = stream_nodes.length - stream_nodes.current;
-        if (residual >= SZRLY)
-        {
-            memcpy(&relay, stream_nodes.buffer + stream_nodes.current, SZRLY);
-            stream_nodes.current += SZRLY;
-            return;
-        }
-        stream_nodes.current = 0;
-    } // while
+        memcpy(&relay, stream_nodes.buffer + stream_nodes.current, sizeof(T_RELAY));
+        stream_nodes.current += sizeof(T_RELAY);
+        return;
+    }
 } // stream_nodes_read
 
 void macrocode_start(void)
 {
     delta = 0;
-    stream_bytes_nodes_open_write(&stream_bytes);
-    stream_bytes_nodes_open_write(&stream_nodes);
+    stream_bytes_nodes_new(&stream_bytes);
+    stream_bytes_nodes_new(&stream_nodes);
     first_entry = (T_ENTRY *)malloc(sizeof(T_ENTRY));
     if (first_entry == NULL)
         error_no_memory();
@@ -390,8 +379,8 @@ void macrocode_end(void)
     if (module_length != 0)
     {
         // text generating
-        stream_bytes_nodes_open_read(&stream_bytes);
-        stream_bytes_nodes_open_read(&stream_nodes);
+        stream_bytes_nodes_begin(&stream_bytes);
+        stream_bytes_nodes_begin(&stream_nodes);
         while (true)
         {
             stream_nodes_read();
