@@ -164,18 +164,12 @@ static void stream_nodes_write(void)
     } // while
 } // stream_nodes_write
 
-static void stream_bytes_read(uint8_t *buffer, size_t count)
+static void stream_bytes_read(uint8_t *buffer)
 {
-    const size_t residual = stream_bytes.length - stream_bytes.current;
-    if (residual >= count)
+    if (stream_bytes.current != stream_bytes.length)
     {
-        memcpy(buffer, stream_bytes.buffer + stream_bytes.current, count);
-        stream_bytes.current += count;
-    }
-    else
-    {
-        memcpy(buffer, stream_bytes.buffer + stream_bytes.current, residual);
-        stream_bytes.current += residual;
+        memcpy(buffer, stream_bytes.buffer + stream_bytes.current, 1);
+        stream_bytes.current++;
     }
     return;
 } // stream_bytes_read
@@ -187,8 +181,8 @@ static void stream_nodes_read(void)
     {
         memcpy(&relay, stream_nodes.buffer + stream_nodes.current, sizeof(T_RELAY));
         stream_nodes.current += sizeof(T_RELAY);
-        return;
     }
+    return;
 } // stream_nodes_read
 
 void macrocode_start(void)
@@ -387,7 +381,7 @@ void macrocode_end(void)
             delta = relay.delta;
             for (size_t k = 0; k < delta; k++)
             {
-                stream_bytes_read(&byte, 1);
+                stream_bytes_read(&byte);
                 if (k % 60 == 0)
                 {
                     if (k != 0)
