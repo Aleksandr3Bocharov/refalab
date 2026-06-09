@@ -101,8 +101,9 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
         stream_bytes_nodes->buffer = (uint8_t *)malloc(stream_bytes_nodes_length);
         if (stream_bytes_nodes->buffer != NULL)
         {
+            stream_bytes_nodes->length = stream_bytes_nodes_length;
 #if defined mdebug
-            fprintf(stderr, "malloc(stream_bytes_nodes_open_write): stream_bytes_nodes->buffer=%p stream_bytes_nodes_length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes_length);
+            fprintf(stderr, "malloc(stream_bytes_nodes_open_write): stream_bytes_nodes->buffer=%p stream_bytes_nodes->length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes->length);
 #endif
             break;
         }
@@ -113,7 +114,6 @@ static void stream_bytes_nodes_open_write(T_STREAM_BYTES_NODES *stream_bytes_nod
                 error_no_memory();
         }
     } // while
-    stream_bytes_nodes->length = stream_bytes_nodes_length;
     stream_bytes_nodes->current = 0;
     return;
 }
@@ -122,6 +122,29 @@ static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     if (stream_bytes_nodes->buffer == NULL)
         return;
+    const size_t max_stream_bytes_nodes_append_length = 8192 * SZRLY;
+    const size_t min_stream_bytes_nodes_append_length = 2 * SZRLY;
+    size_t stream_bytes_nodes_append_length = max_stream_bytes_nodes_append_length;
+    while (true)
+    {
+        const size_t new_length = stream_bytes_nodes->length + stream_bytes_nodes_append_length;
+        uint8_t *new_buffer = (uint8_t *)realloc(stream_bytes_nodes->buffer, new_length);
+        if (new_buffer != NULL)
+        {
+            stream_bytes_nodes->buffer = new_buffer;
+            stream_bytes_nodes->length = new_length;
+#if defined mdebug
+            fprintf(stderr, "realloc(stream_bytes_nodes_append): stream_bytes_nodes->buffer=%p stream_bytes_nodes->length=%zu\n", (void *)stream_bytes_nodes->buffer, stream_bytes_nodes->length);
+#endif
+            break;
+        }
+        else
+        {
+            stream_bytes_nodes_append_length /= 2;
+            if (stream_bytes_nodes_append_length < min_stream_bytes_nodes_append_length)
+                error_no_memory();
+        }
+    } // while
     return;
 }
 
