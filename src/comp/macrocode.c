@@ -616,7 +616,7 @@ void macrocode_end(void)
         }
         write_llvm_source(fputs("\n}>,\n", llvm_source));
         // Define global variable alignment based on pointer size (LBLL)
-        sprintf(buffer_string, "align %d\n\n", LBLL);
+        sprintf(buffer_string, "align %zu\n\n", LBLL);
         write_llvm_source(fputs(buffer_string, llvm_source));
         // ====================================================================
         // IMPORTS: Global declarations for external labels
