@@ -523,12 +523,10 @@ void macrocode_end(void)
     ending();
     uint8_t byte = 0;
     char buffer_string[256]; // Increased buffer size for safe formatting of long identifiers
-
     // Module header. Using packed structure syntax <{ ... }> 
     // to prevent LLVM from inserting unexpected padding between bytes and pointers.
     sprintf(buffer_string, "@_d%" PRIu32 "$ = private constant <{\n", scanner.module_number);
     write_assembler_source(fputs(buffer_string, assembler_source));
-
     if (module_length != 0)
     {
         // ====================================================================
@@ -537,7 +535,6 @@ void macrocode_end(void)
         stream_bytes_nodes_begin(&stream_bytes);
         stream_bytes_nodes_begin(&stream_nodes);
         bool first_element = true;
-
         while (true)
         {
             stream_nodes_read();
@@ -546,14 +543,13 @@ void macrocode_end(void)
             // If there are raw bytes preceding a label/relay
             if (delta > 0) {
                 if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
-                sprintf(buffer_string, "\t[%" PRIuMAX " x i8]", (uintmax_t)delta);
+                sprintf(buffer_string, "\t[%zu x i8]", delta);
                 write_assembler_source(fputs(buffer_string, assembler_source));
                 first_element = false;
 
                 // Advance the byte stream pointer forward
                 for (size_t k = 0; k < delta; k++) stream_bytes_read(&byte);
             }
-
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
@@ -566,24 +562,20 @@ void macrocode_end(void)
         }
         // Close type block <{ }>, open values block <{ }>
         write_assembler_source(fputs("\n}> <{\n", assembler_source)); 
-
         // ====================================================================
         // PASS 2: Populate the structure with constant values
         // ====================================================================
         stream_bytes_nodes_begin(&stream_bytes);
         stream_bytes_nodes_begin(&stream_nodes);
         first_element = true;
-
         while (true)
         {
             stream_nodes_read();
             delta = relay.delta;
-
             if (delta > 0) {
                 if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
-                sprintf(buffer_string, "\t[%" PRIuMAX " x i8] c\"", (uintmax_t)delta);
+                sprintf(buffer_string, "\t[%zu x i8] c\"", delta);
                 write_assembler_source(fputs(buffer_string, assembler_source));
-                
                 for (size_t k = 0; k < delta; k++)
                 {
                     stream_bytes_read(&byte);
@@ -594,14 +586,12 @@ void macrocode_end(void)
                 write_assembler_source(fputs("\"", assembler_source));
                 first_element = false;
             }
-
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
                 if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
                 while ((label->mode & 0300) == 0300)
                     label = label->info.infop;
-
                 if ((label->mode & 0300) != 0200)
                 {
                     // Internal label (offset): cast structure pointer to i8* and apply 'infon' offset
@@ -625,11 +615,9 @@ void macrocode_end(void)
             break;
         }
         write_assembler_source(fputs("\n}>,\n", assembler_source));
-        
         // Define global variable alignment based on pointer size (LBLL)
         sprintf(buffer_string, "align %d\n\n", LBLL);
         write_assembler_source(fputs(buffer_string, assembler_source));
-
         // ====================================================================
         // IMPORTS: Global declarations for external labels
         // ====================================================================
@@ -643,7 +631,6 @@ void macrocode_end(void)
             extrn = extrn->next;
         }
         write_assembler_source(fputs("\n", assembler_source));
-
         // ====================================================================
         // EXPORTS: Global entry points exposed via LLVM aliases
         // ====================================================================
@@ -653,26 +640,21 @@ void macrocode_end(void)
             const T_LABEL *label = entry->label;
             while ((label->mode & 0300) == 0300)
                 label = label->info.infop;
-
             write_assembler_source(fputs("@refalab_", assembler_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            
             // dso_local alias binds the public symbol to a specific byte offset inside the module data
             sprintf(buffer_string, " = dso_local alias i8, getelementptr (i8, ptr @_d%" PRIu32 "$, i64 %zu)\n", 
                     scanner.module_number, label->info.infon);
             write_assembler_source(fputs(buffer_string, assembler_source));
-
             entry = entry->next;
         }
     }
-
     // ====================================================================
     // TERMINATION: Stream cleanup and dynamic memory deallocation
     // ====================================================================
     stream_bytes_nodes_clear(&stream_bytes);
     stream_bytes_nodes_clear(&stream_nodes);
-    
     entry = first_entry;
     while (entry != NULL)
     {
@@ -683,7 +665,6 @@ void macrocode_end(void)
         free(entry);
         entry = entry2;
     }
-    
     extrn = first_extrn;
     while (extrn != NULL)
     {
