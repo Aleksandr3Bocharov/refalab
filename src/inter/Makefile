@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-05
+# 2026-06-09
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -121,11 +121,11 @@ $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 
 # Pattern rule for all standard Refal modules
 %.o: %.ref
-	$(REFALABC) $* -a,"-o $@" > $*.log
+	$(REFALABC) $* -l,"-o $@" > $*.log
 
 # Special rule for platform-dependent xplatform.o
 xplatform.o: $(XPLATFORM_SRC).ref
-	$(REFALABC) $(XPLATFORM_SRC) -a,"-o $@" > xplatform.log
+	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@" > xplatform.log
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
@@ -133,7 +133,7 @@ xplatform.o: $(XPLATFORM_SRC).ref
 clean_objs:
 	-$(RM) *.o
 	@echo Remove garbage and temporary listings of the RefalAB compiler
-	-$(RM) *.s
+	-$(RM) *.ll
 	-$(RM) *.log
 	-$(RM) *.lst
 
