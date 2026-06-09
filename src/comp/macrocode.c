@@ -360,172 +360,14 @@ static void write_llvm_source(int put_result)
         }
 }
 
-/*
-void macrocode_end(void)
-{
-    ending();
-    uint8_t byte = 0;
-    // heading generating
-    write_assembler_source(fputs(".data\n", assembler_source));
-    char buffer_string[81];
-    sprintf(buffer_string, "_d%" PRIu32 "$:\n", scanner.module_number);
-    write_assembler_source(fputs(buffer_string, assembler_source));
-    //  empty module test
-    if (module_length != 0)
-    {
-        // text generating
-        stream_bytes_nodes_begin(&stream_bytes);
-        stream_bytes_nodes_begin(&stream_nodes);
-        while (true)
-        {
-            stream_nodes_read();
-            delta = relay.delta;
-            for (size_t k = 0; k < delta; k++)
-            {
-                stream_bytes_read(&byte);
-                if (k % 60 == 0)
-                {
-                    if (k != 0)
-                        write_assembler_source(fputc('\n', assembler_source));
-                    write_assembler_source(fputs("\t.byte\t", assembler_source));
-                }
-                sprintf(buffer_string, "%" PRIu8, byte);
-                write_assembler_source(fputs(buffer_string, assembler_source));
-                if (k % 60 != 59 && k != delta - 1)
-                    write_assembler_source(fputc(',', assembler_source));
-            }
-            write_assembler_source(fputc('\n', assembler_source));
-            const T_LABEL *label = relay.label;
-            if (label != NULL)
-            {
-                while ((label->mode & 0300) == 0300)
-                    label = label->info.infop;
-                if ((label->mode & 0300) != 0200)
-                {
-                    //    nonexternal label
-                    if (LBLL == 4)
-                        sprintf(buffer_string, "\t.long\t_d%" PRIu32 "$+%zu\n", scanner.module_number, label->info.infon);
-                    else
-                        sprintf(buffer_string, "\t.quad\t_d%" PRIu32 "$+%zu\n", scanner.module_number, label->info.infon);
-                    write_assembler_source(fputs(buffer_string, assembler_source));
-                }
-                else
-                {
-//     external   label
-#if defined POSIX
-                    // begin name without underlining _
-                    if (LBLL == 4)
-                        write_assembler_source(fputs("\t.long\trefalab_", assembler_source));
-                    else
-                        write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
-#else // Windows - with underlining _ in x86
-                    if (LBLL == 4)
-                        write_assembler_source(fputs("\t.long\t_refalab_", assembler_source));
-                    else
-                        write_assembler_source(fputs("\t.quad\trefalab_", assembler_source));
-#endif
-                    extrn = first_extrn;
-                    for (size_t i = 1; i < label->info.infon; i++)
-                        extrn = extrn->next;
-                    for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                        write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
-                    write_assembler_source(fputs("\n", assembler_source));
-                }
-                continue;
-            } // if
-            break;
-        }
-        //   external label generating
-        extrn = first_extrn->next;
-        while (extrn != NULL)
-        {
-//
-#if defined POSIX
-            // begin name without underlining _
-            write_assembler_source(fputs("\t.extern\trefalab_", assembler_source));
-#else // Windows
-            if (LBLL == 4)
-                write_assembler_source(fputs("\t.extern\t_refalab_", assembler_source));
-            else
-                write_assembler_source(fputs("\t.extern\trefalab_", assembler_source));
-#endif
-            for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
-            write_assembler_source(fputs(":byte\n", assembler_source));
-            extrn = extrn->next;
-        } // while
-        write_assembler_source(fputs(".data\n", assembler_source));
-        // entry label generating
-        entry = first_entry->next;
-        while (entry != NULL)
-        {
-#if !defined POSIX
-            // begin name with underlining _ in x86
-            if (LBLL == 4)
-                write_assembler_source(fputc('_', assembler_source));
-#endif
-            write_assembler_source(fputs("refalab_", assembler_source));
-            for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
-                // translate name to lower case
-                write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            const T_LABEL *label = entry->label;
-            while ((label->mode & 0300) == 0300)
-                label = label->info.infop;
-#if defined POSIX
-            // begin name without underlining _
-            sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
-#else // Windows
-            if (LBLL == 4)
-                sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\t_refalab_", scanner.module_number, label->info.infon);
-            else
-                sprintf(buffer_string, "\t=_d%" PRIu32 "$+%zu\n\t.globl\trefalab_", scanner.module_number, label->info.infon);
-#endif
-            write_assembler_source(fputs(buffer_string, assembler_source));
-            for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
-                // translate name to lower case
-                write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
-            write_assembler_source(fputc('\n', assembler_source));
-            entry = entry->next;
-        };
-#if defined POSIX
-        write_assembler_source(fputs(".section\t.note.GNU-stack,\"\",\%progbits\n", assembler_source));
-#endif
-    }
-    // termination
-    stream_bytes_nodes_clear(&stream_bytes);
-    stream_bytes_nodes_clear(&stream_nodes);
-    entry = first_entry;
-    while (entry != NULL)
-    {
-        entry2 = entry->next;
-#if defined mdebug
-        fprintf(stderr, "free(macrocode_end) entry=%p\n", (void *)entry);
-#endif
-        free(entry);
-        entry = entry2;
-    }
-    extrn = first_extrn;
-    while (extrn != NULL)
-    {
-        extrn2 = extrn->next;
-#if defined mdebug
-        fprintf(stderr, "free(macrocode_end) extrn=%p\n", (void *)extrn);
-#endif
-        free(extrn);
-        extrn = extrn2;
-    }
-    return;
-} // macrocode_end
-*/
-
 void macrocode_end(void)
 {
     ending();
     uint8_t byte = 0;
     char buffer_string[256]; // Increased buffer size for safe formatting of long identifiers
-    // Module header. Using packed structure syntax <{ ... }> 
+    // Module header. Using packed structure syntax <{ ... }>
     // to prevent LLVM from inserting unexpected padding between bytes and pointers.
-    sprintf(buffer_string, "@_d%" PRIu32 "$ = private constant <{\n", scanner.module_number);
+    sprintf(buffer_string, "@_d%" PRIu32 "$ = private global <{\n", scanner.module_number);
     write_llvm_source(fputs(buffer_string, llvm_source));
     if (module_length != 0)
     {
@@ -539,29 +381,31 @@ void macrocode_end(void)
         {
             stream_nodes_read();
             delta = relay.delta;
-
             // If there are raw bytes preceding a label/relay
-            if (delta > 0) {
-                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
+            if (delta > 0)
+            {
+                if (!first_element)
+                    write_llvm_source(fputs(",\n", llvm_source));
                 sprintf(buffer_string, "\t[%zu x i8]", delta);
                 write_llvm_source(fputs(buffer_string, llvm_source));
                 first_element = false;
-
                 // Advance the byte stream pointer forward
-                for (size_t k = 0; k < delta; k++) stream_bytes_read(&byte);
+                for (size_t k = 0; k < delta; k++)
+                    stream_bytes_read(&byte);
             }
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
-                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
-                write_llvm_source(fputs("\tptr", llvm_source)); // Opaque 'ptr' is universal for all addresses in LLVM 15+
+                if (!first_element)
+                    write_llvm_source(fputs(",\n", llvm_source));
+                write_llvm_source(fputs("\tptr", llvm_source));
                 first_element = false;
                 continue;
             }
             break;
         }
         // Close type block <{ }>, open values block <{ }>
-        write_llvm_source(fputs("\n}> <{\n", llvm_source)); 
+        write_llvm_source(fputs("\n}> <{\n", llvm_source));
         // ====================================================================
         // PASS 2: Populate the structure with constant values
         // ====================================================================
@@ -572,8 +416,10 @@ void macrocode_end(void)
         {
             stream_nodes_read();
             delta = relay.delta;
-            if (delta > 0) {
-                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
+            if (delta > 0)
+            {
+                if (!first_element)
+                    write_llvm_source(fputs(",\n", llvm_source));
                 sprintf(buffer_string, "\t[%zu x i8] c\"", delta);
                 write_llvm_source(fputs(buffer_string, llvm_source));
                 for (size_t k = 0; k < delta; k++)
@@ -589,19 +435,17 @@ void macrocode_end(void)
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
-                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
+                if (!first_element)
+                    write_llvm_source(fputs(",\n", llvm_source));
                 while ((label->mode & 0300) == 0300)
                     label = label->info.infop;
                 if ((label->mode & 0300) != 0200)
                 {
-                    // Internal label (offset): cast structure pointer to i8* and apply 'infon' offset
-                    sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i64 %zu)", 
-                            scanner.module_number, label->info.infon);
+                    sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)", scanner.module_number, 8 * LBLL, label->info.infon);
                     write_llvm_source(fputs(buffer_string, llvm_source));
                 }
                 else
                 {
-                    // External label/function. Identifiers are converted to lower case, matching original behavior
                     write_llvm_source(fputs("\tptr @refalab_", llvm_source));
                     extrn = first_extrn;
                     for (size_t i = 1; i < label->info.infon; i++)
@@ -644,8 +488,7 @@ void macrocode_end(void)
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 write_llvm_source(fputc(tolower(*(entry->identifier_extern + i)), llvm_source));
             // dso_local alias binds the public symbol to a specific byte offset inside the module data
-            sprintf(buffer_string, " = dso_local alias i8, getelementptr (i8, ptr @_d%" PRIu32 "$, i64 %zu)\n", 
-                    scanner.module_number, label->info.infon);
+            sprintf(buffer_string, " = dso_local alias i8, getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)\n", scanner.module_number, LBLL * 8, label->info.infon);
             write_llvm_source(fputs(buffer_string, llvm_source));
             entry = entry->next;
         }
