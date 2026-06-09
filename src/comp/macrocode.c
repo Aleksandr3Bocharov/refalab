@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-07
+// 2026-06-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file macrocode.c  ----------
@@ -350,12 +350,12 @@ static void ending(void)
     return;
 } // ending
 
-static void write_assembler_source(int put_result)
+static void write_llvm_source(int put_result)
 {
     if (put_result == EOF)
-        if (feof(assembler_source) != 0 || ferror(assembler_source) != 0)
+        if (feof(llvm_source) != 0 || ferror(llvm_source) != 0)
         {
-            printf("Write i/o error in assembler source file\n");
+            printf("Write i/o error in llvm source file\n");
             exit(8);
         }
 }
@@ -526,7 +526,7 @@ void macrocode_end(void)
     // Module header. Using packed structure syntax <{ ... }> 
     // to prevent LLVM from inserting unexpected padding between bytes and pointers.
     sprintf(buffer_string, "@_d%" PRIu32 "$ = private constant <{\n", scanner.module_number);
-    write_assembler_source(fputs(buffer_string, assembler_source));
+    write_llvm_source(fputs(buffer_string, llvm_source));
     if (module_length != 0)
     {
         // ====================================================================
@@ -542,9 +542,9 @@ void macrocode_end(void)
 
             // If there are raw bytes preceding a label/relay
             if (delta > 0) {
-                if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
+                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
                 sprintf(buffer_string, "\t[%zu x i8]", delta);
-                write_assembler_source(fputs(buffer_string, assembler_source));
+                write_llvm_source(fputs(buffer_string, llvm_source));
                 first_element = false;
 
                 // Advance the byte stream pointer forward
@@ -553,15 +553,15 @@ void macrocode_end(void)
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
-                if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
-                write_assembler_source(fputs("\tptr", assembler_source)); // Opaque 'ptr' is universal for all addresses in LLVM 15+
+                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
+                write_llvm_source(fputs("\tptr", llvm_source)); // Opaque 'ptr' is universal for all addresses in LLVM 15+
                 first_element = false;
                 continue;
             }
             break;
         }
         // Close type block <{ }>, open values block <{ }>
-        write_assembler_source(fputs("\n}> <{\n", assembler_source)); 
+        write_llvm_source(fputs("\n}> <{\n", llvm_source)); 
         // ====================================================================
         // PASS 2: Populate the structure with constant values
         // ====================================================================
@@ -573,23 +573,23 @@ void macrocode_end(void)
             stream_nodes_read();
             delta = relay.delta;
             if (delta > 0) {
-                if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
+                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
                 sprintf(buffer_string, "\t[%zu x i8] c\"", delta);
-                write_assembler_source(fputs(buffer_string, assembler_source));
+                write_llvm_source(fputs(buffer_string, llvm_source));
                 for (size_t k = 0; k < delta; k++)
                 {
                     stream_bytes_read(&byte);
                     // Hexadecimal byte escaping according to the LLVM IR standard (\XX)
                     sprintf(buffer_string, "\\%02X", byte);
-                    write_assembler_source(fputs(buffer_string, assembler_source));
+                    write_llvm_source(fputs(buffer_string, llvm_source));
                 }
-                write_assembler_source(fputs("\"", assembler_source));
+                write_llvm_source(fputs("\"", llvm_source));
                 first_element = false;
             }
             const T_LABEL *label = relay.label;
             if (label != NULL)
             {
-                if (!first_element) write_assembler_source(fputs(",\n", assembler_source));
+                if (!first_element) write_llvm_source(fputs(",\n", llvm_source));
                 while ((label->mode & 0300) == 0300)
                     label = label->info.infop;
                 if ((label->mode & 0300) != 0200)
@@ -597,40 +597,40 @@ void macrocode_end(void)
                     // Internal label (offset): cast structure pointer to i8* and apply 'infon' offset
                     sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i64 %zu)", 
                             scanner.module_number, label->info.infon);
-                    write_assembler_source(fputs(buffer_string, assembler_source));
+                    write_llvm_source(fputs(buffer_string, llvm_source));
                 }
                 else
                 {
                     // External label/function. Identifiers are converted to lower case, matching original behavior
-                    write_assembler_source(fputs("\tptr @refalab_", assembler_source));
+                    write_llvm_source(fputs("\tptr @refalab_", llvm_source));
                     extrn = first_extrn;
                     for (size_t i = 1; i < label->info.infon; i++)
                         extrn = extrn->next;
                     for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                        write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
+                        write_llvm_source(fputc(tolower(*(extrn->identifier_extern + i)), llvm_source));
                 }
                 first_element = false;
                 continue;
             }
             break;
         }
-        write_assembler_source(fputs("\n}>,\n", assembler_source));
+        write_llvm_source(fputs("\n}>,\n", llvm_source));
         // Define global variable alignment based on pointer size (LBLL)
         sprintf(buffer_string, "align %d\n\n", LBLL);
-        write_assembler_source(fputs(buffer_string, assembler_source));
+        write_llvm_source(fputs(buffer_string, llvm_source));
         // ====================================================================
         // IMPORTS: Global declarations for external labels
         // ====================================================================
         extrn = first_extrn->next;
         while (extrn != NULL)
         {
-            write_assembler_source(fputs("@refalab_", assembler_source));
+            write_llvm_source(fputs("@refalab_", llvm_source));
             for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                write_assembler_source(fputc(tolower(*(extrn->identifier_extern + i)), assembler_source));
-            write_assembler_source(fputs(" = external global i8\n", assembler_source));
+                write_llvm_source(fputc(tolower(*(extrn->identifier_extern + i)), llvm_source));
+            write_llvm_source(fputs(" = external global i8\n", llvm_source));
             extrn = extrn->next;
         }
-        write_assembler_source(fputs("\n", assembler_source));
+        write_llvm_source(fputs("\n", llvm_source));
         // ====================================================================
         // EXPORTS: Global entry points exposed via LLVM aliases
         // ====================================================================
@@ -640,13 +640,13 @@ void macrocode_end(void)
             const T_LABEL *label = entry->label;
             while ((label->mode & 0300) == 0300)
                 label = label->info.infop;
-            write_assembler_source(fputs("@refalab_", assembler_source));
+            write_llvm_source(fputs("@refalab_", llvm_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
-                write_assembler_source(fputc(tolower(*(entry->identifier_extern + i)), assembler_source));
+                write_llvm_source(fputc(tolower(*(entry->identifier_extern + i)), llvm_source));
             // dso_local alias binds the public symbol to a specific byte offset inside the module data
             sprintf(buffer_string, " = dso_local alias i8, getelementptr (i8, ptr @_d%" PRIu32 "$, i64 %zu)\n", 
                     scanner.module_number, label->info.infon);
-            write_assembler_source(fputs(buffer_string, assembler_source));
+            write_llvm_source(fputs(buffer_string, llvm_source));
             entry = entry->next;
         }
     }

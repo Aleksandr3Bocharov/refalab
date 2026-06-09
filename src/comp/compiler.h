@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.h  ----------
@@ -22,8 +22,8 @@ typedef struct options_
     bool source_listing;
     bool full_name;
     bool names;
-    bool assembler_source_only;
-    char assembler_options[8192];
+    bool llvm_source_only;
+    char llvm_options[8192];
 } T_OPTIONS;
 
 extern T_OPTIONS options;
@@ -51,7 +51,7 @@ typedef struct sentence_element
 extern T_SENTENCE_ELEMENT current_sentence_element;
 
 extern FILE *refalab_source_listing, *terminal;
-extern FILE *assembler_source; // for assem
+extern FILE *llvm_source; // for llvm
 
 extern void processing_error(void);
 extern void scan_sentence_element(void);

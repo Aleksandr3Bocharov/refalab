@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -180,7 +180,7 @@ T_SCANNER scanner;
 T_SENTENCE_ELEMENT current_sentence_element;
 
 FILE *refalab_source_listing, *terminal;
-FILE *assembler_source; // for assem
+FILE *llvm_source; // for llvm
 
 static struct
 {
@@ -306,9 +306,9 @@ int main(int argc, char *argv[])
     options.source_listing = true;
     options.full_name = false;
     options.names = true;
-    options.assembler_source_only = false;
-    options.assembler_options[0] = '\0';
-    options.assembler_options[8191] = '\0';
+    options.llvm_source_only = false;
+    options.llvm_options[0] = '\0';
+    options.llvm_options[8191] = '\0';
     for (int j = 2; j < argc; ++j)
         if (strcmp(argv[j], "-nn") == 0)
             options.names = false;
@@ -317,9 +317,9 @@ int main(int argc, char *argv[])
         else if (strcmp(argv[j], "-fn") == 0)
             options.full_name = true;
         else if (strcmp(argv[j], "-as") == 0)
-            options.assembler_source_only = true;
+            options.llvm_source_only = true;
         else if (strncmp(argv[j], "-a,", 3) == 0)
-            strncpy(options.assembler_options, &argv[j][3], 8191);
+            strncpy(options.llvm_options, &argv[j][3], 8191);
         else
         {
             printf("Unknown option: %s\n", argv[j]);
@@ -339,8 +339,8 @@ int main(int argc, char *argv[])
     }
     strcpy(filename, argv[1]);
     strcat(filename, ".s");
-    assembler_source = fopen(filename, "w");
-    if (assembler_source == NULL)
+    llvm_source = fopen(filename, "w");
+    if (llvm_source == NULL)
     {
         printf("Can't open %s\n", filename);
         exit(8);
@@ -540,14 +540,14 @@ int main(int argc, char *argv[])
             if (options.source_listing)
                 fclose(refalab_source_listing);
             module_length = macrocode_where();
-            fclose(assembler_source);
+            fclose(llvm_source);
             if (module_length == 0 || flags.was_error)
                 unlink(filename);
-            else if (!options.assembler_source_only)
+            else if (!options.llvm_source_only)
             {
-                char string_assembler[9 + MAX_PATHFILENAME + 1 + 8191 + 1];
-                sprintf(string_assembler, "clang -c %s %s", filename, options.assembler_options);
-                int result_as = system(string_assembler);
+                char string_llvm[9 + MAX_PATHFILENAME + 1 + 8191 + 1];
+                sprintf(string_llvm, "clang -c %s %s", filename, options.llvm_options);
+                int result_as = system(string_llvm);
 #if defined POSIX
                 if (WIFEXITED(result_as) != 0)
                     result_as = WEXITSTATUS(result_as);
