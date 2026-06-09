@@ -21,6 +21,8 @@
 #include "compiler.h"
 #include "avl_identifiers.h"
 
+#define SZRLY sizeof(size_t) + sizeof(void *)
+
 #define PRINT_ERROR_604 \
     print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined")
 
@@ -43,7 +45,7 @@ typedef struct extrn
 typedef struct relay
 {
     T_LABEL *label;
-    uint16_t delta;
+    size_t delta;
 } T_RELAY;
 
 typedef struct stream_bytes_nodes
@@ -67,7 +69,7 @@ static size_t extrn_count;
 static size_t current_address; // module generation files
 static size_t module_length;
 static T_RELAY relay;
-static uint16_t delta;
+static size_t delta;
 
 static void error_no_memory(void)
 {
@@ -155,10 +157,10 @@ static void stream_nodes_write(void)
     while (true)
     {
         const size_t residual = stream_nodes.length - stream_nodes.current;
-        if (residual >= SMBL)
+        if (residual >= SZRLY)
         {
-            memcpy(stream_nodes.buffer + stream_nodes.current, &relay, SMBL);
-            stream_nodes.current += SMBL;
+            memcpy(stream_nodes.buffer + stream_nodes.current, &relay, SZRLY);
+            stream_nodes.current += SZRLY;
             return;
         }
         stream_bytes_nodes_append(&stream_nodes);
@@ -188,10 +190,10 @@ static void stream_nodes_read(void)
     while (true)
     {
         const size_t residual = stream_nodes.length - stream_nodes.current;
-        if (residual >= SMBL)
+        if (residual >= SZRLY)
         {
-            memcpy(&relay, stream_nodes.buffer + stream_nodes.current, SMBL);
-            stream_nodes.current += SMBL;
+            memcpy(&relay, stream_nodes.buffer + stream_nodes.current, SZRLY);
+            stream_nodes.current += SZRLY;
             return;
         }
         stream_nodes.current = 0;
@@ -392,7 +394,7 @@ void macrocode_end(void)
         {
             stream_nodes_read();
             delta = relay.delta;
-            for (uint16_t k = 0; k < delta; k++)
+            for (size_t k = 0; k < delta; k++)
             {
                 stream_bytes_read(&byte, 1);
                 if (k % 60 == 0)

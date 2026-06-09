@@ -24,7 +24,7 @@
 #define Wbin "wb"
 #define Rbin "rb"
 
-#define ZBLL 4 // sizeof(uint32_t)
+#define ZBLL sizeof(uint32_t)
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
