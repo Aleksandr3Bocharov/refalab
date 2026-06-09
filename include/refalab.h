@@ -41,8 +41,8 @@
 #define BRACKET(b) (b->tag & 0001) != 0
 #define NOT_BRACKET(b) (b->tag & 0001) == 0
 
-#define NMBL 1 // sizeof(uint8_t)
-#define ZBLL 4 // sizeof(uint32_t)
+#define NMBL sizeof(uint8_t)
+#define ZBLL sizeof(uint32_t)
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
