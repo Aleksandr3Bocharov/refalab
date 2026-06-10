@@ -441,7 +441,7 @@ void macrocode_end(void)
                     label = label->info.infop;
                 if ((label->mode & 0300) != 0200)
                 {
-                    sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)", scanner.module_number, 8 * LBLL, label->info.infon);
+                    sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)", scanner.module_number, LBLL * 8, label->info.infon);
                     write_llvm_source(fputs(buffer_string, llvm_source));
                 }
                 else
