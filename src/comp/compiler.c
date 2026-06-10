@@ -280,8 +280,8 @@ int main(int argc, char *argv[])
         printf("\n   -nn  No function names");
         printf("\n   -ns  No source listing");
         printf("\n   -fn  Full names");
-        printf("\n   -as  Assembler module");
-        printf("\n   -a,[options]  Assembler options");
+        printf("\n   -ll  LLVM module");
+        printf("\n   -l,[options] LLVM options");
         printf("\n\n");
         exit(1);
     };
@@ -316,14 +316,14 @@ int main(int argc, char *argv[])
             options.source_listing = false;
         else if (strcmp(argv[j], "-fn") == 0)
             options.full_name = true;
-        else if (strcmp(argv[j], "-as") == 0)
+        else if (strcmp(argv[j], "-ll") == 0)
             options.llvm_source_only = true;
-        else if (strncmp(argv[j], "-a,", 3) == 0)
+        else if (strncmp(argv[j], "-l,", 3) == 0)
             strncpy(options.llvm_options, &argv[j][3], 8191);
         else
         {
             printf("Unknown option: %s\n", argv[j]);
-            printf("Options may be: -nn, -ns, -fn, -as, -a,[options]\n");
+            printf("Options may be: -nn, -ns, -fn, -ll, -l,[options]\n");
             exit(1);
         }
     if (options.source_listing)
@@ -338,7 +338,7 @@ int main(int argc, char *argv[])
         }
     }
     strcpy(filename, argv[1]);
-    strcat(filename, ".s");
+    strcat(filename, ".ll");
     llvm_source = fopen(filename, "w");
     if (llvm_source == NULL)
     {
