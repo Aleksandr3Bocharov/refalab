@@ -12,6 +12,6 @@
 # result: running of $1_dbg.exe in debugging mode 
 # *******************************************************************
 
-bin/refalabc $1 -l,"-o $1.o -O0 -g -Wno-override-module" > $1_dbg.log
-clang -o $1_dbg $1.o lib/obj/refalab_initiator_dbg.o -Llib -lrefalab_dbg >> $1_dbg.log
+bin/refalabc $1 -l,"-o $1_dbg.o -O0 -g -Wno-override-module" > $1_dbg.log
+clang -o $1_dbg $1_dbg.o lib/obj/refalab_initiator_dbg.o -Llib -lrefalab_dbg >> $1_dbg.log
 $1_dbg

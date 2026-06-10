@@ -12,4 +12,4 @@
 # result: $1_dbg.o
 # *******************************************************************
 
-bin/refalabc $1 -l,"-o $1.o -O0 -g -Wno-override-module" > $1_dbg.log
+bin/refalabc $1 -l,"-o $1_dbg.o -O0 -g -Wno-override-module" > $1_dbg.log
