@@ -12,6 +12,6 @@ rem arg: %1 - name of refal programm (without ext ref)
 rem result: running of %1.exe debugger 
 rem *******************************************************************
 
-bin\refalabc %1 -l,"-o %1.o -Wno-override-module" > %1.log
+bin\refalabc %1 -l,"-o %1.o -O2 -Wno-override-module" > %1.log
 clang -o %1.exe %1.o lib\obj\refalab_debugger.o -Llib -lrefalab -pthread -static >> %1.log
 %1.exe

@@ -12,4 +12,4 @@ rem arg: %1 - name of refal programm (without extension ref)
 rem result: %1.o
 rem *******************************************************************
 
-bin\refalabc %1 -l,"-o %1.o -Wno-override-module" > %1.log
+bin\refalabc %1 -l,"-o %1.o -O2 -Wno-override-module" > %1.log

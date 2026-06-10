@@ -12,6 +12,6 @@
 # result: running of $1.exe 
 # *******************************************************************
 
-bin/refalabc $1 -l,"-o $1.o -Wno-override-module" > $1.log
+bin/refalabc $1 -l,"-o $1.o -O2 -Wno-override-module" > $1.log
 clang -o $1 $1.o lib/obj/refalab_initiator.o -Llib -lrefalab >> $1.log
 $1

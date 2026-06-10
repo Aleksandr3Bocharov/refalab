@@ -12,4 +12,4 @@
 # result: $1.o
 # *******************************************************************
 
-bin/refalabc $1 -l,"-o $1.o -Wno-override-module" > $1.log
+bin/refalabc $1 -l,"-o $1.o -O2 -Wno-override-module" > $1.log

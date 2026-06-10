@@ -9,9 +9,9 @@
 # refalabclg_dbg
 # compile from refal to object file + link + go
 # arg: $1 - name of refal programm (without ext ref)
-# result: running of $1.exe in debugging mode 
+# result: running of $1_dbg.exe in debugging mode 
 # *******************************************************************
 
-bin/refalabc $1 -l,"-o $1.o -Wno-override-module" > $1.log
-clang -o $1 $1.o lib/obj/refalab_initiator_dbg.o -Llib -lrefalab_dbg >> $1.log
-$1
+bin/refalabc $1 -l,"-o $1.o -O0 -g -Wno-override-module" > $1_dbg.log
+clang -o $1_dbg $1.o lib/obj/refalab_initiator_dbg.o -Llib -lrefalab_dbg >> $1_dbg.log
+$1_dbg
