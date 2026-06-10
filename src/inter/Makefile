@@ -50,8 +50,9 @@ LIB_CORE_OBJS_DBG = $(LIB_CORE_SRCS:.c=_dbg.o)
 XPLATFORM_SRCS = xplatform_win.ref xplatform_posix.ref
 REF_MODULES  := $(filter-out $(XPLATFORM_SRCS), $(wildcard *.ref))
 LIB_REF_OBJS := $(REF_MODULES:.ref=.o) xplatform.o
+LIB_REF_OBJS_DBG := $(REF_MODULES:.ref=_dbg.o) xplatform_dbg.o
 ALL_LIB_OBJS  = $(LIB_CORE_OBJS) $(LIB_REF_OBJS)
-ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS)
+ALL_LIB_OBJS_DBG  = $(LIB_CORE_OBJS_DBG) $(LIB_REF_OBJS_DBG)
 HEADERS = $(wildcard *.h)
 
 REFLIB_RELEASE = $(REFALAB_LIB)$(SLASH)librefalab.a
@@ -121,11 +122,19 @@ $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 
 # Pattern rule for all standard Refal modules
 %.o: %.ref
-	$(REFALABC) $* -l,"-o $@ -Wno-override-module" > $*.log
+	$(REFALABC) $* -l,"-O2 -Wno-override-module" > $*.log
 
 # Special rule for platform-dependent xplatform.o
 xplatform.o: $(XPLATFORM_SRC).ref
-	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ -Wno-override-module" > xplatform.log
+	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ -O2 -Wno-override-module" > xplatform.log
+
+# Pattern rule for all standard Refal modules
+%_dbg.o: %.ref
+	$(REFALABC) $* -l,"-o $@ -O0 -g -Wno-override-module" > $*_dbg.log
+
+# Special rule for platform-dependent xplatform.o
+xplatform_dbg.o: $(XPLATFORM_SRC).ref
+	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ -O0 -g -Wno-override-module" > xplatform_dbg.log
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
