@@ -3,7 +3,7 @@
 // 2026-06-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------  file interpeter.h  ----------
+//----------  file interpreter.h  ----------
 //      Refal-interpretator
 //-----------------------------------------
 
