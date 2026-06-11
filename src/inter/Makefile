@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-09
+# 2026-06-11
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
@@ -35,6 +35,8 @@ CC = clang
 CFLAGS_COMMON = -pipe -Wall -O2 $(PLATFORM_CFLAGS)
 CFLAGS_DEBUG  = -pipe -Wall -O0 -g -Dmdebug $(PLATFORM_CFLAGS)
 REFALABC = ..$(SLASH)..$(SLASH)bin$(SLASH)refalabc
+LLFLAGS_COMMON = -O2 -Wno-override-module
+LLFLAGS_DEBUG = -O0 -g -Wno-override-module
 AR = ar rcs
 REFALAB_LIB = ..$(SLASH)..$(SLASH)lib
 OBJ_DIR    = $(REFALAB_LIB)$(SLASH)obj
@@ -72,6 +74,7 @@ all: release debug
 
 # Full release build (Library + Standalone release object files in lib/obj)
 release: CFLAGS := $(CFLAGS_COMMON)
+release: LLFLAGS := $(LLFLAGS_COMMON)
 release: $(ALL_LIB_OBJS) $(RELEASE_STANDALONE_OBJS)
 	$(AR) $(REFLIB_RELEASE) $(ALL_LIB_OBJS)
 	@echo ==================================================
@@ -82,6 +85,7 @@ release: $(ALL_LIB_OBJS) $(RELEASE_STANDALONE_OBJS)
 
 # Full debug build (Debug library + Standalone debug object files in lib/obj)
 debug: CFLAGS := $(CFLAGS_DEBUG)
+debug: LLFLAGS := $(LLFLAGS_DEBUG)
 debug: $(ALL_LIB_OBJS_DBG) $(DEBUG_STANDALONE_OBJS)
 	$(AR) $(REFLIB_DEBUG) $(ALL_LIB_OBJS_DBG)
 	@echo ==================================================
@@ -122,19 +126,19 @@ $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 
 # Pattern rule for all standard Refal modules
 %.o: %.ref
-	$(REFALABC) $* -l,"-o $@ -O2 -Wno-override-module" > $*.log
+	$(REFALABC) $* -l,"-o $@ $(LLFLAGS)" > $*.log
 
 # Special rule for platform-dependent xplatform.o
 xplatform.o: $(XPLATFORM_SRC).ref
-	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ -O2 -Wno-override-module" > xplatform.log
+	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ $(LLFLAGS)" > xplatform.log
 
 # Pattern rule for all standard Refal modules
 %_dbg.o: %.ref
-	$(REFALABC) $* -l,"-o $@ -O0 -g -Wno-override-module" > $*_dbg.log
+	$(REFALABC) $* -l,"-o $@ $(LLFLAGS)" > $*_dbg.log
 
 # Special rule for platform-dependent xplatform.o
 xplatform_dbg.o: $(XPLATFORM_SRC).ref
-	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ -O0 -g -Wno-override-module" > xplatform_dbg.log
+	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ $(LLFLAGS)" > xplatform_dbg.log
 
 # ------------------------------------------------------------------------------
 # 5. CLEANUP OPERATIONS
