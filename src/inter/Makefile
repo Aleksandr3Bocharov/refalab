@@ -122,7 +122,7 @@ $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 
 # Pattern rule for all standard Refal modules
 %.o: %.ref
-	$(REFALABC) $* -l,"-O2 -Wno-override-module" > $*.log
+	$(REFALABC) $* -l,"-o $@ -O2 -Wno-override-module" > $*.log
 
 # Special rule for platform-dependent xplatform.o
 xplatform.o: $(XPLATFORM_SRC).ref
