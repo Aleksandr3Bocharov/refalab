@@ -2,7 +2,7 @@
 
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-05
+# 2026-06-11
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
@@ -31,6 +31,8 @@ esac
 export REFALABBIN=$CURRENT_DIR/bin
 export REFALABLIB=$CURRENT_DIR/lib
 export REFALABINCLUDE=$CURRENT_DIR/include
+export REFALABLLFLAGS="-O2 -Wno-override-module"
+export REFALABLLFLAGS_DBG="-O0 -g -Wno-override-module"
 export REFALABCFLAGS="-pipe -Wall -O2"
 export REFALABCFLAGS_DBG="-pipe -Wall -O0 -g -Dmdebug"
 export REFALABLFLAGS="$CURRENT_DIR/lib/obj/refalab_initiator.o -L$CURRENT_DIR/lib -lrefalab"

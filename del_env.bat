@@ -2,7 +2,7 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-05-31
+rem 2026-06-11
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
@@ -16,6 +16,8 @@ rem 1. Permanently delete user environment variables from the Windows Registry
 reg delete "HKCU\Environment" /f /v REFALABBIN >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABLIB >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABINCLUDE >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLLFLAGS >nul 2>&1
+reg delete "HKCU\Environment" /f /v REFALABLLFLAGS_DBG >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABCFLAGS >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABCFLAGS_DBG >nul 2>&1
 reg delete "HKCU\Environment" /f /v REFALABLFLAGS >nul 2>&1
@@ -44,6 +46,8 @@ rem 3. Clear variables in the current session (for immediate effect)
 set REFALABBIN=
 set REFALABLIB=
 set REFALABINCLUDE=
+set REFALABLLFLAGS=
+set REFALABLLFLAGS_DBG=
 set REFALABCFLAGS=
 set REFALABCFLAGS_DBG=
 set REFALABLFLAGS=

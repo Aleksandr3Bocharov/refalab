@@ -2,7 +2,7 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-06-05
+rem 2026-06-11
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
@@ -28,6 +28,8 @@ rem If there are no spaces, set environment variables
 setx REFALABBIN %~dp0bin
 setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include
+setx REFALABLLFLAGS "-O2 -Wno-override-module"
+setx REFALABLLFLAGS_DBG "-O0 -g -Wno-override-module"
 setx REFALABCFLAGS "-pipe -Wall -O2"
 setx REFALABCFLAGS_DBG "-pipe -Wall -O0 -g -Dmdebug"
 setx REFALABLFLAGS "%~dp0lib\obj\refalab_initiator.o -L%~dp0lib -lrefalab -pthread"
