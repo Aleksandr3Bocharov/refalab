@@ -42,8 +42,6 @@
 #define CLANG_THREAD_MODEL "unknown"
 #endif
 
-#define CUT 88
-
 #define EH_ROMA                                                          \
     if (current_symbol_number != CUT - 1)                                \
     {                                                                    \
@@ -197,14 +195,21 @@ static struct
 
 static FILE *refalab_source;
 static int8_t current_symbol_number; // current symbol number
-static char card[CUT + 9];           // card buffer (input)
-static const char *card_cut = card;
+static size_t current_card_capacity = 0; // current card capacity
+//static char card[CUT + 9];           // card buffer (input)
+static char *card = NULL;           // card buffer (input)
+//static const char *card_cut = card;
+static const char *card_cut = NULL;
 static uint32_t card_number; // card number
 static uint32_t errors_count;
-static char string_symbols[CUT + 6];
-static char *symbols = string_symbols + 6;
-static char class_symbols_cut[CUT + 6];
-static char *class_symbols = class_symbols_cut + 6;
+//static char string_symbols[CUT + 6];
+static char *string_symbols = NULL;
+//static char *symbols = string_symbols + 6;
+static char *symbols = NULL;
+//static char class_symbols_cut[CUT + 6];
+static char class_symbols_cut = NULL;
+//static char *class_symbols = class_symbols_cut + 6;
+static char *class_symbols = NULL;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t statement_label_length;
@@ -214,6 +219,7 @@ static int8_t fix_current_symbol_number;            // start sentence position
 static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
 static size_t module_length;                        // module length
 
+static void ensure_capacity(size_t required_capacity);
 static void label_key(bool previous);
 static void blanks_out(void);
 static void previous_label_to_statement_label(void);
@@ -580,6 +586,25 @@ static void previous_label_to_statement_label(void)
         set_empty(previous_label, previous_label_length);
     previous_label[0] = '\0';
     return;
+}
+
+static void ensure_capacity(size_t required_capacity) {
+    if (card_capacity >= required_capacity) return;
+
+    if (card_capacity == 0) {
+        card_capacity = 256;
+    }
+    while (card_capacity < required_capacity) {
+        card_capacity *= 2;
+    }
+
+    card = (char *)realloc(card, card_capacity + 9);
+    string_symbols = (char *)realloc(string_symbols, card_capacity + 6);
+    class_symbols_cut = (char *)realloc(class_symbols_cut, card_capacity + 6);
+
+    // Актуализируем зависимые указатели после realloc
+    card_cut = card; 
+    symbols = string_symbols + 6; // Перепривязываем сдвиг к новому адресу
 }
 
 static void read_line(char *line)
