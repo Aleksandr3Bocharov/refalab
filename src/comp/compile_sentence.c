@@ -146,7 +146,7 @@ typedef enum states
 static struct
 { // left part buffer elements
     uint16_t left_number_element, right_number_element;
-    uint8_t type;
+    T_SENTENCE_ELEMENT_TYPES type;
     uint8_t variable_index;
     T_LINKTI code;
     uint8_t next_variable;
@@ -232,39 +232,39 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             left_part_elements[current_left_part_element].pair_bracket = 0;
             left_part_elements[current_left_part_element].eoe_mark = false;
             left_part_elements[current_left_part_element].jump_stack_pointer = 0;
-            switch (current_sentence_element.type)
+            switch (left_part_elements[current_left_part_element].type)
             {
-            case 0:
+            case NONE:
                 state = LPE0;
                 break;
-            case 1:
+            case SC:
                 state = LPE1;
                 break;
-            case 2:
+            case LB:
                 state = LPE2;
                 break;
-            case 3:
+            case RB:
                 state = LPE3;
                 break;
-            case 4:
+            case S:
                 state = LPE4;
                 break;
-            case 5:
+            case W:
                 state = LPE5;
                 break;
-            case 6:
+            case E:
                 state = LPE6;
                 break;
-            case 7:
+            case K:
                 state = LPE7;
                 break;
-            case 8:
+            case DOT:
                 state = LPE8;
                 break;
-            case 9:
+            case EQ:
                 state = LPE9;
                 break;
-            case 10:
+            case END:
                 state = LPE10;
                 break;
             default:
@@ -433,22 +433,22 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             }
             switch (left_part_elements[current_left_part_element].type)
             {
-            case 1:
+            case SC:
                 state = LSW1;
                 break;
-            case 2:
+            case LB:
                 state = LSW2;
                 break;
-            case 3:
+            case RB:
                 state = LSW3;
                 break;
-            case 4:
+            case S:
                 state = LSW4;
                 break;
-            case 5:
+            case W:
                 state = LSW5;
                 break;
-            case 6:
+            case E:
                 state = LSW6;
             };
             break;
@@ -468,7 +468,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case LTXT1:
             current_left_part_element++;
-            if (current_left_part_element == current_right_board || left_part_elements[current_left_part_element].type != t_sc || left_part_elements[current_left_part_element].code.tag != TAGO)
+            if (current_left_part_element == current_right_board || left_part_elements[current_left_part_element].type != SC || left_part_elements[current_left_part_element].code.tag != TAGO)
             {
                 state = LTXT2;
                 break;
@@ -518,7 +518,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_left_board + 1;
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
             {
                 state = GEN_LB;
                 break;
@@ -692,22 +692,22 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             }
             switch (left_part_elements[current_left_part_element].type)
             {
-            case 1:
+            case SC:
                 state = RSW1;
                 break;
-            case 2:
+            case LB:
                 state = RSW2;
                 break;
-            case 3:
+            case RB:
                 state = RSW3;
                 break;
-            case 4:
+            case S:
                 state = RSW4;
                 break;
-            case 5:
+            case W:
                 state = RSW5;
                 break;
-            case 6:
+            case E:
                 state = RSW6;
             };
             break;
@@ -727,7 +727,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             break;
         case RTXT1:
             current_left_part_element--;
-            if (current_left_part_element == current_left_board || left_part_elements[current_left_part_element].type != t_sc || left_part_elements[current_left_part_element].code.tag != TAGO)
+            if (current_left_part_element == current_left_board || left_part_elements[current_left_part_element].type != SC || left_part_elements[current_left_part_element].code.tag != TAGO)
             {
                 state = RTXT2;
                 break;
@@ -780,7 +780,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_right_board - 1;
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
             {
                 state = GEN_RB;
                 break;
@@ -1024,7 +1024,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = NIL;
                 break;
             }
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
             {
                 state = RIGID;
                 break;
@@ -1047,7 +1047,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_right_board - 1;
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
             {
                 state = RIGID;
                 break;
@@ -1142,7 +1142,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                     break;
                 }
             };
-            if (left_part_elements[current_left_part_element].type != t_e || left_part_elements[current_left_part_element].v_variable)
+            if (left_part_elements[current_left_part_element].type != E || left_part_elements[current_left_part_element].v_variable)
             {
                 state = OE1;
                 break;
@@ -1207,22 +1207,22 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             current_left_part_element = current_left_board + 1;
             switch (left_part_elements[current_left_part_element].type)
             {
-            case 1:
+            case SC:
                 state = LESW1;
                 break;
-            case 2:
+            case LB:
                 state = LESW2;
                 break;
-            case 3:
+            case RB:
                 state = LESW3;
                 break;
-            case 4:
+            case S:
                 state = LESW4;
                 break;
-            case 5:
+            case W:
                 state = LESW5;
                 break;
-            case 6:
+            case E:
                 state = LESW6;
             };
             break;
@@ -1296,22 +1296,22 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             current_left_part_element = current_right_board - 1;
             switch (left_part_elements[current_left_part_element].type)
             {
-            case 1:
+            case SC:
                 state = RESW1;
                 break;
-            case 2:
+            case LB:
                 state = RESW2;
                 break;
-            case 3:
+            case RB:
                 state = RESW3;
                 break;
-            case 4:
+            case S:
                 state = RESW4;
                 break;
-            case 5:
+            case W:
                 state = RESW5;
                 break;
-            case 6:
+            case E:
                 state = RESW6;
             };
             break;
@@ -1385,37 +1385,37 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case SW_RPE:
             switch (current_sentence_element.type)
             {
-            case 0:
+            case NONE:
                 state = RPE0;
                 break;
-            case 1:
+            case SC:
                 state = RPE1;
                 break;
-            case 2:
+            case LB:
                 state = RPE2;
                 break;
-            case 3:
+            case RB:
                 state = RPE3;
                 break;
-            case 4:
+            case S:
                 state = RPE4;
                 break;
-            case 5:
+            case W:
                 state = RPE5;
                 break;
-            case 6:
+            case E:
                 state = RPE6;
                 break;
-            case 7:
+            case K:
                 state = RPE7;
                 break;
-            case 8:
+            case DOT:
                 state = RPE8;
                 break;
-            case 9:
+            case EQ:
                 state = RPE9;
                 break;
-            case 10:
+            case END:
                 state = RPE10;
                 break;
             default:
@@ -1444,7 +1444,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             symbols_count++;
             symbols_buffer[symbols_count] = current_sentence_element.code.info.infoc;
             scan_sentence_element();
-            if (symbols_count < 80 && current_sentence_element.type == t_sc && current_sentence_element.code.tag == TAGO)
+            if (symbols_count < 80 && current_sentence_element.type == SC && current_sentence_element.code.tag == TAGO)
                 break;
             if (symbols_count == 1)
                 generate_operator_n(n_nso, (uint8_t)symbols_buffer[1]);
@@ -1459,14 +1459,14 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case RPE2:
             // left bracket
             scan_sentence_element();
-            if (current_sentence_element.type == t_rb)
+            if (current_sentence_element.type == RB)
             {
                 macrocode_byte(n_blr);
                 state = GET_RPE;
                 break;
             }
             brackets_count[brackets_k_level]++;
-            if (current_sentence_element.type == t_sc && current_sentence_element.code.tag == TAGF)
+            if (current_sentence_element.type == SC && current_sentence_element.code.tag == TAGF)
             {
                 function_pointer.info.codef = current_sentence_element.code.info.codef;
                 generate_operator_l(n_blf, function_pointer.info.codef);
@@ -1564,7 +1564,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             }
             brackets_count[++brackets_k_level] = 0;
             scan_sentence_element();
-            if (current_sentence_element.type == t_sc && current_sentence_element.code.tag == TAGF)
+            if (current_sentence_element.type == SC && current_sentence_element.code.tag == TAGF)
             {
                 function_pointer.info.codef = current_sentence_element.code.info.codef;
                 function_pointer.tag = TAGO;
@@ -1671,9 +1671,9 @@ static bool lsg_p(void)
         current_left_part_element++;
         if (current_left_part_element == current_right_board)
             break;
-        if (left_part_elements[current_left_part_element].type != t_lb)
+        if (left_part_elements[current_left_part_element].type != LB)
         {
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
                 continue;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)
@@ -1715,9 +1715,9 @@ static bool rsg_p(void)
         current_left_part_element--;
         if (current_left_part_element == current_left_board)
             break;
-        if (left_part_elements[current_left_part_element].type != t_rb)
+        if (left_part_elements[current_left_part_element].type != RB)
         {
-            if (left_part_elements[current_left_part_element].type != t_e)
+            if (left_part_elements[current_left_part_element].type != E)
                 continue;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)
@@ -1761,7 +1761,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_part_elements[on].type <= 3)
+        if (left_part_elements[on].type <= RB)
             continue;
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)
@@ -1775,7 +1775,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_part_elements[on].type <= 3)
+        if (left_part_elements[on].type <= RB)
             continue;
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)
@@ -1791,7 +1791,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         on++;
         if (on == on2)
             break;
-        if (left_part_elements[on].type <= 3)
+        if (left_part_elements[on].type <= RB)
             continue;
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)

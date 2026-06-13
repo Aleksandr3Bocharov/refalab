@@ -842,7 +842,7 @@ void scan_sentence_element(void)
             }
             break;
         case SCNERR:
-            current_sentence_element.type = 0;
+            current_sentence_element.type = NONE;
             scanner_state = SCNRET;
             break;
         case SCNSC:
@@ -854,23 +854,23 @@ void scan_sentence_element(void)
             scanner_state = SCNERR;
             break;
         case EGO:
-            current_sentence_element.type = 1;
+            current_sentence_element.type = SC;
             scanner_state = SCNRET;
             break;
         case SCNL:
-            current_sentence_element.type = 2;
+            current_sentence_element.type = LB;
             scanner_state = SCNGCR;
             break;
         case SCNR:
-            current_sentence_element.type = 3;
+            current_sentence_element.type = RB;
             scanner_state = SCNGCR;
             break;
         case SCNS:
-            current_sentence_element.type = 4;
+            current_sentence_element.type = S;
             scanner_state = SCNV;
             break;
         case SCNW:
-            current_sentence_element.type = 5;
+            current_sentence_element.type = W;
             scanner_state = SCNV;
             break;
         case SCNVV:
@@ -878,7 +878,7 @@ void scan_sentence_element(void)
             scanner_state = SCNE;
             break;
         case SCNE:
-            current_sentence_element.type = 6;
+            current_sentence_element.type = E;
             scanner_state = SCNV;
             break;
         case SCNV:
@@ -941,7 +941,7 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNKK:
-            current_sentence_element.type = 7;
+            current_sentence_element.type = K;
             if (symbols[current_symbol_number + 1] != ' ')
             {
                 symbols[current_symbol_number - 1] = '&';
@@ -960,16 +960,16 @@ void scan_sentence_element(void)
             scanner_state = SCNGCR;
             break;
         case SCNP:
-            current_sentence_element.type = 8;
+            current_sentence_element.type = DOT;
             scanner_state = SCNGCR;
             break;
         case SCNEOL:
-            current_sentence_element.type = 9;
+            current_sentence_element.type = EQ;
             flags.left_part_sentence = false;
             scanner_state = SCNGCR;
             break;
         case SCNEOS:
-            current_sentence_element.type = 10;
+            current_sentence_element.type = END;
             scanner_state = SCNRET;
             break;
         case SCNA:
@@ -1071,7 +1071,7 @@ void scan_sentence_element(void)
             break;
         case PROD:
             current_sentence_element.code.info.infoc = symbols[current_symbol_number];
-            current_sentence_element.type = 1;
+            current_sentence_element.type = SC;
             scanner_state = SCNGCR;
             break;
         case FSCN:
@@ -1099,7 +1099,7 @@ void scan_sentence_element(void)
             scanner_state = SABBR;
             break;
         case SABBR:
-            current_sentence_element.type = 4;
+            current_sentence_element.type = S;
             if (flags.left_part_sentence)
             {
                 if (*(specifier_abbreviated + specifier_code) == NULL)

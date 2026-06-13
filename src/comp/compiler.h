@@ -40,7 +40,7 @@ extern T_SCANNER scanner;
 
 typedef struct sentence_element
 {                                           // current sentence element
-    uint8_t type;                           //    element type
+    T_SENTENCE_ELEMENT_TYPES type;          //    element type
     char identifier[MAX_IDENTIFIER_LENGTH]; //    variable idenfifier
     uint8_t identifier_length;              // variable identifier length
     bool v_variable;

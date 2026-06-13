@@ -94,23 +94,19 @@
 #define n_swap 0116
 #define n_blf 0117
 
-#define t_sc 1
-#define t_lb 2
-#define t_rb 3
-#define t_s 4
-#define t_w 5
-#define t_e 6
-#define t_k 7
-#define t_p 8
-
 typedef enum sentence_element_types
 {
-    START_OF_MODULE,
-    NEXT_STM,
-    KEYS,
-    END_IS_MISSING,
-    END_STATEMENT,
-    END_OF_SYSIN
+    NONE,
+    SC,
+    LB,
+    RB,
+    S,
+    W,
+    E,
+    K,
+    DOT,
+    EQ,
+    END
 } T_SENTENCE_ELEMENT_TYPES;
 
 extern void compile_sentence(bool direction, char *label, uint8_t label_length);
