@@ -143,6 +143,14 @@ typedef enum states
     ERROR
 } T_STATES;
 
+typedef enum variable_types
+{
+    NEW,
+    S,
+    W,
+    E
+} T_VARIABLE_TYPES;
+
 static struct
 { // left part buffer elements
     uint16_t left_number_element, right_number_element;
@@ -160,7 +168,7 @@ static struct
 static struct
 { // variable table elements
     uint8_t last_left_part_element;
-    uint8_t type;
+    T_VARIABLE_TYPES type;
     uint16_t main_right_number_element;
     uint32_t rem;
     char identifier[MAX_IDENTIFIER_LENGTH];
@@ -246,13 +254,13 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = LPE3;
                 break;
-            case S:
+            case S_V:
                 state = LPE4;
                 break;
-            case W:
+            case W_V:
                 state = LPE5;
                 break;
-            case E:
+            case E_V:
                 state = LPE6;
                 break;
             case K:
@@ -310,10 +318,10 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
-            case 0:
-                variables[variable_index].type = 1; // yet isn't faced
+            case NEW:
+                variables[variable_index].type = S; // yet isn't faced
                 break;
-            case 1:
+            case S:
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
@@ -329,10 +337,10 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
-            case 0:
-                variables[variable_index].type = 2; // yet isn't faced
+            case NEW:
+                variables[variable_index].type = W; // yet isn't faced
                 break;
-            case 2:
+            case W:
                 ++variables[variable_index].rem; // next position
                 break;
             default: // invalid type pointer
@@ -346,9 +354,9 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             // e- or v-varyable
             search_variable();
             left_part_elements[current_left_part_element].variable_index = variable_index;
-            if (variables[variable_index].type == 0) // yet is't faced
-                variables[variable_index].type = 3;
-            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == current_sentence_element.v_variable)
+            if (variables[variable_index].type == NEW) // yet is't faced
+                variables[variable_index].type = E;
+            else if (variables[variable_index].type == E && variables[variable_index].v_variable == current_sentence_element.v_variable)
                 ++variables[variable_index].rem;
             else // invalid type pointer
             {
@@ -442,14 +450,17 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = LSW3;
                 break;
-            case S:
+            case S_V:
                 state = LSW4;
                 break;
-            case W:
+            case W_V:
                 state = LSW5;
                 break;
-            case E:
+            case E_V:
                 state = LSW6;
+                break;
+            default:
+                state = OSH300;
             };
             break;
         case LSW1:
@@ -518,7 +529,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_left_board + 1;
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
             {
                 state = GEN_LB;
                 break;
@@ -701,14 +712,17 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = RSW3;
                 break;
-            case S:
+            case S_V:
                 state = RSW4;
                 break;
-            case W:
+            case W_V:
                 state = RSW5;
                 break;
-            case E:
+            case E_V:
                 state = RSW6;
+             break;
+            default:
+                state = OSH300;
             };
             break;
         case RSW1:
@@ -780,7 +794,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_right_board - 1;
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
             {
                 state = GEN_RB;
                 break;
@@ -1024,7 +1038,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 state = NIL;
                 break;
             }
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
             {
                 state = RIGID;
                 break;
@@ -1047,7 +1061,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                 break;
             }
             current_left_part_element = current_right_board - 1;
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
             {
                 state = RIGID;
                 break;
@@ -1142,7 +1156,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
                     break;
                 }
             };
-            if (left_part_elements[current_left_part_element].type != E || left_part_elements[current_left_part_element].v_variable)
+            if (left_part_elements[current_left_part_element].type != E_V || left_part_elements[current_left_part_element].v_variable)
             {
                 state = OE1;
                 break;
@@ -1216,14 +1230,17 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = LESW3;
                 break;
-            case S:
+            case S_V:
                 state = LESW4;
                 break;
-            case W:
+            case W_V:
                 state = LESW5;
                 break;
-            case E:
+            case E_V:
                 state = LESW6;
+             break;
+            default:
+                state = OSH300;
             };
             break;
         case LESW1:
@@ -1305,14 +1322,17 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = RESW3;
                 break;
-            case S:
+            case S_V:
                 state = RESW4;
                 break;
-            case W:
+            case W_V:
                 state = RESW5;
                 break;
-            case E:
+            case E_V:
                 state = RESW6;
+             break;
+            default:
+                state = OSH300;
             };
             break;
         case RESW1:
@@ -1397,13 +1417,13 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             case RB:
                 state = RPE3;
                 break;
-            case S:
+            case S_V:
                 state = RPE4;
                 break;
-            case W:
+            case W_V:
                 state = RPE5;
                 break;
-            case E:
+            case E_V:
                 state = RPE6;
                 break;
             case K:
@@ -1490,10 +1510,10 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             search_variable();
             switch (variables[variable_index].type)
             {
-            case 0:
+            case NEW:
                 PRINT_ERROR_406;
                 break;
-            case 1:
+            case S:
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
                     generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
@@ -1513,10 +1533,10 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             search_variable();
             switch (variables[variable_index].type)
             {
-            case 0:
+            case NEW:
                 PRINT_ERROR_406;
                 break;
-            case 2:
+            case W:
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
                     generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
@@ -1534,9 +1554,9 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case RPE6:
             // e- or v-varyable
             search_variable();
-            if (variables[variable_index].type == 0)
+            if (variables[variable_index].type == NEW)
                 PRINT_ERROR_406;
-            else if (variables[variable_index].type == 3 && variables[variable_index].v_variable == current_sentence_element.v_variable)
+            else if (variables[variable_index].type == E && variables[variable_index].v_variable == current_sentence_element.v_variable)
             {
                 current_left_part_element = variables[variable_index].last_left_part_element;
                 if (current_left_part_element == 0)
@@ -1620,7 +1640,7 @@ static void search_variable(void)
     variable_index = ++variables_count;
     strncpy(variables[variable_index].identifier, current_sentence_element.identifier, current_sentence_element.identifier_length);
     variables[variable_index].identifier_length = current_sentence_element.identifier_length;
-    variables[variable_index].type = 0;
+    variables[variable_index].type = NEW;
     variables[variable_index].rem = 1;
     variables[variable_index].last_left_part_element = 0;
     variables[variable_index].v_variable = current_sentence_element.v_variable;
@@ -1673,7 +1693,7 @@ static bool lsg_p(void)
             break;
         if (left_part_elements[current_left_part_element].type != LB)
         {
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
                 continue;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)
@@ -1717,7 +1737,7 @@ static bool rsg_p(void)
             break;
         if (left_part_elements[current_left_part_element].type != RB)
         {
-            if (left_part_elements[current_left_part_element].type != E)
+            if (left_part_elements[current_left_part_element].type != E_V)
                 continue;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)

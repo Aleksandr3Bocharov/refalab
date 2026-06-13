@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "refalab.h"
+#include "compile_sentence.h"
 #include "generate_operators.h"
 
 typedef struct options_

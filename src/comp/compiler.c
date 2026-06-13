@@ -866,11 +866,11 @@ void scan_sentence_element(void)
             scanner_state = SCNGCR;
             break;
         case SCNS:
-            current_sentence_element.type = S;
+            current_sentence_element.type = S_V;
             scanner_state = SCNV;
             break;
         case SCNW:
-            current_sentence_element.type = W;
+            current_sentence_element.type = W_V;
             scanner_state = SCNV;
             break;
         case SCNVV:
@@ -878,7 +878,7 @@ void scan_sentence_element(void)
             scanner_state = SCNE;
             break;
         case SCNE:
-            current_sentence_element.type = E;
+            current_sentence_element.type = E_V;
             scanner_state = SCNV;
             break;
         case SCNV:
@@ -1099,7 +1099,7 @@ void scan_sentence_element(void)
             scanner_state = SABBR;
             break;
         case SABBR:
-            current_sentence_element.type = S;
+            current_sentence_element.type = S_V;
             if (flags.left_part_sentence)
             {
                 if (*(specifier_abbreviated + specifier_code) == NULL)
