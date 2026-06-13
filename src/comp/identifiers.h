@@ -11,6 +11,7 @@
 #define IDENTIFIERS_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include "avl_identifiers.h"
 
 typedef struct info_label

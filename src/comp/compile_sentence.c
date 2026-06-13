@@ -26,15 +26,6 @@
 #define PRINT_ERROR_406 \
     print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
 
-#define t_sc 1
-#define t_lb 2
-#define t_rb 3
-#define t_s 4
-#define t_w 5
-#define t_e 6
-#define t_k 7
-#define t_p 8
-
 typedef enum states
 {
     GET_LPE,
