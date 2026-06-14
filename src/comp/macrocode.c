@@ -451,7 +451,7 @@ void macrocode_end(void)
                     for (size_t i = 1; i < label->info.infon; i++)
                         extrn = extrn->next;
                     for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                        write_llvm_source(fputc(tolower(*(extrn->identifier_extern + i)), llvm_source));
+                        write_llvm_source(fputc(tolower((unsigned char)*(extrn->identifier_extern + i)), llvm_source));
                 }
                 first_element = false;
                 continue;
@@ -470,7 +470,7 @@ void macrocode_end(void)
         {
             write_llvm_source(fputs("@refalab_", llvm_source));
             for (uint8_t i = 0; i < extrn->identifier_extern_length; i++)
-                write_llvm_source(fputc(tolower(*(extrn->identifier_extern + i)), llvm_source));
+                write_llvm_source(fputc(tolower((unsigned char)*(extrn->identifier_extern + i)), llvm_source));
             write_llvm_source(fputs(" = external global i8\n", llvm_source));
             extrn = extrn->next;
         }
@@ -486,7 +486,7 @@ void macrocode_end(void)
                 label = label->info.infop;
             write_llvm_source(fputs("@refalab_", llvm_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
-                write_llvm_source(fputc(tolower(*(entry->identifier_extern + i)), llvm_source));
+                write_llvm_source(fputc(tolower((unsigned char)*(entry->identifier_extern + i)), llvm_source));
             // dso_local alias binds the public symbol to a specific byte offset inside the module data
             sprintf(buffer_string, " = dso_local alias i8, getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)\n", scanner.module_number, LBLL * 8, label->info.infon);
             write_llvm_source(fputs(buffer_string, llvm_source));
