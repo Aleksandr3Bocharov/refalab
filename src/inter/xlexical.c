@@ -361,7 +361,7 @@ static void lower_(void)
     while (current_argument != refal.next_argument)
     {
         if (current_argument->tag == TAGO)
-            current_argument->info.infoc = (char)tolower(current_argument->info.infoc);
+            current_argument->info.infoc = (char)tolower((unsigned char)current_argument->info.infoc);
         current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
