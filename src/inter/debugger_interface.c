@@ -899,7 +899,8 @@ static char *card(void)
     if (buffer == NULL)
     {
         buffer_size = 128;
-        if ((buffer = malloc(buffer_size)) == NULL)
+        buffer = malloc(buffer_size);
+        if (buffer == NULL)
             return NULL;
     }
     buffer_length = 0;
