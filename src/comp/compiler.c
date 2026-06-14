@@ -1718,7 +1718,7 @@ static void blanks_out(void)
     while (refalab_source_cursor < refalab_source_size)
     {
         char symbol = refalab_source_buffer[refalab_source_cursor];
-        if (symbol == ' ' || symbol == '\t' || symbol == '\r' || symbol == '\n')
+        if (isspace((unsigned char)symbol))
             refalab_source_cursor++;
         else if (symbol == '*') !!!
             while (refalab_source_cursor < refalab_source_size && refalab_source_buffer[refalab_source_cursor] != '\n')
