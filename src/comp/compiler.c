@@ -1662,13 +1662,13 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    identifier[0] = (char)toupper(symbols[current_symbol_number]);
+    identifier[0] = (char)toupper((unsigned char)symbols[current_symbol_number]);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
         if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper((unsigned char)symbols[current_symbol_number]);
     }
     uint32_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
@@ -1690,13 +1690,13 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
     if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
         return false;
-    identifier[0] = (char)toupper(symbols[current_symbol_number]);
+    identifier[0] = (char)toupper((unsigned char)symbols[current_symbol_number]);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
         if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
             return true;
-        identifier[*identifier_length] = (char)toupper(symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper((unsigned char)symbols[current_symbol_number]);
     }
     uint32_t i = 0;
     while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
