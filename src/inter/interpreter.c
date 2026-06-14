@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -254,8 +255,6 @@ static uint8_t i, n, m;
 static void (*function_c)(void);
 
 static bool specifier_interpretator(const T_LINKCB *linkcb);
-static bool letter(char symbol);
-static bool digit(char symbol);
 
 void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
 {
@@ -1944,7 +1943,7 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
                 specifier_state = SPCNXT;
                 break;
             }
-            if (digit(linkcb->info.infoc))
+            if (isdigit((unsigned char)linkcb->info.infoc) != 0)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1957,7 +1956,7 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
                 specifier_state = SPCNXT;
                 break;
             }
-            if (letter(linkcb->info.infoc))
+            if (isalpha((unsigned char)linkcb->info.infoc) != 0)
             {
                 specifier_state = SPCRET;
                 break;
@@ -1965,20 +1964,5 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
             specifier_state = SPCNXT;
         }
 } //             end      specifier_interpretator
-
-static bool letter(char symbol)
-{
-    if ((symbol >= 'A' && symbol <= 'Z') || // A..Z
-        (symbol >= 'a' && symbol <= 'z'))   // a..z
-        return true;
-    return false;
-}
-
-static bool digit(char symbol)
-{
-    if (symbol >= '0' && symbol <= '9')
-        return true;
-    return false;
-}
 
 //----------  end of file interpreter.с  -----------

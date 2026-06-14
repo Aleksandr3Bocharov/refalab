@@ -922,7 +922,7 @@ static char *card(void)
             buffer = new_buffer;
             buffer_size = new_buffer_size;
         }
-        if (isspace(symbol))
+        if (isspace(symbol) != 0)
             buffer[buffer_length++] = ' ';
         else
             buffer[buffer_length++] = (char)symbol;
