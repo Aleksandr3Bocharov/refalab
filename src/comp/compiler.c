@@ -42,29 +42,15 @@
 #define CLANG_THREAD_MODEL "unknown"
 #endif
 
-#define EH_ROMA                                                          \
-    if (current_symbol_number != CUT - 1)                                \
-    {                                                                    \
-        current_symbol_number++;                                         \
-        if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
-        {                                                                \
-            read_card();                                                 \
-            if (flags.end_refalab_source)                                \
-                return;                                                  \
-        }                                                                \
-    }
+#define EH_ROMA                   \
+    next_char();                  \
+    if (flags.end_refalab_source) \
+        return;
 
-#define EH_ROMA0                                                         \
-    if (current_symbol_number != CUT - 1)                                \
-    {                                                                    \
-        current_symbol_number++;                                         \
-        if (current_symbol_number == CUT - 1 && symbols[CUT - 1] != ' ') \
-        {                                                                \
-            read_card();                                                 \
-            if (flags.end_refalab_source)                                \
-                return false;                                            \
-        }                                                                \
-    }
+#define EH_ROMA0                  \
+    next_char();                  \
+    if (flags.end_refalab_source) \
+        return false;
 
 #define PRINT_ERROR_130 \
     print_error_string("130 invalid record format")
@@ -171,6 +157,8 @@ typedef enum specifier_states
     OSH208
 } T_SPECIFIER_STATES;
 
+typedef struct timespec T_TIMESPEC;
+
 T_OPTIONS options;
 
 T_SCANNER scanner;
@@ -182,7 +170,6 @@ FILE *llvm_source; // for llvm
 
 static struct
 {
-    bool was_cut;
     bool was_card_print_file_source_listing;
     bool was_error;
     bool was_card_print_terminal;
@@ -194,22 +181,11 @@ static struct
 } flags;
 
 static FILE *refalab_source;
-static int8_t current_symbol_number; // current symbol number
-static size_t current_card_capacity = 0; // current card capacity
-//static char card[CUT + 9];           // card buffer (input)
-static char *card = NULL;           // card buffer (input)
-//static const char *card_cut = card;
-static const char *card_cut = NULL;
-static uint32_t card_number; // card number
+static char *refalab_source_buffer = NULL; // source buffer
+static size_t refalab_source_size = 0;     // source size
+static size_t refalab_source_cursor = 0;   // source cursor
+static uint32_t card_number;               // card number
 static uint32_t errors_count;
-//static char string_symbols[CUT + 6];
-static char *string_symbols = NULL;
-//static char *symbols = string_symbols + 6;
-static char *symbols = NULL;
-//static char class_symbols_cut[CUT + 6];
-static char class_symbols_cut = NULL;
-//static char *class_symbols = class_symbols_cut + 6;
-static char *class_symbols = NULL;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
 static uint8_t statement_label_length;
@@ -218,8 +194,9 @@ static char statement_key[6];
 static int8_t fix_current_symbol_number;            // start sentence position
 static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
 static size_t module_length;                        // module length
+static T_TIMESPEC time_begin;
 
-static void ensure_capacity(size_t required_capacity);
+static void load_refalab_source_to_memory(void);
 static void label_key(bool previous);
 static void blanks_out(void);
 static void previous_label_to_statement_label(void);
@@ -234,8 +211,23 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
 static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
 
-typedef struct timespec T_TIMESPEC;
-static T_TIMESPEC time_begin;
+static inline char get_current_char(void)
+{
+    if (refalab_source_cursor >= refalab_source_size)
+    {
+        flags.end_refalab_source = true;
+        return '\0';
+    }
+    return refalab_source_buffer[refalab_source_cursor];
+}
+
+static inline void next_char(void)
+{
+    if (refalab_source_cursor < refalab_source_size)
+        refalab_source_cursor++;
+    else
+        flags.end_refalab_source = true;
+}
 
 static void SET_time(void)
 {
@@ -362,15 +354,14 @@ int main(int argc, char *argv[])
         case START_OF_MODULE:
             errors_count = 0;
             scanner.module_number++;
-            flags.was_cut = false;
             flags.end_refalab_source = false;
-            card[CUT + 8] = '\n';
             previous_label[0] = '\0';
             module_length = 0;
             memset(module_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
             for (uint8_t i = 0; i < 7; ++i)
                 specifier_abbreviated[i] = NULL;
             // "start" - directive work
+            load_refalab_source_to_memory();
             label_key(false);
             if (flags.end_refalab_source)
             {
@@ -542,6 +533,8 @@ int main(int argc, char *argv[])
             module_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
+            free(refalab_source_buffer);
+            refalab_source_buffer = NULL;
             fclose(refalab_source);
             if (options.source_listing)
                 fclose(refalab_source_listing);
@@ -588,53 +581,33 @@ static void previous_label_to_statement_label(void)
     return;
 }
 
-static void ensure_capacity(size_t required_capacity) {
-    if (card_capacity >= required_capacity) return;
-
-    if (card_capacity == 0) {
-        card_capacity = 256;
-    }
-    while (card_capacity < required_capacity) {
-        card_capacity *= 2;
-    }
-
-    card = (char *)realloc(card, card_capacity + 9);
-    string_symbols = (char *)realloc(string_symbols, card_capacity + 6);
-    class_symbols_cut = (char *)realloc(class_symbols_cut, card_capacity + 6);
-
-    // Актуализируем зависимые указатели после realloc
-    card_cut = card; 
-    symbols = string_symbols + 6; // Перепривязываем сдвиг к новому адресу
-}
-
-static void read_line(char *line)
-{ // read CUT + 8 symbols from refalab source
-    flags.empty_card = true;
-    uint8_t i;
-    int symbol_refalab_source = getc(refalab_source);
-    for (i = 0; symbol_refalab_source != '\n' && symbol_refalab_source != EOF && i < CUT + 8; i++)
+static void load_refalab_source_to_memory(void)
+{
+    if (refalab_source_buffer != NULL)
     {
-        if (symbol_refalab_source == '\t')
-        {
-            const uint8_t k = 8 - (i & 7);
-            for (uint8_t j = 0; j < k; j++)
-                *(line + i + j) = ' ';
-            i += (uint8_t)(k - 1);
-        }
-        else if (symbol_refalab_source < ' ' && symbol_refalab_source > '\0')
-            *(line + i) = ' ';
-        else
-        {
-            *(line + i) = (char)symbol_refalab_source;
-            flags.empty_card = false;
-        };
-        symbol_refalab_source = getc(refalab_source);
+        free(refalab_source_buffer);
+        refalab_source_buffer = NULL;
     }
-    if (symbol_refalab_source == EOF && i == 0)
+    fseek(refalab_source, 0, SEEK_END);
+    long int file_size = ftell(refalab_source);
+    fseek(refalab_source, 0, SEEK_SET);
+    if (file_size <= 0)
+    {
         flags.end_refalab_source = true;
-    for (; i < CUT + 8; i++)
-        *(line + i) = ' ';
-    return;
+        return;
+    }
+    refalab_source_buffer = (char *)malloc(file_size + 2);
+    if (refalab_source_buffer == NULL)
+    {
+        printf("Out of memory\n");
+        exit(1);
+    }
+    size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
+    refalab_source_buffer[read_bytes] = '\n';
+    refalab_source_buffer[read_bytes + 1] = '\0';
+    refalab_source_size = read_bytes + 1;
+    refalab_source_cursor = 0;
+    flags.end_refalab_source = false;
 }
 
 static void classificate_string(const char *string, char *classes)
@@ -662,50 +635,6 @@ static void classificate_string(const char *string, char *classes)
                 continue;
             };
     }
-    return;
-}
-
-static bool comment(void)
-{
-    const char *comment_symbol;
-    for (comment_symbol = symbols; *comment_symbol == ' ' || *comment_symbol == '\t'; comment_symbol++)
-        ;
-    if (*comment_symbol == '*')
-        return true;
-    else
-        return false;
-}
-
-static void read_card(void)
-{ // read card procedure
-    while (true)
-    {
-        read_line(card);
-        memcpy(symbols, card_cut, CUT);
-        classificate_string(card_cut, class_symbols);
-        ++scanner.carriage_number;
-        ++card_number;
-        flags.was_card_print_file_source_listing = false;
-        flags.was_card_print_terminal = false;
-        if (options.source_listing)
-            print_card_refalab_source_listing();
-        if (!flags.was_cut && comment())
-            continue;
-        if (flags.empty_card)
-        {
-            if (flags.end_refalab_source)
-                return;
-            continue;
-        }
-        break;
-    }
-    if (*(symbols + CUT - 1) != ' ')
-        flags.was_cut = true;
-    else
-        flags.was_cut = false;
-    if (*(symbols + CUT - 1) != ' ')
-        *(symbols + CUT - 1) = '+'; //!!!
-    current_symbol_number = 0;
     return;
 }
 
@@ -784,7 +713,7 @@ void scan_sentence_element(void)
         case STATE0:
             // among elements
             blanks_out();
-            switch (symbols[current_symbol_number])
+            switch (get_current_char())
             {
             case '&':
             case '0':
@@ -830,8 +759,9 @@ void scan_sentence_element(void)
             case '=':
                 scanner_state = SCNEOL;
                 break;
-            case ' ':
+            case ' ': !!!
             case '\t':
+            case '\0':
                 scanner_state = SCNEOS;
                 break;
             case '\'':
@@ -965,7 +895,7 @@ void scan_sentence_element(void)
             current_sentence_element.identifier_length = identifier_length;
             scanner_state = SCNRET;
             break;
-        case SCNKK:
+        case SCNKK: !!!
             current_sentence_element.type = K;
             if (symbols[current_symbol_number + 1] != ' ')
             {
@@ -1783,25 +1713,18 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
     return true;
 }
 
-//*****************************************************************************************************************************************************************
-//                  missing blanks
-//       before call: (current_symbol_number = CUT - 1) !! (current_symbol_number != CUT - 1)
-//  under call:((current_symbol_number=CUT - 1)&&(symbols[current_symbol_number]=' '))!!((current_symbol_number!=CUT - 1)&&(symbols[current_symbol_number]!=' '))
-//*****************************************************************************************************************************************************************
 static void blanks_out(void)
 {
-    while (true)
+    while (refalab_source_cursor < refalab_source_size)
     {
-        while (current_symbol_number != CUT - 1 && symbols[current_symbol_number] == ' ')
-            current_symbol_number++;
-        if (symbols[current_symbol_number] == '+')
-        {
-            read_card();
-            if (flags.end_refalab_source)
-                return;
-            continue;
-        }
-        return;
+        char symbol = refalab_source_buffer[refalab_source_cursor];
+        if (symbol == ' ' || symbol == '\t' || symbol == '\r' || symbol == '\n')
+            refalab_source_cursor++;
+        else if (symbol == '*') !!!
+            while (refalab_source_cursor < refalab_source_size && refalab_source_buffer[refalab_source_cursor] != '\n')
+                refalab_source_cursor++;
+        else
+            break;
     }
 }
 
