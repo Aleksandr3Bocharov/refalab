@@ -102,7 +102,7 @@ static void chartof_(void)
     if (label == NULL)
         refal_abort_end("chartof: malloc error");
     for (i = 0; current_symbol_char != refal.next_argument; i++, current_symbol_char = current_symbol_char->next)
-        label[i] = (char)toupper(current_symbol_char->info.infoc);
+        label[i] = (char)toupper((unsigned char)current_symbol_char->info.infoc);
     label[i] = (char)i;
     i++;
     label[i] = '\002'; // EMPTY

@@ -487,7 +487,7 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
             const uint8_t *label_length = print->info.codef - 1;
             const char *label = (char *)label_length - *label_length;
             for (uint8_t i = 1; i <= *label_length; i++, label++)
-                putchar(toupper(*label));
+                putchar(toupper((unsigned char)*label));
             putchar('\'');
         }
         else if (print->tag == TAGR)
@@ -529,7 +529,7 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
             const uint8_t *label_length = prints->info.codef - 1;
             const char *label = (char *)label_length - *label_length;
             for (uint8_t i = 1; i <= *label_length; i++, label++)
-                putchar(toupper(*label));
+                putchar(toupper((unsigned char)*label));
         }
         else if (prints->tag == TAGR)
             printf("%%%p", (void *)prints->info.codep);
@@ -590,7 +590,7 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
                 const uint8_t *label_length = printm->info.codef - 1;
                 const char *label = (char *)label_length - *label_length;
                 for (uint8_t i = 1; i <= *label_length; i++, label++)
-                    putchar(toupper(*label));
+                    putchar(toupper((unsigned char)*label));
                 if (printm->next->tag == TAGN)
                     putchar(' ');
             }

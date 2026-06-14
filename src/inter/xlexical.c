@@ -345,7 +345,7 @@ static void upper_(void)
     while (current_argument != refal.next_argument)
     {
         if (current_argument->tag == TAGO)
-            current_argument->info.infoc = (char)toupper(current_argument->info.infoc);
+            current_argument->info.infoc = (char)toupper((unsigned char)current_argument->info.infoc);
         current_argument = current_argument->next;
     }
     transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);

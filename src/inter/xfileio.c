@@ -319,7 +319,7 @@ static void fprint_(void)
                 symbol[1] = '\0';
                 for (uint8_t i = 1; i <= *label_length; i++, label++)
                 {
-                    symbol[0] = (char)toupper(*label);
+                    symbol[0] = (char)toupper((unsigned char)*label);
                     strcat(string, symbol);
                 }
                 strcat(string, "'");
@@ -407,7 +407,7 @@ static void fprints_(void)
                 symbol[1] = '\0';
                 for (uint8_t i = 1; i <= *label_length; i++, label++)
                 {
-                    symbol[0] = (char)toupper(*label);
+                    symbol[0] = (char)toupper((unsigned char)*label);
                     strcat(string, symbol);
                 }
                 put_result = fputs(string, file);
@@ -516,7 +516,7 @@ static void fprintm_(void)
                     symbol[1] = '\0';
                     for (uint8_t i = 1; i <= *label_length; i++, label++)
                     {
-                        symbol[0] = (char)toupper(*label);
+                        symbol[0] = (char)toupper((unsigned char)*label);
                         strcat(string, symbol);
                     }
                     if (current_argument->next->tag == TAGN)

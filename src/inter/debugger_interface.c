@@ -873,7 +873,7 @@ static void get_identifier(const T_STATUS_TABLE *status_table)
         const uint8_t *label_length = next_k->info.codef - 1;
         const char *label = (char *)label_length - *label_length;
         for (uint8_t i = 0; i < *label_length; i++)
-            identifier[i] = (char)toupper(*(label + i));
+            identifier[i] = (char)toupper((unsigned char)*(label + i));
         identifier[*label_length] = '\0';
     }
     current_determination = last_determination;
@@ -938,7 +938,7 @@ static void get_parameter(void)
 {
     for (parameter_length = 0;; parameter_length++)
     {
-        *(parameter + parameter_length) = (char)toupper(*(parameter + parameter_length));
+        *(parameter + parameter_length) = (char)toupper((unsigned char)*(parameter + parameter_length));
         if (*(parameter + parameter_length) == '\0' || *(parameter + parameter_length) == ' ' || *(parameter + parameter_length) == ',')
             break;
     }
