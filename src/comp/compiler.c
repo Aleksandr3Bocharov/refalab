@@ -1641,18 +1641,18 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
 { // read identifier
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
-    if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
+    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
         return false;
-    identifier[0] = (char)toupper((unsigned char)symbols[current_symbol_number]);
+    identifier[0] = (char)toupper((unsigned char)get_current_char());
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
-        if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
+        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
             return true;
-        identifier[*identifier_length] = (char)toupper((unsigned char)symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
     }
     uint32_t i = 0;
-    while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
+    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
     {
         EH_ROMA0;
         i++;
@@ -1669,18 +1669,18 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
 // read external identifier
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
-    if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_')
+    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
         return false;
-    identifier[0] = (char)toupper((unsigned char)symbols[current_symbol_number]);
+    identifier[0] = (char)toupper((unsigned char)get_current_char());
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
     {
         EH_ROMA0;
-        if (class_symbols[current_symbol_number] != 'L' && symbols[current_symbol_number] != '_' && class_symbols[current_symbol_number] != 'D')
+        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
             return true;
-        identifier[*identifier_length] = (char)toupper((unsigned char)symbols[current_symbol_number]);
+        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
     }
     uint32_t i = 0;
-    while (class_symbols[current_symbol_number] == 'L' || class_symbols[current_symbol_number] == 'D' || symbols[current_symbol_number] == '_')
+    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
     {
         EH_ROMA0;
         i++;
