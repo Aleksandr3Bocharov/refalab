@@ -16,8 +16,8 @@
 
 typedef struct usage_list
 {
-    struct usage_list *next;      // on the next usage list
-    uint32_t carriage_numbers[6]; // usage list element
+    struct usage_list *next;    // on the next usage list
+    size_t carriage_numbers[6]; // usage list element
 } T_USAGE_LIST;
 
 typedef struct label
