@@ -1622,7 +1622,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                 break;
             }
             char error_111[64];
-            sprintf(error_111, "111 symbol-number > %lld", MAX_NUMBER);
+            sprintf(error_111, "111 symbol-number > %" PRIu32, MAX_NUMBER);
             print_error_string(error_111);
             break;
         }
