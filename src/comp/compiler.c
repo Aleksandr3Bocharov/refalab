@@ -45,12 +45,12 @@
 #define EH_ROMA                   \
     next_char();                  \
     if (flags.end_refalab_source) \
-        return
+    return
 
 #define EH_ROMA0                  \
     next_char();                  \
     if (flags.end_refalab_source) \
-        return false
+    return false
 
 #define PRINT_ERROR_130 \
     print_error_string("130 invalid record format")
@@ -180,10 +180,10 @@ static struct
     bool end_refalab_source; // "refalab_source" end flag
 } flags;
 
-static FILE *refalab_source;
-static char *refalab_source_buffer = NULL; // source buffer
-static size_t refalab_source_size = 0;     // source size
-static size_t refalab_source_cursor = 0;   // source cursor
+static FILE *refalab_source;               // refalab source
+static char *refalab_source_buffer = NULL; // refalab source buffer
+static size_t refalab_source_size = 0;     // refalab source size
+static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t card_number;               // card number
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
@@ -218,7 +218,7 @@ static inline char get_current_char(void)
         flags.end_refalab_source = true;
         return '\0';
     }
-    return refalab_source_buffer[refalab_source_cursor];
+    return *(refalab_source_buffer + refalab_source_cursor);
 }
 
 static inline void next_char(void)
@@ -603,8 +603,8 @@ static void load_refalab_source_to_memory(void)
         exit(1);
     }
     size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
-    refalab_source_buffer[read_bytes] = '\n';
-    refalab_source_buffer[read_bytes + 1] = '\0';
+    *(refalab_source_buffer + read_bytes) = '\n';
+    *(refalab_source_buffer + read_bytes + 1) = '\0';
     refalab_source_size = read_bytes + 1;
     refalab_source_cursor = 0;
     flags.end_refalab_source = false;
@@ -759,8 +759,8 @@ void scan_sentence_element(void)
             case '=':
                 scanner_state = SCNEOL;
                 break;
-            case ' ': !!!
-            case '\t':
+            case ' ':
+            !!!case '\t':
             case '\0':
                 scanner_state = SCNEOS;
                 break;
@@ -895,8 +895,8 @@ void scan_sentence_element(void)
             current_sentence_element.identifier_length = identifier_length;
             scanner_state = SCNRET;
             break;
-        case SCNKK: !!!
-            current_sentence_element.type = K;
+        case SCNKK:
+            !!!current_sentence_element.type = K;
             if (symbols[current_symbol_number + 1] != ' ')
             {
                 symbols[current_symbol_number - 1] = '&';
@@ -1717,12 +1717,12 @@ static void blanks_out(void)
 {
     while (refalab_source_cursor < refalab_source_size)
     {
-        char symbol = refalab_source_buffer[refalab_source_cursor];
+        char symbol = *(refalab_source_buffer + refalab_source_cursor);
         if (isspace((unsigned char)symbol) != 0)
             refalab_source_cursor++;
-        else if (symbol == '*') !!!
-            while (refalab_source_cursor < refalab_source_size && refalab_source_buffer[refalab_source_cursor] != '\n')
-                refalab_source_cursor++;
+        else if (symbol == '*')
+            !!!while (refalab_source_cursor < refalab_source_size && *(refalab_source_buffer + refalab_source_cursor) != '\n')
+                  refalab_source_cursor++;
         else
             break;
     }
