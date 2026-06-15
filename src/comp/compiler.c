@@ -900,12 +900,12 @@ void scan_sentence_element(void)
             break;
         case SCNA:
             EH_ROMA;
-            if (current_symbol_number == CUT - 1)
+            if (get_current_char() == '\n')
             {
                 scanner_state = OSH101;
                 break;
             }
-            if (symbols[current_symbol_number] == '\'')
+            if (get_current_char() == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
