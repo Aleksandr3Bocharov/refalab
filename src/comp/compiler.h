@@ -32,6 +32,7 @@ extern T_OPTIONS options;
 typedef struct scanner
 { // the table for corresponding with scanner
     size_t carriage_number;
+    size_t column_number;
     char module_name[MAX_IDENTIFIER_LENGTH]; // module name
     uint8_t module_name_length;              // module name length
     uint32_t module_number;
