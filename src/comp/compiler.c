@@ -1588,17 +1588,17 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
     code->info.codef = NULL;
     do
     {
-        if (class_symbols[current_symbol_number] == 'D')
+        if (isdigit((unsigned char)get_current_char()) != 0)
         {
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            int64_t number = symbols[current_symbol_number] - '0';
+            uint64_t number = get_current_char() - '0';
             bool multiple_symbol_end = false;
             while (true)
             {
                 EH_ROMA0;
-                if (class_symbols[current_symbol_number] != 'D')
+                if (isdigit((unsigned char)get_current_char()) == 0)
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
@@ -1606,7 +1606,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                     multiple_symbol_end = true;
                     break;
                 }
-                const int64_t remainder = symbols[current_symbol_number] - '0';
+                const uint64_t remainder = get_current_char() - '0';
                 number = number * 10 + remainder;
                 if (number <= MAX_NUMBER)
                     continue;
@@ -1617,7 +1617,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             while (true)
             {
                 EH_ROMA0;
-                if (class_symbols[current_symbol_number] == 'D')
+                if (isdigit((unsigned char)get_current_char()) != 0)
                     continue;
                 break;
             }

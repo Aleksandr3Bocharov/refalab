@@ -28,7 +28,7 @@
 #define LBLL sizeof(void *)
 #define SMBL (ZBLL + LBLL)
 
-#define MAX_NUMBER 0xFFFFFFFFLL
+#define MAX_NUMBER UINT32_MAX
 
 #define MAX_IDENTIFIER_LENGTH 40
 #define MAX_IDENTIFIER_EXTERN_LENGTH 32
