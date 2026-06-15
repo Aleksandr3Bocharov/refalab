@@ -45,12 +45,12 @@
 #define EH_ROMA                   \
     next_char();                  \
     if (flags.end_refalab_source) \
-        return;
+        return
 
 #define EH_ROMA0                  \
     next_char();                  \
     if (flags.end_refalab_source) \
-        return false;
+        return false
 
 #define PRINT_ERROR_130 \
     print_error_string("130 invalid record format")
