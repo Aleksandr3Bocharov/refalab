@@ -225,8 +225,12 @@ static inline void next_char(void)
     if (refalab_source_cursor < refalab_source_size)
     {
         if (*(refalab_source_buffer + refalab_source_cursor) == '\n')
+        {
             scanner.carriage_number++;
+            scanner.column_number = 0;
+        }
         refalab_source_cursor++;
+        scanner.column_number++;
     }
     else
         flags.end_refalab_source = true;
@@ -590,6 +594,7 @@ static void load_refalab_source_to_memory(void)
         refalab_source_buffer = NULL;
     }
     scanner.carriage_number = 0;
+    scanner.column_number = 0;
     fseek(refalab_source, 0, SEEK_END);
     long int file_size = ftell(refalab_source);
     fseek(refalab_source, 0, SEEK_SET);
@@ -610,6 +615,7 @@ static void load_refalab_source_to_memory(void)
     refalab_source_size = read_bytes + 1;
     refalab_source_cursor = 0;
     scanner.carriage_number++;
+    scanner.column_number++;
     flags.end_refalab_source = false;
 }
 
@@ -1690,14 +1696,14 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 
 static void blanks_out(void)
 {
-    while (refalab_source_cursor < refalab_source_size)
+    while (flags.end_refalab_source == false)
     {
-        char symbol = *(refalab_source_buffer + refalab_source_cursor);
+        char symbol = get_current_char();
         if (isspace((unsigned char)symbol) != 0)
-            refalab_source_cursor++;
-        else if (symbol == '*')
-            !!!while (refalab_source_cursor < refalab_source_size && *(refalab_source_buffer + refalab_source_cursor) != '\n')
-                  refalab_source_cursor++;
+            next_char();
+        else if (symbol == '*' && scanner.column_number == 1)
+            while (flags.end_refalab_source == false && get_current_char() != '\n')
+                  next_char();
         else
             break;
     }
