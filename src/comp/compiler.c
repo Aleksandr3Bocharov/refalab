@@ -740,9 +740,7 @@ void scan_sentence_element(void)
             case '=':
                 scanner_state = SCNEOL;
                 break;
-            case ' ':
-            !!!case '\t':
-            case '\0':
+            case ';':
                 scanner_state = SCNEOS;
                 break;
             case '\'':
@@ -773,7 +771,7 @@ void scan_sentence_element(void)
                 scanner_state = LSCN;
                 break;
             default:
-                print_error_string_symbol("100 illegal symbol", symbols[current_symbol_number]);
+                print_error_string_symbol("100 illegal symbol", get_current_char());
                 scanner_state = SCNERR;
             }
             break;
@@ -819,7 +817,7 @@ void scan_sentence_element(void)
             break;
         case SCNV:
             EH_ROMA;
-            if (symbols[current_symbol_number] == '(')
+            if (get_current_char() == '(')
             {
                 EH_ROMA;
                 if (flags.left_part_sentence)
@@ -829,14 +827,10 @@ void scan_sentence_element(void)
                 }
                 if (compile_specifer(')'))
                 {
-                    EH_ROMA else
-                    {
-                        scanner_state = SCNERR;
-                        break;
-                    }
+                    EH_ROMA;
                 }
             }
-            else if (symbols[current_symbol_number] == ':')
+            else if (get_current_char() == ':')
             {
                 EH_ROMA;
                 if (!get_identifier(identifier, &identifier_length))
@@ -846,19 +840,15 @@ void scan_sentence_element(void)
                 }
                 if (flags.left_part_sentence)
                     current_sentence_element.specifier.info.codef = specifier_reference(identifier, identifier_length, ')');
-                if (symbols[current_symbol_number] == ':')
+                if (get_current_char() == ':')
                 {
-                    EH_ROMA else
-                    {
-                        scanner_state = SOSH204;
-                        break;
-                    }
+                    EH_ROMA;
                 }
             }
             scanner_state = SCNVD;
             break;
         case SCNVD:
-            if (symbols[current_symbol_number] != '.')
+            if (get_current_char() != '.')
             {
                 scanner_state = OSH103;
                 break;
@@ -1006,7 +996,7 @@ void scan_sentence_element(void)
             scanner_state = PROD;
             break;
         case PROD:
-            current_sentence_element.code.info.infoc = symbols[current_symbol_number];
+            current_sentence_element.code.info.infoc = get_current_char();
             current_sentence_element.type = SC;
             scanner_state = SCNGCR;
             break;
@@ -1101,9 +1091,9 @@ static bool compile_specifer(char tail)
             specifier_state = SPCPRC;
             break;
         case SPCPRC:
-            switch (symbols[current_symbol_number])
+            switch (get_current_char())
             {
-            case ' ':
+            case ';':
                 specifier_state = SPCFF;
                 break;
             case '(':
@@ -1168,7 +1158,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCED;
                 break;
             default:
-                print_error_string_symbol("201 within specifier invalid symbol ", symbols[current_symbol_number]);
+                print_error_string_symbol("201 within specifier invalid symbol ", get_current_char());
                 specifier_state = OSH200;
             }
             break;
@@ -1200,17 +1190,17 @@ static bool compile_specifer(char tail)
             }
             EH_ROMA0;
             blanks_out();
-            if (symbols[current_symbol_number] == '(')
+            if (get_current_char() == '(')
             {
                 specifier_state = SPCGC;
                 break;
             }
-            if (symbols[current_symbol_number] == ')')
+            if (get_current_char() == ')')
             {
                 specifier_state = SPCR1;
                 break;
             }
-            if (symbols[current_symbol_number] == ' ')
+            if (get_current_char() == ';')
             {
                 specifier_state = SPCR2;
                 break;
@@ -1262,7 +1252,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 macrocode_address(identifier_specifier);
-            if (symbols[current_symbol_number] == ':')
+            if (get_current_char() == ':')
             {
                 specifier_state = SPCGC;
                 break;
@@ -1501,12 +1491,12 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
             break;
         (*handler)(identifier, identifier_length);
         blanks_out();
-        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
+        if (get_current_char() == ';')
             return;
-        if (symbols[current_symbol_number] == ',')
+        if (get_current_char() == ',')
         {
             EH_ROMA;
-            if (symbols[current_symbol_number] == ' ')
+            if (isspace((unsigned char)get_current_char()) != 0)
                 blanks_out();
             continue;
         }
@@ -1532,13 +1522,13 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
             break;
         char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
         uint8_t identifier_extern_length;
-        if (symbols[current_symbol_number] == '(')
+        if (get_current_char() == '(')
         {
             EH_ROMA;
             if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
             (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
-            if (symbols[current_symbol_number] != ')')
+            if (get_current_char() != ')')
                 break;
             EH_ROMA;
         }
@@ -1549,12 +1539,12 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
             (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
         }
         blanks_out();
-        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
+        if (get_current_char() == ';')
             return;
-        if (symbols[current_symbol_number] == ',')
+        if (get_current_char() == ',')
         {
             EH_ROMA;
-            if (symbols[current_symbol_number] == ' ')
+            if (isspace((unsigned char)get_current_char()) != 0)
                 blanks_out();
             continue;
         }
