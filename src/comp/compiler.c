@@ -1575,7 +1575,7 @@ static void equ(void)
             break;
         set_equ(statement_label, statement_label_length, identifier, identifier_length);
         blanks_out();
-        if (current_symbol_number == CUT - 1 && symbols[current_symbol_number] == ' ')
+        if (get_current_char() == ';')
             return;
     } while (false);
     PRINT_ERROR_130;
