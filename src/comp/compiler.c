@@ -184,7 +184,6 @@ static FILE *refalab_source;               // refalab source
 static char *refalab_source_buffer = NULL; // refalab source buffer
 static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
-static uint32_t card_number;               // card number
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_label[MAX_IDENTIFIER_LENGTH];
@@ -224,7 +223,11 @@ static inline char get_current_char(void)
 static inline void next_char(void)
 {
     if (refalab_source_cursor < refalab_source_size)
+    {
+        if (*(refalab_source_buffer + refalab_source_cursor) == '\n')
+            scanner.carriage_number++;
         refalab_source_cursor++;
+    }
     else
         flags.end_refalab_source = true;
 }
@@ -344,8 +347,6 @@ int main(int argc, char *argv[])
         exit(8);
     }
     flags.was_error = false;
-    card_number = 0;
-    scanner.carriage_number = 0;
     bool impl = false;
     T_MODULE_STATES module_state = START_OF_MODULE;
     while (true)
@@ -588,6 +589,7 @@ static void load_refalab_source_to_memory(void)
         free(refalab_source_buffer);
         refalab_source_buffer = NULL;
     }
+    scanner.carriage_number = 0;
     fseek(refalab_source, 0, SEEK_END);
     long int file_size = ftell(refalab_source);
     fseek(refalab_source, 0, SEEK_SET);
@@ -607,35 +609,8 @@ static void load_refalab_source_to_memory(void)
     *(refalab_source_buffer + read_bytes + 1) = '\0';
     refalab_source_size = read_bytes + 1;
     refalab_source_cursor = 0;
+    scanner.carriage_number++;
     flags.end_refalab_source = false;
-}
-
-static void classificate_string(const char *string, char *classes)
-{ // L,D,* - classification procedure
-    for (uint8_t i = 0; i < CUT; ++i)
-    {
-        *(classes + i) = '*';
-        const int j = *(string + i);
-        if (j > 47)
-            if (j < 58)
-            {
-                *(classes + i) = 'D';
-                continue;
-            };
-        if (j > 64)
-            if (j < 91)
-            {
-                *(classes + i) = 'L';
-                continue;
-            };
-        if (j > 96)
-            if (j < 123)
-            {
-                *(classes + i) = 'L';
-                continue;
-            };
-    }
-    return;
 }
 
 //    directive label and keyword extraction
@@ -1473,7 +1448,7 @@ static void print_card_refalab_source_listing(void)
         if (!flags.end_refalab_source)
         {
             char temp_string[CUT + 28];
-            sprintf(temp_string, "%4" PRIu32 " %s", card_number, card);
+            sprintf(temp_string, "%4zu %s", scanner.carriage_number, card);
             uint8_t i;
             for (i = CUT + 4; i > 4; i--)
                 if (temp_string[i] != ' ')
@@ -1497,7 +1472,7 @@ static void print_card_terminal(void)
         if (!flags.end_refalab_source)
         {
             char temp_string[CUT + 28];
-            sprintf(temp_string, "%4" PRIu32 " %s\n", card_number, card);
+            sprintf(temp_string, "%4zu %s\n", scanner.carriage_number, card);
             fputs(temp_string, terminal);
         }
     }
@@ -1732,11 +1707,10 @@ static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
     sprintf(print_line,
-            "module_name = %-40s    module_length(lines) = %" PRIu32 "\n", module_name, card_number);
+            "module_name = %-40s    module_length(lines) = %zu\n", module_name, scanner.carriage_number);
     if (options.source_listing)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);
-    card_number = 0;
     if (errors_count != 0)
         sprintf(print_line,
                 "errors   = %-3d         module_obj_length(bytes) = %zu\n", errors_count, module_length);
