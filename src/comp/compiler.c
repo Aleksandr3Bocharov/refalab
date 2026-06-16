@@ -42,11 +42,6 @@
 #define CLANG_THREAD_MODEL "unknown"
 #endif
 
-#define EH_ROMA                   \
-    next_char();                  \
-    if (flags.end_refalab_source) \
-    return
-
 #define EH_ROMA0                  \
     next_char();                  \
     if (flags.end_refalab_source) \
@@ -603,16 +598,15 @@ static void load_refalab_source_to_memory(void)
         flags.end_refalab_source = true;
         return;
     }
-    refalab_source_buffer = (char *)malloc(file_size + 2);
+    refalab_source_buffer = (char *)malloc(file_size + 1);
     if (refalab_source_buffer == NULL)
     {
         printf("Out of memory\n");
         exit(1);
     }
     size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
-    *(refalab_source_buffer + read_bytes) = '\n';
-    *(refalab_source_buffer + read_bytes + 1) = '\0';
-    refalab_source_size = read_bytes + 1;
+    *(refalab_source_buffer + read_bytes) = '\0';
+    refalab_source_size = read_bytes;
     refalab_source_cursor = 0;
     scanner.carriage_number++;
     scanner.column_number++;
@@ -816,23 +810,21 @@ void scan_sentence_element(void)
             scanner_state = SCNV;
             break;
         case SCNV:
-            EH_ROMA;
+            next_char();
             if (get_current_char() == '(')
             {
-                EH_ROMA;
+                next_char();
                 if (flags.left_part_sentence)
                 {
                     current_sentence_element.specifier.info.codef = (T_LABEL *)generate_info_label();
                     macrocode_label(current_sentence_element.specifier.info.codef);
                 }
                 if (compile_specifer(')'))
-                {
-                    EH_ROMA;
-                }
+                    next_char();
             }
             else if (get_current_char() == ':')
             {
-                EH_ROMA;
+                next_char();
                 if (!get_identifier(identifier, &identifier_length))
                 {
                     scanner_state = SOSH203;
@@ -841,9 +833,7 @@ void scan_sentence_element(void)
                 if (flags.left_part_sentence)
                     current_sentence_element.specifier.info.codef = specifier_reference(identifier, identifier_length, ')');
                 if (get_current_char() == ':')
-                {
-                    EH_ROMA;
-                }
+                    next_char();
             }
             scanner_state = SCNVD;
             break;
@@ -853,7 +843,7 @@ void scan_sentence_element(void)
                 scanner_state = OSH103;
                 break;
             }
-            EH_ROMA;
+            next_char();
             scanner_state = SCNVI;
             break;
         case SCNVI:
@@ -899,8 +889,8 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNA:
-            EH_ROMA;
-            if (get_current_char() == '\n')
+            next_char();
+            if (get_current_char() == '\n' || get_current_char() == '\0')
             {
                 scanner_state = OSH101;
                 break;
@@ -914,7 +904,7 @@ void scan_sentence_element(void)
             scanner_state = SCNCHR;
             break;
         case STATE1: // within letter chain
-            if (current_symbol_number == CUT - 1)
+            if (get_current_char() == '\n' || get_current_char() == '\0')
             {
                 scanner_state = OSH101;
                 break;
@@ -924,7 +914,7 @@ void scan_sentence_element(void)
                 scanner_state = SCNCHR;
                 break;
             }
-            EH_ROMA;
+            next_char();
             if (symbols[current_symbol_number] == '\'')
             {
                 scanner_state = SCNCHR;
@@ -1037,7 +1027,7 @@ void scan_sentence_element(void)
                 };
                 current_sentence_element.specifier.info.codef = *(specifier_abbreviated + specifier_code);
             };
-            EH_ROMA;
+            next_char();
             scanner_state = SCNVD;
             break;
         case OSH101:
@@ -1061,7 +1051,7 @@ void scan_sentence_element(void)
             scanner_state = SCNERR;
             break;
         case SCNGCR:
-            EH_ROMA;
+            next_char();
             scanner_state = SCNRET;
             break;
         case SCNRET:
@@ -1495,7 +1485,7 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
             return;
         if (get_current_char() == ',')
         {
-            EH_ROMA;
+            next_char();
             if (isspace((unsigned char)get_current_char()) != 0)
                 blanks_out();
             continue;
@@ -1524,13 +1514,13 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
         uint8_t identifier_extern_length;
         if (get_current_char() == '(')
         {
-            EH_ROMA;
+            next_char();
             if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
             (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
             if (get_current_char() != ')')
                 break;
-            EH_ROMA;
+            next_char();
         }
         else
         {
@@ -1543,7 +1533,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
             return;
         if (get_current_char() == ',')
         {
-            EH_ROMA;
+            next_char();
             if (isspace((unsigned char)get_current_char()) != 0)
                 blanks_out();
             continue;
@@ -1693,7 +1683,7 @@ static void blanks_out(void)
             next_char();
         else if (symbol == '*' && scanner.column_number == 1)
             while (flags.end_refalab_source == false && get_current_char() != '\n')
-                  next_char();
+                next_char();
         else
             break;
     }
