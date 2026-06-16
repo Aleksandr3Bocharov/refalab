@@ -904,13 +904,13 @@ void scan_sentence_element(void)
                 scanner_state = OSH101;
                 break;
             }
-            if (symbols[current_symbol_number] != '\'')
+            if (get_current_char() != '\'')
             {
                 scanner_state = SCNCHR;
                 break;
             }
             next_char();
-            if (symbols[current_symbol_number] == '\'')
+            if (get_current_char() == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
@@ -921,9 +921,11 @@ void scan_sentence_element(void)
         case SCNCHR:
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
-            if (symbols[current_symbol_number] == '\\')
-                // control symbols
-                switch (symbols[++current_symbol_number])
+            if (get_current_char() == '\\')
+            // control symbols
+            {
+                next_char();
+                switch (get_current_char())
                 {
                 case '\\':
                     break;
@@ -978,6 +980,7 @@ void scan_sentence_element(void)
                     else
                         current_symbol_number--;
                 }
+            }
             scanner_state = PROD;
             break;
         case PROD:
