@@ -42,11 +42,6 @@
 #define CLANG_THREAD_MODEL "unknown"
 #endif
 
-#define EH_ROMA0                  \
-    next_char();                  \
-    if (flags.end_refalab_source) \
-    return false
-
 #define PRINT_ERROR_130 \
     print_error_string("130 invalid record format")
 
@@ -1178,7 +1173,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCR1;
                 break;
             }
-            EH_ROMA0;
+            next_char();
             blanks_out();
             if (get_current_char() == '(')
             {
@@ -1230,7 +1225,7 @@ static bool compile_specifer(char tail)
             specifier_state = SPCBLO;
             break;
         case SPCSP:
-            EH_ROMA0;
+            next_char();
             if (!get_identifier(identifier, &identifier_length))
             {
                 specifier_state = OSH203;
@@ -1250,7 +1245,7 @@ static bool compile_specifer(char tail)
             specifier_state = OSH204;
             break;
         case SPCA:
-            EH_ROMA0;
+            next_char();
             if (current_symbol_number == CUT - 1)
             {
                 specifier_state = OSH205;
@@ -1337,7 +1332,7 @@ static bool compile_specifer(char tail)
                 code.info.infoc = symbols[current_symbol_number];
                 generate_symbol(&code);
             }
-            EH_ROMA0;
+            next_char();
             if (current_symbol_number == CUT - 1)
             {
                 specifier_state = OSH205;
@@ -1348,7 +1343,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCA1;
                 break;
             }
-            EH_ROMA0;
+            next_char();
             if (symbols[current_symbol_number] == '\'')
             {
                 specifier_state = SPCA1;
@@ -1393,7 +1388,7 @@ static bool compile_specifer(char tail)
             specifier_state = SPCGC;
             break;
         case SPCGC:
-            EH_ROMA0;
+            next_char();
             specifier_state = SPCBLO;
             break;
         case OSH200:
@@ -1577,7 +1572,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             bool multiple_symbol_end = false;
             while (true)
             {
-                EH_ROMA0;
+                next_char();
                 if (isdigit((unsigned char)get_current_char()) == 0)
                 {
                     code->tag = TAGN;
@@ -1596,7 +1591,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                 break;
             while (true)
             {
-                EH_ROMA0;
+                next_char();
                 if (isdigit((unsigned char)get_current_char()) != 0)
                     continue;
                 break;
@@ -1606,7 +1601,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             print_error_string(error_111);
             break;
         }
-        EH_ROMA0;
+        next_char();
         if (!get_identifier(identifier, identifier_length))
         {
             print_error_string("112 unknown type of the multiple symbol");
@@ -1626,7 +1621,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
     identifier[0] = (char)toupper((unsigned char)get_current_char());
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
-        EH_ROMA0;
+        next_char();
         if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
             return true;
         identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
@@ -1634,7 +1629,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
     uint32_t i = 0;
     while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
     {
-        EH_ROMA0;
+        next_char();
         i++;
     }
     if (i > 1)
@@ -1654,7 +1649,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
     identifier[0] = (char)toupper((unsigned char)get_current_char());
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
     {
-        EH_ROMA0;
+        next_char();
         if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
             return true;
         identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
@@ -1662,7 +1657,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
     uint32_t i = 0;
     while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
     {
-        EH_ROMA0;
+        next_char();
         i++;
     }
     if (i > 1)
