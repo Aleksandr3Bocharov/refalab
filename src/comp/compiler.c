@@ -1249,12 +1249,12 @@ static bool compile_specifer(char tail)
             break;
         case SPCA:
             next_char();
-            if (current_symbol_number == CUT - 1)
+            if (get_current_char() == '\n' || get_current_char() == '\0')
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (symbols[current_symbol_number] != '\'')
+            if (get_current_char() != '\'')
             {
                 specifier_state = SPCA1;
                 break;
@@ -1273,9 +1273,11 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
             {
-                if (symbols[current_symbol_number] == '\\')
+                if (get_current_char() == '\\')
+                {
+                    next_char();
                     // control symbols ---------------
-                    switch (symbols[++current_symbol_number])
+                    switch (get_current_char())
                     {
                     case '\\':
                         break;
@@ -1330,28 +1332,23 @@ static bool compile_specifer(char tail)
                         else
                             current_symbol_number--;
                     }
+                }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc = symbols[current_symbol_number];
+                code.info.infoc = get_current_char();
                 generate_symbol(&code);
             }
             next_char();
-            if (current_symbol_number == CUT - 1)
+            if (get_current_char() == '\n' || get_current_char() == '\0')
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (symbols[current_symbol_number] != '\'')
-            {
-                specifier_state = SPCA1;
+            if (get_current_char() != '\'')
                 break;
-            }
             next_char();
-            if (symbols[current_symbol_number] == '\'')
-            {
-                specifier_state = SPCA1;
+            if (get_current_char() == '\'')
                 break;
-            }
             specifier_state = SPCBLO;
             break;
         case SPCES:
