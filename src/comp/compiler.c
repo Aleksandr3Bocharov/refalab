@@ -936,10 +936,10 @@ void scan_sentence_element(void)
             // control symbols
             {
                 next_char();
-                switch (get_current_char())
+                char temp_symbol = get_current_char();
+                switch (temp_symbol)
                 {
                 case '\\':
-                    symbol = '\\';
                     break;
                 case 'n':
                     symbol = '\012';
@@ -958,24 +958,16 @@ void scan_sentence_element(void)
                     break;
                 case '0':
                     next_char();
-                    if (get_current_char() >= '0' && get_current_char() <= '7')
+                    temp_symbol = get_current_char();
+                    if (temp_symbol >= '0' && temp_symbol <= '7')
                     {
-                        previous_char();
-                        uint32_t octal = 0;
-                        for (uint8_t i = 1; i < 3; i++)
-                        {
-                            next_char();
-                            if (get_current_char() >= '0' && get_current_char() <= '7')
-                                octal = octal * 8 + (uint32_t)(get_current_char() - '0');
-                            else
-                            {
-                                for (uint8_t j = i; j > 0; j--)
-                                    previous_char();
-                                previous_char();
-                                break;
-                            }
-                        }
-                        current_symbol_number += 2;
+                        uint32_t octal = (uint32_t)temp_symbol - '0';
+                        next_char();
+                        temp_symbol = get_current_char();
+                        if (temp_symbol >= '0' && temp_symbol <= '7')
+                            octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                        else
+                            previous_char();
                         symbol = (char)(octal & 255);
                     }
                     else
@@ -984,23 +976,31 @@ void scan_sentence_element(void)
                         symbol = '\0';
                     }
                     break;
-                default:
-                    if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                    uint32_t octal = (uint32_t)temp_symbol - '0';
+                    for (uint8_t i = 1; i < 3; i++)
                     {
-                        uint32_t j = 0;
-                        for (uint8_t i = 0; i < 3; i++)
-                            if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
-                                j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
-                            else
-                            {
-                                current_symbol_number--;
-                                break;
-                            }
-                        current_symbol_number += 2;
-                        symbols[current_symbol_number] = (char)(j & 255);
+                        next_char();
+                        temp_symbol = get_current_char();
+                        if (temp_symbol >= '0' && temp_symbol <= '7')
+                            octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                        else
+                            previous_char();
                     }
-                    else
-                        current_symbol_number--;
+                    symbol = (char)(octal & 255);
+                    break;
+                case '\n':
+                case '\0':
+                    previous_char();
+                    break;
+                default:
+                    symbol = temp_symbol;
                 }
             }
             current_sentence_element.code.info.infoc = symbol;
@@ -1292,69 +1292,81 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
             {
-                if (get_current_char() == '\\')
+                char symbol = get_current_char();
+                if (symbol == '\\')
                 {
                     next_char();
                     // control symbols ---------------
-                    switch (get_current_char())
+                    char temp_symbol = get_current_char();
+                    switch (temp_symbol)
                     {
                     case '\\':
                         break;
                     case 'n':
-                        symbols[current_symbol_number] = '\012';
+                        symbol = '\012';
                         break;
                     case 't':
-                        symbols[current_symbol_number] = '\011';
+                        symbol = '\011';
                         break;
                     case 'v':
-                        symbols[current_symbol_number] = '\013';
+                        symbol = '\013';
                         break;
                     case 'r':
-                        symbols[current_symbol_number] = '\015';
+                        symbol = '\015';
                         break;
                     case 'f':
-                        symbols[current_symbol_number] = '\014';
+                        symbol = '\014';
                         break;
                     case '0':
-                        if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
+                        next_char();
+                        temp_symbol = get_current_char();
+                        if (temp_symbol >= '0' && temp_symbol <= '7')
                         {
-                            uint32_t j = 0;
-                            for (uint8_t i = 1; i < 3; i++)
-                                if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
-                                    j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
-                                else
-                                {
-                                    current_symbol_number--;
-                                    break;
-                                }
-                            current_symbol_number += 2;
-                            symbols[current_symbol_number] = (char)(j & 255);
+                            uint32_t octal = (uint32_t)temp_symbol - '0';
+                            next_char();
+                            temp_symbol = get_current_char();
+                            if (temp_symbol >= '0' && temp_symbol <= '7')
+                                octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                            else
+                                previous_char();
+                            symbol = (char)(octal & 255);
                         }
                         else
-                            symbols[current_symbol_number] = '\0';
+                        {
+                            previous_char();
+                            symbol = '\0';
+                        }
+                        break;
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                        uint32_t octal = (uint32_t)temp_symbol - '0';
+                        for (uint8_t i = 1; i < 3; i++)
+                        {
+                            next_char();
+                            temp_symbol = get_current_char();
+                            if (temp_symbol >= '0' && temp_symbol <= '7')
+                                octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                            else
+                                previous_char();
+                        }
+                        symbol = (char)(octal & 255);
+                        break;
+                    case '\n':
+                    case '\0':
+                        previous_char();
                         break;
                     default:
-                        if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
-                        {
-                            uint32_t j = 0;
-                            for (uint8_t i = 0; i < 3; i++)
-                                if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
-                                    j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
-                                else
-                                {
-                                    current_symbol_number--;
-                                    break;
-                                }
-                            current_symbol_number += 2;
-                            symbols[current_symbol_number] = (char)(j & 255);
-                        }
-                        else
-                            current_symbol_number--;
+                        symbol = temp_symbol;
                     }
                 }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc = get_current_char();
+                code.info.infoc = symbol;
                 generate_symbol(&code);
             }
             next_char();
