@@ -862,22 +862,9 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNKK:
-            !!!current_sentence_element.type = K;
-            if (symbols[current_symbol_number + 1] != ' ')
-            {
-                symbols[current_symbol_number - 1] = '&';
-                uint8_t i;
-                for (i = 1;
-                     class_symbols[current_symbol_number + i] == 'L' || symbols[current_symbol_number + i] == '_' || class_symbols[current_symbol_number + i] == 'D';
-                     i++)
-                {
-                    symbols[current_symbol_number + i - 1] = symbols[current_symbol_number + i];
-                    class_symbols[current_symbol_number + i - 1] = class_symbols[current_symbol_number + i];
-                }
-                symbols[current_symbol_number + i - 1] = ' ';
-                class_symbols[current_symbol_number + i - 1] = '*';
-                current_symbol_number -= 2;
-            }
+            !!! current_sentence_element.type = K;
+            next_char();
+            if (isspace((unsigned char)get_current_char()) != 0)
             scanner_state = SCNGCR;
             break;
         case SCNP:
