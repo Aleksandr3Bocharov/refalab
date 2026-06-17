@@ -97,6 +97,7 @@ typedef enum scanner_states
     SCNA,
     STATE1,
     SCNCHR,
+    STATE2,
     FSCN,
     NSCN,
     RSCN,
@@ -165,6 +166,7 @@ static struct
     bool empty_card;        // flag for empty card
     bool compile_direction; // L,R - flag
     bool scanner_station;   // scanner station - in(1),out(0) literal chain
+    bool scanner_station_k; // scanner station k - id(1),any(0) after k
     bool left_part_sentence;
     bool end_refalab_source; // "refalab_source" end flag
 } flags;
@@ -670,6 +672,7 @@ static void label_key(bool previous)
         }
     } while (false);
     flags.scanner_station = false;
+    flags.scanner_station_k = false;
     flags.left_part_sentence = true;
     return;
 }
@@ -687,6 +690,8 @@ void scan_sentence_element(void)
     T_SCANNER_STATES scanner_state = STATE0;
     if (flags.scanner_station)
         scanner_state = STATE1;
+    if (flags.scanner_station_k)
+        scanner_state = STATE2;
     while (true)
         switch (scanner_state)
         {
@@ -862,10 +867,11 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNKK:
-            !!! current_sentence_element.type = K;
+            current_sentence_element.type = K;
             next_char();
-            if (isspace((unsigned char)get_current_char()) != 0)
-            scanner_state = SCNGCR;
+            if (isspace((unsigned char)get_current_char()) == 0)
+                flags.scanner_station_k = true;
+            scanner_state = SCNRET;
             break;
         case SCNP:
             current_sentence_element.type = DOT;
@@ -993,6 +999,20 @@ void scan_sentence_element(void)
             current_sentence_element.code.info.infoc = symbol;
             current_sentence_element.type = SC;
             scanner_state = SCNGCR;
+            break;
+        case STATE2:
+            flags.scanner_station_k = false;
+            current_sentence_element.code.tag = TAGO;
+            current_sentence_element.code.info.codef = NULL;
+            if (get_identifier(identifier, &identifier_length))
+            {
+                current_sentence_element.code.info.codef = function_reference(identifier, identifier_length);
+                current_sentence_element.code.tag = TAGF;
+                scanner_state = EGO;
+                break;
+            }
+            print_error_string_symbol("100 illegal symbol", get_current_char());
+            scanner_state = SCNERR;
             break;
         case FSCN:
             specifier_code = 0;
