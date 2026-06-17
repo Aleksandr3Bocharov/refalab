@@ -930,19 +930,29 @@ void scan_sentence_element(void)
                 case '\\':
                     break;
                 case 'n':
-                    symbols[current_symbol_number] = '\012';
+                    current_sentence_element.code.info.infoc = '\012';
+                    current_sentence_element.type = SC;
+                    scanner_state = SCNGCR;
                     break;
                 case 't':
-                    symbols[current_symbol_number] = '\011';
+                    current_sentence_element.code.info.infoc = '\011';
+                    current_sentence_element.type = SC;
+                    scanner_state = SCNGCR;
                     break;
                 case 'v':
-                    symbols[current_symbol_number] = '\013';
+                    current_sentence_element.code.info.infoc = '\013';
+                    current_sentence_element.type = SC;
+                    scanner_state = SCNGCR;
                     break;
                 case 'r':
-                    symbols[current_symbol_number] = '\015';
+                    current_sentence_element.code.info.infoc = '\015';
+                    current_sentence_element.type = SC;
+                    scanner_state = SCNGCR;
                     break;
                 case 'f':
-                    symbols[current_symbol_number] = '\014';
+                    current_sentence_element.code.info.infoc = '\014';
+                    current_sentence_element.type = SC;
+                    scanner_state = SCNGCR;
                     break;
                 case '0':
                     if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
