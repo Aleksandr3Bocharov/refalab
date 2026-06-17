@@ -97,7 +97,6 @@ typedef enum scanner_states
     SCNA,
     STATE1,
     SCNCHR,
-    PROD,
     FSCN,
     NSCN,
     RSCN,
@@ -202,7 +201,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 
 static inline char get_current_char(void)
 {
-    if (refalab_source_cursor >= refalab_source_size)
+    if (refalab_source_cursor == refalab_source_size)
     {
         flags.end_refalab_source = true;
         return '\0';
@@ -226,7 +225,18 @@ static inline void next_char(void)
         flags.end_refalab_source = true;
 }
 
-static void SET_time(void)
+static inline void previous_char(void)
+{
+    if (scanner.column_number != 1)
+    {
+        refalab_source_cursor--;
+        scanner.column_number--;
+        flags.end_refalab_source = false;
+    }
+    return;
+}
+
+static inline void SET_time(void)
 {
     clock_gettime(CLOCK_MONOTONIC, &time_begin);
     return;
@@ -921,56 +931,58 @@ void scan_sentence_element(void)
         case SCNCHR:
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
-            if (get_current_char() == '\\')
+            char symbol = get_current_char();
+            if (symbol == '\\')
             // control symbols
             {
                 next_char();
                 switch (get_current_char())
                 {
                 case '\\':
+                    symbol = '\\';
                     break;
                 case 'n':
-                    current_sentence_element.code.info.infoc = '\012';
-                    current_sentence_element.type = SC;
-                    scanner_state = SCNGCR;
+                    symbol = '\012';
                     break;
                 case 't':
-                    current_sentence_element.code.info.infoc = '\011';
-                    current_sentence_element.type = SC;
-                    scanner_state = SCNGCR;
+                    symbol = '\011';
                     break;
                 case 'v':
-                    current_sentence_element.code.info.infoc = '\013';
-                    current_sentence_element.type = SC;
-                    scanner_state = SCNGCR;
+                    symbol = '\013';
                     break;
                 case 'r':
-                    current_sentence_element.code.info.infoc = '\015';
-                    current_sentence_element.type = SC;
-                    scanner_state = SCNGCR;
+                    symbol = '\015';
                     break;
                 case 'f':
-                    current_sentence_element.code.info.infoc = '\014';
-                    current_sentence_element.type = SC;
-                    scanner_state = SCNGCR;
+                    symbol = '\014';
                     break;
                 case '0':
-                    if (symbols[current_symbol_number + 1] >= '0' && symbols[current_symbol_number + 1] <= '7')
+                    next_char();
+                    if (get_current_char() >= '0' && get_current_char() <= '7')
                     {
-                        uint32_t j = 0;
+                        previous_char();
+                        uint32_t octal = 0;
                         for (uint8_t i = 1; i < 3; i++)
-                            if (symbols[current_symbol_number + i] >= '0' && symbols[current_symbol_number + i] <= '7')
-                                j = j * 8 + (uint32_t)(symbols[current_symbol_number + i] - '0');
+                        {
+                            next_char();
+                            if (get_current_char() >= '0' && get_current_char() <= '7')
+                                octal = octal * 8 + (uint32_t)(get_current_char() - '0');
                             else
                             {
-                                current_symbol_number--;
+                                for (uint8_t j = i; j > 0; j--)
+                                    previous_char();
+                                previous_char();
                                 break;
                             }
+                        }
                         current_symbol_number += 2;
-                        symbols[current_symbol_number] = (char)(j & 255);
+                        symbol = (char)(octal & 255);
                     }
                     else
-                        symbols[current_symbol_number] = '\0';
+                    {
+                        previous_char();
+                        symbol = '\0';
+                    }
                     break;
                 default:
                     if (symbols[current_symbol_number] >= '0' && symbols[current_symbol_number] <= '7')
@@ -991,10 +1003,7 @@ void scan_sentence_element(void)
                         current_symbol_number--;
                 }
             }
-            scanner_state = PROD;
-            break;
-        case PROD:
-            current_sentence_element.code.info.infoc = get_current_char();
+            current_sentence_element.code.info.infoc = symbol;
             current_sentence_element.type = SC;
             scanner_state = SCNGCR;
             break;
