@@ -389,10 +389,10 @@ int main(int argc, char *argv[])
                 scanner.module_name_length = 0;
             macrocode_start();
             blanks_out();
-            if (get_current_char() != ';')
-                PRINT_ERROR_130;
-            else
+            if (get_current_char() == ';')
                 next_char();
+            else
+                PRINT_ERROR_130;
             module_state = NEXT_STM;
             break;
         case NEXT_STM:
