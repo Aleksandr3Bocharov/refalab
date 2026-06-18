@@ -178,7 +178,7 @@ static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_key[6];
-static uint8_t statement_name_length;
+static uint8_t statement_key_name_length;
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
@@ -603,38 +603,45 @@ static void load_refalab_source_to_memory(void)
     flags.end_refalab_source = false;
 }
 
-void get_statement_key(void)
+static bool get_statement_key(void)
 {
     blanks_out();
     if (get_current_char() != '$')
     {
         print_error_string("004 directive missing");
-        return;
+        return false;
     }
     next_char();
-    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
+    char current_char = get_current_char();
+    if (isalpha((unsigned char)current_char) == 0)
+    {
+        print_error_string("005 directive empty");
         return false;
-    identifier[0] = (char)toupper((unsigned char)get_current_char());
-    for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
-    {
-        next_char();
-        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
-            return true;
-        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
     }
-    uint32_t i = 0;
-    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
+    statement_key[0] = (char)toupper((unsigned char)current_char);
+    for (statement_key_name_length = 1; statement_key_name_length < 6; statement_key_name_length++)
     {
         next_char();
+        current_char = get_current_char();
+        if (isalpha((unsigned char)current_char) == 0)
+            return true;
+        statement_key[statement_key_name_length] = (char)toupper((unsigned char)current_char);
+    }
+    size_t i = 0;
+    while (isalpha((unsigned char)current_char) != 0)
+    {
+        next_char();
+        current_char = get_current_char();
         i++;
     }
     if (i > 1)
     {
-        char errror_113[64];
-        sprintf(errror_113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
-        print_error_string(errror_113);
+        char errror_007[64];
+        sprintf(errror_007, "007 directive length > %d", 6);
+        print_error_string(errror_007);
+        return false;
     }
-    return;
+    return true;
 }
 
 void scan_sentence_element(void)
@@ -652,7 +659,7 @@ void scan_sentence_element(void)
         scanner_state = STATE1;
     if (flags.scanner_station_k)
         scanner_state = STATE2;
-    char current_char = get_current_char(); 
+    char current_char = get_current_char();
     while (true)
         switch (scanner_state)
         {
@@ -1070,7 +1077,7 @@ static bool compile_specifer(char tail)
             specifier_state = SPCPRC;
             break;
         case SPCPRC:
-        current_char = get_current_char();
+            current_char = get_current_char();
             switch (current_char)
             {
             case ';':
@@ -1638,7 +1645,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
             return true;
         identifier[*identifier_length] = (char)toupper((unsigned char)current_char);
     }
-    uint32_t i = 0;
+    size_t i = 0;
     while (isalpha((unsigned char)current_char) != 0 || isdigit((unsigned char)current_char) != 0 || current_char == '_')
     {
         next_char();
@@ -1669,7 +1676,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
             return true;
         identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
     }
-    uint32_t i = 0;
+    size_t i = 0;
     while (isalpha((unsigned char)current_char) != 0 || isdigit((unsigned char)current_char) != 0 || current_char == '_')
     {
         next_char();
