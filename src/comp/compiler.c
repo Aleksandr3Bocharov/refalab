@@ -613,7 +613,15 @@ static void load_refalab_source_to_memory(void)
     }
     size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
     *(refalab_source_buffer + read_bytes) = '\0';
-    refalab_source_size = read_bytes;
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < read_bytes; read_index++)
+    {
+        if (refalab_source_buffer[read_index] == '\r' && read_index + 1 < read_bytes && refalab_source_buffer[read_index + 1] == '\n')
+            continue;
+        refalab_source_buffer[write_index++] = refalab_source_buffer[read_index];
+    }
+    refalab_source_buffer[write_index] = '\0';
+    refalab_source_size = write_index;
     refalab_source_cursor = 0;
     scanner.carriage_number++;
     scanner.column_number++;
