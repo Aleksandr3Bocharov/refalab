@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-09
+// 2026-06-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -163,12 +163,12 @@ static struct
     bool was_card_print_file_source_listing;
     bool was_error;
     bool was_card_print_terminal;
-    bool empty_card;        // flag for empty card
-    bool compile_direction; // L,R - flag
-    bool scanner_station;   // scanner station - in(1),out(0) literal chain
-    bool scanner_station_k; // scanner station k - id(1),any(0) after k
-    bool left_part_sentence;
-    bool end_refalab_source; // "refalab_source" end flag
+    bool now_compile_function; // now compile function flag
+    bool compile_direction;    // L,R - flag
+    bool scanner_station;      // scanner station - in(1),out(0) literal chain
+    bool scanner_station_k;    // scanner station k - id(1),any(0) after k
+    bool left_part_sentence;   // left part sentence flag
+    bool end_refalab_source;   // "refalab_source" end flag
 } flags;
 
 static FILE *refalab_source;               // refalab source
@@ -178,8 +178,7 @@ static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_key[6];
-static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
-static size_t module_length;                        // module length
+static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
 static void load_refalab_source_to_memory(void);
@@ -356,9 +355,7 @@ int main(int argc, char *argv[])
             errors_count = 0;
             scanner.module_number++;
             flags.end_refalab_source = false;
-            previous_label[0] = '\0';
             module_length = 0;
-            memset(module_name, '\0', MAX_IDENTIFIER_LENGTH + 1);
             for (uint8_t i = 0; i < 7; ++i)
                 specifier_abbreviated[i] = NULL;
             // "start" - directive work
@@ -378,8 +375,7 @@ int main(int argc, char *argv[])
                 module_state = KEYS;
                 break;
             }
-            strncpy(module_name, statement_label, statement_label_length);
-            strncpy(scanner.module_name, statement_label, statement_label_length);
+            memcpy(scanner.module_name, statement_label, statement_label_length);
             scanner.module_name_length = statement_label_length;
             macrocode_start();
             blanks_out();
@@ -435,8 +431,6 @@ int main(int argc, char *argv[])
             }
             else if (strncasecmp(statement_key, "end", 3) == 0)
             {
-                if (previous_label[0] != '\0')
-                    set_empty(previous_label, (uint8_t)strlen(previous_label));
                 if (statement_label_length != 0)
                     PRINT_ERROR_130;
                 else
@@ -500,7 +494,6 @@ int main(int argc, char *argv[])
             {
                 if (impl == false)
                     print_error_string("021 l-directive not in the impl-section");
-                current_symbol_number = fix_current_symbol_number; // return to left
                 flags.compile_direction = true;
                 previous_label_to_statement_label();
                 compile_sentence(flags.compile_direction, statement_label, statement_label_length);
@@ -1394,7 +1387,6 @@ static void print_card_refalab_source_listing(void)
     if (!flags.was_card_print_file_source_listing && refalab_source_listing != NULL)
     {
         flags.was_card_print_file_source_listing = true;
-        card[CUT] = '\0';
         if (!flags.end_refalab_source)
         {
             char temp_string[CUT + 28];
@@ -1657,7 +1649,7 @@ static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
     sprintf(print_line,
-            "module_name = %-40s    module_length(lines) = %zu\n", module_name, scanner.carriage_number);
+            "module_name = %-40s    module_length(lines) = %zu\n", scanner.module_name, scanner.carriage_number);
     if (options.source_listing)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);

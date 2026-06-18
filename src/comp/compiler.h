@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-09
+// 2026-06-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.h  ----------
@@ -36,6 +36,8 @@ typedef struct scanner
     char module_name[MAX_IDENTIFIER_LENGTH]; // module name
     uint8_t module_name_length;              // module name length
     uint32_t module_number;
+    char function_name[MAX_IDENTIFIER_LENGTH]; // function name
+    uint8_t function_name_length;              // function name length
 } T_SCANNER;
 
 extern T_SCANNER scanner;
