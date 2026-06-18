@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
     strcpy(filename, argv[1]);
     strcat(filename, ".ref");
     printf("\n%s:\n", filename);
-    refalab_source = fopen(filename, "r");
+    refalab_source = fopen(filename, Rbin);
     if (refalab_source == NULL)
     {
         printf("Can't open %s\n", filename);
