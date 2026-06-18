@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
                 break;
             }
             module_init();
-            if (strncasecmp(statement_key, "start", 5) != 0)
+            if (strncmp(statement_key, "START", statement_key_name_length) != 0)
             {
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
@@ -603,20 +603,22 @@ static void load_refalab_source_to_memory(void)
     flags.end_refalab_source = false;
 }
 
-static bool get_statement_key(void)
+static void get_statement_key(void)
 {
+    statement_key_name_length = 0;
+    memset(statement_key, ' ', 6);
     blanks_out();
     if (get_current_char() != '$')
     {
         print_error_string("004 directive missing");
-        return false;
+        return;
     }
     next_char();
     char current_char = get_current_char();
     if (isalpha((unsigned char)current_char) == 0)
     {
         print_error_string("005 directive empty");
-        return false;
+        return;
     }
     statement_key[0] = (char)toupper((unsigned char)current_char);
     for (statement_key_name_length = 1; statement_key_name_length < 6; statement_key_name_length++)
@@ -624,7 +626,7 @@ static bool get_statement_key(void)
         next_char();
         current_char = get_current_char();
         if (isalpha((unsigned char)current_char) == 0)
-            return true;
+            return;
         statement_key[statement_key_name_length] = (char)toupper((unsigned char)current_char);
     }
     size_t i = 0;
@@ -636,12 +638,11 @@ static bool get_statement_key(void)
     }
     if (i > 1)
     {
-        char errror_007[64];
-        sprintf(errror_007, "007 directive length > %d", 6);
-        print_error_string(errror_007);
-        return false;
+        statement_key_name_length = 0;
+        print_error_string("007 Too long directive");
+        return;
     }
-    return true;
+    return;
 }
 
 void scan_sentence_element(void)
