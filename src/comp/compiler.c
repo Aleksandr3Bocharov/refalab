@@ -377,17 +377,27 @@ int main(int argc, char *argv[])
                 module_state = KEYS;
                 break;
             }
-            memcpy(scanner.module_name, statement_label, statement_label_length);
-            scanner.module_name_length = statement_label_length;
+            blanks_out();
+            char module_name[MAX_IDENTIFIER_LENGTH];
+            uint8_t module_name_length;
+            if (get_identifier(module_name, &module_name_length))
+            {
+                memcpy(scanner.module_name, module_name, module_name_length);
+                scanner.module_name_length = module_name_length;
+            }
+            else
+                scanner.module_name_length = 0;
             macrocode_start();
             blanks_out();
-            if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+            if (get_current_char() != ';')
                 PRINT_ERROR_130;
+            else
+                next_char();
             module_state = NEXT_STM;
             break;
         case NEXT_STM:
             // read of next sentence
-            label_key(false);
+            get_statement_key();
             module_state = KEYS;
             break;
         case KEYS:
@@ -1492,7 +1502,10 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
         blanks_out();
         const char current_char = get_current_char();
         if (current_char == ';')
+        {
+            next_char();
             return;
+        }
         if (current_char == ',')
         {
             next_char();
@@ -1541,7 +1554,10 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
         blanks_out();
         const char current_char = get_current_char();
         if (current_char == ';')
+        {
+            next_char();
             return;
+        }
         if (current_char == ',')
         {
             next_char();
@@ -1567,7 +1583,10 @@ static void equ(void)
         set_equ(statement_label, statement_label_length, identifier, identifier_length);
         blanks_out();
         if (get_current_char() == ';')
+        {
+            next_char();
             return;
+        }
     } while (false);
     PRINT_ERROR_130;
     return;
