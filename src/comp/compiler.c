@@ -1426,11 +1426,6 @@ static void print_card_terminal(void)
 
 static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
-    if (statement_label_length != 0)
-    {
-        PRINT_ERROR_130;
-        return;
-    }
     blanks_out();
     while (true)
     {
@@ -1461,11 +1456,6 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
 
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
-    if (statement_label_length != 0)
-    {
-        PRINT_ERROR_130;
-        return;
-    }
     blanks_out();
     while (true)
     {
@@ -1514,13 +1504,13 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
 static void equ(void)
 { // treatement of directives having 'EQU' type
     blanks_out();
-    char identifier[MAX_IDENTIFIER_LENGTH];
-    uint8_t identifier_length;
+    char identifier1[MAX_IDENTIFIER_LENGTH];
+    uint8_t identifier_length1;
     do
     {
-        if (!get_identifier(identifier, &identifier_length))
+        if (!get_identifier(identifier1, &identifier_length1))
             break;
-        set_equ(statement_label, statement_label_length, identifier, identifier_length);
+        set_equ(identifier1, identifier_length1, statement_label, statement_label_length);
         blanks_out();
         if (get_current_char() == ';')
         {
