@@ -177,19 +177,13 @@ static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
-static char statement_label[MAX_IDENTIFIER_LENGTH];
-static uint8_t statement_label_length;
-static char previous_label[MAX_IDENTIFIER_LENGTH + 1];
 static char statement_key[6];
-static int8_t fix_current_symbol_number;            // start sentence position
 static char module_name[MAX_IDENTIFIER_LENGTH + 1]; // module name
 static size_t module_length;                        // module length
 static T_TIMESPEC time_begin;
 
 static void load_refalab_source_to_memory(void);
-static void label_key(bool previous);
 static void blanks_out(void);
-static void previous_label_to_statement_label(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t));
 static void equ(void);
@@ -574,20 +568,6 @@ int main(int argc, char *argv[])
         }
 } // main program  end
 
-static void previous_label_to_statement_label(void)
-{ // perenos poslednej pustoj metki w tekuschuju
-    uint8_t previous_label_length = (uint8_t)strlen(previous_label);
-    if (previous_label_length != 0 && statement_label_length == 0)
-    {
-        memcpy(statement_label, previous_label, previous_label_length);
-        statement_label_length = previous_label_length;
-    }
-    else if (previous_label_length != 0)
-        set_empty(previous_label, previous_label_length);
-    previous_label[0] = '\0';
-    return;
-}
-
 static void load_refalab_source_to_memory(void)
 {
     if (refalab_source_buffer != NULL)
@@ -626,63 +606,6 @@ static void load_refalab_source_to_memory(void)
     scanner.carriage_number++;
     scanner.column_number++;
     flags.end_refalab_source = false;
-}
-
-//    directive label and keyword extraction
-static void label_key(bool previous)
-{
-    if (!previous)
-        while (true)
-        {
-            read_card();
-            if (symbols[0] == ' ')
-                statement_label_length = 0;
-            else if (!get_identifier(statement_label, &statement_label_length))
-            {
-                print_error_string("120 the first symbol is not letter or underscore or blank");
-                continue;
-            }
-            break;
-        }
-    blanks_out();
-    memset(statement_key, ' ', 6);
-    do
-    {
-        if (symbols[current_symbol_number] == ' ')
-            break;
-        fix_current_symbol_number = current_symbol_number;
-        uint8_t statement_key_length = 0;
-        while (symbols[current_symbol_number] != ' ')
-        {
-            if (current_symbol_number == CUT - 1)
-            {
-                const int8_t delta = CUT - 1 - fix_current_symbol_number;
-                const int8_t temp_fix_current_symbol_number = 0 - delta;
-                for (current_symbol_number = 0; current_symbol_number != delta; current_symbol_number++)
-                {
-                    symbols[temp_fix_current_symbol_number + current_symbol_number] = symbols[fix_current_symbol_number + current_symbol_number];
-                    class_symbols[temp_fix_current_symbol_number + current_symbol_number] = class_symbols[fix_current_symbol_number + current_symbol_number];
-                }
-                read_card();
-                fix_current_symbol_number = temp_fix_current_symbol_number;
-                if (symbols[0] == ' ')
-                    break;
-            }
-            if (statement_key_length == 6)
-            {
-                current_symbol_number = fix_current_symbol_number;
-                statement_key[0] = 'l';
-                break;
-            }
-            statement_key[statement_key_length] = symbols[current_symbol_number];
-            statement_key_length++;
-            current_symbol_number++;
-        }
-    } while (false);
-    flags.scanner_station = false;
-    flags.scanner_station_k = false;
-    flags.left_part_sentence = true;
-    return;
 }
 
 void scan_sentence_element(void)
