@@ -163,12 +163,11 @@ static struct
     bool was_card_print_file_source_listing;
     bool was_error;
     bool was_card_print_terminal;
-    bool now_compile_function; // now compile function flag
-    bool compile_direction;    // L,R - flag
-    bool scanner_station;      // scanner station - in(1),out(0) literal chain
-    bool scanner_station_k;    // scanner station k - id(1),any(0) after k
-    bool left_part_sentence;   // left part sentence flag
-    bool end_refalab_source;   // "refalab_source" end flag
+    bool compile_direction;  // L,R - flag
+    bool scanner_station;    // scanner station - in(1),out(0) literal chain
+    bool scanner_station_k;  // scanner station k - id(1),any(0) after k
+    bool left_part_sentence; // left part sentence flag
+    bool end_refalab_source; // "refalab_source" end flag
 } flags;
 
 static FILE *refalab_source;               // refalab source
@@ -177,7 +176,7 @@ static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
-static char statement_key[6];
+static char statement_key[5];
 static uint8_t statement_key_name_length;
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
@@ -348,7 +347,6 @@ int main(int argc, char *argv[])
         exit(8);
     }
     flags.was_error = false;
-    bool impl = false;
     T_MODULE_STATES module_state = START_OF_MODULE;
     while (true)
         switch (module_state)
@@ -362,12 +360,12 @@ int main(int argc, char *argv[])
                 specifier_abbreviated[i] = NULL;
             // "start" - directive work
             load_refalab_source_to_memory();
-            get_statement_key();
             if (flags.end_refalab_source)
             {
                 module_state = END_OF_SYSIN;
                 break;
             }
+            get_statement_key();
             module_init();
             if (strncmp(statement_key, "START", statement_key_name_length) != 0)
             {
@@ -393,7 +391,12 @@ int main(int argc, char *argv[])
                 next_char();
             else
                 PRINT_ERROR_130;
-            module_state = NEXT_STM;
+            if (!flags.end_refalab_source)
+            {
+                module_state = NEXT_STM;
+                break;
+            }
+            module_state = END_IS_MISSING;
             break;
         case NEXT_STM:
             // read of next sentence
@@ -401,114 +404,52 @@ int main(int argc, char *argv[])
             module_state = KEYS;
             break;
         case KEYS:
-            if (strncasecmp(statement_key, "impl", 4) == 0)
+            if (strncmp(statement_key, "START", statement_key_name_length) == 0)
             {
-                if (impl == true)
-                    print_error_string("011 impl-directive in the impl-section");
-                if (statement_label_length != 0)
-                    PRINT_ERROR_130;
-                else
-                {
-                    blanks_out();
-                    if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
-                        PRINT_ERROR_130;
-                };
-                impl = true;
-            }
-            else if (strncasecmp(statement_key, "l ", 2) == 0)
-            {
-                if (impl == false)
-                    print_error_string("021 l-directive not in the impl-section");
-                flags.compile_direction = true;
-                previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
-            }
-            else if (strncasecmp(statement_key, "r ", 2) == 0)
-            {
-                if (impl == false)
-                    print_error_string("022 r-directive not in the impl-section");
-                flags.compile_direction = false;
-                previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
-            }
-            else if (strncasecmp(statement_key, "start", 5) == 0)
-            {
-                if (impl == true)
-                    print_error_string("012 start-directive in the impl-section");
-                else
-                    print_error_string("002 too many start-directive");
+                print_error_string("002 too many START-directive");
                 blanks_out();
-                if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
+                get_identifier(module_name, &module_name_length);
+                blanks_out();
+                if (get_current_char() == ';')
+                    next_char();
+                else
                     PRINT_ERROR_130;
             }
-            else if (strncasecmp(statement_key, "end", 3) == 0)
+            else if (strncmp(statement_key, "END", statement_key_name_length) == 0)
             {
-                if (statement_label_length != 0)
-                    PRINT_ERROR_130;
-                else
+                blanks_out();
+                if (get_current_char() == '.')
                 {
                     blanks_out();
-                    if (current_symbol_number != CUT - 1 || symbols[current_symbol_number] != ' ')
-                        PRINT_ERROR_130;
+                    if (get_current_char() != '\0')
+                        print_error_string("009 Unexpected end of module");
                 }
+                else
+                    PRINT_ERROR_130;
                 module_state = END_STATEMENT;
                 break;
             }
-            else if (strncasecmp(statement_key, "entry", 5) == 0)
-            {
-                if (impl == true)
-                    print_error_string("013 entry-directive in the impl-section");
+            else if (strncmp(statement_key, "ENTRY", statement_key_name_length) == 0)
                 handle_identifiers_extern(set_entry);
-            }
-            else if (strncasecmp(statement_key, "extrn", 5) == 0)
-            {
-                if (impl == true)
-                    print_error_string("014 extrn-directive in the impl-section");
+            else if (strncmp(statement_key, "EXTRN", statement_key_name_length) == 0)
                 handle_identifiers_extern(set_extrn);
-            }
-            else if (strncasecmp(statement_key, "empty", 5) == 0)
-            {
-                if (impl == true)
-                    print_error_string("015 empty-directive in the impl-section");
+            else if (strncmp(statement_key, "EMPTY", statement_key_name_length) == 0)
                 handle_identifiers(set_empty);
-            }
-            else if (strncasecmp(statement_key, "swap", 4) == 0)
-            {
-                if (impl == true)
-                    print_error_string("016 swap-directive in the impl-section");
+            else if (strncmp(statement_key, "SWAP", statement_key_name_length) == 0)
                 handle_identifiers(set_swap);
-            }
-            else if (strncasecmp(statement_key, "s ", 2) == 0)
+            else if (strncmp(statement_key, "S", statement_key_name_length) == 0)
             {
-                if (impl == true)
-                    print_error_string("017 s-directive in the impl-section");
                 specifier_definition(statement_label, statement_label_length);
                 compile_specifer(' ');
             }
-            else if (strncasecmp(statement_key, "equ", 3) == 0)
-            {
-                if (impl == true)
-                    print_error_string("018 equ-directive in the impl-section");
+            else if (strncmp(statement_key, "EQU", statement_key_name_length) == 0)
                 equ();
-            }
-            else if (statement_key[0] == ' ')
-            {
-                previous_label_to_statement_label();
-                if (statement_label_length != 0)
-                {
-                    if (impl == false)
-                        print_error_string("023 function not in the impl-section");
-                    strncpy(previous_label, statement_label, statement_label_length);
-                    previous_label[statement_label_length] = '\0';
-                }
-            }
             else
             {
-                if (impl == false)
-                    print_error_string("021 l-directive not in the impl-section");
-                flags.compile_direction = true;
-                previous_label_to_statement_label();
-                compile_sentence(flags.compile_direction, statement_label, statement_label_length);
+                print_error_string("009 Unknown directive");
+                const char current_char = get_current_char();
+                if (isspace((unsigned char)current_char) == 0 && current_char != '$' && current_char != '\0')
+                    next_char();
             }
             if (!flags.end_refalab_source)
             {
@@ -518,8 +459,7 @@ int main(int argc, char *argv[])
             module_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
-            print_error_string("003 end-directive missing");
-            errors_count++;
+            print_error_string("003 END-directive missing");
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
@@ -616,7 +556,7 @@ static void load_refalab_source_to_memory(void)
 static void get_statement_key(void)
 {
     statement_key_name_length = 0;
-    memset(statement_key, ' ', 6);
+    memset(statement_key, ' ', 5);
     blanks_out();
     if (get_current_char() != '$')
     {
@@ -631,7 +571,7 @@ static void get_statement_key(void)
         return;
     }
     statement_key[0] = (char)toupper((unsigned char)current_char);
-    for (statement_key_name_length = 1; statement_key_name_length < 6; statement_key_name_length++)
+    for (statement_key_name_length = 1; statement_key_name_length < 5; statement_key_name_length++)
     {
         next_char();
         current_char = get_current_char();
