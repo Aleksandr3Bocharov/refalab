@@ -178,10 +178,12 @@ static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_key[6];
+static uint8_t statement_name_length;
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
 static void load_refalab_source_to_memory(void);
+static void get_statement_key(void);
 static void blanks_out(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t));
@@ -360,7 +362,7 @@ int main(int argc, char *argv[])
                 specifier_abbreviated[i] = NULL;
             // "start" - directive work
             load_refalab_source_to_memory();
-            label_key(false);
+            get_statement_key();
             if (flags.end_refalab_source)
             {
                 module_state = END_OF_SYSIN;
@@ -601,6 +603,40 @@ static void load_refalab_source_to_memory(void)
     flags.end_refalab_source = false;
 }
 
+void get_statement_key(void)
+{
+    blanks_out();
+    if (get_current_char() != '$')
+    {
+        print_error_string("004 directive missing");
+        return;
+    }
+    next_char();
+    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
+        return false;
+    identifier[0] = (char)toupper((unsigned char)get_current_char());
+    for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
+    {
+        next_char();
+        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
+            return true;
+        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
+    }
+    uint32_t i = 0;
+    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
+    {
+        next_char();
+        i++;
+    }
+    if (i > 1)
+    {
+        char errror_113[64];
+        sprintf(errror_113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
+        print_error_string(errror_113);
+    }
+    return;
+}
+
 void scan_sentence_element(void)
 {
     char identifier[MAX_IDENTIFIER_LENGTH];
@@ -616,13 +652,15 @@ void scan_sentence_element(void)
         scanner_state = STATE1;
     if (flags.scanner_station_k)
         scanner_state = STATE2;
+    char current_char = get_current_char(); 
     while (true)
         switch (scanner_state)
         {
         case STATE0:
             // among elements
             blanks_out();
-            switch (get_current_char())
+            current_char = get_current_char();
+            switch (current_char)
             {
             case '&':
             case '0':
@@ -699,7 +737,7 @@ void scan_sentence_element(void)
                 scanner_state = LSCN;
                 break;
             default:
-                print_error_string_symbol("100 illegal symbol", get_current_char());
+                print_error_string_symbol("100 illegal symbol", current_char);
                 scanner_state = SCNERR;
             }
             break;
@@ -745,7 +783,8 @@ void scan_sentence_element(void)
             break;
         case SCNV:
             next_char();
-            if (get_current_char() == '(')
+            current_char = get_current_char();
+            if (current_char == '(')
             {
                 next_char();
                 if (flags.left_part_sentence)
@@ -756,7 +795,7 @@ void scan_sentence_element(void)
                 if (compile_specifer(')'))
                     next_char();
             }
-            else if (get_current_char() == ':')
+            else if (current_char == ':')
             {
                 next_char();
                 if (!get_identifier(identifier, &identifier_length))
@@ -812,12 +851,13 @@ void scan_sentence_element(void)
             break;
         case SCNA:
             next_char();
-            if (get_current_char() == '\n' || get_current_char() == '\0')
+            current_char = get_current_char();
+            if (current_char == '\n' || current_char == '\0')
             {
                 scanner_state = OSH101;
                 break;
             }
-            if (get_current_char() == '\'')
+            if (current_char == '\'')
             {
                 scanner_state = SCNCHR;
                 break;
@@ -826,12 +866,12 @@ void scan_sentence_element(void)
             scanner_state = SCNCHR;
             break;
         case STATE1: // within letter chain
-            if (get_current_char() == '\n' || get_current_char() == '\0')
+            if (current_char == '\n' || current_char == '\0')
             {
                 scanner_state = OSH101;
                 break;
             }
-            if (get_current_char() != '\'')
+            if (current_char != '\'')
             {
                 scanner_state = SCNCHR;
                 break;
@@ -1021,6 +1061,7 @@ static bool compile_specifer(char tail)
     uint8_t identifier_length;
     T_LINKTI code;
     T_SPECIFIER_STATES specifier_state = SPCBLO;
+    char current_char = get_current_char();
     while (true)
         switch (specifier_state)
         {
@@ -1029,7 +1070,8 @@ static bool compile_specifer(char tail)
             specifier_state = SPCPRC;
             break;
         case SPCPRC:
-            switch (get_current_char())
+        current_char = get_current_char();
+            switch (current_char)
             {
             case ';':
                 specifier_state = SPCFF;
@@ -1096,7 +1138,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCED;
                 break;
             default:
-                print_error_string_symbol("201 within specifier invalid symbol ", get_current_char());
+                print_error_string_symbol("201 within specifier invalid symbol ", current_char);
                 specifier_state = OSH200;
             }
             break;
@@ -1128,17 +1170,18 @@ static bool compile_specifer(char tail)
             }
             next_char();
             blanks_out();
-            if (get_current_char() == '(')
+            current_char = get_current_char();
+            if (current_char == '(')
             {
                 specifier_state = SPCGC;
                 break;
             }
-            if (get_current_char() == ')')
+            if (current_char == ')')
             {
                 specifier_state = SPCR1;
                 break;
             }
-            if (get_current_char() == ';')
+            if (current_char == ';')
             {
                 specifier_state = SPCR2;
                 break;
@@ -1199,12 +1242,13 @@ static bool compile_specifer(char tail)
             break;
         case SPCA:
             next_char();
-            if (get_current_char() == '\n' || get_current_char() == '\0')
+            current_char = get_current_char();
+            if (current_char == '\n' || current_char == '\0')
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (get_current_char() != '\'')
+            if (current_char != '\'')
             {
                 specifier_state = SPCA1;
                 break;
@@ -1301,12 +1345,13 @@ static bool compile_specifer(char tail)
                 generate_symbol(&code);
             }
             next_char();
-            if (get_current_char() == '\n' || get_current_char() == '\0')
+            current_char = get_current_char();
+            if (current_char == '\n' || current_char == '\0')
             {
                 specifier_state = OSH205;
                 break;
             }
-            if (get_current_char() != '\'')
+            if (current_char != '\'')
                 break;
             next_char();
             if (get_current_char() == '\'')
@@ -1437,9 +1482,10 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
             break;
         (*handler)(identifier, identifier_length);
         blanks_out();
-        if (get_current_char() == ';')
+        const char current_char = get_current_char();
+        if (current_char == ';')
             return;
-        if (get_current_char() == ',')
+        if (current_char == ',')
         {
             next_char();
             if (isspace((unsigned char)get_current_char()) != 0)
@@ -1485,9 +1531,10 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
             (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
         }
         blanks_out();
-        if (get_current_char() == ';')
+        const char current_char = get_current_char();
+        if (current_char == ';')
             return;
-        if (get_current_char() == ',')
+        if (current_char == ',')
         {
             next_char();
             if (isspace((unsigned char)get_current_char()) != 0)
@@ -1524,17 +1571,19 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
     code->info.codef = NULL;
     do
     {
-        if (isdigit((unsigned char)get_current_char()) != 0)
+        char current_char = get_current_char();
+        if (isdigit((unsigned char)current_char) != 0)
         {
             code->tag = TAGN;
             code->info.codef = NULL;
             code->info.coden = 0;
-            uint64_t number = get_current_char() - '0';
+            uint64_t number = current_char - '0';
             bool multiple_symbol_end = false;
             while (true)
             {
                 next_char();
-                if (isdigit((unsigned char)get_current_char()) == 0)
+                current_char = get_current_char();
+                if (isdigit((unsigned char)current_char) == 0)
                 {
                     code->tag = TAGN;
                     code->info.codef = NULL;
@@ -1542,7 +1591,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                     multiple_symbol_end = true;
                     break;
                 }
-                const uint64_t remainder = get_current_char() - '0';
+                const uint64_t remainder = current_char - '0';
                 number = number * 10 + remainder;
                 if (number <= MAX_NUMBER)
                     continue;
@@ -1577,20 +1626,23 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
 { // read identifier
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
-    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
+    char current_char = get_current_char();
+    if (isalpha((unsigned char)current_char) == 0 && current_char != '_')
         return false;
-    identifier[0] = (char)toupper((unsigned char)get_current_char());
+    identifier[0] = (char)toupper((unsigned char)current_char);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
     {
         next_char();
-        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
+        current_char = get_current_char();
+        if (isalpha((unsigned char)current_char) == 0 && current_char != '_' && isdigit((unsigned char)current_char) == 0)
             return true;
-        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
+        identifier[*identifier_length] = (char)toupper((unsigned char)current_char);
     }
     uint32_t i = 0;
-    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
+    while (isalpha((unsigned char)current_char) != 0 || isdigit((unsigned char)current_char) != 0 || current_char == '_')
     {
         next_char();
+        current_char = get_current_char();
         i++;
     }
     if (i > 1)
@@ -1605,20 +1657,23 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
 // read external identifier
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
-    if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_')
+    char current_char = get_current_char();
+    if (isalpha((unsigned char)current_char) == 0 && current_char != '_')
         return false;
-    identifier[0] = (char)toupper((unsigned char)get_current_char());
+    identifier[0] = (char)toupper((unsigned char)current_char);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
     {
         next_char();
-        if (isalpha((unsigned char)get_current_char()) == 0 && get_current_char() != '_' && isdigit((unsigned char)get_current_char()) == 0)
+        current_char = get_current_char();
+        if (isalpha((unsigned char)current_char) == 0 && current_char != '_' && isdigit((unsigned char)current_char) == 0)
             return true;
         identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
     }
     uint32_t i = 0;
-    while (isalpha((unsigned char)get_current_char()) != 0 || isdigit((unsigned char)get_current_char()) != 0 || get_current_char() == '_')
+    while (isalpha((unsigned char)current_char) != 0 || isdigit((unsigned char)current_char) != 0 || current_char == '_')
     {
         next_char();
+        current_char = get_current_char();
         i++;
     }
     if (i > 1)
