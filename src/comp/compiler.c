@@ -210,7 +210,7 @@ static inline void next_char(void)
 {
     if (refalab_source_cursor < refalab_source_size)
         refalab_source_cursor++;
-    else
+    if (refalab_source_cursor >= refalab_source_size)
         flags.end_refalab_source = true;
 }
 
@@ -219,16 +219,17 @@ static inline void previous_char(void)
     if (refalab_source_cursor > refalab_source_size)
         refalab_source_cursor = refalab_source_size;
     if (refalab_source_cursor != 0)
-    {
         refalab_source_cursor--;
+    if (refalab_source_cursor < refalab_source_size && refalab_source_size > 0)
         flags.end_refalab_source = false;
-    }
+    else
+        flags.end_refalab_source = true;
     return;
 }
 
 static inline void seek_char(char seek)
 {
-    while (get_current_char() != seek || !flags.end_refalab_source)
+    while (get_current_char() != seek && !flags.end_refalab_source)
         next_char();
 }
 
@@ -536,8 +537,8 @@ static void load_refalab_source_to_memory(void)
         free(refalab_source_buffer);
         refalab_source_buffer = NULL;
     }
-    scanner.carriage_number = 0;
-    scanner.column_number = 0;
+    refalab_source_size = 0;
+    refalab_source_cursor = 0;
     fseek(refalab_source, 0, SEEK_END);
     long int file_size = ftell(refalab_source);
     fseek(refalab_source, 0, SEEK_SET);
@@ -553,6 +554,13 @@ static void load_refalab_source_to_memory(void)
         exit(1);
     }
     size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
+    if (read_bytes == 0 && ferror(refalab_source))
+    {
+        free(refalab_source_buffer);
+        refalab_source_buffer = NULL;
+        flags.end_refalab_source = true;
+        return;
+    }
     *(refalab_source_buffer + read_bytes) = '\0';
     size_t write_index = 0;
     for (size_t read_index = 0; read_index < read_bytes; read_index++)
@@ -564,9 +572,14 @@ static void load_refalab_source_to_memory(void)
     refalab_source_buffer[write_index] = '\0';
     refalab_source_size = write_index;
     refalab_source_cursor = 0;
-    scanner.carriage_number++;
-    scanner.column_number++;
-    flags.end_refalab_source = false;
+    if (refalab_source_size == 0)
+    {
+        free(refalab_source_buffer);
+        refalab_source_buffer = NULL;
+        flags.end_refalab_source = true;
+    }
+    else
+        flags.end_refalab_source = false;
 }
 
 static void get_statement_key(void)
