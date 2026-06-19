@@ -187,6 +187,7 @@ static void blanks_out(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t));
 static void equ(void);
+static void specifier(void);
 static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
@@ -463,10 +464,7 @@ int main(int argc, char *argv[])
             else if (strncmp(statement_key, "SWAP", statement_key_name_length) == 0)
                 handle_identifiers(set_swap);
             else if (strncmp(statement_key, "S", statement_key_name_length) == 0)
-            {
-                specifier_definition(statement_label, statement_label_length);
-                compile_specifer(' ');
-            }
+                specifier();
             else if (strncmp(statement_key, "EQU", statement_key_name_length) == 0)
                 equ();
             else
@@ -1552,6 +1550,38 @@ static void equ(void)
         {
             next_char();
             return;
+        }
+    } while (false);
+    PRINT_ERROR_130;
+    seek_char(';');
+    if (get_current_char() == ';')
+        next_char();
+    return;
+}
+
+static void specifier(void)
+{ // treatement of directives having 'S' type
+    do
+    {
+        blanks_out();
+        char identifier[MAX_IDENTIFIER_LENGTH];
+        uint8_t identifier_length;
+        if (!get_identifier(identifier, &identifier_length))
+            break;
+        specifier_definition(identifier, &identifier_length);
+        if (compile_specifer(';'))
+        {
+            next_char();
+            return;
+        }
+        else
+        {
+            blanks_out();
+            if (get_current_char() == ';')
+            {
+                next_char();
+                return;
+            }
         }
     } while (false);
     PRINT_ERROR_130;
