@@ -198,7 +198,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 
 static inline char get_current_char(void)
 {
-    if (refalab_source_cursor >= refalab_source_size)
+    if (refalab_source_buffer == NULL || refalab_source_cursor >= refalab_source_size)
     {
         flags.end_refalab_source = true;
         return '\0';
@@ -571,7 +571,6 @@ static void load_refalab_source_to_memory(void)
     }
     refalab_source_buffer[write_index] = '\0';
     refalab_source_size = write_index;
-    refalab_source_cursor = 0;
     if (refalab_source_size == 0)
     {
         free(refalab_source_buffer);
