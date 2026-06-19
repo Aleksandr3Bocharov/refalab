@@ -1208,8 +1208,9 @@ static bool compile_specifer(char tail)
                 specifier_state = OSH203;
                 break;
             }
-            if (strncmp(statement_label, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || statement_label[identifier_length] == ' '))
-                print_error_string("209 specifier is defined through itself");
+            if (tail != ')')
+                if (strncmp(scanner.label_name, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || scanner.label_name[identifier_length] == ' '))
+                    print_error_string("209 specifier is defined through itself");
             T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
@@ -1564,11 +1565,9 @@ static void specifier(void)
     do
     {
         blanks_out();
-        char identifier[MAX_IDENTIFIER_LENGTH];
-        uint8_t identifier_length;
-        if (!get_identifier(identifier, &identifier_length))
+        if (!get_identifier(scanner.label_name, &scanner.label_name_length))
             break;
-        specifier_definition(identifier, &identifier_length);
+        specifier_definition(scanner.label_name, &scanner.label_name_length);
         if (compile_specifer(';'))
         {
             next_char();
