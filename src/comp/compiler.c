@@ -1417,11 +1417,11 @@ static bool compile_specifer(char tail)
 
 static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
-    if (refalab_source_listing == NULL || flags.was_card_print_file_source_listing)
+    if (refalab_source_listing == NULL || flags.was_card_print_file_source_listing || refalab_source_buffer == NULL)
         return;
     fprintf(refalab_source_listing, "%5zu | ", scanner.carriage_number);
     size_t start_position = refalab_source_cursor;
-    while (start_position > 0 && refalab_source_buffer[start_position] != '\n')
+    while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
@@ -1435,16 +1435,16 @@ static void print_card_refalab_source_listing(void)
 
 static void print_card_terminal(void)
 { // card writing into terminal
-    if (terminal == NULL || flags.was_card_print_terminal)
+    if (terminal == NULL || flags.was_card_print_terminal || refalab_source_buffer == NULL)
         return;
     fprintf(terminal, "Error in line %zu:\n", scanner.carriage_number);
     size_t start_position = refalab_source_cursor;
-    while (start_position > 0 && refalab_source_buffer[start_position] != '\n')
+    while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
-        fputc(refalab_source_buffer[current_position], refalab_source_listing);
+        fputc(refalab_source_buffer[current_position], terminal);
         current_position++;
     }
     fputc('\n', terminal);
