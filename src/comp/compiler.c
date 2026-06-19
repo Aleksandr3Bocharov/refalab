@@ -1411,41 +1411,44 @@ static bool compile_specifer(char tail)
 
 static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
-    if (!flags.was_card_print_file_source_listing && refalab_source_listing != NULL)
+    if (refalab_source_listing == NULL || flags.was_card_print_file_source_listing)
+        return;
+    fprintf(refalab_source_listing, "%5zu | ", scanner.carriage_number);
+    size_t start_position = refalab_source_cursor;
+    while (start_position > 0 && refalab_source_buffer[start_position] != '\n')
+        start_position--;
+    size_t current_position = start_position;
+    while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
-        flags.was_card_print_file_source_listing = true;
-        if (!flags.end_refalab_source)
-        {
-            char temp_string[CUT + 28];
-            sprintf(temp_string, "%4zu %s", scanner.carriage_number, card);
-            uint8_t i;
-            for (i = CUT + 4; i > 4; i--)
-                if (temp_string[i] != ' ')
-                    break;
-            i++;
-            temp_string[i] = '\n';
-            i++;
-            temp_string[i] = '\0';
-            fputs(temp_string, refalab_source_listing);
-        }
+        fputc(refalab_source_buffer[current_position], refalab_source_listing);
+        current_position++;
     }
-    return;
+    fputc('\n', refalab_source_listing);
+    flags.was_card_print_file_source_listing = true;
 }
 
 static void print_card_terminal(void)
 { // card writing into terminal
-    if (!flags.was_card_print_terminal)
+    if (terminal == NULL || flags.was_card_print_terminal)
+        return;
+    fprintf(terminal, "Error in line %zu:\n", scanner.carriage_number);
+    size_t start_position = refalab_source_cursor;
+    while (start_position > 0 && refalab_source_buffer[start_position] != '\n')
+        start_position--;
+    size_t current_position = start_position;
+    while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
-        flags.was_card_print_terminal = true;
-        card[CUT] = '\0';
-        if (!flags.end_refalab_source)
-        {
-            char temp_string[CUT + 28];
-            sprintf(temp_string, "%4zu %s\n", scanner.carriage_number, card);
-            fputs(temp_string, terminal);
-        }
+        fputc(refalab_source_buffer[current_position], refalab_source_listing);
+        current_position++;
     }
-    return;
+    fputc('\n', terminal);
+    if (scanner.column_number > 0)
+    {
+        for (size_t spaces = 1; spaces < scanner.column_number; spaces++)
+            fputc(' ', terminal);
+        fprintf(terminal, "^\n");
+    }
+    flags.was_card_print_terminal = true;
 }
 
 static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
