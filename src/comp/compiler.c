@@ -232,6 +232,12 @@ static inline void previous_char(void)
     return;
 }
 
+static inline void seek_char(char seek)
+{
+    while (get_current_char() != seek || !flags.end_refalab_source)
+        next_char();
+}
+
 static inline void SET_time(void)
 {
     clock_gettime(CLOCK_MONOTONIC, &time_begin);
@@ -390,7 +396,12 @@ int main(int argc, char *argv[])
             if (get_current_char() == ';')
                 next_char();
             else
+            {
                 PRINT_ERROR_130;
+                seek_char(';');
+                if (get_current_char() == ';')
+                    next_char();
+            }
             if (!flags.end_refalab_source)
             {
                 module_state = NEXT_STM;
@@ -413,7 +424,12 @@ int main(int argc, char *argv[])
                 if (get_current_char() == ';')
                     next_char();
                 else
+                {
                     PRINT_ERROR_130;
+                    seek_char(';');
+                    if (get_current_char() == ';')
+                        next_char();
+                }
             }
             else if (strncmp(statement_key, "END", statement_key_name_length) == 0)
             {
@@ -425,7 +441,16 @@ int main(int argc, char *argv[])
                         print_error_string("009 Unexpected end of module");
                 }
                 else
+                {
                     PRINT_ERROR_130;
+                    seek_char('.');
+                    if (get_current_char() == '.')
+                    {
+                        blanks_out();
+                        if (get_current_char() != '\0')
+                            print_error_string("009 Unexpected end of module");
+                    }
+                }
                 module_state = END_STATEMENT;
                 break;
             }
@@ -447,8 +472,8 @@ int main(int argc, char *argv[])
             else
             {
                 print_error_string("009 Unknown directive");
-                const char current_char = get_current_char();
-                if (isspace((unsigned char)current_char) == 0 && current_char != '$' && current_char != '\0')
+                seek_char(';');
+                if (get_current_char() == ';')
                     next_char();
             }
             if (!flags.end_refalab_source)
@@ -1451,6 +1476,9 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
         break;
     }
     PRINT_ERROR_130;
+    seek_char(';');
+    if (get_current_char() == ';')
+        next_char();
     return;
 }
 
@@ -1498,19 +1526,27 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
         break;
     }
     PRINT_ERROR_130;
+    seek_char(';');
+    if (get_current_char() == ';')
+        next_char();
     return;
 }
 
 static void equ(void)
 { // treatement of directives having 'EQU' type
-    blanks_out();
-    char identifier1[MAX_IDENTIFIER_LENGTH];
-    uint8_t identifier_length1;
     do
     {
+        blanks_out();
+        char identifier1[MAX_IDENTIFIER_LENGTH];
+        uint8_t identifier_length1;
+        char identifier2[MAX_IDENTIFIER_LENGTH];
+        uint8_t identifier_length2;
         if (!get_identifier(identifier1, &identifier_length1))
             break;
-        set_equ(identifier1, identifier_length1, statement_label, statement_label_length);
+        blanks_out();
+        if (!get_identifier(identifier2, &identifier_length2))
+            break;
+        set_equ(identifier1, identifier_length1, identifier2, identifier_length2);
         blanks_out();
         if (get_current_char() == ';')
         {
@@ -1519,6 +1555,9 @@ static void equ(void)
         }
     } while (false);
     PRINT_ERROR_130;
+    seek_char(';');
+    if (get_current_char() == ';')
+        next_char();
     return;
 }
 
