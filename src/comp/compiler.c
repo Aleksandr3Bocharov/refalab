@@ -198,7 +198,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 
 static inline char get_current_char(void)
 {
-    if (refalab_source_cursor == refalab_source_size)
+    if (refalab_source_cursor >= refalab_source_size)
     {
         flags.end_refalab_source = true;
         return '\0';
@@ -209,25 +209,18 @@ static inline char get_current_char(void)
 static inline void next_char(void)
 {
     if (refalab_source_cursor < refalab_source_size)
-    {
-        if (*(refalab_source_buffer + refalab_source_cursor) == '\n')
-        {
-            scanner.carriage_number++;
-            scanner.column_number = 0;
-        }
         refalab_source_cursor++;
-        scanner.column_number++;
-    }
     else
         flags.end_refalab_source = true;
 }
 
 static inline void previous_char(void)
 {
-    if (scanner.column_number != 1)
+    if (refalab_source_cursor > refalab_source_size)
+        refalab_source_cursor = refalab_source_size;
+    if (refalab_source_cursor != 0)
     {
         refalab_source_cursor--;
-        scanner.column_number--;
         flags.end_refalab_source = false;
     }
     return;
