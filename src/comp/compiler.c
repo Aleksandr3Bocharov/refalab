@@ -1418,7 +1418,7 @@ static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
     if (refalab_source_listing == NULL || flags.was_card_print_file_source_listing || refalab_source_buffer == NULL)
         return;
-    fprintf(refalab_source_listing, "%5zu | ", scanner.carriage_number);
+    fprintf(refalab_source_listing, "%5zu | ", scanner.location.line);
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
@@ -1436,7 +1436,7 @@ static void print_card_terminal(void)
 { // card writing into terminal
     if (terminal == NULL || flags.was_card_print_terminal || refalab_source_buffer == NULL)
         return;
-    fprintf(terminal, "Error in line %zu:\n", scanner.carriage_number);
+    fprintf(terminal, "Error in line %zu:\n", scanner.location.line);
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
@@ -1447,9 +1447,9 @@ static void print_card_terminal(void)
         current_position++;
     }
     fputc('\n', terminal);
-    if (scanner.column_number > 0)
+    if (scanner.location.column > 0)
     {
-        for (size_t spaces = 1; spaces < scanner.column_number; spaces++)
+        for (size_t spaces = 1; spaces < scanner.location.column; spaces++)
             fputc(' ', terminal);
         fprintf(terminal, "^\n");
     }
@@ -1725,7 +1725,7 @@ static void blanks_out(void)
         char symbol = get_current_char();
         if (isspace((unsigned char)symbol) != 0)
             next_char();
-        else if (symbol == '*' && scanner.column_number == 1)
+        else if (symbol == '*' && scanner.location.column == 1)
             while (flags.end_refalab_source == false && get_current_char() != '\n')
                 next_char();
         else
@@ -1737,7 +1737,7 @@ static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
     sprintf(print_line,
-            "module_name = %-40s    module_length(lines) = %zu\n", scanner.module_name, scanner.carriage_number);
+            "module_name = %-40s    module_length(lines) = %zu\n", scanner.module_name, scanner.location.line);
     if (options.source_listing)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);

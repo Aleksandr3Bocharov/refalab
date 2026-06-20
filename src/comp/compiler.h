@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-18
+// 2026-06-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.h  ----------
@@ -29,10 +29,15 @@ typedef struct options_
 
 extern T_OPTIONS options;
 
+typedef struct location
+{ // the line and column
+    size_t line;
+    size_t column;
+} T_LACATION;
+
 typedef struct scanner
 { // the table for corresponding with scanner
-    size_t carriage_number;
-    size_t column_number;
+    T_LACATION location;
     char module_name[MAX_IDENTIFIER_LENGTH]; // module name
     uint8_t module_name_length;              // module name length
     uint32_t module_number;
