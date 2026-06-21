@@ -29,15 +29,9 @@ typedef struct options_
 
 extern T_OPTIONS options;
 
-typedef struct location
-{ // the line and column
-    size_t line;
-    size_t column;
-} T_LACATION;
-
 typedef struct scanner
 { // the table for corresponding with scanner
-    T_LACATION location;
+    size_t last_error_cursor;
     char module_name[MAX_IDENTIFIER_LENGTH]; // module name
     uint8_t module_name_length;              // module name length
     uint32_t module_number;

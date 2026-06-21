@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-18
+// 2026-06-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -184,8 +184,8 @@ static T_TIMESPEC time_begin;
 static void load_refalab_source_to_memory(void);
 static void get_statement_key(void);
 static void blanks_out(void);
-static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t));
-static void handle_identifiers(void (*handler)(const char *, uint8_t));
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t));
+static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t));
 static void equ(void);
 static void specifier(void);
 static void print_conclusion(void);
@@ -784,13 +784,14 @@ void scan_sentence_element(void)
             else if (current_char == ':')
             {
                 next_char();
+                const size_t cursor_number = refalab_source_cursor;
                 if (!get_identifier(identifier, &identifier_length))
                 {
                     scanner_state = SOSH203;
                     break;
                 }
                 if (flags.left_part_sentence)
-                    current_sentence_element.specifier.info.codef = specifier_reference(identifier, identifier_length, ')');
+                    current_sentence_element.specifier.info.codef = specifier_reference(identifier, identifier_length, cursor_number, ')');
                 if (get_current_char() == ':')
                     next_char();
             }
@@ -954,9 +955,10 @@ void scan_sentence_element(void)
             flags.scanner_station_k = false;
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
+            const size_t cursor_number = refalab_source_cursor;
             if (get_identifier(identifier, &identifier_length))
             {
-                current_sentence_element.code.info.codef = function_reference(identifier, identifier_length);
+                current_sentence_element.code.info.codef = function_reference(identifier, identifier_length, cursor_number);
                 current_sentence_element.code.tag = TAGF;
                 scanner_state = EGO;
                 break;
@@ -1208,6 +1210,7 @@ static bool compile_specifer(char tail)
             break;
         case SPCSP:
             next_char();
+            const size_t cursor_number = refalab_source_cursor;
             if (!get_identifier(identifier, &identifier_length))
             {
                 specifier_state = OSH203;
@@ -1216,7 +1219,7 @@ static bool compile_specifer(char tail)
             if (tail != ')')
                 if (strncmp(scanner.label_name, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || scanner.label_name[identifier_length] == ' '))
                     print_error_string("209 specifier is defined through itself");
-            T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, tail);
+            T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, cursor_number, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
                 macrocode_address(identifier_specifier);
@@ -1456,16 +1459,17 @@ static void print_card_terminal(void)
     flags.was_card_print_terminal = true;
 }
 
-static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
+static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
     blanks_out();
     while (true)
     {
         char identifier[MAX_IDENTIFIER_LENGTH];
         uint8_t identifier_length;
+        const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(identifier, &identifier_length))
             break;
-        (*handler)(identifier, identifier_length);
+        (*handler)(identifier, identifier_length, cursor_number);
         blanks_out();
         const char current_char = get_current_char();
         if (current_char == ';')
@@ -1489,13 +1493,14 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t)) // treatm
     return;
 }
 
-static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
     blanks_out();
     while (true)
     {
         char identifier[MAX_IDENTIFIER_LENGTH];
         uint8_t identifier_length;
+         const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(identifier, &identifier_length))
             break;
         char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
@@ -1505,7 +1510,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
             next_char();
             if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
-            (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
+            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length);
             if (get_current_char() != ')')
                 break;
             next_char();
@@ -1514,7 +1519,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, con
         {
             identifier_extern_length = identifier_length > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : identifier_length;
             memcpy(identifier_extern, identifier, identifier_extern_length);
-            (*handler)(identifier, identifier_length, identifier_extern, identifier_extern_length);
+            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length);
         }
         blanks_out();
         const char current_char = get_current_char();
@@ -1548,12 +1553,14 @@ static void equ(void)
         uint8_t identifier_length1;
         char identifier2[MAX_IDENTIFIER_LENGTH];
         uint8_t identifier_length2;
+        const size_t cursor_number1 = refalab_source_cursor;
         if (!get_identifier(identifier1, &identifier_length1))
             break;
         blanks_out();
+        const size_t cursor_number2 = refalab_source_cursor;
         if (!get_identifier(identifier2, &identifier_length2))
             break;
-        set_equ(identifier1, identifier_length1, identifier2, identifier_length2);
+        set_equ(identifier1, identifier_length1, cursor_number1, identifier2, identifier_length2, cursor_number2);
         blanks_out();
         if (get_current_char() == ';')
         {
@@ -1573,9 +1580,10 @@ static void specifier(void)
     do
     {
         blanks_out();
+        const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(scanner.label_name, &scanner.label_name_length))
             break;
-        specifier_definition(scanner.label_name, &scanner.label_name_length);
+        specifier_definition(scanner.label_name, &scanner.label_name_length, cursor_number);
         if (compile_specifer(';'))
         {
             next_char();
@@ -1645,12 +1653,13 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             break;
         }
         next_char();
+        const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(identifier, identifier_length))
         {
             print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
-        code->info.codef = function_reference(identifier, *identifier_length);
+        code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
         code->tag = TAGF;
     } while (false);
     return true;

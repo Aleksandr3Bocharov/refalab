@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file avl_identifiers.h  -----------
@@ -16,8 +16,8 @@
 
 typedef struct usage_list
 {
-    struct usage_list *next;    // on the next usage list
-    size_t carriage_numbers[6]; // usage list element
+    struct usage_list *next;  // on the next usage list
+    size_t cursor_numbers[6]; // usage list element
 } T_USAGE_LIST;
 
 typedef struct label
@@ -43,7 +43,7 @@ typedef struct label
                                             //              10 - specifier
     T_USAGE_LIST *last_usage_list;          // on the end of usage list
     T_USAGE_LIST usage_list;                // where used
-    uint32_t carriage_number_defined;       // where defined
+    size_t cursor_number_defined;           // where defined
     char identifier[MAX_IDENTIFIER_LENGTH]; // identifier
     uint8_t identifier_length;              // identifier length
     struct label *left_label;               // left reference
@@ -54,7 +54,7 @@ typedef struct label
 
 } T_LABEL;
 
-extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length);
+extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t cursor_number);
 extern void labels_terminate(void);
 extern void through_labels(void (*handler)(const T_LABEL *));
 extern void error_no_memory_labels(void);
