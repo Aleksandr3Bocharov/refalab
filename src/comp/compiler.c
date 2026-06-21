@@ -1441,28 +1441,27 @@ static void print_card_refalab_source_listing(void)
     fputc('\n', refalab_source_listing);
 }
 
-static void print_card_terminal(void)
-{ // card writing into terminal
-    if (terminal == NULL || flags.was_card_print_terminal || refalab_source_buffer == NULL)
+static void print_card_error(FILE* file)
+{ // card writing if error
+    if (file == NULL || refalab_source_buffer == NULL)
         return;
-    fprintf(terminal, "Error in line %zu:\n", scanner.location.line);
+    fprintf(file, "Error in line %zu:\n", scanner.location.line);
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
-        fputc(refalab_source_buffer[current_position], terminal);
+        fputc(refalab_source_buffer[current_position], file);
         current_position++;
     }
-    fputc('\n', terminal);
+    fputc('\n', file);
     if (scanner.location.column > 0)
     {
         for (size_t spaces = 1; spaces < scanner.location.column; spaces++)
-            fputc(' ', terminal);
-        fprintf(terminal, "^\n");
+            fputc(' ', file);
+        fprintf(file, "^\n");
     }
-    flags.was_card_print_terminal = true;
 }
 
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
@@ -1771,8 +1770,8 @@ static void print_conclusion(void)
 
 void processing_error(void)
 {
-    print_card_refalab_source_listing();
-    print_card_terminal();
+    print_card_error(refalab_source_listing);
+    print_card_error(terminal);
     errors_count++;
     return;
 }
