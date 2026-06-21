@@ -160,9 +160,7 @@ FILE *llvm_source; // for llvm
 
 static struct
 {
-    bool was_card_print_file_source_listing;
     bool was_error;
-    bool was_card_print_terminal;
     bool compile_direction;  // L,R - flag
     bool scanner_station;    // scanner station - in(1),out(0) literal chain
     bool scanner_station_k;  // scanner station k - id(1),any(0) after k
@@ -208,10 +206,15 @@ static inline char get_current_char(void)
 
 static inline void next_char(void)
 {
+    bool new_line = false;
+    if (refalab_source_buffer != NULL && refalab_source_cursor < refalab_source_size && *(refalab_source_buffer + refalab_source_cursor) == '\n')
+        new_line = true;
     if (refalab_source_cursor < refalab_source_size)
         refalab_source_cursor++;
     if (refalab_source_cursor >= refalab_source_size)
         flags.end_refalab_source = true;
+    if (new_line)
+        print_card_refalab_source_listing();
 }
 
 static inline void previous_char(void)
@@ -578,7 +581,11 @@ static void load_refalab_source_to_memory(void)
         flags.end_refalab_source = true;
     }
     else
+    {
         flags.end_refalab_source = false;
+        print_card_refalab_source_listing();
+    }
+    return;
 }
 
 static void get_statement_key(void)
@@ -1419,7 +1426,7 @@ static bool compile_specifer(char tail)
 
 static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
-    if (refalab_source_listing == NULL || flags.was_card_print_file_source_listing || refalab_source_buffer == NULL)
+    if (refalab_source_listing == NULL || refalab_source_buffer == NULL)
         return;
     fprintf(refalab_source_listing, "%5zu | ", scanner.location.line);
     size_t start_position = refalab_source_cursor;
@@ -1432,7 +1439,6 @@ static void print_card_refalab_source_listing(void)
         current_position++;
     }
     fputc('\n', refalab_source_listing);
-    flags.was_card_print_file_source_listing = true;
 }
 
 static void print_card_terminal(void)
@@ -1500,7 +1506,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
     {
         char identifier[MAX_IDENTIFIER_LENGTH];
         uint8_t identifier_length;
-         const size_t cursor_number = refalab_source_cursor;
+        const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(identifier, &identifier_length))
             break;
         char identifier_extern[MAX_IDENTIFIER_EXTERN_LENGTH];
