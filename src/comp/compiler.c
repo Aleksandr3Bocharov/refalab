@@ -1516,10 +1516,10 @@ static void print_card_error(FILE *file)
 { // card writing if error
     if (file == NULL || refalab_source_buffer == NULL)
         return;
-    fprintf(file, "Error in line %zu:\n", scanner.location.line);
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
+    fprintf(file, "%5zu | ", scanner.location.line);
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
@@ -1533,9 +1533,10 @@ static void print_card_error(FILE *file)
         current_position++;
     }
     fputc('\n', file);
-    for (size_t i = start_position; i < refalab_source_cursor; i++)
+    fprintf(file, "      | ");
+    for (current_position = start_position; current_position < refalab_source_cursor; i++)
     {
-        unsigned char symbol = (unsigned char)refalab_source_buffer[i];
+        unsigned char symbol = (unsigned char)refalab_source_buffer[current_position];
         if (symbol == '\t')
             fputc('\t', file);
         else if ((symbol & 0xC0) == 0x80)
