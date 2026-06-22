@@ -625,7 +625,7 @@ void get_location(size_t *line, size_t *column, size_t cursor)
             current_column++;
         else if ((symbol & 0xC0) == 0x80)
             continue;
-        else if (iscntrl(symbol))
+        else if (iscntrl(symbol) != 0)
             ;
         else
             current_column++;
@@ -1523,16 +1523,29 @@ static void print_card_error(FILE *file)
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
-        fputc(refalab_source_buffer[current_position], file);
+        unsigned char symbol = (unsigned char)refalab_source_buffer[current_position];
+        if (symbol != '\t' && iscntrl(symbol) != 0)
+        {
+            current_position++;
+            continue;
+        }
+        fputc(symbol, file);
         current_position++;
     }
     fputc('\n', file);
-    if (scanner.location.column > 0)
+    for (size_t i = start_position; i < refalab_source_cursor; i++)
     {
-        for (size_t spaces = 1; spaces < scanner.location.column; spaces++)
+        unsigned char symbol = (unsigned char)refalab_source_buffer[i];
+        if (symbol == '\t')
+            fputc('\t', file);
+        else if ((symbol & 0xC0) == 0x80)
+            continue;
+        else if (iscntrl(symbol) != 0)
+            ;
+        else
             fputc(' ', file);
-        fprintf(file, "^\n");
     }
+    fprintf(file, "^\n");
 }
 
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
