@@ -603,7 +603,37 @@ static void load_refalab_source_to_memory(void)
 
 void get_location(size_t *line, size_t *column, size_t cursor)
 {
-
+    size_t current_line = 1;
+    size_t current_column = 1;
+    if (refalab_source_buffer == NULL || cursor > refalab_source_size)
+    {
+        if (line != NULL)
+            *line = 0;
+        if (column != NULL)
+            *column = 0;
+        return;
+    }
+    for (size_t i = 0; i < cursor; i++)
+    {
+        unsigned char symbol = (unsigned char)refalab_source_buffer[i];
+        if (symbol == '\n')
+        {
+            current_line++;
+            current_column = 1;
+        }
+        else if (symbol == '\t')
+            current_column++;
+        else if ((symbol & 0xC0) == 0x80)
+            continue;
+        else if (iscntrl(symbol))
+            ;
+        else
+            current_column++;
+    }
+    if (line != NULL)
+        *line = current_line;
+    if (column != NULL)
+        *column = current_column;
 }
 
 static void get_statement_key(void)
