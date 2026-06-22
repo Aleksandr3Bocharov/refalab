@@ -182,7 +182,7 @@ static T_TIMESPEC time_begin;
 static void load_refalab_source_to_memory(void);
 static void get_statement_key(void);
 static void blanks_out(void);
-static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t));
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t, size_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t));
 static void equ(void);
 static void specifier(void);
@@ -373,6 +373,7 @@ int main(int argc, char *argv[])
             module_init();
             if (strncmp(statement_key, "START", statement_key_name_length) != 0)
             {
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string("001 START-directive missing");
                 scanner.module_name_length = 0;
                 macrocode_start();
@@ -395,6 +396,7 @@ int main(int argc, char *argv[])
                 next_char();
             else
             {
+                scanner.last_error_cursor = refalab_source_cursor;
                 PRINT_ERROR_130;
                 seek_char(';');
                 if (get_current_char() == ';')
@@ -415,6 +417,7 @@ int main(int argc, char *argv[])
         case KEYS:
             if (strncmp(statement_key, "START", statement_key_name_length) == 0)
             {
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string("002 too many START-directive");
                 blanks_out();
                 get_identifier(module_name, &module_name_length);
@@ -423,6 +426,7 @@ int main(int argc, char *argv[])
                     next_char();
                 else
                 {
+                    scanner.last_error_cursor = refalab_source_cursor;
                     PRINT_ERROR_130;
                     seek_char(';');
                     if (get_current_char() == ';')
@@ -436,17 +440,24 @@ int main(int argc, char *argv[])
                 {
                     blanks_out();
                     if (get_current_char() != '\0')
+                    {
+                        scanner.last_error_cursor = refalab_source_cursor;
                         print_error_string("009 Unexpected end of module");
+                    }
                 }
                 else
                 {
+                    scanner.last_error_cursor = refalab_source_cursor;
                     PRINT_ERROR_130;
                     seek_char('.');
                     if (get_current_char() == '.')
                     {
                         blanks_out();
                         if (get_current_char() != '\0')
+                        {
+                            scanner.last_error_cursor = refalab_source_cursor;
                             print_error_string("009 Unexpected end of module");
+                        }
                     }
                 }
                 module_state = END_STATEMENT;
@@ -466,6 +477,7 @@ int main(int argc, char *argv[])
                 equ();
             else
             {
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string("009 Unknown directive");
                 seek_char(';');
                 if (get_current_char() == ';')
@@ -479,6 +491,7 @@ int main(int argc, char *argv[])
             module_state = END_IS_MISSING;
             break;
         case END_IS_MISSING:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("003 END-directive missing");
             module_state = END_STATEMENT;
             break;
@@ -595,6 +608,7 @@ static void get_statement_key(void)
     blanks_out();
     if (get_current_char() != '$')
     {
+        scanner.last_error_cursor = refalab_source_cursor;
         print_error_string("004 directive missing");
         return;
     }
@@ -602,6 +616,7 @@ static void get_statement_key(void)
     char current_char = get_current_char();
     if (isalpha((unsigned char)current_char) == 0)
     {
+        scanner.last_error_cursor = refalab_source_cursor;
         print_error_string("005 directive empty");
         return;
     }
@@ -624,6 +639,7 @@ static void get_statement_key(void)
     if (i > 1)
     {
         statement_key_name_length = 0;
+        scanner.last_error_cursor = refalab_source_cursor;
         print_error_string("007 Too long directive");
         return;
     }
@@ -730,6 +746,7 @@ void scan_sentence_element(void)
                 scanner_state = LSCN;
                 break;
             default:
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string_symbol("100 illegal symbol", current_char);
                 scanner_state = SCNERR;
             }
@@ -970,6 +987,7 @@ void scan_sentence_element(void)
                 scanner_state = EGO;
                 break;
             }
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string_symbol("100 illegal symbol", get_current_char());
             scanner_state = SCNERR;
             break;
@@ -1014,22 +1032,27 @@ void scan_sentence_element(void)
             scanner_state = SCNVD;
             break;
         case OSH101:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("101 default of left apostroph");
             scanner_state = SCNERR;
             break;
         case OSH102:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("102 sign '.' followed by no letter or underscore");
             scanner_state = SCNERR;
             break;
         case OSH103:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("103 sign '.' expected");
             scanner_state = SCNERR;
             break;
         case SOSH203:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("203 sign ':' followed by no letter or underscore");
             scanner_state = SCNERR;
             break;
         case SOSH204:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("204 default last ':' within specifier");
             scanner_state = SCNERR;
             break;
@@ -1133,6 +1156,7 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCED;
                 break;
             default:
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string_symbol("201 within specifier invalid symbol ", current_char);
                 specifier_state = OSH200;
             }
@@ -1140,7 +1164,10 @@ static bool compile_specifer(char tail)
         case SPCFF:
             generate_specifier(ns_ngw);
             if (negative)
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string("207 within specifier default ')' ");
+            }
             if (tail == ')')
             {
                 specifier_state = OSH206;
@@ -1225,7 +1252,10 @@ static bool compile_specifer(char tail)
             }
             if (tail != ')')
                 if (strncmp(scanner.label_name, identifier, identifier_length) == 0 && (identifier_length == MAX_IDENTIFIER_LENGTH || scanner.label_name[identifier_length] == ' '))
+                {
+                    scanner.last_error_cursor = refalab_source_cursor;
                     print_error_string("209 specifier is defined through itself");
+                }
             T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, cursor_number, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
@@ -1396,17 +1426,21 @@ static bool compile_specifer(char tail)
             specifier_state = SPCBLO;
             break;
         case OSH200:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("200 specifier is't scaned");
             return false;
         case OSH202:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("202 specifier has too many '(' ");
             specifier_state = OSH200;
             break;
         case OSH203:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("203 sign ':' followed by no letter or underscore within specifier ");
             specifier_state = OSH200;
             break;
         case OSH204:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("204 within specifier default last :");
             specifier_state = OSH200;
             break;
@@ -1415,10 +1449,12 @@ static bool compile_specifer(char tail)
             specifier_state = OSH200;
             break;
         case OSH206:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("206 default ')'in the specifier end ");
             specifier_state = OSH200;
             break;
         case OSH208:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("208 within specifier too many )");
             specifier_state = OSH200;
         }
@@ -1441,7 +1477,7 @@ static void print_card_refalab_source_listing(void)
     fputc('\n', refalab_source_listing);
 }
 
-static void print_card_error(FILE* file)
+static void print_card_error(FILE *file)
 { // card writing if error
     if (file == NULL || refalab_source_buffer == NULL)
         return;
@@ -1491,6 +1527,7 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) /
         }
         break;
     }
+    scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
     seek_char(';');
     if (get_current_char() == ';')
@@ -1498,7 +1535,7 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) /
     return;
 }
 
-static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
+static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t, size_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
     blanks_out();
     while (true)
@@ -1513,9 +1550,10 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
         if (get_current_char() == '(')
         {
             next_char();
+            const size_t extern_cursor_number = refalab_source_cursor;
             if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
-            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length);
+            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length, extern_cursor_number);
             if (get_current_char() != ')')
                 break;
             next_char();
@@ -1524,7 +1562,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
         {
             identifier_extern_length = identifier_length > MAX_IDENTIFIER_EXTERN_LENGTH ? MAX_IDENTIFIER_EXTERN_LENGTH : identifier_length;
             memcpy(identifier_extern, identifier, identifier_extern_length);
-            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length);
+            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length, cursor_number);
         }
         blanks_out();
         const char current_char = get_current_char();
@@ -1542,6 +1580,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
         }
         break;
     }
+    scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
     seek_char(';');
     if (get_current_char() == ';')
@@ -1573,6 +1612,7 @@ static void equ(void)
             return;
         }
     } while (false);
+    scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
     seek_char(';');
     if (get_current_char() == ';')
@@ -1604,6 +1644,7 @@ static void specifier(void)
             }
         }
     } while (false);
+    scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
     seek_char(';');
     if (get_current_char() == ';')
@@ -1654,6 +1695,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             }
             char error_111[64];
             sprintf(error_111, "111 symbol-number > %" PRIu32, MAX_NUMBER);
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string(error_111);
             break;
         }
@@ -1661,6 +1703,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
         const size_t cursor_number = refalab_source_cursor;
         if (!get_identifier(identifier, identifier_length))
         {
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string("112 unknown type of the multiple symbol");
             return false;
         }
@@ -1696,6 +1739,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
     {
         char errror_113[64];
         sprintf(errror_113, "113 identifier length > %d", MAX_IDENTIFIER_LENGTH);
+        scanner.last_error_cursor = refalab_source_cursor;
         print_error_string(errror_113);
     }
     return true;
@@ -1727,6 +1771,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
     {
         char error_114[64];
         sprintf(error_114, "114 external identifier length > %d", MAX_IDENTIFIER_EXTERN_LENGTH);
+        scanner.last_error_cursor = refalab_source_cursor;
         print_error_string(error_114);
     }
     return true;

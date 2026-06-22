@@ -19,7 +19,7 @@
 #include "compiler.h"
 #include "compile_sentence.h"
 
-#define PRINT_ERROR_504 \
+#define PRINT_ERROR_504(identifier, identifier_length) \
     print_error_three_strings("504 label", identifier, identifier_length, " is already defined")
 
 #define PRINT_ERROR_500 \
@@ -77,7 +77,10 @@ void function_definition(const char *identifier, uint8_t identifier_length, size
         next_sentence = allocate_info_label();
         label->type |= 0100;
         if ((label->mode) & 0020)
+        {
+            scanner.last_error_cursor = cursor_number;
             PRINT_ERROR_504;
+        }
         else
         {
             function_head(identifier, identifier_length);
@@ -91,7 +94,7 @@ void function_definition(const char *identifier, uint8_t identifier_length, size
         if (next_sentence != NULL)
             macrocode_label((T_LABEL *)next_sentence);
         else
-            PRINT_ERROR_500;
+        !!!    PRINT_ERROR_500;
         next_sentence = allocate_info_label();
         generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
     };
@@ -120,7 +123,10 @@ void set_empty(const char *identifier, uint8_t identifier_length, size_t cursor_
     T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
+    {
+        scanner.last_error_cursor = cursor_number;
         PRINT_ERROR_504;
+    }
     else
     {
         function_head(identifier, identifier_length);
@@ -136,7 +142,10 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t cursor_n
     T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
+    {
+        scanner.last_error_cursor = cursor_number;
         PRINT_ERROR_504;
+    }
     else
     { //  align box head on the 8-byte board
         uint8_t name_length;
@@ -163,24 +172,27 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t cursor_n
     return;
 }
 
-void set_entry(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length)
+void set_entry(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t extern_cursor_number)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
-    macrocode_entry(label, identifier_extern, identifier_extern_length);
+    macrocode_entry(label, identifier_extern, identifier_extern_length, extern_cursor_number);
     return;
 }
 
-void set_extrn(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length)
+void set_extrn(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t extern_cursor_number)
 // identifier internal name
 // identifier_extern external name
 {
     T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
     if (label->mode & 0020)
+    {
+        scanner.last_error_cursor = cursor_number;
         PRINT_ERROR_504;
+    }
     else
     {
         label->cursor_number_defined = cursor_number;
-        macrocode_extrn(label, identifier_extern, identifier_extern_length);
+        macrocode_extrn(label, identifier_extern, identifier_extern_length, extern_cursor_number);
     }
     return;
 }
@@ -197,25 +209,26 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
     label->type |= 0200;
     if (tail != ')' && (label->mode & 0020) != 0020)
+    {
+        scanner.last_error_cursor = cursor_number;
         print_error_three_strings("505 label", identifier, identifier_length, " is yet not defined");
+    } 
     return label;
 }
 
 void specifier_definition(const char *identifier, uint8_t identifier_length, size_t cursor_number)
 {
-    if (identifier_length == 0)
-        PRINT_ERROR_500;
+    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    label->type |= 0200;
+    if (label->mode & 0020)
+    {
+        scanner.last_error_cursor = cursor_number;
+        PRINT_ERROR_504;
+    }
     else
-    { // label exist
-        T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
-        label->type |= 0200;
-        if (label->mode & 0020)
-            PRINT_ERROR_504;
-        else
-        {
-            label->cursor_number_defined = cursor_number;
-            macrocode_label(label);
-        }
+    {
+        label->cursor_number_defined = cursor_number;
+        macrocode_label(label);
     }
     return;
 }
@@ -239,7 +252,13 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, size_t cursor_
         macrocode_equ(label2, label1);
     }
     else
+    {
+        scanner.last_error_cursor = cursor_number1;
+        PRINT_ERROR_504(identifier1, identifier1_length);
+        scanner.last_error_cursor = cursor_number2;
+        PRINT_ERROR_504(identifier2, identifier2_length);
         print_error_string("501 both labels already defined");
+    }
     return;
 }
 

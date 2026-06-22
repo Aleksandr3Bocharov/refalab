@@ -244,7 +244,7 @@ void macrocode_address(T_LABEL *label)
     return;
 }
 
-void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -254,6 +254,7 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
         extrn2 = extrn2->next;
         if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
+            scanner.last_error_cursor = extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
@@ -264,6 +265,7 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
         entry2 = entry2->next;
         if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
+            scanner.last_error_cursor = extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
@@ -284,7 +286,7 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     return;
 } // macrocode_entry
 
-void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length)
+void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number)
 // idendifier_extern label
 {
     // idendifier_extern_length label length
@@ -294,6 +296,7 @@ void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t iden
         entry2 = entry2->next;
         if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
         {
+            scanner.last_error_cursor = extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
