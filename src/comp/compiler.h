@@ -56,6 +56,7 @@ extern T_SENTENCE_ELEMENT current_sentence_element;
 extern FILE *refalab_source_listing, *terminal;
 extern FILE *llvm_source; // for llvm
 
+extern void get_location(size_t *line, size_t *column, size_t cursor);
 extern void processing_error(void);
 extern void scan_sentence_element(void);
 

@@ -601,6 +601,11 @@ static void load_refalab_source_to_memory(void)
     return;
 }
 
+void get_location(size_t *line, size_t *column, size_t cursor)
+{
+
+}
+
 static void get_statement_key(void)
 {
     statement_key_name_length = 0;
