@@ -1499,7 +1499,9 @@ static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
     if (refalab_source_listing == NULL || refalab_source_buffer == NULL)
         return;
-    fprintf(refalab_source_listing, "%5zu | ", scanner.location.line);
+    size_t line;
+    get_location(&line, NULL, refalab_source_cursor);
+    fprintf(refalab_source_listing, "%5zu | ", line);
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
@@ -1519,7 +1521,9 @@ static void print_card_error(FILE *file)
     size_t start_position = refalab_source_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
-    fprintf(file, "%5zu | ", scanner.location.line);
+    size_t line;
+    get_location(&line, NULL, scanner.last_error_cursor);
+    fprintf(file, "%5zu | ", line);
     size_t current_position = start_position;
     while (current_position < refalab_source_size && refalab_source_buffer[current_position] != '\n' && refalab_source_buffer[current_position] != '\0')
     {
@@ -1831,9 +1835,11 @@ static void blanks_out(void)
     while (flags.end_refalab_source == false)
     {
         char symbol = get_current_char();
+        size_t column;
+        get_location(NULL, &column, refalab_source_cursor);
         if (isspace((unsigned char)symbol) != 0)
             next_char();
-        else if (symbol == '*' && scanner.location.column == 1)
+        else if (symbol == '*' && column == 1)
             while (flags.end_refalab_source == false && get_current_char() != '\n')
                 next_char();
         else
@@ -1844,9 +1850,11 @@ static void blanks_out(void)
 static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
+    size_t line;
+    get_location(&line, NULL, refalab_source_size);
     sprintf(print_line,
-            "module_name = %-40s    module_length(lines) = %zu\n", scanner.module_name, scanner.location.line);
-    if (options.source_listing)
+            "module_name = %-40s    module_length(lines) = %zu\n", scanner.module_name, line);
+    if (refalab_source_listing != NULL)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);
     if (errors_count != 0)
@@ -1855,7 +1863,7 @@ static void print_conclusion(void)
     else
         sprintf(print_line,
                 "                       module_obj_length(bytes) = %zu\n", module_length);
-    if (options.source_listing)
+    if (refalab_source_listing != NULL)
         fputs(print_line, refalab_source_listing);
     fputs(print_line, terminal);
     GET_time();
