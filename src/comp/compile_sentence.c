@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -213,10 +213,8 @@ static bool ortogonality(uint8_t on1, uint8_t on2);
 
 // read left part
 // and full array X
-void compile_sentence(bool direction, char *label, uint8_t label_length)
+void compile_sentence(bool direction)
 // direction;     matching feature :left to right or otherwise
-// label;   sentence label
-// label_length; sentence label length
 {
     variables_count = 0;
     current_left_part_element = 0;
@@ -391,7 +389,7 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
         case LPE10:
             // sentence end
             print_error_string("304 under left part default sign '=' ");
-            function_definition(label, label_length);
+            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
             return;
         case NEXT_LPE:
             // end of element processing
@@ -404,14 +402,14 @@ void compile_sentence(bool direction, char *label, uint8_t label_length)
             state = OSH300;
             break;
         case OSH300:
-            function_definition(label, label_length);
+            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
             state = RP_OSH300;
             break;
         //--------------------------------------------
         //         left part compilation
         //--------------------------------------------
         case RCG:
-            function_definition(label, label_length);
+            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;

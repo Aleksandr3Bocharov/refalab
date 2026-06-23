@@ -484,6 +484,7 @@ int main(int argc, char *argv[])
                     error130 = true;
                 else
                 {
+                    scanner.label_cursor_number = cursor_number;
                     blanks_out();
                     const char current_char = get_current_char();
                     if (current_char == ';')
@@ -827,6 +828,9 @@ void scan_sentence_element(void)
             break;
         case SCNERR:
             current_sentence_element.type = NONE;
+            seek_char(';');
+            if (get_current_char() == ';')
+                next_char();
             scanner_state = SCNRET;
             break;
         case SCNSC:
@@ -932,7 +936,7 @@ void scan_sentence_element(void)
             break;
         case SCNEOS:
             current_sentence_element.type = END;
-            scanner_state = SCNRET;
+            scanner_state = SCNGCR;
             break;
         case SCNA:
             next_char();
@@ -1721,12 +1725,12 @@ static void fn(void)
         if (current_char == '>')
         {
             next_char();
-            compile_sentence(true, scanner.label_name, scanner.label_name_length);
+            compile_sentence(true);
         }
         else if (current_char == '<')
         {
             next_char();
-            compile_sentence(false, scanner.label_name, scanner.label_name_length);
+            compile_sentence(false);
         }
         else if (current_char == '}')
         {
@@ -1736,7 +1740,7 @@ static void fn(void)
         else if (current_char == '\0')
             break;
         else
-            compile_sentence(true, scanner.label_name, scanner.label_name_length);
+            compile_sentence(true);
     }
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;

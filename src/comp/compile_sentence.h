@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-06-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.h  ----------
@@ -109,6 +109,6 @@ typedef enum sentence_element_types
     END
 } T_SENTENCE_ELEMENT_TYPES;
 
-extern void compile_sentence(bool direction, char *label, uint8_t label_length);
+extern void compile_sentence(bool direction);
 
 #endif

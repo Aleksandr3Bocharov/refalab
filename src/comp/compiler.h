@@ -37,6 +37,7 @@ typedef struct scanner
     uint32_t module_number;
     char label_name[MAX_IDENTIFIER_LENGTH]; // label (function or specifier) name
     uint8_t label_name_length;              // label (function or specifier) name length
+    size_t label_cursor_number;             // label (function or specifier) cursor number
 } T_SCANNER;
 
 extern T_SCANNER scanner;
