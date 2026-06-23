@@ -475,75 +475,106 @@ int main(int argc, char *argv[])
                 specifier();
             else if (strncmp(statement_key, "EQU", statement_key_name_length) == 0)
                 equ();
-            else
+            else if (strncmp(statement_key, "FN", statement_key_name_length) == 0)
             {
-                scanner.last_error_cursor = refalab_source_cursor;
-                print_error_string("009 Unknown directive");
-                seek_char(';');
-                if (get_current_char() == ';')
-                    next_char();
-            }
-            if (!flags.end_refalab_source)
-            {
-                module_state = NEXT_STM;
-                break;
-            }
-            module_state = END_IS_MISSING;
-            break;
-        case END_IS_MISSING:
-            scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string("003 END-directive missing");
-            module_state = END_STATEMENT;
-            break;
-        case END_STATEMENT:
-            module_end();
-            if (errors_count != 0)
-            {
-                flags.was_error = true;
-                module_length = 0;
-            }
-            else
-            {
-                macrocode_end();
-                module_length = macrocode_where();
-            }
-            module_terminate();
-            print_conclusion();
-            module_state = END_OF_SYSIN;
-            break;
-        case END_OF_SYSIN:
-            free(refalab_source_buffer);
-            refalab_source_buffer = NULL;
-            fclose(refalab_source);
-            if (options.source_listing)
-                fclose(refalab_source_listing);
-            module_length = macrocode_where();
-            fclose(llvm_source);
-            if (module_length == 0 || flags.was_error)
-                unlink(filename);
-            else if (!options.llvm_source_only)
-            {
-                char string_llvm[9 + MAX_PATHFILENAME + 1 + 8191 + 1];
-                sprintf(string_llvm, "clang -c %s %s", filename, options.llvm_options);
-                int result_as = system(string_llvm);
-#if defined POSIX
-                if (WIFEXITED(result_as) != 0)
-                    result_as = WEXITSTATUS(result_as);
+                blanks_out();
+                bool error130 = false;
+                const size_t cursor_number = refalab_source_cursor;
+                if (!get_identifier(scanner.label_name, &scanner.label_name_length))
+                    error130 = true;
                 else
-                    result_as = -1;
-#endif
-                if (result_as != 0)
                 {
-                    printf("Error compiling to object file\n");
-                    exit(1);
+                    blanks_out();
+                    char current_char = get_current_char();
+                    if (current_char == ';')
+                    {
+                        set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
+                        next_char();
+                    }
+                    else if (current_char = '{')
+                        fn();
+                    else
+                        error130 = true;
+                }
+                if (error130)
+                {
+                    scanner.last_error_cursor = refalab_source_cursor;
+                    PRINT_ERROR_130;
+                    seek_char(';');
+                    if (get_current_char() == ';')
+                        next_char();
                 }
             }
-            if (flags.was_error)
-                exit(1);
-            else
-                exit(0);
-            return 0;
         }
+    else
+    {
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string("009 Unknown directive");
+        seek_char(';');
+        if (get_current_char() == ';')
+            next_char();
+    }
+    if (!flags.end_refalab_source)
+    {
+        module_state = NEXT_STM;
+        break;
+    }
+    module_state = END_IS_MISSING;
+    break;
+case END_IS_MISSING:
+    scanner.last_error_cursor = refalab_source_cursor;
+    print_error_string("003 END-directive missing");
+    module_state = END_STATEMENT;
+    break;
+case END_STATEMENT:
+    module_end();
+    if (errors_count != 0)
+    {
+        flags.was_error = true;
+        module_length = 0;
+    }
+    else
+    {
+        macrocode_end();
+        module_length = macrocode_where();
+    }
+    module_terminate();
+    print_conclusion();
+    module_state = END_OF_SYSIN;
+    break;
+case END_OF_SYSIN:
+    free(refalab_source_buffer);
+    refalab_source_buffer = NULL;
+    fclose(refalab_source);
+    if (options.source_listing)
+        fclose(refalab_source_listing);
+    module_length = macrocode_where();
+    fclose(llvm_source);
+    if (module_length == 0 || flags.was_error)
+        unlink(filename);
+    else if (!options.llvm_source_only)
+    {
+        char string_llvm[9 + MAX_PATHFILENAME + 1 + 8191 + 1];
+        sprintf(string_llvm, "clang -c %s %s", filename, options.llvm_options);
+        int result_as = system(string_llvm);
+#if defined POSIX
+        if (WIFEXITED(result_as) != 0)
+            result_as = WEXITSTATUS(result_as);
+        else
+            result_as = -1;
+#endif
+        if (result_as != 0)
+        {
+            printf("Error compiling to object file\n");
+            exit(1);
+        }
+    }
+    if (flags.was_error)
+        exit(1);
+    else
+        exit(0);
+    return 0;
+}
 } // main program  end
 
 static void load_refalab_source_to_memory(void)
