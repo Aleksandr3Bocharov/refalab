@@ -491,8 +491,17 @@ int main(int argc, char *argv[])
                         set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
                         next_char();
                     }
-                    else if (current_char = '{')
-                        fn();
+                    else if (current_char == '{')
+                    {
+                        blanks_out();
+                        if (get_current_char() == '}')
+                        {
+                            set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
+                            next_char();
+                        }
+                        else
+                            fn();
+                    }
                     else
                         error130 = true;
                 }
@@ -1705,21 +1714,32 @@ static void equ(void)
 
 static void fn(void)
 {
-    blanks_out();
     while (true)
     {
+        blanks_out();
         const char current_char = get_current_char();
-        if (current_char == '<')
+        if (current_char == '>')
         {
             next_char();
             compile_sentence(true, scanner.label_name, scanner.label_name_length);
         }
+        else if (current_char == '<')
+        {
+            next_char();
+            compile_sentence(false, scanner.label_name, scanner.label_name_length);
+        }
+        else if (current_char == '}')
+        {
+            next_char();
+            return;
+        }
+        else if (current_char == '\0')
+            break;
+        else
+            compile_sentence(true, scanner.label_name, scanner.label_name_length);
     }
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
-    seek_char('}');
-    if (get_current_char() == '}')
-        next_char();
     return;
 }
 
