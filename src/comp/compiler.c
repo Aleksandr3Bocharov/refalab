@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     blanks_out();
-                    char current_char = get_current_char();
+                    const char current_char = get_current_char();
                     if (current_char == ';')
                     {
                         set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
@@ -1703,8 +1703,23 @@ static void equ(void)
     return;
 }
 
-static void fn()
+static void fn(void)
 {
+    blanks_out();
+    while (true)
+    {
+        const char current_char = get_current_char();
+        if (current_char == '<')
+        {
+            next_char();
+            compile_sentence(true, scanner.label_name, scanner.label_name_length);
+        }
+    }
+    scanner.last_error_cursor = refalab_source_cursor;
+    PRINT_ERROR_130;
+    seek_char('}');
+    if (get_current_char() == '}')
+        next_char();
     return;
 }
 
