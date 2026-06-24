@@ -19,11 +19,14 @@
 #include "compiler.h"
 #include "compile_sentence.h"
 
-#define PRINT_ERROR_504(identifier, identifier_length) \
-    print_error_three_strings("504 label", identifier, identifier_length, " is already defined")
+#define PRINT_ERROR_504 \
+    print_error_three_strings(504, "Label", identifier, identifier_length, " is already defined")
 
 #define PRINT_ERROR_500 \
     print_error_string("500 no statement label")
+
+#define PRINT_ERROR_501 \
+    print_error_string(501, "Both labels in EQU-directive already defined")
 
 typedef struct array_info_labels
 {
@@ -211,7 +214,7 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     if (tail != ')' && (label->mode & 0020) != 0020)
     {
         scanner.last_error_cursor = cursor_number;
-        print_error_three_strings("505 label", identifier, identifier_length, " is yet not defined");
+        print_error_three_strings(505, "Label", identifier, identifier_length, " is yet not defined");
     } 
     return label;
 }
@@ -254,10 +257,9 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, size_t cursor_
     else
     {
         scanner.last_error_cursor = cursor_number1;
-        PRINT_ERROR_504(identifier1, identifier1_length);
+        PRINT_ERROR_501;
         scanner.last_error_cursor = cursor_number2;
-        PRINT_ERROR_504(identifier2, identifier2_length);
-        print_error_string("501 both labels already defined");
+        PRINT_ERROR_501;
     }
     return;
 }
