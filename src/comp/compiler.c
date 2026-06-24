@@ -743,6 +743,7 @@ void scan_sentence_element(void)
         case STATE0:
             // among elements
             blanks_out();
+            current_sentence_element.cursor_number = refalab_source_cursor;
             current_char = get_current_char();
             switch (current_char)
             {
@@ -975,6 +976,7 @@ void scan_sentence_element(void)
             scanner_state = STATE0;
             break;
         case SCNCHR:
+            current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
             char symbol = get_current_char();
@@ -1055,6 +1057,7 @@ void scan_sentence_element(void)
             break;
         case STATE2:
             flags.scanner_station_k = false;
+            current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
             const size_t cursor_number = refalab_source_cursor;
