@@ -236,29 +236,29 @@ void specifier_definition(const char *identifier, uint8_t identifier_length, siz
     return;
 }
 
-void set_equ(const char *identifier1, uint8_t identifier1_length, size_t cursor_number1, const char *identifier2, uint8_t identifier2_length, size_t cursor_number2)
+void set_equ(const char *identifier1, uint8_t identifier1_length, size_t identifier1_cursor_number, const char *identifier2, uint8_t identifier2_length, size_t identifier2_cursor_number)
 {
-    T_LABEL *label1 = lookup_label(identifier1, identifier1_length, cursor_number1);
-    T_LABEL *label2 = lookup_label(identifier2, identifier2_length, cursor_number2);
+    T_LABEL *label1 = lookup_label(identifier1, identifier1_length, identifier1_cursor_number);
+    T_LABEL *label2 = lookup_label(identifier2, identifier2_length, identifier2_cursor_number);
     if (label1 == label2)
         return;
     if ((label1->mode & 0300) == 0)
     {
         label2->type |= label1->type;
-        label1->cursor_number_defined = cursor_number1;
+        label1->cursor_number_defined = identifier1_cursor_number;
         macrocode_equ(label1, label2);
     }
     else if ((label2->mode & 0300) == 0)
     {
         label1->type |= label2->type;
-        label2->cursor_number_defined = cursor_number2;
+        label2->cursor_number_defined = identifier2_cursor_number;
         macrocode_equ(label2, label1);
     }
     else
     {
-        scanner.last_error_cursor = cursor_number1;
+        scanner.last_error_cursor = identifier1_cursor_number;
         PRINT_ERROR_501;
-        scanner.last_error_cursor = cursor_number2;
+        scanner.last_error_cursor = identifier2_cursor_number;
         PRINT_ERROR_501;
     }
     return;
