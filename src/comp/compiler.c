@@ -1656,10 +1656,10 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
         if (get_current_char() == '(')
         {
             next_char();
-            const size_t extern_cursor_number = refalab_source_cursor;
+            const size_t identifier_extern_cursor_number = refalab_source_cursor;
             if (!get_identifier_extern(identifier_extern, &identifier_extern_length))
                 break;
-            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length, extern_cursor_number);
+            (*handler)(identifier, identifier_length, cursor_number, identifier_extern, identifier_extern_length, identifier_extern_cursor_number);
             if (get_current_char() != ')')
                 break;
             next_char();

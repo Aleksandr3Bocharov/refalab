@@ -25,7 +25,7 @@ void error_no_memory_labels(void)
     return;
 }
 
-static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
     T_LABEL *label = (T_LABEL *)calloc(1, sizeof(T_LABEL));
 #if defined mdebug
@@ -42,19 +42,19 @@ static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, siz
     label->usage_list.next = NULL;
     for (uint8_t i = 1; i <= 5; i++)
         label->usage_list.cursor_numbers[i] = 0;
-    label->usage_list.cursor_numbers[0] = cursor_number;
+    label->usage_list.cursor_numbers[0] = identifier_cursor_number;
     label->cursor_number_defined = 0;
     strncpy(label->identifier, identifier, identifier_length);
     label->identifier_length = identifier_length;
     return label;
 }
 
-T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 // identifier_length identifier length
 {
     if (root == NULL)
     { // empty tree
-        root = new_label(identifier, identifier_length, cursor_number);
+        root = new_label(identifier, identifier_length, identifier_cursor_number);
         return root;
     }
     // tree is't empty,begin push.
@@ -77,12 +77,12 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
                     uint8_t i = 5;
                     while (last_usage_list->cursor_numbers[i] == 0)
                         i--;
-                    if (last_usage_list->cursor_numbers[i] != cursor_number)
+                    if (last_usage_list->cursor_numbers[i] != identifier_cursor_number)
                     {
                         // include number to list
                         if (last_usage_list->cursor_numbers[5] == 0)
                             // it's free field in current item
-                            last_usage_list->cursor_numbers[i + 1] = cursor_number;
+                            last_usage_list->cursor_numbers[i + 1] = identifier_cursor_number;
                         else
                         { // create new item
                             T_USAGE_LIST *new_usage_list = (T_USAGE_LIST *)calloc(1, sizeof(T_USAGE_LIST));
@@ -96,7 +96,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
                             new_usage_list->next = NULL;
                             for (i = 0; i <= 5; i++)
                                 new_usage_list->cursor_numbers[i] = 0;
-                            new_usage_list->cursor_numbers[0] = cursor_number;
+                            new_usage_list->cursor_numbers[0] = identifier_cursor_number;
                         };
                     }
                     while ((label->mode & 0300) == 0300)
@@ -133,7 +133,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
         break;
     }
     // include new node to tree
-    T_LABEL *search_label = new_label(identifier, identifier_length, cursor_number);
+    T_LABEL *search_label = new_label(identifier, identifier_length, identifier_cursor_number);
     child_label = search_label;
     if (balance == 0100)
         label->right_label = child_label;

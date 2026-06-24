@@ -71,23 +71,23 @@ T_INFO_LABEL *generate_info_label(void)
     return info_label;
 }
 
-void function_definition(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+void function_definition(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
     if (identifier_length != 0)
     { // new function
         function_end();
-        T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+        T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
         next_sentence = allocate_info_label();
         label->type |= 0100;
         if ((label->mode) & 0020)
         {
-            scanner.last_error_cursor = cursor_number;
+            scanner.last_error_cursor = identifier_cursor_number;
             PRINT_ERROR_504;
         }
         else
         {
             function_head(identifier, identifier_length);
-            label->cursor_number_defined = cursor_number;
+            label->cursor_number_defined = identifier_cursor_number;
             macrocode_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
@@ -121,32 +121,32 @@ static void function_end(void)
     return;
 }
 
-void set_empty(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+void set_empty(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
     {
-        scanner.last_error_cursor = cursor_number;
+        scanner.last_error_cursor = identifier_cursor_number;
         PRINT_ERROR_504;
     }
     else
     {
         function_head(identifier, identifier_length);
-        label->cursor_number_defined = cursor_number;
+        label->cursor_number_defined = identifier_cursor_number;
         macrocode_label(label);
         macrocode_byte(n_fail);
     }
     return;
 }
 
-void set_swap(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+void set_swap(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
     {
-        scanner.last_error_cursor = cursor_number;
+        scanner.last_error_cursor = identifier_cursor_number;
         PRINT_ERROR_504;
     }
     else
@@ -165,7 +165,7 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t cursor_n
         for (uint8_t i = 1; i <= align_bytes; i++)
             macrocode_byte(' ');
         function_head(identifier, identifier_length);
-        label->cursor_number_defined = cursor_number;
+        label->cursor_number_defined = identifier_cursor_number;
         macrocode_label(label);
         macrocode_byte(n_swap);
         const uint8_t swap_length = SMBL + LBLL * 2;
@@ -175,62 +175,62 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t cursor_n
     return;
 }
 
-void set_entry(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t extern_cursor_number)
+void set_entry(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
-    macrocode_entry(label, identifier_extern, identifier_extern_length, extern_cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
+    macrocode_entry(label, identifier_extern, identifier_extern_length, identifier_extern_cursor_number);
     return;
 }
 
-void set_extrn(const char *identifier, uint8_t identifier_length, size_t cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t extern_cursor_number)
+void set_extrn(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 // identifier internal name
 // identifier_extern external name
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     if (label->mode & 0020)
     {
-        scanner.last_error_cursor = cursor_number;
+        scanner.last_error_cursor = identifier_cursor_number;
         PRINT_ERROR_504;
     }
     else
     {
-        label->cursor_number_defined = cursor_number;
-        macrocode_extrn(label, identifier_extern, identifier_extern_length, extern_cursor_number);
+        label->cursor_number_defined = identifier_cursor_number;
+        macrocode_extrn(label, identifier_extern, identifier_extern_length, identifier_extern_cursor_number);
     }
     return;
 }
 
-T_LABEL *function_reference(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+T_LABEL *function_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0100;
     return label;
 }
 
-T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, size_t cursor_number, char tail)
+T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, char tail)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0200;
     if (tail != ')' && (label->mode & 0020) != 0020)
     {
-        scanner.last_error_cursor = cursor_number;
+        scanner.last_error_cursor = identifier_cursor_number;
         print_error_three_strings(505, "Label", identifier, identifier_length, " is yet not defined");
     } 
     return label;
 }
 
-void specifier_definition(const char *identifier, uint8_t identifier_length, size_t cursor_number)
+void specifier_definition(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, cursor_number);
+    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0200;
     if (label->mode & 0020)
     {
-        scanner.last_error_cursor = cursor_number;
+        scanner.last_error_cursor = identifier_cursor_number;
         PRINT_ERROR_504;
     }
     else
     {
-        label->cursor_number_defined = cursor_number;
+        label->cursor_number_defined = identifier_cursor_number;
         macrocode_label(label);
     }
     return;

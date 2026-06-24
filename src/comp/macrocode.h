@@ -17,9 +17,9 @@
 extern void macrocode_address(T_LABEL *label);
 extern void macrocode_byte(uint8_t byte);
 extern void macrocode_end(void);
-extern void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number);
+extern void macrocode_entry(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number);
 extern void macrocode_equ(T_LABEL *equ_label, T_LABEL *label);
-extern void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number);
+extern void macrocode_extrn(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number);
 extern void macrocode_label(T_LABEL *label);
 extern void macrocode_start(void);
 extern size_t macrocode_where(void);

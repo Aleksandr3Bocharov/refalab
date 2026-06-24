@@ -54,7 +54,7 @@ typedef struct label
 
 } T_LABEL;
 
-extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t cursor_number);
+extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number);
 extern void labels_terminate(void);
 extern void through_labels(void (*handler)(const T_LABEL *));
 extern void error_no_memory_labels(void);

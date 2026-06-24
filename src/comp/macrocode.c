@@ -22,7 +22,7 @@
 #include "avl_identifiers.h"
 
 #define PRINT_ERROR_604 \
-    print_error_three_strings("604 external label", idendifier_extern, idendifier_extern_length, " is already defined")
+    print_error_three_strings(604, "External label", identifier_extern, identifier_extern_length, " is already defined")
 
 typedef struct entry
 { // entry table element
@@ -244,17 +244,17 @@ void macrocode_address(T_LABEL *label)
     return;
 }
 
-void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number)
-// idendifier_extern label
+void macrocode_entry(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
+// identifier_extern label
 {
-    // idendifier_extern_length label length
+    // identifier_extern_length label length
     extrn2 = first_extrn;
     while (extrn2 != last_extrn)
     {
         extrn2 = extrn2->next;
-        if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        if (extrn2->identifier_extern_length == identifier_extern_length && strncmp(extrn2->identifier_extern, identifier_extern, identifier_extern_length) == 0)
         {
-            scanner.last_error_cursor = extern_cursor_number;
+            scanner.last_error_cursor = identifier_extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
@@ -263,9 +263,9 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     while (entry2 != last_entry)
     {
         entry2 = entry2->next;
-        if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        if (entry2->identifier_extern_length == identifier_extern_length && strncmp(entry2->identifier_extern, identifier_extern, identifier_extern_length) == 0)
         {
-            scanner.last_error_cursor = extern_cursor_number;
+            scanner.last_error_cursor = identifier_extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
@@ -280,23 +280,23 @@ void macrocode_entry(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     last_entry = entry2;
     entry2->label = label;
     entry2->next = NULL;
-    entry2->identifier_extern_length = idendifier_extern_length;
-    strncpy(entry2->identifier_extern, idendifier_extern, entry2->identifier_extern_length);
+    entry2->identifier_extern_length = identifier_extern_length;
+    strncpy(entry2->identifier_extern, identifier_extern, entry2->identifier_extern_length);
     label->mode |= 0040;
     return;
 } // macrocode_entry
 
-void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t idendifier_extern_length, size_t extern_cursor_number)
-// idendifier_extern label
+void macrocode_extrn(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
+// identifier_extern label
 {
-    // idendifier_extern_length label length
+    // identifier_extern_length label length
     entry2 = first_entry;
     while (entry2 != last_entry)
     {
         entry2 = entry2->next;
-        if (entry2->identifier_extern_length == idendifier_extern_length && strncmp(entry2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        if (entry2->identifier_extern_length == identifier_extern_length && strncmp(entry2->identifier_extern, identifier_extern, identifier_extern_length) == 0)
         {
-            scanner.last_error_cursor = extern_cursor_number;
+            scanner.last_error_cursor = identifier_extern_cursor_number;
             PRINT_ERROR_604;
             return;
         }
@@ -305,7 +305,7 @@ void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     while (extrn2 != last_extrn)
     {
         extrn2 = extrn2->next;
-        if (extrn2->identifier_extern_length == idendifier_extern_length && strncmp(extrn2->identifier_extern, idendifier_extern, idendifier_extern_length) == 0)
+        if (extrn2->identifier_extern_length == identifier_extern_length && strncmp(extrn2->identifier_extern, identifier_extern, identifier_extern_length) == 0)
         {
             label->info.infon = extrn2->label->info.infon;
             label->mode |= 0220;
@@ -322,8 +322,8 @@ void macrocode_extrn(T_LABEL *label, const char *idendifier_extern, uint8_t iden
     last_extrn = extrn2;
     extrn2->label = label;
     extrn2->next = NULL;
-    extrn2->identifier_extern_length = idendifier_extern_length;
-    strncpy(extrn2->identifier_extern, idendifier_extern, extrn2->identifier_extern_length);
+    extrn2->identifier_extern_length = identifier_extern_length;
+    strncpy(extrn2->identifier_extern, identifier_extern, extrn2->identifier_extern_length);
     label->mode |= 0220;
     extrn_count++;
     label->info.infon = extrn_count;
