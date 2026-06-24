@@ -50,6 +50,7 @@ typedef struct sentence_element
     bool v_variable;
     T_LINKTI code;
     T_LINKTI specifier;
+    size_t cursor_number;
 } T_SENTENCE_ELEMENT;
 
 extern T_SENTENCE_ELEMENT current_sentence_element;
