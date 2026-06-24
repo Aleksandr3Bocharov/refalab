@@ -828,6 +828,7 @@ void scan_sentence_element(void)
             }
             break;
         case SCNERR:
+            current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.type = NONE;
             seek_char(';');
             if (get_current_char() == ';')
