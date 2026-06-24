@@ -21,10 +21,10 @@
 #include "compiler.h"
 
 #define PRINT_ERROR_303 \
-    print_error_two_strings("303 differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
+    print_error_two_strings(303, "Differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
 
 #define PRINT_ERROR_406 \
-    print_error_two_strings("406 in left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
+    print_error_two_strings(406, "In left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
 
 typedef enum states
 {
@@ -298,7 +298,7 @@ void compile_sentence(bool direction)
             if (last_bracket == 0)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("302 too many ')' in left part");
+                print_error_string(302, "Too many ')' in left part");
                 current_left_part_element--;
             }
             else
@@ -371,14 +371,14 @@ void compile_sentence(bool direction)
         case LPE7:
             // sign '<'
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("306 sign '<' in left part");
+            print_error_string(306, "Sign '<' in left part");
             current_left_part_element--;
             state = NEXT_LPE;
             break;
         case LPE8:
             // sign '>'
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("307 sign '>' in left part");
+            print_error_string(307, "Sign '>' in left part");
             current_left_part_element--;
             state = NEXT_LPE;
             break;
@@ -390,13 +390,13 @@ void compile_sentence(bool direction)
                 break;
             }
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("301 too many '(' in left part");
+            print_error_string(301, "Too many '(' in left part");
             state = OSH300;
             break;
         case LPE10:
             // sentence end
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("304 under left part default sign '=' ");
+            print_error_string(304, "Under left part default sign '=' ");
             function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
             return;
         case NEXT_LPE:
@@ -407,7 +407,7 @@ void compile_sentence(bool direction)
                 break;
             }
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("305 very large left part");
+            print_error_string(305, "Very large left part");
             state = OSH300;
             break;
         case OSH300:
@@ -1509,7 +1509,7 @@ void compile_sentence(bool direction)
             if (brackets_count[brackets_k_level] == 0)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("402 too many ')' in right part");
+                print_error_string(402, "Too many ')' in right part");
             }
             else
                 brackets_count[brackets_k_level]--;
@@ -1599,7 +1599,7 @@ void compile_sentence(bool direction)
             if (brackets_k_level > 511)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("407 including of the signs '<' > 511");
+                print_error_string(407, "Including of the signs '<' > 511");
                 state = RP_OSH300;
                 break;
             }
@@ -1621,14 +1621,14 @@ void compile_sentence(bool direction)
             if (brackets_k_level == 1)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("404 too many sign '>' in right part");
+                print_error_string(404, "Too many sign '>' in right part");
             }
             else
             {
                 if (brackets_count[brackets_k_level] != 0)
                 {
                     scanner.last_error_cursor = current_sentence_element.cursor_number;
-                    print_error_string("401 too many '(' in right part");
+                    print_error_string(401, "Too many '(' in right part");
                 }
                 macrocode_byte(n_bract);
                 brackets_k_level--;
@@ -1638,7 +1638,7 @@ void compile_sentence(bool direction)
         case RPE9:
             // sign '=' in right part
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("405 sign '=' in right part");
+            print_error_string(405, "Sign '=' in right part");
             state = GET_RPE;
             break;
         case RPE10:
@@ -1647,17 +1647,17 @@ void compile_sentence(bool direction)
             if (brackets_k_level != 1)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("403 too many signs '<' in right part");
+                print_error_string(403, "Too many signs '<' in right part");
             }
             if (brackets_count[brackets_k_level] != 0)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
-                print_error_string("401 too many '(' in right part");
+                print_error_string(401, "Too many '(' in right part");
             }
             return;
         case RP_OSH300:
             scanner.last_error_cursor = current_sentence_element.cursor_number;
-            print_error_string("300 sentence is't scanned");
+            print_error_string(300, "Sentence is't scanned");
             return;
         //                      place of compiler's error
         case ERROR:

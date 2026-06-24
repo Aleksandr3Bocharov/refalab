@@ -1585,7 +1585,7 @@ static void print_card_error(FILE *file)
     }
     fputc('\n', file);
     fprintf(file, "      | ");
-    for (current_position = start_position; current_position < refalab_source_cursor; i++)
+    for (current_position = start_position; current_position < refalab_source_cursor; current_position++)
     {
         unsigned char symbol = (unsigned char)refalab_source_buffer[current_position];
         if (symbol == '\t')
