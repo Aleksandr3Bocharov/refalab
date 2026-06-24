@@ -19,7 +19,7 @@ void print_error_string(uint16_t error_number, const char *error_string)
     char tmp[512];
     size_t line, column;
     get_location(&line, &column, scanner.last_error_cursor);
-    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %u] %s\n", line, column, error_number, error_string);
+    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %.3u] %s\n", line, column, error_number, error_string);
     if (refalab_source_listing != NULL)
         fputs(tmp, refalab_source_listing);
     fputs(tmp, terminal);
@@ -35,7 +35,7 @@ void print_error_two_strings(uint16_t error_number, const char *error_string, co
     char tmp[512];
     size_t line, column;
     get_location(&line, &column, scanner.last_error_cursor);
-    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %u] %s %s\n", line, column, error_number, error_string, tmp1);
+    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %.3u] %s %s\n", line, column, error_number, error_string, tmp1);
     if (refalab_source_listing != NULL)
         fputs(tmp, refalab_source_listing);
     fputs(tmp, terminal);
@@ -51,7 +51,7 @@ void print_error_three_strings(uint16_t error_number, const char *error_string, 
     char tmp[512];
     size_t line, column;
     get_location(&line, &column, scanner.last_error_cursor);
-    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %u] %s %s %s\n", line, column, error_number, error_string, tmp1, error3_string);
+    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %.3u] %s %s %s\n", line, column, error_number, error_string, tmp1, error3_string);
     if (refalab_source_listing != NULL)
         fputs(tmp, refalab_source_listing);
     fputs(tmp, terminal);
@@ -64,7 +64,7 @@ void print_error_string_symbol(uint16_t error_number, const char *error_string, 
     char tmp[512];
     size_t line, column;
     get_location(&line, &column, scanner.last_error_cursor);
-    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %u] %s %c\n", line, column, error_number, error_string, symbol);
+    sprintf(tmp, "***** Line %zu, Column %zu: [ERROR %.3u] %s %c\n", line, column, error_number, error_string, symbol);
     if (refalab_source_listing != NULL)
         fputs(tmp, refalab_source_listing);
     fputs(tmp, terminal);
