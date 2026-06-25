@@ -19,7 +19,7 @@
 #include "compiler.h"
 #include "compile_sentence.h"
 
-#define PRINT_ERROR_504 \
+#define PRINT_ERROR_504(identifier, identifier_length) \
     print_error_three_strings(504, "Label", identifier, identifier_length, " is already defined")
 
 #define PRINT_ERROR_501 \
@@ -79,7 +79,7 @@ void function_definition()
         if ((label->mode) & 0020)
         {
             scanner.last_error_cursor = scanner.label_cursor_number;
-            PRINT_ERROR_504;
+            PRINT_ERROR_504(scanner.label_name, scanner.label_name_length);
         }
         else
         {
@@ -123,7 +123,7 @@ void set_empty(const char *identifier, uint8_t identifier_length, size_t identif
     if (label->mode & 0020)
     {
         scanner.last_error_cursor = identifier_cursor_number;
-        PRINT_ERROR_504;
+        PRINT_ERROR_504(identifier, identifier_length);
     }
     else
     {
@@ -142,7 +142,7 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t identifi
     if (label->mode & 0020)
     {
         scanner.last_error_cursor = identifier_cursor_number;
-        PRINT_ERROR_504;
+        PRINT_ERROR_504(identifier, identifier_length);
     }
     else
     { //  align box head on the 8-byte board
@@ -185,7 +185,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, size_t identif
     if (label->mode & 0020)
     {
         scanner.last_error_cursor = identifier_cursor_number;
-        PRINT_ERROR_504;
+        PRINT_ERROR_504(identifier, identifier_length);
     }
     else
     {
@@ -221,7 +221,7 @@ void specifier_definition()
     if (label->mode & 0020)
     {
         scanner.last_error_cursor = scanner.label_cursor_number;
-        PRINT_ERROR_504;
+        PRINT_ERROR_504(scanner.label_name, scanner.label_name_length);
     }
     else
     {
