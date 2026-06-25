@@ -287,11 +287,20 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
     while ((not_equ_label->mode & 0300) == 0300)
         not_equ_label = not_equ_label->info.infop;
     if ((label->mode & 0300) == 0)
-        print_error_three_strings("512 label", label->identifier, label->identifier_length, " not defined");
+    {
+        scanner.last_error_cursor = label->usage_list.cursor_numbers[0];
+        print_error_three_strings(512, "Label", label->identifier, label->identifier_length, " not defined");
+    }
     if ((label->mode & 0040) == 0040 && (not_equ_label->mode & 0300) == 0200)
-        print_error_three_strings("511 label", label->identifier, label->identifier_length, " both extrn and entry");
+    {
+        scanner.last_error_cursor = label->usage_list.cursor_numbers[0];
+        print_error_three_strings(511, "Label", label->identifier, label->identifier_length, " both extrn and entry");
+    }
     if ((not_equ_label->type & 0300) == 0300)
-        print_error_three_strings("502 label", label->identifier, label->identifier_length, " boht specifier and function");
+    {
+        scanner.last_error_cursor = label->usage_list.cursor_numbers[0];
+        print_error_three_strings(502, "Label", label->identifier, label->identifier_length, " boht specifier and function");
+    }
     return;
 }
 
