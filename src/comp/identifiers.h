@@ -22,8 +22,9 @@ typedef struct info_label
 
 extern T_INFO_LABEL *generate_info_label(void);
 
-extern void function_definition();
-extern void specifier_definition();
+extern void function_definition(void);
+extern void function_end(void);
+extern void specifier_definition(void);
 extern T_LABEL *function_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number);
 extern T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, char tail);
 

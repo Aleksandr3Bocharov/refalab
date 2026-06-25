@@ -36,7 +36,6 @@ static uint8_t number_info_label = 15;
 static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
 static T_INFO_LABEL *next_sentence = NULL; // next sentence label
 
-static void function_end(void);
 static void function_head(const char *identifier, uint8_t identifier_length);
 
 static T_INFO_LABEL *allocate_info_label(void)
@@ -68,11 +67,10 @@ T_INFO_LABEL *generate_info_label(void)
     return info_label;
 }
 
-void function_definition()
+void function_definition(void)
 {
     if (scanner.label_name_length != 0)
     { // new function
-        function_end();
         T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
         next_sentence = allocate_info_label();
         label->type |= 0100;
@@ -99,7 +97,7 @@ void function_definition()
     return;
 }
 
-static void function_end(void)
+void function_end(void)
 {
     if (next_sentence != NULL)
     {
@@ -214,7 +212,7 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     return label;
 }
 
-void specifier_definition()
+void specifier_definition(void)
 {
     T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
     label->type |= 0200;
@@ -299,7 +297,6 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
 
 void module_end(void)
 {
-    function_end();
     through_labels(check_identifier);
     return;
 }

@@ -1743,11 +1743,15 @@ static void fn(void)
         }
         else if (current_char == '}')
         {
+            function_end();
             next_char();
             return;
         }
         else if (current_char == '\0')
+        {
+            function_end();
             break;
+        }
         else
             compile_sentence(true);
     }
