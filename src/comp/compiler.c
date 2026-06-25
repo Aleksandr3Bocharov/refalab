@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
                 specifier();
             else if (strncmp(statement_key, "EQU", statement_key_name_length) == 0)
                 equ();
-            else if (strncmp(statement_key, "FN", statement_key_name_length) == 0)
+            else if (strncmp(statement_key, "FUNC", statement_key_name_length) == 0)
             {
                 blanks_out();
                 bool error130 = false;
@@ -1725,7 +1725,7 @@ static void equ(void)
     return;
 }
 
-static void fn(void)
+static void func(void)
 {
     while (true)
     {
