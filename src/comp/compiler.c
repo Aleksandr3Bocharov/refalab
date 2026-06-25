@@ -1762,10 +1762,10 @@ static void specifier(void)
     do
     {
         blanks_out();
-        const size_t cursor_number = refalab_source_cursor;
+        scanner.label_cursor_number = refalab_source_cursor;
         if (!get_identifier(scanner.label_name, &scanner.label_name_length))
             break;
-        specifier_definition(scanner.label_name, &scanner.label_name_length, cursor_number);
+        specifier_definition();
         if (compile_specifer(';'))
         {
             next_char();

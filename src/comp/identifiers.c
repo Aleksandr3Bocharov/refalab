@@ -22,9 +22,6 @@
 #define PRINT_ERROR_504 \
     print_error_three_strings(504, "Label", identifier, identifier_length, " is already defined")
 
-#define PRINT_ERROR_500 \
-    print_error_string("500 no statement label")
-
 #define PRINT_ERROR_501 \
     print_error_string(501, "Both labels in EQU-directive already defined")
 
@@ -94,10 +91,7 @@ void function_definition(const char *identifier, uint8_t identifier_length, size
     }
     else
     { //  next sentence in function
-        if (next_sentence != NULL)
-            macrocode_label((T_LABEL *)next_sentence);
-        else
-        !!!    PRINT_ERROR_500;
+        macrocode_label((T_LABEL *)next_sentence);
         next_sentence = allocate_info_label();
         generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
     };
@@ -215,22 +209,22 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     {
         scanner.last_error_cursor = identifier_cursor_number;
         print_error_three_strings(505, "Label", identifier, identifier_length, " is yet not defined");
-    } 
+    }
     return label;
 }
 
-void specifier_definition(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
+void specifier_definition()
 {
-    T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
+    T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
     label->type |= 0200;
     if (label->mode & 0020)
     {
-        scanner.last_error_cursor = identifier_cursor_number;
+        scanner.last_error_cursor = scanner.label_cursor_number;
         PRINT_ERROR_504;
     }
     else
     {
-        label->cursor_number_defined = identifier_cursor_number;
+        label->cursor_number_defined = scanner.label_cursor_number;
         macrocode_label(label);
     }
     return;
