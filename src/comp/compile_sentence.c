@@ -397,7 +397,7 @@ void compile_sentence(bool direction)
             // sentence end
             scanner.last_error_cursor = current_sentence_element.cursor_number;
             print_error_string(304, "Under left part default sign '=' ");
-            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
+            function_definition();
             return;
         case NEXT_LPE:
             // end of element processing
@@ -411,14 +411,14 @@ void compile_sentence(bool direction)
             state = OSH300;
             break;
         case OSH300:
-            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
+            function_definition();
             state = RP_OSH300;
             break;
         //--------------------------------------------
         //         left part compilation
         //--------------------------------------------
         case RCG:
-            function_definition(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
+            function_definition();
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;

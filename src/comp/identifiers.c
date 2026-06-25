@@ -68,26 +68,27 @@ T_INFO_LABEL *generate_info_label(void)
     return info_label;
 }
 
-void function_definition(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
+void function_definition()
 {
-    if (identifier_length != 0)
+    if (scanner.label_name_length != 0)
     { // new function
         function_end();
-        T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
+        T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
         next_sentence = allocate_info_label();
         label->type |= 0100;
         if ((label->mode) & 0020)
         {
-            scanner.last_error_cursor = identifier_cursor_number;
+            scanner.last_error_cursor = scanner.label_cursor_number;
             PRINT_ERROR_504;
         }
         else
         {
-            function_head(identifier, identifier_length);
-            label->cursor_number_defined = identifier_cursor_number;
+            function_head(scanner.label_name, scanner.label_name_length);
+            label->cursor_number_defined = scanner.label_cursor_number;
             macrocode_label(label);
             generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
         }
+        scanner.label_name_length = 0;
     }
     else
     { //  next sentence in function

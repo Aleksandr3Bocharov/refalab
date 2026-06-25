@@ -485,17 +485,16 @@ int main(int argc, char *argv[])
             {
                 blanks_out();
                 bool error130 = false;
-                const size_t cursor_number = refalab_source_cursor;
+                scanner.label_cursor_number = refalab_source_cursor;
                 if (!get_identifier(scanner.label_name, &scanner.label_name_length))
                     error130 = true;
                 else
                 {
-                    scanner.label_cursor_number = cursor_number;
                     blanks_out();
                     const char current_char = get_current_char();
                     if (current_char == ';')
                     {
-                        set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
+                        set_swap(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
                         next_char();
                     }
                     else if (current_char == '{')
@@ -503,7 +502,7 @@ int main(int argc, char *argv[])
                         blanks_out();
                         if (get_current_char() == '}')
                         {
-                            set_swap(scanner.label_name, scanner.label_name_length, cursor_number);
+                            set_swap(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
                             next_char();
                         }
                         else
