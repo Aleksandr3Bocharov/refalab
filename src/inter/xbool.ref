@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -9,75 +9,79 @@
 * Спецификаторы библиотеки РефалАБ.
 *====================================================================
 
-BOOL +
-    START
+$START BOOL;
 
-    ENTRY True, False, Bool
-    ENTRY If, And, Or, Not
-    EXTRN Call
-    EMPTY True, False
+$ENTRY True, False, Bool;
+$ENTRY If, And, Or, Not;
+$EXTRN Call;
+$EMPTY True, False;
 
-Bool +
-    S   &True &False
-
-    IMPL
+$S Bool &True &False;
 
 * <If (V.Cond E.Any)+ (E.Any)> = E.Any
 * V.Cond ::= &True | &False | (E.Any)
-If  E(B).CExp +
-        = <If_Aux E.CExp>
+$FUNC If  
+{
+    E(B).CExp = <If_Aux E.CExp>;
+}
 
-If_Aux
-    (&True E.Expr) E._ W.False +
-        = <If_Aux_Get E.Expr>
-    (&False E._) (E.False) +
-        = <If_Aux_Get E.False>
-    (&False E._) E.Rest W.False +
-        = <If_Aux E.Rest W.False>
-    ((E.BExp) E.Expr) E.Rest W.False +
-        = <If_Aux (<BCheck < E.BExp>> E.Expr) E.Rest W.False>
+$FUNC If_Aux 
+{
+    (&True E.Expr) E._ W.False = <If_Aux_Get E.Expr>;
+    (&False E._) (E.False) = <If_Aux_Get E.False>;
+    (&False E._) E.Rest W.False = <If_Aux E.Rest W.False>;
+    ((E.BExp) E.Expr) E.Rest W.False = <If_Aux (<BCheck < E.BExp>> E.Expr) E.Rest W.False>;
+}
 
-If_Aux_Get
-    (&Call E.Expr) +
-        = < E.Expr>
-    E._ = E._
+$FUNC If_Aux_Get
+{
+    (&Call E.Expr) = < E.Expr>;
+    E._ = E._;
+}
 
-BCheck
-    S(:Bool:).Bool +
-        = S.Bool
+$FUNC BCheck
+{
+    S(:Bool:).Bool = S.Bool;
+}
 
 * <And E(:Bool: B).BExp> = &True | &False
-And E(:Bool: B).BExp +
-        = <And_Aux E.BExp>
+$FUNC And
+{
+    E(:Bool: B).BExp = <And_Aux E.BExp>;
+}
 
-And_Aux = &True
-    &False E._ +
-        = &False
-    &True E.BExp +
-        = <And_Aux E.BExp>
-    (E.Exp) E.BExp_E +
-        = <And_Aux <BExp_Check < E.Exp>> E.BExp_E>
+$FUNC And_Aux 
+{
+    = &True;
+    &False E._ = &False;
+    &True E.BExp = <And_Aux E.BExp>;
+    (E.Exp) E.BExp_E = <And_Aux <BExp_Check < E.Exp>> E.BExp_E>;
+}
 
-BExp_Check
-    E(:Bool: B).BExp +
-        = E.BExp
+$FUNC BExp_Check
+{
+    E(:Bool: B).BExp = E.BExp;
+}
 
 * <Or E(:Bool: B).BExp> = &True | &False
-Or   E(:Bool: B).BExp +
-        = <Or_Aux E.BExp>
+$FUNC Or 
+{  
+    E(:Bool: B).BExp = <Or_Aux E.BExp>;
+}
 
-Or_Aux  = &False
-    &True E._ +
-        = &True
-    &False E.BExp +
-        = <Or_Aux E.BExp>
-    (E.Exp) E.BExp_E +
-        = <Or_Aux <BExp_Check < E.Exp>> E.BExp_E>
+$FUNC Or_Aux 
+{ 
+    = &False;
+    &True E._ = &True;
+    &False E.BExp = <Or_Aux E.BExp>;
+    (E.Exp) E.BExp_E = <Or_Aux <BExp_Check < E.Exp>> E.BExp_E>;
+}
 
 * <Not S(:Bool:).Bool> = &True | &False
-Not &True +
-        = &False
-    &False +
-        = &True
+$FUNC Not 
+{
+    &True = &False;
+    &False = &True;
+}
 
-    END
+$END.
