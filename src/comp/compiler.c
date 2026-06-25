@@ -191,6 +191,7 @@ static void blanks_out(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t, size_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t));
 static void equ(void);
+static void func(void);
 static void specifier(void);
 static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
@@ -506,7 +507,7 @@ int main(int argc, char *argv[])
                             next_char();
                         }
                         else
-                            fn();
+                            func();
                     }
                     else
                         error130 = true;
