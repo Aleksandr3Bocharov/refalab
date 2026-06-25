@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-05
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -8,34 +8,36 @@
 * Спецификаторы библиотеки РефалАБ.
 *====================================================================
 
-ARIPHMETICS2 START
+$START ARIPHMETICS2;
 
-    ENTRY Inc, Dec
-    ENTRY Max_Number, Is_Max_Number
-    EXTRN Add, Sub
-    EXTRN True, False
+$ENTRY Inc, Dec;
+$ENTRY Max_Number, Is_Max_Number;
+$EXTRN Add, Sub;
+$EXTRN True, False;
 
-Max_Number +
-    S   4294967295
-
-    IMPL
+$S Max_Number 4294967295;
 
 * <Inc E.Number> == V.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
 * V.Number1 ::= '-'? S(N).Number+
-Inc E.Number +
-        = <Add (E.Number) 1>
+$FUNC Inc
+{
+    E.Number = <Add (E.Number) 1>;
+}
 
 * <Dec E.Number> == V.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
 * V.Number1 ::= '-'? S(N).Number+
-Dec E.Number +
-        = <Sub (E.Number) 1>
+$FUNC Dec 
+{
+    E.Number = <Sub (E.Number) 1>;
+}
 
 * <Is_Max_Number S.Any> == &True | &False
-Is_Max_Number
-    S(:Max_Number:)._ +
-        = &True
-    S._ = &False
+$FUNC Is_Max_Number
+{
+    S(:Max_Number:)._ = &True;
+    S._ = &False;
+}
 
-    END
+$END.
