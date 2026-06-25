@@ -16,7 +16,7 @@ $EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 $FUNC QSortN
 {
-        = ;
+    = ;
     W.Pivot = (<NCheck <Unbrackets W.Pivot>>);
     W.Pivot E.Items = <QSortN_Aux <FoldL &DoQSortN (() (W.Pivot) ()) E.Items>>;
 }
