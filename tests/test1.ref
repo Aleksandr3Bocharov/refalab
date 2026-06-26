@@ -1,187 +1,249 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-TEST1 +
-    START
+$START TEST1;
 
-    ENTRY Go
-    EXTRN Add, Sub, Mul, Dr, Div
-    EXTRN AddN, SubN, MulN, DrN, DivN
-    EXTRN P1, M1, Numb, Symb, Prout, Proutm, LRel
+$ENTRY Go;
+$EXTRN Add, Sub, Mul, Dr, Div;
+$EXTRN AddN, SubN, MulN, DrN, DivN;
+$EXTRN P1, M1, Numb, Symb, Prout, Proutm, LRel;
 
-    IMPL
-
-Go      = <F1> <F2> <F3> <F4>
+$FUNC Go
+{
+    =
+        <F1>
+        <F2>
+        <F3>
+        <F4>;
+}
 
 *  prowerka mul, dr, div, add, sub
-F1      = <Prad (1) 2> +
-        <Prad () 2> +
+$FUNC F1 
+{    
+    = 
+        <Prad (1) 2>
+        <Prad () 2>
         <Prad (1)> +
-        <Prad (1) '-' 2> +
-        <Prsu (1) 2> +
-        <Prsu () 2> +
-        <Prsu (1)> +
-        <Prsu (1) '-' 2> +
-        <Prmu( '-' 126)> +
-        <Prmu () 2> +
-        <Prmu ('-' 126) 2> +
-        <Prmu (16777216) 64> +
-        <Prmu ('-' 2) '-' 2> +
-        <Prmu (4294967295) '-' 1> +
-        <Prmu ('-'16777216) '-' 512> +    
-        <Prdr (5) 3> +
-        <Prdr (5) '-' 3> +
-        <Prdr ('-' 5) 3> +
-        <Prdr ('-' 5) '-' 3> +
-        <Prdr (5) 33> +
-        <Prdr (5) '-' 33> +
-        <Prdr ('-' 5) 33> +
-        <Prdr ('-' 5) '-' 33> +
-        <Prdl (5) 3> +
-        <Prdl (5) '-' 3> +
-        <Prdl ('-' 5) 3> +
-        <Prdl ('-' 5) '-' 3> +
-        <Prdl (5) 33> +
-        <Prdl (5) '-' 33> +
-        <Prdl ('-' 5) 33> +
-        <Prdl ('-' 5) '-' 33> 
-     
+        <Prad (1) '-' 2>
+        <Prsu (1) 2>
+        <Prsu () 2>
+        <Prsu (1)>
+        <Prsu (1) '-' 2> 
+        <Prmu( '-' 126)>
+        <Prmu () 2> 
+        <Prmu ('-' 126) 2>
+        <Prmu (16777216) 64> 
+        <Prmu ('-' 2) '-' 2> 
+        <Prmu (4294967295) '-' 1> 
+        <Prmu ('-'16777216) '-' 512>     
+        <Prdr (5) 3> 
+        <Prdr (5) '-' 3> 
+        <Prdr ('-' 5) 3> 
+        <Prdr ('-' 5) '-' 3> 
+        <Prdr (5) 33> 
+        <Prdr (5) '-' 33> 
+        <Prdr ('-' 5) 33> 
+        <Prdr ('-' 5) '-' 33> 
+        <Prdl (5) 3> 
+        <Prdl (5) '-' 3> 
+        <Prdl ('-' 5) 3> 
+        <Prdl ('-' 5) '-' 3> 
+        <Prdl (5) 33> 
+        <Prdl (5) '-' 33> 
+        <Prdl ('-' 5) 33> 
+        <Prdl ('-' 5) '-' 33>;
+}
+
 *  prowerka muln, drn, divn, addn, subn
-F2      = <Pradn (1) 2> +
-        <Pradn () 2> +
-        <Pradn (1)> +
-        <Pradn (1) '-' 2> +
-        <Prsun (1) 2> +
-        <Prsun () 2> +
-        <Prsun (1)> +
-        <Prsun (1) '-' 2> +
-        <Prmun ('-' 126)> +
-        <Prmun () 2> +
-        <Prmun ('-' 126) 2> +
-        <Prmun (16777216) 64> +
-        <Prmun ('-' 2) '-' 2> +
-        <Prmun (4294967295) '-' 1> +
-        <Prmun ('-' 16777216) '-' 512> +    
-        <Prdrn (5) 3> +
-        <Prdrn (5) '-' 3> +
-        <Prdrn ('-' 5) 3> +
-        <Prdrn ('-' 5) '-' 3> +
-        <Prdrn (5) 33> +
-        <Prdrn (5) '-' 33> +
-        <Prdrn ('-' 5) 33> +
-        <Prdrn ('-' 5) '-' 33> +
-        <Prdln (5) 3> +
-        <Prdln (5) '-' 3> +
-        <Prdln ('-' 5) 3> +
-        <Prdln ('-' 5) '-' 3> +
-        <Prdln (5) 33> +
-        <Prdln (5) '-' 33> +
-        <Prdln ('-' 5) 33> +
-        <Prdln( '-' 5) '-' 33>      
+$FUNC F2
+{
+    =
+        <Pradn (1) 2> 
+        <Pradn () 2> 
+        <Pradn (1)> 
+        <Pradn (1) '-' 2> 
+        <Prsun (1) 2> 
+        <Prsun () 2> 
+        <Prsun (1)> 
+        <Prsun (1) '-' 2> 
+        <Prmun ('-' 126)> 
+        <Prmun () 2> 
+        <Prmun ('-' 126) 2> 
+        <Prmun (16777216) 64> 
+        <Prmun ('-' 2) '-' 2>
+        <Prmun (4294967295) '-' 1> 
+        <Prmun ('-' 16777216) '-' 512>    
+        <Prdrn (5) 3> 
+        <Prdrn (5) '-' 3> 
+        <Prdrn ('-' 5) 3> 
+        <Prdrn ('-' 5) '-' 3> 
+        <Prdrn (5) 33> 
+        <Prdrn (5) '-' 33> 
+        <Prdrn ('-' 5) 33> 
+        <Prdrn ('-' 5) '-' 33> 
+        <Prdln (5) 3> 
+        <Prdln (5) '-' 3> 
+        <Prdln ('-' 5) 3> 
+        <Prdln ('-' 5) '-' 3> 
+        <Prdln (5) 33> 
+        <Prdln (5) '-' 33> 
+        <Prdln ('-' 5) 33> 
+        <Prdln( '-' 5) '-' 33>;     
+}
 
 *  neot
-F3      = <Prad ('+') 2> +
-        <Prad (2) '-'> +
-        <Prdr (1) 0> +      
-        <Prdr (1 2 3 4) 0 0> +
-        <Prdl (1)> +
-        <Prdrn (1) 0> +      
-        <Prdrn (1 2 3 4) 0 0> +
-        <Prdln (1)>   
+$FUNC F3
+{
+    =
+        <Prad ('+') 2> 
+        <Prad (2) '-'> 
+        <Prdr (1) 0>      
+        <Prdr (1 2 3 4) 0 0> 
+        <Prdl (1)> 
+        <Prdrn (1) 0>       
+        <Prdrn (1 2 3 4) 0 0> 
+        <Prdln (1)>;
+}
 
 *  prowerka p1, m1, numb, symb
-F4      = <Prp1 0> +
-        <Prp1 4294967294> +
-        <Prm1 1> +
-        <Prm1 4294967295> +
-        <Prnu '1000'> +
-        <Prnu '1000000000'> +
-        <Prnu '4294967295'> +
-        <Prnu> +
-        <Prnu '-'> +
-        <Prnu '+'> +
-        <Prsy 1000> +
-        <Prsy> +
-        <Prsy '-'> +
-        <Prsy '+'> +
-        <Prsy 1000000000> +
-        <Prsy 4294967295> +
-        <Prsy '+' 0 0 0> +
+$FUNC F4
+{
+    =
+        <Prp1 0> 
+        <Prp1 4294967294> 
+        <Prm1 1> 
+        <Prm1 4294967295> 
+        <Prnu '1000'> 
+        <Prnu '1000000000'> 
+        <Prnu '4294967295'> 
+        <Prnu> 
+        <Prnu '-'> 
+        <Prnu '+'> 
+        <Prsy 1000> 
+        <Prsy> 
+        <Prsy '-'> 
+        <Prsy '+'> 
+        <Prsy 1000000000> 
+        <Prsy 4294967295> 
+        <Prsy '+' 0 0 0> 
 *  neot
-        <Prp1 4294967295> +
-        <Prp1 '+' 1> +     
-        <Prm1 0> +
-        <Prnu '4294967296'> +
-        <Prnu '-+45'> +
-        <Prnu '++'> +      
-        <Prsy 1 0> +
+        <Prp1 4294967295> 
+        <Prp1 '+' 1> 
+        <Prm1 0> 
+        <Prnu '4294967296'> 
+        <Prnu '-+45'> 
+        <Prnu '++'>      
+        <Prsy 1 0> 
 *  prowerka LRel
-        <LRel ('a') 'a'> <LRel (1 2) 1 2> +
-        <LRel (&LRel) &LRel> <LRel ('\101\n') '\101\n'> +
-        <LRel (67 66) '\103\102'> <LRel ('A') '\101'> +
-        <LRel ('ab') 'a'>  <LRel ('ab') 'b'> +
-        <LRel ('ba') 'a'>  <LRel ('ba') 'b'> +
-        <LRel ('a') 'ab'>  <LRel ('b') 'ab'> +
-        <LRel ('a') 'ba'>  <LRel ('b') 'ba'> +
-        <LRel ('ab') 'ba'> <LRel ('ba') 'ab'> +
-        <LRel ('100') '99'> <LRel ('99') '100'> +
-        <LRel ('010') '99'> <LRel ('99') '010'> +
-        <LRel ('a' ('b')) 'b'> <LRel ('a') 'b' ('123')> +
-        <LRel ('a' ('b')) 'ab'> <LRel ('abc') 'a' ('123')> +
-        <LRel ('a' ('b')) 'a' ('c')> +
-        <LRel ('a' ('b')) 'a' ('b')> +
-        <LRel ('a' ('bc')) 'a' ('b')> +
+        <LRel ('a') 'a'> 
+        <LRel (1 2) 1 2> 
+        <LRel (&LRel) &LRel> 
+        <LRel ('\101\n') '\101\n'> 
+        <LRel (67 66) '\103\102'>
+        <LRel ('A') '\101'> 
+        <LRel ('ab') 'a'>
+        <LRel ('ab') 'b'> 
+        <LRel ('ba') 'a'> 
+        <LRel ('ba') 'b'> 
+        <LRel ('a') 'ab'>
+        <LRel ('b') 'ab'>
+        <LRel ('a') 'ba'>
+        <LRel ('b') 'ba'>
+        <LRel ('ab') 'ba'>
+        <LRel ('ba') 'ab'>
+        <LRel ('100') '99'>
+        <LRel ('99') '100'>
+        <LRel ('010') '99'>
+        <LRel ('99') '010'> 
+        <LRel ('a' ('b')) 'b'>
+        <LRel ('a') 'b' ('123')> 
+        <LRel ('a' ('b')) 'ab'>
+        <LRel ('abc') 'a' ('123')> 
+        <LRel ('a' ('b')) 'a' ('c')>
+        <LRel ('a' ('b')) 'a' ('b')>
+        <LRel ('a' ('bc')) 'a' ('b')>
 *  neot
-        <LRel> <LRel 0> +
-        <LRel &LRel> +
-        <LRel '123'>
+        <LRel>
+        <LRel 0>
+        <LRel &LRel>
+        <LRel '123'>;
+}
 
-Prad
-    E.N = <Prow &Add E.N>
+$FUNC Prad
+{
+    E.N = <Prow &Add E.N>;
+}
 
-Prsu
-    E.N = <Prow &Sub E.N>
+$FUNC Prsu
+{
+    E.N = <Prow &Sub E.N>;
+}
 
-Prmu
-    E.N = <Prow &Mul E.N>
+$FUNC Prmu
+{
+    E.N = <Prow &Mul E.N>;
+}
 
-Prdr
-    E.N = <Prow &Dr E.N>
+$FUNC Prdr
+{
+    E.N = <Prow &Dr E.N>;
+}
 
-Prdl
-    E.N = <Prow &Div E.N>
+$FUNC Prdl
+{
+    E.N = <Prow &Div E.N>;
+}
 
-Pradn
-    E.N = <Prow &AddN E.N>
+$FUNC Pradn
+{
+    E.N = <Prow &AddN E.N>;
+}
 
-Prsun
-    E.N = <Prow &SubN E.N>
+$FUNC Prsun
+{
+    E.N = <Prow &SubN E.N>;
+}
 
-Prmun
-    E.N = <Prow &MulN E.N>
+$FUNC Prmun
+{
+    E.N = <Prow &MulN E.N>;
+}
 
-Prdrn
-    E.N = <Prow &DrN E.N>
+$FUNC Prdrn
+{
+    E.N = <Prow &DrN E.N>;
+}
 
-Prdln
-    E.N = <Prow &DivN E.N>
+$FUNC Prdln
+{
+    E.N = <Prow &DivN E.N>;
+}
 
-Prm1
-    E.N = <Prow &M1 E.N>
+$FUNC Prm1
+{
+    E.N = <Prow &M1 E.N>;
+}
 
-Prp1
-    E.N = <Prow &P1 E.N>
+$FUNC Prp1
+{
+    E.N = <Prow &P1 E.N>;
+}
 
-Prnu
-    E.N = <Prow &Numb E.N>
+$FUNC Prnu
+{
+    E.N = <Prow &Numb E.N>;
+}
 
-Prsy
-    E.N = <Prow &Symb E.N>
+$FUNC Prsy
+{
+    E.N = <Prow &Symb E.N>;
+}
 
-Prow
-    S.F E.E +
-        = <Proutm S.F ': in=' E.E '  out=' < S.F E.E>>
+$FUNC Prow
+{
+    S.F E.E = <Proutm S.F ': in=' E.E '  out=' < S.F E.E>>
+}
 
-    END
+$END.
