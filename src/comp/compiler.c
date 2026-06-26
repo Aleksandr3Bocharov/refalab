@@ -180,8 +180,7 @@ static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
-static char statement_key[6];
-static uint8_t statement_key_name_length;
+static char statement_key[7];
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
@@ -378,7 +377,7 @@ int main(int argc, char *argv[])
             }
             get_statement_key(false);
             module_init();
-            if (strncmp(statement_key, "START", statement_key_name_length) != 0)
+            if (strcmp(statement_key, "START") != 0)
             {
                 scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string(1, "START-directive missing");
@@ -422,8 +421,9 @@ int main(int argc, char *argv[])
             module_state = KEYS;
             break;
         case KEYS:
-            if (strncmp(statement_key, "START", statement_key_name_length) == 0)
+            if (strcmp(statement_key, "START") == 0)
             {
+                printf("\n%s %zu\n", statement_key, strlen(statement_key));
                 scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string(2, "Too many START-directive");
                 blanks_out();
@@ -440,7 +440,7 @@ int main(int argc, char *argv[])
                         next_char();
                 }
             }
-            else if (strncmp(statement_key, "END", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "END") == 0)
             {
                 blanks_out();
                 if (get_current_char() == '.')
@@ -470,19 +470,19 @@ int main(int argc, char *argv[])
                 module_state = END_STATEMENT;
                 break;
             }
-            else if (strncmp(statement_key, "ENTRY", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "ENTRY") == 0)
                 handle_identifiers_extern(set_entry);
-            else if (strncmp(statement_key, "EXTRN", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "EXTRN") == 0)
                 handle_identifiers_extern(set_extrn);
-            else if (strncmp(statement_key, "EMPTY", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "EMPTY") == 0)
                 handle_identifiers(set_empty);
-            else if (strncmp(statement_key, "SWAP", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "SWAP") == 0)
                 handle_identifiers(set_swap);
-            else if (strncmp(statement_key, "S", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "S") == 0)
                 specifier();
-            else if (strncmp(statement_key, "EQU", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "EQU") == 0)
                 equ();
-            else if (strncmp(statement_key, "FUNC", statement_key_name_length) == 0)
+            else if (strcmp(statement_key, "FUNC") == 0)
             {
                 blanks_out();
                 bool error130 = false;
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                if (statement_key_name_length != 0)
+                if (strlen(statement_key) != 0)
                 {
                     scanner.last_error_cursor = refalab_source_cursor;
                     print_error_string(9, "Unknown directive");
@@ -687,8 +687,7 @@ void get_location(size_t *line, size_t *column, size_t cursor)
 
 static void get_statement_key(bool is_func)
 {
-    statement_key_name_length = 0;
-    memset(statement_key, ' ', 6);
+    statement_key[0] = '\0';
     blanks_out();
     if (get_current_char() != '$')
     {
@@ -708,14 +707,19 @@ static void get_statement_key(bool is_func)
         return;
     }
     statement_key[0] = (char)toupper((unsigned char)current_char);
-    for (statement_key_name_length = 1; statement_key_name_length < 6; statement_key_name_length++)
+    uint8_t i;
+    for (i = 1; i < 6; i++)
     {
         next_char();
         current_char = get_current_char();
         if (isalpha((unsigned char)current_char) == 0)
+        {
+            statement_key[i] = '\0';
             return;
-        statement_key[statement_key_name_length] = (char)toupper((unsigned char)current_char);
+        }
+        statement_key[i] = (char)toupper((unsigned char)current_char);
     }
+    statement_key[i] = '\0';
     while (isalpha((unsigned char)get_current_char()) != 0)
         next_char();
     return;
@@ -1729,13 +1733,13 @@ static void func(void)
     while (true)
     {
         get_statement_key(true);
-        if (strncmp(statement_key, "L", statement_key_name_length) == 0)
+        if (strcmp(statement_key, "L") == 0)
             compile_sentence(true);
-        else if (strncmp(statement_key, "R", statement_key_name_length) == 0)
+        else if (strcmp(statement_key, "R") == 0)
             compile_sentence(false);
         else
         {
-            if (statement_key_name_length != 0)
+            if (strlen(statement_key) != 0)
             {
                 scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string(9, "Unknown directive");
