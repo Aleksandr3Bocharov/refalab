@@ -25,7 +25,10 @@ $S EOF &FEOF &FError;
 * E.Lines ::= (E(O).Line)*
 $FUNC Load_File
 {
-    S.Handle E.FileName = <FOpen 'r' S.Handle E.FileName> <Load_File_Aux S.Handle <FGetS S.Handle>> <FClose S.Handle>;
+    S.Handle E.FileName =
+        <FOpen 'r' S.Handle E.FileName>
+        <Load_File_Aux S.Handle <FGetS S.Handle>>
+        <FClose S.Handle>;
 }
 
 $FUNC Load_File_Aux 
@@ -41,7 +44,11 @@ $FUNC Load_File_Aux
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 $FUNC Save_File
 {
-    S.Handle (E.FileName) E.Lines = <Check_Lines E.Lines> <FOpen 'w' S.Handle E.FileName> <Write_Bracket_Lines S.Handle E.Lines> <FClose S.Handle>;
+    S.Handle (E.FileName) E.Lines =
+        <Check_Lines E.Lines>
+        <FOpen 'w' S.Handle E.FileName>
+        <Write_Bracket_Lines S.Handle E.Lines>
+        <FClose S.Handle>;
 }
 
 $FUNC Check_Lines
@@ -68,7 +75,11 @@ $FUNC Write_Bracket_Lines_Aux
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 $FUNC Append_File
 {
-    S.Handle (E.FileName) E.Lines = <Check_Lines E.Lines> <FOpen 'a' S.Handle E.FileName> <Write_Bracket_Lines S.Handle E.Lines> <FClose S.Handle>;
+    S.Handle (E.FileName) E.Lines =
+        <Check_Lines E.Lines>
+        <FOpen 'a' S.Handle E.FileName>
+        <Write_Bracket_Lines S.Handle E.Lines>
+        <FClose S.Handle>;
 }
 
 * <Load_FBytes S(:Numbers_Files:).Handle E(O).FileName> == V.Out
@@ -76,7 +87,10 @@ $FUNC Append_File
 * E.Bytes ::= S(N).Byte*
 $FUNC Load_FBytes
 {
-    S.Handle E.FileName = <FOpen 'rb' S.Handle E.FileName> <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>> <FClose S.Handle>
+    S.Handle E.FileName =
+        <FOpen 'rb' S.Handle E.FileName>
+        <Load_FBytes_Aux S.Handle <FRead S.Handle 4096>>
+        <FClose S.Handle>;
 }
 
 $FUNC Load_FBytes_Aux
@@ -91,7 +105,10 @@ $FUNC Load_FBytes_Aux
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 $FUNC Save_FBytes
 {
-    S.Handle (E.FileName) E(ON).Bytes = <FOpen 'wb' S.Handle E.FileName> <Write_FBytes <FWrite S.Handle E.Bytes>> <FClose S.Handle>;
+    S.Handle (E.FileName) E(ON).Bytes =
+        <FOpen 'wb' S.Handle E.FileName>
+        <Write_FBytes <FWrite S.Handle E.Bytes>>
+        <FClose S.Handle>;
 }
 
 $FUNC Write_FBytes
@@ -105,7 +122,10 @@ $FUNC Write_FBytes
 * E.Out ::= V(O).Open_Error &NULL | E(:EOF:).EOF E(O).Close_Error
 $FUNC Append_FBytes
 {
-    S.Handle (E.FileName) E(ON).Bytes = <FOpen 'ab' S.Handle E.FileName> <Write_FBytes <FWrite S.Handle E.Bytes>> <FClose S.Handle>;
+    S.Handle (E.FileName) E(ON).Bytes =
+        <FOpen 'ab' S.Handle E.FileName>
+        <Write_FBytes <FWrite S.Handle E.Bytes>>
+        <FClose S.Handle>;
 }
 
 $END.
