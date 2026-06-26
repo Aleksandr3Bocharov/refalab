@@ -88,7 +88,7 @@ $FUNC TrimL
 $FUNC TrimR
 {
     E.Any S(:White_Spaces:)._ = <TrimR E.Any>;
-    E._ = E._
+    E._ = E._;
 }
 
 * <Exist W.Elem E.Sample_Elems> == &True | &False
