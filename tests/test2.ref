@@ -1,37 +1,45 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-TEST2 +
-    START
+$STARET TEST2;
 
-    ENTRY Go
-    EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File
-    EXTRN Print, Prout, FtoChar, ChartoF, FuncTab
-    EMPTY ffff
+$ENTRY Go;
+$EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
+$EXTRN Print, Prout, FtoChar, ChartoF, FuncTab;
+$EMPTY ffff;
 
-    IMPL
+$FUNC Go
+{
+    =
+        <FuncTab &Prout> 
+        < <ChartoF 'prout'> ' eto prout'> 
+        < <ChartoF 'PROUT'> ' eto PROUT'> 
+*       <FOpen 'r' 10 'bb'>     !!  neot  !!
+        <FOpen 'w' 0 'lala.tes'> 
+        <FPutS 0 ' str 1\n'>
+        <FPutS 0 ' str 2\n'>
+        <FClose 0> 
+        <FOpen 'a' 1 'lala.tes'> 
+        <FPutS 1  ' str 3\n'> 
+        <FClose 1> 
+        <Rename 'lala.tes' 0 'lala.tos'> 
+        <FOpen 'r' 4 'lala.tos'> 
+        <Print <FGetS 4>>
+        <Print <FGetS 4>> 
+        <Print <FGetS 4>> 
+        <Print <FGetS 4>>
+        <FClose 4> 
+        <Prout ' d.b. ffff: ' <FtoChar &ffff>> 
+        <FuncTab &tttt> 
+        < <ChartoF 'tttt'> 'werno'> 
+        <Remove_File 'lala.tos'>;
+}
 
-Go      = <FuncTab &Prout> +
-        < <ChartoF 'prout'> ' eto prout'> +
-        < <ChartoF 'PROUT'> ' eto PROUT'> +
-*       <FOpen 'r' 10 'bb'> +    !!  neot  !!
-        <FOpen 'w' 0 'lala.tes'> +
-        <FPutS 0 ' str 1\n'> <FPutS 0 ' str 2\n'> <FClose 0> +
-        <FOpen 'a' 1 'lala.tes'> +
-        <FPutS 1  ' str 3\n'> <FClose 1> +
-        <Rename 'lala.tes' 0 'lala.tos'> +
-        <FOpen 'r' 4 'lala.tos'> +
-        <Print <FGetS 4>> <Print <FGetS 4>> +
-        <Print <FGetS 4>> +
-        <Print <FGetS 4>> <FClose 4> +
-        <Prout ' d.b. ffff: ' <FtoChar &ffff>> +
-        <FuncTab &tttt> +
-        < <ChartoF 'tttt'> 'werno'> +
-        <Remove_File 'lala.tos'>
+$FUNC tttt
+{
+    E.E = <Prout E.E>;
+}
 
-tttt
-    E.E = <Prout E.E>
-
-    END
+$END.
