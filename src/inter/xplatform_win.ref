@@ -1,57 +1,60 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-05
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
 * Рефал-функции библиотеки РефалАБ.
 * Спецификаторы библиотеки РефалАБ.
 * Пустые функции библиотеки РефалАБ.
-* Модуль "PLATFORM" с реализацией
-* специфичных рефал-функций 
+* Модуль "PLATFORM" с реализацией специфичных рефал-функций 
 * и спецификаторов в среде Windows.
-* Для среды POSIX используется
-* аналогичный модуль.
+* Для среды POSIX используется аналогичный модуль.
 *====================================================================
 
-PLATFORM +
-    START
+$START PLATFORM;
 
-    ENTRY Platform, POSIX, Windows 
-    ENTRY Directory_Separators, Directory_Separator, Is_Directory_Separator
-    ENTRY Path_Separator
-    ENTRY Max_PathFileName, Get_Max_PathFileName, Is_Max_PathFileName
-    EXTRN True, False
-    EMPTY POSIX, Windows
+$ENTRY Platform, POSIX, Windows; 
+$ENTRY Directory_Separators, Directory_Separator, Is_Directory_Separator;
+$ENTRY Path_Separator;
+$ENTRY Max_PathFileName, Get_Max_PathFileName, Is_Max_PathFileName;
+$EXTRN True, False;
+$EMPTY POSIX, Windows;
 
-Directory_Separators +
-    S   '\\/'
+$S Directory_Separators '\\/';
 
-Max_PathFileName +
-    S   260
+$S Max_PathFileName 260;
 
-    IMPL
+$FUNC Platform
+{
+    = &Windows;
+}
 
-Platform
-        = &Windows
+$FUNC Directory_Separator
+{
+    = '\\';
+}
 
-Directory_Separator
-        = '\\'
+$FUNC Is_Directory_Separator
+{
+    S(:Directory_Separators:)._ = &True;
+    S._ = &False;
+}
+ 
+$FUNC Path_Separator
+{
+    = ';';
+}
 
-Is_Directory_Separator
-    S(:Directory_Separators:)._ +
-        = &True
-    S._ = &False
-        
-Path_Separator
-        = ';'
+$FUNC Get_Max_PathFileName
+{
+    = 260;
+}
 
-Get_Max_PathFileName
-        = 260
+$FUNC Is_Max_PathFileName
+{
+    S(:Max_PathFileName:)._ = &True;
+    S._ = &False;
+}
 
-Is_Max_PathFileName
-    S(:Max_PathFileName:)._ +
-        = &True
-    S._ = &False
-
-    END
+$END.
