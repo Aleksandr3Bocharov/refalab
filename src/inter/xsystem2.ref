@@ -1,32 +1,32 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-05
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
 * Рефал-функции библиотеки РефалАБ.
 *====================================================================
 
-SYSTEM2 +
-    START
+$START SYSTEM2;
 
-    ENTRY ArgList
-    EXTRN P1, Arg
-
-    IMPL
+$ENTRY ArgList;
+$EXTRN P1, Arg;
 
 * <ArgList> == (S(O).Arg+)*
-ArgList
-        = <ArgList_Aux 1>
+$FUNC ArgList
+{
+    = <ArgList_Aux 1>;
+}
 
-ArgList_Aux
-    S.Next +
-        = <SwArgList_Aux <P1 S.Next> <Arg S.Next>>
+$FUNC ArgList_Aux
+{
+    S.Next = <SwArgList_Aux <P1 S.Next> <Arg S.Next>>;
+}
 
-SwArgList_Aux
-    S.Next +
-        =
-    S.Next E.Arg +
-        = (E.Arg) <ArgList_Aux S.Next>
+$FUNC SwArgList_Aux
+{
+    S.Next = ;
+    S.Next E.Arg = (E.Arg) <ArgList_Aux S.Next>;
+}
 
-    END
+$END.
