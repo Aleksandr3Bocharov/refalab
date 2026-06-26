@@ -1,54 +1,73 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-TEST4 +
-    START
+$START TEST4;
 
-    ENTRY Go
-    EXTRN First, Last, LengR, LengW, Prout, Proutm
-    EMPTY Pus, Em1, Em2, Em3
+$ENTRY Go;
+$EXTRN First, Last, LengR, LengW, Prout, Proutm;
+$EMPTY Pus, Em1, Em2, Em3;
 
-Bspe +
-    S   '2134' &Pus
+$S Bspe '2134' &Pus;
 
-    IMPL
-
-Go      = <Prspe &Pus 'as01a432l7l' &Em3> +
-        <Dal>
+$FUNC Go
+{
+    = 
+        <Prspe &Pus 'as01a432l7l' &Em3> +
+        <Dal>;
+}
 
 *      prowerka  specifikacii
-Prspe
-    E.E S(&Em1 &Em2 &Em3).S +
-        = <Prout ' symbol-&em' S.S> <Prspe E.E>
-    S(:Bspe:).S E.k +
-        = <Prout ' symbol-1234p=' S.S> <Prspe E.k>
-    R E.h S('l7').S +
-        = <Prout ' symbol-l7=' S.S> <Prspe E.h>
-    S.S E.k +
-        = <Prout '  symbol =' S.S> <Prspe E.k>
-        =
+$FUNC Prspe
+{
+    E.E S(&Em1 &Em2 &Em3).S = 
+        <Prout ' symbol-&em' S.S>
+        <Prspe E.E>;
+    S(:Bspe:).S E.k =
+        <Prout ' symbol-1234p=' S.S>
+        <Prspe E.k>;
+    $R E.h S('l7').S = 
+        <Prout ' symbol-l7=' S.S>
+        <Prspe E.h>;
+    S.S E.k = 
+        <Prout '  symbol =' S.S> 
+        <Prspe E.k>;
+    = ;
+}
 
-Dal     = <Prln 0 1 '345678'> <Prln (0 1) '345678'> +
-        <Prfe 3 '1234567'> <Prla 3 '123456'> <Prfe 1 2> +
-        <Prla 3 1 2 3 '567'> +
+$FUNC Dal
+{
+    = 
+        <Prln 0 1 '345678'>
+        <Prln (0 1) '345678'> 
+        <Prfe 3 '1234567'>
+        <Prla 3 '123456'>
+        <Prfe 1 2> 
+        <Prla 3 1 2 3 '567'> 
 *  neot
-        <Prfe '123'> <Prla '123'>
+        <Prfe '123'>
+        <Prla '123'>;
+}
 
-Prfe
-    E.E = <Prow &First E.E>
+$FUNC Prfe
+{
+    E.E = <Prow &First E.E>;
+}
 
-Prla
-    E.E  = <Prow &Last E.E>
+$FUNC Prla
+{
+    E.E = <Prow &Last E.E>;
+}
 
-Prow
-    S.F E.E +
-        = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>
-*
-*
-Prln
-    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> +
-        '  wyh-w=' <LengW E.E>>
-                                 
-    END
+$FUNC Prow
+{
+    S.F E.E = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>;
+}
+
+$FUNC Prln
+{
+    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> '  wyh-w=' <LengW E.E>>;
+}
+
+$END.
