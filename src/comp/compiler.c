@@ -423,7 +423,6 @@ int main(int argc, char *argv[])
         case KEYS:
             if (strcmp(statement_key, "START") == 0)
             {
-                printf("\n%s %zu\n", statement_key, strlen(statement_key));
                 scanner.last_error_cursor = refalab_source_cursor;
                 print_error_string(2, "Too many START-directive");
                 blanks_out();
@@ -445,6 +444,7 @@ int main(int argc, char *argv[])
                 blanks_out();
                 if (get_current_char() == '.')
                 {
+                    next_char();
                     blanks_out();
                     if (get_current_char() != '\0')
                     {
@@ -459,6 +459,7 @@ int main(int argc, char *argv[])
                     seek_char('.');
                     if (get_current_char() == '.')
                     {
+                        next_char();
                         blanks_out();
                         if (get_current_char() != '\0')
                         {
@@ -500,6 +501,7 @@ int main(int argc, char *argv[])
                     }
                     else if (current_char == '{')
                     {
+                        next_char();
                         blanks_out();
                         if (get_current_char() == '}')
                         {
@@ -834,9 +836,6 @@ void scan_sentence_element(void)
         case SCNERR:
             current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.type = NONE;
-            seek_char(';');
-            if (get_current_char() == ';')
-                next_char();
             scanner_state = SCNRET;
             break;
         case SCNSC:
@@ -942,7 +941,7 @@ void scan_sentence_element(void)
             break;
         case SCNEOS:
             current_sentence_element.type = END;
-            scanner_state = SCNGCR;
+            scanner_state = SCNRET;
             break;
         case SCNA:
             next_char();
@@ -1573,7 +1572,7 @@ static void print_card_error(FILE *file)
 { // card writing if error
     if (file == NULL || refalab_source_buffer == NULL)
         return;
-    size_t start_position = refalab_source_cursor;
+    size_t start_position = scanner.last_error_cursor;
     while (start_position > 0 && refalab_source_buffer[start_position - 1] != '\n')
         start_position--;
     size_t line;
@@ -1593,7 +1592,7 @@ static void print_card_error(FILE *file)
     }
     fputc('\n', file);
     fprintf(file, "      | ");
-    for (current_position = start_position; current_position < refalab_source_cursor; current_position++)
+    for (current_position = start_position; current_position < scanner.last_error_cursor; current_position++)
     {
         unsigned char symbol = (unsigned char)refalab_source_buffer[current_position];
         if (symbol == '\t')
@@ -1760,6 +1759,9 @@ static void func(void)
             else
                 compile_sentence(true);
         }
+        seek_char(';');
+        if (get_current_char() == ';')
+            next_char();
     }
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
