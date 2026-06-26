@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-06-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -180,13 +180,13 @@ static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
-static char statement_key[5];
+static char statement_key[6];
 static uint8_t statement_key_name_length;
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
 static void load_refalab_source_to_memory(void);
-static void get_statement_key(void);
+static void get_statement_key(bool is_func);
 static void blanks_out(void);
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t, size_t));
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t));
@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
                 module_state = END_OF_SYSIN;
                 break;
             }
-            get_statement_key();
+            get_statement_key(false);
             module_init();
             if (strncmp(statement_key, "START", statement_key_name_length) != 0)
             {
@@ -418,7 +418,7 @@ int main(int argc, char *argv[])
             break;
         case NEXT_STM:
             // read of next sentence
-            get_statement_key();
+            get_statement_key(false);
             module_state = KEYS;
             break;
         case KEYS:
@@ -523,8 +523,11 @@ int main(int argc, char *argv[])
             }
             else
             {
-                scanner.last_error_cursor = refalab_source_cursor;
-                print_error_string(9, "Unknown directive");
+                if (statement_key_name_length != 0)
+                {
+                    scanner.last_error_cursor = refalab_source_cursor;
+                    print_error_string(9, "Unknown directive");
+                }
                 seek_char(';');
                 if (get_current_char() == ';')
                     next_char();
@@ -682,15 +685,18 @@ void get_location(size_t *line, size_t *column, size_t cursor)
         *column = current_column;
 }
 
-static void get_statement_key(void)
+static void get_statement_key(bool is_func)
 {
     statement_key_name_length = 0;
-    memset(statement_key, ' ', 5);
+    memset(statement_key, ' ', 6);
     blanks_out();
     if (get_current_char() != '$')
     {
-        scanner.last_error_cursor = refalab_source_cursor;
-        print_error_string(4, "Directive missing");
+        if (!is_func)
+        {
+            scanner.last_error_cursor = refalab_source_cursor;
+            print_error_string(4, "Directive missing");
+        }
         return;
     }
     next_char();
@@ -702,7 +708,7 @@ static void get_statement_key(void)
         return;
     }
     statement_key[0] = (char)toupper((unsigned char)current_char);
-    for (statement_key_name_length = 1; statement_key_name_length < 5; statement_key_name_length++)
+    for (statement_key_name_length = 1; statement_key_name_length < 6; statement_key_name_length++)
     {
         next_char();
         current_char = get_current_char();
@@ -710,20 +716,8 @@ static void get_statement_key(void)
             return;
         statement_key[statement_key_name_length] = (char)toupper((unsigned char)current_char);
     }
-    size_t i = 0;
-    while (isalpha((unsigned char)current_char) != 0)
-    {
+    while (isalpha((unsigned char)get_current_char()) != 0)
         next_char();
-        current_char = get_current_char();
-        i++;
-    }
-    if (i > 1)
-    {
-        statement_key_name_length = 0;
-        scanner.last_error_cursor = refalab_source_cursor;
-        print_error_string(7, "Too long directive");
-        return;
-    }
     return;
 }
 
@@ -1730,31 +1724,34 @@ static void func(void)
 {
     while (true)
     {
-        blanks_out();
-        const char current_char = get_current_char();
-        if (current_char == '>')
-        {
-            next_char();
+        get_statement_key(true);
+        if (strncmp(statement_key, "L", statement_key_name_length) == 0)
             compile_sentence(true);
-        }
-        else if (current_char == '<')
-        {
-            next_char();
+        else if (strncmp(statement_key, "R", statement_key_name_length) == 0)
             compile_sentence(false);
-        }
-        else if (current_char == '}')
-        {
-            function_end();
-            next_char();
-            return;
-        }
-        else if (current_char == '\0')
-        {
-            function_end();
-            break;
-        }
         else
-            compile_sentence(true);
+        {
+            if (statement_key_name_length != 0)
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
+                print_error_string(9, "Unknown directive");
+            }
+            blanks_out();
+            const char current_char = get_current_char();
+            if (current_char == '}')
+            {
+                function_end();
+                next_char();
+                return;
+            }
+            else if (current_char == '\0')
+            {
+                function_end();
+                break;
+            }
+            else
+                compile_sentence(true);
+        }
     }
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
