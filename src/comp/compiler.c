@@ -1032,6 +1032,7 @@ void scan_sentence_element(void)
                 case '5':
                 case '6':
                 case '7':
+                {
                     uint32_t octal = (uint32_t)temp_symbol - '0';
                     for (uint8_t i = 1; i < 3; i++)
                     {
@@ -1043,7 +1044,8 @@ void scan_sentence_element(void)
                             previous_char();
                     }
                     symbol = (char)(octal & 255);
-                    break;
+                }
+                break;
                 case '\n':
                 case '\0':
                     previous_char();
@@ -1428,6 +1430,7 @@ static bool compile_specifer(char tail)
                     case '5':
                     case '6':
                     case '7':
+                    {
                         uint32_t octal = (uint32_t)temp_symbol - '0';
                         for (uint8_t i = 1; i < 3; i++)
                         {
@@ -1439,7 +1442,8 @@ static bool compile_specifer(char tail)
                                 previous_char();
                         }
                         symbol = (char)(octal & 255);
-                        break;
+                    }
+                    break;
                     case '\n':
                     case '\0':
                         previous_char();
