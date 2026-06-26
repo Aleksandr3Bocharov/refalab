@@ -58,8 +58,8 @@ $FUNC Map_Accumulator
 $FUNC Map_Accumulator_Aux
 {
     W.Fn W.Acc (E.Scanned) W.Next E.Tail = 
-        <Map_Accumulator_Aux W.Fn +
-            <Map_Accumulator_Add_Scanned <Apply W.Fn W.Acc W.Next> (E.Scanned)> +
+        <Map_Accumulator_Aux W.Fn
+            <Map_Accumulator_Add_Scanned <Apply W.Fn W.Acc W.Next> (E.Scanned)>
         E.Tail>;
     W.Fn W.Acc (E.Scanned) = W.Acc E.Scanned;
 }
