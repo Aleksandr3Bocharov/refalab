@@ -1,135 +1,217 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-TEST0 +
-    START
+$START TEST0;
 
-    ENTRY Go
-    EXTRN Add, Sub, Mul, Dr, M1, P1, Numb, Symb
-    EXTRN First, Last, LengR, LengW
-    EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr
-    EXTRN Print, Prout, Proutm
-    EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File
-    EXTRN Br, Rp, Dg, DgAll, Cp
-    EMPTY Tra, Em1, Em2, Em3, Pus
-    SWAP Sw
+$ENTRY Go;
+$EXTRN Add, Sub, Mul, Dr, M1, P1, Numb, Symb;
+$EXTRN First, Last, LengR, LengW;
+$EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr;
+$EXTRN Print, Prout, Proutm;
+$EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
+$EXTRN Br, Rp, Dg, DgAll, Cp;
+$EMPTY Tra, Em1, Em2, Em3, Pus;
+$SWAP Sw;
 
-Bspe +
-    S  '2134' &Pus
+$S Bspe '2134' &Pus;
 
-    IMPL
+$FUNC Div 
+{
+    E.N = <Div0 <Dr E.N>>;
+}
 
-Div E.N = <Div0 <Dr E.N>>
+$FUNC Div0
+{
+    E.N (E._) = E.N;
+}
 
-Div0
-    E.N (E._) +
-        = E.N
-
-Go  = <Prsw> +
-    <Prvv> +
-    <Prkop> +
-    <Dal1> +
-    <Prspe &Pus 'as01a432l7l' &Em3>
+$FUNC Go 
+{
+    =
+        <Prsw>
+        <Prvv>
+        <Prkop>
+        <Dal1>
+        <Prspe &Pus 'as01a432l7l' &Em3>;
+}
 
 *      prowerka  specifikacii
-Prspe
-    E.E S(&Em1 &Em2 &Em3).S +
-        = <Prout ' symbol-&em' S.S> <Prspe E.E>
-    S(:Bspe:).S E.k +
-        = <Prout ' symbol-b=' S.S> <Prspe E.k>
-    R E.h S('l7').S +
-        = <Prout ' symbol-l=' S.S> <Prspe E.h>
-    S.S E.k +
-        = <Prout '  symbol=' S.S> <Prspe E.k>
-        =
+$FUNC Prspe
+{
+    E.E S(&Em1 &Em2 &Em3).S = <Prout ' symbol-&em' S.S> <Prspe E.E>;
+    S(:Bspe:).S E.k = <Prout ' symbol-b=' S.S> <Prspe E.k>;
+    $R E.h S('l7').S = <Prout ' symbol-l=' S.S> <Prspe E.h>;
+    S.S E.k = <Prout '  symbol=' S.S> <Prspe E.k>;
+    = ;
+}
 
 *      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
-Dal1    = <Prmu (126) 2> <Prmu (16777216) 64> +
-        <Prmu (4294967295) 1> +
-        <Prmu (16777216) 512> +  
-        <Prdl (65536) 4> <Prdl (65536) 777> +
-*       <Prdl (1) 0> +      neot
-        <Prp1 4> <Prp1 65536> <Prp1 128> +
-*       <Prp1 4294967295> +     neot
-        <Dal>
+$FUNC Dal1
+{
+    =
+        <Prmu (126) 2>
+        <Prmu (16777216) 64> 
+        <Prmu (4294967295) 1> 
+        <Prmu (16777216) 512>   
+        <Prdl (65536) 4>
+        <Prdl (65536) 777> 
+*       <Prdl (1) 0>       neot
+        <Prp1 4>
+        <Prp1 65536>
+        <Prp1 128> 
+*       <Prp1 4294967295>      neot
+        <Dal>;
+}
 
-Dal     = <Prln 0 1 '345678'> <Prln (0 1) '345678'> +
-        <Prfe 3 '1234567'> <Prla 3 '123456'> <Prfe 1 2> +
-        <Prla 3 1 2 3 '567'> +
-*       <Prfe '123'> <Prla '123'> +          neot
-        <Prnu '125'> <Prnu '76666'> <Prnu '4294967295'> +
-*       <Prnu '4394967295'> +                neot
-        <Prnu '-45'> +
-        <Prsy 5678> <Prsy 4294967295> +
-        <Prad (128) 456> <Prad (4294967295) 2> +
-        <Prm1 3> <Prm1 128> <Prm1 4294967295> +
-        <Prsu (4294967295) 2> <Prsu (2) 456>
+$FUNC Dal
+{
+    = 
+        <Prln 0 1 '345678'>
+        <Prln (0 1) '345678'>
+        <Prfe 3 '1234567'>
+        <Prla 3 '123456'>
+        <Prfe 1 2> 
+        <Prla 3 1 2 3 '567'> 
+*       <Prfe '123'>          neot
+*       <Prla '123'>          neot
+        <Prnu '125'>
+        <Prnu '76666'>
+        <Prnu '4294967295'> 
+*       <Prnu '4394967295'>                 neot
+        <Prnu '-45'> 
+        <Prsy 5678>
+        <Prsy 4294967295> 
+        <Prad (128) 456>
+        <Prad (4294967295) 2>
+        <Prm1 3>
+        <Prm1 128>
+        <Prm1 4294967295> 
+        <Prsu (4294967295) 2>
+        <Prsu (2) 456>
+}
 
-Prmu
-    E.N = <Prow &Mul E.N>
+$FUNC Prmu
+{
+    E.N = <Prow &Mul E.N>;
+}
 
-Prnu
-    E.N = <Prow &Numb E.N>
+$FUNC Prnu
+{
+    E.N = <Prow &Numb E.N>;
+}
 
-Prsy
-    E.N = <Prow &Symb E.N>
+$FUNC Prsy
+{
+    E.N = <Prow &Symb E.N>;
+}
 
-Prad
-    E.N = <Prow &Add E.N>
+$FUNC Prad
+{
+    E.N = <Prow &Add E.N>;
+}
 
-Prsu
-    E.N = <Prow &Sub E.N>
+$FUNC Prsu
+{
+    E.N = <Prow &Sub E.N>;
+}
 
-Prm1
-    E.N = <Prow &M1 E.N>
+$FUNC Prm1
+{
+    E.N = <Prow &M1 E.N>;
+}
 
-Prdl
-    E.N = <Prow &Div E.N>
+$FUNC Prdl
+{
+    E.N = <Prow &Div E.N>;
+}
 
-Prp1
-    E.N = <Prow &P1 E.N>
+$FUNC Prp1
+{
+    E.N = <Prow &P1 E.N>;
+}
 
-Prfe
-    E.E = <Prow &First E.E>
+$FUNC Prfe
+{
+    E.E = <Prow &First E.E>;
+}
 
-Prla
-    E.E = <Prow &Last E.E>
+$FUNC Prla
+{
+    E.E = <Prow &Last E.E>;
+}
 
-Prow
-    S.F E.E +
-        = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>
+$FUNC Prow
+{
+    S.F E.E = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>;
+}
 
-*
-*
-Prkop   = <Br 'cc' '=' 123> <Br 'mmm' '=' '345'> +
-        <Rp 'mmm' '=' '879'> <Dg 'mmm'> +
-        <Cp 'cc'> <DgAll> +
-        <Br &Tra '=' '765'> <Rp &Tra '=' 16777215> <Dg &Tra>
+$FUNC Prkop 
+{  
+    = 
+        <Br 'cc' '=' 123>
+        <Br 'mmm' '=' '345'>
+        <Rp 'mmm' '=' '879'>
+        <Dg 'mmm'>
+        <Cp 'cc'>
+        <DgAll>
+        <Br &Tra '=' '765'>
+        <Rp &Tra '=' 16777215>
+        <Dg &Tra>;
+}
 
-*
-Prvv    = <FOpen 'w' 0 'lala.put'> +
-        <FPutS 0 ' str 1\n'> <FPutS 0 ' str 2\n'> <FClose 0> +
-        <FOpen 'a' 1 'lala.put'> +
-        <FPutS 1 ' str 3\n'> <FClose 1> +
-        <Rename 'lala.put' 0 'lala.get'> +
-        <FOpen 'r' 4 'lala.get'> +
-        <Print <FGetS 4>> <Print <FGetS 4>> +
-        <Print <FGetS 4>> <FClose 4> <Remove_File 'lala.get'>
+$FUNC Prvv
+{   
+    =
+        <FOpen 'w' 0 'lala.put'>
+        <FPutS 0 ' str 1\n'>
+        <FPutS 0 ' str 2\n'>
+        <FClose 0>
+        <FOpen 'a' 1 'lala.put'> 
+        <FPutS 1 ' str 3\n'>
+        <FClose 1> 
+        <Rename 'lala.put' 0 'lala.get'>
+        <FOpen 'r' 4 'lala.get'>
+        <Print <FGetS 4>>
+        <Print <FGetS 4>>
+        <Print <FGetS 4>>
+        <FClose 4>
+        <Remove_File 'lala.get'>;
+}
 
-*
-Prsw    = <Sw1 <New 123456>> <Wtr &Sw 123456> <Ptr &Sw '0'> +
-        <Rdr &Sw> <Gtr &Sw>
+$FUNC Prsw
+{   
+    = 
+        <Sw1 <New 123456>>
+        <Wtr &Sw 123456>
+        <Ptr &Sw '0'>
+        <Rdr &Sw>
+        <Gtr &Sw>;
+}
 
-Sw1 R.x = <Ptr R.x 2> <Rdr R.x> <Wtr R.x 12> <Sw2 R.x>
+$FUNC Sw1 
+{
+    R.x = 
+        <Ptr R.x 2>
+        <Rdr R.x>
+        <Wtr R.x 12>
+        <Sw2 R.x>;
+}
 
-Sw2 R.x = <Ptr R.x 3> <Rdr R.x> <Gtr R.x> +
-        <Swr R.x '0' 4294967295 '0'> +
-        <Prout <Rdr R.x>>
+$FUNC Sw2 
+{
+    R.x =
+        <Ptr R.x 3>
+        <Rdr R.x>
+        <Gtr R.x>
+        <Swr R.x '0' 4294967295 '0'>
+        <Prout <Rdr R.x>>;
+}
 
-Prln
-    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> +
-        '  wyh-w=' <LengW E.E>>
+$FUNC Prln
+{
+    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> '  wyh-w=' <LengW E.E>>;
+}
 
-    END
+$END.
