@@ -18,12 +18,12 @@ $ENTRY Platform, POSIX, Windows;
 $ENTRY Directory_Separators, Directory_Separator, Is_Directory_Separator;
 $ENTRY Path_Separator;
 $ENTRY Max_PathFileName, Get_Max_PathFileName, Is_Max_PathFileName;
-$EXTRN True, False;
+$EXTERN True, False;
 $EMPTY POSIX, Windows;
 
-$S Directory_Separators '\\/';
+$SPEC Directory_Separators '\\/';
 
-$S Max_PathFileName 260;
+$SPEC Max_PathFileName 260;
 
 $FUNC Platform
 {

@@ -11,7 +11,7 @@ $START COMPARE2;
 
 $ENTRY QSortN, MinN, MaxN;
 $ENTRY QSortW, MinW, MaxW;
-$EXTRN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
+$EXTERN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
 
 * <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
 $FUNC QSortN

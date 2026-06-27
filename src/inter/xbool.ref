@@ -13,10 +13,10 @@ $START BOOL;
 
 $ENTRY True, False, Bool;
 $ENTRY If, And, Or, Not;
-$EXTRN Call;
+$EXTERN Call;
 $EMPTY True, False;
 
-$S Bool &True &False;
+$SPEC Bool &True &False;
 
 * <If (V.Cond E.Any)+ (E.Any)> = E.Any
 * V.Cond ::= &True | &False | (E.Any)

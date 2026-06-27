@@ -12,10 +12,10 @@ $START ARIPHMETICS2;
 
 $ENTRY Inc, Dec;
 $ENTRY Max_Number, Is_Max_Number;
-$EXTRN Add, Sub;
-$EXTRN True, False;
+$EXTERN Add, Sub;
+$EXTERN True, False;
 
-$S Max_Number 4294967295;
+$SPEC Max_Number 4294967295;
 
 * <Inc E.Number> == V.Number1
 * E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*

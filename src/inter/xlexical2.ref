@@ -15,11 +15,11 @@ $ENTRY Cvb, Cvd;
 $ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR;
 $ENTRY Exist, Set, Type, Is_Type;
 $ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT;
-$EXTRN Numb, Symb, Add, Mul, DrN;
-$EXTRN True, False;
+$EXTERN Numb, Symb, Add, Mul, DrN;
+$EXTERN True, False;
 $EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT;
 
-$S White_Spaces ' \n\t\v\f\r';
+$SPEC White_Spaces ' \n\t\v\f\r';
 
 $FUNC Cvb 
 {
@@ -101,7 +101,7 @@ $FUNC Exist
 * <Set W.Item*> == W.Item*′
 $FUNC Set 
 {
-    $R E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques = <Set E.Items_B W.Repeated E.Items_E> E.Uniques;
+    $RIGHT E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques = <Set E.Items_B W.Repeated E.Items_E> E.Uniques;
     E._ = E._;
 }
 

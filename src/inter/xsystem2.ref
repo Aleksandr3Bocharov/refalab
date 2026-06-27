@@ -10,7 +10,7 @@
 $START SYSTEM2;
 
 $ENTRY ArgList;
-$EXTRN P1, Arg;
+$EXTERN P1, Arg;
 
 * <ArgList> == (S(O).Arg+)*
 $FUNC ArgList
