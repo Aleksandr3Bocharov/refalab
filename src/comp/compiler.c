@@ -180,7 +180,7 @@ static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
 static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
-static char statement_key[7];
+static char statement_key[8];
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
@@ -473,13 +473,13 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(statement_key, "ENTRY") == 0)
                 handle_identifiers_extern(set_entry);
-            else if (strcmp(statement_key, "EXTRN") == 0)
+            else if (strcmp(statement_key, "EXTERN") == 0)
                 handle_identifiers_extern(set_extrn);
             else if (strcmp(statement_key, "EMPTY") == 0)
                 handle_identifiers(set_empty);
             else if (strcmp(statement_key, "SWAP") == 0)
                 handle_identifiers(set_swap);
-            else if (strcmp(statement_key, "S") == 0)
+            else if (strcmp(statement_key, "SPEC") == 0)
                 specifier();
             else if (strcmp(statement_key, "EQU") == 0)
                 equ();
@@ -710,7 +710,7 @@ static void get_statement_key(bool is_func)
     }
     statement_key[0] = (char)toupper((unsigned char)current_char);
     uint8_t i;
-    for (i = 1; i < 6; i++)
+    for (i = 1; i < 7; i++)
     {
         next_char();
         current_char = get_current_char();
@@ -1732,9 +1732,9 @@ static void func(void)
     while (true)
     {
         get_statement_key(true);
-        if (strcmp(statement_key, "L") == 0)
+        if (strcmp(statement_key, "LEFT") == 0)
             compile_sentence(true);
-        else if (strcmp(statement_key, "R") == 0)
+        else if (strcmp(statement_key, "RIGHT") == 0)
             compile_sentence(false);
         else
         {
