@@ -42,7 +42,7 @@ $FUNC Prspe
 {
     E.E S(&Em1 &Em2 &Em3).S = <Prout ' symbol-&em' S.S> <Prspe E.E>;
     S(:Bspe:).S E.k = <Prout ' symbol-b=' S.S> <Prspe E.k>;
-    $R E.h S('l7').S = <Prout ' symbol-l=' S.S> <Prspe E.h>;
+    $RIGHT E.h S('l7').S = <Prout ' symbol-l=' S.S> <Prspe E.h>;
     S.S E.k = <Prout '  symbol=' S.S> <Prspe E.k>;
     = ;
 }
@@ -89,7 +89,7 @@ $FUNC Dal
         <Prm1 128>
         <Prm1 4294967295> 
         <Prsu (4294967295) 2>
-        <Prsu (2) 456>
+        <Prsu (2) 456>;
 }
 
 $FUNC Prmu

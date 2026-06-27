@@ -43,4 +43,4 @@ $FUNC Pr1
     '*' E.S = <Prouts E.S>;
 }
 
-    END
+$END.

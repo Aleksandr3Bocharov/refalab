@@ -27,7 +27,7 @@ $FUNC Prspe
     S(:Bspe:).S E.k =
         <Prout ' symbol-1234p=' S.S>
         <Prspe E.k>;
-    $R E.h S('l7').S = 
+    $RIGHT E.h S('l7').S = 
         <Prout ' symbol-l7=' S.S>
         <Prspe E.h>;
     S.S E.k = 

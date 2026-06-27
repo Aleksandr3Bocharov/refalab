@@ -3,7 +3,7 @@
 * 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-$STARET TEST2;
+$START TEST2;
 
 $ENTRY Go;
 $EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
