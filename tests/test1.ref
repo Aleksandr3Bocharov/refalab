@@ -6,9 +6,9 @@
 $START TEST1;
 
 $ENTRY Go;
-$EXTRN Add, Sub, Mul, Dr, Div;
-$EXTRN AddN, SubN, MulN, DrN, DivN;
-$EXTRN P1, M1, Numb, Symb, Prout, Proutm, LRel;
+$EXTERN Add, Sub, Mul, Dr, Div;
+$EXTERN AddN, SubN, MulN, DrN, DivN;
+$EXTERN P1, M1, Numb, Symb, Prout, Proutm, LRel;
 
 $FUNC Go
 {

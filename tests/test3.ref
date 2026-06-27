@@ -6,9 +6,9 @@
 $START TEST3;
 
 $ENTRY Go;
-$EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr;
-$EXTRN Print, Proutm, Prout;
-$EXTRN Br, Rp, Dg, DgAll, Cp;
+$EXTERN New, Wtr, Rdr, Ptr, Gtr, Swr;
+$EXTERN Print, Proutm, Prout;
+$EXTERN Br, Rp, Dg, DgAll, Cp;
 $EMPTY Tra;
 $SWAP Sw;
 

@@ -6,16 +6,16 @@
 $START TEST0;
 
 $ENTRY Go;
-$EXTRN Add, Sub, Mul, Dr, M1, P1, Numb, Symb;
-$EXTRN First, Last, LengR, LengW;
-$EXTRN New, Wtr, Rdr, Ptr, Gtr, Swr;
-$EXTRN Print, Prout, Proutm;
-$EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
-$EXTRN Br, Rp, Dg, DgAll, Cp;
+$EXTERN Add, Sub, Mul, Dr, M1, P1, Numb, Symb;
+$EXTERN First, Last, LengR, LengW;
+$EXTERN New, Wtr, Rdr, Ptr, Gtr, Swr;
+$EXTERN Print, Prout, Proutm;
+$EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
+$EXTERN Br, Rp, Dg, DgAll, Cp;
 $EMPTY Tra, Em1, Em2, Em3, Pus;
 $SWAP Sw;
 
-$S Bspe '2134' &Pus;
+$SPEC Bspe '2134' &Pus;
 
 $FUNC Div 
 {

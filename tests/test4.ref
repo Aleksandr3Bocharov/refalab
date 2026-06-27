@@ -6,15 +6,15 @@
 $START TEST4;
 
 $ENTRY Go;
-$EXTRN First, Last, LengR, LengW, Prout, Proutm;
+$EXTERN First, Last, LengR, LengW, Prout, Proutm;
 $EMPTY Pus, Em1, Em2, Em3;
 
-$S Bspe '2134' &Pus;
+$SPEC Bspe '2134' &Pus;
 
 $FUNC Go
 {
     = 
-        <Prspe &Pus 'as01a432l7l' &Em3> +
+        <Prspe &Pus 'as01a432l7l' &Em3>
         <Dal>;
 }
 

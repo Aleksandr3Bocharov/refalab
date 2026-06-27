@@ -6,9 +6,9 @@
 $START FACT;
 
 $ENTRY Go;
-$EXTRN Numb, Symb, Cvd, First;
-$EXTRN Mul;
-$EXTRN Prouts, Card, M1;
+$EXTERN Numb, Symb, Cvd, First;
+$EXTERN Mul;
+$EXTERN Prouts, Card, M1;
 
 $FUNC Go
 {

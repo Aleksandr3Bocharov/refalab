@@ -6,7 +6,7 @@
 $START TEST5;
 
 $ENTRY Go;
-$EXTRN Prout, Numb, Symb;
+$EXTERN Prout, Numb, Symb;
 
 $FUNC Go
 {

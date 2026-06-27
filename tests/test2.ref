@@ -6,8 +6,8 @@
 $STARET TEST2;
 
 $ENTRY Go;
-$EXTRN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
-$EXTRN Print, Prout, FtoChar, ChartoF, FuncTab;
+$EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
+$EXTERN Print, Prout, FtoChar, ChartoF, FuncTab;
 $EMPTY ffff;
 
 $FUNC Go

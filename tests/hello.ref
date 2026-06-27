@@ -1,16 +1,16 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-05-29
+* 2026-06-25
 * https://github.com/Aleksandr3Bocharov/refalab
 
-HELLO +
-    START
+$START HELLO;
 
-    ENTRY Go
-    EXTRN Print
+$ENTRY Go;
+$EXTERN Print;
 
-    IMPL
+$FUNC Go 
+{
+    = <Print 'Hello World!'>;
+}
 
-Go      = <Print 'Hello World!'>
-
-    END
+$END.
