@@ -2,7 +2,8 @@
 -----------------------------------
 
 Чтобы собрать РефалАБ-систему в Windows из исходников РефалАБ-системы,
-требуется [LLVM Mingw-w64](https://github.com/mstorsjo/llvm-mingw) (LLVM 18.1.8 или позже (POSIX threads) UCRT Runtime).
+требуется [LLVM Mingw-w64](https://github.com/mstorsjo/llvm-mingw) (LLVM 18.1.8 или позже (POSIX threads) UCRT Runtime)
+или аналогичная автономная сборка.
 
 32-битная версия LLVM Mingw-w64 i686 позволяет собрать 32-битную РефалАБ-систему.
 
