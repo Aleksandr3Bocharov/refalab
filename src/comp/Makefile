@@ -22,7 +22,7 @@ ifdef OS
     SLASH = \\
     LFLAGS = -pthread -static
     PLATFORM_CFLAGS =
-	CLANG_VERSION := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'clang version' | ForEach-Object { ($$_ -split ' ')[2] }")
+	CLANG_VERSION := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'clang version' | ForEach-Object { (($$_ -replace '.*clang version ', '') -split ' ')[0] }")
 	CLANG_TARGET := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'Target:' | ForEach-Object { ($$_ -split ' ')[1] }")
     CLANG_THREAD_MODEL := $(shell $(CC) -v 2>&1 | powershell -Command "$$input | Select-String 'Thread model:' | ForEach-Object { ($$_ -split ' ')[2] }")
 else
