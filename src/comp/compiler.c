@@ -49,7 +49,7 @@
     print_error_string_symbol(100, "Illegal symbol", symbol)
 
 #define PRINT_ERROR_130 \
-    print_error_string(130, "Invalid record format")
+    print_error_string(130, "Invalid directive format")
 
 #define ns_b 0006
 #define ns_cll 0000
@@ -496,7 +496,7 @@ int main(int argc, char *argv[])
                     const char current_char = get_current_char();
                     if (current_char == ';')
                     {
-                        set_swap(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
+                        set_empty(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
                         next_char();
                     }
                     else if (current_char == '{')
@@ -505,7 +505,7 @@ int main(int argc, char *argv[])
                         blanks_out();
                         if (get_current_char() == '}')
                         {
-                            set_swap(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
+                            set_empty(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
                             next_char();
                         }
                         else
