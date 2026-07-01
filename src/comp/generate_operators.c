@@ -38,10 +38,10 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
 void generate_symbol(const T_LINKTI *code)
 {
     const uint32_t code_tag = code->tag;
-    macrocode_byte((uint8_t)((code_tag >> 24) & 0xFF));
-    macrocode_byte((uint8_t)((code_tag >> 16) & 0xFF));
-    macrocode_byte((uint8_t)((code_tag >> 8) & 0xFF));
     macrocode_byte((uint8_t)(code_tag & 0xFF));
+    macrocode_byte((uint8_t)((code_tag >> 8) & 0xFF));
+    macrocode_byte((uint8_t)((code_tag >> 16) & 0xFF));
+    macrocode_byte((uint8_t)((code_tag >> 24) & 0xFF));
     if (code->tag == TAGF)
     {
         macrocode_address(code->info.codef);
