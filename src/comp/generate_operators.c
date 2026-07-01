@@ -65,7 +65,7 @@ void generate_symbol(const T_LINKTI *code)
     else
     {
         uint8_t i = 0;
-        for (; i < 4 /* sizeof(uint32_t) */; i++)
+        for (; i < ZBLL; i++)
             macrocode_byte(*(code_info + i));
         for (; i < LBLL; i++)
             macrocode_byte(0);
