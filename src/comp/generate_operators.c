@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.c  ----------
@@ -12,14 +12,6 @@
 #include "refalab.h"
 #include "generate_operators.h"
 #include "macrocode.h"
-
-typedef struct _TAG
-{
-    uint8_t byte1;
-    uint8_t byte2;
-    uint8_t byte3;
-    uint8_t byte4;
-} T_TAG;
 
 void generate_operator_n(uint8_t operator, uint8_t n)
 {
@@ -45,11 +37,11 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
 
 void generate_symbol(const T_LINKTI *code)
 {
-    const T_TAG *code_tag = (T_TAG *)&(code->tag);
-    macrocode_byte(code_tag->byte1);
-    macrocode_byte(code_tag->byte2);
-    macrocode_byte(code_tag->byte3);
-    macrocode_byte(code_tag->byte4);
+    const uint32_t code_tag = code->tag;
+    macrocode_byte((uint8_t)((code_tag >> 24) & 0xFF));
+    macrocode_byte((uint8_t)((code_tag >> 16) & 0xFF));
+    macrocode_byte((uint8_t)((code_tag >> 8) & 0xFF));
+    macrocode_byte((uint8_t)(code_tag & 0xFF));
     if (code->tag == TAGF)
     {
         macrocode_address(code->info.codef);
