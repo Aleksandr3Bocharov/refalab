@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-07-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -24,7 +24,7 @@
     print_error_two_strings(303, "Differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
 
 #define PRINT_ERROR_406 \
-    print_error_two_strings(406, "In left part missing variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
+    print_error_two_strings(406, "In left part missing variable ", current_sentence_element.identifier, current_sentence_element.identifier_length)
 
 typedef enum states
 {
@@ -1517,58 +1517,59 @@ void compile_sentence(bool direction)
             break;
         case RPE4:
             // s - varyable
-            search_variable(false);
-            switch (variables[variable_index].type)
+            if (!search_variable(false))
             {
-            case NEW:
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
                 PRINT_ERROR_406;
-                break;
-            case S:
-                current_left_part_element = variables[variable_index].last_left_part_element;
-                if (current_left_part_element == 0)
-                    generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
-                else
+            }
+            else
+                switch (variables[variable_index].type)
                 {
-                    generate_operator_n(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                    variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
+                case S:
+                    current_left_part_element = variables[variable_index].last_left_part_element;
+                    if (current_left_part_element == 0)
+                        generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
+                    else
+                    {
+                        generate_operator_n(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                        variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
+                    };
+                    break;
+                default:
+                    scanner.last_error_cursor = current_sentence_element.cursor_number;
+                    PRINT_ERROR_303;
                 };
-                break;
-            default:
-                scanner.last_error_cursor = current_sentence_element.cursor_number;
-                PRINT_ERROR_303;
-            };
             state = GET_RPE;
             break;
         case RPE5:
             // w - varyable
-            search_variable(false);
-            switch (variables[variable_index].type)
+            if (!search_variable(false))
             {
-            case NEW:
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
                 PRINT_ERROR_406;
-                break;
-            case W:
-                current_left_part_element = variables[variable_index].last_left_part_element;
-                if (current_left_part_element == 0)
-                    generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
-                else
+            }
+            else
+                switch (variables[variable_index].type)
                 {
-                    generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                    variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
+                case W:
+                    current_left_part_element = variables[variable_index].last_left_part_element;
+                    if (current_left_part_element == 0)
+                        generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
+                    else
+                    {
+                        generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
+                        variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
+                    };
+                    break;
+                default:
+                    scanner.last_error_cursor = current_sentence_element.cursor_number;
+                    PRINT_ERROR_303;
                 };
-                break;
-            default:
-                scanner.last_error_cursor = current_sentence_element.cursor_number;
-                PRINT_ERROR_303;
-            };
             state = GET_RPE;
             break;
         case RPE6:
             // e- or v-varyable
-            search_variable(false);
-            if (variables[variable_index].type == NEW)
+            if (!search_variable(false))
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
                 PRINT_ERROR_406;
