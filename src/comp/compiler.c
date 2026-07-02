@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-25
+// 2026-07-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -198,7 +198,7 @@ static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
 static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
-static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
+static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
 
 static inline char get_current_char(void)
 {
@@ -753,7 +753,33 @@ void scan_sentence_element(void)
             current_char = get_current_char();
             switch (current_char)
             {
-            case '&':
+            case '_':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            case 'G':
+            case 'H':
+            case 'I':
+            case 'J':
+            case 'K':
+            case 'L':
+            case 'M':
+            case 'N':
+            case 'O':
+            case 'P':
+            case 'Q':
+            case 'R':
+            case 'S':
+            case 'T':
+            case 'U':
+            case 'V':
+            case 'W':
+            case 'X':
+            case 'Y':
+            case 'Z':
             case '0':
             case '1':
             case '2':
@@ -773,19 +799,15 @@ void scan_sentence_element(void)
                 scanner_state = SCNR;
                 break;
             case 's':
-            case 'S':
                 scanner_state = SCNS;
                 break;
             case 'w':
-            case 'W':
                 scanner_state = SCNW;
                 break;
             case 'v':
-            case 'V':
                 scanner_state = SCNVV;
                 break;
             case 'e':
-            case 'E':
                 scanner_state = SCNE;
                 break;
             case '<':
@@ -804,27 +826,21 @@ void scan_sentence_element(void)
                 scanner_state = SCNA;
                 break;
             case 'f':
-            case 'F':
                 scanner_state = FSCN;
                 break;
             case 'n':
-            case 'N':
                 scanner_state = NSCN;
                 break;
             case 'r':
-            case 'R':
                 scanner_state = RSCN;
                 break;
             case 'o':
-            case 'O':
                 scanner_state = OSCN;
                 break;
             case 'd':
-            case 'D':
                 scanner_state = DSCN;
                 break;
             case 'l':
-            case 'L':
                 scanner_state = LSCN;
                 break;
             default:
@@ -839,12 +855,8 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            if (get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length))
-            {
-                scanner_state = EGO;
-                break;
-            }
-            scanner_state = SCNERR;
+            get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length);
+            scanner_state = EGO;
             break;
         case EGO:
             current_sentence_element.type = SC;
@@ -1187,7 +1199,33 @@ static bool compile_specifer(char tail)
             case ')':
                 specifier_state = SPCR;
                 break;
-            case '&':
+            case '_':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            case 'G':
+            case 'H':
+            case 'I':
+            case 'J':
+            case 'K':
+            case 'L':
+            case 'M':
+            case 'N':
+            case 'O':
+            case 'P':
+            case 'Q':
+            case 'R':
+            case 'S':
+            case 'T':
+            case 'U':
+            case 'V':
+            case 'W':
+            case 'X':
+            case 'Y':
+            case 'Z':
             case '0':
             case '1':
             case '2':
@@ -1207,39 +1245,30 @@ static bool compile_specifer(char tail)
                 specifier_state = SPCA;
                 break;
             case 's':
-            case 'S':
                 specifier_state = SPCES;
                 break;
             case 'b':
-            case 'B':
                 specifier_state = SPCEB;
                 break;
             case 'w':
-            case 'W':
                 specifier_state = SPCEW;
                 break;
             case 'f':
-            case 'F':
                 specifier_state = SPCEF;
                 break;
             case 'n':
-            case 'N':
                 specifier_state = SPCEN;
                 break;
             case 'r':
-            case 'R':
                 specifier_state = SPCER;
                 break;
             case 'o':
-            case 'O':
                 specifier_state = SPCEO;
                 break;
             case 'l':
-            case 'L':
                 specifier_state = SPCEL;
                 break;
             case 'd':
-            case 'D':
                 specifier_state = SPCED;
                 break;
             default:
@@ -1319,11 +1348,7 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            if (!get_multiple_symbol(&code, identifier, &identifier_length))
-            {
-                specifier_state = OSH200;
-                break;
-            }
+            get_multiple_symbol(&code, identifier, &identifier_length);
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
                 generate_symbol(&code);
@@ -1800,7 +1825,7 @@ static void specifier(void)
     return;
 }
 
-static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
+static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
@@ -1847,25 +1872,19 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             print_error_string(111, error_111);
             break;
         }
-        next_char();
         const size_t cursor_number = refalab_source_cursor;
-        if (!get_identifier(identifier, identifier_length))
-        {
-            scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(112, "Unknown type of the multiple symbol");
-            return false;
-        }
+        get_identifier(identifier, identifier_length);
         code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
         code->tag = TAGF;
     } while (false);
-    return true;
+    return;
 }
 
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
 { // read identifier
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
     char current_char = get_current_char();
-    if (isalpha((unsigned char)current_char) == 0 && current_char != '_')
+    if (isupper((unsigned char)current_char) == 0 && current_char != '_')
         return false;
     identifier[0] = (char)toupper((unsigned char)current_char);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_LENGTH; (*identifier_length)++)
@@ -1897,7 +1916,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
     char current_char = get_current_char();
-    if (isalpha((unsigned char)current_char) == 0 && current_char != '_')
+    if (isupper((unsigned char)current_char) == 0 && current_char != '_')
         return false;
     identifier[0] = (char)toupper((unsigned char)current_char);
     for (*identifier_length = 1; *identifier_length < MAX_IDENTIFIER_EXTERN_LENGTH; (*identifier_length)++)
