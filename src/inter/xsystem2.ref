@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -12,7 +12,7 @@ $START SYSTEM2;
 $ENTRY ArgList;
 $EXTERN P1, Arg;
 
-* <ArgList> == (S(O).Arg+)*
+* <ArgList> == (s(o).Arg+)*
 $FUNC ArgList
 {
     = <ArgList_Aux 1>;
@@ -20,13 +20,13 @@ $FUNC ArgList
 
 $FUNC ArgList_Aux
 {
-    S.Next = <SwArgList_Aux <P1 S.Next> <Arg S.Next>>;
+    s.Next = <SwArgList_Aux <P1 s.Next> <Arg s.Next>>;
 }
 
 $FUNC SwArgList_Aux
 {
-    S.Next = ;
-    S.Next E.Arg = (E.Arg) <ArgList_Aux S.Next>;
+    s.Next = ;
+    s.Next e.Arg = (e.Arg) <ArgList_Aux s.Next>;
 }
 
 $END.

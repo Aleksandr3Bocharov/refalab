@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -27,7 +27,7 @@ $SPEC Max_PathFileName 260;
 
 $FUNC Platform
 {
-    = &Windows;
+    = Windows;
 }
 
 $FUNC Directory_Separator
@@ -37,8 +37,8 @@ $FUNC Directory_Separator
 
 $FUNC Is_Directory_Separator
 {
-    S(:Directory_Separators:)._ = &True;
-    S._ = &False;
+    s(:Directory_Separators:)._ = True;
+    s._ = False;
 }
  
 $FUNC Path_Separator
@@ -53,8 +53,8 @@ $FUNC Get_Max_PathFileName
 
 $FUNC Is_Max_PathFileName
 {
-    S(:Max_PathFileName:)._ = &True;
-    S._ = &False;
+    s(:Max_PathFileName:)._ = True;
+    s._ = False;
 }
 
 $END.
