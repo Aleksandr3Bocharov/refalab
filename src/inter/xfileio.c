@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xfileio.c  ----------
@@ -509,7 +509,6 @@ static void fprintm_(void)
                 }
                 else if (current_argument->tag == TAGF)
                 {
-                    strcat(string, "&");
                     const uint8_t *label_length = current_argument->info.codef - 1;
                     const char *label = (char *)label_length - *label_length;
                     char symbol[2];
