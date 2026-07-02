@@ -44,7 +44,7 @@ $FUNC Cvd
     '-' v(n).X = '-' <Cvd0 v.X>;
     '+' = '0';
     '+' v(n).X = <Cvd0 v.X>;
-    E(n).X = <Cvd0 e.X>;
+    e(n).X = <Cvd0 e.X>;
 }
 
 $FUNC Cvd0 
