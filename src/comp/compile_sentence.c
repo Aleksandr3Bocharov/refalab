@@ -204,7 +204,7 @@ static uint8_t free_segment_hole_list; // free segment number in the hole  list
 static uint8_t next_hole;              // next hole number
 static uint8_t hole_x, hole_y;         // hole numbers (under enter in brackets)
 
-static void search_variable(void);
+static bool search_variable(bool left_part);
 static void generate_boards_stoping_brackets(void);
 static bool lsg_p(void);
 static bool rsg_p(void);
@@ -313,7 +313,7 @@ void compile_sentence(bool direction)
             break;
         case LPE4:
             // s-varyable
-            search_variable();
+            search_variable(true);
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
@@ -333,7 +333,7 @@ void compile_sentence(bool direction)
             break;
         case LPE5:
             // w-varyable
-            search_variable();
+            search_variable(true);
             left_part_elements[current_left_part_element].variable_index = variable_index;
             switch (variables[variable_index].type)
             {
@@ -353,7 +353,7 @@ void compile_sentence(bool direction)
             break;
         case LPE6:
             // e- or v-varyable
-            search_variable();
+            search_variable(true);
             left_part_elements[current_left_part_element].variable_index = variable_index;
             if (variables[variable_index].type == NEW) // yet is't faced
                 variables[variable_index].type = E;
@@ -1517,7 +1517,7 @@ void compile_sentence(bool direction)
             break;
         case RPE4:
             // s - varyable
-            search_variable();
+            search_variable(false);
             switch (variables[variable_index].type)
             {
             case NEW:
@@ -1542,7 +1542,7 @@ void compile_sentence(bool direction)
             break;
         case RPE5:
             // w - varyable
-            search_variable();
+            search_variable(false);
             switch (variables[variable_index].type)
             {
             case NEW:
@@ -1567,7 +1567,7 @@ void compile_sentence(bool direction)
             break;
         case RPE6:
             // e- or v-varyable
-            search_variable();
+            search_variable(false);
             if (variables[variable_index].type == NEW)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1667,11 +1667,13 @@ void compile_sentence(bool direction)
         }
 }
 
-static void search_variable(void)
+static bool search_variable(bool left_part)
 {
     for (variable_index = 1; variable_index <= variables_count; variable_index++)
         if (variables[variable_index].identifier_length == current_sentence_element.identifier_length && strncmp(variables[variable_index].identifier, current_sentence_element.identifier, variables[variable_index].identifier_length) == 0)
-            return;
+            return true;
+    if (!left_part)
+        return false;
     variable_index = ++variables_count;
     strncpy(variables[variable_index].identifier, current_sentence_element.identifier, current_sentence_element.identifier_length);
     variables[variable_index].identifier_length = current_sentence_element.identifier_length;
@@ -1679,7 +1681,7 @@ static void search_variable(void)
     variables[variable_index].rem = 1;
     variables[variable_index].last_left_part_element = 0;
     variables[variable_index].v_variable = current_sentence_element.v_variable;
-    return;
+    return true;
 }
 
 //   generation of stoped brackets and setting boards
