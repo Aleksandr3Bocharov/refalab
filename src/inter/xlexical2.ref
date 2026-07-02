@@ -111,12 +111,12 @@ $FUNC Set
 $FUNC Type
 {
     = Void;
-    f.Symbol e._ = Label s.Symbol e._;
-    n.Symbol e._ = Number s.Symbol e._;
-    r.Symbol e._ = Reference s.Symbol e._;
-    l.Symbol e._ = Char Latin s.Symbol e._;
-    d.Symbol e._ = Char Digit s.Symbol e._;
-    o.Symbol e._ = Char s.Symbol e._;
+    f.Symbol e._ = Label f.Symbol e._;
+    n.Symbol e._ = Number n.Symbol e._;
+    r.Symbol e._ = Reference r.Symbol e._;
+    l.Symbol e._ = Char Latin l.Symbol e._;
+    d.Symbol e._ = Char Digit d.Symbol e._;
+    o.Symbol e._ = Char o.Symbol e._;
     (e.Expr) e._ = Brackets (e.Expr) e._;
     e._ = OtherT e._;
 }
