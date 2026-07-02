@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -11,62 +11,62 @@ $START HIGH_ORDER_FUNCS;
 
 $ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator;
 
-* <Apply W.Closure E.Arg> == E.Res
-* W.Closure ::= S(F).Fn | (W.Closure E.Bounded)
+* <Apply w.Closure e.Arg> == e.Res
+* w.Closure ::= s(f).Fn | (w.Closure e.Bounded)
 $FUNC Apply 
 {
-    S(F).Fn E.Argument = < S.Fn E.Argument>;
-    (W.Closure E.Bounded) E.Argument = <Apply W.Closure E.Bounded E.Argument>;
+    s(f).Fn e.Argument = < s.Fn e.Argument>;
+    (w.Closure e.Bounded) e.Argument = <Apply w.Closure e.Bounded e.Argument>;
 }
 
-* <Map W.Closure W.Item*> == E.Item_Res*
-* <Apply W.Closure W.Item> == E.Item_Res
+* <Map w.Closure w.Item*> == e.Item_Res*
+* <Apply w.Closure w.Item> == e.Item_Res
 $FUNC Map
 {
-    W.Fn W.Next E.Tail =
-        <Apply W.Fn W.Next>
-        <Map W.Fn E.Tail>;
-    W._ = ;
+    w.Fn w.Next e.Tail =
+        <Apply w.Fn w.Next>
+        <Map w.Fn e.Tail>;
+    w._ = ;
 }
 
-* <FoldL W.Closure W.Accum W.Item*> == W.Accum′
-* <Apply W.Closure W.Accum W.Item> == W.Accum′
-* W.Accum′ ::= W.Accum
+* <FoldL w.Closure w.Accum w.Item*> == w.Accum′
+* <Apply w.Closure w.Accum w.Item> == w.Accum′
+* w.Accum′ ::= w.Accum
 $FUNC FoldL
 {
-    W.Fn W.Acc W.Next E.Tail = <FoldL W.Fn <Apply W.Fn W.Acc W.Next> E.Tail>;
-    W.Fn W.Acc = W.Acc;
+    w.Fn w.Acc w.Next e.Tail = <FoldL w.Fn <Apply w.Fn w.Acc w.Next> e.Tail>;
+    w.Fn w.Acc = w.Acc;
 }
 
-* <FoldR W.Closure W.Item* W.Accum> == W.Accum′
-* <Apply W.Closure W.Item W.Accum> == W.Accum′
-* W.Accum′ ::= W.Accum
+* <FoldR w.Closure w.Item* w.Accum> == w.Accum′
+* <Apply w.Closure w.Item w.Accum> == w.Accum′
+* w.Accum′ ::= w.Accum
 $FUNC FoldR
 {
-    W.Fn E.Head W.Prev W.Acc = <FoldR W.Fn E.Head <Apply W.Fn W.Prev W.Acc>>;
-    W.Fn W.Acc = W.Acc;
+    w.Fn e.Head w.Prev w.Acc = <FoldR w.Fn e.Head <Apply w.Fn w.Prev w.Acc>>;
+    w.Fn w.Acc = w.Acc;
 }
 
-* <Map_Accumulator W.Closure W.Accum W.Item*> == W.Accum′ E.Item_Res*
-* <Apply W.Closure W.Accum W.Item> == W.Accum′ E.Item_Res
-* W.Accum′ ::= W.Accum
+* <Map_Accumulator w.Closure w.Accum w.Item*> == w.Accum′ e.Item_Res*
+* <Apply w.Closure w.Accum w.Item> == w.Accum′ e.Item_Res
+* w.Accum′ ::= w.Accum
 $FUNC Map_Accumulator
 {
-    W.Fn W.Acc E.Tail = <Map_Accumulator_Aux W.Fn W.Acc () E.Tail>;
+    w.Fn w.Acc e.Tail = <Map_Accumulator_Aux w.Fn w.Acc () e.Tail>;
 }
 
 $FUNC Map_Accumulator_Aux
 {
-    W.Fn W.Acc (E.Scanned) W.Next E.Tail = 
-        <Map_Accumulator_Aux W.Fn
-            <Map_Accumulator_Add_Scanned <Apply W.Fn W.Acc W.Next> (E.Scanned)>
-        E.Tail>;
-    W.Fn W.Acc (E.Scanned) = W.Acc E.Scanned;
+    w.Fn w.Acc (e.Scanned) w.Next e.Tail = 
+        <Map_Accumulator_Aux w.Fn
+            <Map_Accumulator_Add_Scanned <Apply w.Fn w.Acc w.Next> (e.Scanned)>
+        e.Tail>;
+    w.Fn w.Acc (e.Scanned) = w.Acc e.Scanned;
 }
 
 $FUNC Map_Accumulator_Add_Scanned 
 {
-    W.Acc E.Step_Scanned (E.Scanned) = W.Acc (E.Scanned E.Step_Scanned);
+    w.Acc e.Step_Scanned (e.Scanned) = w.Acc (e.Scanned e.Step_Scanned);
 }
 
 $END.
