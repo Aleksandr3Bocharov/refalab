@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST2;
@@ -8,12 +8,12 @@ $START TEST2;
 $ENTRY Go;
 $EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
 $EXTERN Print, Prout, FtoChar, ChartoF, FuncTab;
-$EMPTY ffff;
+$EMPTY Ffff;
 
 $FUNC Go
 {
     =
-        <FuncTab &Prout> 
+        <FuncTab Prout> 
         < <ChartoF 'prout'> ' eto prout'> 
         < <ChartoF 'PROUT'> ' eto PROUT'> 
 *       <FOpen 'r' 10 'bb'>     !!  neot  !!
@@ -31,15 +31,15 @@ $FUNC Go
         <Print <FGetS 4>> 
         <Print <FGetS 4>>
         <FClose 4> 
-        <Prout ' d.b. ffff: ' <FtoChar &ffff>> 
-        <FuncTab &tttt> 
+        <Prout ' d.b. ffff: ' <FtoChar Ffff>> 
+        <FuncTab Tttt> 
         < <ChartoF 'tttt'> 'werno'> 
         <Remove_File 'lala.tos'>;
 }
 
-$FUNC tttt
+$FUNC Tttt
 {
-    E.E = <Prout E.E>;
+    e.E = <Prout e.E>;
 }
 
 $END.

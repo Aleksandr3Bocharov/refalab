@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST5;
@@ -39,7 +39,7 @@ $FUNC Go
 
 $FUNC P 
 {
-    E.N = <Prout E.N ' : ' <Symb E.N>>;
+    e.N = <Prout e.N ' : ' <Symb e.N>>;
 }
 
 $END.

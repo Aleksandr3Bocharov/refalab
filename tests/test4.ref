@@ -9,30 +9,30 @@ $ENTRY Go;
 $EXTERN First, Last, LengR, LengW, Prout, Proutm;
 $EMPTY Pus, Em1, Em2, Em3;
 
-$SPEC Bspe '2134' &Pus;
+$SPEC Bspe '2134' Pus;
 
 $FUNC Go
 {
     = 
-        <Prspe &Pus 'as01a432l7l' &Em3>
+        <Prspe Pus 'as01a432l7l' Em3>
         <Dal>;
 }
 
 *      prowerka  specifikacii
 $FUNC Prspe
 {
-    E.E S(&Em1 &Em2 &Em3).S = 
-        <Prout ' symbol-&em' S.S>
-        <Prspe E.E>;
-    S(:Bspe:).S E.k =
-        <Prout ' symbol-1234p=' S.S>
-        <Prspe E.k>;
-    $RIGHT E.h S('l7').S = 
-        <Prout ' symbol-l7=' S.S>
-        <Prspe E.h>;
-    S.S E.k = 
-        <Prout '  symbol =' S.S> 
-        <Prspe E.k>;
+    e.E s(Em1 Em2 Em3).S = 
+        <Prout ' symbol-&em' s.S>
+        <Prspe e.E>;
+    s(:Bspe:).S e.K =
+        <Prout ' symbol-1234p=' s.S>
+        <Prspe e.K>;
+    $RIGHT e.H s('l7').S = 
+        <Prout ' symbol-l7=' s.S>
+        <Prspe e.H>;
+    s.S e.K = 
+        <Prout '  symbol =' s.S> 
+        <Prspe e.K>;
     = ;
 }
 
@@ -52,22 +52,22 @@ $FUNC Dal
 
 $FUNC Prfe
 {
-    E.E = <Prow &First E.E>;
+    e.E = <Prow First e.E>;
 }
 
 $FUNC Prla
 {
-    E.E = <Prow &Last E.E>;
+    e.E = <Prow Last e.E>;
 }
 
 $FUNC Prow
 {
-    S.F E.E = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>;
+    s.F e.E = <Proutm s.F ', whod=' e.E '  wyh=' < s.F e.E>>;
 }
 
 $FUNC Prln
 {
-    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> '  wyh-w=' <LengW E.E>>;
+    e.E = <Prout ' lengr,lengw: whod=' e.E '  wyh-r=' <LengR e.E> '  wyh-w=' <LengW e.E>>;
 }
 
 $END.

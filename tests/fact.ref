@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 $START FACT;
@@ -18,29 +18,29 @@ $FUNC Go
 $FUNC Fact
 {
     0 = ; 
-    E.N =
-        <Pr E.N '!=' <Cvd <F E.N>>> 
+    e.N =
+        <Pr e.N '!=' <Cvd <F e.N>>> 
         <Go>;
 }
 
 $FUNC F 
 {  
     1 = 1;
-    E.N = <Mul (E.N) <F <M1 E.N>>>;
+    e.N = <Mul (e.N) <F <M1 e.N>>>;
 }
 
 $FUNC Pr 
 {
     = ;
-    E.S = <Pr1 <First 80 E.S>>;
+    e.S = <Pr1 <First 80 e.S>>;
 }
 
 $FUNC Pr1
 {
-    (E.S) E.E =
-        <Prouts E.S>
-        <Pr E.E>;
-    '*' E.S = <Prouts E.S>;
+    (e.S) e.E =
+        <Prouts e.S>
+        <Pr e.E>;
+    '*' e.S = <Prouts e.S>;
 }
 
 $END.

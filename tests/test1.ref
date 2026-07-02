@@ -139,7 +139,7 @@ $FUNC F4
 *  prowerka LRel
         <LRel ('a') 'a'> 
         <LRel (1 2) 1 2> 
-        <LRel (&LRel) &LRel> 
+        <LRel (LRel) LRel> 
         <LRel ('\101\n') '\101\n'> 
         <LRel (67 66) '\103\102'>
         <LRel ('A') '\101'> 
@@ -167,83 +167,83 @@ $FUNC F4
 *  neot
         <LRel>
         <LRel 0>
-        <LRel &LRel>
+        <LRel LRel>
         <LRel '123'>;
 }
 
 $FUNC Prad
 {
-    E.N = <Prow &Add E.N>;
+    e.N = <Prow Add e.N>;
 }
 
 $FUNC Prsu
 {
-    E.N = <Prow &Sub E.N>;
+    e.N = <Prow Sub e.N>;
 }
 
 $FUNC Prmu
 {
-    E.N = <Prow &Mul E.N>;
+    e.N = <Prow Mul e.N>;
 }
 
 $FUNC Prdr
 {
-    E.N = <Prow &Dr E.N>;
+    e.N = <Prow Dr e.N>;
 }
 
 $FUNC Prdl
 {
-    E.N = <Prow &Div E.N>;
+    e.N = <Prow Div e.N>;
 }
 
 $FUNC Pradn
 {
-    E.N = <Prow &AddN E.N>;
+    e.N = <Prow AddN e.N>;
 }
 
 $FUNC Prsun
 {
-    E.N = <Prow &SubN E.N>;
+    e.N = <Prow SubN e.N>;
 }
 
 $FUNC Prmun
 {
-    E.N = <Prow &MulN E.N>;
+    e.N = <Prow MulN e.N>;
 }
 
 $FUNC Prdrn
 {
-    E.N = <Prow &DrN E.N>;
+    e.N = <Prow DrN e.N>;
 }
 
 $FUNC Prdln
 {
-    E.N = <Prow &DivN E.N>;
+    e.N = <Prow DivN e.N>;
 }
 
 $FUNC Prm1
 {
-    E.N = <Prow &M1 E.N>;
+    e.N = <Prow M1 e.N>;
 }
 
 $FUNC Prp1
 {
-    E.N = <Prow &P1 E.N>;
+    e.N = <Prow P1 e.N>;
 }
 
 $FUNC Prnu
 {
-    E.N = <Prow &Numb E.N>;
+    e.N = <Prow Numb e.N>;
 }
 
 $FUNC Prsy
 {
-    E.N = <Prow &Symb E.N>;
+    e.N = <Prow Symb e.N>;
 }
 
 $FUNC Prow
 {
-    S.F E.E = <Proutm S.F ': in=' E.E '  out=' < S.F E.E>>;
+    s.F e.E = <Proutm s.F ': in=' e.E '  out=' < s.F e.E>>;
 }
 
 $END.

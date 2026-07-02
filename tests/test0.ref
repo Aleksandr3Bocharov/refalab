@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST0;
@@ -15,16 +15,16 @@ $EXTERN Br, Rp, Dg, DgAll, Cp;
 $EMPTY Tra, Em1, Em2, Em3, Pus;
 $SWAP Sw;
 
-$SPEC Bspe '2134' &Pus;
+$SPEC Bspe '2134' Pus;
 
 $FUNC Div 
 {
-    E.N = <Div0 <Dr E.N>>;
+    e.N = <Div0 <Dr e.N>>;
 }
 
 $FUNC Div0
 {
-    E.N (E._) = E.N;
+    e.N (e._) = e.N;
 }
 
 $FUNC Go 
@@ -34,16 +34,16 @@ $FUNC Go
         <Prvv>
         <Prkop>
         <Dal1>
-        <Prspe &Pus 'as01a432l7l' &Em3>;
+        <Prspe Pus 'as01a432l7l' Em3>;
 }
 
 *      prowerka  specifikacii
 $FUNC Prspe
 {
-    E.E S(&Em1 &Em2 &Em3).S = <Prout ' symbol-&em' S.S> <Prspe E.E>;
-    S(:Bspe:).S E.k = <Prout ' symbol-b=' S.S> <Prspe E.k>;
-    $RIGHT E.h S('l7').S = <Prout ' symbol-l=' S.S> <Prspe E.h>;
-    S.S E.k = <Prout '  symbol=' S.S> <Prspe E.k>;
+    e.E s(Em1 Em2 Em3).S = <Prout ' symbol-&em' s.S> <Prspe e.E>;
+    s(:Bspe:).S e.K = <Prout ' symbol-b=' s.S> <Prspe e.K>;
+    $RIGHT e.H s('l7').S = <Prout ' symbol-l=' s.S> <Prspe e.H>;
+    s.S e.K = <Prout '  symbol=' s.S> <Prspe e.K>;
     = ;
 }
 
@@ -94,57 +94,57 @@ $FUNC Dal
 
 $FUNC Prmu
 {
-    E.N = <Prow &Mul E.N>;
+    e.N = <Prow Mul e.N>;
 }
 
 $FUNC Prnu
 {
-    E.N = <Prow &Numb E.N>;
+    e.N = <Prow Numb e.N>;
 }
 
 $FUNC Prsy
 {
-    E.N = <Prow &Symb E.N>;
+    e.N = <Prow Symb e.N>;
 }
 
 $FUNC Prad
 {
-    E.N = <Prow &Add E.N>;
+    e.N = <Prow Add e.N>;
 }
 
 $FUNC Prsu
 {
-    E.N = <Prow &Sub E.N>;
+    e.N = <Prow Sub e.N>;
 }
 
 $FUNC Prm1
 {
-    E.N = <Prow &M1 E.N>;
+    e.N = <Prow M1 e.N>;
 }
 
 $FUNC Prdl
 {
-    E.N = <Prow &Div E.N>;
+    e.N = <Prow Div e.N>;
 }
 
 $FUNC Prp1
 {
-    E.N = <Prow &P1 E.N>;
+    e.N = <Prow P1 e.N>;
 }
 
 $FUNC Prfe
 {
-    E.E = <Prow &First E.E>;
+    e.E = <Prow First e.E>;
 }
 
 $FUNC Prla
 {
-    E.E = <Prow &Last E.E>;
+    e.E = <Prow Last e.E>;
 }
 
 $FUNC Prow
 {
-    S.F E.E = <Proutm S.F ', whod=' E.E '  wyh=' < S.F E.E>>;
+    s.F e.E = <Proutm s.F ', whod=' e.E '  wyh=' < s.F e.E>>;
 }
 
 $FUNC Prkop 
@@ -156,9 +156,9 @@ $FUNC Prkop
         <Dg 'mmm'>
         <Cp 'cc'>
         <DgAll>
-        <Br &Tra '=' '765'>
-        <Rp &Tra '=' 16777215>
-        <Dg &Tra>;
+        <Br Tra '=' '765'>
+        <Rp Tra '=' 16777215>
+        <Dg Tra>;
 }
 
 $FUNC Prvv
@@ -184,34 +184,34 @@ $FUNC Prsw
 {   
     = 
         <Sw1 <New 123456>>
-        <Wtr &Sw 123456>
-        <Ptr &Sw '0'>
-        <Rdr &Sw>
-        <Gtr &Sw>;
+        <Wtr Sw 123456>
+        <Ptr Sw '0'>
+        <Rdr Sw>
+        <Gtr Sw>;
 }
 
 $FUNC Sw1 
 {
-    R.x = 
-        <Ptr R.x 2>
-        <Rdr R.x>
-        <Wtr R.x 12>
-        <Sw2 R.x>;
+    r.X = 
+        <Ptr r.X 2>
+        <Rdr r.X>
+        <Wtr r.X 12>
+        <Sw2 r.X>;
 }
 
 $FUNC Sw2 
 {
-    R.x =
-        <Ptr R.x 3>
-        <Rdr R.x>
-        <Gtr R.x>
-        <Swr R.x '0' 4294967295 '0'>
-        <Prout <Rdr R.x>>;
+    r.X =
+        <Ptr r.X 3>
+        <Rdr r.X>
+        <Gtr r.X>
+        <Swr r.X '0' 4294967295 '0'>
+        <Prout <Rdr r.X>>;
 }
 
 $FUNC Prln
 {
-    E.E = <Prout ' lengr,lengw: whod=' E.E '  wyh-r=' <LengR E.E> '  wyh-w=' <LengW E.E>>;
+    e.E = <Prout ' lengr,lengw: whod=' e.E '  wyh-r=' <LengR e.E> '  wyh-w=' <LengW e.E>>;
 }
 
 $END.

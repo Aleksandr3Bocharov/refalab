@@ -22,30 +22,31 @@ $FUNC Go
         <Rp 'cc' '=' '1'> 
         <Cp 'cc'> 
         <Proutm ' d.b. 345 i 1: ' <DgAll>> 
-        <Rp &Tra '=' '765'>
-        <Rp &Tra '=' 4294967295> 
-        <Proutm ' d.b. 4294967295: ' <Dg &Tra>> 
+        <Rp Tra '=' '765'>
+        <Rp Tra '=' 4294967295> 
+        <Proutm ' d.b. 4294967295: ' <Dg Tra>> 
         <Sw1 <New 123456>> 
-        <Wtr &Sw 123456>
-        <Wtr &Sw '0'> 
-        <Proutm ' d.b. 0 i 0: ' <Rdr &Sw> <Gtr &Sw> <Rdr &Sw>>;
+        <Wtr Sw 123456>
+        <Wtr Sw '0'> 
+        <Proutm ' d.b. 0 i 0: ' <Rdr Sw> <Gtr Sw> <Rdr Sw>>;
 }
 
 $FUNC Sw1 
 {
-    R.x =
-        <Proutm ' d.b. 123456: ' <Swr R.x 2>> 
-        <Proutm ' d.b. 2: ' <Rdr R.x>> 
-        <Wtr R.x 12> <Sw2 R.x>;
+    r.X =
+        <Proutm ' d.b. 123456: ' <Swr r.X 2>> 
+        <Proutm ' d.b. 2: ' <Rdr r.X>> 
+        <Wtr r.X 12>
+        <Sw2 r.X>;
 }
 
 $FUNC Sw2 
 {
-    R.x =
-        <Ptr R.x 3> 
-        <Proutm ' d.b. 2*(12 3): ' <Rdr R.x> <Gtr R.x>>
-        <Prout ' d.b. pusto: ' <Swr R.x '0' 4294967295 '0'>> 
-        <Prout <Rdr R.x>>;
+    r.X =
+        <Ptr r.X 3> 
+        <Proutm ' d.b. 2*(12 3): ' <Rdr r.X> <Gtr r.X>>
+        <Prout ' d.b. pusto: ' <Swr r.X '0' 4294967295 '0'>> 
+        <Prout <Rdr r.X>>;
 }
 
 $END.
