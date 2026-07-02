@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -23,132 +23,131 @@ $SPEC White_Spaces ' \n\t\v\f\r';
 
 $FUNC Cvb 
 {
-    '-' E('0').X = 0;
-    '-' V(D).X = '-' <Cvb0 V.X>;
+    '-' e('0').X = 0;
+    '-' v(d).X = '-' <Cvb0 v.X>;
     '+' = 0;
-    '+' V(D).X = <Cvb0 V.X>;
-    E(D).X = <Cvb0 E.X>;
+    '+' v(d).X = <Cvb0 v.X>;
+    e(d).X = <Cvb0 e.X>;
 }
 
 $FUNC Cvb0
 {
-    V.X S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9 = 
-        <Add (<Mul (<Cvb0 V.X>) 1000000000>) 
-            <Numb S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9>>;
-    E.X = <Numb E.X>;
+    v.X s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9 = 
+        <Add (<Mul (<Cvb0 v.X>) 1000000000>) 
+            <Numb s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9>>;
+    e.X = <Numb e.X>;
 }
 
 $FUNC Cvd 
 {
-    '-' E(0).X = '0';
-    '-' V(N).X = '-' <Cvd0 V.X>;
+    '-' e(0).X = '0';
+    '-' v(n).X = '-' <Cvd0 v.X>;
     '+' = '0';
-    '+' V(N).X = <Cvd0 V.X>;
-    E(N).X = <Cvd0 E.X>;
+    '+' v(n).X = <Cvd0 v.X>;
+    E(n).X = <Cvd0 e.X>;
 }
 
 $FUNC Cvd0 
 {
-    E.X = <Cvd1 <DrN (E.X) 1000000000>>;
+    e.X = <Cvd1 <DrN (e.X) 1000000000>>;
 }
 
 $FUNC Cvd1
 {
-    (E.Y) = <Symb E.Y>;
-    E.X (E.Y) = <Cvd0 E.X> <Cvd2 <Symb E.Y>>;
+    (e.Y) = <Symb e.Y>;
+    e.X (e.Y) = <Cvd0 e.X> <Cvd2 <Symb e.Y>>;
 }
 
 $FUNC Cvd2
 {
-    S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9 = S.D1 S.D2 S.D3 S.D4 S.D5 S.D6 S.D7 S.D8 S.D9;
-    E.X = <Cvd2 '0' E.X>;
+    s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9 = s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9;
+    e.X = <Cvd2 '0' e.X>;
 }
 
-* <Is_White_Space S.Any> == &True | &False
+* <Is_White_Space s.Any> == True | False
 $FUNC Is_White_Space
 {
-    S(:White_Spaces:)._ = &True;
-    S._ = &False;
+    s(:White_Spaces:)._ = True;
+    s._ = False;
 }
 
-* <Trim E.Any> == E.Any′
+* <Trim e.Any> == e.Any′
 $FUNC Trim
 {
-    E.Any = <TrimL <TrimR E.Any>>;
+    e.Any = <TrimL <TrimR e.Any>>;
 }
 
-* <TrimL E.Any> == E.Any′
+* <TrimL e.Any> == e.Any′
 $FUNC TrimL
 {
-    S(:White_Spaces:)._ E.Any = <TrimL E.Any>;
-    E._ = E._;
+    s(:White_Spaces:)._ e.Any = <TrimL e.Any>;
+    e._ = e._;
 }
 
-* <TrimR E.Any> == E.Any′
+* <TrimR e.Any> == e.Any′
 $FUNC TrimR
 {
-    E.Any S(:White_Spaces:)._ = <TrimR E.Any>;
-    E._ = E._;
+    e.Any s(:White_Spaces:)._ = <TrimR e.Any>;
+    e._ = e._;
 }
 
-* <Exist W.Elem E.Sample_Elems> == &True | &False
+* <Exist w.Elem e.Sample_Elems> == True | False
 $FUNC Exist
 {
-    W.Sample E.Items_B W.Sample E.Items_E = &True;
-    W._ E.__ = &False;
+    w.Sample e.Items_B w.Sample e.Items_E = True;
+    w._ e.__ = False;
 }
 
-* <Set W.Item*> == W.Item*′
+* <Set w.Item*> == w.Item*′
 $FUNC Set 
 {
-    $RIGHT E.Items_B W.Repeated E.Items_E W.Repeated E.Uniques = <Set E.Items_B W.Repeated E.Items_E> E.Uniques;
-    E._ = E._;
+    $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <Set e.Items_B w.Repeated e.Items_E> e.Uniques;
+    e._ = e._;
 }
 
-* <Type E.Any> == S.Type E.SubType E.Any
-* S.Type ::= &Void | &Label | &Number | &Reference | &Char | &Brackets | &OtherT
-* E.SubType ::= &Latin | &Digit |
+* <Type e.Any> == s.Type e.SubType e.Any
+* s.Type ::= Void | Label | Number | Reference | Char | Brackets | OtherT
+* e.SubType ::= Latin | Digit |
 $FUNC Type
 {
-    = &Void;
-    S(F).Symbol E._ = &Label S.Symbol E._;
-    S(N).Symbol E._ = &Number S.Symbol E._;
-    S(R).Symbol E._ = &Reference S.Symbol E._;
-    S(L).Symbol E._ = &Char &Latin S.Symbol E._;
-    S(D).Symbol E._ = &Char &Digit S.Symbol E._;
-    S(O).Symbol E._ = &Char S.Symbol E._;
-    (E.Expr) E._ = &Brackets (E.Expr) E._;
-    E._ = &OtherT E._;
+    = Void;
+    f.Symbol e._ = Label s.Symbol e._;
+    n.Symbol e._ = Number s.Symbol e._;
+    r.Symbol e._ = Reference s.Symbol e._;
+    l.Symbol e._ = Char Latin s.Symbol e._;
+    d.Symbol e._ = Char Digit s.Symbol e._;
+    o.Symbol e._ = Char s.Symbol e._;
+    (e.Expr) e._ = Brackets (e.Expr) e._;
+    e._ = OtherT e._;
 }
 
-* <Is_Type S.Type E.Any> == &True | &False
-* S.Type ::= &Void | &Label | &Number | &Reference | &Char | &Latin | &Digit |
-*            &Brackets | &OtherT
+* <Is_Type s.Type e.Any> == True | False
+* s.Type ::= Void | Label | Number | Reference | Char | Latin | Digit | Brackets | OtherT
 $FUNC Is_Type
 {
-    &Void = &True;
-    &Void E._ = &False;
-    &Label S(F).Symbol E._ = &True;
-    &Label E._ = &False;
-    &Number S(N).Symbol E._ = &True;
-    &Number E._ = &False;
-    &Reference S(R).Symbol E._ = &True;
-    &Reference E._ = &False;
-    &Char S(O).Symbol E._ = &True;
-    &Char E._ = &False;
-    &Latin S(L).Symbol E._ = &True;
-    &Latin E._ = &False;
-    &Digit S(D).Symbol E._ = &True;
-    &Digit E._ = &False;
-    &Brackets (E.Expr) E._ = &True;
-    &Brackets E._ = &False;
-    &OtherT = &False;
-    &OtherT S(F).Symbol E._ = &False;
-    &OtherT S(N).Symbol E._ = &False;
-    &OtherT S(R).Symbol E._ = &False;
-    &OtherT S(O).Symbol E._ = &False;
-    &OtherT (E.Expr) E._ = &False;
-    &OtherT E._ = &True;
+    Void = True;
+    Void e._ = False;
+    Label f.Symbol e._ = True;
+    Label e._ = False;
+    Number n.Symbol e._ = True;
+    Number e._ = False;
+    Reference r.Symbol e._ = True;
+    Reference e._ = False;
+    Char o.Symbol e._ = True;
+    Char e._ = False;
+    Latin l.Symbol e._ = True;
+    Latin e._ = False;
+    Digit d.Symbol e._ = True;
+    Digit e._ = False;
+    Brackets (e.Expr) e._ = True;
+    Brackets e._ = False;
+    OtherT = False;
+    OtherT f.Symbol e._ = False;
+    OtherT n.Symbol e._ = False;
+    OtherT r.Symbol e._ = False;
+    OtherT o.Symbol e._ = False;
+    OtherT (e.Expr) e._ = False;
+    OtherT e._ = True;
 }
 
 $END.
