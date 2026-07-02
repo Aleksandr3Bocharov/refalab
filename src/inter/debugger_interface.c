@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-01
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file debugger_interface.c  ----------
@@ -333,7 +333,7 @@ void refal_debugger(T_STATUS_TABLE *status_table)
     //----------------------------------
     while (true)
     {
-        printf("\n E._= (y/n) : ");
+        printf("\n e._=; (y/n) : ");
         parameters = card();
         if (parameters == NULL)
         {
