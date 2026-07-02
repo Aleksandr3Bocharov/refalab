@@ -590,7 +590,7 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
                 const char *label = (char *)label_length - *label_length;
                 for (uint8_t i = 1; i <= *label_length; i++, label++)
                     putchar(toupper((unsigned char)*label));
-                if (printm->next->tag == TAGN)
+                if (printm->next->tag == TAGN || printm->next->tag == TAGF)
                     putchar(' ');
             }
             else if (printm->tag == TAGR)

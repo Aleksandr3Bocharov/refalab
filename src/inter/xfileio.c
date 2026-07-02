@@ -518,7 +518,7 @@ static void fprintm_(void)
                         symbol[0] = (char)toupper((unsigned char)*label);
                         strcat(string, symbol);
                     }
-                    if (current_argument->next->tag == TAGN)
+                    if (current_argument->next->tag == TAGN || current_argument->next->tag == TAGF)
                         strcat(string, " ");
                 }
                 else if (current_argument->tag == TAGR)
