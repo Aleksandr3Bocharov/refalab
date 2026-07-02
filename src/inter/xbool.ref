@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -16,72 +16,72 @@ $ENTRY If, And, Or, Not;
 $EXTERN Call;
 $EMPTY True, False;
 
-$SPEC Bool &True &False;
+$SPEC Bool True False;
 
-* <If (V.Cond E.Any)+ (E.Any)> = E.Any
-* V.Cond ::= &True | &False | (E.Any)
+* <If (v.Cond e.Any)+ (e.Any)> = e.Any
+* v.Cond ::= True | False | (e.Any)
 $FUNC If  
 {
-    E(B).CExp = <If_Aux E.CExp>;
+    e(b).CExp = <If_Aux e.CExp>;
 }
 
 $FUNC If_Aux 
 {
-    (&True E.Expr) E._ W.False = <If_Aux_Get E.Expr>;
-    (&False E._) (E.False) = <If_Aux_Get E.False>;
-    (&False E._) E.Rest W.False = <If_Aux E.Rest W.False>;
-    ((E.BExp) E.Expr) E.Rest W.False = <If_Aux (<BCheck < E.BExp>> E.Expr) E.Rest W.False>;
+    (True e.Expr) e._ w.False = <If_Aux_Get e.Expr>;
+    (False e._) (e.False) = <If_Aux_Get e.False>;
+    (False e._) e.Rest w.False = <If_Aux e.Rest w.False>;
+    ((e.BExp) e.Expr) e.Rest w.False = <If_Aux (<BCheck < e.BExp>> e.Expr) e.Rest w.False>;
 }
 
 $FUNC If_Aux_Get
 {
-    (&Call E.Expr) = < E.Expr>;
-    E._ = E._;
+    (Call e.Expr) = < e.Expr>;
+    e._ = e._;
 }
 
 $FUNC BCheck
 {
-    S(:Bool:).Bool = S.Bool;
+    s(:Bool:).Bool = s.Bool;
 }
 
-* <And E(:Bool: B).BExp> = &True | &False
+* <And e(:Bool: b).BExp> = True | False
 $FUNC And
 {
-    E(:Bool: B).BExp = <And_Aux E.BExp>;
+    e(:Bool: b).BExp = <And_Aux e.BExp>;
 }
 
 $FUNC And_Aux 
 {
-    = &True;
-    &False E._ = &False;
-    &True E.BExp = <And_Aux E.BExp>;
-    (E.Exp) E.BExp_E = <And_Aux <BExp_Check < E.Exp>> E.BExp_E>;
+    = True;
+    False e._ = False;
+    True e.BExp = <And_Aux e.BExp>;
+    (e.Exp) e.BExp_E = <And_Aux <BExp_Check < e.Exp>> e.BExp_E>;
 }
 
 $FUNC BExp_Check
 {
-    E(:Bool: B).BExp = E.BExp;
+    e(:Bool: b).BExp = e.BExp;
 }
 
-* <Or E(:Bool: B).BExp> = &True | &False
+* <Or e(:Bool: b).BExp> = True | False
 $FUNC Or 
 {  
-    E(:Bool: B).BExp = <Or_Aux E.BExp>;
+    e(:Bool: b).BExp = <Or_Aux e.BExp>;
 }
 
 $FUNC Or_Aux 
 { 
-    = &False;
-    &True E._ = &True;
-    &False E.BExp = <Or_Aux E.BExp>;
-    (E.Exp) E.BExp_E = <Or_Aux <BExp_Check < E.Exp>> E.BExp_E>;
+    = False;
+    True e._ = True;
+    False e.BExp = <Or_Aux e.BExp>;
+    (e.Exp) e.BExp_E = <Or_Aux <BExp_Check < e.Exp>> e.BExp_E>;
 }
 
-* <Not S(:Bool:).Bool> = &True | &False
+* <Not s(:Bool:).Bool> = True | False
 $FUNC Not 
 {
-    &True = &False;
-    &False = &True;
+    True = False;
+    False = True;
 }
 
 $END.

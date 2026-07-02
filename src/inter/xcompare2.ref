@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -13,114 +13,114 @@ $ENTRY QSortN, MinN, MaxN;
 $ENTRY QSortW, MinW, MaxW;
 $EXTERN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
 
-* <QSortN E.AnyNumbers> == E.Sort_AnyNumbers
+* <QSortN e.AnyNumbers> == e.Sort_AnyNumbers
 $FUNC QSortN
 {
     = ;
-    W.Pivot = (<NCheck <Unbrackets W.Pivot>>);
-    W.Pivot E.Items = <QSortN_Aux <FoldL &DoQSortN (() (W.Pivot) ()) E.Items>>;
+    w.Pivot = (<NCheck <Unbrackets w.Pivot>>);
+    w.Pivot e.Items = <QSortN_Aux <FoldL DoQSortN (() (w.Pivot) ()) e.Items>>;
 }
 
 $FUNC QSortN_Aux
 {
-    ((E.Less) (E.Equal) (E.Greater)) = <QSortN E.Less> E.Equal <QSortN E.Greater>;
+    ((e.Less) (e.Equal) (e.Greater)) = <QSortN e.Less> e.Equal <QSortN e.Greater>;
 }
 
 $FUNC DoQSortN 
 {
-    (W.Less ((E.Pivot) E.Equal) W.Greater) W.Next = <DoQSortN_Aux <NRel W.Next E.Pivot> (W.Less ((E.Pivot) E.Equal) W.Greater)>;
+    (w.Less ((e.Pivot) e.Equal) w.Greater) w.Next = <DoQSortN_Aux <NRel w.Next e.Pivot> (w.Less ((e.Pivot) e.Equal) w.Greater)>;
 }
 
 $FUNC DoQSortN_Aux
 {
-    '<' W.Next E._ ((E.Less) E.__) = ((E.Less W.Next) E.__);
-    '=' W.Next E._ (W.Less (E.Equal) W.Greater) = (W.Less (E.Equal W.Next) W.Greater);
-    '>' W.Next E._ (E.__ (E.Greater)) = (E.__ (E.Greater W.Next));
+    '<' w.Next e._ ((e.Less) e.__) = ((e.Less w.Next) e.__);
+    '=' w.Next e._ (w.Less (e.Equal) w.Greater) = (w.Less (e.Equal w.Next) w.Greater);
+    '>' w.Next e._ (e.__ (e.Greater)) = (e.__ (e.Greater w.Next));
 }
 
-* <MinN (E.First) (E.Number)*> == V.Min
+* <MinN (e.First) (e.Number)*> == v.Min
 $FUNC MinN
 {
-    W.First E.Tail = <NNorm <UnBrackets <FoldL &DoMinN W.First E.Tail>>>;
+    w.First e.Tail = <NNorm <UnBrackets <FoldL DoMinN w.First e.Tail>>>;
 }
 
 $FUNC DoMinN
 {
-    W.X (E.Y) = <DoMinN_Aux <NRel W.X E.Y>>;
+    w.X (e.Y) = <DoMinN_Aux <NRel w.X e.Y>>;
 }
 
 $FUNC DoMinN_Aux 
 {
-    '<' W.X E._ = W.X;
-    S._ W.__ E.Y = (E.Y);
+    '<' w.X e._ = w.X;
+    s._ w.__ e.Y = (e.Y);
 }
 
-* <MaxN (E.First) (E.Number)*> == V.Max
+* <MaxN (e.First) (e.Number)*> == v.Max
 $FUNC MaxN
 {
-    W.First E.Tail = <NNorm <UnBrackets <FoldL &DoMaxN W.First E.Tail>>>;
+    w.First e.Tail = <NNorm <UnBrackets <FoldL DoMaxN w.First e.Tail>>>;
 }
 
 $FUNC DoMaxN
 {
-    W.X (E.Y) = <DoMaxN_Aux <NRel W.X E.Y>>;
+    w.X (e.Y) = <DoMaxN_Aux <NRel w.X e.Y>>;
 }
 
 $FUNC DoMaxN_Aux
 {
-    '>' W.X E._ = W.X;
-    S._ W.__ E.Y = (E.Y);
+    '>' w.X e._ = w.X;
+    s._ w.__ e.Y = (e.Y);
 }
 
-* <QSortW E.Any> == E.Sort_Any
+* <QSortW e.Any> == e.Sort_Any
 $FUNC QSortW
 {
     = ;
-    W.Pivot = W.Pivot;
-    W.Pivot E.Items = <QSortW_Aux <FoldL &DoQSortW (() (W.Pivot) ()) E.Items>>;
+    w.Pivot = w.Pivot;
+    w.Pivot e.Items = <QSortW_Aux <FoldL DoQSortW (() (w.Pivot) ()) e.Items>>;
 }
 
 $FUNC QSortW_Aux
 {
-    ((E.Less) (E.Equal) (E.Greater)) = <QSortW E.Less> E.Equal <QSortW E.Greater>;
+    ((e.Less) (e.Equal) (e.Greater)) = <QSortW e.Less> e.Equal <QSortW e.Greater>;
 }
 
 $FUNC DoQSortW
 {
-    (W.Less (W.Pivot E.Equal) W.Greater) W.Next = <DoQSortW_Aux <LRel (W.Next) W.Pivot> (W.Less (W.Pivot E.Equal) W.Greater) W.Next>;
+    (w.Less (w.Pivot e.Equal) w.Greater) w.Next = <DoQSortW_Aux <LRel (w.Next) w.Pivot> (w.Less (w.Pivot e.Equal) w.Greater) w.Next>;
 }
 
 $FUNC DoQSortW_Aux
 {
-    '<' ((E.Less) E._) W.Next = ((E.Less W.Next) E._);
-    '=' (W.Less (E.Equal) W.Greater) W.Next = (W.Less (E.Equal W.Next) W.Greater);
-    '>' (E._ (E.Greater)) W.Next = (E._ (E.Greater W.Next));
+    '<' ((e.Less) e._) w.Next = ((e.Less w.Next) e._);
+    '=' (w.Less (e.Equal) w.Greater) w.Next = (w.Less (e.Equal w.Next) w.Greater);
+    '>' (e._ (e.Greater)) w.Next = (e._ (e.Greater w.Next));
 }
 
-* <MinW W.First E.Tail> == W.Min
+* <MinW w.First e.Tail> == w.Min
 $FUNC MinW
 {
-    W.X W.Y = <MinW_Aux <LRel (W.X) W.Y> W.X W.Y>;
-    W.First E.Tail = <FoldL &MinW W.First E.Tail>;
+    w.X w.Y = <MinW_Aux <LRel (w.X) w.Y> w.X w.Y>;
+    w.First e.Tail = <FoldL MinW w.First e.Tail>;
 }
 
 $FUNC MinW_Aux
 {
-    '<' W.X E._ = W.X;
-    E._ W.Y = W.Y;
+    '<' w.X e._ = w.X;
+    e._ w.Y = w.Y;
 }
 
-* <MaxW W.First E.Tail> == W.Max
+* <MaxW w.First e.Tail> == w.Max
 $FUNC MaxW 
 {
-    W.X W.Y = <MaxW_Aux <LRel (W.X) W.Y> W.X W.Y>;
-    W.First E.Tail = <FoldL &MaxW W.First E.Tail>;
+    w.X w.Y = <MaxW_Aux <LRel (w.X) w.Y> w.X w.Y>;
+    w.First e.Tail = <FoldL MaxW w.First e.Tail>;
 }
 
 $FUNC MaxW_Aux
 {
-    '>' W.X E._ = W.X;
-    E._ W.Y = W.Y;
+    '>' w.X e._ = w.X;
+    e._ w.Y = w.Y;
 }
 
 $END.

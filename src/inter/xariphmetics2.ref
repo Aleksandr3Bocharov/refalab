@@ -1,6 +1,6 @@
 * Copyright (c) 2026 Aleksandr Bocharov
 * SPDX-License-Identifier: MIT
-* 2026-06-25
+* 2026-07-01
 * https://github.com/Aleksandr3Bocharov/refalab
 
 *====================================================================
@@ -17,27 +17,27 @@ $EXTERN True, False;
 
 $SPEC Max_Number 4294967295;
 
-* <Inc E.Number> == V.Number1
-* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* V.Number1 ::= '-'? S(N).Number+
+* <Inc e.Number> == v.Number1
+* e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
+* v.Number1 ::= '-'? s(n).Number+
 $FUNC Inc
 {
-    E.Number = <Add (E.Number) 1>;
+    e.Number = <Add (e.Number) 1>;
 }
 
-* <Dec E.Number> == V.Number1
-* E.Number ::= '+' S(N).Number+ | '-' S(N).Number+ | S(N).Number*
-* V.Number1 ::= '-'? S(N).Number+
+* <Dec e.Number> == v.Number1
+* e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
+* v.Number1 ::= '-'? s(n).Number+
 $FUNC Dec 
 {
-    E.Number = <Sub (E.Number) 1>;
+    e.Number = <Sub (e.Number) 1>;
 }
 
-* <Is_Max_Number S.Any> == &True | &False
+* <Is_Max_Number s.Any> == True | False
 $FUNC Is_Max_Number
 {
-    S(:Max_Number:)._ = &True;
-    S._ = &False;
+    s(:Max_Number:)._ = True;
+    s._ = False;
 }
 
 $END.
