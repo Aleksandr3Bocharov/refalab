@@ -1137,7 +1137,7 @@ void scan_sentence_element(void)
             break;
         case OSH102:
             scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(102, "Sign '.' followed by no letter or underscore");
+            print_error_string(102, "Sign '.' followed by no upper letter or underscore");
             scanner_state = SCNERR;
             break;
         case OSH103:
@@ -1147,7 +1147,7 @@ void scan_sentence_element(void)
             break;
         case SOSH203:
             scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(203, "Sign ':' followed by no letter or underscore");
+            print_error_string(203, "Sign ':' followed by no upper letter or underscore");
             scanner_state = SCNERR;
             break;
         case SOSH204:
@@ -1550,7 +1550,7 @@ static bool compile_specifer(char tail)
             break;
         case OSH203:
             scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(203, "Sign ':' followed by no letter or underscore within specifier ");
+            print_error_string(203, "Sign ':' followed by no upper letter or underscore within specifier ");
             specifier_state = OSH200;
             break;
         case OSH204:
