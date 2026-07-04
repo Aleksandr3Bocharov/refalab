@@ -19,7 +19,7 @@ $FUNC Go
         <F4>;
 }
 
-*  prowerka mul, dr, div, add, sub
+*  prowerka Mul, Dr, Div, Add, Sub
 $FUNC F1 
 {    
     = 
@@ -56,7 +56,7 @@ $FUNC F1
         <Prdl ('-' 5) '-' 33>;
 }
 
-*  prowerka muln, drn, divn, addn, subn
+*  prowerka Muln, Drn, Divn, Addn, Subn
 $FUNC F2
 {
     =
@@ -107,7 +107,7 @@ $FUNC F3
         <Prdln (1)>;
 }
 
-*  prowerka p1, m1, numb, symb
+*  prowerka P1, M1, Numb, Symb
 $FUNC F4
 {
     =
