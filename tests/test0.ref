@@ -47,7 +47,7 @@ $FUNC Prspe
     = ;
 }
 
-*      prowerka mul,p1,lengr,lengw,first,last,numb,symb,add,m1,sub
+*      prowerka Mul, P1, Lengr, Lengw, First, Last, Numb, Symb, Add, M1, Sub
 $FUNC Dal1
 {
     =
