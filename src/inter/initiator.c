@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "interface.h"
 
-// GO -> go
+// GO -> refalab_go
 extern uint8_t refalab_go;
 
 int main(int argc, char *argv[])
