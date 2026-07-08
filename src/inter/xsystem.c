@@ -4,9 +4,9 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xsystem.c  ---------
-//       MO: arg, system, exit, get_env,
-//           change_dir, get_current_dir,
-//           step
+//       MO: Arg, System, Exit, Get_env,
+//           Change_dir, Get_current_dir,
+//           Step
 //-------------------------------------
 
 #include <stdio.h>
