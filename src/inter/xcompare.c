@@ -4,8 +4,8 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xcompare.c  ----------
-//   MO: nrel, ltn, len, eqn, nen, gen, gtn
-//   lrel, ltl, lel, eql, nel, gel, gtl
+//   MO: Nrel, Ltn, Len, Eqn, Nen, Gen, Gtn
+//   Lrel, Ltl, Lel, Eql, Nel, Gel, Gtl
 //---------------------------------------
 
 #include <stddef.h>
