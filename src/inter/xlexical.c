@@ -5,11 +5,11 @@
 
 //-----------  file xlexical.c  ----------
 //                 Lexical MO:
-//     numb, symb, first, last,
-//     lengr, lengw, multe,
-//     chr, ord, upper, lower,
-//     empty, del_first2, del_lastw,
-//     unbrackets
+//     Numb, Symb, First, Last,
+//     Lengr, Lengw, Multe,
+//     Chr, Ord, Upper, Lower,
+//     Empty, Del_first2, Del_lastw,
+//     Unbrackets
 //----------------------------------------
 
 #include <stdio.h>
