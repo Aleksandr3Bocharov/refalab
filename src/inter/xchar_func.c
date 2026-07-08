@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xchar_func.c  -----------
-//   MO: ftochar, functab, chartof
+//   MO: Ftochar, Functab, Chartof
 //------------------------------------------
 
 #include <stdio.h>
