@@ -4,8 +4,8 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xrandom.c  ---------
-//        MO: random,
-//            random_number
+//        MO: Random,
+//            Random_number
 //-------------------------------------
 
 #include <stdlib.h>
