@@ -4,9 +4,9 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xtime.c  ---------
-//        MO: time (date and time),
-//            tm (timer),
-//            tm_elapsed (current interpretator time)
+//        MO: Time (date and time),
+//            Tm (timer),
+//            Tm_elapsed (current interpretator time)
 //-----------------------------------
 
 #define _POSIX_C_SOURCE 199309L
