@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xstore.c  ----------
-//       MO: br, dg, dgall, rp, cp
+//       MO: Br, Dg, Dgall, Rp, Cp
 //-------------------------------------
 
 #include <stddef.h>
