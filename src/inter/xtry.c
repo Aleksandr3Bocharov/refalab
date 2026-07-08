@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xtry.c  ---------
-//                 MO: try
+//                 MO: Try
 //----------------------------------
 
 #include <stdio.h>
