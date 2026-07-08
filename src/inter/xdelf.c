@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xdelf.c  ----------
-//               MO: delf
+//               MO: Delf
 //------------------------------------
 
 #include <stddef.h>
