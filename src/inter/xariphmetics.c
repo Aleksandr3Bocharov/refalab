@@ -5,10 +5,10 @@
 
 //----------  file xariphmetics.c ----------
 //              Ariphmetics MO:
-//       add, sub, mul, dr, div,
-//       addn, subn, muln, drn, divn,
-//       gcd, ncheck, nnorm, abs, minus,
-//       get_max_number, p1, m1
+//       Add, Sub, Mul, Dr, Div,
+//       Addn, Subn, Muln, Drn, Divn,
+//       Gcd, Ncheck, Nnorm, Abs, Minus,
+//       Get_max_number, P1, M1
 //------------------------------------------
 
 #include <stddef.h>
