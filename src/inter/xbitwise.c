@@ -5,7 +5,7 @@
 
 //----------  file xbitwise.c  ----------
 //                Bitwise MO:
-//      band, bor, bxor, bnot, shl, shr
+//      Band, Bor, Bxor, Bnot, Shl, Shr
 //---------------------------------------
 
 #include <stddef.h>
