@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xbox.c  ---------
-//       MO: gtr, rdr, wtr, swr, new
+//       MO: Gtr, Rdr, Wtr, Swr, New
 //----------------------------------
 
 #include <stddef.h>
