@@ -1952,13 +1952,48 @@ static void blanks_out(void)
 {
     while (flags.end_refalab_source == false)
     {
-        char symbol = get_current_char();
+        const char symbol = get_current_char();
         if (symbol == '/')
         {
             next_char();
-            if (flags.end_refalab_source == false && get_current_char() == '/')
-                while (flags.end_refalab_source == false && get_current_char() != '\n')
+            if (flags.end_refalab_source == false)
+            {
+                const char next_symbol = get_current_char();
+                if (next_symbol == '/')
+                    while (flags.end_refalab_source == false && get_current_char() != '\n')
+                        next_char();
+                else if (next_symbol == '*')
+                {
+                    const size_t begin_comment_cursor = refalab_source_cursor;
                     next_char();
+                    bool comment_closed = false;
+                    while (flags.end_refalab_source == false)
+                    {
+                        if (get_current_char() == '*')
+                        {
+                            const size_t next_pos = refalab_source_cursor + 1;
+                            if (next_pos < refalab_source_size && *(refalab_source_buffer + next_pos) == '/')
+                            {
+                                next_char();
+                                next_char();
+                                comment_closed = true;
+                                break;
+                            }
+                        }
+                        next_char();
+                    }
+                    if (!comment_closed)
+                    {
+                        scanner.last_error_cursor = begin_comment_cursor;
+                        print_error_string(10, "Unterminated comment");
+                    }
+                }
+                else
+                {
+                    previous_char();
+                    break;
+                }
+            }
             else
             {
                 previous_char();
