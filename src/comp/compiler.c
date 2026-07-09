@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-09
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -1953,16 +1953,24 @@ static void blanks_out(void)
     while (flags.end_refalab_source == false)
     {
         char symbol = get_current_char();
-        size_t column;
-        get_location(NULL, &column, refalab_source_cursor);
-        if (isspace((unsigned char)symbol) != 0)
+        if (symbol == '/')
+        {
             next_char();
-        else if (symbol == '*' && column == 1)
-            while (flags.end_refalab_source == false && get_current_char() != '\n')
-                next_char();
+            if (flags.end_refalab_source == false && get_current_char() == '/')
+                while (flags.end_refalab_source == false && get_current_char() != '\n')
+                    next_char();
+            else
+            {
+                previous_char();
+                break;
+            }
+        }
+        else if (isspace((unsigned char)symbol) != 0)
+            next_char();
         else
             break;
     }
+    return;
 }
 
 static void print_conclusion(void)
