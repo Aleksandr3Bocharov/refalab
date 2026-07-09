@@ -1,12 +1,12 @@
-* Copyright (c) 2026 Aleksandr Bocharov
-* SPDX-License-Identifier: MIT
-* 2026-07-01
-* https://github.com/Aleksandr3Bocharov/refalab
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-07-01
+// https://github.com/Aleksandr3Bocharov/refalab
 
-*====================================================================
-* Рефал-функции библиотеки РефалАБ.
-* Спецификаторы библиотеки РефалАБ.
-*====================================================================
+//====================================================================
+// Рефал-функции библиотеки РефалАБ.
+// Спецификаторы библиотеки РефалАБ.
+//====================================================================
 
 $START ARIPHMETICS2;
 
@@ -17,23 +17,23 @@ $EXTERN True, False;
 
 $SPEC Max_Number 4294967295;
 
-* <Inc e.Number> == v.Number1
-* e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
-* v.Number1 ::= '-'? s(n).Number+
+// <Inc e.Number> == v.Number1
+// e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
+// v.Number1 ::= '-'? s(n).Number+
 $FUNC Inc
 {
     e.Number = <Add (e.Number) 1>;
 }
 
-* <Dec e.Number> == v.Number1
-* e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
-* v.Number1 ::= '-'? s(n).Number+
+// <Dec e.Number> == v.Number1
+// e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
+// v.Number1 ::= '-'? s(n).Number+
 $FUNC Dec 
 {
     e.Number = <Sub (e.Number) 1>;
 }
 
-* <Is_Max_Number s.Any> == True | False
+// <Is_Max_Number s.Any> == True | False
 $FUNC Is_Max_Number
 {
     s(:Max_Number:)._ = True;

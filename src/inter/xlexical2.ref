@@ -1,13 +1,13 @@
-* Copyright (c) 2026 Aleksandr Bocharov
-* SPDX-License-Identifier: MIT
-* 2026-07-01
-* https://github.com/Aleksandr3Bocharov/refalab
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-07-01
+// https://github.com/Aleksandr3Bocharov/refalab
 
-*====================================================================
-* Рефал-функции библиотеки РефалАБ.
-* Спецификаторы библиотеки РефалАБ.
-* Пустые функции библиотеки РефалАБ.
-*====================================================================
+//====================================================================
+// Рефал-функции библиотеки РефалАБ.
+// Спецификаторы библиотеки РефалАБ.
+// Пустые функции библиотеки РефалАБ.
+//====================================================================
 
 $START LEXICAL2;
 
@@ -64,50 +64,50 @@ $FUNC Cvd2
     e.X = <Cvd2 '0' e.X>;
 }
 
-* <Is_White_Space s.Any> == True | False
+// <Is_White_Space s.Any> == True | False
 $FUNC Is_White_Space
 {
     s(:White_Spaces:)._ = True;
     s._ = False;
 }
 
-* <Trim e.Any> == e.Any′
+// <Trim e.Any> == e.Any′
 $FUNC Trim
 {
     e.Any = <TrimL <TrimR e.Any>>;
 }
 
-* <TrimL e.Any> == e.Any′
+// <TrimL e.Any> == e.Any′
 $FUNC TrimL
 {
     s(:White_Spaces:)._ e.Any = <TrimL e.Any>;
     e._ = e._;
 }
 
-* <TrimR e.Any> == e.Any′
+// <TrimR e.Any> == e.Any′
 $FUNC TrimR
 {
     e.Any s(:White_Spaces:)._ = <TrimR e.Any>;
     e._ = e._;
 }
 
-* <Exist w.Elem e.Sample_Elems> == True | False
+// <Exist w.Elem e.Sample_Elems> == True | False
 $FUNC Exist
 {
     w.Sample e.Items_B w.Sample e.Items_E = True;
     w._ e.__ = False;
 }
 
-* <Set w.Item*> == w.Item*′
+// <Set w.Item*> == w.Item*′
 $FUNC Set 
 {
     $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <Set e.Items_B w.Repeated e.Items_E> e.Uniques;
     e._ = e._;
 }
 
-* <Type e.Any> == s.Type e.SubType e.Any
-* s.Type ::= Void | Label | Number | Reference | Char | Brackets | OtherT
-* e.SubType ::= Latin | Digit |
+// <Type e.Any> == s.Type e.SubType e.Any
+// s.Type ::= Void | Label | Number | Reference | Char | Brackets | OtherT
+// e.SubType ::= Latin | Digit |
 $FUNC Type
 {
     = Void;
@@ -121,8 +121,8 @@ $FUNC Type
     e._ = OtherT e._;
 }
 
-* <Is_Type s.Type e.Any> == True | False
-* s.Type ::= Void | Label | Number | Reference | Char | Latin | Digit | Brackets | OtherT
+// <Is_Type s.Type e.Any> == True | False
+// s.Type ::= Void | Label | Number | Reference | Char | Latin | Digit | Brackets | OtherT
 $FUNC Is_Type
 {
     Void = True;
