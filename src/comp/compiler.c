@@ -1753,10 +1753,11 @@ static void equ(void)
 }
 
 static void func(void)
-{
+{ // treatement of directives having 'FUNC' type
     while (true)
     {
         get_statement_key(true);
+        flags.scanner_station = false;
         flags.left_part_sentence = true;
         if (strcmp(statement_key, "LEFT") == 0)
             compile_sentence(true);
@@ -1795,13 +1796,14 @@ static void func(void)
 }
 
 static void specifier(void)
-{ // treatement of directives having 'S' type
+{ // treatement of directives having 'SPEC' type
     do
     {
         blanks_out();
         scanner.label_cursor_number = refalab_source_cursor;
         if (!get_identifier(scanner.label_name, &scanner.label_name_length))
             break;
+        flags.left_part_sentence = true;
         specifier_definition();
         if (compile_specifer(';'))
         {
