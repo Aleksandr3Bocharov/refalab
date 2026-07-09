@@ -1758,6 +1758,7 @@ static void func(void)
     {
         get_statement_key(true);
         flags.scanner_station = false;
+        flags.scanner_station_k = false;
         flags.left_part_sentence = true;
         if (strcmp(statement_key, "LEFT") == 0)
             compile_sentence(true);
