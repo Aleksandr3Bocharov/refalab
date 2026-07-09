@@ -1,7 +1,7 @@
-* Copyright (c) 2026 Aleksandr Bocharov
-* SPDX-License-Identifier: MIT
-* 2026-07-01
-* https://github.com/Aleksandr3Bocharov/refalab
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-07-01
+// https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST2;
 
@@ -16,7 +16,7 @@ $FUNC Go
         <FuncTab Prout> 
         < <ChartoF 'prout'> ' eto prout'> 
         < <ChartoF 'PROUT'> ' eto PROUT'> 
-*       <FOpen 'r' 10 'bb'>     !!  neot  !!
+//      <FOpen 'r' 10 'bb'>     !!  neot  !!
         <FOpen 'w' 0 'lala.tes'> 
         <FPutS 0 ' str 1\n'>
         <FPutS 0 ' str 2\n'>

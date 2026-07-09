@@ -1,7 +1,7 @@
-* Copyright (c) 2026 Aleksandr Bocharov
-* SPDX-License-Identifier: MIT
-* 2026-07-01
-* https://github.com/Aleksandr3Bocharov/refalab
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-07-01
+// https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST0;
 
@@ -37,7 +37,7 @@ $FUNC Go
         <Prspe Pus 'as01a432l7l' Em3>;
 }
 
-*      prowerka  specifikacii
+//      prowerka  specifikacii
 $FUNC Prspe
 {
     e.E s(Em1 Em2 Em3).S = <Prout ' symbol-&em' s.S> <Prspe e.E>;
@@ -47,7 +47,7 @@ $FUNC Prspe
     = ;
 }
 
-*      prowerka Mul, P1, Lengr, Lengw, First, Last, Numb, Symb, Add, M1, Sub
+//      prowerka Mul, P1, Lengr, Lengw, First, Last, Numb, Symb, Add, M1, Sub
 $FUNC Dal1
 {
     =
@@ -57,11 +57,11 @@ $FUNC Dal1
         <Prmu (16777216) 512>   
         <Prdl (65536) 4>
         <Prdl (65536) 777> 
-*       <Prdl (1) 0>       neot
+//      <Prdl (1) 0>       neot
         <Prp1 4>
         <Prp1 65536>
         <Prp1 128> 
-*       <Prp1 4294967295>      neot
+//      <Prp1 4294967295>      neot
         <Dal>;
 }
 
@@ -74,12 +74,12 @@ $FUNC Dal
         <Prla 3 '123456'>
         <Prfe 1 2> 
         <Prla 3 1 2 3 '567'> 
-*       <Prfe '123'>          neot
-*       <Prla '123'>          neot
+//      <Prfe '123'>          neot
+//      <Prla '123'>          neot
         <Prnu '125'>
         <Prnu '76666'>
         <Prnu '4294967295'> 
-*       <Prnu '4394967295'>                 neot
+//      <Prnu '4394967295'>                 neot
         <Prnu '-45'> 
         <Prsy 5678>
         <Prsy 4294967295> 

@@ -1,7 +1,7 @@
-* Copyright (c) 2026 Aleksandr Bocharov
-* SPDX-License-Identifier: MIT
-* 2026-06-25
-* https://github.com/Aleksandr3Bocharov/refalab
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-06-25
+// https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST1;
 
@@ -19,7 +19,7 @@ $FUNC Go
         <F4>;
 }
 
-*  prowerka Mul, Dr, Div, Add, Sub
+//  prowerka Mul, Dr, Div, Add, Sub
 $FUNC F1 
 {    
     = 
@@ -56,7 +56,7 @@ $FUNC F1
         <Prdl ('-' 5) '-' 33>;
 }
 
-*  prowerka Muln, Drn, Divn, Addn, Subn
+//  prowerka Muln, Drn, Divn, Addn, Subn
 $FUNC F2
 {
     =
@@ -93,7 +93,7 @@ $FUNC F2
         <Prdln( '-' 5) '-' 33>;     
 }
 
-*  neot
+//  neot
 $FUNC F3
 {
     =
@@ -107,7 +107,7 @@ $FUNC F3
         <Prdln (1)>;
 }
 
-*  prowerka P1, M1, Numb, Symb
+//  prowerka P1, M1, Numb, Symb
 $FUNC F4
 {
     =
@@ -128,7 +128,7 @@ $FUNC F4
         <Prsy 1000000000> 
         <Prsy 4294967295> 
         <Prsy '+' 0 0 0> 
-*  neot
+//  neot
         <Prp1 4294967295> 
         <Prp1 '+' 1> 
         <Prm1 0> 
@@ -136,7 +136,7 @@ $FUNC F4
         <Prnu '-+45'> 
         <Prnu '++'>      
         <Prsy 1 0> 
-*  prowerka LRel
+//  prowerka LRel
         <LRel ('a') 'a'> 
         <LRel (1 2) 1 2> 
         <LRel (LRel) LRel> 
@@ -164,7 +164,7 @@ $FUNC F4
         <LRel ('a' ('b')) 'a' ('c')>
         <LRel ('a' ('b')) 'a' ('b')>
         <LRel ('a' ('bc')) 'a' ('b')>
-*  neot
+//  neot
         <LRel>
         <LRel 0>
         <LRel LRel>
