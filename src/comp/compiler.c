@@ -1757,6 +1757,7 @@ static void func(void)
     while (true)
     {
         get_statement_key(true);
+        flags.left_part_sentence = true;
         if (strcmp(statement_key, "LEFT") == 0)
             compile_sentence(true);
         else if (strcmp(statement_key, "RIGHT") == 0)
