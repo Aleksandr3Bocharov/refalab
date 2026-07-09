@@ -13,7 +13,7 @@ $ENTRY QSortN, MinN, MaxN;
 $ENTRY QSortW, MinW, MaxW;
 $EXTERN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
 
-// <QSortN e.AnyNumbers> == e.Sort_AnyNumbers
+//  <QSortN e.AnyNumbers> == e.Sort_AnyNumbers
 $FUNC QSortN
 {
     = ;
@@ -38,7 +38,7 @@ $FUNC DoQSortN_Aux
     '>' w.Next e._ (e.__ (e.Greater)) = (e.__ (e.Greater w.Next));
 }
 
-// <MinN (e.First) (e.Number)*> == v.Min
+//  <MinN (e.First) (e.Number)*> == v.Min
 $FUNC MinN
 {
     w.First e.Tail = <NNorm <UnBrackets <FoldL DoMinN w.First e.Tail>>>;
@@ -55,7 +55,7 @@ $FUNC DoMinN_Aux
     s._ w.__ e.Y = (e.Y);
 }
 
-// <MaxN (e.First) (e.Number)*> == v.Max
+//  <MaxN (e.First) (e.Number)*> == v.Max
 $FUNC MaxN
 {
     w.First e.Tail = <NNorm <UnBrackets <FoldL DoMaxN w.First e.Tail>>>;
@@ -72,7 +72,7 @@ $FUNC DoMaxN_Aux
     s._ w.__ e.Y = (e.Y);
 }
 
-// <QSortW e.Any> == e.Sort_Any
+//  <QSortW e.Any> == e.Sort_Any
 $FUNC QSortW
 {
     = ;
@@ -97,7 +97,7 @@ $FUNC DoQSortW_Aux
     '>' (e._ (e.Greater)) w.Next = (e._ (e.Greater w.Next));
 }
 
-// <MinW w.First e.Tail> == w.Min
+//  <MinW w.First e.Tail> == w.Min
 $FUNC MinW
 {
     w.X w.Y = <MinW_Aux <LRel (w.X) w.Y> w.X w.Y>;
@@ -110,7 +110,7 @@ $FUNC MinW_Aux
     e._ w.Y = w.Y;
 }
 
-// <MaxW w.First e.Tail> == w.Max
+//  <MaxW w.First e.Tail> == w.Max
 $FUNC MaxW 
 {
     w.X w.Y = <MaxW_Aux <LRel (w.X) w.Y> w.X w.Y>;

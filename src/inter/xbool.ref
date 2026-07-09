@@ -18,8 +18,10 @@ $EMPTY True, False;
 
 $SPEC Bool True False;
 
-// <If (v.Cond e.Any)+ (e.Any)> = e.Any
-// v.Cond ::= True | False | (e.Any)
+/*
+    <If (v.Cond e.Any)+ (e.Any)> = e.Any
+    v.Cond ::= True | False | (e.Any)
+*/
 $FUNC If  
 {
     e(b).CExp = <If_Aux e.CExp>;
@@ -44,7 +46,7 @@ $FUNC BCheck
     s(:Bool:).Bool = s.Bool;
 }
 
-// <And e(:Bool: b).BExp> = True | False
+//  <And e(:Bool: b).BExp> = True | False
 $FUNC And
 {
     e(:Bool: b).BExp = <And_Aux e.BExp>;
@@ -63,7 +65,7 @@ $FUNC BExp_Check
     e(:Bool: b).BExp = e.BExp;
 }
 
-// <Or e(:Bool: b).BExp> = True | False
+//  <Or e(:Bool: b).BExp> = True | False
 $FUNC Or 
 {  
     e(:Bool: b).BExp = <Or_Aux e.BExp>;
@@ -77,7 +79,7 @@ $FUNC Or_Aux
     (e.Exp) e.BExp_E = <Or_Aux <BExp_Check < e.Exp>> e.BExp_E>;
 }
 
-// <Not s(:Bool:).Bool> = True | False
+//  <Not s(:Bool:).Bool> = True | False
 $FUNC Not 
 {
     True = False;

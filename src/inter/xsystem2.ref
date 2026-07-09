@@ -12,7 +12,7 @@ $START SYSTEM2;
 $ENTRY ArgList;
 $EXTERN P1, Arg;
 
-// <ArgList> == (s(o).Arg+)*
+//  <ArgList> == (s(o).Arg+)*
 $FUNC ArgList
 {
     = <ArgList_Aux 1>;
