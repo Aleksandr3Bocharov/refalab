@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -486,7 +486,7 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
             putchar('\'');
             const uint8_t *label_length = print->info.codef - 1;
             const char *label = (char *)label_length - *label_length;
-            for (uint8_t i = 1; i <= *label_length; i++, label++)
+            for (uint8_t i = 0; i < *label_length; i++, label++)
                 putchar(toupper((unsigned char)*label));
             putchar('\'');
         }
@@ -528,7 +528,7 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
         {
             const uint8_t *label_length = prints->info.codef - 1;
             const char *label = (char *)label_length - *label_length;
-            for (uint8_t i = 1; i <= *label_length; i++, label++)
+            for (uint8_t i = 0; i < *label_length; i++, label++)
                 putchar(toupper((unsigned char)*label));
         }
         else if (prints->tag == TAGR)
@@ -588,7 +588,7 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
             {
                 const uint8_t *label_length = printm->info.codef - 1;
                 const char *label = (char *)label_length - *label_length;
-                for (uint8_t i = 1; i <= *label_length; i++, label++)
+                for (uint8_t i = 0; i < *label_length; i++, label++)
                     putchar(toupper((unsigned char)*label));
                 if (printm->next->tag == TAGN || printm->next->tag == TAGF)
                     putchar(' ');

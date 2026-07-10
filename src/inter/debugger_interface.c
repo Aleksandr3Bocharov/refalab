@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file debugger_interface.c  ----------
@@ -73,7 +73,7 @@ static char *parameters = NULL;
 static size_t parameter_delimiters;
 static size_t parameter_length;
 static char *parameter = NULL;
-static char identifier[256];
+static char identifier[UINT8_MAX + 1];
 static uint32_t printed_step;
 static uint32_t current_step;
 static uint32_t leading_term_step;

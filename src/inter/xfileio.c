@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xfileio.c  ----------
@@ -317,7 +317,7 @@ static void fprint_(void)
                 const char *label = (char *)label_length - *label_length;
                 char symbol[2];
                 symbol[1] = '\0';
-                for (uint8_t i = 1; i <= *label_length; i++, label++)
+                for (uint8_t i = 0; i < *label_length; i++, label++)
                 {
                     symbol[0] = (char)toupper((unsigned char)*label);
                     strcat(string, symbol);
@@ -405,7 +405,7 @@ static void fprints_(void)
                 const char *label = (char *)label_length - *label_length;
                 char symbol[2];
                 symbol[1] = '\0';
-                for (uint8_t i = 1; i <= *label_length; i++, label++)
+                for (uint8_t i = 0; i < *label_length; i++, label++)
                 {
                     symbol[0] = (char)toupper((unsigned char)*label);
                     strcat(string, symbol);
@@ -513,7 +513,7 @@ static void fprintm_(void)
                     const char *label = (char *)label_length - *label_length;
                     char symbol[2];
                     symbol[1] = '\0';
-                    for (uint8_t i = 1; i <= *label_length; i++, label++)
+                    for (uint8_t i = 0; i < *label_length; i++, label++)
                     {
                         symbol[0] = (char)toupper((unsigned char)*label);
                         strcat(string, symbol);

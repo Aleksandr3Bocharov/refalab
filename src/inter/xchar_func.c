@@ -89,7 +89,7 @@ static void chartof_(void)
                 impossible = true;
                 break;
             }
-        if (i > 254)
+        if (i > UINT8_MAX)
             impossible = true;
     }
     if (impossible)
