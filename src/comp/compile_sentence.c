@@ -198,7 +198,7 @@ static uint8_t stoped_bracket_flag;                                             
 static uint32_t brackets_count[513];                                               // stack for counting of the brackets balance
 static uint16_t brackets_k_level;
 static uint8_t symbols_count;          // counter of the symbol number
-static char symbols_buffer[256];       // buffer for generating of the "text" statement
+static char symbols_buffer[255];       // buffer for generating of the "text" statement
 static uint8_t current_hole;           // current hole number
 static uint8_t free_segment_hole_list; // free segment number in the hole  list
 static uint8_t next_hole;              // next hole number
@@ -1468,17 +1468,17 @@ void compile_sentence(bool direction)
             state = TEXT1;
             break;
         case TEXT1:
-            symbols_count++;
             symbols_buffer[symbols_count] = current_sentence_element.code.info.infoc;
+            symbols_count++;
             scan_sentence_element();
-            if (symbols_count < 254 && current_sentence_element.type == SC && current_sentence_element.code.tag == TAGO)
+            if (symbols_count < 255 && current_sentence_element.type == SC && current_sentence_element.code.tag == TAGO)
                 break;
             if (symbols_count == 1)
-                generate_operator_n(n_nso, (uint8_t)symbols_buffer[1]);
+                generate_operator_n(n_nso, (uint8_t)symbols_buffer[0]);
             else
             {
                 generate_operator_n(n_text, symbols_count);
-                for (uint8_t k = 1; k <= symbols_count; k++)
+                for (uint8_t k = 0; k < symbols_count; k++)
                     macrocode_byte((uint8_t)symbols_buffer[k]);
             };
             state = SW_RPE;
