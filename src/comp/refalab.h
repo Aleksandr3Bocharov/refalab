@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-05-29
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file refalab.h  ----------
@@ -30,8 +30,8 @@
 
 #define MAX_NUMBER UINT32_MAX
 
-#define MAX_IDENTIFIER_LENGTH 40
-#define MAX_IDENTIFIER_EXTERN_LENGTH 32
+#define MAX_IDENTIFIER_LENGTH 254
+#define MAX_IDENTIFIER_EXTERN_LENGTH 254
 
 #endif
 

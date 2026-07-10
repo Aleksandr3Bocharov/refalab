@@ -148,7 +148,7 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t identifi
         if (options.full_name)
         {
             const int full_length = (int)scanner.module_name_length + (int)identifier_length + 1;
-            name_length = (uint8_t)(full_length > 255 ? 255 : full_length);
+            name_length = (uint8_t)(full_length > 254 ? 254 : full_length);
         }
         else
             name_length = identifier_length;
@@ -274,7 +274,7 @@ static void function_head(const char *identifier, uint8_t identifier_length)
         for (uint8_t i = 0; i < identifier_length; i++)
             macrocode_byte((uint8_t)*(identifier + i));
         const int full_length = name_length_add + identifier_length;
-        macrocode_byte((uint8_t)(full_length > 255 ? 255 : full_length));
+        macrocode_byte((uint8_t)(full_length > 254 ? 254 : full_length));
     }
     else
         macrocode_byte(0);

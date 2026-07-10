@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -163,7 +163,7 @@ static struct
     bool v_variable;
     bool eoe_mark;
     uint8_t jump_stack_pointer;
-} left_part_elements[256];
+} left_part_elements[255];
 
 static struct
 { // variable table elements
@@ -1471,7 +1471,7 @@ void compile_sentence(bool direction)
             symbols_count++;
             symbols_buffer[symbols_count] = current_sentence_element.code.info.infoc;
             scan_sentence_element();
-            if (symbols_count < 255 && current_sentence_element.type == SC && current_sentence_element.code.tag == TAGO)
+            if (symbols_count < 254 && current_sentence_element.type == SC && current_sentence_element.code.tag == TAGO)
                 break;
             if (symbols_count == 1)
                 generate_operator_n(n_nso, (uint8_t)symbols_buffer[1]);
