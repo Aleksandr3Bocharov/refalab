@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xchar_func.c  -----------
@@ -89,7 +89,7 @@ static void chartof_(void)
                 impossible = true;
                 break;
             }
-        if (i > 255)
+        if (i > 254)
             impossible = true;
     }
     if (impossible)
