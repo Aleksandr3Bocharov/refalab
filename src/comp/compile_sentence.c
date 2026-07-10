@@ -163,7 +163,7 @@ static struct
     bool v_variable;
     bool eoe_mark;
     uint8_t jump_stack_pointer;
-} left_part_elements[255];
+} left_part_elements[UINT8_MAX];
 
 static struct
 { // variable table elements
@@ -174,7 +174,7 @@ static struct
     char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t identifier_length;
     bool v_variable;
-} variables[256];
+} variables[UINT8_MAX];
 
 // hole list
 static struct
@@ -1670,12 +1670,12 @@ void compile_sentence(bool direction)
 
 static bool search_variable(bool left_part)
 {
-    for (variable_index = 1; variable_index <= variables_count; variable_index++)
+    for (variable_index = 0; variable_index < variables_count; variable_index++)
         if (variables[variable_index].identifier_length == current_sentence_element.identifier_length && strncmp(variables[variable_index].identifier, current_sentence_element.identifier, variables[variable_index].identifier_length) == 0)
             return true;
     if (!left_part)
         return false;
-    variable_index = ++variables_count;
+    variable_index = variables_count++;
     strncpy(variables[variable_index].identifier, current_sentence_element.identifier, current_sentence_element.identifier_length);
     variables[variable_index].identifier_length = current_sentence_element.identifier_length;
     variables[variable_index].type = NEW;
