@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-10
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interpeter.c  ----------
@@ -1492,7 +1492,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             n = *(virtual_program_counter + NMBL);
             virtual_program_counter += NMBL + NMBL;
             bool lack = false;
-            for (i = 1; i <= n; i++)
+            for (i = 0; i < n; i++)
             {
                 current_linkcb_free_memory = current_linkcb_free_memory->next;
                 if (current_linkcb_free_memory == free_memory_head)
