@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST0;
 
 $ENTRY Go;
 $EXTERN Add, Sub, Mul, Dr, M1, P1, Numb, Symb;
-$EXTERN First, Last, LengR, LengW;
+$EXTERN First, Last, Length, LengthW;
 $EXTERN New, Wtr, Rdr, Ptr, Gtr, Swr;
 $EXTERN Print, Prout, Proutm;
 $EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
@@ -47,7 +47,7 @@ $FUNC Prspe
     = ;
 }
 
-//      prowerka Mul, P1, Lengr, Lengw, First, Last, Numb, Symb, Add, M1, Sub
+//      prowerka Mul, P1, Length, Lengthw, First, Last, Numb, Symb, Add, M1, Sub
 $FUNC Dal1
 {
     =
@@ -211,7 +211,7 @@ $FUNC Sw2
 
 $FUNC Prln
 {
-    e.E = <Prout ' lengr,lengw: whod=' e.E '  wyh-r=' <LengR e.E> '  wyh-w=' <LengW e.E>>;
+    e.E = <Prout ' length,lengthw: whod=' e.E '  wyh=' <Length e.E> '  wyh-w=' <LengthW e.E>>;
 }
 
 $END.

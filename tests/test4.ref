@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-25
+// 2026-07-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST4;
 
 $ENTRY Go;
-$EXTERN First, Last, LengR, LengW, Prout, Proutm;
+$EXTERN First, Last, Length, LengthW, Prout, Proutm;
 $EMPTY Pus, Em1, Em2, Em3;
 
 $SPEC Bspe '2134' Pus;
@@ -67,7 +67,7 @@ $FUNC Prow
 
 $FUNC Prln
 {
-    e.E = <Prout ' lengr,lengw: whod=' e.E '  wyh-r=' <LengR e.E> '  wyh-w=' <LengW e.E>>;
+    e.E = <Prout ' length,lengthw: whod=' e.E '  wyh=' <Length e.E> '  wyh-w=' <LengthW e.E>>;
 }
 
 $END.
