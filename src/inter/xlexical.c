@@ -8,7 +8,8 @@
 //     Numb, Symb, First, Last,
 //     Length, Lengthw, Multe,
 //     Chr, Ord, Upper, Lower,
-//     Empty, Del_first2, Del_lastw,
+//     Empty, Firstw, Lastw
+//     Del_firstw, Del_lastw,
 //     Unbrackets
 //----------------------------------------
 
@@ -378,6 +379,42 @@ static void empty_(void)
 char empty_0[] = {Z5 'E', 'M', 'P', 'T', 'Y', (char)5};
 G_L_B uint8_t refalab_empty = '\122';
 void (*empty_1)(void) = empty_;
+
+static void firstw_(void)
+{
+    T_LINKCB *first_term_begin = refal.previous_argument->next;
+    if (first_term_begin == refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    T_LINKCB *first_term_end = first_term_begin;
+    if (first_term_begin->tag == TAGLB)
+        first_term_end = first_term_begin->info.codep;
+    transplantation(refal.previous_result, first_term_begin->previous, first_term_end->next);
+    return;
+}
+char firstw_0[] = {Z6 'F', 'I', 'R', 'S', 'T', 'W', (char)6};
+G_L_B uint8_t refalab_firstw = '\122';
+void (*firstw_1)(void) = firstw_;
+
+static void lastw_(void)
+{
+    T_LINKCB *last_term_end = refal.next_argument->previous;
+    if (refal.previous_argument == last_term_end)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    T_LINKCB *last_term_begin = last_term_end;
+    if (last_term_end->tag == TAGRB)
+        last_term_begin = last_term_end->info.codep;
+    transplantation(refal.previous_result, last_term_begin->previous, last_term_end->next);
+    return;
+}
+char lastw_0[] = {Z5 'L', 'A', 'S', 'T', 'W', (char)5};
+G_L_B uint8_t refalab_lastw = '\122';
+void (*lastw_1)(void) = lastw_;
 
 static void del_firstw_(void)
 {
