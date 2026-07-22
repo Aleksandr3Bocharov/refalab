@@ -23,6 +23,8 @@
 #include "refalab.h"
 #include "interface.h"
 
+extern uint8_t refalab_null;
+
 static void numb_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -155,9 +157,8 @@ static void first_(void)
         current_argument = current_argument->next;
         if (current_argument == refal.next_argument)
         {
-            first_argument->info.code = NULL;
-            first_argument->info.infoc = '*';
-            first_argument->tag = TAGO;
+            first_argument->tag = TAGF;
+            first_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
             return;
         }
@@ -192,9 +193,8 @@ static void last_(void)
         current_argument = current_argument->previous;
         if (current_argument == first_argument)
         {
-            first_argument->tag = TAGO;
-            first_argument->info.code = NULL;
-            first_argument->info.infoc = '*';
+            first_argument->tag = TAGF;
+            first_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, first_argument, refal.next_argument);
             transplantation(refal.next_result->previous, first_argument->previous, first_argument->next);
             return;
