@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file xlexical.c  ----------
 //                 Lexical MO:
 //     Numb, Symb, First, Last,
-//     Lengr, Lengw, Multe,
+//     Length, Lengthw, Multe,
 //     Chr, Ord, Upper, Lower,
 //     Empty, Del_first2, Del_lastw,
 //     Unbrackets
@@ -215,7 +215,7 @@ char last_0[] = {Z4 'L', 'A', 'S', 'T', (char)4};
 G_L_B uint8_t refalab_last = '\122';
 void (*last_1)(void) = last_;
 
-static void lengr_(void)
+static void length_(void)
 {
     uint32_t length = 0;
     const T_LINKCB *current_argument = refal.previous_argument->next;
@@ -230,11 +230,11 @@ static void lengr_(void)
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
-char lengr_0[] = {Z5 'L', 'E', 'N', 'G', 'R', (char)5};
-G_L_B uint8_t refalab_lengr = '\122';
-void (*lengr_1)(void) = lengr_;
+char length_0[] = {Z6 'L', 'E', 'N', 'G', 'T', 'H', (char)6};
+G_L_B uint8_t refalab_length = '\122';
+void (*length_1)(void) = length_;
 
-static void lengw_(void)
+static void lengthw_(void)
 {
     uint32_t length = 0;
     const T_LINKCB *current_argument = refal.previous_argument->next;
@@ -251,9 +251,9 @@ static void lengw_(void)
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
-char lengw_0[] = {Z5 'L', 'E', 'N', 'G', 'W', (char)5};
-G_L_B uint8_t refalab_lengw = '\122';
-void (*lengw_1)(void) = lengw_;
+char lengthw_0[] = {Z7 'L', 'E', 'N', 'G', 'T', 'H', 'W', (char)7};
+G_L_B uint8_t refalab_lengthw = '\122';
+void (*lengthw_1)(void) = lengthw_;
 
 static void multe_(void)
 {
