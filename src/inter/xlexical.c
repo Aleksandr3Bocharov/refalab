@@ -22,7 +22,7 @@
 #include "refalab.h"
 #include "interface.h"
 
-extern uint8_t refalab_null;
+extern uint8_t refalab_null, refalab_true, refalab_false;
 
 static void numb_(void)
 {
@@ -287,7 +287,10 @@ static void del_left_(void)
     {
         const uint32_t number = gcoden(first_argument);
         if (number == 0)
+        {
+            first_argument->info.codef = &refalab_false;
             break;
+        }
         T_LINKCB *current_argument = first_argument;
         bool many_terms = false;
         for (uint32_t k = 0; k < number; k++)
@@ -295,6 +298,7 @@ static void del_left_(void)
             current_argument = current_argument->next;
             if (current_argument == refal.next_argument)
             {
+                first_argument->info.codef = &refalab_false;
                 many_terms = true;
                 break;
             }
@@ -307,8 +311,10 @@ static void del_left_(void)
         if (current_argument->tag == TAGRB)
             current_argument_begin = current_argument->info.codep;
         insert_to_free_memory(current_argument_begin->previous, current_argument->next);
+        first_argument->info.codef = &refalab_true;
     } while (false);
-    transplantation(refal.previous_result, first_argument, refal.next_argument);
+    first_argument->tag = TAGF;
+    transplantation(refal.previous_result, first_argument->previous, refal.next_argument);
     return;
 }
 char del_left_0[] = {Z0 'D', 'E', 'L', '_', 'L', 'E', 'F', 'T', (char)8};
