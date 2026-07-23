@@ -217,16 +217,28 @@ void (*last_1)(void) = last_;
 
 static void left_(void)
 {
-    T_LINKCB *first_term_begin = refal.previous_argument->next;
-    if (first_term_begin == refal.next_argument)
+    T_LINKCB *first_argument = refal.previous_argument->next;
+    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
     {
         refal.upshot = 2;
         return;
+    }; // FAIL
+    const uint32_t number = gcoden(first_argument);
+    if (number == 0)
+        return;
+    T_LINKCB *current_argument = first_argument;
+    for (uint32_t k = 0; k < number; k++)
+    {
+        current_argument = current_argument->next;
+        if (current_argument == refal.next_argument)
+            return;
+        if (current_argument->tag == TAGLB)
+            current_argument = current_argument->info.codep;
     }
-    T_LINKCB *first_term_end = first_term_begin;
-    if (first_term_begin->tag == TAGLB)
-        first_term_end = first_term_begin->info.codep;
-    transplantation(refal.previous_result, first_term_begin->previous, first_term_end->next);
+    T_LINKCB *current_argument_begin = current_argument;
+    if (current_argument->tag == TAGRB)
+        current_argument_begin = current_argument->info.codep;
+    transplantation(refal.previous_result, current_argument_begin->previous, current_argument->next);
     return;
 }
 char left_0[] = {Z4 'L', 'E', 'F', 'T', (char)4};
