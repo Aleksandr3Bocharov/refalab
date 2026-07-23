@@ -247,16 +247,28 @@ void (*left_1)(void) = left_;
 
 static void right_(void)
 {
-    T_LINKCB *last_term_end = refal.next_argument->previous;
-    if (refal.previous_argument == last_term_end)
+     T_LINKCB *first_argument = refal.previous_argument->next;
+    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
     {
         refal.upshot = 2;
         return;
+    }; // FAIL
+    const uint32_t number = gcoden(first_argument);
+    if (number == 0)
+        return;
+    T_LINKCB *current_argument = refal.next_argument;
+    for (uint32_t k = 0; k < number; k++)
+    {
+        current_argument = current_argument->previous;
+        if (current_argument == first_argument)
+            return;
+        if (current_argument->tag == TAGRB)
+            current_argument = current_argument->info.codep;
     }
-    T_LINKCB *last_term_begin = last_term_end;
-    if (last_term_end->tag == TAGRB)
-        last_term_begin = last_term_end->info.codep;
-    transplantation(refal.previous_result, last_term_begin->previous, last_term_end->next);
+    T_LINKCB *current_argument_end = current_argument;
+    if (current_argument->tag == TAGLB)
+        current_argument_end = current_argument->info.codep;
+    transplantation(refal.previous_result, current_argument->previous, current_argument_end->next);
     return;
 }
 char right_0[] = {Z5 'R', 'I', 'G', 'H', 'T', (char)5};
