@@ -152,7 +152,7 @@ static void first_(void)
     }; // FAIL
     const uint32_t number = gcoden(first_argument);
     T_LINKCB *current_argument = first_argument;
-    for (uint32_t k = 1; k <= number; k++)
+    for (uint32_t k = 0; k < number; k++)
     {
         current_argument = current_argument->next;
         if (current_argument == refal.next_argument)
@@ -188,7 +188,7 @@ static void last_(void)
     }; // FAIL
     const uint32_t number = gcoden(first_argument);
     T_LINKCB *current_argument = refal.next_argument;
-    for (uint32_t k = 1; k <= number; k++)
+    for (uint32_t k = 0; k < number; k++)
     {
         current_argument = current_argument->previous;
         if (current_argument == first_argument)
