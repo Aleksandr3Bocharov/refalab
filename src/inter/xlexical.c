@@ -143,34 +143,37 @@ void (*symb_1)(void) = symb_;
 
 static void first_(void)
 {
-    T_LINKCB *first_argument = refal.previous_argument->next;
-    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
+    do
     {
-        refal.upshot = 2;
-        return;
-    }; // FAIL
-    const uint32_t number = gcoden(first_argument);
-    T_LINKCB *current_argument = first_argument;
-    for (uint32_t k = 0; k < number; k++)
-    {
-        current_argument = current_argument->next;
-        if (current_argument == refal.next_argument)
+        T_LINKCB *first_argument = refal.previous_argument->next;
+        if (first_argument == refal.next_argument || first_argument->tag != TAGN)
+            break;
+        const uint32_t number = gcoden(first_argument);
+        T_LINKCB *current_argument = first_argument;
+        bool neot = false;
+        for (uint32_t k = 0; k < number; k++)
         {
-            first_argument->tag = TAGF;
-            first_argument->info.codef = &refalab_null;
-            transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
-            return;
+            current_argument = current_argument->next;
+            if (current_argument == refal.next_argument)
+            {
+                neot = true;
+                break;
+            }
+            if (current_argument->tag == TAGLB)
+                current_argument = current_argument->info.codep;
         }
-        if (current_argument->tag == TAGLB)
-            current_argument = current_argument->info.codep;
-    }
-    current_argument = current_argument->next;
-    refal.previous_argument->tag = TAGLB;
-    refal.previous_argument->info.codep = first_argument;
-    first_argument->tag = TAGRB;
-    first_argument->info.codep = refal.previous_argument;
-    transplantation(refal.previous_argument, first_argument, current_argument);
-    transplantation(refal.previous_result, refal.next_result, refal.next_argument);
+        if (neot)
+            break;
+        current_argument = current_argument->next;
+        refal.previous_argument->tag = TAGLB;
+        refal.previous_argument->info.codep = first_argument;
+        first_argument->tag = TAGRB;
+        first_argument->info.codep = refal.previous_argument;
+        transplantation(refal.previous_argument, first_argument, current_argument);
+        transplantation(refal.previous_result, refal.next_result, refal.next_argument);
+        return;
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', (char)5};
