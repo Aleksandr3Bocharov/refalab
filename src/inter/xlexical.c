@@ -22,8 +22,6 @@
 #include "refalab.h"
 #include "interface.h"
 
-extern uint8_t refalab_null, refalab_true, refalab_false;
-
 static void numb_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -298,44 +296,37 @@ void (*right_1)(void) = right_;
 
 static void del_left_(void)
 {
-    T_LINKCB *first_argument = refal.previous_argument->next;
-    if (first_argument == refal.next_argument || first_argument->tag != TAGN)
-    {
-        refal.upshot = 2;
-        return;
-    }; // FAIL
     do
     {
+        T_LINKCB *first_argument = refal.previous_argument->next;
+        if (first_argument == refal.next_argument || first_argument->tag != TAGN)
+            break;
         const uint32_t number = gcoden(first_argument);
         if (number == 0)
-        {
-            first_argument->info.codef = &refalab_false;
             break;
-        }
         T_LINKCB *current_argument = first_argument;
-        bool many_terms = false;
+        bool impossible = false;
         for (uint32_t k = 0; k < number; k++)
         {
             current_argument = current_argument->next;
             if (current_argument == refal.next_argument)
             {
-                first_argument->info.codef = &refalab_false;
-                many_terms = true;
+                impossible = true;
                 break;
             }
             if (current_argument->tag == TAGLB)
                 current_argument = current_argument->info.codep;
         }
-        if (many_terms)
+        if (impossible)
             break;
         T_LINKCB *current_argument_begin = current_argument;
         if (current_argument->tag == TAGRB)
             current_argument_begin = current_argument->info.codep;
         insert_to_free_memory(current_argument_begin->previous, current_argument->next);
-        first_argument->info.codef = &refalab_true;
+        transplantation(refal.previous_result, first_argument, refal.next_argument);
+        return;
     } while (false);
-    first_argument->tag = TAGF;
-    transplantation(refal.previous_result, first_argument->previous, refal.next_argument);
+    refal.upshot = 2;
     return;
 }
 char del_left_0[] = {Z0 'D', 'E', 'L', '_', 'L', 'E', 'F', 'T', (char)8};
