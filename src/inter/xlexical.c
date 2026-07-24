@@ -335,15 +335,37 @@ void (*del_left_1)(void) = del_left_;
 
 static void del_right_(void)
 {
-    T_LINKCB *last_term = refal.next_argument->previous;
-    if (refal.previous_argument == last_term)
+    do
     {
-        refal.upshot = 2;
+        T_LINKCB *first_argument = refal.previous_argument->next;
+        if (first_argument == refal.next_argument || first_argument->tag != TAGN)
+            break;
+        const uint32_t number = gcoden(first_argument);
+        if (number == 0)
+            break;
+        T_LINKCB *current_argument = refal.next_argument;
+        bool impossible = false;
+        for (uint32_t k = 0; k < number; k++)
+        {
+            current_argument = current_argument->previous;
+            if (current_argument == first_argument)
+            {
+                impossible = true;
+                break;
+            }
+            if (current_argument->tag == TAGRB)
+                current_argument = current_argument->info.codep;
+        }
+        if (impossible)
+            break;
+        T_LINKCB *current_argument_end = current_argument;
+        if (current_argument->tag == TAGLB)
+            current_argument_end = current_argument->info.codep;
+        insert_to_free_memory(current_argument->previous, current_argument_end->next);
+        transplantation(refal.previous_result, first_argument, refal.next_argument);
         return;
-    }
-    if (last_term->tag == TAGRB)
-        last_term = last_term->info.codep;
-    transplantation(refal.previous_result, refal.previous_argument, last_term);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char del_right_0[] = {Z1 'D', 'E', 'L', '_', 'R', 'I', 'G', 'H', 'T', (char)9};
