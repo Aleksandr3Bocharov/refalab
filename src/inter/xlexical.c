@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-23
+// 2026-07-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file xlexical.c  ----------
@@ -9,7 +9,7 @@
 //     Left, Right, Del_left, Del_right,
 //     Length, Lengthw, Multe,
 //     Chr, Ord, Upper, Lower,
-//     Empty, Unbrackets
+//     Empty, Unbrackets, Reverse
 //----------------------------------------
 
 #include <stdio.h>
@@ -551,5 +551,34 @@ static void unbrackets_(void)
 char unbrackets_0[] = {Z2 'U', 'N', 'B', 'R', 'A', 'C', 'K', 'E', 'T', 'S', (char)10};
 G_L_B uint8_t refalab_unbrackets = '\122';
 void (*unbrackets_1)(void) = unbrackets_;
+
+static void reverse_(void)
+{
+    if (refal.previous_argument->next == refal.next_argument)
+        return;
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    while (current_argument != refal.next_argument)
+    {
+        T_LINKCB *next_argument = current_argument->next;
+        current_argument->next = current_argument->previous;
+        current_argument->previous = next_argument;
+        if (current_argument->tag == TAGLB)
+            current_argument->tag = TAGRB;
+        else if (current_argument->tag == TAGRB)
+            current_argument->tag = TAGLB;
+        current_argument = next_argument;
+    }
+    T_LINKCB *first_term = refal.next_argument->previous;
+    T_LINKCB *last_term = refal.previous_argument->next;
+    refal.previous_argument->next = first_term;
+    first_term->previous = refal.previous_argument;
+    refal.next_argument->previous = last_term;
+    last_term->next = refal.next_argument;
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+    return;
+}
+char reverse_0[] = {Z7 'R', 'E', 'V', 'E', 'R', 'S', 'E', (char)7};
+G_L_B uint8_t refalab_reverse = '\122';
+void (*reverse_1)(void) = reverse_;
 
 //----------  end of file xlexical.c  ----------
