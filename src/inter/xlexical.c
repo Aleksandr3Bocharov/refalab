@@ -581,4 +581,45 @@ char reverse_0[] = {Z7 'R', 'E', 'V', 'E', 'R', 'S', 'E', (char)7};
 G_L_B uint8_t refalab_reverse = '\122';
 void (*reverse_1)(void) = reverse_;
 
+static void reversew_(void)
+{
+    if (refal.previous_argument->next == refal.next_argument)
+        return;
+    T_LINKCB *current_argument = refal.previous_argument->next;
+    T_LINKCB *last_term_head = NULL;
+    T_LINKCB *last_term_tail = NULL;
+    while (current_argument != refal.next_argument)
+    {
+        T_LINKCB *current_term_begin = current_argument;
+        T_LINKCB *current_term_end = current_argument;
+        if (current_argument->tag == TAGLB)
+        {
+            current_term_end = current_argument->info.codep;
+            current_argument = current_term_end->next;
+        }
+        else
+            current_argument = current_argument->next;
+        if (last_term_head == NULL)
+        {
+            current_term_end->next = refal.next_argument;
+            last_term_tail = current_term_end;
+        }
+        else
+        {
+            current_term_end->next = last_term_head;
+            last_term_head->previous = current_term_end;
+        }
+        last_term_head = current_term_begin;
+    }
+    refal.previous_argument->next = last_term_head;
+    last_term_head->previous = refal.previous_argument;
+    refal.next_argument->previous = last_term_tail;
+    last_term_tail->next = refal.next_argument;
+    transplantation(refal.previous_result, refal.previous_argument, refal.next_argument);
+    return;
+}
+char reversew_0[] = {Z0 'R', 'E', 'V', 'E', 'R', 'S', 'E', 'W', (char)8};
+G_L_B uint8_t refalab_reversew = '\122';
+void (*reversew_1)(void) = reversew_;
+
 //----------  end of file xlexical.c  ----------
