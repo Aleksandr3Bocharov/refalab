@@ -13,7 +13,7 @@ $START LEXICAL2;
 
 $ENTRY Cvb, Cvd;
 $ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR;
-$ENTRY ExistW, SetW, Type, Is_Type;
+$ENTRY SetW, Type, Is_Type;
 $ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT;
 $EXTERN Numb, Symb, Add, Mul, DrN;
 $EXTERN True, False;
@@ -89,13 +89,6 @@ $FUNC TrimR
 {
     e.Any s(:White_Spaces:)._ = <TrimR e.Any>;
     e._ = e._;
-}
-
-//  <ExistW w.Elem e.Sample_Elems> == True | False
-$FUNC ExistW
-{
-    w.Sample e.Items_B w.Sample e.Items_E = True;
-    w._ e.__ = False;
 }
 
 //  <SetW w.Item*> == w.Item*′
