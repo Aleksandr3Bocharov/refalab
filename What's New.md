@@ -11,9 +11,9 @@ First, Last, Del_left, Del_right.
 Добавлены первичные функции в библиотеку РефалАБ: Left, Right,
 Reverse, Reversew.
 
-Первичные функции Lengr, Lengw, Del_firstw, Del_lastw
+Функции Lengr, Lengw, Del_firstw, Del_lastw, Exist, Set
 из библиотеки РефалАБ переименованы соответственно
-в Length, Lengthw, Del_left, Del_right.
+в Length, Lengthw, Del_left, Del_right, Existw, Setw.
 
 
 
