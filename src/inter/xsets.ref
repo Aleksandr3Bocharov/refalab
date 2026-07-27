@@ -1,0 +1,21 @@
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-07-27
+// https://github.com/Aleksandr3Bocharov/refalab
+
+//====================================================================
+// Рефал-функции библиотеки РефалАБ.
+//====================================================================
+
+$START SETS;
+
+$ENTRY SetW;
+
+//  <SetW w.Item*> == w.Item*′
+$FUNC SetW 
+{
+    $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <SetW e.Items_B w.Repeated e.Items_E> e.Uniques;
+    e._ = e._;
+}
+
+$END.

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-25
+// 2026-07-27
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -13,7 +13,7 @@ $START LEXICAL2;
 
 $ENTRY Cvb, Cvd;
 $ENTRY White_Spaces, Is_White_Space, Trim, TrimL, TrimR;
-$ENTRY SetW, Type, Is_Type;
+$ENTRY Type, Is_Type;
 $ENTRY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT;
 $EXTERN Numb, Symb, Add, Mul, DrN;
 $EXTERN True, False;
@@ -88,13 +88,6 @@ $FUNC TrimL
 $FUNC TrimR
 {
     e.Any s(:White_Spaces:)._ = <TrimR e.Any>;
-    e._ = e._;
-}
-
-//  <SetW w.Item*> == w.Item*′
-$FUNC SetW 
-{
-    $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <SetW e.Items_B w.Repeated e.Items_E> e.Uniques;
     e._ = e._;
 }
 
