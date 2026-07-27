@@ -640,8 +640,7 @@ static void existw_(void)
     const T_LINKCB *current_argument = exist_term_end->next;
     while (current_argument != refal.next_argument)
     {
-        T_LINKCB *after_duplicate = find_duplicate(exist_term_begin->previous, exist_term_end->next, current_argument->previous);
-        if (after_duplicate != NULL)
+        if (find_duplicate(exist_term_begin->previous, exist_term_end->next, current_argument->previous) != NULL)
         {
             refal.previous_argument->info.codef = &refalab_true;
             break;
