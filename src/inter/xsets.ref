@@ -9,12 +9,30 @@
 
 $START SETS;
 
-$ENTRY SetW;
+$ENTRY SetW, SetN;
+$EXTERN Map, NNorm;
+
 
 //  <SetW w.Item*> == w.Item*′
 $FUNC SetW 
 {
-    $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <SetW e.Items_B w.Repeated e.Items_E> e.Uniques;
+    e.Terms = <PurgeDuplicates e.Terms>;
+}
+
+//  <SetN (e.Number)*> == (e.Number)*′
+$FUNC SetN
+{
+    e.Numbers = <PurgeDuplicates <Map NormTerm e.Numbers>>;
+}
+
+$FUNC NormTerm
+{
+    (e.Number) = (<NNorm e.Number>);
+}
+
+$FUNC PurgeDuplicates
+{
+    $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <PurgeDuplicates e.Items_B w.Repeated e.Items_E> e.Uniques;
     e._ = e._;
 }
 
