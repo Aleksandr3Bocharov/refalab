@@ -9,9 +9,9 @@
 
 $START SETS;
 
-$ENTRY SetW, SetW_Union;
+$ENTRY SetW, SetW_Union, SetW_Intersect;
 $ENTRY SetN, SetN_Union;
-$EXTERN Map, NNorm;
+$EXTERN Map, NNorm, ExistW, True;
 
 //  <SetW w.Item*> == w.Item*′
 $FUNC SetW 
@@ -23,6 +23,23 @@ $FUNC SetW
 $FUNC SetW_Union
 {
     (e.Terms1) e.Terms2 = <SetW e.Terms1 e.Terms2>;
+}
+
+//  <SetW_Intersect (w.Item1*) w.Item2*> == w.Item_Intersect*
+$FUNC SetW_Intersect
+{
+    (e.Terms1) e.Terms2 = <Map (Intersect e.Terms1) <SetW e.Terms2>>;
+}
+
+$FUNC Intersect
+{
+    e.Items1 w.Item2 = <Intersect_Aux <ExistW w.Item2 e.Items1> w.Item2>;
+}
+
+$FUNC Intersect_Aux
+{
+    True w.Item2 = w.Item2;
+    e._ = ;
 }
 
 //  <SetN (e.Number)*> == (e.Number)*′
