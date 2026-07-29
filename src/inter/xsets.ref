@@ -9,7 +9,8 @@
 
 $START SETS;
 
-$ENTRY SetW, SetN;
+$ENTRY SetW, SetW_Union;
+$ENTRY SetN;
 $EXTERN Map, NNorm;
 
 
@@ -17,6 +18,12 @@ $EXTERN Map, NNorm;
 $FUNC SetW 
 {
     e.Terms = <PurgeDuplicates e.Terms>;
+}
+
+//  <SetW_Union (w.Item1*) w.Item2*> == w.Item_Union*
+$FUNC SetW_Union
+{
+    (e.Terms1) e.Terms2 = <SetW e.Terms1 e.Terms2>;
 }
 
 //  <SetN (e.Number)*> == (e.Number)*′
