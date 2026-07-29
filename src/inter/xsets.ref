@@ -10,7 +10,7 @@
 $START SETS;
 
 $ENTRY SetW, SetW_Union, SetW_Intersect;
-$ENTRY SetN, SetN_Union;
+$ENTRY SetN, SetN_Union, SetN_Intersect;
 $EXTERN Map, NNorm, ExistW, True;
 
 //  <SetW w.Item*> == w.Item*′
@@ -31,17 +31,6 @@ $FUNC SetW_Intersect
     (e.Terms1) e.Terms2 = <Map (Intersect e.Terms1) <SetW e.Terms2>>;
 }
 
-$FUNC Intersect
-{
-    e.Items1 w.Item2 = <Intersect_Aux <ExistW w.Item2 e.Items1> w.Item2>;
-}
-
-$FUNC Intersect_Aux
-{
-    True w.Item2 = w.Item2;
-    e._ = ;
-}
-
 //  <SetN (e.Number)*> == (e.Number)*′
 $FUNC SetN
 {
@@ -59,10 +48,27 @@ $FUNC SetN_Union
     (e.Numbers1) e.Numbers2 = <SetN e.Numbers1 e.Numbers2>;
 }
 
+//  <SetN_Intersect ((e.Number1)*) (e.Number2)*> == (e.Number_Intersect)*
+$FUNC SetN_Intersect
+{
+    (e.Numbers1) e.Numbers2 = <Map (Intersect <SetN e.Numbers1>) <SetN e.Numbers2>>;
+}
+
 $FUNC PurgeDuplicates
 {
     $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <PurgeDuplicates e.Items_B w.Repeated e.Items_E> e.Uniques;
     e._ = e._;
+}
+
+$FUNC Intersect
+{
+    e.Items1 w.Item2 = <Intersect_Aux <ExistW w.Item2 e.Items1> w.Item2>;
+}
+
+$FUNC Intersect_Aux
+{
+    True w.Item2 = w.Item2;
+    e._ = ;
 }
 
 $END.
