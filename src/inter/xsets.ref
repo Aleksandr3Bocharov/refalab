@@ -10,9 +10,8 @@
 $START SETS;
 
 $ENTRY SetW, SetW_Union;
-$ENTRY SetN;
+$ENTRY SetN, SetN_Union;
 $EXTERN Map, NNorm;
-
 
 //  <SetW w.Item*> == w.Item*′
 $FUNC SetW 
@@ -35,6 +34,12 @@ $FUNC SetN
 $FUNC NormTerm
 {
     (e.Number) = (<NNorm e.Number>);
+}
+
+//  <SetN_Union ((e.Number1)*) (e.Number2)*> == (e.Number_Union)*
+$FUNC SetN_Union
+{
+    (e.Numbers1) e.Numbers2 = <SetN e.Numbers1 e.Numbers2>;
 }
 
 $FUNC PurgeDuplicates
