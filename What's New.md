@@ -6,7 +6,7 @@
 **21-07-2026**
 
 Добавлены рефал-функции в библиотеку РефалАБ: Setn, Setw_union, Setn_union,
-Setw_Intersect, Setn_Intersect, Setw_Diff.
+Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 
 Рефал-функция Existw из библиотеки РефалАБ переделена в первичую функцию.
 
