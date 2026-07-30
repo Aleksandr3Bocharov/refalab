@@ -9,7 +9,7 @@
 
 $START SETS;
 
-$ENTRY SetW, SetW_Union, SetW_Intersect;
+$ENTRY SetW, SetW_Union, SetW_Intersect, SetW_Diff;
 $ENTRY SetN, SetN_Union, SetN_Intersect;
 $EXTERN Map, NNorm, ExistW, True, False;
 $EMPTY Intersection, Difference;
@@ -30,6 +30,12 @@ $FUNC SetW_Union
 $FUNC SetW_Intersect
 {
     (e.Terms1) e.Terms2 = <Set_Operation Intersection (<SetW e.Terms1>) e.Terms2>;
+}
+
+//  <SetW_Diff (w.Item1*) w.Item2*> == w.Item_Diff*
+$FUNC SetW_Diff
+{
+    (e.Terms1) e.Terms2 = <Set_Operation Difference (<SetW e.Terms1>) e.Terms2>;
 }
 
 //  <SetN (e.Number)*> == (e.Number)*′
@@ -70,6 +76,7 @@ $FUNC Set_Operation
 $FUNC Set_Operation_Aux
 {
     Intersection True w.Item1 e.Items2 (e.Items1_E) = w.Item1 <Set_Operation Intersection (e.Items1_E) e.Items2>;
+    Difference False w.Item1 e.Items2 (e.Items1_E) = w.Item1 <Set_Operation Difference (e.Items1_E) e.Items2>;
     s.Set_Operation s._ w.__ e.Items2 (e.Items1_E) = <Set_Operation s.Set_Operation (e.Items1_E) e.Items2>;
 }
 
