@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-27
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file xbool.c  ----------
@@ -40,7 +40,7 @@ static void existw_(void)
             current_argument = current_argument->info.codep;
         current_argument = current_argument->next;
     }
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char existw_0[] = {Z6 'E', 'X', 'I', 'S', 'T', 'W', (char)6};
@@ -107,7 +107,7 @@ static void existn_(void)
             refal.previous_argument->info.codef = &refalab_true;
         else
             refal.previous_argument->info.codef = &refalab_false;
-        transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+        transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
         return;
     } while (false);
     refal.upshot = 2;
