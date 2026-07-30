@@ -12,6 +12,7 @@ $START SETS;
 $ENTRY SetW, SetW_Union, SetW_Intersect;
 $ENTRY SetN, SetN_Union, SetN_Intersect;
 $EXTERN Map, NNorm, ExistW, True, False;
+$EMPTY Intersection, Difference;
 
 //  <SetW w.Item*> == w.Item*′
 $FUNC SetW 
@@ -28,7 +29,7 @@ $FUNC SetW_Union
 //  <SetW_Intersect (w.Item1*) w.Item2*> == w.Item_Intersect*
 $FUNC SetW_Intersect
 {
-    (e.Terms1) e.Terms2 = <Intersect (<SetW e.Terms1>) e.Terms2>;
+    (e.Terms1) e.Terms2 = <Set_Operation Intersection (<SetW e.Terms1>) e.Terms2>;
 }
 
 //  <SetN (e.Number)*> == (e.Number)*′
@@ -51,7 +52,7 @@ $FUNC SetN_Union
 //  <SetN_Intersect ((e.Number1)*) (e.Number2)*> == (e.Number_Intersect)*
 $FUNC SetN_Intersect
 {
-    (e.Numbers1) e.Numbers2 = <Intersect (<SetN e.Numbers1>) <SetN e.Numbers2>>;
+    (e.Numbers1) e.Numbers2 = <Set_Operation Intersection (<SetN e.Numbers1>) <SetN e.Numbers2>>;
 }
 
 $FUNC PurgeDuplicates
@@ -60,16 +61,16 @@ $FUNC PurgeDuplicates
     e._ = e._;
 }
 
-$FUNC Intersect
+$FUNC Set_Operation
 {
-    (w.Item1 e.Items1_E) e.Items2 = <Intersect_Aux <ExistW w.Item1 e.Items2> (e.Items1_E)>;
-    () e._ = ;
+    s.Set_Operation (w.Item1 e.Items1_E) e.Items2 = <Set_Operation_Aux s.Set_Operation <ExistW w.Item1 e.Items2> (e.Items1_E)>;
+    s._ () e.__ = ;
 }
 
-$FUNC Intersect_Aux
+$FUNC Set_Operation_Aux
 {
-    True w.Item1 e.Items2 (e.Items1_E) = w.Item1 <Intersect (e.Items1_E) e.Items2>;
-    s._ w.__ e.Items2 (e.Items1_E) = <Intersect (e.Items1_E) e.Items2>;
+    Intersection True w.Item1 e.Items2 (e.Items1_E) = w.Item1 <Set_Operation Intersection (e.Items1_E) e.Items2>;
+    s.Set_Operation s._ w.__ e.Items2 (e.Items1_E) = <Set_Operation s.Set_Operation (e.Items1_E) e.Items2>;
 }
 
 $END.
