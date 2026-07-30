@@ -10,7 +10,7 @@
 $START SETS;
 
 $ENTRY SetW, SetW_Union, SetW_Intersect, SetW_Diff;
-$ENTRY SetN, SetN_Union, SetN_Intersect;
+$ENTRY SetN, SetN_Union, SetN_Intersect, SetN_Diff;
 $EXTERN Map, NNorm, ExistW, True, False;
 $EMPTY Intersection, Difference;
 
@@ -59,6 +59,12 @@ $FUNC SetN_Union
 $FUNC SetN_Intersect
 {
     (e.Numbers1) e.Numbers2 = <Set_Operation Intersection (<SetN e.Numbers1>) <SetN e.Numbers2>>;
+}
+
+//  <SetN_Diff ((e.Number1)*) (e.Number2)*> == (e.Number_Diff)*
+$FUNC SetN_Diff
+{
+    (e.Numbers1) e.Numbers2 = <Set_Operation Difference (<SetN e.Numbers1>) <SetN e.Numbers2>>;
 }
 
 $FUNC PurgeDuplicates
