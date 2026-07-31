@@ -5,6 +5,9 @@
 
 **21-07-2026**
 
+Внесены изменения в работу рефал-функций из библиотеки РефалАБ:
+QSortW, MinW, MaxW.
+
 Добавлены рефал-функции в библиотеку РефалАБ: Setn, Setw_union, Setn_union,
 Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 
