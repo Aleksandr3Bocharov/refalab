@@ -14,7 +14,8 @@ Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 Рефал-функция Existw из библиотеки РефалАБ переделена в первичую функцию.
 
 Внесены изменения в работу первичных функций из библиотеки РефалАБ:
-First, Last, Del_left, Del_right, Lrel.
+First, Last, Del_left, Del_right, Lrel, Ltn, Len, Eqn, Nen, Gen, Gtn,
+Ltl, Lel, Eql, Nel, Gel, Gtl.
 
 Добавлены первичные функции в библиотеку РефалАБ: Left, Right,
 Reverse, Reversew, Existn.
