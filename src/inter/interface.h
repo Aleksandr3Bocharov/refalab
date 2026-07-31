@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.h  ----------
@@ -38,6 +38,7 @@ extern bool read_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER 
 extern void exchange_big_numbers(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2);
 extern int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2);
 extern int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2);
+extern int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after);
 
 extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool create_status_table(T_STATUS_TABLE *status_table);

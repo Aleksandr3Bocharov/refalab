@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -978,6 +978,32 @@ int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG
             return 1; // |X|>|Y|
     }
     return 0; // |X|=|Y|
+}
+
+int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
+{
+    const T_LINKCB *first_current = before->next;
+    const T_LINKCB *second_current = middle->next;
+    for (; first_current != middle && second_current != after; first_current = first_current->next, second_current = second_current->next)
+        if ((first_current->tag == TAGLB && second_current->tag == TAGLB) || (first_current->tag == TAGRB && second_current->tag == TAGRB))
+            continue;
+        else if (first_current->tag == TAGLB || second_current->tag == TAGRB)
+            return 1; // X>Y
+        else if (first_current->tag == TAGRB || second_current->tag == TAGLB)
+            return -1; // X<Y
+        else if (first_current->tag > second_current->tag)
+            return 1; // X>Y
+        else if (first_current->tag < second_current->tag)
+            return -1; // X<Y
+        else if ((size_t)first_current->info.code > (size_t)second_current->info.code)
+            return 1; // X>Y
+        else if ((size_t)first_current->info.code < (size_t)second_current->info.code)
+            return -1; // X<Y
+    if (first_current == middle && second_current != after)
+        return -1; // X<Y
+    if (second_current == after && first_current != middle)
+        return 1; // X>Y
+    return 0;     // X=Y
 }
 
 //----------- end of file interface.c ------------

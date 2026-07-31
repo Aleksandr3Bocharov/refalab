@@ -174,32 +174,6 @@ char gtn_0[] = {Z3 'G', 'T', 'N', (char)3};
 G_L_B uint8_t refalab_gtn = '\122';
 void (*gtn_1)(void) = gtn_;
 
-static int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
-{
-    const T_LINKCB *first_current = before->next;
-    const T_LINKCB *second_current = middle->next;
-    for (; first_current != middle && second_current != after; first_current = first_current->next, second_current = second_current->next)
-        if ((first_current->tag == TAGLB && second_current->tag == TAGLB) || (first_current->tag == TAGRB && second_current->tag == TAGRB))
-            continue;
-        else if (first_current->tag == TAGLB || second_current->tag == TAGRB)
-            return 1; // X>Y
-        else if (first_current->tag == TAGRB || second_current->tag == TAGLB)
-            return -1; // X<Y
-        else if (first_current->tag > second_current->tag)
-            return 1; // X>Y
-        else if (first_current->tag < second_current->tag)
-            return -1; // X<Y
-        else if ((size_t)first_current->info.code > (size_t)second_current->info.code)
-            return 1; // X>Y
-        else if ((size_t)first_current->info.code < (size_t)second_current->info.code)
-            return -1; // X<Y
-    if (first_current == middle && second_current != after)
-        return -1; // X<Y
-    if (second_current == after && first_current != middle)
-        return 1; // X>Y
-    return 0;     // X=Y
-}
-
 static void lrel_(void)
 {
     const T_LINKCB *first_begin = refal.previous_argument->next;
