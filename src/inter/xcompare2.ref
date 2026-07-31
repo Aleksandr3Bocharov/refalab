@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -87,39 +87,39 @@ $FUNC QSortW_Aux
 
 $FUNC DoQSortW
 {
-    (w.Less (w.Pivot e.Equal) w.Greater) w.Next = <DoQSortW_Aux <LRel (w.Next) w.Pivot> (w.Less (w.Pivot e.Equal) w.Greater) w.Next>;
+    (w.Less (w.Pivot e.Equal) w.Greater) w.Next = <DoQSortW_Aux <LRel (w.Next) w.Pivot> (w.Less (w.Pivot e.Equal) w.Greater)>;
 }
 
 $FUNC DoQSortW_Aux
 {
-    '<' ((e.Less) e._) w.Next = ((e.Less w.Next) e._);
-    '=' (w.Less (e.Equal) w.Greater) w.Next = (w.Less (e.Equal w.Next) w.Greater);
-    '>' (e._ (e.Greater)) w.Next = (e._ (e.Greater w.Next));
+    '<' (w.Next) e._ ((e.Less) e.__) = ((e.Less w.Next) e.__);
+    '=' (w.Next) e._ (w.Less (e.Equal) w.Greater) = (w.Less (e.Equal w.Next) w.Greater);
+    '>' (w.Next) e._ (e.__ (e.Greater)) = (e.__ (e.Greater w.Next));
 }
 
 //  <MinW w.First e.Tail> == w.Min
 $FUNC MinW
 {
-    w.X w.Y = <MinW_Aux <LRel (w.X) w.Y> w.X w.Y>;
+    w.X w.Y = <MinW_Aux <LRel (w.X) w.Y>>;
     w.First e.Tail = <FoldL MinW w.First e.Tail>;
 }
 
 $FUNC MinW_Aux
 {
-    '<' w.X e._ = w.X;
+    '<' (w.X) e._ = w.X;
     e._ w.Y = w.Y;
 }
 
 //  <MaxW w.First e.Tail> == w.Max
 $FUNC MaxW 
 {
-    w.X w.Y = <MaxW_Aux <LRel (w.X) w.Y> w.X w.Y>;
+    w.X w.Y = <MaxW_Aux <LRel (w.X) w.Y>>;
     w.First e.Tail = <FoldL MaxW w.First e.Tail>;
 }
 
 $FUNC MaxW_Aux
 {
-    '>' w.X e._ = w.X;
+    '>' (w.X) e._ = w.X;
     e._ w.Y = w.Y;
 }
 
