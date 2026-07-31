@@ -57,7 +57,7 @@ static void ltn_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char ltn_0[] = {Z3 'L', 'T', 'N', (char)3};
@@ -79,7 +79,7 @@ static void len_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char len_0[] = {Z3 'L', 'E', 'N', (char)3};
@@ -101,7 +101,7 @@ static void eqn_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char eqn_0[] = {Z3 'E', 'Q', 'N', (char)3};
@@ -123,7 +123,7 @@ static void nen_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char nen_0[] = {Z3 'N', 'E', 'N', (char)3};
@@ -145,7 +145,7 @@ static void gen_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char gen_0[] = {Z3 'G', 'E', 'N', (char)3};
@@ -167,7 +167,7 @@ static void gtn_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char gtn_0[] = {Z3 'G', 'T', 'N', (char)3};
@@ -239,7 +239,7 @@ static void ltl_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char ltl_0[] = {Z3 'L', 'T', 'L', (char)3};
@@ -260,7 +260,7 @@ static void lel_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char lel_0[] = {Z3 'L', 'E', 'L', (char)3};
@@ -281,7 +281,7 @@ static void eql_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char eql_0[] = {Z3 'E', 'Q', 'L', (char)3};
@@ -302,7 +302,7 @@ static void nel_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char nel_0[] = {Z3 'N', 'E', 'L', (char)3};
@@ -323,7 +323,7 @@ static void gel_(void)
         refal.previous_argument->info.codef = &refalab_false;
     else
         refal.previous_argument->info.codef = &refalab_true;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char gel_0[] = {Z3 'G', 'E', 'L', (char)3};
@@ -344,7 +344,7 @@ static void gtl_(void)
         refal.previous_argument->info.codef = &refalab_true;
     else
         refal.previous_argument->info.codef = &refalab_false;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
