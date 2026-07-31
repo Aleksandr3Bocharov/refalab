@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-27
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -110,34 +110,34 @@ $FUNC Type
 }
 
 /*
-    <Is_Type s.Type e.Any> == True | False
+    <Is_Type s.Type e.Any> == True s.Type e.Any | False s.Type e.Any
     s.Type ::= Void | Label | Number | Reference | Char | Latin | Digit | Brackets | OtherT
 */
 $FUNC Is_Type
 {
-    Void = True;
-    Void e._ = False;
-    Label f.Symbol e._ = True;
-    Label e._ = False;
-    Number n.Symbol e._ = True;
-    Number e._ = False;
-    Reference r.Symbol e._ = True;
-    Reference e._ = False;
-    Char o.Symbol e._ = True;
-    Char e._ = False;
-    Latin l.Symbol e._ = True;
-    Latin e._ = False;
-    Digit d.Symbol e._ = True;
-    Digit e._ = False;
-    Brackets (e.Expr) e._ = True;
-    Brackets e._ = False;
-    OtherT = False;
-    OtherT f.Symbol e._ = False;
-    OtherT n.Symbol e._ = False;
-    OtherT r.Symbol e._ = False;
-    OtherT o.Symbol e._ = False;
-    OtherT (e.Expr) e._ = False;
-    OtherT e._ = True;
+    Void = True Void;
+    Void e._ = False Void e._;
+    Label f.Symbol e._ = True Label f.Symbol e._;
+    Label e._ = False Label e._;
+    Number n.Symbol e._ = True Number n.Symbol e._;
+    Number e._ = False Number e._;
+    Reference r.Symbol e._ = True Reference r.Symbol e._;
+    Reference e._ = False Reference e._;
+    Char o.Symbol e._ = True Char o.Symbol e._;
+    Char e._ = False Char e._;
+    Latin l.Symbol e._ = True Latin l.Symbol e._;
+    Latin e._ = False Latin e._;
+    Digit d.Symbol e._ = True Digit d.Symbol e._;
+    Digit e._ = False Digit e._;
+    Brackets (e.Expr) e._ = True Brackets (e.Expr) e._;
+    Brackets e._ = False Brackets e._;
+    OtherT = False OtherT;
+    OtherT f.Symbol e._ = False OtherT f.Symbol e._;
+    OtherT n.Symbol e._ = False OtherT n.Symbol e._;
+    OtherT r.Symbol e._ = False OtherT r.Symbol e._;
+    OtherT o.Symbol e._ = False OtherT o.Symbol e._;
+    OtherT (e.Expr) e._ = False OtherT (e.Expr) e._;
+    OtherT e._ = True OtherT e._;
 }
 
 $END.
