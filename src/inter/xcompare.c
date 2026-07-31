@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-07-30
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xcompare.c  ----------
@@ -218,7 +218,7 @@ static void lrel_(void)
     refal.previous_argument->tag = TAGO;
     refal.previous_argument->info.code = NULL;
     refal.previous_argument->info.infoc = compare_result;
-    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
 char lrel_0[] = {Z4 'L', 'R', 'E', 'L', (char)4};
