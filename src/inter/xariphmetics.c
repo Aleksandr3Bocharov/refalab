@@ -297,6 +297,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 transplantation(refal.previous_result, X.begin->previous, X.end->next);
                 return;
             }
+            //DR, DRN
             X.begin = X.begin->previous;
             X.end = X.end->next;
             X.begin->tag = TAGLB;
