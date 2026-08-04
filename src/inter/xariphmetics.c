@@ -276,18 +276,17 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         if (compare_absolute == -1)
         { //  delimoe < delitelja
-            if ((type & 2) == 2 || (type & 4) == 4)
-            { // DIV, DIVN, MOD, MODN
-                if ((type & 4) == 0)
-                { // DIV, DIVN
-                    remainder = 0;
-                    quotient = 0;
-                    X.sign = '+';
-                    Y.sign = '+';
-                }
+            if ((type & 2) == 2)
+            { // DIV, DIVN
+                remainder = 0;
+                quotient = 0;
+                X.sign = '+';
+                Y.sign = '+';
                 dr_one_remainder_one_quotient = true;
                 break;
             }
+            //if ((type & 4) == 4)
+            //{ // MOD, MODN
             if (X.sign == '-')
             {
                 X.begin = X.begin->previous;
