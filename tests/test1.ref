@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-25
+// 2026-08-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST1;
 
 $ENTRY Go;
-$EXTERN Add, Sub, Mul, Dr, Div;
-$EXTERN AddN, SubN, MulN, DrN, DivN;
+$EXTERN Add, Sub, Mul, Dr, Div, Mod;
+$EXTERN AddN, SubN, MulN, DrN, DivN, ModN;
 $EXTERN P1, M1, Numb, Symb, Prout, Proutm, LRel;
 
 $FUNC Go
@@ -19,7 +19,7 @@ $FUNC Go
         <F4>;
 }
 
-//  prowerka Mul, Dr, Div, Add, Sub
+//  prowerka Mul, Dr, Div, Mod, Add, Sub
 $FUNC F1 
 {    
     = 
@@ -53,10 +53,18 @@ $FUNC F1
         <Prdl (5) 33> 
         <Prdl (5) '-' 33> 
         <Prdl ('-' 5) 33> 
-        <Prdl ('-' 5) '-' 33>;
+        <Prdl ('-' 5) '-' 33>
+        <Prmd (5) 3> 
+        <Prmd (5) '-' 3> 
+        <Prmd ('-' 5) 3> 
+        <Prmd ('-' 5) '-' 3> 
+        <Prmd (5) 33> 
+        <Prmd (5) '-' 33> 
+        <Prmd ('-' 5) 33> 
+        <Prmd ('-' 5) '-' 33>;
 }
 
-//  prowerka Muln, Drn, Divn, Addn, Subn
+//  prowerka Muln, Drn, Divn, Modn, Addn, Subn
 $FUNC F2
 {
     =
@@ -90,7 +98,15 @@ $FUNC F2
         <Prdln (5) 33> 
         <Prdln (5) '-' 33> 
         <Prdln ('-' 5) 33> 
-        <Prdln( '-' 5) '-' 33>;     
+        <Prdln( '-' 5) '-' 33>
+        <Prmdn (5) 3> 
+        <Prmdn (5) '-' 3> 
+        <Prmdn ('-' 5) 3> 
+        <Prmdn ('-' 5) '-' 3> 
+        <Prmdn (5) 33> 
+        <Prmdn (5) '-' 33> 
+        <Prmdn ('-' 5) 33> 
+        <Prmdn ('-' 5) '-' 33>;     
 }
 
 //  neot
@@ -101,10 +117,12 @@ $FUNC F3
         <Prad (2) '-'> 
         <Prdr (1) 0>      
         <Prdr (1 2 3 4) 0 0> 
-        <Prdl (1)> 
+        <Prdl (1)>
+        <Prmd (1 2 3 4)>
         <Prdrn (1) 0>       
         <Prdrn (1 2 3 4) 0 0> 
-        <Prdln (1)>;
+        <Prdln (1)>
+        <Prmdn (1 2 3 4)>;
 }
 
 //  prowerka P1, M1, Numb, Symb
@@ -196,6 +214,11 @@ $FUNC Prdl
     e.N = <Prow Div e.N>;
 }
 
+$FUNC Prmd
+{
+    e.N = <Prow Mod e.N>;
+}
+
 $FUNC Pradn
 {
     e.N = <Prow AddN e.N>;
@@ -219,6 +242,11 @@ $FUNC Prdrn
 $FUNC Prdln
 {
     e.N = <Prow DivN e.N>;
+}
+
+$FUNC Prmdn
+{
+    e.N = <Prow ModN e.N>;
 }
 
 $FUNC Prm1
