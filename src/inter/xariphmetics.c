@@ -484,9 +484,11 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         X.end->info.codep = X.begin;
         if (result_begin->next != X.begin)
             transplantation(result_begin, X.begin->previous, X.end->next);
-        if ((type & 2) == 0)
+        if ((type & 4) == 4) // mod/n
+            transplantation(refal.previous_result, X.begin, X.end);
+        else if ((type & 2) == 0) // dr/n
             transplantation(refal.previous_result, x_current->previous, X.end->next);
-        else
+        else // div/n
             transplantation(refal.previous_result, x_current->previous, X.begin);
         return;
     } // end case
@@ -533,7 +535,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         x_current = x_current->next;
     }
     if (quotient != 0 || (type & 1) == 0)
-    { // div/dr
+    { // div/dr/mod
         x_current->tag = TAGN;
         x_current->info.code = NULL;
         pcoden(x_current, quotient);
@@ -549,7 +551,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             y_current = y_current->next;
         }
     if (remainder != 0 || (type & 1) == 0)
-    { // div/dr
+    { // div/dr/mod
         y_current->tag = TAGN;
         y_current->info.code = NULL;
         pcoden(y_current, remainder);
@@ -559,7 +561,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     y_current->tag = TAGRB;
     x_current->info.codep = y_current;
     y_current->info.codep = x_current;
-    if ((type & 2) == 0)
+    if ((type & 4) == 4)
+        // mod/n
+        transplantation(refal.previous_result, x_current, y_current);
+    else if ((type & 2) == 0)
         // dr/n
         transplantation(refal.previous_result, refal.previous_argument->previous, y_current->next);
     else
