@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-08-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xio.c  ----------
@@ -39,6 +39,25 @@ static void card_(void)
 char card_0[] = {Z4 'C', 'A', 'R', 'D', (char)4};
 G_L_B uint8_t refalab_card = '\122';
 void (*card_1)(void) = card_;
+
+static void get_char_(void)
+{
+    if (refal.previous_argument->next != refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const int symbol = getchar();
+    refal.previous_argument->tag = TAGN;
+    refal.previous_argument->info.codep = NULL;
+    if (symbol != EOF)
+        pcoden(refal.previous_argument, (uint8_t)symbol);
+    transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+    return;
+}
+char get_char_0[] = {Z0 'G', 'E', 'T', '_', 'C', 'H', 'A', 'R', (char)8};
+G_L_B uint8_t refalab_get_char = '\122';
+void (*get_char_1)(void) = get_char_;
 
 static void print_(void)
 {
