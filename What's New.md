@@ -14,7 +14,7 @@ Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 First, Last, Del_left, Del_right.
 
 Добавлены первичные функции в библиотеку РефалАБ: Left, Right,
-Reverse, Reversew, Existn, Mod, Modn, Get_char.
+Reverse, Reversew, Existn, Mod, Modn, Get_char, Remove_dir.
 
 Функции Lengr, Lengw, Del_firstw, Del_lastw, Exist, Set
 из библиотеки РефалАБ переименованы соответственно
