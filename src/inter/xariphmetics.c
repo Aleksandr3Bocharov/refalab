@@ -285,14 +285,17 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 dr_one_remainder_one_quotient = true;
                 break;
             }
-            //if ((type & 4) == 4)
-            //{ // MOD, MODN
             if (X.sign == '-')
             {
                 X.begin = X.begin->previous;
                 X.begin->tag = TAGO;
                 X.begin->info.code = NULL;
                 X.begin->info.infoc = '-';
+            }
+            if ((type & 4) == 4)
+            { // MOD, MODN
+                transplantation(refal.previous_result, X.begin->previous, X.end->next);
+                return;
             }
             X.begin = X.begin->previous;
             X.end = X.end->next;
