@@ -47,11 +47,15 @@ static void get_char_(void)
         refal.upshot = 2;
         return;
     }
-    const int symbol = getchar();
-    refal.previous_argument->tag = TAGN;
-    refal.previous_argument->info.codep = NULL;
-    if (symbol != EOF)
-        pcoden(refal.previous_argument, (uint8_t)symbol);
+    const int get_result = getchar();
+    refal.previous_argument->info.code = NULL;
+    if (get_result == EOF)
+        refal.previous_argument->tag = TAGN;
+    else
+    {
+        refal.previous_argument->tag = TAGO;
+        refal.previous_argument->info.infoc = (char)get_result;
+    }
     transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
     return;
 }
