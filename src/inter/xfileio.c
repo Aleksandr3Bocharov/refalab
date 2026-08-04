@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-08-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xfileio.c  ----------
@@ -957,6 +957,34 @@ static void remove_file_(void)
 char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E', (char)11};
 G_L_B uint8_t refalab_remove_file = '\122';
 void (*remove_file_1)(void) = remove_file_;
+
+static void remove_dir_(void)
+{
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
+    char directory_name[MAX_PATHFILENAME + 1];
+    current_symbol_char = get_string_expression(directory_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    const int remove_result = rmdir(directory_name);
+    if (remove_result == -1)
+    {
+        const int error_number = errno;
+        const char *string_error = strerror(error_number);
+        const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(directory_name) + 1);
+        if (result_yet_need > 0)
+            if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
+                return;
+        T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
+    }
+    return;
+}
+char remove_dir_0[] = {Z2 'R', 'E', 'M', 'O', 'V', 'E', '_', 'D', 'I', 'R', (char)10};
+G_L_B uint8_t refalab_remove_dir = '\122';
+void (*remove_dir_1)(void) = remove_dir_;
 
 static void rename_(void)
 {
