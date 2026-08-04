@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-08-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xariphmetics.c ----------
 //              Ariphmetics MO:
-//       Add, Sub, Mul, Dr, Div,
-//       Addn, Subn, Muln, Drn, Divn,
+//       Add, Sub, Mul, Dr, Div, Mod
+//       Addn, Subn, Muln, Drn, Divn, Modn
 //       Gcd, Ncheck, Nnorm, Abs, Minus,
 //       Get_max_number, P1, M1
 //------------------------------------------
@@ -51,6 +51,11 @@ char div_0[] = {Z3 'D', 'I', 'V', (char)3};
 G_L_B uint8_t refalab_div = '\122';
 void (*div_1)(void) = div_;
 
+static void mod_(void) { arithmetic_operate(Odr, 4); }
+char mod_0[] = {Z3 'M', 'O', 'D', (char)3};
+G_L_B uint8_t refalab_mod = '\122';
+void (*mod_1)(void) = mod_;
+
 static void addn_(void) { arithmetic_operate(Oadd, 1); }
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_addn = '\122';
@@ -75,6 +80,11 @@ static void divn_(void) { arithmetic_operate(Odr, 3); }
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
+
+static void modn_(void) { arithmetic_operate(Odr, 5); }
+char modn_0[] = {Z4 'M', 'O', 'D', 'N', (char)4};
+G_L_B uint8_t refalab_modn = '\122';
+void (*modn_1)(void) = modn_;
 
 static inline void multiply(uint64_t *a, uint64_t *b)
 { // rezult: a - starshy, b - mladshy
