@@ -1019,10 +1019,12 @@ static int remove_directory_recursive(const char *path)
         }
         if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
             continue;
-        const int snprintf_result = snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
+        int snprintf_result = snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
         if (snprintf_result < 0 || (size_t)snprintf_result >= sizeof(fullpath))
         {
-            snprintf(remove_error_path, sizeof(remove_error_path), "%s/%s", path, entry->d_name);
+            snprintf_result = snprintf(remove_error_path, sizeof(remove_error_path), "%s/%s", path, entry->d_name);
+            if (snprintf_result < 0)
+                remove_error_path[0] = '\0';
             closedir(directory);
             errno = ENAMETOOLONG;
             return -1;
