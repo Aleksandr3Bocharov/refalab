@@ -993,7 +993,11 @@ static int remove_directory_recursive(const char *path)
 {
     DIR *directory = opendir(path);
     if (directory == NULL)
+    {
+        strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
+        remove_error_path[sizeof(remove_error_path) - 1] = '\0';
         return -1;
+    }
     struct dirent *entry;
     char fullpath[MAX_PATHFILENAME + 1];
     for (;;)
@@ -1005,6 +1009,8 @@ static int remove_directory_recursive(const char *path)
             if (errno != 0)
             {
                 int error = errno;
+                strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
+                remove_error_path[sizeof(remove_error_path) - 1] = '\0';
                 closedir(directory);
                 errno = error;
                 return -1;
@@ -1016,6 +1022,7 @@ static int remove_directory_recursive(const char *path)
         const int snprintf_result = snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
         if (snprintf_result < 0 || (size_t)snprintf_result >= sizeof(fullpath))
         {
+            remove_error_path[0] = '\0';
             snprintf(remove_error_path, sizeof(remove_error_path), "%s/%s", path, entry->d_name);
             closedir(directory);
             errno = ENAMETOOLONG;
@@ -1055,8 +1062,18 @@ static int remove_directory_recursive(const char *path)
         }
     }
     if (closedir(directory) == -1)
+    {
+        strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
+        remove_error_path[sizeof(remove_error_path) - 1] = '\0';
         return -1;
-    return rmdir(path);
+    }
+    if (rmdir(path) == -1)
+    {
+        strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
+        remove_error_path[sizeof(remove_error_path) - 1] = '\0';
+        return -1;
+    }
+    return 0;
 }
 
 static void remove_alldir_(void)
