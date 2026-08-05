@@ -35,6 +35,8 @@ extern uint8_t refalab_begin, refalab_end, refalab_current;
 static FILE *file;
 static FILE *files[FILES_MAX] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
+static char remove_error_path[MAX_PATHFILENAME + 1];
+
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
 
@@ -1014,6 +1016,7 @@ static int remove_directory_recursive(const char *path)
         const int snprintf_result = snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
         if (snprintf_result < 0 || (size_t)snprintf_result >= sizeof(fullpath))
         {
+            snprintf(remove_error_path, sizeof(remove_error_path), "%s/%s", path, entry->d_name);
             closedir(directory);
             errno = ENAMETOOLONG;
             return -1;
@@ -1022,6 +1025,8 @@ static int remove_directory_recursive(const char *path)
         if (stat(fullpath, &state_directory_buffer) == -1)
         {
             const int error = errno;
+            strncpy(remove_error_path, fullpath, sizeof(remove_error_path) - 1);
+            remove_error_path[sizeof(remove_error_path) - 1] = '\0';
             closedir(directory);
             errno = error;
             return -1;
@@ -1041,6 +1046,8 @@ static int remove_directory_recursive(const char *path)
             if (remove(fullpath) == -1)
             {
                 const int error = errno;
+                strncpy(remove_error_path, fullpath, sizeof(remove_error_path) - 1);
+                remove_error_path[sizeof(remove_error_path) - 1] = '\0';
                 closedir(directory);
                 errno = error;
                 return -1;
@@ -1062,10 +1069,12 @@ static void remove_alldir_(void)
         refal.upshot = 2;
         return;
     }
+    remove_error_path[0] = '\0';
     if (remove_directory_recursive(directory_name) == -1)
     {
         const int error_number = errno;
-        const char *string_error = strerror(error_number);
+        char string_error[MAX_PATHFILENAME + 256];
+        snprintf(string_error, sizeof(string_error), "%s: %s", remove_error_path, strerror(error_number));
         const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(directory_name) + 1);
         if (result_yet_need > 0)
             if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
