@@ -989,7 +989,7 @@ char remove_dir_0[] = {Z2 'R', 'E', 'M', 'O', 'V', 'E', '_', 'D', 'I', 'R', (cha
 G_L_B uint8_t refalab_remove_dir = '\122';
 void (*remove_dir_1)(void) = remove_dir_;
 
-static int remove_directory_recursive(const char *path)
+static int remove_directory_recursive(const char *path, bool remove_self)
 {
     DIR *directory = opendir(path);
     if (directory == NULL)
@@ -1045,7 +1045,7 @@ static int remove_directory_recursive(const char *path)
         }
         if (S_ISDIR(state_directory_buffer.st_mode))
         {
-            if (remove_directory_recursive(fullpath) == -1)
+            if (remove_directory_recursive(fullpath, true) == -1)
             {
                 const int error = errno;
                 closedir(directory);
@@ -1072,16 +1072,17 @@ static int remove_directory_recursive(const char *path)
         remove_error_path[sizeof(remove_error_path) - 1] = '\0';
         return -1;
     }
-    if (rmdir(path) == -1)
-    {
-        strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
-        remove_error_path[sizeof(remove_error_path) - 1] = '\0';
-        return -1;
-    }
+    if (remove_self)
+        if (rmdir(path) == -1)
+        {
+            strncpy(remove_error_path, path, sizeof(remove_error_path) - 1);
+            remove_error_path[sizeof(remove_error_path) - 1] = '\0';
+            return -1;
+        }
     return 0;
 }
 
-static void remove_alldir_(void)
+static void clear_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
     char directory_name[MAX_PATHFILENAME + 1];
@@ -1092,7 +1093,7 @@ static void remove_alldir_(void)
         return;
     }
     remove_error_path[0] = '\0';
-    if (remove_directory_recursive(directory_name) == -1)
+    if (remove_directory_recursive(directory_name, false) == -1)
     {
         const int error_number = errno;
         char string_error[MAX_PATHFILENAME + 256];
@@ -1106,9 +1107,9 @@ static void remove_alldir_(void)
     }
     return;
 }
-char remove_alldir_0[] = {Z5 'R', 'E', 'M', 'O', 'V', 'E', '_', 'A', 'L', 'L', 'D', 'I', 'R', (char)13};
-G_L_B uint8_t refalab_remove_alldir = '\122';
-void (*remove_alldir_1)(void) = remove_alldir_;
+char clear_dir_0[] = {Z1 'C', 'L', 'E', 'A', 'R', '_', 'D', 'I', 'R', (char)9};
+G_L_B uint8_t refalab_clear_dir = '\122';
+void (*clear_dir_1)(void) = clear_dir_;
 
 static void rename_(void)
 {
