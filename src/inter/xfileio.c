@@ -1028,7 +1028,11 @@ static int remove_directory_recursive(const char *path)
             return -1;
         }
         struct stat state_directory_buffer;
+#if defined POSIX
+        if (lstat(fullpath, &state_directory_buffer) == -1)
+#else
         if (stat(fullpath, &state_directory_buffer) == -1)
+#endif
         {
             const int error = errno;
             strncpy(remove_error_path, fullpath, sizeof(remove_error_path) - 1);
