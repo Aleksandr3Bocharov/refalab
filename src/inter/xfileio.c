@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include "refalab.h"
@@ -985,6 +986,97 @@ static void remove_dir_(void)
 char remove_dir_0[] = {Z2 'R', 'E', 'M', 'O', 'V', 'E', '_', 'D', 'I', 'R', (char)10};
 G_L_B uint8_t refalab_remove_dir = '\122';
 void (*remove_dir_1)(void) = remove_dir_;
+
+static int remove_directory_recursive(const char *path)
+{
+    DIR *directory = opendir(path);
+    if (directory == NULL)
+        return -1;
+    struct dirent *entry;
+    char fullpath[MAX_PATHFILENAME + 1];
+    for (;;)
+    {
+        errno = 0;
+        entry = readdir(directory);
+        if (entry == NULL)
+        {
+            if (errno != 0)
+            {
+                int error = errno;
+                closedir(directory);
+                errno = error;
+                return -1;
+            }
+            break;
+        }
+        if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
+            continue;
+        if (snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name) >= sizeof(fullpath))
+        {
+            closedir(directory);
+            errno = ENAMETOOLONG;
+            return -1;
+        }
+        struct stat state_directory_buffer;
+        if (stat(fullpath, &state_directory_buffer) == -1)
+        {
+            const int error = errno;
+            closedir(directory);
+            errno = error;
+            return -1;
+        }
+        if (S_ISDIR(state_directory_buffer.st_mode))
+        {
+            if (remove_directory_recursive(fullpath) == -1)
+            {
+                const int error = errno;
+                closedir(directory);
+                errno = error;
+                return -1;
+            }
+        }
+        else
+        {
+            if (remove(fullpath) == -1)
+            {
+                const int error = errno;
+                closedir(directory);
+                errno = error;
+                return -1;
+            }
+        }
+    }
+    if (closedir(directory) == -1)
+        return -1;
+    return rmdir(path);
+}
+
+static void remove_alldir_(void)
+{
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
+    char directory_name[MAX_PATHFILENAME + 1];
+    current_symbol_char = get_string_expression(directory_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+    if (remove_directory_recursive(directory_name) == -1)
+    {
+        const int error_number = errno;
+        const char *string_error = strerror(error_number);
+        const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(directory_name) + 1);
+        if (result_yet_need > 0)
+            if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
+                return;
+        T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
+    }
+    return;
+}
+char remove_alldir_0[] = {Z5 'R', 'E', 'M', 'O', 'V', 'E', '_', 'A', 'L', 'L', 'D', 'I', 'R', (char)13};
+G_L_B uint8_t refalab_remove_alldir = '\122';
+void (*remove_alldir_1)(void) = remove_alldir_;
 
 static void rename_(void)
 {
