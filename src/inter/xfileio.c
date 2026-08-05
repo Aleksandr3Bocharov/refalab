@@ -1011,7 +1011,8 @@ static int remove_directory_recursive(const char *path)
         }
         if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
             continue;
-        if (snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name) >= sizeof(fullpath))
+        const int snprintf_result = snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
+        if (snprintf_result < 0 || (size_t)snprintf_result >= sizeof(fullpath))
         {
             closedir(directory);
             errno = ENAMETOOLONG;
