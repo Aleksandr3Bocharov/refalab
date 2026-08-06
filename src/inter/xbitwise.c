@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-08-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xbitwise.c  ----------
@@ -193,19 +193,14 @@ static void shift_operate(uint8_t operation)
         if (current_argument->tag != TAGN)
             break;
         uint64_t shift_bits = gcoden(current_argument);
-        if (operation == Oshr || sizeof(size_t) == 8)
+        current_argument = current_argument->next;
+        if (current_argument->tag == TAGN)
         {
-            current_argument = current_argument->next;
-            if (current_argument->tag == TAGN)
-            {
-                shift_bits = shift_bits << 32 | gcoden(current_argument);
-                if (current_argument->next != refal.next_argument)
-                    break;
-            }
-            else if (current_argument != refal.next_argument)
+            shift_bits = shift_bits << 32 | gcoden(current_argument);
+            if (current_argument->next != refal.next_argument)
                 break;
         }
-        else if (current_argument->next != refal.next_argument)
+        else if (current_argument != refal.next_argument)
             break;
         const uint64_t numbers_count = shift_bits / 32;
         shift_bits %= 32;
