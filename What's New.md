@@ -5,20 +5,25 @@
 
 **21-07-2026**
 
+Добавлена новая интерфейсная функция compare_expressions_lexicographic.
+
+Внесены изменения в файл заголовков include/refalab.h для разработчиков.
+
+Оптимизирована работа рефал-функций из библиотеки РефалАБ: QSortW, MinW, MaxW.
+
 Добавлены рефал-функции в библиотеку РефалАБ: Setn, Setw_union, Setn_union,
 Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 
 Рефал-функция Existw из библиотеки РефалАБ переделена в первичую функцию.
 
-Внесены изменения в работу первичных функций из библиотеки РефалАБ:
-First, Last, Del_left, Del_right, Length, Lengthw.
+Внесены изменения в работу функций из библиотеки РефалАБ: First, Last, Del_left, Del_right,
+Lrel, Ltn, Len, Eqn, Nen, Gen, Gtn, Ltl, Lel, Eql, Nel, Gel, Gtl,Is_type, Length, Lengthw.
 
-Добавлены первичные функции в библиотеку РефалАБ: Left, Right,
-Reverse, Reversew, Existn, Mod, Modn, Get_char, Remove_dir, Clear_dir.
+Добавлены первичные функции в библиотеку РефалАБ: Left, Right, Reverse, Reversew,
+Existn, Mod, Modn, Get_char, Remove_dir, Clear_dir..
 
-Функции Lengr, Lengw, Del_firstw, Del_lastw, Exist, Set
-из библиотеки РефалАБ переименованы соответственно
-в Length, Lengthw, Del_left, Del_right, Existw, Setw.
+Функции Lengr, Lengw, Del_firstw, Del_lastw, Exist, Set из библиотеки РефалАБ переименованы
+соответственно в Length, Lengthw, Del_left, Del_right, Existw, Setw.
 
 
 
