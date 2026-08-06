@@ -375,16 +375,37 @@ void (*del_right_1)(void) = del_right_;
 
 static void length_(void)
 {
-    uint32_t length = 0;
-    const T_LINKCB *current_argument = refal.previous_argument->next;
+    uint64_t length = 0;
+    T_LINKCB *current_argument = refal.previous_argument->next;
     while (current_argument != refal.next_argument)
     {
         length++;
         current_argument = current_argument->next;
     }
-    refal.previous_argument->tag = TAGN;
-    refal.previous_argument->info.code = NULL;
-    pcoden(refal.previous_argument, length);
+    if (length > MAX_NUMBER)
+    {
+        if (!extended_insert_from_free_memory(refal.previous_argument, 3))
+            return;
+        refal.previous_argument->tag = TAGLB;
+        current_argument = refal.previous_argument->next;
+        current_argument->tag = TAGN;
+        current_argument->info.code = NULL;
+        pcoden(current_argument, (uint32_t)(length >> 32));
+        current_argument = current_argument->next;
+        current_argument->tag = TAGN;
+        current_argument->info.code = NULL;
+        pcoden(current_argument, (uint32_t)length);
+        current_argument = current_argument->next;
+        current_argument->tag = TAGRB;
+        current_argument->info.codep = refal.previous_argument;
+        refal.previous_argument->info.codep = current_argument;
+    }
+    else
+    {
+        refal.previous_argument->tag = TAGN;
+        refal.previous_argument->info.code = NULL;
+        pcoden(refal.previous_argument, (uint32_t)length);
+    }
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
@@ -394,8 +415,8 @@ void (*length_1)(void) = length_;
 
 static void lengthw_(void)
 {
-    uint32_t length = 0;
-    const T_LINKCB *current_argument = refal.previous_argument->next;
+    uint64_t length = 0;
+    T_LINKCB *current_argument = refal.previous_argument->next;
     while (current_argument != refal.next_argument)
     {
         length++;
@@ -403,9 +424,30 @@ static void lengthw_(void)
             current_argument = current_argument->info.codep;
         current_argument = current_argument->next;
     }
-    refal.previous_argument->tag = TAGN;
-    refal.previous_argument->info.code = NULL;
-    pcoden(refal.previous_argument, length);
+    if (length > MAX_NUMBER)
+    {
+        if (!extended_insert_from_free_memory(refal.previous_argument, 3))
+            return;
+        refal.previous_argument->tag = TAGLB;
+        current_argument = refal.previous_argument->next;
+        current_argument->tag = TAGN;
+        current_argument->info.code = NULL;
+        pcoden(current_argument, (uint32_t)(length >> 32));
+        current_argument = current_argument->next;
+        current_argument->tag = TAGN;
+        current_argument->info.code = NULL;
+        pcoden(current_argument, (uint32_t)length);
+        current_argument = current_argument->next;
+        current_argument->tag = TAGRB;
+        current_argument->info.codep = refal.previous_argument;
+        refal.previous_argument->info.codep = current_argument;
+    }
+    else
+    {
+        refal.previous_argument->tag = TAGN;
+        refal.previous_argument->info.code = NULL;
+        pcoden(refal.previous_argument, (uint32_t)length);
+    }
     transplantation(refal.previous_result, refal.next_result, refal.next_argument);
     return;
 }
