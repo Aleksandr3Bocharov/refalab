@@ -6,8 +6,8 @@
 //----------  file xbitarray.c  ----------
 //                Bitwise MO:
 //      Bit, Bitand, Bitor, Bitxor,
-//      Bitnot, Bitshl, Bitshr, Bitro
-//-----------------------------------
+//      Bitnot, Bitshl, Bitshr, Bitrot
+//----------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
@@ -80,4 +80,4 @@ char bit_0[] = {Z3 'B', 'I', 'T', (char)3};
 G_L_B uint8_t refalab_bit = '\122';
 void (*bit_1)(void) = bit_;
 
-//----------  end of file xbit.c  ----------
+//----------  end of file xbitarray.c  ----------
