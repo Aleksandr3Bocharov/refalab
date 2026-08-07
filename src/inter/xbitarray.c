@@ -3,11 +3,10 @@
 // 2026-08-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
-//----------  file xbit.c  ----------
+//----------  file xbitarray.c  ----------
 //                Bitwise MO:
 //      Bit, Bitand, Bitor, Bitxor,
-//      Bitnot, Bitshl, Bitshr,
-//      Bitrol, Bitror
+//      Bitnot, Bitshl, Bitshr, Bitro
 //-----------------------------------
 
 #include <stddef.h>
