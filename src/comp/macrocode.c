@@ -367,7 +367,7 @@ void macrocode_end(void)
 {
     ending();
     uint8_t byte = 0;
-    char buffer_string[256]; // Increased buffer size for safe formatting of long identifiers
+    char buffer_string[1024]; // Increased buffer size for safe formatting of long identifiers
     // Module header. Using packed structure syntax <{ ... }>
     // to prevent LLVM from inserting unexpected padding between bytes and pointers.
     sprintf(buffer_string, "@_d%" PRIu32 "$ = private global <{\n", scanner.module_number);
