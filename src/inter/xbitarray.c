@@ -152,9 +152,8 @@ static void bit_shift_operate(uint8_t operation)
         if (current_argument != end_array || array_length == 0)
             break;
         const uint64_t array_bits = array_length << 5;
-        current_argument = right_bracket->next;
         T_BIG_NUMBER shift_number;
-        if (!read_big_number_expression(&shift_number, current_argument, refal.next_argument))
+        if (!read_big_number_expression(&shift_number, right_bracket, refal.next_argument))
             break;
         if (shift_number.length == 0)
         {
