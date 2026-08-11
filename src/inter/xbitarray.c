@@ -255,16 +255,18 @@ static void bit_shift_operate(uint8_t operation)
                  */
                 if (number_shift != 0)
                 {
+                    T_LINKCB *left_bracket = begin_array->previous;
                     T_LINKCB *middle_array = begin_array;
                     for (uint64_t i = 0; i < number_shift; i++)
                         middle_array = middle_array->next;
-                    transplantation(begin_array->previous, middle_array->previous, end_array);
+                    transplantation(left_bracket, middle_array->previous, end_array);
                     current_argument = end_array->previous;
                     for (uint64_t i = 0; i < number_shift; i++)
                     {
                         pcoden(current_argument, 0);
                         current_argument = current_argument->previous;
                     }
+                    begin_array = left_bracket->next;
                 }
                 if (bit_shift != 0)
                 {
@@ -290,16 +292,18 @@ static void bit_shift_operate(uint8_t operation)
                  */
                 if (number_shift != 0)
                 {
+                    T_LINKCB *left_bracket = begin_array->previous;
                     T_LINKCB *middle_array = begin_array;
                     for (uint64_t i = 0; i < array_length - number_shift; i++)
                         middle_array = middle_array->next;
-                    transplantation(begin_array->previous, middle_array->previous, end_array);
-                    current_argument = begin_array;
+                    transplantation(left_bracket, middle_array->previous, end_array);
+                    current_argument = left_bracket->next;
                     for (uint64_t i = 0; i < number_shift; i++)
                     {
                         pcoden(current_argument, 0);
                         current_argument = current_argument->next;
                     }
+                    begin_array = left_bracket->next;
                 }
                 if (bit_shift != 0)
                 {
