@@ -336,10 +336,12 @@ static void bit_shift_operate(uint8_t operation)
          */
         if (number_shift != 0)
         {
+            T_LINKCB *left_bracket = begin_array->previous;
             T_LINKCB *middle_array = begin_array;
             for (uint64_t i = 0; i < number_shift; i++)
                 middle_array = middle_array->next;
-            transplantation(begin_array->previous, middle_array->previous, end_array);
+            transplantation(left_bracket, middle_array->previous, end_array);
+            begin_array = left_bracket->next;
         }
         if (bit_shift != 0)
         {
@@ -348,8 +350,12 @@ static void bit_shift_operate(uint8_t operation)
             for (current_argument = begin_array; current_argument != end_array; current_argument = current_argument->next)
             {
                 const uint32_t value = gcoden(current_argument);
-                const uint32_t next = current_argument->next == end_array ? carry : gcoden(current_argument->next);
-                pcoden(current_argument, value << bit_shift | next >> reverse_shift);
+                uint32_t next_shifted;
+                if (current_argument->next == end_array)
+                    next_shifted = carry;
+                else
+                    next_shifted = gcoden(current_argument->next) >> reverse_shift;
+                pcoden(current_argument, value << bit_shift | next_shifted);
             }
         }
         transplantation(refal.previous_result, begin_array->previous, end_array);
