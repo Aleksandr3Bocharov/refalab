@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-05
+// 2026-08-12
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xfileio.c  ----------
-//           MO: file input/output
-//           MO: file/dir remove/rename/exist
+//      MO: file input/output
+//      MO: file/dir create/remove/rename/exist
 //--------------------------------------
 
 #define _POSIX_C_SOURCE 200112L
@@ -933,6 +933,38 @@ char is_ferror_0[] = {Z1 'I', 'S', '_', 'F', 'E', 'R', 'R', 'O', 'R', (char)9};
 G_L_B uint8_t refalab_is_ferror = '\122';
 void (*is_ferror_1)(void) = is_ferror_;
 
+static void make_dir_(void)
+{
+    T_LINKCB *current_symbol_char = refal.previous_argument->next;
+    char directory_name[MAX_PATHFILENAME + 1];
+    current_symbol_char = get_string_expression(directory_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
+    if (current_symbol_char != refal.next_argument)
+    {
+        refal.upshot = 2;
+        return;
+    }
+#ifdef POSIX
+    const int make_result = mkdir(directory_name, 0755);
+#else
+    const int make_result = mkdir(directory_name);
+#endif
+    if (make_result == -1)
+    {
+        const int error_number = errno;
+        const char *string_error = strerror(error_number);
+        const int32_t result_yet_need = (int32_t)strlen(string_error) - ((int32_t)strlen(directory_name) + 1);
+        if (result_yet_need > 0)
+            if (!extended_insert_from_free_memory(refal.next_result, (size_t)result_yet_need))
+                return;
+        T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
+        transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
+    }
+    return;
+}
+char make_dir_0[] = {Z0 'M', 'A', 'K', 'E', '_', 'D', 'I', 'R', (char)8};
+G_L_B uint8_t refalab_make_dir = '\122';
+void (*make_dir_1)(void) = make_dir_;
+
 static void remove_file_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -1151,7 +1183,7 @@ static void exist_file_(void)
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
     char file_name[MAX_PATHFILENAME + 1];
     current_symbol_char = get_string_expression(file_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
-    if (current_symbol_char != refal.next_argument)
+    if (current_symbol_char != refal.next_argument) 
     {
         refal.upshot = 2;
         return;
