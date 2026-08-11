@@ -272,7 +272,7 @@ static void bit_shift_operate(uint8_t operation)
                 {
                     const uint32_t reverse_shift = 32 - bit_shift;
                     uint32_t carry = 0;
-                    for (current_argument = begin_array; current_argument != end_array; current_argument = current_argument->next)
+                    for (current_argument = end_array->previous; current_argument != begin_array->previous; current_argument = current_argument->previous)
                     {
                         const uint32_t value = gcoden(current_argument);
                         pcoden(current_argument, value << bit_shift | carry);
@@ -309,7 +309,7 @@ static void bit_shift_operate(uint8_t operation)
                 {
                     const uint32_t reverse_shift = 32 - bit_shift;
                     uint32_t carry = 0;
-                    for (current_argument = end_array->previous; current_argument != begin_array->previous; current_argument = current_argument->previous)
+                    for (current_argument = begin_array; current_argument != end_array; current_argument = current_argument->next)
                     {
                         const uint32_t value = gcoden(current_argument);
                         pcoden(current_argument, value >> bit_shift | carry);
