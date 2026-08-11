@@ -19,8 +19,9 @@ Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
 Внесены изменения в работу функций из библиотеки РефалАБ: First, Last, Del_left, Del_right,
 Lrel, Ltn, Len, Eqn, Nen, Gen, Gtn, Ltl, Lel, Eql, Nel, Gel, Gtl,Is_type, Length, Lengthw, Shl.
 
-Добавлены первичные функции в библиотеку РефалАБ: Left, Right, Reverse, Reversew,
-Existn, Mod, Modn, Get_char, Remove_dir, Clear_dir, Bit, Bitand, Bitor, Bitxor, Bitnot, Bitsh, Bitrot.
+Добавлены первичные функции в библиотеку РефалАБ: Left, Right, Reverse, Reversew, Existn,
+Mod, Modn, Get_char, Remove_dir, Clear_dir, Bit, Bitand, Bitor, Bitxor, Bitnot, Bitsh, Bitrot,
+Make_dir.
 
 Функции Lengr, Lengw, Del_firstw, Del_lastw, Exist, Set из библиотеки РефалАБ переименованы
 соответственно в Length, Lengthw, Del_left, Del_right, Existw, Setw.
