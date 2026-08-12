@@ -154,18 +154,17 @@ static void fclose_(void)
 char fclose_0[] = {Z6 'F', 'C', 'L', 'O', 'S', 'E', (char)6};
 G_L_B uint8_t refalab_fclose = '\122';
 void (*fclose_1)(void) = fclose_;
-/*
+
 static void fgets_(void)
 {
     do
     {
         const T_LINKCB *argument = refal.previous_argument->next;
+        FILE *file;
         if (argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (argument->tag == TAGF)
         {
@@ -211,12 +210,11 @@ static void fputs_(void)
     do
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
+        FILE *file;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (current_argument->tag == TAGF)
         {
@@ -274,12 +272,11 @@ static void fprint_(void)
     do
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
+        FILE *file;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (current_argument->tag == TAGF)
         {
@@ -362,12 +359,11 @@ static void fprints_(void)
     do
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
+        FILE *file;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (current_argument->tag == TAGF)
         {
@@ -449,12 +445,11 @@ static void fprintm_(void)
     do
     {
         const T_LINKCB *current_argument = refal.previous_argument->next;
+        FILE *file;
         if (current_argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(current_argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (current_argument->tag == TAGF)
         {
@@ -571,9 +566,7 @@ static void fread_(void)
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
-        if (file_number >= FILES_MAX)
-            break;
-        file = files[file_number];
+        FILE *file = file_get(file_number);
         current_argument = current_argument->next;
         if (current_argument->tag != TAGN)
             break;
@@ -619,9 +612,7 @@ static void fwrite_(void)
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
-        if (file_number >= FILES_MAX)
-            break;
-        file = files[file_number];
+        FILE *file = file_get(file_number);
         const T_LINKCB *temp_argument = current_argument->next;
         bool impossible = false;
         while (temp_argument != refal.next_argument)
@@ -675,9 +666,7 @@ static void fseek_(void)
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
-        if (file_number >= FILES_MAX)
-            break;
-        file = files[file_number];
+        FILE *file = file_get(file_number);
         current_argument = current_argument->next;
         const char sign = current_argument->info.infoc;
         off_t sign_digit = 1;
@@ -749,11 +738,9 @@ static void ftell_(void)
         if (symbol_number->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(symbol_number);
-        if (file_number >= FILES_MAX)
-            break;
+        FILE *file = file_get(file_number);
         if (symbol_number->next != refal.next_argument)
             break;
-        file = files[file_number];
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
@@ -798,12 +785,11 @@ static void is_eof_(void)
     do
     {
         const T_LINKCB *argument = refal.previous_argument->next;
+        FILE *file;
         if (argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (argument->tag == TAGF)
         {
@@ -845,12 +831,11 @@ static void is_feof_(void)
     do
     {
         const T_LINKCB *argument = refal.previous_argument->next;
+        FILE *file;
         if (argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (argument->tag == TAGF)
         {
@@ -892,12 +877,11 @@ static void is_ferror_(void)
     do
     {
         const T_LINKCB *argument = refal.previous_argument->next;
+        FILE *file;
         if (argument->tag == TAGN)
         {
             const uint32_t file_number = gcoden(argument);
-            if (file_number >= FILES_MAX)
-                break;
-            file = files[file_number];
+            file = file_get(file_number);
         }
         else if (argument->tag == TAGF)
         {
@@ -1184,7 +1168,7 @@ static void exist_file_(void)
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
     char file_name[MAX_PATHFILENAME + 1];
     current_symbol_char = get_string_expression(file_name, MAX_PATHFILENAME, current_symbol_char, refal.next_argument);
-    if (current_symbol_char != refal.next_argument) 
+    if (current_symbol_char != refal.next_argument)
     {
         refal.upshot = 2;
         return;
@@ -1222,5 +1206,5 @@ static void exist_dir_(void)
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
 G_L_B uint8_t refalab_exist_dir = '\122';
 void (*exist_dir_1)(void) = exist_dir_;
-*/
+
 //----------  end of file xfileio.c  -----------
