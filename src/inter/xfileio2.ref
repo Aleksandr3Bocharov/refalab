@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-08-12
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -10,18 +10,16 @@
 
 $START FILEIO2;
 
-$ENTRY Numbers_Files, EOF;
+$ENTRY EOF;
 $ENTRY Load_File, Save_File, Append_File;
 $ENTRY Load_FBytes, Save_FBytes, Append_FBytes;
 $EXTERN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError;
 $EXTERN NULL;
 
-$SPEC Numbers_Files 0 1 2 3 4 5 6 7 8 9;
-
 $SPEC EOF FEOF FError;
 
 /*
-    <Load_File s(:Numbers_Files:).Handle e(O).FileName> == v.Out
+    <Load_File s(n).Handle e(o).FileName> == v.Out
     v.Out ::= v(o).Open_Error NULL | e.Lines s(:EOF:).EOF e(o).Close_Error
     e.Lines ::= (e(o).Line)*
 */
@@ -42,7 +40,7 @@ $FUNC Load_File_Aux
 }
 
 /*
-    <Save_File s(:Numbers_Files:).Handle (e(o).FileName) e.Lines> == e.Out
+    <Save_File s(n).Handle (e(o).FileName) e.Lines> == e.Out
     e.Lines ::= (e(o).Line)*
     e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
@@ -75,7 +73,7 @@ $FUNC Write_Bracket_Lines_Aux
 }
 
 /*
-    <Append_File s(:Numbers_Files:).Handle (e(O).FileName) e.Lines> == e.Out
+    <Append_File s(n).Handle (e(o).FileName) e.Lines> == e.Out
     e.Lines ::= (e(o).Line)*
     e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
@@ -89,7 +87,7 @@ $FUNC Append_File
 }
 
 /*
-    <Load_FBytes s(:Numbers_Files:).Handle e(o).FileName> == v.Out
+    <Load_FBytes s(n).Handle e(o).FileName> == v.Out
     v.Out ::= v(o).Open_Error NULL | e.Bytes s(:EOF:).EOF e(O).Close_Error
     e.Bytes ::= s(n).Byte*
 */
@@ -109,7 +107,7 @@ $FUNC Load_FBytes_Aux
 }
 
 /*
-    <Save_FBytes s(:Numbers_Files:).Handle (e(o).FileName) e.Bytes> == e.Out
+    <Save_FBytes s(n).Handle (e(o).FileName) e.Bytes> == e.Out
     e.Bytes ::= s(on).Byte*
     e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
@@ -128,7 +126,7 @@ $FUNC Write_FBytes
 }
 
 /*
-    <Append_FBytes s(:Numbers_Files:).Handle (e(o).FileName) e.Bytes> == e.Out
+    <Append_FBytes s(n).Handle (e(o).FileName) e.Bytes> == e.Out
     e.Bytes ::= s(on).Byte*
     e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
