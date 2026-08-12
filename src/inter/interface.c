@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-08-12
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -23,7 +23,15 @@
 #include "interface.h"
 #include "interpreter.h"
 
+#define FILE_HASH_SIZE 256
+
 extern uint8_t refalab_feof, refalab_ferror;
+
+typedef struct file_node {
+    uint32_t id_number;
+    FILE *file;
+    struct file_node *next;
+} T_FILE_NODE;
 
 T_REFAL refal;
 
@@ -43,6 +51,8 @@ static T_LINKCB *last_block_list_memory = NULL;
 static size_t list_memory_count = 0;
 static bool refal_init = true;
 static T_LINKCB free_memory_head;
+
+static T_FILE_NODE *file_table[FILE_HASH_SIZE] = {NULL};
 
 static bool collect_garbage(void);
 static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_memory);
@@ -1004,6 +1014,55 @@ int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB 
     if (second_current == after && first_current != middle)
         return 1; // X>Y
     return 0;     // X=Y
+}
+
+// MurmurHash3 finalizer
+static uint32_t file_hash(uint32_t id_number)
+{
+    uint32_t hash = id_number;
+    hash ^= hash >> 16;
+    hash *= 0x85ebca6bU;
+    hash ^= hash >> 13;
+    hash *= 0xc2b2ae35U;
+    hash ^= hash >> 16;
+    return hash & (FILE_HASH_SIZE - 1);
+}
+
+FILE *file_get(uint32_t id_number)
+{
+    for (T_FILE_NODE *file_node = file_table[file_hash(id_number)]; file_node != NULL; file_node = file_node->next)
+        if (file_node->id_number == id_number)
+            return file_node->file;
+    return NULL;
+}
+
+bool file_add(uint32_t id_number, FILE *file)
+{
+    T_FILE_NODE *file_node = malloc(sizeof(T_FILE_NODE));
+    if (file_node == NULL)
+        return false;
+    file_node->id_number = id_number;
+    file_node->file = file;
+    const uint32_t hash = file_hash(id_number);
+    file_node->next = file_table[hash];
+    file_table[hash] = file_node;
+    return true;
+}
+
+bool file_remove(uint32_t id_number)
+{
+    const uint32_t hash = file_hash(id_number);
+    T_FILE_NODE **previous_node = &file_table[hash];
+    for (T_FILE_NODE *file_node = *previous_node; file_node != NULL; previous_node = &file_node->next, file_node = file_node->next)
+    {
+        if (file_node->id_number == id_number)
+        {
+            *previous_node = file_node->next;
+            free(file_node);
+            return true;
+        }
+    }
+    return false;
 }
 
 //----------- end of file interface.c ------------
