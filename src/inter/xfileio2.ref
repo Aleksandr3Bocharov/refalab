@@ -20,13 +20,19 @@ $SPEC EOF FEOF FError;
 
 /*
     <Load_File s(n).Handle e(o).FileName> == v.Out
-    v.Out ::= v(o).Open_Error NULL | e.Lines s(:EOF:).EOF e(o).Close_Error
+    v.Out ::= NULL | v(o).Open_Error NULL | e.Lines s(:EOF:).EOF e(o).Close_Error
     e.Lines ::= (e(o).Line)*
 */
 $FUNC Load_File
 {
     s.Handle e.FileName =
-        <FOpen 'r' s.Handle e.FileName>
+        <Check_Open <FOpen 'r' s.Handle e.FileName> s.Handle>;
+}
+
+$FUNC Check_Open
+{
+    NULL e._ = NULL;
+    e.Open_Error s.Handle = e.Open_Error
         <Load_File_Aux s.Handle <FGetS s.Handle>>
         <FClose s.Handle>;
 }
@@ -42,13 +48,31 @@ $FUNC Load_File_Aux
 /*
     <Save_File s(n).Handle (e(o).FileName) e.Lines> == e.Out
     e.Lines ::= (e(o).Line)*
-    e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
+    e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
 $FUNC Save_File
 {
     s.Handle (e.FileName) e.Lines =
         <Check_Lines e.Lines>
-        <FOpen 'w' s.Handle e.FileName>
+        <Check_Open_Write_Lines <FOpen 'w' s.Handle e.FileName> s.Handle (e.Lines)>;
+}
+
+/*
+    <Append_File s(n).Handle (e(o).FileName) e.Lines> == e.Out
+    e.Lines ::= (e(o).Line)*
+    e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
+*/
+$FUNC Append_File
+{
+    s.Handle (e.FileName) e.Lines =
+        <Check_Lines e.Lines>
+        <Check_Open_Write_Lines <FOpen 'a' s.Handle e.FileName> s.Handle (e.Lines)>;
+}
+
+$FUNC Check_Open_Write_Lines
+{
+    NULL e._ = NULL;
+    e.Open_Error s.Handle (e.Lines) = e.Open_Error
         <Write_Bracket_Lines s.Handle e.Lines>
         <FClose s.Handle>;
 }
@@ -73,28 +97,20 @@ $FUNC Write_Bracket_Lines_Aux
 }
 
 /*
-    <Append_File s(n).Handle (e(o).FileName) e.Lines> == e.Out
-    e.Lines ::= (e(o).Line)*
-    e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
-*/
-$FUNC Append_File
-{
-    s.Handle (e.FileName) e.Lines =
-        <Check_Lines e.Lines>
-        <FOpen 'a' s.Handle e.FileName>
-        <Write_Bracket_Lines s.Handle e.Lines>
-        <FClose s.Handle>;
-}
-
-/*
     <Load_FBytes s(n).Handle e(o).FileName> == v.Out
-    v.Out ::= v(o).Open_Error NULL | e.Bytes s(:EOF:).EOF e(O).Close_Error
+    v.Out ::= NULL | v(o).Open_Error NULL | e.Bytes s(:EOF:).EOF e(O).Close_Error
     e.Bytes ::= s(n).Byte*
 */
 $FUNC Load_FBytes
 {
     s.Handle e.FileName =
-        <FOpen 'rb' s.Handle e.FileName>
+        <Check_Open_FBytes <FOpen 'rb' s.Handle e.FileName> s.Handle>;
+}
+
+$FUNC Check_Open_FBytes
+{
+    NULL e._ = NULL;
+    e.Open_Error s.Handle = e.Open_Error
         <Load_FBytes_Aux s.Handle <FRead s.Handle 4096>>
         <FClose s.Handle>;
 }
@@ -109,12 +125,29 @@ $FUNC Load_FBytes_Aux
 /*
     <Save_FBytes s(n).Handle (e(o).FileName) e.Bytes> == e.Out
     e.Bytes ::= s(on).Byte*
-    e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
+    e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
 $FUNC Save_FBytes
 {
     s.Handle (e.FileName) e(on).Bytes =
-        <FOpen 'wb' d.Handle e.FileName>
+        <Check_Open_Write_Bytes <FOpen 'wb' s.Handle e.FileName> s.Handle (e.Bytes)>;
+}
+
+/*
+    <Append_FBytes s(n).Handle (e(o).FileName) e.Bytes> == e.Out
+    e.Bytes ::= s(on).Byte*
+    e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
+*/
+$FUNC Append_FBytes
+{
+    s.Handle (e.FileName) e(on).Bytes =
+        <Check_Open_Write_Bytes <FOpen 'ab' s.Handle e.FileName> s.Handle (e.Bytes)>;
+}
+
+$FUNC Check_Open_Write_Bytes
+{
+    NULL e._ = NULL;
+    e.Open_Error s.Handle (e.Bytes) = e.Open_Error
         <Write_FBytes <FWrite s.Handle e.Bytes>>
         <FClose s.Handle>;
 }
@@ -123,19 +156,6 @@ $FUNC Write_FBytes
 {
     NULL = ;
     e._ = e._;
-}
-
-/*
-    <Append_FBytes s(n).Handle (e(o).FileName) e.Bytes> == e.Out
-    e.Bytes ::= s(on).Byte*
-    e.Out ::= v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
-*/
-$FUNC Append_FBytes
-{
-    s.Handle (e.FileName) e(on).Bytes =
-        <FOpen 'ab' s.Handle e.FileName>
-        <Write_FBytes <FWrite s.Handle e.Bytes>>
-        <FClose s.Handle>;
 }
 
 $END.
