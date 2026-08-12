@@ -27,7 +27,8 @@
 
 extern uint8_t refalab_feof, refalab_ferror;
 
-typedef struct file_node {
+typedef struct file_node
+{
     uint32_t id_number;
     FILE *file;
     struct file_node *next;
@@ -144,7 +145,7 @@ bool more_free_memory(void)
                 linkcb_free_memory = linkcb_free_memory->next;
             }
 #if defined mdebug
-    fprintf(stderr, "more_free_memory: free_memory_count=%" PRIu32 " after collect_garbage\n", free_memory_count);
+            fprintf(stderr, "more_free_memory: free_memory_count=%" PRIu32 " after collect_garbage\n", free_memory_count);
 #endif
             if (free_memory_count == options.free_memory_count)
                 return true;
@@ -1052,15 +1053,21 @@ bool file_add(uint32_t id_number, FILE *file)
 bool file_remove(uint32_t id_number)
 {
     const uint32_t hash = file_hash(id_number);
-    T_FILE_NODE **previous_node = &file_table[hash];
-    for (T_FILE_NODE *file_node = *previous_node; file_node != NULL; previous_node = &file_node->next, file_node = file_node->next)
+    T_FILE_NODE *file_node = file_table[hash];
+    T_FILE_NODE *previous_node = NULL;
+    while (file_node != NULL)
     {
         if (file_node->id_number == id_number)
         {
-            *previous_node = file_node->next;
+            if (previous_node == NULL)
+                file_table[hash] = file_node->next;
+            else
+                previous_node->next = file_node->next;
             free(file_node);
             return true;
         }
+        previous_node = file_node;
+        file_node = file_node->next;
     }
     return false;
 }
