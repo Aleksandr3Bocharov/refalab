@@ -105,7 +105,7 @@ static void fopen_(void)
         else if (!file_add(file_number, file))
         {
             fclose(file);
-            refal_abort_end("fopen: file_add error");
+            refal_abort_end("Fopen: file_add error");
         }
         return;
     } while (false);
@@ -154,7 +154,7 @@ static void fclose_(void)
 char fclose_0[] = {Z6 'F', 'C', 'L', 'O', 'S', 'E', (char)6};
 G_L_B uint8_t refalab_fclose = '\122';
 void (*fclose_1)(void) = fclose_;
-
+/*
 static void fgets_(void)
 {
     do
@@ -335,7 +335,7 @@ static void fprint_(void)
                 put_result = fputs(string, file);
             }
             else if (BRACKET(current_argument))
-                refal_abort_end("fprint: unknown bracket type");
+                refal_abort_end("Fprint: unknown bracket type");
             else
             {
                 sprintf(string, "'%" PRIx32 ",%p'", current_argument->tag, current_argument->info.code);
@@ -422,7 +422,7 @@ static void fprints_(void)
                 put_result = fputs(string, file);
             }
             else if (BRACKET(current_argument))
-                refal_abort_end("fprints: unknown bracket type");
+                refal_abort_end("Fprints: unknown bracket type");
             else
             {
                 sprintf(string, "%" PRIu32 ",%p", current_argument->tag, current_argument->info.code);
@@ -532,7 +532,7 @@ static void fprintm_(void)
                     strcat(string, string_reference);
                 }
                 else if (BRACKET(current_argument))
-                    refal_abort_end("fprintm: unknown bracket type");
+                    refal_abort_end("Fprintm: unknown bracket type");
                 else
                 {
                     char string_symbol[512];
@@ -1222,5 +1222,5 @@ static void exist_dir_(void)
 char exist_dir_0[] = {Z1 'E', 'X', 'I', 'S', 'T', '_', 'D', 'I', 'R', (char)9};
 G_L_B uint8_t refalab_exist_dir = '\122';
 void (*exist_dir_1)(void) = exist_dir_;
-
+*/
 //----------  end of file xfileio.c  -----------

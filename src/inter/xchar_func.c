@@ -64,7 +64,7 @@ static void functab_(void)
     else
         temp_functions_table = (uint8_t **)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t *));
     if (temp_functions_table == NULL)
-        refal_abort_end("functab: malloc or realloc error");
+        refal_abort_end("Functab: malloc or realloc error");
     functions_table = temp_functions_table;
     functions_table[functions_count] = function;
     functions_count++;
@@ -100,7 +100,7 @@ static void chartof_(void)
     current_symbol_char = refal.previous_argument->next;
     char *label = (char *)malloc(i + 2);
     if (label == NULL)
-        refal_abort_end("chartof: malloc error");
+        refal_abort_end("Chartof: malloc error");
     for (i = 0; current_symbol_char != refal.next_argument; i++, current_symbol_char = current_symbol_char->next)
         label[i] = (char)toupper((unsigned char)current_symbol_char->info.infoc);
     label[i] = (char)i;
@@ -125,7 +125,7 @@ static void chartof_(void)
     else
         temp_functions_table = (uint8_t **)realloc(functions_table, (functions_count + 1) * sizeof(uint8_t *));
     if (temp_functions_table == NULL)
-        refal_abort_end("chartof: malloc or realloc error");
+        refal_abort_end("Chartof: malloc or realloc error");
     functions_table = temp_functions_table;
     uint8_t *function = (uint8_t *)(label + i);
     functions_table[functions_count] = function;

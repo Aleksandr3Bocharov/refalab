@@ -27,7 +27,7 @@ static void delf_(void)
         temp_k = delete_dot->info.codep;
         delete_dot = temp_k->info.codep;
         if (delete_dot == NULL)
-            refal_abort_end("delf: sign '#' missing");
+            refal_abort_end("Delf: sign '#' missing");
         delete_dot_next = delete_dot->next;
         if (delete_dot_next->info.infoc != '#')
             continue;
