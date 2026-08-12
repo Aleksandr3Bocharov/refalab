@@ -26,14 +26,9 @@
 #include "refalab.h"
 #include "interface.h"
 
-#define FILES_MAX 10
-
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_current;
-
-static FILE *file;
-static FILE *files[FILES_MAX] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static char remove_error_path[MAX_PATHFILENAME + 1];
 
@@ -84,15 +79,18 @@ static void fopen_(void)
         if (current_argument->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(current_argument);
-        if (file_number >= FILES_MAX)
-            break;
         current_argument = current_argument->next;
         char file_name[MAX_PATHFILENAME + 1];
         current_argument = get_string_expression(file_name, MAX_PATHFILENAME, current_argument, refal.next_argument);
         if (current_argument != refal.next_argument)
             break;
-        file = fopen(file_name, file_mode);
-        files[file_number] = file;
+        if (file_get(file_number) != NULL)
+        {
+            refal.previous_argument->info.codef = &refalab_null;
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+            return;
+        }
+        FILE *file = fopen(file_name, file_mode);
         if (file == NULL)
         {
             const int error_number = errno;
@@ -103,6 +101,11 @@ static void fopen_(void)
                     return;
             T_LINKCB *last_error_argument = set_string_expression(string_error, refal.next_result);
             transplantation(refal.previous_result, refal.next_result, last_error_argument->next);
+        }
+        else if (!file_add(file_number, file))
+        {
+            fclose(file);
+            refal_abort_end("fopen: file_add error");
         }
         return;
     } while (false);
@@ -121,18 +124,16 @@ static void fclose_(void)
         if (symbol_number->tag != TAGN)
             break;
         const uint32_t file_number = gcoden(symbol_number);
-        if (file_number >= FILES_MAX)
-            break;
         if (symbol_number->next != refal.next_argument)
             break;
-        file = files[file_number];
-        files[file_number] = NULL;
+        FILE *file = file_get(file_number);
         if (file == NULL)
         {
             refal.previous_argument->info.codef = &refalab_null;
             transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             return;
         }
+        file_remove(file_number);
         const int close_result = fclose(file);
         if (close_result == EOF)
         {
