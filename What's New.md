@@ -14,7 +14,7 @@
 Оптимизирована работа рефал-функций из библиотеки РефалАБ: QSortW, MinW, MaxW.
 
 Добавлены рефал-функции в библиотеку РефалАБ: Setn, Setw_union, Setn_union,
-Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff.
+Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff, Eval.
 
 Рефал-функция Existw из библиотеки РефалАБ переделена в первичую функцию.
 
