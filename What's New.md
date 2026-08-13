@@ -7,7 +7,8 @@
 
 Удален из библиотеки РефалАБ спецификатор Numbers_files.
 
-Добавлена новая интерфейсная функция compare_expressions_lexicographic.
+Добавлены новые интерфейсные функции: compare_expressions_lexicographic,
+file_get, file_add, file_remove.
 
 Внесены изменения в файл заголовков include/refalab.h для разработчиков.
 
