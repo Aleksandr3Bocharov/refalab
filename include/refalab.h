@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-08-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -149,6 +149,9 @@ extern void exchange_big_numbers(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_nu
 extern int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2);
 extern int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2);
 extern int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after);
+extern FILE *file_get(uint32_t id_number);
+extern bool file_add(uint32_t id_number, FILE *file);
+extern bool file_remove(uint32_t id_number);
 
 extern bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool create_status_table(T_STATUS_TABLE *status_table);
