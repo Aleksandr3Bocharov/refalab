@@ -1039,6 +1039,8 @@ FILE *file_get(uint32_t id_number)
 
 bool file_add(uint32_t id_number, FILE *file)
 {
+    if (file_get(id_number) != NULL)
+        return false;
     T_FILE_NODE *file_node = malloc(sizeof(T_FILE_NODE));
     if (file_node == NULL)
         return false;
