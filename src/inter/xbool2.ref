@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-27
+// 2026-08-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -13,7 +13,7 @@ $START BOOL2;
 
 $ENTRY True, False, Bool;
 $ENTRY If, And, Or, Not;
-$EXTERN Call;
+$EXTERN Eval;
 $EMPTY True, False;
 
 $SPEC Bool True False;
@@ -29,16 +29,10 @@ $FUNC If
 
 $FUNC If_Aux 
 {
-    (True e.Expr) e._ w.False = <If_Aux_Get e.Expr>;
-    (False e._) (e.False) = <If_Aux_Get e.False>;
+    (True e.Expr) e._ w.False = <Eval e.Expr>;
+    (False e._) (e.False) = <Eval e.False>;
     (False e._) e.Rest w.False = <If_Aux e.Rest w.False>;
-    ((e.BExp) e.Expr) e.Rest w.False = <If_Aux (<BCheck < e.BExp>> e.Expr) e.Rest w.False>;
-}
-
-$FUNC If_Aux_Get
-{
-    (Call e.Expr) = < e.Expr>;
-    e._ = e._;
+    ((e.BExp) e.Expr) e.Rest w.False = <If_Aux (<BCheck <Eval e.BExp>> e.Expr) e.Rest w.False>;
 }
 
 $FUNC BCheck
@@ -57,12 +51,7 @@ $FUNC And_Aux
     = True;
     False e._ = False;
     True e.BExp = <And_Aux e.BExp>;
-    (e.Exp) e.BExp_E = <And_Aux <BExp_Check < e.Exp>> e.BExp_E>;
-}
-
-$FUNC BExp_Check
-{
-    e(:Bool: b).BExp = e.BExp;
+    (e.Exp) e.BExp_E = <And_Aux <BCheck <Eval e.Exp>> e.BExp_E>;
 }
 
 //  <Or e(:Bool: b).BExp> = True | False
@@ -76,7 +65,7 @@ $FUNC Or_Aux
     = False;
     True e._ = True;
     False e.BExp = <Or_Aux e.BExp>;
-    (e.Exp) e.BExp_E = <Or_Aux <BExp_Check < e.Exp>> e.BExp_E>;
+    (e.Exp) e.BExp_E = <Or_Aux <BCheck <Eval e.Exp>> e.BExp_E>;
 }
 
 //  <Not s(:Bool:).Bool> = True | False
