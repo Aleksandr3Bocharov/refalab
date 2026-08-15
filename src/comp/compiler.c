@@ -1510,6 +1510,44 @@ static bool compile_specifer(char tail)
                         symbol = (char)(octal & 255);
                     }
                     break;
+                    case 'x':
+                        next_char();
+                        temp_symbol = get_current_char();
+                        if ((temp_symbol >= '0' && temp_symbol <= '9') ||
+                            (temp_symbol >= 'a' && temp_symbol <= 'f') ||
+                            (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                        {
+                            uint32_t hex = 0;
+                            if (temp_symbol >= '0' && temp_symbol <= '9')
+                                hex = (uint32_t)temp_symbol - '0';
+                            else if (temp_symbol >= 'a' && temp_symbol <= 'f')
+                                hex = (uint32_t)temp_symbol - 'a' + 10;
+                            else
+                                hex = (uint32_t)temp_symbol - 'A' + 10;
+                            next_char();
+                            temp_symbol = get_current_char();
+                            if ((temp_symbol >= '0' && temp_symbol <= '9') ||
+                                (temp_symbol >= 'a' && temp_symbol <= 'f') ||
+                                (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                            {
+                                hex = hex * 16;
+                                if (temp_symbol >= '0' && temp_symbol <= '9')
+                                    hex += (uint32_t)temp_symbol - '0';
+                                else if (temp_symbol >= 'a' && temp_symbol <= 'f')
+                                    hex += (uint32_t)temp_symbol - 'a' + 10;
+                                else
+                                    hex += (uint32_t)temp_symbol - 'A' + 10;
+                            }
+                            else
+                                previous_char();
+                            symbol = (char)(hex & 255);
+                        }
+                        else
+                        {
+                            previous_char();
+                            symbol = 'x';
+                        }
+                        break;
                     case '\n':
                     case '\0':
                         previous_char();
