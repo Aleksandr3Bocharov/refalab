@@ -1064,9 +1064,7 @@ void scan_sentence_element(void)
                 case 'x':
                     next_char();
                     temp_symbol = get_current_char();
-                    if ((temp_symbol >= '0' && temp_symbol <= '9') ||
-                        (temp_symbol >= 'a' && temp_symbol <= 'f') ||
-                        (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                    if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
                     {
                         uint32_t hex = 0;
                         if (temp_symbol >= '0' && temp_symbol <= '9')
@@ -1077,9 +1075,7 @@ void scan_sentence_element(void)
                             hex = (uint32_t)temp_symbol - 'A' + 10;
                         next_char();
                         temp_symbol = get_current_char();
-                        if ((temp_symbol >= '0' && temp_symbol <= '9') ||
-                            (temp_symbol >= 'a' && temp_symbol <= 'f') ||
-                            (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                        if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
                         {
                             hex = hex * 16;
                             if (temp_symbol >= '0' && temp_symbol <= '9')
@@ -1513,9 +1509,7 @@ static bool compile_specifer(char tail)
                     case 'x':
                         next_char();
                         temp_symbol = get_current_char();
-                        if ((temp_symbol >= '0' && temp_symbol <= '9') ||
-                            (temp_symbol >= 'a' && temp_symbol <= 'f') ||
-                            (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                        if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
                         {
                             uint32_t hex = 0;
                             if (temp_symbol >= '0' && temp_symbol <= '9')
@@ -1526,9 +1520,7 @@ static bool compile_specifer(char tail)
                                 hex = (uint32_t)temp_symbol - 'A' + 10;
                             next_char();
                             temp_symbol = get_current_char();
-                            if ((temp_symbol >= '0' && temp_symbol <= '9') ||
-                                (temp_symbol >= 'a' && temp_symbol <= 'f') ||
-                                (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                            if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
                             {
                                 hex = hex * 16;
                                 if (temp_symbol >= '0' && temp_symbol <= '9')
