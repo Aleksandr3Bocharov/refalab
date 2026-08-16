@@ -1907,24 +1907,49 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
         if (isdigit((unsigned char)current_char) != 0)
         {
             code->tag = TAGN;
-            code->info.codef = NULL;
-            code->info.coden = 0;
-            uint64_t number = current_char - '0';
+            uint64_t number = 0;
+            uint8_t base = 10;
+            if (current_char == '0')
+            {
+                next_char();
+                current_char = get_current_char();
+                if (current_char >= '0' && current_char <= '7')
+                {
+                    base = 8;
+                    number = (uint64_t)(current_char - '0');
+                }
+                else
+                    break;
+            }
+            else
+                number = (uint64_t)(current_char - '0');
             bool multiple_symbol_end = false;
             while (true)
             {
                 next_char();
                 current_char = get_current_char();
-                if (isdigit((unsigned char)current_char) == 0)
+                bool is_valid_digit = false;
+                uint64_t digit_value = 0;
+                if (base == 8)
                 {
-                    code->tag = TAGN;
-                    code->info.codef = NULL;
+                    if (current_char >= '0' && current_char <= '7')
+                    {
+                        is_valid_digit = true;
+                        digit_value = (uint64_t)(current_char - '0');
+                    }
+                }
+                else if (isdigit((unsigned char)current_char) != 0)
+                {
+                    is_valid_digit = true;
+                    digit_value = (uint64_t)(current_char - '0');
+                }
+                if (!is_valid_digit)
+                {
                     code->info.coden = (uint32_t)number;
                     multiple_symbol_end = true;
                     break;
                 }
-                const uint64_t remainder = current_char - '0';
-                number = number * 10 + remainder;
+                number = number * base + digit_value;
                 if (number <= MAX_NUMBER)
                     continue;
                 break;
@@ -1934,7 +1959,13 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             while (true)
             {
                 next_char();
-                if (isdigit((unsigned char)get_current_char()) != 0)
+                current_char = get_current_char();
+                if (base == 8)
+                {
+                    if (current_char >= '0' && current_char <= '7')
+                        continue;
+                }
+                else if (isdigit((unsigned char)current_char) != 0)
                     continue;
                 break;
             }
