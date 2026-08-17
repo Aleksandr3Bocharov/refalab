@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-08-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -23,9 +23,8 @@ $SPEC White_Spaces ' \n\t\v\f\r';
 
 $FUNC Cvb 
 {
-    '-' e('0').X = 0;
+    '-' v('0').X = 0;
     '-' v(d).X = '-' <Cvb0 v.X>;
-    '+' = 0;
     '+' v(d).X = <Cvb0 v.X>;
     e(d).X = <Cvb0 e.X>;
 }
@@ -40,9 +39,8 @@ $FUNC Cvb0
 
 $FUNC Cvd 
 {
-    '-' e(0).X = '0';
+    '-' v(0).X = '0';
     '-' v(n).X = '-' <Cvd0 v.X>;
-    '+' = '0';
     '+' v(n).X = <Cvd0 v.X>;
     e(n).X = <Cvd0 e.X>;
 }

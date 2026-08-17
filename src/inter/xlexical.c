@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-05
+// 2026-08-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xlexical.c  ----------
