@@ -1913,7 +1913,32 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             {
                 next_char();
                 current_char = get_current_char();
-                if (current_char >= '0' && current_char <= '7')
+                if (current_char == 'x')
+                {
+                    base = 16;
+                    next_char();
+                    current_char = get_current_char();
+                    if ((current_char >= '0' && current_char <= '9') ||
+                        (current_char >= 'a' && current_char <= 'f') ||
+                        (current_char >= 'A' && current_char <= 'F'))
+                    {
+                        if (current_char >= '0' && current_char <= '9')
+                            number = (uint64_t)(current_char - '0');
+                        else if (current_char >= 'a' && current_char <= 'f')
+                            number = (uint64_t)(current_char - 'a' + 10);
+                        else
+                            number = (uint64_t)(current_char - 'A' + 10);
+                    }
+                    else
+                    {
+                        char error_112[64];
+                        sprintf(error_112, "Invalid hex number: 0x%c", current_char);
+                        scanner.last_error_cursor = refalab_source_cursor;
+                        print_error_string(112, error_112);
+                        break;
+                    }
+                }
+                else if (current_char >= '0' && current_char <= '7')
                 {
                     base = 8;
                     number = (uint64_t)(current_char - '0');
@@ -1930,18 +1955,24 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                 current_char = get_current_char();
                 bool is_valid_digit = false;
                 uint64_t digit_value = 0;
-                if (base == 8)
+                if (current_char >= '0' && current_char <= '9')
                 {
-                    if (current_char >= '0' && current_char <= '7')
+                    digit_value = (uint64_t)(current_char - '0');
+                    if (base == 10 || base == 16 || (base == 8 && digit_value <= 7))
+                        is_valid_digit = true;
+                }
+                else if (base == 16)
+                {
+                    if (current_char >= 'a' && current_char <= 'f')
                     {
                         is_valid_digit = true;
-                        digit_value = (uint64_t)(current_char - '0');
+                        digit_value = (uint64_t)(current_char - 'a' + 10);
                     }
-                }
-                else if (isdigit((unsigned char)current_char) != 0)
-                {
-                    is_valid_digit = true;
-                    digit_value = (uint64_t)(current_char - '0');
+                    else if (current_char >= 'A' && current_char <= 'F')
+                    {
+                        is_valid_digit = true;
+                        digit_value = (uint64_t)(current_char - 'A' + 10);
+                    }
                 }
                 if (!is_valid_digit)
                 {
@@ -1950,9 +1981,8 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                     break;
                 }
                 number = number * base + digit_value;
-                if (number <= MAX_NUMBER)
-                    continue;
-                break;
+                if (number > MAX_NUMBER)
+                    break;
             }
             if (multiple_symbol_end)
                 break;
@@ -1960,14 +1990,20 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             {
                 next_char();
                 current_char = get_current_char();
-                if (base == 8)
+                bool is_digit = false;
+                if (current_char >= '0' && current_char <= '9')
                 {
-                    if (current_char >= '0' && current_char <= '7')
-                        continue;
+                    if (base == 10 || base == 16 || (base == 8 && current_char <= '7'))
+                        is_digit = true;
                 }
-                else if (isdigit((unsigned char)current_char) != 0)
-                    continue;
-                break;
+                else if (base == 16)
+                {
+                    if ((current_char >= 'a' && current_char <= 'f') ||
+                        (current_char >= 'A' && current_char <= 'F'))
+                        is_digit = true;
+                }
+                if (!is_digit)
+                    break;
             }
             char error_111[64];
             sprintf(error_111, "Symbol-number > %" PRIu32, MAX_NUMBER);
