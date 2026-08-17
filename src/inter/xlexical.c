@@ -25,56 +25,60 @@
 
 static void numb_(void)
 {
-    T_LINKCB *current_argument = refal.previous_argument->next;
-    const char sign = current_argument->info.infoc;
-    const T_LINKCB *sign_argument = current_argument;
-    if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
+    do
     {
-        current_argument = current_argument->next;
-        if (sign == '+')
-            sign_argument = current_argument;
-    }
-    T_LINKCB *number_argument = current_argument;
-    while (current_argument->tag == TAGO && current_argument->info.infoc == '0')
-        current_argument = current_argument->next;
-    char number_string[11];
-    uint8_t i;
-    bool impossible = false;
-    for (i = 0; current_argument != refal.next_argument; i++)
-    {
-        if (current_argument->tag != TAGO || i == 10)
+        T_LINKCB *current_argument = refal.previous_argument->next;
+        const char sign = current_argument->info.infoc;
+        const T_LINKCB *sign_argument = current_argument;
+        if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
         {
-            impossible = true;
-            break;
+            if (current_argument->next == refal.next_argument)
+                break;
+            current_argument = current_argument->next;
+            if (sign == '+')
+                sign_argument = current_argument;
         }
-        number_string[i] = current_argument->info.infoc;
-        if (number_string[i] < '0' || number_string[i] > '9')
+        T_LINKCB *number_argument = current_argument;
+        while (current_argument->tag == TAGO && current_argument->info.infoc == '0')
+            current_argument = current_argument->next;
+        char number_string[11];
+        uint8_t i;
+        bool impossible = false;
+        for (i = 0; current_argument != refal.next_argument; i++)
         {
-            impossible = true;
-            break;
+            if (current_argument->tag != TAGO || i == 10)
+            {
+                impossible = true;
+                break;
+            }
+            number_string[i] = current_argument->info.infoc;
+            if (number_string[i] < '0' || number_string[i] > '9')
+            {
+                impossible = true;
+                break;
+            }
+            if (i == 9 && strncmp(number_string, "4294967295", i + 1) > 0)
+            {
+                impossible = true;
+                break;
+            }
+            current_argument = current_argument->next;
         }
-        if (i == 9 && strncmp(number_string, "4294967295", i + 1) > 0)
+        if (impossible)
+            break;
+        number_string[i] = '\0';
+        if (strlen(number_string) == 0)
         {
-            impossible = true;
-            break;
+            number_argument = refal.previous_argument;
+            sign_argument = number_argument;
         }
-        current_argument = current_argument->next;
-    }
-    if (impossible)
-    {
-        refal.upshot = 2;
+        number_argument->tag = TAGN;
+        number_argument->info.code = NULL;
+        pcoden(number_argument, (uint32_t)atoll(number_string));
+        transplantation(refal.previous_result, sign_argument->previous, number_argument->next);
         return;
-    }
-    number_string[i] = '\0';
-    if (strlen(number_string) == 0)
-    {
-        number_argument = refal.previous_argument;
-        sign_argument = number_argument;
-    }
-    number_argument->tag = TAGN;
-    number_argument->info.code = NULL;
-    pcoden(number_argument, (uint32_t)atoll(number_string));
-    transplantation(refal.previous_result, sign_argument->previous, number_argument->next);
+    } while (false);
+    refal.upshot = 2;
     return;
 }
 char numb_0[] = {Z4 'N', 'U', 'M', 'B', (char)4};
