@@ -1931,10 +1931,8 @@ static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
                     }
                     else
                     {
-                        char error_112[64];
-                        sprintf(error_112, "Invalid hex number: 0x%c", current_char);
                         scanner.last_error_cursor = refalab_source_cursor;
-                        print_error_string(112, error_112);
+                        print_error_string(112, "Invalid hex number: 0x");
                         break;
                     }
                 }
