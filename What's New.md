@@ -28,7 +28,8 @@ Setw_Intersect, Setn_Intersect, Setw_Diff, Setn_Diff, Eval.
 Внесены изменения в работу функций из библиотеки РефалАБ: First, Last, Del_left, Del_right,
 Lrel, Ltn, Len, Eqn, Nen, Gen, Gtn, Ltl, Lel, Eql, Nel, Gel, Gtl, Is_type, Length, Lengthw, Shl,
 Fopen, Fclose, Fgets, Fputs, Fprint, Fprints, Fprintm, Fread, Fwrite, Fseek, Ftell, Is_eof, Is_feof, Is_ferror,
-Load_file, Save_file, Append_file, Load_fbytes, Save_fbytes, Append_fbytes, If, And, Or.
+Load_file, Save_file, Append_file, Load_fbytes, Save_fbytes, Append_fbytes, If, And, Or,
+Numb.
 
 Добавлены первичные функции в библиотеку РефалАБ: Left, Right, Reverse, Reversew, Existn,
 Mod, Modn, Get_char, Remove_dir, Clear_dir, Bit, Bitand, Bitor, Bitxor, Bitnot, Bitsh, Bitrot,
