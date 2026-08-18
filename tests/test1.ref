@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-05
+// 2026-08-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST1;
@@ -137,8 +137,6 @@ $FUNC F4
         <Prnu '1000000000'> 
         <Prnu '4294967295'> 
         <Prnu> 
-        <Prnu '-'> 
-        <Prnu '+'> 
         <Prsy 1000> 
         <Prsy> 
         <Prsy '-'> 
@@ -150,6 +148,8 @@ $FUNC F4
         <Prp1 4294967295> 
         <Prp1 '+' 1> 
         <Prm1 0> 
+        <Prnu '-'> 
+        <Prnu '+'> 
         <Prnu '4294967296'> 
         <Prnu '-+45'> 
         <Prnu '++'>      
