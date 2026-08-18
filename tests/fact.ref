@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-08-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START FACT;
@@ -9,6 +9,7 @@ $ENTRY Go;
 $EXTERN Numb, Symb, Cvd, First;
 $EXTERN Mul;
 $EXTERN Prouts, Card, M1;
+$EXTERN Try;
 
 $FUNC Go
 {
@@ -32,15 +33,15 @@ $FUNC F
 $FUNC Pr 
 {
     = ;
-    e.S = <Pr1 <First 80 e.S>>;
+    e.S = <Pr1 <Try First 80 e.S>>;
 }
 
 $FUNC Pr1
 {
-    (e.S) e.E =
+    'N' (e.S) e.E =
         <Prouts e.S>
         <Pr e.E>;
-    '*' e.S = <Prouts e.S>;
+    'R' s._ s.__ e.S = <Prouts e.S>;
 }
 
 $END.
