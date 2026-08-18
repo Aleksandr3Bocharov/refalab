@@ -60,7 +60,7 @@ static void numb_(void)
                     if (current_argument == refal.next_argument)
                         break;
                 }
-                else if (next_char >= '0' && next_char <= '7')
+                else
                 {
                     base = 8;
                     current_argument = next_argument;
