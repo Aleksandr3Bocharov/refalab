@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-17
+// 2026-08-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
@@ -33,8 +33,14 @@ $FUNC Cvb0
 {
     v.X s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9 = 
         <Add (<Mul (<Cvb0 v.X>) 1000000000>) 
-            <Numb s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9>>;
-    e.X = <Numb e.X>;
+            <Numb <Strip_Zeros s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9>>>;
+    e.X = <Numb <Strip_Zeros e.X>>;
+}
+
+$FUNC Strip_Zeros
+{
+    '0' e.X = <Strip_Zeros e.X>;
+    e.X = e.X;
 }
 
 $FUNC Cvd 
