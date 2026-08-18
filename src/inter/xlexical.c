@@ -28,6 +28,13 @@ static void numb_(void)
     do
     {
         T_LINKCB *current_argument = refal.previous_argument->next;
+        if (current_argument == refal.next_argument)
+        {
+            refal.previous_argument->tag = TAGN;
+            refal.previous_argument->info.code = NULL;
+            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+            return;
+        }
         const char sign = current_argument->info.infoc;
         const T_LINKCB *sign_argument = current_argument;
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
@@ -39,42 +46,77 @@ static void numb_(void)
                 sign_argument = current_argument;
         }
         T_LINKCB *number_argument = current_argument;
-        while (current_argument->tag == TAGO && current_argument->info.infoc == '0')
-            current_argument = current_argument->next;
-        char number_string[11];
-        uint8_t i;
-        bool impossible = false;
-        for (i = 0; current_argument != refal.next_argument; i++)
+        uint8_t base = 10;
+        if (current_argument->tag == TAGO && current_argument->info.infoc == '0')
         {
-            if (current_argument->tag != TAGO || i == 10)
+            T_LINKCB *next_argument = current_argument->next;
+            if (next_argument != refal.next_argument && next_argument->tag == TAGO)
+            {
+                char next_char = next_argument->info.infoc;
+                if (next_char == 'x')
+                {
+                    base = 16;
+                    current_argument = next_argument->next;
+                    if (current_argument == refal.next_argument)
+                        break;
+                }
+                else if (next_char >= '0' && next_char <= '7')
+                {
+                    base = 8;
+                    current_argument = next_argument;
+                }
+            }
+        }
+        uint64_t number = 0;
+        bool impossible = false;
+        for (; current_argument != refal.next_argument; current_argument = current_argument->next)
+        {
+            if (current_argument->tag != TAGO)
             {
                 impossible = true;
                 break;
             }
-            number_string[i] = current_argument->info.infoc;
-            if (number_string[i] < '0' || number_string[i] > '9')
+            char digit_char = current_argument->info.infoc;
+            uint64_t digit_value = 0;
+            bool is_valid_digit = false;
+            if (digit_char >= '0' && digit_char <= '9')
+            {
+                digit_value = (uint64_t)(digit_char - '0');
+                if (base == 10 || base == 16 || (base == 8 && digit_value <= 7))
+                    is_valid_digit = true;
+            }
+            else if (base == 16)
+            {
+                if (digit_char >= 'a' && digit_char <= 'f')
+                {
+                    is_valid_digit = true;
+                    digit_value = (uint64_t)(digit_char - 'a' + 10);
+                }
+                else if (digit_char >= 'A' && digit_char <= 'F')
+                {
+                    is_valid_digit = true;
+                    digit_value = (uint64_t)(digit_char - 'A' + 10);
+                }
+            }
+            if (!is_valid_digit)
             {
                 impossible = true;
                 break;
             }
-            if (i == 9 && strncmp(number_string, "4294967295", i + 1) > 0)
+            number = number * base + digit_value;
+            if (number > MAX_NUMBER)
             {
                 impossible = true;
                 break;
             }
-            current_argument = current_argument->next;
         }
         if (impossible)
             break;
-        number_string[i] = '\0';
-        if (strlen(number_string) == 0)
-        {
-            number_argument = refal.previous_argument;
+        if (number == 0 && sign == '-')
             sign_argument = number_argument;
-        }
         number_argument->tag = TAGN;
         number_argument->info.code = NULL;
-        pcoden(number_argument, (uint32_t)atoll(number_string));
+        pcoden(number_argument, (uint32_t)number);
         transplantation(refal.previous_result, sign_argument->previous, number_argument->next);
         return;
     } while (false);
