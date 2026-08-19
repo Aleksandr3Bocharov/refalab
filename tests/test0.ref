@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-23
+// 2026-08-18
 // https://github.com/Aleksandr3Bocharov/refalab
 
 $START TEST0;
@@ -81,8 +81,8 @@ $FUNC Dal
         <Prnu '4294967295'> 
 //      <Prnu '4394967295'>                 neot
         <Prnu '-45'> 
-        <Prsy 5678>
-        <Prsy 4294967295> 
+        <Prsy 10 5678>
+        <Prsy 10 4294967295> 
         <Prad (128) 456>
         <Prad (4294967295) 2>
         <Prm1 3>

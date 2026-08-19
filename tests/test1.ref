@@ -137,13 +137,11 @@ $FUNC F4
         <Prnu '1000000000'> 
         <Prnu '4294967295'> 
         <Prnu> 
-        <Prsy 1000> 
-        <Prsy> 
-        <Prsy '-'> 
-        <Prsy '+'> 
-        <Prsy 1000000000> 
-        <Prsy 4294967295> 
-        <Prsy '+' 0 0 0> 
+        <Prsy 10 1000> 
+        <Prsy 10> 
+        <Prsy 10 1000000000> 
+        <Prsy 10 4294967295> 
+        <Prsy 10 '+' 0 0 0> 
 //  neot
         <Prp1 4294967295> 
         <Prp1 '+' 1> 
@@ -152,8 +150,10 @@ $FUNC F4
         <Prnu '+'> 
         <Prnu '4294967296'> 
         <Prnu '-+45'> 
-        <Prnu '++'>      
-        <Prsy 1 0> 
+        <Prnu '++'>  
+        <Prsy 10 '-'> 
+        <Prsy 10 '+'>     
+        <Prsy 10 1 0> 
 //  prowerka LRel
         <LRel ('a') 'a'> 
         <LRel (1 2) 1 2> 

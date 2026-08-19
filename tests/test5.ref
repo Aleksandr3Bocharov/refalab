@@ -19,27 +19,27 @@ $FUNC Go
         <P <Numb '1000000000'>> 
         <P <Numb '4294967295'>> 
         <P <Numb '+0xff'>> 
-        <Prout '0:' <Symb>> 
-        <Prout '0:' <Symb '+'>> 
-        <Prout '0:' <Symb '-'>> 
-        <Prout '0:' <Symb 0>> 
-        <Prout '1:' <Symb 0 1>> 
-        <Prout '1:' <Symb 0 0 0 0 1>> 
-        <Prout '-1:' <Symb '-' 0 0 0 0 1>> 
-        <Prout '1:' <Symb '+' 0 0 0 0 1>> 
+        <Prout '0:' <Symb 10>> 
+        <Prout '0:' <Symb 10 0>> 
+        <Prout '1:' <Symb 10 0 1>> 
+        <Prout '1:' <Symb 10 0 0 0 0 1>> 
+        <Prout '-01:' <Symb 8 '-' 0 0 0 0 1>> 
+        <Prout '0x1:' <Symb 16 '+' 0 0 0 0 1>> 
         <Prout <Symb 4294967295>> 
 //  neot:
         <Numb '+'>
         <Numb '-'>
         <Numb '4294967296'> 
         <Numb '-4294967296'> 
-        <Symb 1 0> 
-        <Symb '-' 1 0>;
+        <Symb 10 '+'>
+        <Symb 10 '-'>
+        <Symb 10 1 0> 
+        <Symb 10 '-' 1 0>;
 }
 
 $FUNC P 
 {
-    e.N = <Prout e.N ' : ' <Symb e.N>>;
+    e.N = <Prout e.N ' : ' <Symb 10 e.N>>;
 }
 
 $END.
