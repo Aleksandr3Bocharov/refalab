@@ -58,8 +58,8 @@ $FUNC Cvd0
 
 $FUNC Cvd1
 {
-    (e.Y) = <Symb e.Y>;
-    e.X (e.Y) = <Cvd0 e.X> <Cvd2 <Symb e.Y>>;
+    (e.Y) = <Symb 10 e.Y>;
+    e.X (e.Y) = <Cvd0 e.X> <Cvd2 <Symb 10 e.Y>>;
 }
 
 $FUNC Cvd2
