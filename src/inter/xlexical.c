@@ -133,6 +133,13 @@ static void symb_(void)
     {
         T_LINKCB *current_argument = refal.previous_argument->next;
         size_t argument_length = 1;
+        if (current_argument->tag != TAGN)
+            break;
+        uint32_t base = gcoden(current_argument);
+        if (base != 8 && base != 10 && base != 16)
+            break;
+        argument_length++;
+        current_argument = current_argument->next;
         char sign = current_argument->info.infoc;
         T_LINKCB *sign_argument = current_argument;
         if (current_argument->tag == TAGO && (sign == '-' || sign == '+'))
@@ -164,29 +171,38 @@ static void symb_(void)
             break;
         if (i == 0)
         {
-            refal.previous_argument->tag = TAGO;
-            refal.previous_argument->info.code = NULL;
-            refal.previous_argument->info.infoc = '0';
-            transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
+            char number_string[4];
+            if (base == 8)
+                sprintf(number_string, "0%" PRIo32, 0);
+            else if (base == 10)
+                sprintf(number_string, "%" PRIu32, 0);
+            else
+                sprintf(number_string, "0x%" PRIX32, 0);
+            const size_t number_length = strlen(number_string);
+            if (number_length > argument_length)
+                if (!extended_insert_from_free_memory(refal.next_result, number_length - argument_length))
+                    return;
+            current_argument = set_string_expression(number_string, refal.next_result);
+            transplantation(refal.previous_result, refal.next_result, current_argument->next);
             return;
         }
         current_argument = current_argument->previous;
         uint32_t number = gcoden(current_argument);
-        char number_string[11];
-        sprintf(number_string, "%" PRIu32, number);
+        char number_string[13];
+        if (base == 8)
+            sprintf(number_string, "0%" PRIo32, number);
+        else if (base == 10)
+            sprintf(number_string, "%" PRIu32, number);
+        else
+            sprintf(number_string, "0x%" PRIX32, number);
         const size_t number_length = strlen(number_string);
         const size_t result_need = number_length + (sign == '-' ? 1 : 0);
         if (result_need > argument_length)
             if (!extended_insert_from_free_memory(refal.next_result, result_need - argument_length))
                 return;
         transplantation(refal.next_argument->previous, refal.next_result, sign_argument);
-        for (i = 0, current_argument = begin_number_argument; i < number_length; i++, current_argument = current_argument->next)
-        {
-            current_argument->tag = TAGO;
-            current_argument->info.code = NULL;
-            current_argument->info.infoc = number_string[i];
-        }
-        transplantation(refal.previous_result, sign_argument->previous, current_argument);
+        current_argument = set_string_expression(number_string, begin_number_argument->previous);
+        transplantation(refal.previous_result, sign_argument->previous, current_argument->next);
         return;
     } while (false);
     refal.upshot = 2;
