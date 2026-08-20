@@ -117,7 +117,6 @@ typedef enum scanner_states
     OSH102,
     OSH103,
     OSH113,
-    OSH114,
     SOSH203,
     SOSH204,
     SCNGCR,
@@ -190,7 +189,10 @@ static size_t module_length; // module length
 static T_TIMESPEC time_begin;
 
 // for big numbers
-static uint32_t big_number_buffer[64];
+static char *big_number_digits = NULL; // digits buffer
+static size_t big_number_digits_capacity = 0;
+static uint32_t *big_number_buffer = NULL; // macrodigits buffer
+static size_t big_number_buffer_capacity = 0;
 static size_t big_number_count = 0;
 static size_t big_number_index = 0;
 
@@ -573,6 +575,9 @@ int main(int argc, char *argv[])
             module_state = END_OF_SYSIN;
             break;
         case END_OF_SYSIN:
+#if defined mdebug
+            fprintf(stderr, "free(main): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
+#endif
             free(refalab_source_buffer);
             refalab_source_buffer = NULL;
             fclose(refalab_source);
@@ -611,6 +616,9 @@ static void load_refalab_source_to_memory(void)
 {
     if (refalab_source_buffer != NULL)
     {
+#if defined mdebug
+        fprintf(stderr, "free(load_refalab_source_to_memory): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
+#endif
         free(refalab_source_buffer);
         refalab_source_buffer = NULL;
     }
@@ -626,13 +634,16 @@ static void load_refalab_source_to_memory(void)
     }
     refalab_source_buffer = (char *)malloc(file_size + 1);
     if (refalab_source_buffer == NULL)
-    {
-        printf("Out of memory\n");
-        exit(1);
-    }
+        error_no_memory();
+#if defined mdebug
+    fprintf(stderr, "malloc(load_refalab_source_to_memory): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
+#endif
     size_t read_bytes = fread(refalab_source_buffer, 1, file_size, refalab_source);
     if (read_bytes == 0 && ferror(refalab_source))
     {
+#if defined mdebug
+        fprintf(stderr, "free(load_refalab_source_to_memory): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
+#endif
         free(refalab_source_buffer);
         refalab_source_buffer = NULL;
         flags.end_refalab_source = true;
@@ -650,6 +661,9 @@ static void load_refalab_source_to_memory(void)
     refalab_source_size = write_index;
     if (refalab_source_size == 0)
     {
+#if defined mdebug
+        fprintf(stderr, "free(load_refalab_source_to_memory): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
+#endif
         free(refalab_source_buffer);
         refalab_source_buffer = NULL;
         flags.end_refalab_source = true;
@@ -880,28 +894,48 @@ void scan_sentence_element(void)
         case SCNBN:
             next_char();
             current_char = get_current_char();
-            char buffer[255];
+            big_number_digits_capacity = 64;
+            big_number_digits = malloc(big_number_digits_capacity);
+            if (big_number_digits == NULL)
+                error_no_memory();
+#if defined mdebug
+            fprintf(stderr, "malloc(scan_sentence_element): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
             size_t buffer_size = 0;
             while (isdigit((unsigned char)current_char) != 0)
             {
-                if (buffer_size == 255)
+                if (buffer_size == big_number_digits_capacity)
                 {
-                    while (isdigit((unsigned char)get_current_char()) != 0)
-                        next_char();
-                    scanner_state = OSH114;
-                    break;
+                    big_number_digits_capacity *= 2;
+                    char *new_buffer = realloc(big_number_digits, big_number_digits_capacity);
+                    if (new_buffer == NULL)
+                        error_no_memory();
+                    big_number_digits = new_buffer;
+#if defined mdebug
+                    fprintf(stderr, "realloc(scan_sentence_element): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
                 }
-                buffer[buffer_size++] = current_char;
+                big_number_digits[buffer_size++] = current_char;
                 next_char();
                 current_char = get_current_char();
             }
-            if (scanner_state == OSH114)
-                break;
             if (buffer_size == 0)
             {
+#if defined mdebug
+                fprintf(stderr, "free(scan_sentence_element): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
+                free(big_number_digits);
+                big_number_digits = NULL;
                 scanner_state = OSH113;
                 break;
             }
+            big_number_buffer_capacity = (buffer_size / 9) + 2;
+            big_number_buffer = malloc(big_number_buffer_capacity * sizeof(uint32_t));
+            if (big_number_buffer == NULL)
+                error_no_memory();
+#if defined mdebug
+            fprintf(stderr, "malloc(scan_sentence_element): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
             big_number_count = 0;
             while (buffer_size > 0)
             {
@@ -909,15 +943,31 @@ void scan_sentence_element(void)
                 size_t quotient_size = 0;
                 for (size_t i = 0; i < buffer_size; i++)
                 {
-                    uint64_t current = remainder * 10 + (uint64_t)(buffer[i] - '0');
+                    uint64_t current = remainder * 10 + (uint64_t)(big_number_digits[i] - '0');
                     uint64_t quotient_digit = current >> 32;
                     remainder = current & 0xFFFFFFFF;
                     if (quotient_size > 0 || quotient_digit > 0)
-                        buffer[quotient_size++] = (char)('0' + quotient_digit);
+                        big_number_digits[quotient_size++] = (char)('0' + quotient_digit);
+                }
+                if (big_number_count == big_number_buffer_capacity)
+                {
+                    big_number_buffer_capacity *= 2;
+                    uint32_t *new_buffer = realloc(big_number_buffer, big_number_buffer_capacity * sizeof(uint32_t));
+                    if (new_buffer == NULL)
+                        error_no_memory();
+                    big_number_buffer = new_buffer;
+#if defined mdebug
+                    fprintf(stderr, "realloc(scan_sentence_element): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
                 }
                 big_number_buffer[big_number_count++] = (uint32_t)remainder;
                 buffer_size = quotient_size;
             }
+#if defined mdebug
+            fprintf(stderr, "free(scan_sentence_element): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
+            free(big_number_digits);
+            big_number_digits = NULL;
             for (size_t i = 0; i < big_number_count / 2; i++)
             {
                 uint32_t temp = big_number_buffer[i];
@@ -932,6 +982,14 @@ void scan_sentence_element(void)
             current_sentence_element.type = SC;
             if (big_number_index < big_number_count)
                 flags.scanner_big_number = true;
+            else
+            {
+#if defined mdebug
+                fprintf(stderr, "free(scan_sentence_element): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
+                free(big_number_buffer);
+                big_number_buffer = NULL;
+            }
             scanner_state = SCNRET;
             break;
         case SCNL:
@@ -1203,7 +1261,14 @@ void scan_sentence_element(void)
             current_sentence_element.code.info.coden = big_number_buffer[big_number_index++];
             current_sentence_element.type = SC;
             if (big_number_index == big_number_count)
+            {
                 flags.scanner_big_number = false;
+#if defined mdebug
+                fprintf(stderr, "free(scan_sentence_element): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
+                free(big_number_buffer);
+                big_number_buffer = NULL;
+            }
             scanner_state = SCNRET;
             break;
         case FSCN:
@@ -1264,11 +1329,6 @@ void scan_sentence_element(void)
         case OSH113:
             scanner.last_error_cursor = refalab_source_cursor;
             print_error_string(113, "No digits after #");
-            scanner_state = SCNERR;
-            break;
-        case OSH114:
-            scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(114, "Big number too long");
             scanner_state = SCNERR;
             break;
         case SOSH203:

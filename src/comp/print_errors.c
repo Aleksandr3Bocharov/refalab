@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-11
+// 2026-08-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file print_errors.c  ---------- 
@@ -8,11 +8,19 @@
 //------------------------------------------- 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include "refalab.h"
 #include "print_errors.h"
 #include "compiler.h"
+
+void error_no_memory(void)
+{
+    fputs("\nERROR: no memory!!!\n", stdout);
+    exit(1);
+    return;
+}
 
 void print_error_string(uint16_t error_number, const char *error_string)
 {

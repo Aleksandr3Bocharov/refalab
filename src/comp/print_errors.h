@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-23
+// 2026-08-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file print_errors.h  ---------- 
@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+extern void error_no_memory(void);
 extern void print_error_string(uint16_t error_number, const char *error_string);
 extern void print_error_two_strings(uint16_t error_number, const char *error_string, const char *error2_string, uint8_t error2_string_length);
 extern void print_error_three_strings(uint16_t error_number, const char *error_string, const char *error2_string, uint8_t error2_string_length, const char *error3_string);

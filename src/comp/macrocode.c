@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-10
+// 2026-08-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file macrocode.c  ----------
@@ -68,13 +68,6 @@ static size_t current_address; // module generation files
 static size_t module_length;
 static T_RELAY relay;
 static size_t delta;
-
-static void error_no_memory(void)
-{
-    fputs("\nERROR: no memory!!!\n", stdout);
-    exit(1);
-    return;
-}
 
 static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
