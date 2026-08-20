@@ -1399,7 +1399,7 @@ static bool compile_specifer(char tail)
                 break;
             default:
                 scanner.last_error_cursor = refalab_source_cursor;
-                print_error_string_symbol(201, "Within specifier invalid symbol ", current_char);
+                print_error_string_symbol(201, "Within specifier invalid symbol", current_char);
                 specifier_state = OSH200;
             }
             break;
