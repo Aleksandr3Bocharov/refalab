@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-14
+// 2026-08-20
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -87,6 +87,7 @@ typedef enum scanner_states
     SCNERR,
     SCNSC,
     EGO,
+    SCNBN,
     SCNL,
     SCNR,
     SCNS,
@@ -104,6 +105,7 @@ typedef enum scanner_states
     STATE1,
     SCNCHR,
     STATE2,
+    STATE3,
     FSCN,
     NSCN,
     RSCN,
@@ -114,6 +116,8 @@ typedef enum scanner_states
     OSH101,
     OSH102,
     OSH103,
+    OSH113,
+    OSH114,
     SOSH203,
     SOSH204,
     SCNGCR,
@@ -170,6 +174,7 @@ static struct
     bool compile_direction;  // L,R - flag
     bool scanner_station;    // scanner station - in(1),out(0) literal chain
     bool scanner_station_k;  // scanner station k - id(1),any(0) after k
+    bool scanner_big_number; // scanner big number - has more macro digits
     bool left_part_sentence; // left part sentence flag
     bool end_refalab_source; // "refalab_source" end flag
 } flags;
@@ -183,6 +188,11 @@ static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_key[8];
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
+
+// for big numbers
+static uint32_t big_number_buffer[64];
+static size_t big_number_count = 0;
+static size_t big_number_index = 0;
 
 static void load_refalab_source_to_memory(void);
 static void get_statement_key(bool is_func);
@@ -742,6 +752,8 @@ void scan_sentence_element(void)
         scanner_state = STATE1;
     if (flags.scanner_station_k)
         scanner_state = STATE2;
+    if (flags.scanner_big_number)
+        scanner_state = STATE3;
     char current_char = get_current_char();
     while (true)
         switch (scanner_state)
@@ -791,6 +803,9 @@ void scan_sentence_element(void)
             case '8':
             case '9':
                 scanner_state = SCNSC;
+                break;
+            case '#':
+                scanner_state = SCNBN;
                 break;
             case '(':
                 scanner_state = SCNL;
@@ -860,6 +875,63 @@ void scan_sentence_element(void)
             break;
         case EGO:
             current_sentence_element.type = SC;
+            scanner_state = SCNRET;
+            break;
+        case SCNBN:
+            next_char();
+            current_char = get_current_char();
+            char buffer[256];
+            size_t buffer_size = 0;
+            while (isdigit((unsigned char)current_char) != 0)
+            {
+                buffer[buffer_size++] = current_char;
+                if (buffer_size == 255)
+                {
+                    while (isdigit((unsigned char)get_current_char()) != 0)
+                        next_char();
+                    scanner_state = OSH114;
+                    break;
+                }
+                next_char();
+                current_char = get_current_char();
+            }
+            if (scanner_state == OSH114)
+                break;
+            if (buffer_size == 0)
+            {
+                scanner_state = OSH113;
+                break;
+            }
+            big_number_count = 0;
+            while (buffer_size > 0)
+            {
+                uint64_t remainder = 0;
+                size_t quotient_size = 0;
+                for (size_t i = 0; i < buffer_size; i++)
+                {
+                    uint64_t current = remainder * 10 + (uint64_t)(buffer[i] - '0');
+                    uint64_t quotient_digit = current >> 32;
+                    remainder = current & 0xFFFFFFFF;
+                    if (quotient_size > 0 || quotient_digit > 0)
+                        buffer[quotient_size++] = (char)('0' + quotient_digit);
+                }
+                big_number_buffer[big_number_count++] = (uint32_t)remainder;
+                buffer_size = quotient_size;
+            }
+            for (size_t i = 0; i < big_number_count / 2; i++)
+            {
+                uint32_t temp = big_number_buffer[i];
+                big_number_buffer[i] = big_number_buffer[big_number_count - 1 - i];
+                big_number_buffer[big_number_count - 1 - i] = temp;
+            }
+            big_number_index = 0;
+            current_sentence_element.cursor_number = refalab_source_cursor;
+            current_sentence_element.code.tag = TAGN;
+            current_sentence_element.code.info.codef = NULL;
+            current_sentence_element.code.info.coden = big_number_buffer[big_number_index++];
+            current_sentence_element.type = SC;
+            if (big_number_index < big_number_count)
+                flags.scanner_big_number = true;
             scanner_state = SCNRET;
             break;
         case SCNL:
@@ -1124,6 +1196,16 @@ void scan_sentence_element(void)
             PRINT_ERROR_100(get_current_char());
             scanner_state = SCNERR;
             break;
+        case STATE3:
+            current_sentence_element.cursor_number = refalab_source_cursor;
+            current_sentence_element.code.tag = TAGN;
+            current_sentence_element.code.info.codef = NULL;
+            current_sentence_element.code.info.coden = big_number_buffer[big_number_index++];
+            current_sentence_element.type = SC;
+            if (big_number_index == big_number_count)
+                flags.scanner_big_number = false;
+            scanner_state = SCNRET;
+            break;
         case FSCN:
             specifier_code = 0;
             scanner_state = SABBR;
@@ -1177,6 +1259,16 @@ void scan_sentence_element(void)
         case OSH103:
             scanner.last_error_cursor = refalab_source_cursor;
             print_error_string(103, "Sign '.' expected");
+            scanner_state = SCNERR;
+            break;
+        case OSH113:
+            scanner.last_error_cursor = refalab_source_cursor;
+            print_error_string(113, "No digits after #");
+            scanner_state = SCNERR;
+            break;
+        case OSH114:
+            scanner.last_error_cursor = refalab_source_cursor;
+            print_error_string(114, "Big number too long");
             scanner_state = SCNERR;
             break;
         case SOSH203:
@@ -1827,6 +1919,7 @@ static void func(void)
         get_statement_key(true);
         flags.scanner_station = false;
         flags.scanner_station_k = false;
+        flags.scanner_big_number = false;
         flags.left_part_sentence = true;
         if (strcmp(statement_key, "LEFT") == 0)
             compile_sentence(true);
