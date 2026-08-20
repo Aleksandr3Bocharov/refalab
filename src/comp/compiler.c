@@ -949,17 +949,6 @@ void scan_sentence_element(void)
                     if (quotient_size > 0 || quotient_digit > 0)
                         big_number_digits[quotient_size++] = (char)('0' + quotient_digit);
                 }
-                if (big_number_count == big_number_buffer_capacity)
-                {
-                    big_number_buffer_capacity *= 2;
-                    uint32_t *new_buffer = realloc(big_number_buffer, big_number_buffer_capacity * sizeof(uint32_t));
-                    if (new_buffer == NULL)
-                        error_no_memory();
-                    big_number_buffer = new_buffer;
-#if defined mdebug
-                    fprintf(stderr, "realloc(scan_sentence_element): big_number_buffer=%p\n", (void *)big_number_buffer);
-#endif
-                }
                 big_number_buffer[big_number_count++] = (uint32_t)remainder;
                 buffer_size = quotient_size;
             }
