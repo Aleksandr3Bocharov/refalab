@@ -885,7 +885,7 @@ void scan_sentence_element(void)
             while (isdigit((unsigned char)current_char) != 0)
             {
                 buffer[buffer_size++] = current_char;
-                if (buffer_size == 255)
+                if (buffer_size == 256)
                 {
                     while (isdigit((unsigned char)get_current_char()) != 0)
                         next_char();
