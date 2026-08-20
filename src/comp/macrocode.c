@@ -78,10 +78,10 @@ static void error_no_memory(void)
 
 static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
-    free(stream_bytes_nodes->buffer);
 #if defined mdebug
     fprintf(stderr, "free(stream_bytes_nodes_clear): stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
 #endif
+    free(stream_bytes_nodes->buffer);
     stream_bytes_nodes->buffer = NULL;
     stream_bytes_nodes->length = 0;
     stream_bytes_nodes->current = 0;
