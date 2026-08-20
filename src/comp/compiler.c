@@ -880,18 +880,18 @@ void scan_sentence_element(void)
         case SCNBN:
             next_char();
             current_char = get_current_char();
-            char buffer[256];
+            char buffer[255];
             size_t buffer_size = 0;
             while (isdigit((unsigned char)current_char) != 0)
             {
-                buffer[buffer_size++] = current_char;
-                if (buffer_size == 256)
+                if (buffer_size == 255)
                 {
                     while (isdigit((unsigned char)get_current_char()) != 0)
                         next_char();
                     scanner_state = OSH114;
                     break;
                 }
+                buffer[buffer_size++] = current_char;
                 next_char();
                 current_char = get_current_char();
             }
