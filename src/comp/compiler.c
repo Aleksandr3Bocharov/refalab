@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-20
+// 2026-08-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -116,7 +116,7 @@ typedef enum scanner_states
     OSH101,
     OSH102,
     OSH103,
-    OSH113,
+    OSH115,
     SOSH203,
     SOSH204,
     SCNGCR,
@@ -210,7 +210,7 @@ static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
 static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
-static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
+static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
 
 static inline char get_current_char(void)
 {
@@ -884,8 +884,10 @@ void scan_sentence_element(void)
             scanner_state = SCNRET;
             break;
         case SCNSC:
-            get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length);
-            scanner_state = EGO;
+            if (get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length))
+                scanner_state = EGO;
+            else
+                scanner_state = SCNERR;
             break;
         case EGO:
             current_sentence_element.type = SC;
@@ -926,7 +928,7 @@ void scan_sentence_element(void)
 #endif
                 free(big_number_digits);
                 big_number_digits = NULL;
-                scanner_state = OSH113;
+                scanner_state = OSH115;
                 break;
             }
             big_number_buffer_capacity = (buffer_size / 9) + 2;
@@ -1315,9 +1317,9 @@ void scan_sentence_element(void)
             print_error_string(103, "Sign '.' expected");
             scanner_state = SCNERR;
             break;
-        case OSH113:
+        case OSH115:
             scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(113, "No digits after #");
+            print_error_string(115, "No digits after #");
             scanner_state = SCNERR;
             break;
         case SOSH203:
@@ -1523,7 +1525,11 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_ngw);
             return true;
         case SPCESC:
-            get_multiple_symbol(&code, identifier, &identifier_length);
+            if (!get_multiple_symbol(&code, identifier, &identifier_length))
+            {
+                specifier_state = OSH200;
+                break;
+            }
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
                 generate_symbol(&code);
@@ -2021,15 +2027,6 @@ static void specifier(void)
             next_char();
             return;
         }
-        else
-        {
-            blanks_out();
-            if (get_current_char() == ';')
-            {
-                next_char();
-                return;
-            }
-        }
     } while (false);
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
@@ -2039,124 +2036,122 @@ static void specifier(void)
     return;
 }
 
-static void get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
+static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
     code->info.codef = NULL;
-    do
+    char current_char = get_current_char();
+    if (isdigit((unsigned char)current_char) != 0)
     {
-        char current_char = get_current_char();
-        if (isdigit((unsigned char)current_char) != 0)
+        code->tag = TAGN;
+        uint64_t number = 0;
+        uint8_t base = 10;
+        if (current_char == '0')
         {
-            code->tag = TAGN;
-            uint64_t number = 0;
-            uint8_t base = 10;
-            if (current_char == '0')
+            next_char();
+            current_char = get_current_char();
+            if (current_char == 'x')
             {
+                base = 16;
                 next_char();
                 current_char = get_current_char();
-                if (current_char == 'x')
+                if ((current_char >= '0' && current_char <= '9') ||
+                    (current_char >= 'a' && current_char <= 'f') ||
+                    (current_char >= 'A' && current_char <= 'F'))
                 {
-                    base = 16;
-                    next_char();
-                    current_char = get_current_char();
-                    if ((current_char >= '0' && current_char <= '9') ||
-                        (current_char >= 'a' && current_char <= 'f') ||
-                        (current_char >= 'A' && current_char <= 'F'))
-                    {
-                        if (current_char >= '0' && current_char <= '9')
-                            number = (uint64_t)(current_char - '0');
-                        else if (current_char >= 'a' && current_char <= 'f')
-                            number = (uint64_t)(current_char - 'a' + 10);
-                        else
-                            number = (uint64_t)(current_char - 'A' + 10);
-                    }
+                    if (current_char >= '0' && current_char <= '9')
+                        number = (uint64_t)(current_char - '0');
+                    else if (current_char >= 'a' && current_char <= 'f')
+                        number = (uint64_t)(current_char - 'a' + 10);
                     else
-                    {
-                        scanner.last_error_cursor = refalab_source_cursor;
-                        print_error_string(112, "Invalid hex number: 0x");
-                        break;
-                    }
-                }
-                else if (current_char >= '0' && current_char <= '7')
-                {
-                    base = 8;
-                    number = (uint64_t)(current_char - '0');
+                        number = (uint64_t)(current_char - 'A' + 10);
                 }
                 else
-                    break;
+                {
+                    scanner.last_error_cursor = refalab_source_cursor;
+                    print_error_string(112, "Invalid hex number: 0x");
+                    return false;
+                }
+            }
+            else if (current_char >= '0' && current_char <= '7')
+            {
+                base = 8;
+                number = (uint64_t)(current_char - '0');
             }
             else
-                number = (uint64_t)(current_char - '0');
-            bool multiple_symbol_end = false;
-            while (true)
-            {
-                next_char();
-                current_char = get_current_char();
-                bool is_valid_digit = false;
-                uint64_t digit_value = 0;
-                if (current_char >= '0' && current_char <= '9')
-                {
-                    digit_value = (uint64_t)(current_char - '0');
-                    if (base == 10 || base == 16 || (base == 8 && digit_value <= 7))
-                        is_valid_digit = true;
-                }
-                else if (base == 16)
-                {
-                    if (current_char >= 'a' && current_char <= 'f')
-                    {
-                        is_valid_digit = true;
-                        digit_value = (uint64_t)(current_char - 'a' + 10);
-                    }
-                    else if (current_char >= 'A' && current_char <= 'F')
-                    {
-                        is_valid_digit = true;
-                        digit_value = (uint64_t)(current_char - 'A' + 10);
-                    }
-                }
-                if (!is_valid_digit)
-                {
-                    code->info.coden = (uint32_t)number;
-                    multiple_symbol_end = true;
-                    break;
-                }
-                number = number * base + digit_value;
-                if (number > MAX_NUMBER)
-                    break;
-            }
-            if (multiple_symbol_end)
-                break;
-            while (true)
-            {
-                next_char();
-                current_char = get_current_char();
-                bool is_digit = false;
-                if (current_char >= '0' && current_char <= '9')
-                {
-                    if (base == 10 || base == 16 || (base == 8 && current_char <= '7'))
-                        is_digit = true;
-                }
-                else if (base == 16)
-                {
-                    if ((current_char >= 'a' && current_char <= 'f') ||
-                        (current_char >= 'A' && current_char <= 'F'))
-                        is_digit = true;
-                }
-                if (!is_digit)
-                    break;
-            }
-            char error_111[64];
-            sprintf(error_111, "Symbol-number > %" PRIu32, MAX_NUMBER);
-            scanner.last_error_cursor = refalab_source_cursor;
-            print_error_string(111, error_111);
-            break;
+                return true;
         }
-        const size_t cursor_number = refalab_source_cursor;
-        get_identifier(identifier, identifier_length);
-        code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
-        code->tag = TAGF;
-    } while (false);
-    return;
+        else
+            number = (uint64_t)(current_char - '0');
+        bool multiple_symbol_end = false;
+        while (true)
+        {
+            next_char();
+            current_char = get_current_char();
+            bool is_valid_digit = false;
+            uint64_t digit_value = 0;
+            if (current_char >= '0' && current_char <= '9')
+            {
+                digit_value = (uint64_t)(current_char - '0');
+                if (base == 10 || base == 16 || (base == 8 && digit_value <= 7))
+                    is_valid_digit = true;
+            }
+            else if (base == 16)
+            {
+                if (current_char >= 'a' && current_char <= 'f')
+                {
+                    is_valid_digit = true;
+                    digit_value = (uint64_t)(current_char - 'a' + 10);
+                }
+                else if (current_char >= 'A' && current_char <= 'F')
+                {
+                    is_valid_digit = true;
+                    digit_value = (uint64_t)(current_char - 'A' + 10);
+                }
+            }
+            if (!is_valid_digit)
+            {
+                code->info.coden = (uint32_t)number;
+                multiple_symbol_end = true;
+                break;
+            }
+            number = number * base + digit_value;
+            if (number > MAX_NUMBER)
+                break;
+        }
+        if (multiple_symbol_end)
+            return true;
+        while (true)
+        {
+            next_char();
+            current_char = get_current_char();
+            bool is_digit = false;
+            if (current_char >= '0' && current_char <= '9')
+            {
+                if (base == 10 || base == 16 || (base == 8 && current_char <= '7'))
+                    is_digit = true;
+            }
+            else if (base == 16)
+            {
+                if ((current_char >= 'a' && current_char <= 'f') ||
+                    (current_char >= 'A' && current_char <= 'F'))
+                    is_digit = true;
+            }
+            if (!is_digit)
+                break;
+        }
+        char error_111[64];
+        sprintf(error_111, "Symbol-number > %" PRIu32, MAX_NUMBER);
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string(111, error_111);
+        return false;
+    }
+    const size_t cursor_number = refalab_source_cursor;
+    if (!get_identifier(identifier, identifier_length))
+        return false;
+    code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
+    code->tag = TAGF;
+    return true;
 }
 
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
@@ -2187,6 +2182,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
         sprintf(errror_113, "Identifier length > %d", MAX_IDENTIFIER_LENGTH);
         scanner.last_error_cursor = refalab_source_cursor;
         print_error_string(113, errror_113);
+        return false;
     }
     return true;
 }
@@ -2219,6 +2215,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
         sprintf(error_114, "External identifier length > %d", MAX_IDENTIFIER_EXTERN_LENGTH);
         scanner.last_error_cursor = refalab_source_cursor;
         print_error_string(114, error_114);
+        return false;
     }
     return true;
 }
