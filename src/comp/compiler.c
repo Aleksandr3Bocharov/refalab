@@ -51,6 +51,12 @@
 #define PRINT_ERROR_130 \
     print_error_string(130, "Invalid directive format")
 
+#define PRINT_ERROR_210 \
+    print_error_string(210, "Range: invalid character syntax")
+
+#define PRINT_ERROR_212 \
+    print_error_string(212, "Range: mixed types (character and number)")
+
 #define ns_b 0006
 #define ns_cll 0000
 #define ns_d 0013
@@ -61,6 +67,8 @@
 #define ns_ngw 0003
 #define ns_o 0012
 #define ns_r 0011
+#define ns_range_c 0016
+#define ns_range_n 0015
 #define ns_s 0005
 #define ns_sc 0004
 #define ns_w 0001
@@ -137,6 +145,7 @@ typedef enum specifier_states
     SPCSP,
     SPCA,
     SPCA1,
+    SPCRG,
     SPCES,
     SPCEB,
     SPCEW,
@@ -208,6 +217,7 @@ static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
+static bool compile_range(void);
 static char get_char_object(void);
 static bool get_macrodigit(T_LINKTI *code);
 static bool get_identifier(char *identifier, uint8_t *identifier_length);
@@ -1270,6 +1280,9 @@ static bool compile_specifer(char tail)
             case ')':
                 specifier_state = SPCR;
                 break;
+            case '[':
+                specifier_state = SPCRG;
+                break;
             case '_':
             case 'A':
             case 'B':
@@ -1500,6 +1513,12 @@ static bool compile_specifer(char tail)
                 break;
             specifier_state = SPCBLO;
             break;
+        case SPCRG:
+            if (!compile_range())
+                specifier_state = OSH200;
+            else
+                specifier_state = SPCGC;
+            break;
         case SPCES:
             generate_specifier(ns_s);
             specifier_state = SPCGC;
@@ -1573,6 +1592,149 @@ static bool compile_specifer(char tail)
             print_error_string(208, "Within specifier too many )");
             specifier_state = OSH200;
         }
+}
+
+static bool compile_range(void)
+{
+    next_char();
+    blanks_out();
+    bool is_char_range = false;
+    bool has_first = false;
+    bool has_second = false;
+    uint32_t first_value = 0;
+    uint32_t second_value = 0;
+    char current_char = get_current_char();
+    // first_value
+    if (current_char == '\'')
+    {
+        is_char_range = true;
+        next_char();
+        current_char = get_current_char();
+        if (current_char == '\'')
+        {
+            // '' — '
+            first_value = '\'';
+            next_char();
+        }
+        else
+        {
+            first_value = (uint8_t)get_char_object();
+            next_char();
+            if (get_current_char() != '\'')
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
+                PRINT_ERROR_210;
+                return false;
+            }
+            next_char();
+        }
+        has_first = true;
+    }
+    else if (isdigit((unsigned char)current_char) != 0)
+    {
+        T_LINKTI code;
+        if (!get_macrodigit(&code))
+            return false;
+        first_value = code.info.coden;
+        has_first = true;
+    }
+    blanks_out();
+    if (get_current_char() == '.' && refalab_source_cursor + 1 < refalab_source_size &&
+        *(refalab_source_buffer + refalab_source_cursor + 1) == '.')
+    {
+        next_char();
+        next_char();
+        blanks_out();
+        current_char = get_current_char();
+        // second_value
+        if (current_char == '\'')
+        {
+            if (!is_char_range && has_first)
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
+                PRINT_ERROR_212;
+                return false;
+            }
+            is_char_range = true;
+            next_char();
+            current_char = get_current_char();
+            if (current_char == '\'')
+            {
+                // '' — '
+                second_value = '\'';
+                next_char();
+            }
+            else
+            {
+                second_value = (uint8_t)get_char_object();
+                next_char();
+                if (get_current_char() != '\'')
+                {
+                    scanner.last_error_cursor = refalab_source_cursor;
+                    PRINT_ERROR_210;
+                    return false;
+                }
+                next_char();
+            }
+            has_second = true;
+        }
+        else if (isdigit((unsigned char)current_char) != 0)
+        {
+            if (is_char_range && has_first)
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
+                PRINT_ERROR_212;
+                return false;
+            }
+            T_LINKTI code;
+            if (!get_macrodigit(&code))
+                return false;
+            second_value = code.info.coden;
+            has_second = true;
+        }
+    }
+    blanks_out();
+    if (get_current_char() != ']')
+    {
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string(213, "Range: expected ']'");
+        return false;
+    }
+    if (!has_first)
+        first_value = 0;
+    if (!has_second)
+        second_value = is_char_range ? 255 : MAX_NUMBER;
+    if (first_value > second_value)
+    {
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string(211, "Range: start > end");
+        return false;
+    }
+    if (is_char_range)
+    {
+        generate_specifier(ns_range_c);
+        if (flags.left_part_sentence)
+        {
+            macrocode_byte((uint8_t)first_value);
+            macrocode_byte((uint8_t)second_value);
+        }
+    }
+    else
+    {
+        generate_specifier(ns_range_n);
+        if (flags.left_part_sentence)
+        {
+            macrocode_byte((uint8_t)(first_value & 0xFF));
+            macrocode_byte((uint8_t)((first_value >> 8) & 0xFF));
+            macrocode_byte((uint8_t)((first_value >> 16) & 0xFF));
+            macrocode_byte((uint8_t)((first_value >> 24) & 0xFF));
+            macrocode_byte((uint8_t)(second_value & 0xFF));
+            macrocode_byte((uint8_t)((second_value >> 8) & 0xFF));
+            macrocode_byte((uint8_t)((second_value >> 16) & 0xFF));
+            macrocode_byte((uint8_t)((second_value >> 24) & 0xFF));
+        }
+    }
+    return true;
 }
 
 static void print_card_refalab_source_listing(void)
