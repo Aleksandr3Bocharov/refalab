@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-21
+// 2026-08-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -208,6 +208,7 @@ static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
+static bool get_macrodigit(T_LINKTI *code);
 static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
 static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
@@ -2040,10 +2041,27 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
 {
     code->tag = TAGO;
     code->info.codef = NULL;
+    if (isdigit((unsigned char)get_current_char()) != 0)
+    {
+        if (get_macrodigit(code))
+            return true;
+        return false;
+    }
+    const size_t cursor_number = refalab_source_cursor;
+    if (!get_identifier(identifier, identifier_length))
+        return false;
+    code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
+    code->tag = TAGF;
+    return true;
+}
+
+static bool get_macrodigit(T_LINKTI *code)
+{
     char current_char = get_current_char();
     if (isdigit((unsigned char)current_char) != 0)
     {
         code->tag = TAGN;
+        code->info.codef = NULL;
         uint64_t number = 0;
         uint8_t base = 10;
         if (current_char == '0')
@@ -2083,7 +2101,7 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
         }
         else
             number = (uint64_t)(current_char - '0');
-        bool multiple_symbol_end = false;
+        bool macodigit_end = false;
         while (true)
         {
             next_char();
@@ -2112,14 +2130,14 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
             if (!is_valid_digit)
             {
                 code->info.coden = (uint32_t)number;
-                multiple_symbol_end = true;
+                macodigit_end = true;
                 break;
             }
             number = number * base + digit_value;
             if (number > MAX_NUMBER)
                 break;
         }
-        if (multiple_symbol_end)
+        if (macodigit_end)
             return true;
         while (true)
         {
@@ -2144,14 +2162,8 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
         sprintf(error_111, "Symbol-number > %" PRIu32, MAX_NUMBER);
         scanner.last_error_cursor = refalab_source_cursor;
         print_error_string(111, error_111);
-        return false;
     }
-    const size_t cursor_number = refalab_source_cursor;
-    if (!get_identifier(identifier, identifier_length))
-        return false;
-    code->info.codef = function_reference(identifier, *identifier_length, cursor_number);
-    code->tag = TAGF;
-    return true;
+    return false;
 }
 
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
