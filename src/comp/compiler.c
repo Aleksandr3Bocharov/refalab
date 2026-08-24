@@ -67,8 +67,8 @@
 #define ns_ngw 0003
 #define ns_o 0012
 #define ns_r 0011
-#define ns_range_c 0016
-#define ns_range_n 0015
+#define ns_rc 0016
+#define ns_rn 0015
 #define ns_s 0005
 #define ns_sc 0004
 #define ns_w 0001
@@ -1730,7 +1730,7 @@ static bool compile_range(void)
     }
     if (is_char_range)
     {
-        generate_specifier(ns_range_c);
+        generate_specifier(ns_rc);
         if (flags.left_part_sentence)
         {
             macrocode_byte((uint8_t)first_value);
@@ -1739,7 +1739,7 @@ static bool compile_range(void)
     }
     else
     {
-        generate_specifier(ns_range_n);
+        generate_specifier(ns_rn);
         if (flags.left_part_sentence)
         {
             const uint8_t *bytes = (const uint8_t *)&first_value;
