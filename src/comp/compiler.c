@@ -2101,7 +2101,7 @@ static bool get_macrodigit(T_LINKTI *code)
         }
         else
             number = (uint64_t)(current_char - '0');
-        bool macodigit_end = false;
+        bool macrodigit_end = false;
         while (true)
         {
             next_char();
@@ -2130,14 +2130,14 @@ static bool get_macrodigit(T_LINKTI *code)
             if (!is_valid_digit)
             {
                 code->info.coden = (uint32_t)number;
-                macodigit_end = true;
+                macrodigit_end = true;
                 break;
             }
             number = number * base + digit_value;
             if (number > MAX_NUMBER)
                 break;
         }
-        if (macodigit_end)
+        if (macrodigit_end)
             return true;
         while (true)
         {
