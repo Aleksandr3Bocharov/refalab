@@ -208,6 +208,7 @@ static void print_conclusion(void);
 static void print_card_refalab_source_listing(void);
 static void generate_specifier(uint8_t n);
 static bool compile_specifer(char tail);
+static char get_char_object(void);
 static bool get_macrodigit(T_LINKTI *code);
 static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
@@ -1117,115 +1118,7 @@ void scan_sentence_element(void)
             current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.code.tag = TAGO;
             current_sentence_element.code.info.codef = NULL;
-            char symbol = get_current_char();
-            if (symbol == '\\')
-            // control symbols
-            {
-                next_char();
-                char temp_symbol = get_current_char();
-                switch (temp_symbol)
-                {
-                case '\\':
-                    break;
-                case 'n':
-                    symbol = '\012';
-                    break;
-                case 't':
-                    symbol = '\011';
-                    break;
-                case 'v':
-                    symbol = '\013';
-                    break;
-                case 'r':
-                    symbol = '\015';
-                    break;
-                case 'f':
-                    symbol = '\014';
-                    break;
-                case '0':
-                    next_char();
-                    temp_symbol = get_current_char();
-                    if (temp_symbol >= '0' && temp_symbol <= '7')
-                    {
-                        uint32_t octal = (uint32_t)temp_symbol - '0';
-                        next_char();
-                        temp_symbol = get_current_char();
-                        if (temp_symbol >= '0' && temp_symbol <= '7')
-                            octal = octal * 8 + (uint32_t)temp_symbol - '0';
-                        else
-                            previous_char();
-                        symbol = (char)(octal & 255);
-                    }
-                    else
-                    {
-                        previous_char();
-                        symbol = '\0';
-                    }
-                    break;
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                {
-                    uint32_t octal = (uint32_t)temp_symbol - '0';
-                    for (uint8_t i = 1; i < 3; i++)
-                    {
-                        next_char();
-                        temp_symbol = get_current_char();
-                        if (temp_symbol >= '0' && temp_symbol <= '7')
-                            octal = octal * 8 + (uint32_t)temp_symbol - '0';
-                        else
-                            previous_char();
-                    }
-                    symbol = (char)(octal & 255);
-                }
-                break;
-                case 'x':
-                    next_char();
-                    temp_symbol = get_current_char();
-                    if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
-                    {
-                        uint32_t hex = 0;
-                        if (temp_symbol >= '0' && temp_symbol <= '9')
-                            hex = (uint32_t)temp_symbol - '0';
-                        else if (temp_symbol >= 'a' && temp_symbol <= 'f')
-                            hex = (uint32_t)temp_symbol - 'a' + 10;
-                        else
-                            hex = (uint32_t)temp_symbol - 'A' + 10;
-                        next_char();
-                        temp_symbol = get_current_char();
-                        if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
-                        {
-                            hex = hex * 16;
-                            if (temp_symbol >= '0' && temp_symbol <= '9')
-                                hex += (uint32_t)temp_symbol - '0';
-                            else if (temp_symbol >= 'a' && temp_symbol <= 'f')
-                                hex += (uint32_t)temp_symbol - 'a' + 10;
-                            else
-                                hex += (uint32_t)temp_symbol - 'A' + 10;
-                        }
-                        else
-                            previous_char();
-                        symbol = (char)(hex & 255);
-                    }
-                    else
-                    {
-                        previous_char();
-                        symbol = 'x';
-                    }
-                    break;
-                case '\n':
-                case '\0':
-                    previous_char();
-                    break;
-                default:
-                    symbol = temp_symbol;
-                }
-            }
-            current_sentence_element.code.info.infoc = symbol;
+            current_sentence_element.code.info.infoc = get_char_object();
             current_sentence_element.type = SC;
             scanner_state = SCNGCR;
             break;
@@ -1588,117 +1481,9 @@ static bool compile_specifer(char tail)
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
             {
-                char symbol = get_current_char();
-                if (symbol == '\\')
-                {
-                    next_char();
-                    // control symbols ---------------
-                    char temp_symbol = get_current_char();
-                    switch (temp_symbol)
-                    {
-                    case '\\':
-                        break;
-                    case 'n':
-                        symbol = '\012';
-                        break;
-                    case 't':
-                        symbol = '\011';
-                        break;
-                    case 'v':
-                        symbol = '\013';
-                        break;
-                    case 'r':
-                        symbol = '\015';
-                        break;
-                    case 'f':
-                        symbol = '\014';
-                        break;
-                    case '0':
-                        next_char();
-                        temp_symbol = get_current_char();
-                        if (temp_symbol >= '0' && temp_symbol <= '7')
-                        {
-                            uint32_t octal = (uint32_t)temp_symbol - '0';
-                            next_char();
-                            temp_symbol = get_current_char();
-                            if (temp_symbol >= '0' && temp_symbol <= '7')
-                                octal = octal * 8 + (uint32_t)temp_symbol - '0';
-                            else
-                                previous_char();
-                            symbol = (char)(octal & 255);
-                        }
-                        else
-                        {
-                            previous_char();
-                            symbol = '\0';
-                        }
-                        break;
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    {
-                        uint32_t octal = (uint32_t)temp_symbol - '0';
-                        for (uint8_t i = 1; i < 3; i++)
-                        {
-                            next_char();
-                            temp_symbol = get_current_char();
-                            if (temp_symbol >= '0' && temp_symbol <= '7')
-                                octal = octal * 8 + (uint32_t)temp_symbol - '0';
-                            else
-                                previous_char();
-                        }
-                        symbol = (char)(octal & 255);
-                    }
-                    break;
-                    case 'x':
-                        next_char();
-                        temp_symbol = get_current_char();
-                        if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
-                        {
-                            uint32_t hex = 0;
-                            if (temp_symbol >= '0' && temp_symbol <= '9')
-                                hex = (uint32_t)temp_symbol - '0';
-                            else if (temp_symbol >= 'a' && temp_symbol <= 'f')
-                                hex = (uint32_t)temp_symbol - 'a' + 10;
-                            else
-                                hex = (uint32_t)temp_symbol - 'A' + 10;
-                            next_char();
-                            temp_symbol = get_current_char();
-                            if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
-                            {
-                                hex = hex * 16;
-                                if (temp_symbol >= '0' && temp_symbol <= '9')
-                                    hex += (uint32_t)temp_symbol - '0';
-                                else if (temp_symbol >= 'a' && temp_symbol <= 'f')
-                                    hex += (uint32_t)temp_symbol - 'a' + 10;
-                                else
-                                    hex += (uint32_t)temp_symbol - 'A' + 10;
-                            }
-                            else
-                                previous_char();
-                            symbol = (char)(hex & 255);
-                        }
-                        else
-                        {
-                            previous_char();
-                            symbol = 'x';
-                        }
-                        break;
-                    case '\n':
-                    case '\0':
-                        previous_char();
-                        break;
-                    default:
-                        symbol = temp_symbol;
-                    }
-                }
                 code.tag = TAGO;
                 code.info.codef = NULL;
-                code.info.infoc = symbol;
+                code.info.infoc = get_char_object();
                 generate_symbol(&code);
             }
             next_char();
@@ -2035,6 +1820,119 @@ static void specifier(void)
     if (get_current_char() == ';')
         next_char();
     return;
+}
+
+static char get_char_object(void)
+{
+    char symbol = get_current_char();
+    if (symbol == '\\')
+    // control symbols
+    {
+        next_char();
+        char temp_symbol = get_current_char();
+        switch (temp_symbol)
+        {
+        case '\\':
+            break;
+        case 'n':
+            symbol = '\012';
+            break;
+        case 't':
+            symbol = '\011';
+            break;
+        case 'v':
+            symbol = '\013';
+            break;
+        case 'r':
+            symbol = '\015';
+            break;
+        case 'f':
+            symbol = '\014';
+            break;
+        case '0':
+            next_char();
+            temp_symbol = get_current_char();
+            if (temp_symbol >= '0' && temp_symbol <= '7')
+            {
+                uint32_t octal = (uint32_t)temp_symbol - '0';
+                next_char();
+                temp_symbol = get_current_char();
+                if (temp_symbol >= '0' && temp_symbol <= '7')
+                    octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                else
+                    previous_char();
+                symbol = (char)(octal & 255);
+            }
+            else
+            {
+                previous_char();
+                symbol = '\0';
+            }
+            break;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        {
+            uint32_t octal = (uint32_t)temp_symbol - '0';
+            for (uint8_t i = 1; i < 3; i++)
+            {
+                next_char();
+                temp_symbol = get_current_char();
+                if (temp_symbol >= '0' && temp_symbol <= '7')
+                    octal = octal * 8 + (uint32_t)temp_symbol - '0';
+                else
+                    previous_char();
+            }
+            symbol = (char)(octal & 255);
+        }
+        break;
+        case 'x':
+            next_char();
+            temp_symbol = get_current_char();
+            if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
+            {
+                uint32_t hex = 0;
+                if (temp_symbol >= '0' && temp_symbol <= '9')
+                    hex = (uint32_t)temp_symbol - '0';
+                else if (temp_symbol >= 'a' && temp_symbol <= 'f')
+                    hex = (uint32_t)temp_symbol - 'a' + 10;
+                else
+                    hex = (uint32_t)temp_symbol - 'A' + 10;
+                next_char();
+                temp_symbol = get_current_char();
+                if ((temp_symbol >= '0' && temp_symbol <= '9') || (temp_symbol >= 'a' && temp_symbol <= 'f') || (temp_symbol >= 'A' && temp_symbol <= 'F'))
+                {
+                    hex = hex * 16;
+                    if (temp_symbol >= '0' && temp_symbol <= '9')
+                        hex += (uint32_t)temp_symbol - '0';
+                    else if (temp_symbol >= 'a' && temp_symbol <= 'f')
+                        hex += (uint32_t)temp_symbol - 'a' + 10;
+                    else
+                        hex += (uint32_t)temp_symbol - 'A' + 10;
+                }
+                else
+                    previous_char();
+                symbol = (char)(hex & 255);
+            }
+            else
+            {
+                previous_char();
+                symbol = 'x';
+            }
+            break;
+        case '\n':
+        case '\0':
+            previous_char();
+            break;
+        default:
+            symbol = temp_symbol;
+        }
+    }
+    return symbol;
 }
 
 static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
