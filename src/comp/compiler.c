@@ -1700,6 +1700,12 @@ static bool compile_range(void)
         print_error_string(213, "Range: expected ']'");
         return false;
     }
+    if (!has_first && !has_second)
+    {
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string(214, "Range: empty range");
+        return false;
+    }
     if (!has_first)
         first_value = 0;
     if (!has_second)
