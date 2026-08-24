@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-08-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interpeter.c  ----------
@@ -38,7 +38,7 @@
 
 #define SHIFT_CURRENT_LINKCB_FREE_MEMORY                           \
     current_linkcb_free_memory = current_linkcb_free_memory->next; \
-    if (current_linkcb_free_memory == free_memory_head)       \
+    if (current_linkcb_free_memory == free_memory_head)            \
     {                                                              \
         interpretator_state = LACK;                                \
         break;                                                     \
@@ -195,7 +195,9 @@ typedef enum specifier_states
     SPCR,
     SPCD,
     SPCO,
-    SPCL
+    SPCL,
+    SPCRN,
+    SPCRC
 } T_SPECIFIER_STATES;
 
 typedef struct save_area
@@ -1858,6 +1860,12 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
                 break;
             case 0014:
                 specifier_state = SPCL;
+                break;
+            case 0015:
+                specifier_state = SPCRN;
+                break;
+            case 0016:
+                specifier_state = SPCRC;
             }
             break;
             // SPCCLL(L);
@@ -1962,6 +1970,48 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
                 break;
             }
             specifier_state = SPCNXT;
+            break;
+        case SPCRN:
+        {
+            uint32_t first_number;
+            uint32_t second_number;
+            memcpy(&first_number, specifier_virtual_program_counter, ZBLL);
+            specifier_virtual_program_counter += ZBLL;
+            memcpy(&second_number, specifier_virtual_program_counter, ZBLL);
+            specifier_virtual_program_counter += ZBLL;
+            if (linkcb->tag != TAGN)
+            {
+                specifier_state = SPCNXT;
+                break;
+            }
+            const uint32_t number = linkcb->info.coden;
+            if (number >= first_number && number <= second_number)
+            {
+                specifier_state = SPCRET;
+                break;
+            }
+            specifier_state = SPCNXT;
+            break;
+        }
+        case SPCRC:
+        {
+            uint8_t first_symbol = (uint8_t)*specifier_virtual_program_counter;
+            specifier_virtual_program_counter += NMBL;
+            uint8_t second_symbol = (uint8_t)*specifier_virtual_program_counter;
+            specifier_virtual_program_counter += NMBL;
+            if (linkcb->tag != TAGO)
+            {
+                specifier_state = SPCNXT;
+                break;
+            }
+            const uint8_t symbol = (uint8_t)linkcb->info.infoc;
+            if (symbol >= first_symbol && symbol <= second_symbol)
+            {
+                specifier_state = SPCRET;
+                break;
+            }
+            specifier_state = SPCNXT;
+        }
         }
 } //             end      specifier_interpretator
 
