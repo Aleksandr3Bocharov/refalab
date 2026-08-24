@@ -2112,7 +2112,7 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
         current_char = get_current_char();
         if (isalpha((unsigned char)current_char) == 0 && current_char != '_' && isdigit((unsigned char)current_char) == 0)
             return true;
-        identifier[*identifier_length] = (char)toupper((unsigned char)get_current_char());
+        identifier[*identifier_length] = (char)toupper((unsigned char)current_char);
     }
     size_t i = 0;
     while (isalpha((unsigned char)current_char) != 0 || isdigit((unsigned char)current_char) != 0 || current_char == '_')
