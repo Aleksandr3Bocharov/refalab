@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-08-23
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.c  ----------
@@ -37,17 +37,15 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
 
 void generate_symbol(const T_LINKTI *code)
 {
-    const uint32_t code_tag = code->tag;
-    macrocode_byte((uint8_t)(code_tag & 0xFF));
-    macrocode_byte((uint8_t)((code_tag >> 8) & 0xFF));
-    macrocode_byte((uint8_t)((code_tag >> 16) & 0xFF));
-    macrocode_byte((uint8_t)((code_tag >> 24) & 0xFF));
+    const uint8_t *tag_bytes = (const uint8_t *)&(code->tag);
+    for (uint8_t i = 0; i < ZBLL; i++)
+        macrocode_byte(tag_bytes[i]);
     if (code->tag == TAGF)
     {
         macrocode_address(code->info.codef);
         return;
     };
-    const uint8_t *code_info = (uint8_t *)&(code->info.codef);
+    const uint8_t *code_info = (const uint8_t *)&(code->info.codef);
     if (code->tag == TAGO)
     {
         macrocode_byte(*code_info);

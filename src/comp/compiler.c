@@ -1616,6 +1616,12 @@ static bool compile_range(void)
             first_value = '\'';
             next_char();
         }
+        else if (current_char == '\n' || current_char == '\0')
+        {
+            scanner.last_error_cursor = refalab_source_cursor;
+            PRINT_ERROR_210;
+            return false;
+        }
         else
         {
             first_value = (uint8_t)get_char_object();
@@ -1663,6 +1669,12 @@ static bool compile_range(void)
                 // '' — '
                 second_value = '\'';
                 next_char();
+            }
+            else if (current_char == '\n' || current_char == '\0')
+            {
+                scanner.last_error_cursor = refalab_source_cursor;
+                PRINT_ERROR_210;
+                return false;
             }
             else
             {
@@ -1730,14 +1742,12 @@ static bool compile_range(void)
         generate_specifier(ns_range_n);
         if (flags.left_part_sentence)
         {
-            macrocode_byte((uint8_t)(first_value & 0xFF));
-            macrocode_byte((uint8_t)((first_value >> 8) & 0xFF));
-            macrocode_byte((uint8_t)((first_value >> 16) & 0xFF));
-            macrocode_byte((uint8_t)((first_value >> 24) & 0xFF));
-            macrocode_byte((uint8_t)(second_value & 0xFF));
-            macrocode_byte((uint8_t)((second_value >> 8) & 0xFF));
-            macrocode_byte((uint8_t)((second_value >> 16) & 0xFF));
-            macrocode_byte((uint8_t)((second_value >> 24) & 0xFF));
+            const uint8_t *bytes = (const uint8_t *)&first_value;
+            for (uint8_t i = 0; i < ZBLL; i++)
+                macrocode_byte(bytes[i]);
+            bytes = (const uint8_t *)&second_value;
+            for (uint8_t i = 0; i < ZBLL; i++)
+                macrocode_byte(bytes[i]);
         }
     }
     return true;
