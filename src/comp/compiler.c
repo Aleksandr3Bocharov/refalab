@@ -1985,7 +1985,9 @@ static bool get_macrodigit(T_LINKTI *code)
                 else
                 {
                     scanner.last_error_cursor = refalab_source_cursor;
-                    print_error_string(112, "Invalid hex number: 0x");
+                    char error_112[64];
+                    sprintf(error_112, "Invalid hex number: 0x%c", current_char);
+                    print_error_string(112, error_112);
                     return false;
                 }
             }
@@ -2088,10 +2090,10 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
     }
     if (i > 1)
     {
-        char errror_113[64];
-        sprintf(errror_113, "Identifier length > %d", MAX_IDENTIFIER_LENGTH);
+        char error_113[64];
+        sprintf(error_113, "Identifier length > %d", MAX_IDENTIFIER_LENGTH);
         scanner.last_error_cursor = refalab_source_cursor;
-        print_error_string(113, errror_113);
+        print_error_string(113, error_113);
         return false;
     }
     return true;
