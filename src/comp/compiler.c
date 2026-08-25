@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-23
+// 2026-08-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -1601,6 +1601,7 @@ static bool compile_range(void)
     bool is_char_range = false;
     bool has_first = false;
     bool has_second = false;
+    bool has_dots = false;
     uint32_t first_value = 0;
     uint32_t second_value = 0;
     char current_char = get_current_char();
@@ -1648,6 +1649,7 @@ static bool compile_range(void)
     if (get_current_char() == '.' && refalab_source_cursor + 1 < refalab_source_size &&
         *(refalab_source_buffer + refalab_source_cursor + 1) == '.')
     {
+        has_dots = true;
         next_char();
         next_char();
         blanks_out();
@@ -1704,6 +1706,12 @@ static bool compile_range(void)
             second_value = code.info.coden;
             has_second = true;
         }
+    }
+    if (!has_dots)
+    {
+        scanner.last_error_cursor = refalab_source_cursor;
+        print_error_string(215, "Range: '..' expected");
+        return false;
     }
     blanks_out();
     if (get_current_char() != ']')
