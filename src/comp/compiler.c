@@ -1579,6 +1579,7 @@ static bool compile_specifer(char tail)
             specifier_state = OSH200;
             break;
         case OSH205:
+            scanner.last_error_cursor = refalab_source_cursor;
             print_error_string(205, "Within specifier default last apostroph");
             specifier_state = OSH200;
             break;
