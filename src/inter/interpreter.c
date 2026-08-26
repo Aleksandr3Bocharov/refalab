@@ -2015,4 +2015,4 @@ static bool specifier_interpretator(const T_LINKCB *linkcb)
         }
 } //             end      specifier_interpretator
 
-//----------  end of file interpreter.с  -----------
+//----------  end of file interpreter.c  -----------
