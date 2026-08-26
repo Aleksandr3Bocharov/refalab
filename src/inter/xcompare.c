@@ -167,6 +167,7 @@ static void nrel_operate(uint8_t operation)
     switch (operation)
     {
     case Orel:
+    {
         char compare_result = '=';
         if (compare == -1)
             compare_result = '<';
@@ -176,6 +177,7 @@ static void nrel_operate(uint8_t operation)
         refal.previous_argument->info.code = NULL;
         refal.previous_argument->info.infoc = compare_result;
         break;
+    }
     case Olt:
         if (compare == -1)
             refal.previous_argument->info.codef = &refalab_true;
@@ -229,6 +231,7 @@ static void lrel_operate(uint8_t operation)
     switch (operation)
     {
     case Orel:
+    {
         char compare_result = '=';
         if (compare == 1)
             compare_result = '>';
@@ -238,6 +241,7 @@ static void lrel_operate(uint8_t operation)
         refal.previous_argument->info.code = NULL;
         refal.previous_argument->info.infoc = compare_result;
         break;
+    }
     case Olt:
         if (compare == -1)
             refal.previous_argument->info.codef = &refalab_true;
