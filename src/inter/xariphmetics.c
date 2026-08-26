@@ -26,62 +26,110 @@
 
 static void arithmetic_operate(uint8_t operation, uint8_t type);
 
-static void add_(void) { arithmetic_operate(Oadd, 0); }
+static void add_(void)
+{
+    arithmetic_operate(Oadd, 0);
+    return;
+}
 char add_0[] = {Z3 'A', 'D', 'D', (char)3};
 G_L_B uint8_t refalab_add = '\122';
 void (*add_1)(void) = add_;
 
-static void sub_(void) { arithmetic_operate(Osub, 0); }
+static void sub_(void)
+{
+    arithmetic_operate(Osub, 0);
+    return;
+}
 char sub_0[] = {Z3 'S', 'U', 'B', (char)3};
 G_L_B uint8_t refalab_sub = '\122';
 void (*sub_1)(void) = sub_;
 
-static void mul_(void) { arithmetic_operate(Omul, 0); }
+static void mul_(void)
+{
+    arithmetic_operate(Omul, 0);
+    return;
+}
 char mul_0[] = {Z3 'M', 'U', 'L', (char)3};
 G_L_B uint8_t refalab_mul = '\122';
 void (*mul_1)(void) = mul_;
 
-static void dr_(void) { arithmetic_operate(Odr, 0); }
+static void dr_(void)
+{
+    arithmetic_operate(Odr, 0);
+    return;
+}
 char dr_0[] = {Z2 'D', 'R', (char)2};
 G_L_B uint8_t refalab_dr = '\122';
 void (*dr_1)(void) = dr_;
 
-static void div_(void) { arithmetic_operate(Odr, 2); }
+static void div_(void)
+{
+    arithmetic_operate(Odr, 2);
+    return;
+}
 char div_0[] = {Z3 'D', 'I', 'V', (char)3};
 G_L_B uint8_t refalab_div = '\122';
 void (*div_1)(void) = div_;
 
-static void mod_(void) { arithmetic_operate(Odr, 4); }
+static void mod_(void)
+{
+    arithmetic_operate(Odr, 4);
+    return;
+}
 char mod_0[] = {Z3 'M', 'O', 'D', (char)3};
 G_L_B uint8_t refalab_mod = '\122';
 void (*mod_1)(void) = mod_;
 
-static void addn_(void) { arithmetic_operate(Oadd, 1); }
+static void addn_(void)
+{
+    arithmetic_operate(Oadd, 1);
+    return;
+}
 char addn_0[] = {Z4 'A', 'D', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_addn = '\122';
 void (*addn_1)(void) = addn_;
 
-static void subn_(void) { arithmetic_operate(Osub, 1); }
+static void subn_(void)
+{
+    arithmetic_operate(Osub, 1);
+    return;
+}
 char subn_0[] = {Z4 'S', 'U', 'B', 'N', (char)4};
 G_L_B uint8_t refalab_subn = '\122';
 void (*subn_1)(void) = subn_;
 
-static void muln_(void) { arithmetic_operate(Omul, 1); }
+static void muln_(void)
+{
+    arithmetic_operate(Omul, 1);
+    return;
+}
 char muln_0[] = {Z4 'M', 'U', 'L', 'N', (char)4};
 G_L_B uint8_t refalab_muln = '\122';
 void (*muln_1)(void) = muln_;
 
-static void drn_(void) { arithmetic_operate(Odr, 1); }
+static void drn_(void)
+{
+    arithmetic_operate(Odr, 1);
+    return;
+}
 char drn_0[] = {Z3 'D', 'R', 'N', (char)3};
 G_L_B uint8_t refalab_drn = '\122';
 void (*drn_1)(void) = drn_;
 
-static void divn_(void) { arithmetic_operate(Odr, 3); }
+static void divn_(void)
+{
+    arithmetic_operate(Odr, 3);
+    return;
+}
 char divn_0[] = {Z4 'D', 'I', 'V', 'N', (char)4};
 G_L_B uint8_t refalab_divn = '\122';
 void (*divn_1)(void) = divn_;
 
-static void modn_(void) { arithmetic_operate(Odr, 5); }
+static void modn_(void)
+{
+    arithmetic_operate(Odr, 5);
+    return;
+}
 char modn_0[] = {Z4 'M', 'O', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_modn = '\122';
 void (*modn_1)(void) = modn_;
@@ -297,7 +345,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 transplantation(refal.previous_result, X.begin->previous, X.end->next);
                 return;
             }
-            //DR, DRN
+            // DR, DRN
             X.begin = X.begin->previous;
             X.end = X.end->next;
             X.begin->tag = TAGLB;

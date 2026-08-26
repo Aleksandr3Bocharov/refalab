@@ -24,32 +24,56 @@
 static void bit_operate(uint8_t operation);
 static void shift_operate(uint8_t operation);
 
-static void band_(void) { bit_operate(Oand); }
+static void band_(void)
+{
+    bit_operate(Oand);
+    return;
+}
 char band_0[] = {Z4 'B', 'A', 'N', 'D', (char)4};
 G_L_B uint8_t refalab_band = '\122';
 void (*band_1)(void) = band_;
 
-static void bor_(void) { bit_operate(Oor); }
+static void bor_(void)
+{
+    bit_operate(Oor);
+    return;
+}
 char bor_0[] = {Z3 'B', 'O', 'R', (char)3};
 G_L_B uint8_t refalab_bor = '\122';
 void (*bor_1)(void) = bor_;
 
-static void bxor_(void) { bit_operate(Oxor); }
+static void bxor_(void)
+{
+    bit_operate(Oxor);
+    return;
+}
 char bxor_0[] = {Z4 'B', 'X', 'O', 'R', (char)4};
 G_L_B uint8_t refalab_bxor = '\122';
 void (*bxor_1)(void) = bxor_;
 
-static void bnot_(void) { bit_operate(Onot); }
+static void bnot_(void)
+{
+    bit_operate(Onot);
+    return;
+}
 char bnot_0[] = {Z4 'B', 'N', 'O', 'T', (char)4};
 G_L_B uint8_t refalab_bnot = '\122';
 void (*bnot_1)(void) = bnot_;
 
-static void shl_(void) { shift_operate(Oshl); }
+static void shl_(void)
+{
+    shift_operate(Oshl);
+    return;
+}
 char shl_0[] = {Z3 'S', 'H', 'L', (char)3};
 G_L_B uint8_t refalab_shl = '\122';
 void (*shl_1)(void) = shl_;
 
-static void shr_(void) { shift_operate(Oshr); }
+static void shr_(void)
+{
+    shift_operate(Oshr);
+    return;
+}
 char shr_0[] = {Z3 'S', 'H', 'R', (char)3};
 G_L_B uint8_t refalab_shr = '\122';
 void (*shr_1)(void) = shr_;

@@ -14,9 +14,20 @@
 #include "refalab.h"
 #include "interface.h"
 
+#define Orel 1
+#define Olt 2
+#define Ole 3
+#define Oeq 4
+#define One 5
+#define Oge 6
+#define Ogt 7
+
 extern uint8_t refalab_true, refalab_false;
 
-static void nrel_(void)
+static void nrel_operate(uint8_t operation);
+static void lrel_operate(uint8_t operation);
+
+static void nrel_operate(uint8_t operation)
 {
     const T_LINKCB *x_current = refal.previous_argument->next;
     const T_LINKCB *y_current = x_current->info.codep;
@@ -26,16 +37,38 @@ static void nrel_(void)
         refal.upshot = 2;
         return;
     }
-    char compare_result = '=';
     const int8_t compare = compare_big_numbers(&X, &Y);
-    if (compare == -1)
-        compare_result = '<';
-    else if (compare == 1)
-        compare_result = '>';
-    refal.previous_argument->tag = TAGO;
-    refal.previous_argument->info.code = NULL;
-    refal.previous_argument->info.infoc = compare_result;
+    switch (operation)
+    {
+    case Orel:
+        char compare_result = '=';
+        if (compare == -1)
+            compare_result = '<';
+        else if (compare == 1)
+            compare_result = '>';
+        refal.previous_argument->tag = TAGO;
+        refal.previous_argument->info.code = NULL;
+        refal.previous_argument->info.infoc = compare_result;
+        break;
+    case Olt:
+        break;
+    case Ole:
+        break;
+    case Oeq:
+        break;
+    case One:
+        break;
+    case Oge:
+        break;
+    case Ogt:
+    }
     transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
+    return;
+}
+
+static void nrel_(void)
+{
+    nrel_operate(Orel);
     return;
 }
 char nrel_0[] = {Z4 'N', 'R', 'E', 'L', (char)4};

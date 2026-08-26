@@ -24,32 +24,56 @@
 static void bit_operate(uint8_t operation);
 static void bit_shift_operate(uint8_t operation);
 
-static void bitand_(void) { bit_operate(Oand); }
+static void bitand_(void)
+{
+    bit_operate(Oand);
+    return;
+}
 char bitand_0[] = {Z6 'B', 'I', 'T', 'A', 'N', 'D', (char)6};
 G_L_B uint8_t refalab_bitand = '\122';
 void (*bitand_1)(void) = bitand_;
 
-static void bitor_(void) { bit_operate(Oor); }
+static void bitor_(void)
+{
+    bit_operate(Oor);
+    return;
+}
 char bitor_0[] = {Z5 'B', 'I', 'T', 'O', 'R', (char)5};
 G_L_B uint8_t refalab_bitor = '\122';
 void (*bitor_1)(void) = bitor_;
 
-static void bitxor_(void) { bit_operate(Oxor); }
+static void bitxor_(void)
+{
+    bit_operate(Oxor);
+    return;
+}
 char bitxor_0[] = {Z6 'B', 'I', 'T', 'X', 'O', 'R', (char)6};
 G_L_B uint8_t refalab_bitxor = '\122';
 void (*bitxor_1)(void) = bitxor_;
 
-static void bitnot_(void) { bit_operate(Onot); }
+static void bitnot_(void)
+{
+    bit_operate(Onot);
+    return;
+}
 char bitnot_0[] = {Z6 'B', 'I', 'T', 'N', 'O', 'T', (char)6};
 G_L_B uint8_t refalab_bitnot = '\122';
 void (*bitnot_1)(void) = bitnot_;
 
-static void bitsh_(void) { bit_shift_operate(Osh); }
+static void bitsh_(void)
+{
+    bit_shift_operate(Osh);
+    return;
+}
 char bitsh_0[] = {Z5 'B', 'I', 'T', 'S', 'H', (char)5};
 G_L_B uint8_t refalab_bitsh = '\122';
 void (*bitsh_1)(void) = bitsh_;
 
-static void bitrot_(void) { bit_shift_operate(Orot); }
+static void bitrot_(void)
+{
+    bit_shift_operate(Orot);
+    return;
+}
 char bitrot_0[] = {Z6 'B', 'I', 'T', 'R', 'O', 'T', (char)6};
 G_L_B uint8_t refalab_bitrot = '\122';
 void (*bitrot_1)(void) = bitrot_;
