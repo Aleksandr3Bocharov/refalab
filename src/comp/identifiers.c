@@ -207,7 +207,7 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     if (tail != ')' && (label->mode & 0020) != 0020)
     {
         scanner.last_error_cursor = identifier_cursor_number;
-        print_error_three_strings(505, "Label", identifier, identifier_length, " is yet not defined");
+        print_error_three_strings(505, "Label", identifier, identifier_length, " is not yet defined");
     }
     return label;
 }
@@ -299,7 +299,7 @@ static void check_identifier(const T_LABEL *label) // check identifier attribute
     if ((not_equ_label->type & 0300) == 0300)
     {
         scanner.last_error_cursor = label->usage_list.cursor_numbers[0];
-        print_error_three_strings(502, "Label", label->identifier, label->identifier_length, " boht specifier and function");
+        print_error_three_strings(502, "Label", label->identifier, label->identifier_length, " both specifier and function");
     }
     return;
 }
