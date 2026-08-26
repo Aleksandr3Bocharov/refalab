@@ -153,6 +153,50 @@ char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
 G_L_B uint8_t refalab_gtl = '\122';
 void (*gtl_1)(void) = gtl_;
 
+static uint8_t *rel_operate(uint8_t operation, int8_t compare)
+{
+    uint8_t *rel_result = NULL;
+    switch (operation)
+    {
+    case Olt:
+        if (compare == -1)
+            rel_result = &refalab_true;
+        else
+            rel_result = &refalab_false;
+        break;
+    case Ole:
+        if (compare == 1)
+            rel_result = &refalab_false;
+        else
+            rel_result = &refalab_true;
+        break;
+    case Oeq:
+        if (compare == 0)
+            rel_result = &refalab_true;
+        else
+            rel_result = &refalab_false;
+        break;
+    case One:
+        if (compare == 0)
+            rel_result = &refalab_false;
+        else
+            rel_result = &refalab_true;
+        break;
+    case Oge:
+        if (compare == -1)
+            rel_result = &refalab_false;
+        else
+            rel_result = &refalab_true;
+        break;
+    case Ogt:
+        if (compare == 1)
+            rel_result = &refalab_true;
+        else
+            rel_result = &refalab_false;
+    }
+    return rel_result;
+}
+
 static void nrel_operate(uint8_t operation)
 {
     const T_LINKCB *x_current = refal.previous_argument->next;
@@ -164,9 +208,7 @@ static void nrel_operate(uint8_t operation)
         return;
     }
     const int8_t compare = compare_big_numbers(&X, &Y);
-    switch (operation)
-    {
-    case Orel:
+    if (operation == Orel)
     {
         char compare_result = '=';
         if (compare == -1)
@@ -176,44 +218,9 @@ static void nrel_operate(uint8_t operation)
         refal.previous_argument->tag = TAGO;
         refal.previous_argument->info.code = NULL;
         refal.previous_argument->info.infoc = compare_result;
-        break;
     }
-    case Olt:
-        if (compare == -1)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-        break;
-    case Ole:
-        if (compare == 1)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Oeq:
-        if (compare == 0)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-        break;
-    case One:
-        if (compare == 0)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Oge:
-        if (compare == -1)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Ogt:
-        if (compare == 1)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-    }
+    else
+        refal.previous_argument->info.codef = rel_operate(operation, compare);
     transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
@@ -228,9 +235,7 @@ static void lrel_operate(uint8_t operation)
     }
     const T_LINKCB *second_begin = first_begin->info.codep;
     const int8_t compare = compare_expressions_lexicographic(first_begin, second_begin, refal.next_argument);
-    switch (operation)
-    {
-    case Orel:
+    if (operation == Orel)
     {
         char compare_result = '=';
         if (compare == 1)
@@ -240,44 +245,9 @@ static void lrel_operate(uint8_t operation)
         refal.previous_argument->tag = TAGO;
         refal.previous_argument->info.code = NULL;
         refal.previous_argument->info.infoc = compare_result;
-        break;
     }
-    case Olt:
-        if (compare == -1)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-        break;
-    case Ole:
-        if (compare == 1)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Oeq:
-        if (compare == 0)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-        break;
-    case One:
-        if (compare == 0)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Oge:
-        if (compare == -1)
-            refal.previous_argument->info.codef = &refalab_false;
-        else
-            refal.previous_argument->info.codef = &refalab_true;
-        break;
-    case Ogt:
-        if (compare == 1)
-            refal.previous_argument->info.codef = &refalab_true;
-        else
-            refal.previous_argument->info.codef = &refalab_false;
-    }
+    else
+        refal.previous_argument->info.codef = rel_operate(operation, compare);
     transplantation(refal.previous_result, refal.previous_argument->previous, refal.next_argument);
     return;
 }
