@@ -272,7 +272,7 @@ static inline void SET_time(void)
     return;
 }
 
-static void GET_time(void)
+static inline void GET_time(void)
 {
     T_TIMESPEC time_end;
     clock_gettime(CLOCK_MONOTONIC, &time_end);
@@ -1245,7 +1245,7 @@ void scan_sentence_element(void)
         }
 }
 
-static void generate_specifier(uint8_t n)
+static inline void generate_specifier(uint8_t n)
 {
     if (flags.left_part_sentence)
         macrocode_byte(n);

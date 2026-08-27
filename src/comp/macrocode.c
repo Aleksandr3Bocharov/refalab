@@ -69,7 +69,7 @@ static size_t module_length;
 static T_RELAY relay;
 static size_t delta;
 
-static void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static inline void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
 #if defined mdebug
     fprintf(stderr, "free(stream_bytes_nodes_clear): stream_bytes_nodes->buffer=%p\n", (void *)stream_bytes_nodes->buffer);
@@ -136,7 +136,7 @@ static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
-static void stream_bytes_nodes_begin(T_STREAM_BYTES_NODES *stream_bytes_nodes)
+static inline void stream_bytes_nodes_begin(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes->current = 0;
     return;
@@ -157,7 +157,7 @@ static void stream_nodes_write(void)
     } // while
 } // stream_nodes_write
 
-static void stream_bytes_read(uint8_t *buffer)
+static inline void stream_bytes_read(uint8_t *buffer)
 {
     if (stream_bytes.current != stream_bytes.length)
     {
@@ -167,7 +167,7 @@ static void stream_bytes_read(uint8_t *buffer)
     return;
 } // stream_bytes_read
 
-static void stream_nodes_read(void)
+static inline void stream_nodes_read(void)
 {
     const size_t residual = stream_nodes.length - stream_nodes.current;
     if (residual >= sizeof(T_RELAY))
@@ -337,7 +337,7 @@ void macrocode_equ(T_LABEL *equ_label, T_LABEL *label)
     return;
 }
 
-static void ending(void)
+static inline void ending(void)
 {
     relay.delta = delta;
     relay.label = NULL;
@@ -346,7 +346,7 @@ static void ending(void)
     return;
 } // ending
 
-static void write_llvm_source(int put_result)
+static inline void write_llvm_source(int put_result)
 {
     if (put_result == EOF)
         if (feof(llvm_source) != 0 || ferror(llvm_source) != 0)

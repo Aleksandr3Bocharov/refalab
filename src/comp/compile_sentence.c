@@ -1859,7 +1859,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
     return res;
 }
 
-static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
+static inline void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
         macrocode_byte(operator_v);
