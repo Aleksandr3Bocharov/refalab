@@ -73,4 +73,5 @@ MIT License. Подробности в файле [LICENSE](LICENSE).
 ### Автор
 
 Александр Бочаров (Aleksandr Bocharov)
+
 2026
