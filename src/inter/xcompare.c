@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-08-27
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xcompare.c  ----------
