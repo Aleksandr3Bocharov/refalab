@@ -153,7 +153,7 @@ char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
 G_L_B uint8_t refalab_gtl = '\122';
 void (*gtl_1)(void) = gtl_;
 
-static uint8_t *rel_operate(uint8_t operation, int8_t compare)
+static inline uint8_t *rel_operate(uint8_t operation, int8_t compare)
 {
     uint8_t *rel_result = NULL;
     switch (operation)
