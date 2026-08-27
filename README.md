@@ -68,7 +68,7 @@
 
 ### Лицензия
 
-MIT License. Подробности в файле [LICENSE]().
+MIT License. Подробности в файле [LICENSE](LICENSE).
 
 ### Автор
 
