@@ -789,7 +789,7 @@ static void one_step(T_STATUS_TABLE *status_table)
     return;
 }
 
-static void print_step(void)
+static inline void print_step(void)
 {
     if (current_step != printed_step)
     {
@@ -799,7 +799,7 @@ static void print_step(void)
     return;
 }
 
-static void print_leading_term(void)
+static inline void print_leading_term(void)
 {
     if (current_step > step_upto || current_step < step_from)
         return;
@@ -816,7 +816,7 @@ static void print_leading_term(void)
     return;
 }
 
-static void print_immediate_result(void)
+static inline void print_immediate_result(void)
 {
     if (current_step > step_upto || current_step < step_from)
         return;

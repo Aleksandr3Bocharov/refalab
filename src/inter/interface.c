@@ -1018,7 +1018,7 @@ int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB 
 }
 
 // MurmurHash3 finalizer
-static uint32_t file_hash(uint32_t id_number)
+static inline uint32_t file_hash(uint32_t id_number)
 {
     uint32_t hash = id_number;
     hash ^= hash >> 16;
