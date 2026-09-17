@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-09-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -170,7 +170,7 @@ static struct
     uint8_t last_left_part_element;
     T_VARIABLE_TYPES type;
     uint16_t main_right_number_element;
-    uint32_t rem;
+    uint8_t remains;
     char identifier[MAX_IDENTIFIER_LENGTH];
     uint8_t identifier_length;
     bool v_variable;
@@ -321,7 +321,7 @@ void compile_sentence(bool direction)
                 variables[variable_index].type = S; // yet isn't faced
                 break;
             case S:
-                ++variables[variable_index].rem; // next position
+                ++variables[variable_index].remains; // next position
                 break;
             default: // invalid type pointer
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -341,7 +341,7 @@ void compile_sentence(bool direction)
                 variables[variable_index].type = W; // yet isn't faced
                 break;
             case W:
-                ++variables[variable_index].rem; // next position
+                ++variables[variable_index].remains; // next position
                 break;
             default: // invalid type pointer
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -358,7 +358,7 @@ void compile_sentence(bool direction)
             if (variables[variable_index].type == NEW) // yet is't faced
                 variables[variable_index].type = E;
             else if (variables[variable_index].type == E && variables[variable_index].v_variable == current_sentence_element.v_variable)
-                ++variables[variable_index].rem;
+                ++variables[variable_index].remains;
             else // invalid type pointer
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -555,7 +555,7 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
                 macrocode_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
@@ -630,7 +630,7 @@ void compile_sentence(bool direction)
         case LSMD:
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L1;
@@ -654,7 +654,7 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L2;
@@ -666,7 +666,7 @@ void compile_sentence(bool direction)
         case LEMD:
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = L2;
@@ -820,7 +820,7 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
                 macrocode_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
@@ -892,7 +892,7 @@ void compile_sentence(bool direction)
         case RSMD:
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R1;
@@ -916,7 +916,7 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_wspc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R2;
@@ -928,7 +928,7 @@ void compile_sentence(bool direction)
         case REMD:
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             state = R2;
@@ -998,7 +998,7 @@ void compile_sentence(bool direction)
             macrocode_byte(n_ce);
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
-            variables[variable_index].rem--;
+            variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
                 macrocode_byte(n_nnil);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -1058,7 +1058,7 @@ void compile_sentence(bool direction)
             }
             if (current_left_part_element + 1 == current_right_board)
             {
-                if (variables[variable_index].rem == 1)
+                if (variables[variable_index].remains == 1)
                 {
                     state = NHOLE1;
                     break;
@@ -1140,7 +1140,7 @@ void compile_sentence(bool direction)
             break;
         case OE0:
             variable_index = left_part_elements[current_left_part_element].variable_index;
-            if (variables[variable_index].last_left_part_element != 0 || variables[variable_index].rem != 1)
+            if (variables[variable_index].last_left_part_element != 0 || variables[variable_index].remains != 1)
             {
                 state = OE1;
                 break;
@@ -1679,7 +1679,7 @@ static bool search_variable(bool left_part)
     strncpy(variables[variable_index].identifier, current_sentence_element.identifier, current_sentence_element.identifier_length);
     variables[variable_index].identifier_length = current_sentence_element.identifier_length;
     variables[variable_index].type = NEW;
-    variables[variable_index].rem = 1;
+    variables[variable_index].remains = 1;
     variables[variable_index].last_left_part_element = 0;
     variables[variable_index].v_variable = current_sentence_element.v_variable;
     return true;
@@ -1736,7 +1736,7 @@ static bool lsg_p(void)
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)
                 continue;
-            if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].rem != 1)
+            if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].remains != 1)
                 break;
             if (!ortogonality(current_left_board, current_left_part_element))
                 break;
@@ -1752,7 +1752,7 @@ static bool lsg_p(void)
     variables[variable_index].main_right_number_element = number_element + 1;
     left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
     variables[variable_index].last_left_part_element = current_left_part_element;
-    variables[variable_index].rem--;
+    variables[variable_index].remains--;
     left_part_elements[current_left_part_element].left_number_element = number_element;
     left_part_elements[current_left_part_element].right_number_element = number_element + 1;
     number_element += 2;
@@ -1780,7 +1780,7 @@ static bool rsg_p(void)
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variable_index == temp_variable_index || variables[variable_index].last_left_part_element != 0)
                 continue;
-            if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].rem != 1)
+            if (left_part_elements[current_left_part_element].specifier.info.codef != NULL || variables[variable_index].remains != 1)
                 break;
             if (!ortogonality(current_left_part_element, current_right_board))
                 break;
@@ -1796,7 +1796,7 @@ static bool rsg_p(void)
     variables[variable_index].main_right_number_element = number_element + 1;
     left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
     variables[variable_index].last_left_part_element = current_left_part_element;
-    variables[variable_index].rem--;
+    variables[variable_index].remains--;
     left_part_elements[current_left_part_element].left_number_element = number_element;
     left_part_elements[current_left_part_element].right_number_element = number_element + 1;
     number_element += 2;
@@ -1824,7 +1824,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)
             continue;
-        variables[i].rem--;
+        variables[i].remains--;
     }
     bool res = true;
     on = on1;
@@ -1838,7 +1838,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)
             continue;
-        if (variables[i].rem == 0)
+        if (variables[i].remains == 0)
             continue;
         res = false;
         break;
@@ -1854,7 +1854,7 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
         i = left_part_elements[on].variable_index;
         if (variables[i].last_left_part_element != 0)
             continue;
-        variables[i].rem++;
+        variables[i].remains++;
     }
     return res;
 }
