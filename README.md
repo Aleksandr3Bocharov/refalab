@@ -74,4 +74,4 @@ MIT License. Подробности в файле [LICENSE](LICENSE).
 
 Александр Бочаров (Aleksandr Bocharov)
 
-2026
+2024-2026
