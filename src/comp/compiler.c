@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-17
+// 2026-09-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
     scanner.module_number = 0;
     printf("\n");
     // Aleksandr Bocharov   // compiler version
-    printf("RefalAB Version 2.1 20260917 (c) Aleksandr Bocharov\n");
+    printf("RefalAB Version 2.2-dev 20260921 (c) Aleksandr Bocharov\n");
     printf("https://github.com/Aleksandr3Bocharov/refalab\n");
     printf("Compiled with clang version: %s\n", CLANG_VERSION);
     printf("Target: %s\n", CLANG_TARGET_TRIPLE);
