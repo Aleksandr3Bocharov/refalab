@@ -1826,7 +1826,7 @@ static bool try_transplant(void)
     // Step 6: Restore scanner state
     restore_scanner_state(&saved_state);
     // Re-read right part — LISTING IS OUTPUT
-    for (uint8_t p = best_i; p < best_i + best_length; p++)
+    for (uint8_t p = best_i + 1; p < best_i + best_length; p++)
     {
         if (left_part_elements[p].used)
             continue;
