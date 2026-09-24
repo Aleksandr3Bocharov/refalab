@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-21
+// 2026-09-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -175,6 +175,8 @@ T_SENTENCE_ELEMENT current_sentence_element;
 
 FILE *refalab_source_listing, *terminal;
 FILE *llvm_source; // for llvm
+
+bool suppress_listing = false;
 
 static struct
 {
@@ -761,6 +763,124 @@ static void get_statement_key(bool is_func)
     while (isalpha((unsigned char)get_current_char()) != 0)
         next_char();
     return;
+}
+
+void save_scanner_state(T_SAVE_SCANNER_STATE *state)
+{
+    state->cursor = refalab_source_cursor;
+    state->end_refalab_source = flags.end_refalab_source;
+    state->scanner_station = flags.scanner_station;
+    state->scanner_station_k = flags.scanner_station_k;
+    state->scanner_big_number = flags.scanner_big_number;
+    state->left_part_sentence = flags.left_part_sentence;
+    state->suppress_listing = suppress_listing;
+    state->element = current_sentence_element;
+    if (flags.scanner_big_number && big_number_buffer != NULL && big_number_count > 0)
+    {
+        state->big_number_buffer_copy = (uint32_t *)malloc(big_number_count * sizeof(uint32_t));
+        if (state->big_number_buffer_copy != NULL)
+        {
+#if defined mdebug
+            fprintf(stderr, "malloc(save_scanner_state): big_number_buffer_copy=%p\n", (void *)state->big_number_buffer_copy);
+#endif
+            memcpy(state->big_number_buffer_copy, big_number_buffer, big_number_count * sizeof(uint32_t));
+            state->big_number_count = big_number_count;
+            state->big_number_index = big_number_index;
+        }
+        else
+            error_no_memory();
+    }
+    else
+    {
+        state->big_number_buffer_copy = NULL;
+        state->big_number_count = 0;
+        state->big_number_index = 0;
+    }
+}
+
+void restore_scanner_state(const T_SAVE_SCANNER_STATE *state)
+{
+    refalab_source_cursor = state->cursor;
+    flags.end_refalab_source = state->end_refalab_source;
+    flags.scanner_station = state->scanner_station;
+    flags.scanner_station_k = state->scanner_station_k;
+    flags.left_part_sentence = state->left_part_sentence;
+    suppress_listing = state->suppress_listing;
+    current_sentence_element = state->element;
+    if (state->big_number_buffer_copy != NULL && state->big_number_count > 0)
+    {
+        if (big_number_digits != NULL)
+        {
+#if defined mdebug
+            fprintf(stderr, "free(restore_scanner_state): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
+            free(big_number_digits);
+            big_number_digits = NULL;
+        }
+        if (big_number_buffer != NULL)
+        {
+#if defined mdebug
+            fprintf(stderr, "free(restore_scanner_state): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
+            free(big_number_buffer);
+            big_number_buffer = NULL;
+        }
+        flags.scanner_big_number = true;
+        big_number_count = state->big_number_count;
+        big_number_index = state->big_number_index;
+        big_number_buffer_capacity = big_number_count;
+        big_number_buffer = (uint32_t *)malloc(big_number_count * sizeof(uint32_t));
+        if (big_number_buffer != NULL)
+        {
+#if defined mdebug
+            fprintf(stderr, "malloc(restore_scanner_state): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
+            memcpy(big_number_buffer, state->big_number_buffer_copy, big_number_count * sizeof(uint32_t));
+        }
+        else
+            error_no_memory();
+    }
+    else
+    {
+        flags.scanner_big_number = state->scanner_big_number;
+        if (!flags.scanner_big_number)
+        {
+            if (big_number_digits != NULL)
+            {
+#if defined mdebug
+                fprintf(stderr, "free(restore_scanner_state): big_number_digits=%p\n", (void *)big_number_digits);
+#endif
+                free(big_number_digits);
+                big_number_digits = NULL;
+            }
+            if (big_number_buffer != NULL)
+            {
+#if defined mdebug
+                fprintf(stderr, "free(restore_scanner_state): big_number_buffer=%p\n", (void *)big_number_buffer);
+#endif
+                free(big_number_buffer);
+                big_number_buffer = NULL;
+            }
+            big_number_count = 0;
+            big_number_index = 0;
+            big_number_buffer_capacity = 0;
+            big_number_digits_capacity = 0;
+        }
+    }
+}
+
+void free_scanner_state(T_SAVE_SCANNER_STATE *state)
+{
+    if (state->big_number_buffer_copy != NULL)
+    {
+#if defined mdebug
+        fprintf(stderr, "free(free_scanner_state): big_number_buffer_copy=%p\n", (void *)state->big_number_buffer_copy);
+#endif
+        free(state->big_number_buffer_copy);
+        state->big_number_buffer_copy = NULL;
+    }
+    state->big_number_count = 0;
+    state->big_number_index = 0;
 }
 
 void scan_sentence_element(void)
@@ -1764,7 +1884,7 @@ static bool compile_range(void)
 
 static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
-    if (refalab_source_listing == NULL || refalab_source_buffer == NULL)
+    if (refalab_source_listing == NULL || refalab_source_buffer == NULL || suppress_listing)
         return;
     size_t line;
     get_location(&line, NULL, refalab_source_cursor);
@@ -2404,9 +2524,12 @@ static void print_conclusion(void)
 
 void processing_error(void)
 {
-    print_card_error(refalab_source_listing);
-    print_card_error(terminal);
-    errors_count++;
+    if (!suppress_listing)
+    {
+        print_card_error(refalab_source_listing);
+        print_card_error(terminal);
+        errors_count++;
+    }
     return;
 }
 

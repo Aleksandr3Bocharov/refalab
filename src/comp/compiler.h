@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-09-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.h  ----------
@@ -55,11 +55,33 @@ typedef struct sentence_element
 
 extern T_SENTENCE_ELEMENT current_sentence_element;
 
+typedef struct save_scanner_state
+{
+    size_t cursor;                    // position in source code
+    bool end_refalab_source;          // end of file flag
+    bool scanner_station;             // literal chain mode
+    bool scanner_station_k;           // mode after '<'
+    bool scanner_big_number;          // big number mode
+    bool left_part_sentence;          // left part flag
+    bool suppress_listing;            // listing suppression flag
+    T_SENTENCE_ELEMENT element;       // current element
+    // Buffers for big numbers
+    uint32_t *big_number_buffer_copy; // macrodigit buffer copy
+    size_t big_number_count;          // macrodigit count
+    size_t big_number_index;          // current index
+} T_SAVE_SCANNER_STATE;
+
+extern bool suppress_listing;
+
 extern FILE *refalab_source_listing, *terminal;
 extern FILE *llvm_source; // for llvm
 
 extern void get_location(size_t *line, size_t *column, size_t cursor);
 extern void processing_error(void);
 extern void scan_sentence_element(void);
+
+extern void free_scanner_state(T_SAVE_SCANNER_STATE *state);
+extern void restore_scanner_state(const T_SAVE_SCANNER_STATE *state);
+extern void save_scanner_state(T_SAVE_SCANNER_STATE *state);
 
 #endif
