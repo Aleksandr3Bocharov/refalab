@@ -2524,12 +2524,9 @@ static void print_conclusion(void)
 
 void processing_error(void)
 {
-    if (!suppress_listing)
-    {
-        print_card_error(refalab_source_listing);
-        print_card_error(terminal);
-        errors_count++;
-    }
+    print_card_error(refalab_source_listing);
+    print_card_error(terminal);
+    errors_count++;
     return;
 }
 
