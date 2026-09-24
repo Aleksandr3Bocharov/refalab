@@ -188,6 +188,7 @@ static T_LINKTI xncode;           // work structure
 static T_LINKTI function_pointer; // work pointer
 
 static uint8_t current_left_part_element, current_left_board, current_right_board; // left part element pointers
+static uint8_t left_part_elements_count;                                           // left part element count
 static uint8_t variable_index, temp_variable_index;                                // element index
 static uint16_t number_element;                                                    // current number of element
 static uint8_t jump_stack_pointer;                                                 // counter of the longing levels
@@ -422,6 +423,7 @@ void compile_sentence(bool direction)
         //--------------------------------------------
         case RCG:
             function_definition();
+            left_part_elements_count = current_left_part_element;
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;
@@ -1668,7 +1670,7 @@ static bool try_transplant(void)
     // Step 2: Find candidates
     uint8_t candidates[UINT8_MAX];
     uint8_t candidates_count = 0;
-    for (uint8_t i = 1; i <= current_left_part_element; i++)
+    for (uint8_t i = 1; i <= left_part_elements_count; i++)
     {
         // Skip used elements
         if (left_part_elements[i].used)
@@ -1729,7 +1731,7 @@ static bool try_transplant(void)
         suppress_listing = true;
         uint8_t length = 1;
         uint8_t k = 1;
-        while (i + k <= current_left_part_element)
+        while (i + k <= left_part_elements_count)
         {
             // Used element — "garbage"
             if (left_part_elements[i + k].used)
@@ -1850,14 +1852,10 @@ static bool try_transplant(void)
     {
         if (best_length == 1)
         {
-            if (left_part_elements[best_i].type == S_V)
+            if (left_part_elements[best_i].type == S_V || left_part_elements[best_i].type == SC)
                 generate_operator_n(n_tpls, (uint8_t)N);
-            else if (left_part_elements[best_i].type == W_V)
+            else if (left_part_elements[best_i].type == W_V || left_part_elements[best_i].type == E_V)
                 generate_operator_n(n_tplv, (uint8_t)N);
-            else if (left_part_elements[best_i].type == E_V)
-                generate_operator_n(n_tplv, (uint8_t)N);
-            else if (left_part_elements[best_i].type == SC)
-                generate_operator_n_m(n_tplm, (uint8_t)N, (uint8_t)N);
         }
         else
             generate_operator_n_m(n_tplm, (uint8_t)N, (uint8_t)M);
