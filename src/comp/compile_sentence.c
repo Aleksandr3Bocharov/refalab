@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-17
+// 2026-09-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -163,6 +163,7 @@ static struct
     bool v_variable;
     bool eoe_mark;
     uint8_t jump_stack_pointer;
+    bool used;
 } left_part_elements[UINT8_MAX];
 
 static struct
@@ -210,6 +211,7 @@ static bool lsg_p(void);
 static bool rsg_p(void);
 static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v);
 static bool ortogonality(uint8_t on1, uint8_t on2);
+static bool try_transplant(void);
 
 // read left part
 // and full array X
@@ -238,6 +240,7 @@ void compile_sentence(bool direction)
             left_part_elements[current_left_part_element].pair_bracket = 0;
             left_part_elements[current_left_part_element].eoe_mark = false;
             left_part_elements[current_left_part_element].jump_stack_pointer = 0;
+            left_part_elements[current_left_part_element].used = false;
             switch (left_part_elements[current_left_part_element].type)
             {
             case NONE:
@@ -1416,22 +1419,37 @@ void compile_sentence(bool direction)
                 state = RPE0;
                 break;
             case SC:
-                state = RPE1;
+                if (try_transplant())
+                    state = GET_RPE;
+                else
+                    state = RPE1;
                 break;
             case LB:
-                state = RPE2;
+                if (try_transplant())
+                    state = GET_RPE;
+                else
+                    state = RPE2;
                 break;
             case RB:
                 state = RPE3;
                 break;
             case S_V:
-                state = RPE4;
+                if (try_transplant())
+                    state = GET_RPE;
+                else
+                    state = RPE4;
                 break;
             case W_V:
-                state = RPE5;
+                if (try_transplant())
+                    state = GET_RPE;
+                else
+                    state = RPE5;
                 break;
             case E_V:
-                state = RPE6;
+                if (try_transplant())
+                    state = GET_RPE;
+                else
+                    state = RPE6;
                 break;
             case K:
                 state = RPE7;
@@ -1526,14 +1544,7 @@ void compile_sentence(bool direction)
                 switch (variables[variable_index].type)
                 {
                 case S:
-                    current_left_part_element = variables[variable_index].last_left_part_element;
-                    if (current_left_part_element == 0)
-                        generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
-                    else
-                    {
-                        generate_operator_n(n_tpls, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                        variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
-                    };
+                    generate_operator_n(n_muls, (uint8_t)variables[variable_index].main_right_number_element);
                     break;
                 default:
                     scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1552,14 +1563,7 @@ void compile_sentence(bool direction)
                 switch (variables[variable_index].type)
                 {
                 case W:
-                    current_left_part_element = variables[variable_index].last_left_part_element;
-                    if (current_left_part_element == 0)
-                        generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
-                    else
-                    {
-                        generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                        variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
-                    };
+                    generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
                     break;
                 default:
                     scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1575,19 +1579,7 @@ void compile_sentence(bool direction)
                 PRINT_ERROR_406;
             }
             else if (variables[variable_index].type == E && variables[variable_index].v_variable == current_sentence_element.v_variable)
-            {
-                current_left_part_element = variables[variable_index].last_left_part_element;
-                if (current_left_part_element == 0)
-                    generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
-                else
-                {
-                    if (variables[variable_index].v_variable)
-                        generate_operator_n(n_tplv, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                    else
-                        generate_operator_n(n_tple, (uint8_t)left_part_elements[current_left_part_element].right_number_element);
-                    variables[variable_index].last_left_part_element = left_part_elements[current_left_part_element].next_variable;
-                };
-            }
+                generate_operator_n(n_mule, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1666,6 +1658,244 @@ void compile_sentence(bool direction)
             exit(1);
             return;
         }
+}
+
+static bool try_transplant(void)
+{
+    // Step 1: Save scanner state
+    T_SAVE_SCANNER_STATE saved_state;
+    save_scanner_state(&saved_state);
+    // Step 2: Find candidates
+    uint8_t candidates[UINT8_MAX];
+    uint8_t candidates_count = 0;
+    for (uint8_t i = 1; i <= current_left_part_element; i++)
+    {
+        // Skip used elements
+        if (left_part_elements[i].used)
+            continue;
+        // Check type match
+        if (left_part_elements[i].type != current_sentence_element.type)
+            continue;
+        // Check code match for constants
+        if (current_sentence_element.type == SC)
+        {
+            if (left_part_elements[i].code.tag != current_sentence_element.code.tag)
+                continue;
+            if (left_part_elements[i].code.info.codef != current_sentence_element.code.info.codef)
+                continue;
+        }
+        // Check variable match and chain availability
+        if (current_sentence_element.type == S_V || current_sentence_element.type == W_V || current_sentence_element.type == E_V)
+        {
+            const uint8_t v = left_part_elements[i].variable_index;
+            if (variables[v].identifier_length != current_sentence_element.identifier_length)
+                continue;
+            if (strncmp(variables[v].identifier, current_sentence_element.identifier, variables[v].identifier_length) != 0)
+                continue;
+            if (variables[v].v_variable != current_sentence_element.v_variable)
+                continue;
+            // Check availability in chain
+            bool found = false;
+            uint8_t curr = variables[v].last_left_part_element;
+            while (curr != 0)
+            {
+                if (curr == i)
+                {
+                    found = true;
+                    break;
+                }
+                curr = left_part_elements[curr].next_variable;
+            }
+            if (!found)
+                continue;
+        }
+        // Add candidate
+        candidates[candidates_count++] = i;
+    }
+    if (candidates_count == 0)
+    {
+        restore_scanner_state(&saved_state);
+        free_scanner_state(&saved_state);
+        return false;
+    }
+    // Step 3: Expand transplant (greedy, on-the-fly)
+    uint8_t best_i = 0;
+    uint8_t best_length = 0;
+    for (uint8_t c = 0; c < candidates_count; c++)
+    {
+        const uint8_t i = candidates[c];
+        // Return scanner to initial position for each candidate
+        restore_scanner_state(&saved_state);
+        suppress_listing = true;
+        uint8_t length = 1;
+        uint8_t k = 1;
+        while (i + k <= current_left_part_element)
+        {
+            // Used element — "garbage"
+            if (left_part_elements[i + k].used)
+            {
+                length++;
+                k++;
+                continue;
+            }
+            // Read next right part element
+            scan_sentence_element();
+            // Check type match (NONE will not match any left part type)
+            if (left_part_elements[i + k].type != current_sentence_element.type)
+                break;
+            // Check code match for constants
+            if (left_part_elements[i + k].type == SC)
+            {
+                if (left_part_elements[i + k].code.tag != current_sentence_element.code.tag)
+                    break;
+                if (left_part_elements[i + k].code.info.codef != current_sentence_element.code.info.codef)
+                    break;
+            }
+            // Check variable match and chain availability
+            if (left_part_elements[i + k].type == S_V || left_part_elements[i + k].type == W_V || left_part_elements[i + k].type == E_V)
+            {
+                const uint8_t v = left_part_elements[i + k].variable_index;
+                if (variables[v].identifier_length != current_sentence_element.identifier_length)
+                    break;
+                if (strncmp(variables[v].identifier, current_sentence_element.identifier, variables[v].identifier_length) != 0)
+                    break;
+                if (variables[v].v_variable != current_sentence_element.v_variable)
+                    break;
+                bool found = false;
+                uint8_t curr = variables[v].last_left_part_element;
+                while (curr != 0)
+                {
+                    if (curr == i + k)
+                    {
+                        found = true;
+                        break;
+                    }
+                    curr = left_part_elements[curr].next_variable;
+                }
+                if (!found)
+                    break;
+            }
+            length++;
+            k++;
+        }
+        // Step 4: Check bracket pairing
+        uint8_t p = i;
+        while (p < i + length)
+        {
+            if (left_part_elements[p].type == LB)
+            {
+                const uint8_t pair = left_part_elements[p].pair_bracket;
+                if (pair < i + length)
+                {
+                    // Pair inside transplant — jump over
+                    p = pair + 1;
+                    continue;
+                }
+                else
+                {
+                    // Pair outside transplant on the right
+                    if (p == i)
+                        length = 0;
+                    else
+                        length = p - i;
+                    break;
+                }
+            }
+            if (left_part_elements[p].type == RB)
+            {
+                // Pair guaranteed to be left of transplant
+                // Transplant invalid
+                length = 0;
+                break;
+            }
+            p++;
+        }
+        // Step 5: Select best transplant
+        if (length > best_length)
+        {
+            best_length = length;
+            best_i = i;
+        }
+    }
+    if (best_length == 0)
+    {
+        restore_scanner_state(&saved_state);
+        free_scanner_state(&saved_state);
+        return false;
+    }
+    // Step 6: Restore scanner state
+    restore_scanner_state(&saved_state);
+    // Re-read right part — LISTING IS OUTPUT
+    for (uint8_t p = best_i; p < best_i + best_length; p++)
+    {
+        if (left_part_elements[p].used)
+            continue;
+        scan_sentence_element();
+    }
+    // Determine numbers for generation
+    const uint16_t N = left_part_elements[best_i].right_number_element;
+    const uint16_t M = left_part_elements[best_i + best_length - 1].right_number_element;
+    // Determine if guaranteed non-empty element exists
+    bool has_non_empty = false;
+    for (uint8_t p = best_i; p < best_i + best_length; p++)
+    {
+        if (left_part_elements[p].type == SC || left_part_elements[p].type == LB || left_part_elements[p].type == RB || left_part_elements[p].type == S_V || left_part_elements[p].type == W_V || (left_part_elements[p].type == E_V && left_part_elements[p].v_variable))
+        {
+            has_non_empty = true;
+            break;
+        }
+    }
+    // Generate operator
+    if (has_non_empty)
+    {
+        if (best_length == 1)
+        {
+            if (left_part_elements[best_i].type == S_V)
+                generate_operator_n(n_tpls, (uint8_t)N);
+            else if (left_part_elements[best_i].type == W_V)
+                generate_operator_n(n_tplv, (uint8_t)N);
+            else if (left_part_elements[best_i].type == E_V)
+                generate_operator_n(n_tplv, (uint8_t)N);
+            else if (left_part_elements[best_i].type == SC)
+                generate_operator_n_m(n_tplm, (uint8_t)N, (uint8_t)N);
+        }
+        else
+            generate_operator_n_m(n_tplm, (uint8_t)N, (uint8_t)M);
+    }
+    else
+    {
+        if (best_length == 1)
+            generate_operator_n(n_tple, (uint8_t)N);
+        else
+            generate_operator_n_m(n_tpl, (uint8_t)N, (uint8_t)M);
+    }
+    // Step 7: Update chains and mark used
+    for (uint8_t p = best_i; p < best_i + best_length; p++)
+    {
+        left_part_elements[p].used = true;
+        if (left_part_elements[p].type == S_V || left_part_elements[p].type == W_V || left_part_elements[p].type == E_V)
+        {
+            const uint8_t v = left_part_elements[p].variable_index;
+            uint8_t prev = 0;
+            uint8_t curr = variables[v].last_left_part_element;
+            while (curr != 0)
+            {
+                if (curr == p)
+                {
+                    if (prev == 0)
+                        variables[v].last_left_part_element = left_part_elements[curr].next_variable;
+                    else
+                        left_part_elements[prev].next_variable = left_part_elements[curr].next_variable;
+                    break;
+                }
+                prev = curr;
+                curr = left_part_elements[curr].next_variable;
+            }
+        }
+    }
+    // Step 8: Success
+    free_scanner_state(&saved_state);
+    return true;
 }
 
 static bool search_variable(bool left_part)
