@@ -1796,18 +1796,15 @@ static bool try_transplant(void)
                 else
                 {
                     // Pair outside transplant on the right
-                    if (p == i)
-                        length = 0;
-                    else
-                        length = p - i;
+                    length = p - i;
                     break;
                 }
             }
             if (left_part_elements[p].type == RB)
             {
                 // Pair guaranteed to be left of transplant
-                // Transplant invalid
-                length = 0;
+                // Truncate transplant before this RB
+                length = p - i;
                 break;
             }
             p++;
