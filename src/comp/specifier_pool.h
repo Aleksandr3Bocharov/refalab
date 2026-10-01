@@ -20,7 +20,7 @@ typedef struct unique_specifier
 {
     uint8_t *bytes; // bytes
     size_t length;  // length
-    T_LABEL *label; // label
+    T_LABEL *label; // specifier label
     struct unique_specifier *next;
 } T_UNIQUE_SPECIFIER;
 

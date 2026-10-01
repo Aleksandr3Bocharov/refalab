@@ -1,0 +1,220 @@
+// Copyright (c) 2026 Aleksandr Bocharov
+// SPDX-License-Identifier: MIT
+// 2026-10-01
+// https://github.com/Aleksandr3Bocharov/refalab
+
+//----------  file specifier_pool.c  -----------
+//    pool of unique specifiers optimization
+//----------------------------------------------
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "refalab.h"
+#include "specifier_pool.h"
+#include "macrocode.h"
+#include "generate_operators.h"
+#include "print_errors.h"
+#include "avl_identifiers.h"
+#include "identifiers.h"
+
+typedef struct pending_address
+{
+    size_t offset;
+    T_LABEL *label;
+} T_PENDING_ADDRESS;
+
+static T_UNIQUE_SPECIFIER *pool_head = NULL;
+
+static uint8_t *spec_buffer = NULL;
+static size_t spec_buffer_size = 0;
+static size_t spec_buffer_capacity = 0;
+static bool collecting = false;
+
+static T_PENDING_ADDRESS *pending_addresses = NULL;
+static size_t pending_count = 0;
+static size_t pending_capacity = 0;
+
+void specifier_pool_init(void)
+{
+    pool_head = NULL;
+    spec_buffer = NULL;
+    spec_buffer_size = 0;
+    spec_buffer_capacity = 0;
+    collecting = false;
+    pending_addresses = NULL;
+    pending_count = 0;
+    pending_capacity = 0;
+}
+
+void specifier_pool_clear(void)
+{
+    T_UNIQUE_SPECIFIER *current = pool_head;
+    while (current != NULL)
+    {
+        T_UNIQUE_SPECIFIER *next = current->next;
+#if defined mdebug
+        fprintf(stderr, "free(specifier_pool_clear): current=%p bytes=%p\n", (void *)current, (void *)current->bytes);
+#endif
+        free(current->bytes);
+        free(current);
+        current = next;
+    }
+    pool_head = NULL;
+#if defined mdebug
+    fprintf(stderr, "free(specifier_pool_clear): spec_buffer=%p pending_addresses=%p\n", (void *)spec_buffer, (void *)pending_addresses);
+#endif
+    free(spec_buffer);
+    spec_buffer = NULL;
+    spec_buffer_size = 0;
+    spec_buffer_capacity = 0;
+    free(pending_addresses);
+    pending_addresses = NULL;
+    pending_count = 0;
+    pending_capacity = 0;
+    collecting = false;
+    return;
+}
+
+bool specifier_pool_is_collecting(void)
+{
+    return collecting;
+}
+
+void specifier_buffer_begin(void)
+{
+    collecting = true;
+    spec_buffer_size = 0;
+    pending_count = 0;
+}
+
+static void ensure_buffer_capacity(size_t needed)
+{
+    if (spec_buffer_capacity < needed)
+    {
+        size_t new_capacity = spec_buffer_capacity == 0 ? 64 : spec_buffer_capacity * 2;
+        while (new_capacity < needed)
+            new_capacity *= 2;
+        uint8_t *new_buffer = realloc(spec_buffer, new_capacity);
+        if (new_buffer == NULL)
+            error_no_memory();
+        spec_buffer = new_buffer;
+        spec_buffer_capacity = new_capacity;
+#if defined mdebug
+        fprintf(stderr, "realloc(ensure_buffer_capacity): spec_buffer=%p spec_buffer_capacity=%zu\n", (void *)spec_buffer, spec_buffer_capacity);
+#endif
+    }
+}
+
+void specifier_buffer_append_byte(uint8_t byte)
+{
+    if (!collecting)
+        return;
+    ensure_buffer_capacity(spec_buffer_size + 1);
+    spec_buffer[spec_buffer_size++] = byte;
+}
+
+void specifier_buffer_append_address(T_LABEL *label)
+{
+    if (!collecting)
+        return;
+    if (pending_count >= pending_capacity)
+    {
+        size_t new_capacity = pending_capacity == 0 ? 8 : pending_capacity * 2;
+        T_PENDING_ADDRESS *new_pending = realloc(pending_addresses, new_capacity * sizeof(T_PENDING_ADDRESS));
+        if (new_pending == NULL)
+            error_no_memory();
+        pending_addresses = new_pending;
+        pending_capacity = new_capacity;
+#if defined mdebug
+        fprintf(stderr, "realloc(specifier_buffer_append_address): pending_addresses=%p pending_capacity=%zu\n", (void *)pending_addresses, pending_capacity);
+#endif
+    }
+    pending_addresses[pending_count].offset = spec_buffer_size;
+    pending_addresses[pending_count].label = label;
+    pending_count++;
+    ensure_buffer_capacity(spec_buffer_size + LBLL);
+    memset(spec_buffer + spec_buffer_size, 0, LBLL);
+    spec_buffer_size += LBLL;
+}
+
+void specifier_buffer_append_symbol(const T_LINKTI *code)
+{
+    if (!collecting)
+        return;
+    const uint8_t *tag_bytes = (const uint8_t *)&(code->tag);
+    ensure_buffer_capacity(spec_buffer_size + ZBLL);
+    memcpy(spec_buffer + spec_buffer_size, tag_bytes, ZBLL);
+    spec_buffer_size += ZBLL;
+    if (code->tag == TAGF)
+    {
+        specifier_buffer_append_address(code->info.codef);
+        return;
+    }
+    ensure_buffer_capacity(spec_buffer_size + LBLL);
+    if (code->tag == TAGO)
+    {
+        spec_buffer[spec_buffer_size] = code->info.infoc;
+        memset(spec_buffer + spec_buffer_size + 1, 0, LBLL - 1);
+    }
+    else
+    {
+        const uint8_t *info_bytes = (const uint8_t *)&(code->info.coden);
+        memcpy(spec_buffer + spec_buffer_size, info_bytes, ZBLL);
+        memset(spec_buffer + spec_buffer_size + ZBLL, 0, LBLL - ZBLL);
+    }
+    spec_buffer_size += LBLL;
+}
+
+T_LABEL *specifier_pool_find_or_create(void)
+{
+    collecting = false;
+    T_UNIQUE_SPECIFIER *current = pool_head;
+    while (current != NULL)
+    {
+        if (current->length == spec_buffer_size && memcmp(current->bytes, spec_buffer, spec_buffer_size) == 0)
+            return current->label;
+        current = current->next;
+    }
+    T_UNIQUE_SPECIFIER *new_spec = malloc(sizeof(T_UNIQUE_SPECIFIER));
+    if (new_spec == NULL)
+        error_no_memory();
+#if defined mdebug
+    fprintf(stderr, "malloc(specifier_pool_find_or_create): new_spec=%p\n", (void *)new_spec);
+#endif
+    new_spec->bytes = malloc(spec_buffer_size);
+    if (new_spec->bytes == NULL)
+        error_no_memory();
+#if defined mdebug
+    fprintf(stderr, "malloc(specifier_pool_find_or_create): new_spec->bytes=%p length=%zu\n", (void *)new_spec->bytes, spec_buffer_size);
+#endif
+    memcpy(new_spec->bytes, spec_buffer, spec_buffer_size);
+    new_spec->length = spec_buffer_size;
+    new_spec->label = (T_LABEL *)generate_info_label();
+    macrocode_label(new_spec->label);
+    size_t pos = 0;
+    size_t addr_index = 0;
+    while (pos < spec_buffer_size)
+    {
+        bool is_address = false;
+        if (addr_index < pending_count && pending_addresses[addr_index].offset == pos)
+        {
+            macrocode_address(pending_addresses[addr_index].label);
+            pos += LBLL;
+            addr_index++;
+            is_address = true;
+        }
+        if (!is_address)
+        {
+            macrocode_byte(spec_buffer[pos]);
+            pos++;
+        }
+    }
+    new_spec->next = pool_head;
+    pool_head = new_spec;
+    return new_spec->label;
+}
+
+//----------  end of file specifier_pool.c  ----------
