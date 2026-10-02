@@ -41,6 +41,7 @@ extern void specifier_buffer_append_address(T_LABEL *label);
 extern void specifier_buffer_append_symbol(const T_LINKTI *code);
 
 extern T_LABEL *specifier_pool_find_or_create(void);
+extern void specifier_pool_finalize(void);
 
 extern bool specifier_pool_is_collecting(void);
 

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-01
+// 2026-10-02
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file specifier_pool.c  -----------
@@ -207,11 +207,8 @@ T_LABEL *specifier_pool_find_or_create(void)
             size_t addr_idx_new = 0;
             while (pos < spec_buffer_size && match)
             {
-                bool cur_has_addr = (addr_idx_cur < current->address_count && 
-                                     current->addresses[addr_idx_cur].offset == pos);
-                bool new_has_addr = (addr_idx_new < pending_count && 
-                                     pending_addresses[addr_idx_new].offset == pos);
-                
+                bool cur_has_addr = (addr_idx_cur < current->address_count && current->addresses[addr_idx_cur].offset == pos);
+                bool new_has_addr = (addr_idx_new < pending_count && pending_addresses[addr_idx_new].offset == pos);
                 if (cur_has_addr && new_has_addr)
                 {
                     if (current->addresses[addr_idx_cur].label != pending_addresses[addr_idx_new].label)
@@ -262,7 +259,6 @@ T_LABEL *specifier_pool_find_or_create(void)
     memcpy(new_spec->bytes, spec_buffer, spec_buffer_size);
     new_spec->length = spec_buffer_size;
     new_spec->label = (T_LABEL *)generate_info_label();
-    macrocode_label(new_spec->label);
     new_spec->address_count = pending_count;
     if (pending_count > 0)
     {
@@ -276,24 +272,6 @@ T_LABEL *specifier_pool_find_or_create(void)
     }
     else
         new_spec->addresses = NULL;
-    size_t pos = 0;
-    size_t addr_index = 0;
-    while (pos < spec_buffer_size)
-    {
-        bool is_address = false;
-        if (addr_index < pending_count && pending_addresses[addr_index].offset == pos)
-        {
-            macrocode_address(pending_addresses[addr_index].label);
-            pos += LBLL;
-            addr_index++;
-            is_address = true;
-        }
-        if (!is_address)
-        {
-            macrocode_byte(spec_buffer[pos]);
-            pos++;
-        }
-    }
     new_spec->next = pool_head;
     pool_head = new_spec;
 #if defined mdebug
