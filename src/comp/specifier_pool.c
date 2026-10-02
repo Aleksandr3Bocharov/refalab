@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdbool.h>
 #include "refalab.h"
 #include "specifier_pool.h"
@@ -19,12 +20,6 @@
 #include "print_errors.h"
 #include "avl_identifiers.h"
 #include "identifiers.h"
-
-typedef struct pending_address
-{
-    size_t offset;
-    T_LABEL *label;
-} T_PENDING_ADDRESS;
 
 static T_UNIQUE_SPECIFIER *pool_head = NULL;
 
@@ -56,9 +51,12 @@ void specifier_pool_clear(void)
     {
         T_UNIQUE_SPECIFIER *next = current->next;
 #if defined mdebug
-        fprintf(stderr, "free(specifier_pool_clear): current=%p bytes=%p\n", (void *)current, (void *)current->bytes);
+        fprintf(stderr, "free(specifier_pool_clear): current=%p bytes=%p addresses=%p\n",
+                (void *)current, (void *)current->bytes, (void *)current->addresses);
 #endif
         free(current->bytes);
+        if (current->addresses != NULL)
+            free(current->addresses);
         free(current);
         current = next;
     }
@@ -88,6 +86,9 @@ void specifier_buffer_begin(void)
     collecting = true;
     spec_buffer_size = 0;
     pending_count = 0;
+#if defined mdebug
+    fprintf(stderr, "specifier_buffer_begin: collecting=true\n");
+#endif
 }
 
 static void ensure_buffer_capacity(size_t needed)
@@ -114,6 +115,9 @@ void specifier_buffer_append_byte(uint8_t byte)
         return;
     ensure_buffer_capacity(spec_buffer_size + 1);
     spec_buffer[spec_buffer_size++] = byte;
+#if defined mdebug
+    fprintf(stderr, "specifier_buffer_append_byte: byte=0x%02X size=%zu\n", byte, spec_buffer_size);
+#endif
 }
 
 void specifier_buffer_append_address(T_LABEL *label)
@@ -138,6 +142,9 @@ void specifier_buffer_append_address(T_LABEL *label)
     ensure_buffer_capacity(spec_buffer_size + LBLL);
     memset(spec_buffer + spec_buffer_size, 0, LBLL);
     spec_buffer_size += LBLL;
+#if defined mdebug
+    fprintf(stderr, "specifier_buffer_append_address: label=%p offset=%zu size=%zu\n", (void *)label, spec_buffer_size - LBLL, spec_buffer_size);
+#endif
 }
 
 void specifier_buffer_append_symbol(const T_LINKTI *code)
@@ -150,6 +157,9 @@ void specifier_buffer_append_symbol(const T_LINKTI *code)
     spec_buffer_size += ZBLL;
     if (code->tag == TAGF)
     {
+#if defined mdebug
+        fprintf(stderr, "specifier_buffer_append_symbol: TAGF codef=%p\n", (void *)code->info.codef);
+#endif
         specifier_buffer_append_address(code->info.codef);
         return;
     }
@@ -158,12 +168,18 @@ void specifier_buffer_append_symbol(const T_LINKTI *code)
     {
         spec_buffer[spec_buffer_size] = code->info.infoc;
         memset(spec_buffer + spec_buffer_size + 1, 0, LBLL - 1);
+#if defined mdebug
+        fprintf(stderr, "specifier_buffer_append_symbol: TAGO infoc=0x%02X\n", (unsigned char)code->info.infoc);
+#endif
     }
     else
     {
         const uint8_t *info_bytes = (const uint8_t *)&(code->info.coden);
         memcpy(spec_buffer + spec_buffer_size, info_bytes, ZBLL);
         memset(spec_buffer + spec_buffer_size + ZBLL, 0, LBLL - ZBLL);
+#if defined mdebug
+        fprintf(stderr, "specifier_buffer_append_symbol: TAGN coden=%" PRIu32 "\n", code->info.coden);
+#endif
     }
     spec_buffer_size += LBLL;
 }
@@ -171,11 +187,64 @@ void specifier_buffer_append_symbol(const T_LINKTI *code)
 T_LABEL *specifier_pool_find_or_create(void)
 {
     collecting = false;
+#if defined mdebug
+    fprintf(stderr, "specifier_pool_find_or_create: searching, buffer_size=%zu\n", spec_buffer_size);
+    fprintf(stderr, "  buffer content: ");
+    for (size_t i = 0; i < spec_buffer_size && i < 48; i++)
+        fprintf(stderr, "%02X ", spec_buffer[i]);
+    if (spec_buffer_size > 48)
+        fprintf(stderr, "...");
+    fprintf(stderr, "\n");
+#endif
     T_UNIQUE_SPECIFIER *current = pool_head;
     while (current != NULL)
     {
-        if (current->length == spec_buffer_size && memcmp(current->bytes, spec_buffer, spec_buffer_size) == 0)
-            return current->label;
+        if (current->length == spec_buffer_size)
+        {
+            bool match = true;
+            size_t pos = 0;
+            size_t addr_idx_cur = 0;
+            size_t addr_idx_new = 0;
+            while (pos < spec_buffer_size && match)
+            {
+                bool cur_has_addr = (addr_idx_cur < current->address_count && 
+                                     current->addresses[addr_idx_cur].offset == pos);
+                bool new_has_addr = (addr_idx_new < pending_count && 
+                                     pending_addresses[addr_idx_new].offset == pos);
+                
+                if (cur_has_addr && new_has_addr)
+                {
+                    if (current->addresses[addr_idx_cur].label != pending_addresses[addr_idx_new].label)
+                        match = false;
+                    pos += LBLL;
+                    addr_idx_cur++;
+                    addr_idx_new++;
+                }
+                else if (cur_has_addr != new_has_addr)
+                    match = false;
+                else
+                {
+                    if (current->bytes[pos] != spec_buffer[pos])
+                        match = false;
+                    pos++;
+                }
+            }
+            if (match)
+            {
+#if defined mdebug
+                fprintf(stderr, "  FOUND existing label=%p\n", (void *)current->label);
+#endif
+                return current->label;
+            }
+        }
+#if defined mdebug
+        fprintf(stderr, "  comparing with spec at %p (length=%zu): ", (void *)current, current->length);
+        for (size_t i = 0; i < current->length && i < 48; i++)
+            fprintf(stderr, "%02X ", current->bytes[i]);
+        if (current->length > 48)
+            fprintf(stderr, "...");
+        fprintf(stderr, "\n");
+#endif
         current = current->next;
     }
     T_UNIQUE_SPECIFIER *new_spec = malloc(sizeof(T_UNIQUE_SPECIFIER));
@@ -194,6 +263,19 @@ T_LABEL *specifier_pool_find_or_create(void)
     new_spec->length = spec_buffer_size;
     new_spec->label = (T_LABEL *)generate_info_label();
     macrocode_label(new_spec->label);
+    new_spec->address_count = pending_count;
+    if (pending_count > 0)
+    {
+        new_spec->addresses = malloc(pending_count * sizeof(T_PENDING_ADDRESS));
+        if (new_spec->addresses == NULL)
+            error_no_memory();
+#if defined mdebug
+        fprintf(stderr, "malloc(specifier_pool_find_or_create): new_spec->addresses=%p count=%zu\n", (void *)new_spec->addresses, pending_count);
+#endif
+        memcpy(new_spec->addresses, pending_addresses, pending_count * sizeof(T_PENDING_ADDRESS));
+    }
+    else
+        new_spec->addresses = NULL;
     size_t pos = 0;
     size_t addr_index = 0;
     while (pos < spec_buffer_size)
@@ -214,6 +296,9 @@ T_LABEL *specifier_pool_find_or_create(void)
     }
     new_spec->next = pool_head;
     pool_head = new_spec;
+#if defined mdebug
+    fprintf(stderr, "  CREATED new label=%p\n", (void *)new_spec->label);
+#endif
     return new_spec->label;
 }
 

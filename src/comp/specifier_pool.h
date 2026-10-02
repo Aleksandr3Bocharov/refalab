@@ -15,12 +15,20 @@
 #include "avl_identifiers.h"
 #include "generate_operators.h"
 
+typedef struct pending_address
+{
+    size_t offset;
+    T_LABEL *label;
+} T_PENDING_ADDRESS;
+
 // Uniqe specifier table
 typedef struct unique_specifier
 {
-    uint8_t *bytes; // bytes
-    size_t length;  // length
-    T_LABEL *label; // specifier label
+    uint8_t *bytes;               // bytes
+    size_t length;                // length
+    T_LABEL *label;               // specifier label
+    T_PENDING_ADDRESS *addresses; // addresses array
+    size_t address_count;         // addresses count
     struct unique_specifier *next;
 } T_UNIQUE_SPECIFIER;
 
