@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-25
+// 2026-10-02
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -29,6 +29,7 @@
 #include "generate_operators.h"
 #include "identifiers.h"
 #include "compile_sentence.h"
+#include "specifier_pool.h"
 
 #ifndef CLANG_VERSION
 #define CLANG_VERSION "unknown"
@@ -394,6 +395,7 @@ int main(int argc, char *argv[])
             module_length = 0;
             for (uint8_t i = 0; i < 7; ++i)
                 specifier_abbreviated[i] = NULL;
+            specifier_pool_init();
             // "start" - directive work
             load_refalab_source_to_memory();
             if (flags.end_refalab_source)
@@ -584,6 +586,7 @@ int main(int argc, char *argv[])
                 macrocode_end();
                 module_length = macrocode_where();
             }
+            specifier_pool_clear();
             module_terminate();
             print_conclusion();
             module_state = END_OF_SYSIN;
@@ -1146,12 +1149,13 @@ void scan_sentence_element(void)
             {
                 next_char();
                 if (flags.left_part_sentence)
-                {
-                    current_sentence_element.specifier.info.codef = (T_LABEL *)generate_info_label();
-                    macrocode_label(current_sentence_element.specifier.info.codef);
-                }
+                    specifier_buffer_begin();
                 if (compile_specifer(')'))
+                {
+                    if (flags.left_part_sentence)
+                        current_sentence_element.specifier.info.codef = specifier_pool_find_or_create();
                     next_char();
+                }
             }
             else if (current_char == ':')
             {
@@ -1368,7 +1372,12 @@ void scan_sentence_element(void)
 static inline void generate_specifier(uint8_t n)
 {
     if (flags.left_part_sentence)
-        macrocode_byte(n);
+    {
+        if (specifier_pool_is_collecting())
+            specifier_buffer_append_byte(n);
+        else
+            macrocode_byte(n);
+    }
     return;
 }
 
@@ -1559,7 +1568,12 @@ static bool compile_specifer(char tail)
             }
             generate_specifier(ns_sc);
             if (flags.left_part_sentence)
-                generate_symbol(&code);
+            {
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_symbol(&code);
+                else
+                    generate_symbol(&code);
+            }
             specifier_state = SPCBLO;
             break;
         case SPCSP:
@@ -1579,7 +1593,12 @@ static bool compile_specifer(char tail)
             T_LABEL *identifier_specifier = specifier_reference(identifier, identifier_length, cursor_number, tail);
             generate_specifier(ns_cll);
             if (flags.left_part_sentence)
-                macrocode_address(identifier_specifier);
+            {
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_address(identifier_specifier);
+                else
+                    macrocode_address(identifier_specifier);
+            }
             if (get_current_char() == ':')
             {
                 specifier_state = SPCGC;
@@ -1606,7 +1625,10 @@ static bool compile_specifer(char tail)
                 code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc = '\'';
-                generate_symbol(&code);
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_symbol(&code);
+                else
+                    generate_symbol(&code);
             }
             specifier_state = SPCGC;
             break;
@@ -1617,7 +1639,10 @@ static bool compile_specifer(char tail)
                 code.tag = TAGO;
                 code.info.codef = NULL;
                 code.info.infoc = get_char_object();
-                generate_symbol(&code);
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_symbol(&code);
+                else
+                    generate_symbol(&code);
             }
             next_char();
             current_char = get_current_char();
@@ -1862,8 +1887,16 @@ static bool compile_range(void)
         generate_specifier(ns_rc);
         if (flags.left_part_sentence)
         {
-            macrocode_byte((uint8_t)first_value);
-            macrocode_byte((uint8_t)second_value);
+            if (specifier_pool_is_collecting())
+            {
+                specifier_buffer_append_byte((uint8_t)first_value);
+                specifier_buffer_append_byte((uint8_t)second_value);
+            }
+            else
+            {
+                macrocode_byte((uint8_t)first_value);
+                macrocode_byte((uint8_t)second_value);
+            }
         }
     }
     else
@@ -1873,10 +1906,16 @@ static bool compile_range(void)
         {
             const uint8_t *bytes = (const uint8_t *)&first_value;
             for (uint8_t i = 0; i < ZBLL; i++)
-                macrocode_byte(bytes[i]);
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_byte(bytes[i]);
+                else
+                    macrocode_byte(bytes[i]);
             bytes = (const uint8_t *)&second_value;
             for (uint8_t i = 0; i < ZBLL; i++)
-                macrocode_byte(bytes[i]);
+                if (specifier_pool_is_collecting())
+                    specifier_buffer_append_byte(bytes[i]);
+                else
+                    macrocode_byte(bytes[i]);
         }
     }
     return true;
