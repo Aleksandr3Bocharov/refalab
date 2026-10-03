@@ -281,9 +281,9 @@ static void function_head(const char *identifier, uint8_t identifier_length)
     return;
 }
 
-static void check_identifier(const T_LABEL *label) // check identifier attributes on confirmness
+static void check_identifier(T_LABEL *label) // check identifier attributes on confirmness
 {
-    const T_LABEL *not_equ_label = resolve_label_alias(label);
+    T_LABEL *not_equ_label = resolve_label_alias(label);
     if ((label->mode & 0300) == 0)
     {
         scanner.last_error_cursor = label->usage_list.cursor_numbers[0];

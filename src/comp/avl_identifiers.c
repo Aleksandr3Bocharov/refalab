@@ -243,9 +243,9 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
     return search_label;
 }
 
-static void traverse_down_label(const T_LABEL *label, void (*handler)(const T_LABEL *))
+static void traverse_down_label(T_LABEL *label, void (*handler)(T_LABEL *))
 {
-    const T_LABEL *traverse_label = label;
+    T_LABEL *traverse_label = label;
     do
     {
         if (traverse_label->left_label != NULL)
@@ -256,7 +256,7 @@ static void traverse_down_label(const T_LABEL *label, void (*handler)(const T_LA
     return;
 }
 
-void through_labels(void (*handler)(const T_LABEL *))
+void through_labels(void (*handler)(T_LABEL *))
 {
     if (root != NULL)
         traverse_down_label(root, handler);

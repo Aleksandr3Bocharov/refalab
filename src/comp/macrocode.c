@@ -428,7 +428,7 @@ void macrocode_end(void)
                 write_llvm_source(fputs("\"", llvm_source));
                 first_element = false;
             }
-            const T_LABEL *label = relay.label;
+            T_LABEL *label = relay.label;
             if (label != NULL)
             {
                 if (!first_element)
