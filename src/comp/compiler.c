@@ -583,6 +583,7 @@ int main(int argc, char *argv[])
             }
             else
             {
+                specifier_pool_finalize();
                 macrocode_end();
                 module_length = macrocode_where();
             }

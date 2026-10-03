@@ -280,4 +280,115 @@ T_LABEL *specifier_pool_find_or_create(void)
     return new_spec->label;
 }
 
+static bool specifiers_equal(const T_UNIQUE_SPECIFIER *a, const T_UNIQUE_SPECIFIER *b)
+{
+    if (a->length != b->length)
+        return false;
+    size_t pos = 0;
+    size_t addr_idx_a = 0;
+    size_t addr_idx_b = 0;
+    while (pos < a->length)
+    {
+        bool a_has_addr = (addr_idx_a < a->address_count && a->addresses[addr_idx_a].offset == pos);
+        bool b_has_addr = (addr_idx_b < b->address_count && b->addresses[addr_idx_b].offset == pos);
+        if (a_has_addr && b_has_addr)
+        {
+            if (a->addresses[addr_idx_a].label != b->addresses[addr_idx_b].label)
+                return false;
+            pos += LBLL;
+            addr_idx_a++;
+            addr_idx_b++;
+        }
+        else if (a_has_addr != b_has_addr)
+            return false;
+        else
+        {
+            if (a->bytes[pos] != b->bytes[pos])
+                return false;
+            pos++;
+        }
+    } 
+    return true;
+}
+
+void specifier_pool_finalize(void)
+{
+#if defined mdebug
+    fprintf(stderr, "specifier_pool_finalize: begin\n");
+#endif
+    // === PASS 1 ===
+    T_UNIQUE_SPECIFIER *current = pool_head;
+    while (current != NULL)
+    {
+        for (size_t i = 0; i < current->address_count; i++)
+        {
+            T_LABEL *resolved = current->addresses[i].label;
+            while ((resolved->mode & 0300) == 0300)
+                resolved = resolved->info.infop;
+            current->addresses[i].label = resolved;
+        }
+        current = current->next;
+    }
+    // === PASS 2 ===
+    current = pool_head;
+    while (current != NULL)
+    {
+        T_UNIQUE_SPECIFIER **prev_next = &current->next;
+        T_UNIQUE_SPECIFIER *other = current->next;
+        while (other != NULL)
+        {
+            if (specifiers_equal(current, other))
+            {
+#if defined mdebug
+                fprintf(stderr, "  MERGE: label=%p -> label=%p\n", (void *)other->label, (void *)current->label);
+#endif
+                macrocode_equ((T_LABEL *)other->label, (T_LABEL *)current->label);
+                *prev_next = other->next;
+                free(other->bytes);
+                if (other->addresses != NULL)
+                    free(other->addresses);
+                free(other);
+                other = *prev_next;
+            }
+            else
+            {
+                prev_next = &other->next;
+                other = other->next;
+            }
+        }
+        current = current->next;
+    }
+    // === PASS 3 ===
+    current = pool_head;
+    while (current != NULL)
+    {
+        macrocode_label(current->label);
+        size_t pos = 0;
+        size_t addr_index = 0;
+        while (pos < current->length)
+        {
+            bool is_address = false;
+            if (addr_index < current->address_count && current->addresses[addr_index].offset == pos)
+            {
+                macrocode_address(current->addresses[addr_index].label);
+                pos += LBLL;
+                addr_index++;
+                is_address = true;
+            }
+            if (!is_address)
+            {
+                macrocode_byte(current->bytes[pos]);
+                pos++;
+            }
+        }
+#if defined mdebug
+        fprintf(stderr, "  WRITE: label=%p length=%zu\n", (void *)current->label, current->length);
+#endif
+        current = current->next;
+    }
+#if defined mdebug
+    fprintf(stderr, "specifier_pool_finalize: end\n");
+#endif
+}
+
 //----------  end of file specifier_pool.c  ----------
