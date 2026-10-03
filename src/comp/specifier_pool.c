@@ -322,9 +322,7 @@ void specifier_pool_finalize(void)
     {
         for (size_t i = 0; i < current->address_count; i++)
         {
-            T_LABEL *resolved = current->addresses[i].label;
-            while ((resolved->mode & 0300) == 0300)
-                resolved = resolved->info.infop;
+            T_LABEL *resolved = resolve_label_alias(current->addresses[i].label);
             current->addresses[i].label = resolved;
         }
         current = current->next;

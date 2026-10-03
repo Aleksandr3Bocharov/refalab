@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-10-02
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file avl_identifiers.h  -----------
@@ -54,6 +54,7 @@ typedef struct label
 
 } T_LABEL;
 
+extern T_LABEL *resolve_label_alias(T_LABEL *label);
 extern T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number);
 extern void labels_terminate(void);
 extern void through_labels(void (*handler)(const T_LABEL *));

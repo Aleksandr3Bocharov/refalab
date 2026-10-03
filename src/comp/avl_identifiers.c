@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-10-02
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file avl_identifiers.c  -----------
@@ -23,6 +23,13 @@ void error_no_memory_labels(void)
     printf("\nNo memory for identifier table\n");
     exit(1);
     return;
+}
+
+T_LABEL *resolve_label_alias(T_LABEL *label)
+{
+    while ((label->mode & 0300) == 0300)
+        label = label->info.infop;
+    return label;
 }
 
 static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
@@ -99,8 +106,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
                             new_usage_list->cursor_numbers[0] = identifier_cursor_number;
                         };
                     }
-                    while ((label->mode & 0300) == 0300)
-                        label = label->info.infop;
+                    label = resolve_label_alias(label);
                     return label;
                 }
                 else

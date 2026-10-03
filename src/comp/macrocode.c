@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-20
+// 2026-10-02
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file macrocode.c  ----------
@@ -433,8 +433,7 @@ void macrocode_end(void)
             {
                 if (!first_element)
                     write_llvm_source(fputs(",\n", llvm_source));
-                while ((label->mode & 0300) == 0300)
-                    label = label->info.infop;
+                label = resolve_label_alias(label);
                 if ((label->mode & 0300) != 0200)
                 {
                     sprintf(buffer_string, "\tptr getelementptr (i8, ptr @_d%" PRIu32 "$, i%zu %zu)", scanner.module_number, LBLL * 8, label->info.infon);
@@ -477,9 +476,7 @@ void macrocode_end(void)
         entry = first_entry->next;
         while (entry != NULL)
         {
-            const T_LABEL *label = entry->label;
-            while ((label->mode & 0300) == 0300)
-                label = label->info.infop;
+            const T_LABEL *label = resolve_label_alias(entry->label);
             write_llvm_source(fputs("@refalab_", llvm_source));
             for (uint8_t i = 0; i < entry->identifier_extern_length; i++)
                 write_llvm_source(fputc(tolower((unsigned char)*(entry->identifier_extern + i)), llvm_source));
