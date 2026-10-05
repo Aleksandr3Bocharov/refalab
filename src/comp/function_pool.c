@@ -346,7 +346,6 @@ void function_pool_finalize(void)
 #endif
             macrocode_label(sentence->sentence_label);
             write_buffer_to_macrocode(&sentence->left_part);
-            macrocode_byte(n_eor);
             write_buffer_to_macrocode(&sentence->right_part);
             if (sentence->next != NULL)
                 generate_operator_l(n_sjump, sentence->next->sentence_label);
