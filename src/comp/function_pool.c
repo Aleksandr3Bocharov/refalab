@@ -198,9 +198,7 @@ void function_pool_set_fail_label(T_STORED_FUNCTION *func, T_LABEL *fail_label)
 void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_part)
 {
     if (sentence == NULL)
-    {
         compile_output_set_mode(OUTPUT_MACROCODE, NULL);
-    }
     else
     {
         const T_OUTPUT_MODE mode = is_left_part ? OUTPUT_LEFT_PART : OUTPUT_RIGHT_PART;
