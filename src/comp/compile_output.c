@@ -59,10 +59,12 @@ void compile_output_byte(uint8_t byte)
         macrocode_byte(byte);
         break;
     case OUTPUT_LEFT_PART:
-        sentence_append_byte_left(current_sentence, byte);
+        if (current_sentence != NULL)
+            sentence_append_byte_left(current_sentence, byte);
         break;
     case OUTPUT_RIGHT_PART:
-        sentence_append_byte_right(current_sentence, byte);
+        if (current_sentence != NULL)
+            sentence_append_byte_right(current_sentence, byte);
     }
     return;
 }
@@ -75,10 +77,12 @@ void compile_output_address(T_LABEL *label)
         macrocode_address(label);
         break;
     case OUTPUT_LEFT_PART:
-        sentence_append_address_left(current_sentence, label);
+        if (current_sentence != NULL)
+            sentence_append_address_left(current_sentence, label);
         break;
     case OUTPUT_RIGHT_PART:
-        sentence_append_address_right(current_sentence, label);
+        if (current_sentence != NULL)
+            sentence_append_address_right(current_sentence, label);
     }
     return;
 }

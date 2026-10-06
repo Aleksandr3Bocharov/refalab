@@ -80,6 +80,7 @@ void function_definition(void)
         {
             scanner.last_error_cursor = scanner.label_cursor_number;
             PRINT_ERROR_504(scanner.label_name, scanner.label_name_length);
+            function_pool_set_current_function(NULL);
         }
         else
         {
@@ -118,7 +119,6 @@ void function_end(void)
         next_sentence = NULL;
     }
     compile_output_switch_to_macrocode();
-    function_pool_set_current_function(NULL);
     return;
 }
 

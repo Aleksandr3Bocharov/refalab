@@ -173,6 +173,8 @@ void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, uint8_t n
 
 T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *sentence_label)
 {
+    if (func == NULL)
+        return NULL;
     T_STORED_SENTENCE *sentence = (T_STORED_SENTENCE *)calloc(1, sizeof(T_STORED_SENTENCE));
     if (sentence == NULL)
         error_no_memory();
