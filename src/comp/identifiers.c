@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-10-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file identifiers.c  ----------
@@ -18,6 +18,8 @@
 #include "avl_identifiers.h"
 #include "compiler.h"
 #include "compile_sentence.h"
+#include "compile_output.h"
+#include "function_pool.h"
 
 #define PRINT_ERROR_504(identifier, identifier_length) \
     print_error_three_strings(504, "Label", identifier, identifier_length, " is already defined")
@@ -81,19 +83,22 @@ void function_definition(void)
         }
         else
         {
-            function_head(scanner.label_name, scanner.label_name_length);
             label->cursor_number_defined = scanner.label_cursor_number;
-            macrocode_label(label);
-            generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
+            T_STORED_FUNCTION *func = function_pool_begin(label);
+            function_pool_set_name(func, scanner.label_name, scanner.label_name_length);
+            function_pool_set_current_function(func);
         }
         scanner.label_name_length = 0;
     }
     else
-    { //  next sentence in function
-        macrocode_label((T_LABEL *)next_sentence);
         next_sentence = allocate_info_label();
-        generate_operator_l(n_sjump, (T_LABEL *)next_sentence);
-    };
+    T_STORED_FUNCTION *current_func = function_pool_get_current_function();
+    if (current_func != NULL)
+    {
+        T_STORED_SENTENCE *sentence = function_pool_add_sentence(current_func, next_sentence);
+        compile_output_set_current_sentence(sentence);
+        compile_output_set_mode(OUTPUT_LEFT_PART, sentence);
+    }
     return;
 }
 
@@ -106,11 +111,14 @@ void function_end(void)
         else
         {
             fail_sentence = next_sentence;
-            macrocode_label((T_LABEL *)next_sentence);
-            macrocode_byte(n_fail);
+            T_STORED_FUNCTION *current_func = function_pool_get_current_function();
+            if (current_func != NULL)
+                function_pool_set_fail_label(current_func, fail_sentence);
         }
         next_sentence = NULL;
     }
+    compile_output_switch_to_macrocode();
+    function_pool_set_current_function(NULL);
     return;
 }
 
