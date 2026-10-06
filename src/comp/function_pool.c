@@ -358,17 +358,33 @@ void function_pool_finalize(void)
 #if defined mdebug
             fprintf(stderr, "    sentence: label=%p left=%zu right=%zu\n", (void *)sentence->sentence_label, sentence->left_part.length, sentence->right_part.length);
 #endif
-            macrocode_label(sentence->sentence_label);
-            write_buffer_to_macrocode(&sentence->left_part);
-            write_buffer_to_macrocode(&sentence->right_part);
-            if (sentence->next != NULL)
-                generate_operator_l(n_sjump, sentence->next->sentence_label);
+            bool is_alias = ((sentence->sentence_label->mode & 0300) == 0300);
+            if (!is_alias)
+            {
+                macrocode_label(sentence->sentence_label);
+                write_buffer_to_macrocode(&sentence->left_part);
+                write_buffer_to_macrocode(&sentence->right_part);
+                if (sentence->next != NULL)
+                    generate_operator_l(n_sjump, sentence->next->sentence_label);
+            }
+#if defined mdebug
+            else
+                fprintf(stderr, "      SKIPPED (alias to %p)\n", (void *)sentence->sentence_label->info.infop);
+#endif
             sentence = sentence->next;
         }
         if (func->fail_label != NULL)
         {
-            macrocode_label(func->fail_label);
-            macrocode_byte(n_fail);
+            bool is_alias = ((func->fail_label->mode & 0300) == 0300);
+            if (!is_alias)
+            {
+                macrocode_label(func->fail_label);
+                macrocode_byte(n_fail);
+            }
+#if defined mdebug
+            else
+                fprintf(stderr, "    fail_label SKIPPED (alias to %p)\n", (void *)func->fail_label->info.infop);
+#endif
         }
         func = func->next;
     }
