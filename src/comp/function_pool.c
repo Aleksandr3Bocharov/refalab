@@ -350,41 +350,30 @@ void function_pool_finalize(void)
 #endif
         write_function_name(func);
         macrocode_label(func->func_label);
-        if (func->sentences != NULL)
-            generate_operator_l(n_sjump, func->sentences->sentence_label);
         T_STORED_SENTENCE *sentence = func->sentences;
+        if (sentence != NULL)
+            generate_operator_l(n_sjump, sentence->sentence_label);
         while (sentence != NULL)
         {
 #if defined mdebug
             fprintf(stderr, "    sentence: label=%p left=%zu right=%zu\n", (void *)sentence->sentence_label, sentence->left_part.length, sentence->right_part.length);
 #endif
+            write_buffer_to_macrocode(&sentence->left_part);
+            write_buffer_to_macrocode(&sentence->right_part);
             bool is_alias = ((sentence->sentence_label->mode & 0300) == 0300);
             if (!is_alias)
             {
                 macrocode_label(sentence->sentence_label);
-                write_buffer_to_macrocode(&sentence->left_part);
-                write_buffer_to_macrocode(&sentence->right_part);
                 if (sentence->next != NULL)
                     generate_operator_l(n_sjump, sentence->next->sentence_label);
+                else
+                    macrocode_byte(n_fail);
             }
 #if defined mdebug
             else
-                fprintf(stderr, "      SKIPPED (alias to %p)\n", (void *)sentence->sentence_label->info.infop);
+                fprintf(stderr, "      SKIPPED label (alias to %p)\n", (void *)sentence->sentence_label->info.infop);
 #endif
             sentence = sentence->next;
-        }
-        if (func->fail_label != NULL)
-        {
-            bool is_alias = ((func->fail_label->mode & 0300) == 0300);
-            if (!is_alias)
-            {
-                macrocode_label(func->fail_label);
-                macrocode_byte(n_fail);
-            }
-#if defined mdebug
-            else
-                fprintf(stderr, "    fail_label SKIPPED (alias to %p)\n", (void *)func->fail_label->info.infop);
-#endif
         }
         func = func->next;
     }
