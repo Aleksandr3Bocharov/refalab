@@ -95,7 +95,7 @@ void function_definition(void)
     T_STORED_FUNCTION *current_func = function_pool_get_current_function();
     if (current_func != NULL)
     {
-        T_STORED_SENTENCE *sentence = function_pool_add_sentence(current_func, next_sentence);
+        T_STORED_SENTENCE *sentence = function_pool_add_sentence(current_func, (T_LABEL *)next_sentence);
         compile_output_set_current_sentence(sentence);
         compile_output_set_mode(OUTPUT_LEFT_PART, sentence);
     }
@@ -113,7 +113,7 @@ void function_end(void)
             fail_sentence = next_sentence;
             T_STORED_FUNCTION *current_func = function_pool_get_current_function();
             if (current_func != NULL)
-                function_pool_set_fail_label(current_func, fail_sentence);
+                function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
         }
         next_sentence = NULL;
     }
