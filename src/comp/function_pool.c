@@ -116,7 +116,6 @@ T_STORED_FUNCTION *function_pool_begin(T_LABEL *label)
     func->sentences = NULL;
     func->last_sentence = NULL;
     func->sentence_count = 0;
-    func->fail_label = NULL;
     func->next = function_pool_head;
     function_pool_head = func;
     return func;
