@@ -108,19 +108,12 @@ void function_definition(void)
 
 void function_end(void)
 {
-    T_STORED_FUNCTION *current_func = function_pool_get_current_function();
-    if (current_func != NULL && next_sentence != NULL)
+    if (next_sentence != NULL)
     {
         if (fail_sentence != NULL)
-        {
             macrocode_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
-            function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
-        }
         else
-        {
             fail_sentence = next_sentence;
-            function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
-        }
         next_sentence = NULL;
     }
     compile_output_switch_to_macrocode();

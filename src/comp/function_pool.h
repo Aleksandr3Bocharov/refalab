@@ -51,7 +51,6 @@ typedef struct stored_function
     T_STORED_SENTENCE *sentences; // Sentences
     T_STORED_SENTENCE *last_sentence; // Last sentence
     size_t sentence_count;
-    T_LABEL *fail_label; // fail_sentence
     struct stored_function *next;
 } T_STORED_FUNCTION;
 
@@ -65,8 +64,6 @@ extern T_STORED_FUNCTION *function_pool_begin(T_LABEL *label);
 extern void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, uint8_t name_length);
 
 extern T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *sentence_label);
-
-extern void function_pool_set_fail_label(T_STORED_FUNCTION *func, T_LABEL *fail_label);
 
 extern void sentence_append_byte_left(T_STORED_SENTENCE *sentence, uint8_t byte);
 extern void sentence_append_address_left(T_STORED_SENTENCE *sentence, T_LABEL *label);

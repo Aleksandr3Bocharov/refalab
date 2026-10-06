@@ -204,12 +204,6 @@ T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *
     return sentence;
 }
 
-void function_pool_set_fail_label(T_STORED_FUNCTION *func, T_LABEL *fail_label)
-{
-    func->fail_label = fail_label;
-    return;
-}
-
 void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_part)
 {
     if (sentence == NULL)
