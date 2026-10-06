@@ -112,7 +112,7 @@ void function_end(void)
         {
             macrocode_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
             if (current_func != NULL)
-                function_pool_set_fail_label(current_func, fail_sentence);
+                function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
         }
         else
         {
