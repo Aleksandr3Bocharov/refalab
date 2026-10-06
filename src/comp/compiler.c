@@ -30,6 +30,8 @@
 #include "identifiers.h"
 #include "compile_sentence.h"
 #include "specifier_pool.h"
+#include "compile_output.h"
+#include "function_pool.h"
 
 #ifndef CLANG_VERSION
 #define CLANG_VERSION "unknown"
@@ -396,6 +398,8 @@ int main(int argc, char *argv[])
             for (uint8_t i = 0; i < 7; ++i)
                 specifier_abbreviated[i] = NULL;
             specifier_pool_init();
+            function_pool_init();
+            compile_output_init();
             // "start" - directive work
             load_refalab_source_to_memory();
             if (flags.end_refalab_source)
@@ -584,10 +588,13 @@ int main(int argc, char *argv[])
             else
             {
                 specifier_pool_finalize();
+                function_pool_finalize();
                 macrocode_end();
                 module_length = macrocode_where();
             }
             specifier_pool_clear();
+            compile_output_init();
+            function_pool_clear();
             module_terminate();
             print_conclusion();
             module_state = END_OF_SYSIN;

@@ -27,6 +27,7 @@ static T_STORED_FUNCTION *current_function = NULL;
 void function_pool_init(void)
 {
     function_pool_head = NULL;
+    current_function = NULL;
     return;
 }
 

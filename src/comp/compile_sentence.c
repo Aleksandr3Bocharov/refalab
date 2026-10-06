@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-25
+// 2026-10-05
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -19,6 +19,7 @@
 #include "generate_operators.h"
 #include "macrocode.h"
 #include "compiler.h"
+#include "compile_output.h"
 
 #define PRINT_ERROR_303 \
     print_error_two_strings(303, "Differents for variable ", variables[variable_index].identifier, variables[variable_index].identifier_length)
@@ -401,6 +402,7 @@ void compile_sentence(bool direction)
             // sentence end
             scanner.last_error_cursor = current_sentence_element.cursor_number;
             print_error_string(304, "Under left part default sign '=' ");
+            compile_output_switch_to_macrocode();
             function_definition();
             return;
         case NEXT_LPE:
@@ -415,6 +417,7 @@ void compile_sentence(bool direction)
             state = OSH300;
             break;
         case OSH300:
+            compile_output_switch_to_macrocode();
             function_definition();
             state = RP_OSH300;
             break;
@@ -510,7 +513,7 @@ void compile_sentence(bool direction)
             break;
         case LTXT3:
             current_left_part_element++;
-            macrocode_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            compile_output_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             left_part_elements[current_left_part_element].right_number_element = number_element;
             left_part_elements[current_left_part_element].left_number_element = left_part_elements[current_left_part_element].right_number_element;
             number_element++;
@@ -556,13 +559,13 @@ void compile_sentence(bool direction)
             break;
         case LBCE:
             number_element += 2;
-            macrocode_byte(n_lbce);
+            compile_output_byte(n_lbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                macrocode_byte(n_nnil);
+                compile_output_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -576,7 +579,7 @@ void compile_sentence(bool direction)
             state = RCGL;
             break;
         case LBNIL:
-            macrocode_byte(n_lbnil);
+            compile_output_byte(n_lbnil);
             left_part_elements[current_left_board].right_number_element = number_element;
             left_part_elements[current_left_board].left_number_element = left_part_elements[current_left_board].right_number_element;
             current_left_board = current_left_part_element;
@@ -627,7 +630,7 @@ void compile_sentence(bool direction)
                 generate_operator_n(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                macrocode_byte(n_ls);
+                compile_output_byte(n_ls);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = LSMD;
@@ -655,7 +658,7 @@ void compile_sentence(bool direction)
                 state = LED;
                 break;
             }
-            macrocode_byte(n_lw);
+            compile_output_byte(n_lw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -772,7 +775,7 @@ void compile_sentence(bool direction)
             break;
         case RTXT3:
             current_left_part_element--;
-            macrocode_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
+            compile_output_byte((uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             left_part_elements[current_left_part_element].right_number_element = number_element;
             left_part_elements[current_left_part_element].left_number_element = left_part_elements[current_left_part_element].right_number_element;
             number_element++;
@@ -821,13 +824,13 @@ void compile_sentence(bool direction)
             break;
         case RBCE:
             number_element += 2;
-            macrocode_byte(n_rbce);
+            compile_output_byte(n_rbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                macrocode_byte(n_nnil);
+                compile_output_byte(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -841,7 +844,7 @@ void compile_sentence(bool direction)
             state = RCGR;
             break;
         case RBNIL:
-            macrocode_byte(n_rbnil);
+            compile_output_byte(n_rbnil);
             left_part_elements[current_right_board].right_number_element = number_element + 1;
             left_part_elements[current_right_board].left_number_element = left_part_elements[current_right_board].right_number_element;
             current_right_board = current_left_part_element;
@@ -889,7 +892,7 @@ void compile_sentence(bool direction)
                 generate_operator_n(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                macrocode_byte(n_rs);
+                compile_output_byte(n_rs);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = RSMD;
@@ -917,7 +920,7 @@ void compile_sentence(bool direction)
                 state = RED;
                 break;
             }
-            macrocode_byte(n_rw);
+            compile_output_byte(n_rw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -967,7 +970,7 @@ void compile_sentence(bool direction)
             break;
         case NIL:
             //     empty hole
-            macrocode_byte(n_nil);
+            compile_output_byte(n_nil);
             next_hole = hole_list[current_hole].next_hole;
             hole_list[current_hole].next_hole = hole_list[next_hole].next_hole;
             hole_list[current_hole].left_board = hole_list[next_hole].left_board;
@@ -1000,12 +1003,12 @@ void compile_sentence(bool direction)
         case CE2:
             variable_index = left_part_elements[current_left_part_element].variable_index;
             variables[variable_index].main_right_number_element = number_element + 1;
-            macrocode_byte(n_ce);
+            compile_output_byte(n_ce);
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                macrocode_byte(n_nnil);
+                compile_output_byte(n_nnil);
             left_part_elements[current_left_part_element].left_number_element = number_element;
             left_part_elements[current_left_part_element].right_number_element = number_element + 1;
             number_element += 2;
@@ -1120,7 +1123,7 @@ void compile_sentence(bool direction)
             {
                 const uint8_t diff = jump_stack_pointer - left_part_elements[current_left_part_element].jump_stack_pointer;
                 if (diff == 1)
-                    macrocode_byte(n_eoei);
+                    compile_output_byte(n_eoei);
                 else
                     generate_operator_n(n_eoe, diff);
                 jump_stack_pointer = left_part_elements[current_left_part_element].jump_stack_pointer;
@@ -1183,7 +1186,7 @@ void compile_sentence(bool direction)
         case RMAX:
             generate_operator_l(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                macrocode_byte(n_nnil);
+                compile_output_byte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = REM;
             break;
@@ -1199,7 +1202,7 @@ void compile_sentence(bool direction)
         case LMAX:
             generate_operator_l(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                macrocode_byte(n_nnil);
+                compile_output_byte(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = LEM;
             break;
@@ -1278,7 +1281,7 @@ void compile_sentence(bool direction)
         case LESW2:
             //   ei ( . . . ) . . .
             generate_operator_e_v(n_pleb, n_plvb);
-            macrocode_byte(n_leb);
+            compile_output_byte(n_leb);
             stoped_bracket_flag = 0;
             state = LB1;
             break;
@@ -1304,7 +1307,7 @@ void compile_sentence(bool direction)
             break;
         case LE:
             generate_operator_e_v(n_ple, n_plv);
-            macrocode_byte(n_le);
+            compile_output_byte(n_le);
             state = RCGL;
             break;
         case ROE:
@@ -1373,7 +1376,7 @@ void compile_sentence(bool direction)
         case RESW3:
             // . . .  ( . . .  ) ei
             generate_operator_e_v(n_preb, n_prvb);
-            macrocode_byte(n_reb);
+            compile_output_byte(n_reb);
             stoped_bracket_flag = 0;
             state = RB1;
             break;
@@ -1396,12 +1399,13 @@ void compile_sentence(bool direction)
             break;
         case RE:
             generate_operator_e_v(n_pre, n_prv);
-            macrocode_byte(n_re);
+            compile_output_byte(n_re);
             state = RCGR;
             break;
         //                 identification end
         case RCGFIN:
-            macrocode_byte(n_eor);
+            compile_output_byte(n_eor);
+            compile_output_switch_to_right_part();
             //--------------------------------------------
             //         right part compilation
             //--------------------------------------------
@@ -1499,7 +1503,7 @@ void compile_sentence(bool direction)
             {
                 generate_operator_n(n_text, symbols_count);
                 for (uint8_t k = 0; k < symbols_count; k++)
-                    macrocode_byte((uint8_t)symbols_buffer[k]);
+                    compile_output_byte((uint8_t)symbols_buffer[k]);
             };
             state = SW_RPE;
             break;
@@ -1508,7 +1512,7 @@ void compile_sentence(bool direction)
             scan_sentence_element();
             if (current_sentence_element.type == RB)
             {
-                macrocode_byte(n_blr);
+                compile_output_byte(n_blr);
                 state = GET_RPE;
                 break;
             }
@@ -1520,12 +1524,12 @@ void compile_sentence(bool direction)
                 state = GET_RPE;
                 break;
             }
-            macrocode_byte(n_bl);
+            compile_output_byte(n_bl);
             state = SW_RPE;
             break;
         case RPE3:
             // right bracket
-            macrocode_byte(n_br);
+            compile_output_byte(n_br);
             if (brackets_count[brackets_k_level] == 0)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1608,7 +1612,7 @@ void compile_sentence(bool direction)
                 state = GET_RPE;
                 break;
             }
-            macrocode_byte(n_bl);
+            compile_output_byte(n_bl);
             state = SW_RPE;
             break;
         case RPE8:
@@ -1625,7 +1629,7 @@ void compile_sentence(bool direction)
                     scanner.last_error_cursor = current_sentence_element.cursor_number;
                     print_error_string(401, "Too many '(' in right part");
                 }
-                macrocode_byte(n_bract);
+                compile_output_byte(n_bract);
                 brackets_k_level--;
             };
             state = GET_RPE;
@@ -1638,7 +1642,7 @@ void compile_sentence(bool direction)
             break;
         case RPE10:
             // sentence end
-            macrocode_byte(n_eos);
+            compile_output_byte(n_eos);
             if (brackets_k_level != 1)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1649,10 +1653,12 @@ void compile_sentence(bool direction)
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
                 print_error_string(401, "Too many '(' in right part");
             }
+            compile_output_switch_to_macrocode();
             return;
         case RP_OSH300:
             scanner.last_error_cursor = current_sentence_element.cursor_number;
             print_error_string(300, "Sentence is't scanned");
+            compile_output_switch_to_macrocode();
             return;
         //                      place of compiler's error
         case ERROR:
@@ -1921,23 +1927,23 @@ static void generate_boards_stoping_brackets(void)
         return;
     case 1: // left stoped brackets
         if (current_hole == hole_x)
-            macrocode_byte(n_lb);
+            compile_output_byte(n_lb);
         else if (current_hole == hole_y)
-            macrocode_byte(n_lby);
+            compile_output_byte(n_lby);
         else
         {
-            macrocode_byte(n_lb);
+            compile_output_byte(n_lb);
             break;
         };
         return;
     case 2: // right stoped brackets
         if (current_hole == hole_x)
-            macrocode_byte(n_rb);
+            compile_output_byte(n_rb);
         else if (current_hole == hole_y)
-            macrocode_byte(n_rby);
+            compile_output_byte(n_rby);
         else
         {
-            macrocode_byte(n_rb);
+            compile_output_byte(n_rb);
             break;
         };
         return;
@@ -2087,9 +2093,9 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
 static inline void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
-        macrocode_byte(operator_v);
+        compile_output_byte(operator_v);
     else
-        macrocode_byte(operator_e);
+        compile_output_byte(operator_e);
 }
 
 //----------  end of file compile_sentence.c  ----------
