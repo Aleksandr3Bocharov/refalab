@@ -22,6 +22,7 @@
 #include "compiler.h"
 
 static T_STORED_FUNCTION *function_pool_head = NULL;
+static T_STORED_FUNCTION *current_function = NULL;
 
 void function_pool_init(void)
 {
@@ -86,6 +87,17 @@ void function_pool_clear(void)
         func = next_func;
     }
     function_pool_head = NULL;
+    return;
+}
+
+T_STORED_FUNCTION *function_pool_get_current_function(void)
+{
+    return current_function;
+}
+
+void function_pool_set_current_function(T_STORED_FUNCTION *func)
+{
+    current_function = func;
     return;
 }
 
@@ -326,6 +338,7 @@ void function_pool_finalize(void)
 #if defined mdebug
     fprintf(stderr, "function_pool_finalize: begin\n");
 #endif
+    compile_output_set_mode(OUTPUT_MACROCODE, NULL);
     T_STORED_FUNCTION *func = function_pool_head;
     while (func != NULL)
     {

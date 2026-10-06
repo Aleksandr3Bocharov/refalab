@@ -31,6 +31,26 @@ void compile_output_set_mode(T_OUTPUT_MODE mode, T_STORED_SENTENCE *sentence)
     return;
 }
 
+void compile_output_set_current_sentence(T_STORED_SENTENCE *sentence)
+{
+    current_sentence = sentence;
+    return;
+}
+
+void compile_output_switch_to_right_part(void)
+{
+    if (current_sentence != NULL)
+        current_mode = OUTPUT_RIGHT_PART;
+    return;
+}
+
+void compile_output_switch_to_macrocode(void)
+{
+    current_mode = OUTPUT_MACROCODE;
+    current_sentence = NULL;
+    return;
+}
+
 void compile_output_byte(uint8_t byte)
 {
     switch (current_mode)

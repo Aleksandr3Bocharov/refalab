@@ -58,6 +58,9 @@ typedef struct stored_function
 extern void function_pool_init(void);
 extern void function_pool_clear(void);
 
+extern T_STORED_FUNCTION *function_pool_get_current_function(void);
+extern void function_pool_set_current_function(T_STORED_FUNCTION *func);
+
 extern T_STORED_FUNCTION *function_pool_begin(T_LABEL *label);
 extern void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, uint8_t name_length);
 

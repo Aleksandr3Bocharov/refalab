@@ -23,6 +23,9 @@ typedef enum
 
 extern void compile_output_init(void);
 extern void compile_output_set_mode(T_OUTPUT_MODE mode, T_STORED_SENTENCE *sentence);
+extern void compile_output_set_current_sentence(T_STORED_SENTENCE *sentence);
+extern void compile_output_switch_to_right_part(void);
+extern void compile_output_switch_to_macrocode(void);
 extern void compile_output_byte(uint8_t byte);
 extern void compile_output_address(T_LABEL *label);
 extern void compile_output_label(T_LABEL *label);
