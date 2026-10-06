@@ -97,28 +97,29 @@ void function_definition(void)
     if (current_func != NULL)
     {
         T_STORED_SENTENCE *sentence = function_pool_add_sentence(current_func, (T_LABEL *)next_sentence);
-        compile_output_set_current_sentence(sentence);
-        compile_output_set_mode(OUTPUT_LEFT_PART, sentence);
+        if (sentence != NULL)
+        {
+            compile_output_set_current_sentence(sentence);
+            compile_output_set_mode(OUTPUT_LEFT_PART, sentence);
+        }
     }
     return;
 }
 
 void function_end(void)
 {
-    if (next_sentence != NULL)
+    T_STORED_FUNCTION *current_func = function_pool_get_current_function();
+    if (current_func != NULL && next_sentence != NULL)
     {
-        T_STORED_FUNCTION *current_func = function_pool_get_current_function();
         if (fail_sentence != NULL)
         {
             macrocode_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
-            if (current_func != NULL)
-                function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
+            function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
         }
         else
         {
             fail_sentence = next_sentence;
-            if (current_func != NULL)
-                function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
+            function_pool_set_fail_label(current_func, (T_LABEL *)fail_sentence);
         }
         next_sentence = NULL;
     }
