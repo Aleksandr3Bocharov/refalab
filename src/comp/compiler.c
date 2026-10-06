@@ -579,6 +579,11 @@ int main(int argc, char *argv[])
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
+            if (errors_count == 0)
+            {
+                specifier_pool_finalize();
+                function_pool_finalize();
+            }
             module_end();
             if (errors_count != 0)
             {
@@ -587,8 +592,6 @@ int main(int argc, char *argv[])
             }
             else
             {
-                specifier_pool_finalize();
-                function_pool_finalize();
                 macrocode_end();
                 module_length = macrocode_where();
             }
