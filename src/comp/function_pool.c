@@ -306,13 +306,15 @@ static void write_buffer_to_macrocode(T_OPERATOR_BUFFER *buf)
 {
     size_t pos = 0;
     size_t label_idx = 0;
+    size_t next_label_offset = (label_idx < buf->label_count) ? buf->labels[label_idx].offset : buf->length;
     while (pos < buf->length)
     {
-        if (label_idx < buf->label_count && buf->labels[label_idx].offset == pos)
+        if (pos == next_label_offset)
         {
             macrocode_address(buf->labels[label_idx].label);
             pos += LBLL;
             label_idx++;
+            next_label_offset = (label_idx < buf->label_count) ? buf->labels[label_idx].offset : buf->length;
         }
         else
         {
