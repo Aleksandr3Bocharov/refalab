@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-05
+// 2026-10-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file function_pool.c  ----------
@@ -22,11 +22,13 @@
 #include "compiler.h"
 
 static T_STORED_FUNCTION *function_pool_head = NULL;
+static T_STORED_FUNCTION *function_pool_tail = NULL;
 static T_STORED_FUNCTION *current_function = NULL;
 
 void function_pool_init(void)
 {
     function_pool_head = NULL;
+    function_pool_tail = NULL;
     current_function = NULL;
     return;
 }
@@ -88,6 +90,7 @@ void function_pool_clear(void)
         func = next_func;
     }
     function_pool_head = NULL;
+    function_pool_tail = NULL;
     return;
 }
 
@@ -118,6 +121,12 @@ T_STORED_FUNCTION *function_pool_begin(T_LABEL *label)
     func->sentence_count = 0;
     func->next = function_pool_head;
     function_pool_head = func;
+    func->next = NULL;
+    if (function_pool_tail != NULL)
+        function_pool_tail->next = func;
+    else
+        function_pool_head = func;
+    function_pool_tail = func;
     return func;
 }
 
