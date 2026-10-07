@@ -289,29 +289,16 @@ static bool specifiers_equal(const T_UNIQUE_SPECIFIER *a, const T_UNIQUE_SPECIFI
 {
     if (a->length != b->length)
         return false;
-    size_t pos = 0;
-    size_t addr_idx_a = 0;
-    size_t addr_idx_b = 0;
-    while (pos < a->length)
+    if (a->address_count != b->address_count)
+        return false;
+    if (memcmp(a->bytes, b->bytes, a->length) != 0)
+        return false;
+    for (size_t i = 0; i < a->address_count; i++)
     {
-        bool a_has_addr = (addr_idx_a < a->address_count && a->addresses[addr_idx_a].offset == pos);
-        bool b_has_addr = (addr_idx_b < b->address_count && b->addresses[addr_idx_b].offset == pos);
-        if (a_has_addr && b_has_addr)
-        {
-            if (a->addresses[addr_idx_a].label != b->addresses[addr_idx_b].label)
-                return false;
-            pos += LBLL;
-            addr_idx_a++;
-            addr_idx_b++;
-        }
-        else if (a_has_addr != b_has_addr)
+        if (a->addresses[i].offset != b->addresses[i].offset)
             return false;
-        else
-        {
-            if (a->bytes[pos] != b->bytes[pos])
-                return false;
-            pos++;
-        }
+        if (a->addresses[i].label != b->addresses[i].label)
+            return false;
     }
     return true;
 }
@@ -326,10 +313,7 @@ void specifier_pool_finalize(void)
     while (current != NULL)
     {
         for (size_t i = 0; i < current->address_count; i++)
-        {
-            T_LABEL *resolved = resolve_label_alias(current->addresses[i].label);
-            current->addresses[i].label = resolved;
-        }
+            current->addresses[i].label = resolve_label_alias(current->addresses[i].label);
         current = current->next;
     }
     // === PASS 2 ===
@@ -366,27 +350,27 @@ void specifier_pool_finalize(void)
     while (current != NULL)
     {
         macrocode_label(current->label);
+#if defined mdebug
+        fprintf(stderr, "  WRITE: label=%p length=%zu\n", (void *)current->label, current->length);
+#endif
         size_t pos = 0;
-        size_t addr_index = 0;
+        size_t addr_idx = 0;
+        size_t next_label_offset = (addr_idx < current->address_count) ? current->addresses[addr_idx].offset : current->length;
         while (pos < current->length)
         {
-            bool is_address = false;
-            if (addr_index < current->address_count && current->addresses[addr_index].offset == pos)
+            if (pos == next_label_offset)
             {
-                macrocode_address(current->addresses[addr_index].label);
+                macrocode_address(current->addresses[addr_idx].label);
                 pos += LBLL;
-                addr_index++;
-                is_address = true;
+                addr_idx++;
+                next_label_offset = (addr_idx < current->address_count) ? current->addresses[addr_idx].offset : current->length;
             }
-            if (!is_address)
+            else
             {
                 macrocode_byte(current->bytes[pos]);
                 pos++;
             }
         }
-#if defined mdebug
-        fprintf(stderr, "  WRITE: label=%p length=%zu\n", (void *)current->label, current->length);
-#endif
         current = current->next;
     }
 #if defined mdebug
