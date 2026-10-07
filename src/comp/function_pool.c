@@ -222,41 +222,32 @@ void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_par
     return;
 }
 
-static void ensure_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
+static void *ensure_buffer_capacity(void *buffer, size_t *capacity, size_t needed, size_t element_size, size_t initial_capacity, const char *debug_name)
 {
-    if (buf->capacity < needed)
-    {
-        size_t new_capacity = buf->capacity == 0 ? 64 : buf->capacity * 2;
-        while (new_capacity < needed)
-            new_capacity *= 2;
-        uint8_t *new_bytes = (uint8_t *)realloc(buf->bytes, new_capacity);
-        if (new_bytes == NULL)
-            error_no_memory();
+    if (*capacity >= needed)
+        return buffer;
+    size_t new_capacity = (*capacity == 0) ? initial_capacity : *capacity * 2;
+    while (new_capacity < needed)
+        new_capacity *= 2;  
+    void *new_buffer = realloc(buffer, new_capacity * element_size);
+    if (new_buffer == NULL)
+        error_no_memory();
 #if defined mdebug
-        fprintf(stderr, "realloc(ensure_capacity): bytes=%p capacity=%zu\n", (void *)new_bytes, new_capacity);
+    fprintf(stderr, "realloc(%s): buffer=%p capacity=%zu\n", debug_name, new_buffer, new_capacity);
 #endif
-        buf->bytes = new_bytes;
-        buf->capacity = new_capacity;
-    }
+    *capacity = new_capacity;
+    return new_buffer;
+}
+
+static inline void ensure_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
+{
+    buf->bytes = ensure_buffer_capacity(buf->bytes, &buf->capacity, needed, sizeof(uint8_t), 64, "ensure_capacity");
     return;
 }
 
-static void ensure_label_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
+static inline void ensure_label_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
 {
-    if (buf->label_capacity < needed)
-    {
-        size_t new_capacity = buf->label_capacity == 0 ? 8 : buf->label_capacity * 2;
-        while (new_capacity < needed)
-            new_capacity *= 2;
-        T_LABEL_REF *new_labels = (T_LABEL_REF *)realloc(buf->labels, new_capacity * sizeof(T_LABEL_REF));
-        if (new_labels == NULL)
-            error_no_memory();
-#if defined mdebug
-        fprintf(stderr, "realloc(ensure_label_capacity): labels=%p capacity=%zu\n", (void *)new_labels, new_capacity);
-#endif
-        buf->labels = new_labels;
-        buf->label_capacity = new_capacity;
-    }
+    buf->labels = ensure_buffer_capacity(buf->labels, &buf->label_capacity, needed, sizeof(T_LABEL_REF), 8, "ensure_label_capacity");
     return;
 }
 
