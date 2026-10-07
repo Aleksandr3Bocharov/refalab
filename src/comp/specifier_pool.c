@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-10-07
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file specifier_pool.c  -----------
@@ -199,48 +199,53 @@ T_LABEL *specifier_pool_find_or_create(void)
     T_UNIQUE_SPECIFIER *current = pool_head;
     while (current != NULL)
     {
-        if (current->length == spec_buffer_size)
+        if (current->length != spec_buffer_size)
         {
-            bool match = true;
-            size_t pos = 0;
-            size_t addr_idx_cur = 0;
-            size_t addr_idx_new = 0;
-            while (pos < spec_buffer_size && match)
-            {
-                bool cur_has_addr = (addr_idx_cur < current->address_count && current->addresses[addr_idx_cur].offset == pos);
-                bool new_has_addr = (addr_idx_new < pending_count && pending_addresses[addr_idx_new].offset == pos);
-                if (cur_has_addr && new_has_addr)
-                {
-                    if (current->addresses[addr_idx_cur].label != pending_addresses[addr_idx_new].label)
-                        match = false;
-                    pos += LBLL;
-                    addr_idx_cur++;
-                    addr_idx_new++;
-                }
-                else if (cur_has_addr != new_has_addr)
-                    match = false;
-                else
-                {
-                    if (current->bytes[pos] != spec_buffer[pos])
-                        match = false;
-                    pos++;
-                }
-            }
-            if (match)
-            {
 #if defined mdebug
-                fprintf(stderr, "  FOUND existing label=%p\n", (void *)current->label);
+            fprintf(stderr, "  skip spec at %p: length mismatch (%zu != %zu)\n", (void *)current, current->length, spec_buffer_size);
 #endif
-                return current->label;
+            current = current->next;
+            continue;
+        }
+        if (current->address_count != pending_count)
+        {
+#if defined mdebug
+            fprintf(stderr, "  skip spec at %p: address_count mismatch (%zu != %zu)\n", (void *)current, current->address_count, pending_count);
+#endif
+            current = current->next;
+            continue;
+        }
+        if (memcmp(current->bytes, spec_buffer, spec_buffer_size) != 0)
+        {
+#if defined mdebug
+            fprintf(stderr, "  skip spec at %p: bytes mismatch\n", (void *)current);
+#endif
+            current = current->next;
+            continue;
+        }
+        bool addresses_match = true;
+        for (size_t i = 0; i < pending_count; i++)
+        {
+            if (current->addresses[i].offset != pending_addresses[i].offset)
+            {
+                addresses_match = false;
+                break;
+            }
+            if (current->addresses[i].label != pending_addresses[i].label)
+            {
+                addresses_match = false;
+                break;
             }
         }
+        if (addresses_match)
+        {
 #if defined mdebug
-        fprintf(stderr, "  comparing with spec at %p (length=%zu): ", (void *)current, current->length);
-        for (size_t i = 0; i < current->length && i < 48; i++)
-            fprintf(stderr, "%02X ", current->bytes[i]);
-        if (current->length > 48)
-            fprintf(stderr, "...");
-        fprintf(stderr, "\n");
+            fprintf(stderr, "  FOUND existing label=%p\n", (void *)current->label);
+#endif
+            return current->label;
+        }
+#if defined mdebug
+        fprintf(stderr, "  skip spec at %p: addresses mismatch\n", (void *)current);
 #endif
         current = current->next;
     }
@@ -307,7 +312,7 @@ static bool specifiers_equal(const T_UNIQUE_SPECIFIER *a, const T_UNIQUE_SPECIFI
                 return false;
             pos++;
         }
-    } 
+    }
     return true;
 }
 
