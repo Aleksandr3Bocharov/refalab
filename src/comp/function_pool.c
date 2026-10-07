@@ -119,8 +119,6 @@ T_STORED_FUNCTION *function_pool_begin(T_LABEL *label)
     func->sentences = NULL;
     func->last_sentence = NULL;
     func->sentence_count = 0;
-    func->next = function_pool_head;
-    function_pool_head = func;
     func->next = NULL;
     if (function_pool_tail != NULL)
         function_pool_tail->next = func;
@@ -341,14 +339,18 @@ static void write_function_name(T_STORED_FUNCTION *func)
 void function_pool_finalize(void)
 {
 #if defined mdebug
-    fprintf(stderr, "function_pool_finalize: begin\n");
+    fprintf(stderr, "function_pool_finalize: begin, head=%p tail=%p\n", (void *)function_pool_head, (void *)function_pool_tail);
 #endif
     compile_output_set_mode(OUTPUT_MACROCODE, NULL);
     T_STORED_FUNCTION *func = function_pool_head;
+#if defined mdebug
+    int func_count = 0;
+#endif
     while (func != NULL)
     {
 #if defined mdebug
-        fprintf(stderr, "  function: label=%p sentences=%zu\n", (void *)func->func_label, func->sentence_count);
+        func_count++;
+        fprintf(stderr, "  function %d: func=%p label=%p sentences=%zu\n", func_count, (void *)func, (void *)func->func_label, func->sentence_count);
 #endif
         write_function_name(func);
         macrocode_label(func->func_label);
@@ -380,7 +382,7 @@ void function_pool_finalize(void)
         func = func->next;
     }
 #if defined mdebug
-    fprintf(stderr, "function_pool_finalize: end\n");
+    fprintf(stderr, "function_pool_finalize: end, %d functions processed\n", func_count);
 #endif
     return;
 }
