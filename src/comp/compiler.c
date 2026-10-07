@@ -1382,6 +1382,9 @@ void scan_sentence_element(void)
 
 static inline void generate_specifier(uint8_t n)
 {
+#if defined mdebug
+    fprintf(stderr, "generate_specifier: n=0x%02X left_part=%d collecting=%d\n", n, flags.left_part_sentence, specifier_pool_is_collecting());
+#endif
     if (flags.left_part_sentence)
     {
         if (specifier_pool_is_collecting())
@@ -2157,25 +2160,48 @@ static void func(void)
 
 static void specifier(void)
 { // treatement of directives having 'SPEC' type
+#if defined mdebug
+    fprintf(stderr, "specifier: begin\n");
+#endif
     do
     {
         blanks_out();
         scanner.label_cursor_number = refalab_source_cursor;
         if (!get_identifier(scanner.label_name, &scanner.label_name_length))
+        {
+#if defined mdebug
+            fprintf(stderr, "specifier: get_identifier FAILED\n");
+#endif
             break;
+        }
+#if defined mdebug
+        fprintf(stderr, "specifier: identifier=%.*s, setting left_part=true\n", scanner.label_name_length, scanner.label_name);
+#endif
         flags.left_part_sentence = true;
         specifier_definition();
+#if defined mdebug
+        fprintf(stderr, "specifier: after specifier_definition\n");
+#endif
         if (compile_specifer(';'))
         {
+#if defined mdebug
+            fprintf(stderr, "specifier: compile_specifer OK\n");
+#endif
             next_char();
             return;
         }
+#if defined mdebug
+        fprintf(stderr, "specifier: compile_specifer FAILED\n");
+#endif
     } while (false);
     scanner.last_error_cursor = refalab_source_cursor;
     PRINT_ERROR_130;
     seek_char(';');
     if (get_current_char() == ';')
         next_char();
+#if defined mdebug
+    fprintf(stderr, "specifier: end with error\n");
+#endif
     return;
 }
 
