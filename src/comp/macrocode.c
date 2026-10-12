@@ -211,6 +211,9 @@ size_t macrocode_where(void)
 
 void macrocode_byte(uint8_t byte)
 {
+#if defined mdebug
+    fprintf(stderr, "macrocode_byte: byte=0x%02X\n", byte);
+#endif
     if (stream_bytes.current != stream_bytes.length)
     {
         *(stream_bytes.buffer + stream_bytes.current) = byte;

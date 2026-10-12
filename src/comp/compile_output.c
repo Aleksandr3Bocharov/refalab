@@ -7,6 +7,7 @@
 //    output abstraction for macrocode/buffers
 //---------------------------------------------
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include "compile_output.h"
@@ -53,6 +54,9 @@ void compile_output_switch_to_macrocode(void)
 
 void compile_output_byte(uint8_t byte)
 {
+#if defined mdebug
+    fprintf(stderr, "compile_output_byte: byte=0x%02X mode=%d sentence=%p\n", byte, current_mode, (void *)current_sentence);
+#endif
     switch (current_mode)
     {
     case OUTPUT_MACROCODE:
@@ -71,6 +75,9 @@ void compile_output_byte(uint8_t byte)
 
 void compile_output_address(T_LABEL *label)
 {
+#if defined mdebug
+    fprintf(stderr, "compile_output_address: label=%p mode=%d sentence=%p\n", (void *)label, current_mode, (void *)current_sentence);
+#endif
     switch (current_mode)
     {
     case OUTPUT_MACROCODE:

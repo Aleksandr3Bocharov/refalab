@@ -7,6 +7,7 @@
 //    generation of the assembly language operators
 //-------------------------------------------------
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include "refalab.h"
@@ -37,6 +38,9 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
 
 void generate_symbol(const T_LINKTI *code)
 {
+#if defined mdebug
+    fprintf(stderr, "generate_symbol: tag=%d codef=%p infoc=%d coden=%u\n", code->tag, (void *)code->info.codef, code->info.infoc, code->info.coden);
+#endif
     const uint8_t *tag_bytes = (const uint8_t *)&(code->tag);
     for (uint8_t i = 0; i < ZBLL; i++)
         compile_output_byte(tag_bytes[i]);
