@@ -328,6 +328,9 @@ void macrocode_extrn(T_LABEL *label, const char *identifier_extern, uint8_t iden
 
 void macrocode_label(T_LABEL *label)
 {
+#if defined mdebug
+    fprintf(stderr, "macrocode_label: label=%p type=%d mode=%d current_address=%zu\n", (void *)label, label->type, label->mode, current_address);
+#endif
     label->mode |= 0120;
     label->info.infon = current_address;
     return;
