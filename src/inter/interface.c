@@ -919,21 +919,20 @@ bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before
         return true;
     }
     T_LINKCB *current = before->next;
-    if (current->tag == TAGO &&
-        (current->info.infoc == '+' || current->info.infoc == '-'))
+    if (current->tag == TAGO && (current->info.infoc == '+' || current->info.infoc == '-'))
     {
         big_number->sign = current->info.infoc;
         current = current->next;
         if (current == after)
             return false; //  w chisle - lish znak
     }
-    for (; current->tag == TAGN && gcoden(current) == 0; current = current->next)
+    for (; current != after && current->tag == TAGN && gcoden(current) == 0; current = current->next)
         ;
     if (current == after)
         big_number->length = 0; //  wse cifry - nuli
     else
     {
-        for (big_number->length = 0, big_number->begin = current; current->tag == TAGN; current = current->next, big_number->length++)
+        for (big_number->length = 0, big_number->begin = current; current != after && current->tag == TAGN; current = current->next, big_number->length++)
             ;
         if (current != after)
             return false; // ne makrocifra
