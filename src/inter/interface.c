@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-12
+// 2026-10-25
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -624,8 +624,10 @@ void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
     T_LINKCB *first = before->next;
     if (first == after)
         return;
-    T_LINKCB *next_where = where->next;
     T_LINKCB *last = after->previous;
+    if (where == before || where == last)
+        return;
+    T_LINKCB *next_where = where->next;
     before->next = after;
     after->previous = before;
     last->next = next_where;
