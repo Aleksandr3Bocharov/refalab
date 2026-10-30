@@ -1838,7 +1838,7 @@ static bool try_transplant(void)
         scan_sentence_element();
     }
     // Determine numbers for generation
-    const uint16_t N = left_part_elements[best_i].right_number_element;
+    const uint16_t N = (best_length == 1) ? left_part_elements[best_i].right_number_element : left_part_elements[best_i].left_number_element;
     const uint16_t M = left_part_elements[best_i + best_length - 1].right_number_element;
     // Determine if guaranteed non-empty element exists
     bool has_non_empty = false;
