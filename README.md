@@ -64,7 +64,7 @@
 - Сортировка: QSortN, QSortW, MinN, MaxN, MinW, MaxW;
 - Множества: SetW, SetN, SetW_Union, SetW_Intersect, SetW_Diff;
 - Функции высшего порядка: Apply, Map, FoldL, FoldR;
-- Системные функции: System, Get_env, Change_dir, Arg, Time.
+- Системные функции: System, Get_Env, Change_Dir, Arg, Time.
 
 ### Лицензия
 
