@@ -26,6 +26,9 @@
 #include "refalab.h"
 #include "interface.h"
 
+// number of hex digits to print an address (info field, reference): 8 on x32, 16 on x64
+#define PTR_HEX_WIDTH ((int)(2 * sizeof(uintptr_t)))
+
 extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_current;
@@ -328,14 +331,14 @@ static void fprint_(void)
             }
             else if (current_argument->tag == TAGR)
             {
-                sprintf(string, "'%%%p'", (void *)current_argument->info.codep);
+                sprintf(string, "'%%%0*" PRIxPTR "'", PTR_HEX_WIDTH, (uintptr_t)current_argument->info.codep);
                 put_result = fputs(string, file);
             }
             else if (BRACKET(current_argument))
                 refal_abort_end("Fprint: unknown bracket type");
             else
             {
-                sprintf(string, "'%" PRIx32 ",%p'", current_argument->tag, current_argument->info.code);
+                sprintf(string, "'%" PRIx32 ",%0*" PRIxPTR "'", current_argument->tag, PTR_HEX_WIDTH, (uintptr_t)current_argument->info.code);
                 put_result = fputs(string, file);
             }
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
@@ -414,14 +417,14 @@ static void fprints_(void)
             }
             else if (current_argument->tag == TAGR)
             {
-                sprintf(string, "%%%p", (void *)current_argument->info.codep);
+                sprintf(string, "%%%0*" PRIxPTR, PTR_HEX_WIDTH, (uintptr_t)current_argument->info.codep);
                 put_result = fputs(string, file);
             }
             else if (BRACKET(current_argument))
                 refal_abort_end("Fprints: unknown bracket type");
             else
             {
-                sprintf(string, "%" PRIu32 ",%p", current_argument->tag, current_argument->info.code);
+                sprintf(string, "%" PRIx32 ",%0*" PRIxPTR, current_argument->tag, PTR_HEX_WIDTH, (uintptr_t)current_argument->info.code);
                 put_result = fputs(string, file);
             }
             if (set_eof_linkcb(put_result, file, refal.previous_argument))
@@ -523,7 +526,7 @@ static void fprintm_(void)
                 else if (current_argument->tag == TAGR)
                 {
                     char string_reference[512];
-                    sprintf(string_reference, "/%%%p/", (void *)current_argument->info.codep);
+                    sprintf(string_reference, "/%%%0*" PRIxPTR "/", PTR_HEX_WIDTH, (uintptr_t)current_argument->info.codep);
                     strcat(string, string_reference);
                 }
                 else if (BRACKET(current_argument))
@@ -531,7 +534,7 @@ static void fprintm_(void)
                 else
                 {
                     char string_symbol[512];
-                    sprintf(string_symbol, "/%" PRIu32 ",%p/", current_argument->tag, current_argument->info.code);
+                    sprintf(string_symbol, "/%" PRIx32 ",%0*" PRIxPTR "/", current_argument->tag, PTR_HEX_WIDTH, (uintptr_t)current_argument->info.code);
                     strcat(string, string_symbol);
                 }
                 put_result = fputs(string, file);

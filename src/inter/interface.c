@@ -25,6 +25,9 @@
 
 #define FILE_HASH_SIZE 256
 
+// number of hex digits to print an address (info field, reference): 8 on x32, 16 on x64
+#define PTR_HEX_WIDTH ((int)(2 * sizeof(uintptr_t)))
+
 extern uint8_t refalab_feof, refalab_ferror;
 
 typedef struct file_node
@@ -502,11 +505,11 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
             putchar('\'');
         }
         else if (print->tag == TAGR)
-            printf("'%%%p'", (void *)print->info.codep);
+            printf("'%%%0*" PRIxPTR "'", PTR_HEX_WIDTH, (uintptr_t)print->info.codep);
         else if (BRACKET(print))
             refal_abort_end("print_expression: unknown bracket type");
         else
-            printf("'%" PRIx32 ",%p'", print->tag, print->info.code);
+            printf("'%" PRIx32 ",%0*" PRIxPTR "'", print->tag, PTR_HEX_WIDTH, (uintptr_t)print->info.code);
     }
     if (new_line)
         printf("\n");
@@ -543,11 +546,11 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
                 putchar(toupper((unsigned char)*label));
         }
         else if (prints->tag == TAGR)
-            printf("%%%p", (void *)prints->info.codep);
+            printf("%%%0*" PRIxPTR, PTR_HEX_WIDTH, (uintptr_t)prints->info.codep);
         else if (BRACKET(prints))
             refal_abort_end("print_expression_s: unknown bracket type");
         else
-            printf("%" PRIx32 ",%p", prints->tag, prints->info.code);
+            printf("%" PRIx32 ",%0*" PRIxPTR, prints->tag, PTR_HEX_WIDTH, (uintptr_t)prints->info.code);
     }
     if (new_line)
         printf("\n");
@@ -605,11 +608,11 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
                     putchar(' ');
             }
             else if (printm->tag == TAGR)
-                printf("/%%%p/", (void *)printm->info.codep);
+                printf("/%%%0*" PRIxPTR "/", PTR_HEX_WIDTH, (uintptr_t)printm->info.codep);
             else if (BRACKET(printm))
                 refal_abort_end("print_expression_m: unknown bracket type");
             else
-                printf("/%" PRIu32 ",%p/", printm->tag, printm->info.code);
+                printf("/%" PRIx32 ",%0*" PRIxPTR "/", printm->tag, PTR_HEX_WIDTH, (uintptr_t)printm->info.code);
         }
     }
     if (tago)
