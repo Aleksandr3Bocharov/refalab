@@ -267,7 +267,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
     if (!exist_status_table(status_table))
         refal_abort_end("refal_run: attempt to run unexisting process");
     if (status_table->state == 4)
-        refal_abort_end("refal_run: attampt to run process in state 4");
+        refal_abort_end("refal_run: attempt to run process in state 4");
     // saving part of refal-block
     save_process->upshot = refal.upshot;
     save_process->previous_argument = refal.previous_argument;
