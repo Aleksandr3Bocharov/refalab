@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-11-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -12,14 +12,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <ctype.h>
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <time.h>
-#include <unistd.h>
 #if defined POSIX
+#include <unistd.h>
 #include <sys/wait.h>
 #endif
 #include "refalab.h"
@@ -197,7 +196,6 @@ static char *refalab_source_buffer = NULL; // refalab source buffer
 static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
 static uint32_t errors_count;
-static T_LABEL *specifier_abbreviated[7]; // abbreviated specifier table
 static char statement_key[8];
 static size_t module_length; // module length
 static T_TIMESPEC time_begin;
@@ -395,8 +393,6 @@ int main(int argc, char *argv[])
             scanner.module_number++;
             flags.end_refalab_source = false;
             module_length = 0;
-            for (uint8_t i = 0; i < 7; ++i)
-                specifier_abbreviated[i] = NULL;
             specifier_pool_init();
             function_pool_init();
             compile_output_init();
@@ -1329,14 +1325,10 @@ void scan_sentence_element(void)
             current_sentence_element.type = S_V;
             if (flags.left_part_sentence)
             {
-                if (*(specifier_abbreviated + specifier_code) == NULL)
-                {
-                    *(specifier_abbreviated + specifier_code) = (T_LABEL *)generate_info_label();
-                    macrocode_label(*(specifier_abbreviated + specifier_code));
-                    generate_specifier(specifier_code + 7);
-                    generate_specifier(ns_ngw);
-                };
-                current_sentence_element.specifier.info.codef = *(specifier_abbreviated + specifier_code);
+                specifier_buffer_begin();
+                specifier_buffer_append_byte(specifier_code + 7);
+                specifier_buffer_append_byte(ns_ngw);
+                current_sentence_element.specifier.info.codef = specifier_pool_find_or_create();
             };
             next_char();
             scanner_state = SCNVD;
