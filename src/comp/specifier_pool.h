@@ -29,6 +29,8 @@ typedef struct unique_specifier
     T_LABEL *label;               // specifier label
     T_PENDING_ADDRESS *addresses; // addresses array
     size_t address_count;         // addresses count
+    bool named;                   // named specifier ($SPEC): the label is the user's one
+    bool symbol_only;             // used only by variables of type s: brackets are never checked
     struct unique_specifier *next;
 } T_UNIQUE_SPECIFIER;
 
@@ -40,7 +42,9 @@ extern void specifier_buffer_append_byte(uint8_t byte);
 extern void specifier_buffer_append_address(T_LABEL *label);
 extern void specifier_buffer_append_symbol(const T_LINKTI *code);
 
-extern T_LABEL *specifier_pool_find_or_create(void);
+extern T_LABEL *specifier_pool_find_or_create(bool symbol_only);
+extern void specifier_pool_add_named(T_LABEL *label);
+extern void specifier_buffer_abort(void);
 extern void specifier_pool_finalize(void);
 
 extern bool specifier_pool_is_collecting(void);

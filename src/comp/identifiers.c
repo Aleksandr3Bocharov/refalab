@@ -218,7 +218,7 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     return label;
 }
 
-void specifier_definition(void)
+T_LABEL *specifier_definition(void)
 {
     T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
     label->type |= 0200;
@@ -230,9 +230,9 @@ void specifier_definition(void)
     else
     {
         label->cursor_number_defined = scanner.label_cursor_number;
-        macrocode_label(label);
+        label->mode |= 0120; // the address is set at the end of the module (specifier_pool_finalize)
     }
-    return;
+    return label;
 }
 
 void set_equ(const char *identifier1, uint8_t identifier1_length, size_t identifier1_cursor_number, const char *identifier2, uint8_t identifier2_length, size_t identifier2_cursor_number)

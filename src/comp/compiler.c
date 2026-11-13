@@ -1160,9 +1160,11 @@ void scan_sentence_element(void)
                 if (compile_specifer(')'))
                 {
                     if (flags.left_part_sentence)
-                        current_sentence_element.specifier.info.codef = specifier_pool_find_or_create();
+                        current_sentence_element.specifier.info.codef = specifier_pool_find_or_create(current_sentence_element.type == S_V);
                     next_char();
                 }
+                else if (flags.left_part_sentence)
+                    specifier_buffer_abort();
             }
             else if (current_char == ':')
             {
@@ -1328,7 +1330,7 @@ void scan_sentence_element(void)
                 specifier_buffer_begin();
                 specifier_buffer_append_byte(specifier_code + 7);
                 specifier_buffer_append_byte(ns_ngw);
-                current_sentence_element.specifier.info.codef = specifier_pool_find_or_create();
+                current_sentence_element.specifier.info.codef = specifier_pool_find_or_create(true);
             };
             next_char();
             scanner_state = SCNVD;
@@ -2170,18 +2172,21 @@ static void specifier(void)
         fprintf(stderr, "specifier: identifier=%.*s, setting left_part=true\n", scanner.label_name_length, scanner.label_name);
 #endif
         flags.left_part_sentence = true;
-        specifier_definition();
+        T_LABEL *specifier_label = specifier_definition();
 #if defined mdebug
         fprintf(stderr, "specifier: after specifier_definition\n");
 #endif
+        specifier_buffer_begin();
         if (compile_specifer(';'))
         {
 #if defined mdebug
             fprintf(stderr, "specifier: compile_specifer OK\n");
 #endif
+            specifier_pool_add_named(specifier_label);
             next_char();
             return;
         }
+        specifier_buffer_abort();
 #if defined mdebug
         fprintf(stderr, "specifier: compile_specifer FAILED\n");
 #endif

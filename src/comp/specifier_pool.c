@@ -663,6 +663,7 @@ static size_t mz_best_n;
 static size_t mz_best_segs;
 static uint32_t mz_best_cost;
 static unsigned long mz_work;
+static bool mz_var_s; // the specifier is checked only on symbols (variable of type s)
 
 static bool mz_class_covers(unsigned k, const MZ_ATOM *a)
 {
@@ -1085,8 +1086,9 @@ static void mz_solve(const uint16_t *res, bool p, size_t depth, uint32_t cost)
     }
 }
 
+// bfix: -1 - as is; 0 or 1 - the answer for brackets is chosen freely (variable of type s)
 // returns false if the specifier matches any link (no check is needed)
-static bool minimize_buffer(void)
+static bool minimize_buffer_mode(int bfix)
 {
     if (spec_buffer_size == 0)
         return true;
@@ -1206,6 +1208,8 @@ static bool minimize_buffer(void)
             if (mz_eval(spec_buffer, terms, n, segs, &raw_probe[i], c, cl, ncl))
                 raw_out[i] |= 1u << c;
     }
+    if (bfix >= 0)
+        raw_out[0] = bfix != 0 ? (uint32_t)((1u << ncv) - 1u) : 0u; // raw atom 0 is the brackets
     // black boxes that influence the answer
     size_t relevant[MZ_MAX_CLL];
     size_t nrel = 0;
@@ -1412,6 +1416,8 @@ static bool minimize_buffer(void)
             {
                 if (tag == TAGO || tag == TAGN || tag == TAGF)
                     continue;
+                if (mz_var_s && (tag & 1) != 0)
+                    continue; // a variable of type s is never checked on brackets
                 probe.tag = tag;
                 probe.val = 0;
                 probe.label = NULL;
@@ -1473,9 +1479,73 @@ static bool minimize_buffer(void)
     return true;
 }
 
-T_LABEL *specifier_pool_find_or_create(void)
+// For a variable of type s the answer for brackets is not important:
+// the shortest of the three variants (as is, "yes", "no") is taken.
+static bool minimize_buffer(void)
+{
+    if (!mz_var_s || spec_buffer_size == 0)
+        return minimize_buffer_mode(-1);
+    const size_t orig_size = spec_buffer_size;
+    const size_t orig_count = pending_count;
+    uint8_t *orig_buf = malloc(orig_size);
+    T_PENDING_ADDRESS *orig_pend = malloc((orig_count + 1) * sizeof(T_PENDING_ADDRESS));
+    if (orig_buf == NULL || orig_pend == NULL)
+        error_no_memory();
+    memcpy(orig_buf, spec_buffer, orig_size);
+    if (orig_count > 0)
+        memcpy(orig_pend, pending_addresses, orig_count * sizeof(T_PENDING_ADDRESS));
+    uint8_t *best_buf = NULL;
+    T_PENDING_ADDRESS *best_pend = NULL;
+    size_t best_size = 0;
+    size_t best_count = 0;
+    bool result = true;
+    const int modes[3] = {-1, 1, 0};
+    for (int m = 0; m < 3; m++)
+    {
+        memcpy(spec_buffer, orig_buf, orig_size);
+        spec_buffer_size = orig_size;
+        if (orig_count > 0)
+            memcpy(pending_addresses, orig_pend, orig_count * sizeof(T_PENDING_ADDRESS));
+        pending_count = orig_count;
+        if (!minimize_buffer_mode(modes[m]))
+        {
+            result = false;
+            break;
+        }
+        if (best_buf == NULL || spec_buffer_size < best_size)
+        {
+            free(best_buf);
+            free(best_pend);
+            best_size = spec_buffer_size;
+            best_count = pending_count;
+            best_buf = malloc(best_size);
+            best_pend = malloc((best_count + 1) * sizeof(T_PENDING_ADDRESS));
+            if (best_buf == NULL || best_pend == NULL)
+                error_no_memory();
+            memcpy(best_buf, spec_buffer, best_size);
+            if (best_count > 0)
+                memcpy(best_pend, pending_addresses, best_count * sizeof(T_PENDING_ADDRESS));
+        }
+    }
+    if (result)
+    {
+        memcpy(spec_buffer, best_buf, best_size);
+        spec_buffer_size = best_size;
+        if (best_count > 0)
+            memcpy(pending_addresses, best_pend, best_count * sizeof(T_PENDING_ADDRESS));
+        pending_count = best_count;
+    }
+    free(best_buf);
+    free(best_pend);
+    free(orig_buf);
+    free(orig_pend);
+    return result;
+}
+
+T_LABEL *specifier_pool_find_or_create(bool symbol_only)
 {
     collecting = false;
+    mz_var_s = symbol_only;
     if (!canonicalize_buffer())
         return NULL;
     if (!minimize_buffer())
@@ -1492,6 +1562,11 @@ T_LABEL *specifier_pool_find_or_create(void)
     T_UNIQUE_SPECIFIER *current = pool_head;
     while (current != NULL)
     {
+        if (current->named)
+        {
+            current = current->next;
+            continue;
+        }
         if (current->length != spec_buffer_size)
         {
 #if defined mdebug
@@ -1535,6 +1610,8 @@ T_LABEL *specifier_pool_find_or_create(void)
 #if defined mdebug
             fprintf(stderr, "  FOUND existing label=%p\n", (void *)current->label);
 #endif
+            if (!symbol_only)
+                current->symbol_only = false;
             return current->label;
         }
 #if defined mdebug
@@ -1557,6 +1634,8 @@ T_LABEL *specifier_pool_find_or_create(void)
     memcpy(new_spec->bytes, spec_buffer, spec_buffer_size);
     new_spec->length = spec_buffer_size;
     new_spec->label = (T_LABEL *)generate_info_label();
+    new_spec->named = false;
+    new_spec->symbol_only = symbol_only;
     new_spec->address_count = pending_count;
     if (pending_count > 0)
     {
@@ -1576,6 +1655,101 @@ T_LABEL *specifier_pool_find_or_create(void)
     fprintf(stderr, "  CREATED new label=%p\n", (void *)new_spec->label);
 #endif
     return new_spec->label;
+}
+
+// stop collecting after an error in the specifier
+void specifier_buffer_abort(void)
+{
+    collecting = false;
+    spec_buffer_size = 0;
+    pending_count = 0;
+    return;
+}
+
+// Named specifier ($SPEC): the collected terms wait for the end of the module,
+// where they are written in the canonical minimal form (the aliases are known then)
+void specifier_pool_add_named(T_LABEL *label)
+{
+    collecting = false;
+    T_UNIQUE_SPECIFIER *new_spec = malloc(sizeof(T_UNIQUE_SPECIFIER));
+    if (new_spec == NULL)
+        error_no_memory();
+    new_spec->bytes = malloc(spec_buffer_size > 0 ? spec_buffer_size : 1);
+    if (new_spec->bytes == NULL)
+        error_no_memory();
+    if (spec_buffer_size > 0)
+        memcpy(new_spec->bytes, spec_buffer, spec_buffer_size);
+    new_spec->length = spec_buffer_size;
+    new_spec->label = label;
+    new_spec->named = true;
+    new_spec->symbol_only = false;
+    new_spec->address_count = pending_count;
+    if (pending_count > 0)
+    {
+        new_spec->addresses = malloc(pending_count * sizeof(T_PENDING_ADDRESS));
+        if (new_spec->addresses == NULL)
+            error_no_memory();
+        memcpy(new_spec->addresses, pending_addresses, pending_count * sizeof(T_PENDING_ADDRESS));
+    }
+    else
+        new_spec->addresses = NULL;
+    new_spec->next = pool_head;
+    pool_head = new_spec;
+    return;
+}
+
+// The aliases ($EQU) are resolved, so the black boxes :A: and :B: may be the same one now
+static void specifier_recanonicalize(T_UNIQUE_SPECIFIER *spec)
+{
+    if (spec->length == 0)
+        return;
+    ensure_buffer_capacity(spec->length);
+    memcpy(spec_buffer, spec->bytes, spec->length);
+    spec_buffer_size = spec->length;
+    if (spec->address_count > pending_capacity)
+    {
+        T_PENDING_ADDRESS *new_pending = realloc(pending_addresses, spec->address_count * sizeof(T_PENDING_ADDRESS));
+        if (new_pending == NULL)
+            error_no_memory();
+        pending_addresses = new_pending;
+        pending_capacity = spec->address_count;
+    }
+    if (spec->address_count > 0)
+        memcpy(pending_addresses, spec->addresses, spec->address_count * sizeof(T_PENDING_ADDRESS));
+    pending_count = spec->address_count;
+    mz_var_s = spec->symbol_only;
+    if (!canonicalize_buffer() || !minimize_buffer())
+    {
+        // the specifier matches any link: "w" is its shortest form
+        spec_buffer[0] = SP_W;
+        spec_buffer[1] = SP_NGW;
+        spec_buffer_size = 2;
+        pending_count = 0;
+    }
+    if (spec_buffer_size == spec->length && pending_count == spec->address_count &&
+        memcmp(spec_buffer, spec->bytes, spec->length) == 0)
+        return; // nothing changed
+    uint8_t *new_bytes = malloc(spec_buffer_size);
+    if (new_bytes == NULL)
+        error_no_memory();
+    memcpy(new_bytes, spec_buffer, spec_buffer_size);
+    free(spec->bytes);
+    spec->bytes = new_bytes;
+    spec->length = spec_buffer_size;
+    if (spec->addresses != NULL)
+    {
+        free(spec->addresses);
+        spec->addresses = NULL;
+    }
+    spec->address_count = pending_count;
+    if (pending_count > 0)
+    {
+        spec->addresses = malloc(pending_count * sizeof(T_PENDING_ADDRESS));
+        if (spec->addresses == NULL)
+            error_no_memory();
+        memcpy(spec->addresses, pending_addresses, pending_count * sizeof(T_PENDING_ADDRESS));
+    }
+    return;
 }
 
 static bool specifiers_equal(const T_UNIQUE_SPECIFIER *a, const T_UNIQUE_SPECIFIER *b)
@@ -1609,6 +1783,13 @@ void specifier_pool_finalize(void)
             current->addresses[i].label = resolve_label_alias(current->addresses[i].label);
         current = current->next;
     }
+    // === PASS 1b: canonical minimal form once more, now with the aliases resolved ===
+    current = pool_head;
+    while (current != NULL)
+    {
+        specifier_recanonicalize(current);
+        current = current->next;
+    }
     // === PASS 2 ===
     current = pool_head;
     while (current != NULL)
@@ -1617,7 +1798,7 @@ void specifier_pool_finalize(void)
         T_UNIQUE_SPECIFIER *other = current->next;
         while (other != NULL)
         {
-            if (specifiers_equal(current, other))
+            if (!other->named && specifiers_equal(current, other))
             {
 #if defined mdebug
                 fprintf(stderr, "  MERGE: label=%p -> label=%p\n", (void *)other->label, (void *)current->label);
