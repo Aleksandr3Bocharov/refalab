@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-11-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file identifiers.h  ----------
@@ -10,7 +10,6 @@
 #ifndef IDENTIFIERS_H
 #define IDENTIFIERS_H
 
-#include <stddef.h>
 #include <stdint.h>
 #include "avl_identifiers.h"
 

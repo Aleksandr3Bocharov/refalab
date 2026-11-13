@@ -1,13 +1,15 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-05
+// 2026-11-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file identifiers.c  ----------
 //         Work with identifier table
 //------------------------------------------
 
+#if defined mdebug
 #include <stdio.h>
+#endif
 #include <stdlib.h>
 #include <stdint.h>
 #include "refalab.h"
