@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-05
+// 2026-11-14
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -189,7 +189,10 @@ static T_LINKTI xncode;           // work structure
 static T_LINKTI function_pointer; // work pointer
 
 static uint8_t current_left_part_element, current_left_board, current_right_board; // left part element pointers
+#define SENTENCE_SEARCH_BUDGET 5000  // nodes of transplantation search for one sentence
+#define DECISION_SEARCH_BUDGET 2000  // nodes of transplantation search for one decision
 static uint8_t left_part_elements_count;                                           // left part element count
+static int32_t search_budget;                                                    // nodes left for transplantation search of the sentence
 static uint8_t variable_index, temp_variable_index;                                // element index
 static uint16_t number_element;                                                    // current number of element
 static uint8_t jump_stack_pointer;                                                 // counter of the longing levels
@@ -427,6 +430,7 @@ void compile_sentence(bool direction)
         case RCG:
             function_definition();
             left_part_elements_count = current_left_part_element;
+            search_budget = SENTENCE_SEARCH_BUDGET;
             current_left_board = 0;
             current_right_board = current_left_part_element;
             number_element = 4;
@@ -1668,166 +1672,285 @@ void compile_sentence(bool direction)
         }
 }
 
-static bool try_transplant(void)
+//------------------------------------------------------------------
+//   Transplantation of left part pieces into the right part.
+//
+//   The right part is read ahead (with the listing suppressed) into
+//   rp_elements. A piece is a run of left part elements that equals
+//   a run of right part elements; it is moved into the result by one
+//   operator. For the current right element the compiler chooses between
+//   "transplant one of the pieces" and "generate the element as usual"
+//   by a search that minimizes the number of generated operators of
+//   the rest of the right part (branch and bound with a node budget).
+//
+//   Brackets: a piece must be balanced, because bracket links keep
+//   pointers to their pair. Balance is counted while the piece grows,
+//   so the pairs of left part brackets are not needed.
+//------------------------------------------------------------------
+#define LOOKAHEAD_MAX UINT8_MAX
+#define OPTIONS_MAX 24
+
+static T_SENTENCE_ELEMENT rp_elements[LOOKAHEAD_MAX];
+static uint16_t rp_count;
+
+typedef struct transplant_option
 {
-    // Step 1: Save scanner state
-    T_SAVE_SCANNER_STATE saved_state;
-    save_scanner_state(&saved_state);
-    // Step 2: Find candidates
-    uint8_t candidates[UINT8_MAX];
-    uint8_t candidates_count = 0;
+    uint8_t first;     // first left part element of the piece
+    uint8_t length;    // number of left part elements (used ones inside included)
+    uint16_t consumed; // number of right part elements replaced by the piece
+} T_TRANSPLANT_OPTION;
+
+static bool rp_element_matches(const T_SENTENCE_ELEMENT *r, uint8_t j, const bool *in_chain)
+{
+    if (left_part_elements[j].type != r->type)
+        return false;
+    if (r->type == SC)
+    {
+        if (left_part_elements[j].code.tag != r->code.tag)
+            return false;
+        return left_part_elements[j].code.info.codef == r->code.info.codef;
+    }
+    if (r->type == S_V || r->type == W_V || r->type == E_V)
+    {
+        const uint8_t v = left_part_elements[j].variable_index;
+        if (variables[v].identifier_length != r->identifier_length)
+            return false;
+        if (strncmp(variables[v].identifier, r->identifier, variables[v].identifier_length) != 0)
+            return false;
+        if (left_part_elements[j].v_variable != r->v_variable)
+            return false;
+        return in_chain[j];
+    }
+    return true;
+}
+
+// Keeps options sorted by consumed (descending); equal ones stay in the order of adding.
+static void add_option(T_TRANSPLANT_OPTION *options, uint8_t *count, uint8_t first, uint8_t length, uint16_t consumed)
+{
+    uint8_t k = *count;
+    if (k == OPTIONS_MAX)
+    {
+        if (consumed <= options[k - 1].consumed)
+            return;
+        k--;
+    }
+    else
+        (*count)++;
+    while (k > 0 && options[k - 1].consumed < consumed)
+    {
+        options[k] = options[k - 1];
+        k--;
+    }
+    options[k].first = first;
+    options[k].length = length;
+    options[k].consumed = consumed;
+}
+
+// All balanced pieces that start at rp_elements[pos] (best OPTIONS_MAX of them).
+static uint8_t collect_options(uint16_t pos, const bool *used, const bool *in_chain, T_TRANSPLANT_OPTION *options)
+{
+    uint8_t count = 0;
     for (uint8_t i = 1; i <= left_part_elements_count; i++)
     {
-        // Skip used elements
-        if (left_part_elements[i].used)
+        if (used[i] || !rp_element_matches(&rp_elements[pos], i, in_chain))
             continue;
-        // Check type match
-        if (left_part_elements[i].type != current_sentence_element.type)
-            continue;
-        // Check code match for constants
-        if (current_sentence_element.type == SC)
+        uint16_t r = pos;
+        uint16_t consumed = 0;
+        uint8_t balance = 0;
+        for (uint8_t j = i; j <= left_part_elements_count; j++)
         {
-            if (left_part_elements[i].code.tag != current_sentence_element.code.tag)
+            // Used element inside - "garbage", it is moved together with the piece
+            if (j != i && used[j])
                 continue;
-            if (left_part_elements[i].code.info.codef != current_sentence_element.code.info.codef)
-                continue;
-        }
-        // Check variable match and chain availability
-        if (current_sentence_element.type == S_V || current_sentence_element.type == W_V || current_sentence_element.type == E_V)
-        {
-            const uint8_t v = left_part_elements[i].variable_index;
-            if (variables[v].identifier_length != current_sentence_element.identifier_length)
-                continue;
-            if (strncmp(variables[v].identifier, current_sentence_element.identifier, variables[v].identifier_length) != 0)
-                continue;
-            if (variables[v].v_variable != current_sentence_element.v_variable)
-                continue;
-            // Check availability in chain
-            bool found = false;
-            uint8_t curr = variables[v].last_left_part_element;
-            while (curr != 0)
+            if (r >= rp_count || !rp_element_matches(&rp_elements[r], j, in_chain))
+                break;
+            if (left_part_elements[j].type == LB)
+                balance++;
+            else if (left_part_elements[j].type == RB)
             {
-                if (curr == i)
-                {
-                    found = true;
+                if (balance == 0)
                     break;
-                }
-                curr = left_part_elements[curr].next_variable;
+                balance--;
             }
-            if (!found)
-                continue;
+            r++;
+            consumed++;
+            if (balance == 0)
+                add_option(options, &count, i, (uint8_t)(j - i + 1), consumed);
         }
-        // Add candidate
-        candidates[candidates_count++] = i;
     }
-    if (candidates_count == 0)
+    return count;
+}
+
+// Number of right part elements that the ordinary handlers generate by one operator.
+static uint16_t copy_unit(uint16_t pos)
+{
+    const T_SENTENCE_ELEMENT *e = &rp_elements[pos];
+    uint16_t unit = 1;
+    if (e->type == SC && e->code.tag == TAGO)
     {
-        restore_scanner_state(&saved_state);
+        // a run of symbols is generated by one operator
+        while (pos + unit < rp_count && unit < UINT8_MAX && rp_elements[pos + unit].type == SC && rp_elements[pos + unit].code.tag == TAGO)
+            unit++;
+    }
+    else if (e->type == LB || e->type == K)
+    {
+        // "()" and a function name after '<' are generated together with the bracket
+        if (pos + 1 < rp_count)
+        {
+            if (e->type == LB && rp_elements[pos + 1].type == RB)
+                unit = 2;
+            else if (rp_elements[pos + 1].type == SC && rp_elements[pos + 1].code.tag == TAGF)
+                unit = 2;
+        }
+    }
+    return unit;
+}
+
+static void mark_option_used(bool *used, const T_TRANSPLANT_OPTION *option)
+{
+    for (uint8_t p = option->first; p < option->first + option->length; p++)
+        used[p] = true;
+}
+
+// Number of operators for rp_elements[pos..] when the longest piece is always taken.
+static uint16_t greedy_cost(uint16_t pos, bool *used, const bool *in_chain)
+{
+    uint16_t cost = 0;
+    T_TRANSPLANT_OPTION options[OPTIONS_MAX];
+    while (pos < rp_count)
+    {
+        cost++;
+        if (collect_options(pos, used, in_chain, options) > 0)
+        {
+            mark_option_used(used, &options[0]);
+            pos += options[0].consumed;
+        }
+        else
+            pos += copy_unit(pos);
+    }
+    return cost;
+}
+
+// Minimal number of operators for rp_elements[pos..]. The result is exact only
+// if it is less than limit; otherwise any value >= limit is returned.
+static uint16_t solve(uint16_t pos, const bool *used, const bool *in_chain, uint16_t limit, int32_t *budget)
+{
+    uint16_t base = 0;
+    uint8_t options_count = 0;
+    T_TRANSPLANT_OPTION options[OPTIONS_MAX];
+    while (pos < rp_count)
+    {
+        if (base >= limit)
+            return base;
+        options_count = collect_options(pos, used, in_chain, options);
+        if (options_count > 0)
+            break;
+        base++;
+        pos += copy_unit(pos);
+    }
+    if (pos >= rp_count)
+        return base;
+    if (base + 1 >= limit)
+        return limit;
+    bool next_used[UINT8_MAX];
+    if ((*budget)-- <= 0)
+    {
+        memcpy(next_used, used, sizeof(next_used));
+        return base + greedy_cost(pos, next_used, in_chain);
+    }
+    uint16_t best = limit;
+    for (uint8_t k = 0; k < options_count; k++)
+    {
+        memcpy(next_used, used, sizeof(next_used));
+        mark_option_used(next_used, &options[k]);
+        const uint16_t cost = base + 1 + solve(pos + options[k].consumed, next_used, in_chain, best - base - 1, budget);
+        if (cost < best)
+            best = cost;
+    }
+    const uint16_t cost = base + 1 + solve(pos + copy_unit(pos), used, in_chain, best - base - 1, budget);
+    if (cost < best)
+        best = cost;
+    return best;
+}
+
+static bool try_transplant(void)
+{
+    bool used[UINT8_MAX];
+    bool in_chain[UINT8_MAX];
+    // Step 1: Quick check - is there any candidate for the current element
+    for (uint8_t i = 0; i <= left_part_elements_count; i++)
+    {
+        used[i] = left_part_elements[i].used;
+        in_chain[i] = true;
+    }
+    // in_chain: variable elements that are still in their variable chain
+    for (uint8_t i = 1; i <= left_part_elements_count; i++)
+        if (left_part_elements[i].type == S_V || left_part_elements[i].type == W_V || left_part_elements[i].type == E_V)
+            in_chain[i] = false;
+    for (uint8_t v = 0; v < variables_count; v++)
+        for (uint8_t curr = variables[v].last_left_part_element; curr != 0; curr = left_part_elements[curr].next_variable)
+            in_chain[curr] = true;
+    rp_elements[0] = current_sentence_element;
+    bool has_candidate = false;
+    for (uint8_t i = 1; i <= left_part_elements_count; i++)
+        if (!used[i] && rp_element_matches(&rp_elements[0], i, in_chain))
+        {
+            has_candidate = true;
+            break;
+        }
+    if (!has_candidate)
+        return false;
+    // Step 2: Read the rest of the right part ahead
+    T_SAVE_SCANNER_STATE saved_state;
+    save_scanner_state(&saved_state);
+    suppress_listing = true;
+    rp_count = 1;
+    while (rp_count < LOOKAHEAD_MAX)
+    {
+        scan_sentence_element();
+        if (current_sentence_element.type == END || current_sentence_element.type == NONE)
+            break;
+        rp_elements[rp_count++] = current_sentence_element;
+    }
+    restore_scanner_state(&saved_state);
+    // Step 3: Choose between transplantation of a piece and ordinary generation
+    T_TRANSPLANT_OPTION options[OPTIONS_MAX];
+    const uint8_t options_count = collect_options(0, used, in_chain, options);
+    if (options_count == 0)
+    {
         free_scanner_state(&saved_state);
         return false;
     }
-    // Step 3: Expand transplant (greedy, on-the-fly)
-    uint8_t best_i = 0;
-    uint8_t best_length = 0;
-    for (uint8_t c = 0; c < candidates_count; c++)
+    uint8_t best_option = 0;
+    // When the budget of the sentence is exhausted the longest piece is taken
+    if (search_budget > 0)
     {
-        const uint8_t i = candidates[c];
-        // Return scanner to initial position for each candidate
-        restore_scanner_state(&saved_state);
-        suppress_listing = true;
-        uint8_t length = 1;
-        uint8_t k = 1;
-        while (i + k <= left_part_elements_count)
+        int32_t budget = search_budget < DECISION_SEARCH_BUDGET ? search_budget : DECISION_SEARCH_BUDGET;
+        const int32_t budget_start = budget;
+        uint16_t best_cost = UINT16_MAX;
+        bool next_used[UINT8_MAX];
+        for (uint8_t k = 0; k < options_count; k++)
         {
-            // Used element — "garbage"
-            if (left_part_elements[i + k].used)
+            memcpy(next_used, used, sizeof(next_used));
+            mark_option_used(next_used, &options[k]);
+            const uint16_t cost = 1 + solve(options[k].consumed, next_used, in_chain, best_cost - 1, &budget);
+            if (cost < best_cost)
             {
-                length++;
-                k++;
-                continue;
+                best_cost = cost;
+                best_option = k;
             }
-            // Read next right part element
-            scan_sentence_element();
-            // Check type match (NONE will not match any left part type)
-            if (left_part_elements[i + k].type != current_sentence_element.type)
-                break;
-            // Check code match for constants
-            if (left_part_elements[i + k].type == SC)
-            {
-                if (left_part_elements[i + k].code.tag != current_sentence_element.code.tag)
-                    break;
-                if (left_part_elements[i + k].code.info.codef != current_sentence_element.code.info.codef)
-                    break;
-            }
-            // Check variable match and chain availability
-            if (left_part_elements[i + k].type == S_V || left_part_elements[i + k].type == W_V || left_part_elements[i + k].type == E_V)
-            {
-                const uint8_t v = left_part_elements[i + k].variable_index;
-                if (variables[v].identifier_length != current_sentence_element.identifier_length)
-                    break;
-                if (strncmp(variables[v].identifier, current_sentence_element.identifier, variables[v].identifier_length) != 0)
-                    break;
-                if (variables[v].v_variable != current_sentence_element.v_variable)
-                    break;
-                bool found = false;
-                uint8_t curr = variables[v].last_left_part_element;
-                while (curr != 0)
-                {
-                    if (curr == i + k)
-                    {
-                        found = true;
-                        break;
-                    }
-                    curr = left_part_elements[curr].next_variable;
-                }
-                if (!found)
-                    break;
-            }
-            length++;
-            k++;
         }
-        // Step 4: Check bracket pairing
-        uint8_t p = i;
-        while (p < i + length)
+        // Ordinary generation is chosen only if it is strictly cheaper
+        const bool copy_is_better = 1 + solve(copy_unit(0), used, in_chain, best_cost - 1, &budget) < best_cost;
+        search_budget -= budget_start - budget;
+        if (copy_is_better)
         {
-            if (left_part_elements[p].type == LB)
-            {
-                const uint8_t pair = left_part_elements[p].pair_bracket;
-                if (pair < i + length)
-                {
-                    // Pair inside transplant — jump over
-                    p = pair + 1;
-                    continue;
-                }
-                else
-                {
-                    // Pair outside transplant on the right
-                    length = p - i;
-                    break;
-                }
-            }
-            if (left_part_elements[p].type == RB)
-            {
-                // Pair guaranteed to be left of transplant
-                // Truncate transplant before this RB
-                length = p - i;
-                break;
-            }
-            p++;
-        }
-        // Step 5: Select best transplant
-        if (length > best_length)
-        {
-            best_length = length;
-            best_i = i;
+            free_scanner_state(&saved_state);
+            return false;
         }
     }
-    if (best_length == 0)
-    {
-        restore_scanner_state(&saved_state);
-        free_scanner_state(&saved_state);
-        return false;
-    }
+    const uint8_t best_i = options[best_option].first;
+    const uint8_t best_length = options[best_option].length;
     // Step 6: Restore scanner state
     restore_scanner_state(&saved_state);
     // Re-read right part — LISTING IS OUTPUT
