@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-14
+// 2026-11-15
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -424,6 +424,9 @@ int main(int argc, char *argv[])
             }
             else
                 scanner.module_name_length = 0;
+#if defined mdebug
+            fprintf(stderr, "compiler: module %u start, name=%.*s, source size=%zu bytes\n", (unsigned)scanner.module_number, scanner.module_name_length, scanner.module_name, refalab_source_size);
+#endif
             macrocode_start();
             blanks_out();
             if (get_current_char() == ';')
@@ -449,6 +452,13 @@ int main(int argc, char *argv[])
             module_state = KEYS;
             break;
         case KEYS:
+#if defined mdebug
+            {
+                size_t line, column;
+                get_location(&line, &column, refalab_source_cursor);
+                fprintf(stderr, "compiler: directive $%s, line=%zu column=%zu\n", statement_key, line, column);
+            }
+#endif
             if (strcmp(statement_key, "START") == 0)
             {
                 scanner.last_error_cursor = refalab_source_cursor;
@@ -520,6 +530,9 @@ int main(int argc, char *argv[])
                     error130 = true;
                 else
                 {
+#if defined mdebug
+                    fprintf(stderr, "compiler: function %.*s\n", scanner.label_name_length, scanner.label_name);
+#endif
                     blanks_out();
                     const char current_char = get_current_char();
                     if (current_char == ';')
@@ -575,6 +588,9 @@ int main(int argc, char *argv[])
             module_state = END_STATEMENT;
             break;
         case END_STATEMENT:
+#if defined mdebug
+            fprintf(stderr, "compiler: end of module, errors=%d\n", errors_count);
+#endif
             if (errors_count == 0)
             {
                 specifier_pool_finalize();
@@ -2117,9 +2133,19 @@ static void func(void)
         flags.scanner_big_number = false;
         flags.left_part_sentence = true;
         if (strcmp(statement_key, "LEFT") == 0)
+        {
             compile_sentence(true);
+#if defined mdebug
+            fprintf(stderr, "func: sentence compiled ($LEFT), errors=%d\n", errors_count);
+#endif
+        }
         else if (strcmp(statement_key, "RIGHT") == 0)
+        {
             compile_sentence(false);
+#if defined mdebug
+            fprintf(stderr, "func: sentence compiled ($RIGHT), errors=%d\n", errors_count);
+#endif
+        }
         else
         {
             if (strlen(statement_key) != 0)
@@ -2131,6 +2157,9 @@ static void func(void)
             const char current_char = get_current_char();
             if (current_char == '}')
             {
+#if defined mdebug
+                fprintf(stderr, "func: end of function\n");
+#endif
                 function_end();
                 next_char();
                 return;
@@ -2141,7 +2170,12 @@ static void func(void)
                 break;
             }
             else
+            {
                 compile_sentence(true);
+#if defined mdebug
+                fprintf(stderr, "func: sentence compiled, errors=%d\n", errors_count);
+#endif
+            }
         }
         seek_char(';');
         if (get_current_char() == ';')
@@ -2597,6 +2631,13 @@ static void print_conclusion(void)
 
 void processing_error(void)
 {
+#if defined mdebug
+    {
+        size_t line, column;
+        get_location(&line, &column, scanner.last_error_cursor);
+        fprintf(stderr, "processing_error: error #%d at line=%zu column=%zu\n", errors_count + 1, line, column);
+    }
+#endif
     print_card_error(refalab_source_listing);
     print_card_error(terminal);
     errors_count++;

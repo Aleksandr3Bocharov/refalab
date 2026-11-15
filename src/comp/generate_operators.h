@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-15
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.h  ----------
@@ -24,10 +24,15 @@ typedef struct linkti
     } info;
 } T_LINKTI;
 
+extern void generate_operator(uint8_t operator);
 extern void generate_operator_l(uint8_t operator, T_LABEL *l);
 extern void generate_operator_n(uint8_t operator, uint8_t n);
 extern void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m);
 extern void generate_operator_s(uint8_t operator, const T_LINKTI *code);
 extern void generate_symbol(const T_LINKTI *code);
+#if defined mdebug
+extern const char *operator_name(uint8_t operator);
+extern void debug_print_symbol(const T_LINKTI *code);
+#endif
 
 #endif

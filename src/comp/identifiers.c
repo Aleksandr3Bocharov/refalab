@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-14
+// 2026-11-15
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file identifiers.c  ----------
@@ -73,6 +73,12 @@ T_INFO_LABEL *generate_info_label(void)
 
 void function_definition(void)
 {
+#if defined mdebug
+    if (scanner.label_name_length != 0)
+        fprintf(stderr, "function_definition: new function %.*s\n", scanner.label_name_length, scanner.label_name);
+    else
+        fprintf(stderr, "function_definition: next sentence of the current function\n");
+#endif
     if (scanner.label_name_length != 0)
     { // new function
         T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
@@ -110,6 +116,9 @@ void function_definition(void)
 
 void function_end(void)
 {
+#if defined mdebug
+    fprintf(stderr, "function_end: fail_sentence=%p next_sentence=%p\n", (void *)fail_sentence, (void *)next_sentence);
+#endif
     if (next_sentence != NULL)
     {
         if (fail_sentence != NULL)
@@ -124,6 +133,9 @@ void function_end(void)
 
 void set_empty(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
+#if defined mdebug
+    fprintf(stderr, "set_empty: %.*s\n", identifier_length, identifier);
+#endif
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
@@ -143,6 +155,9 @@ void set_empty(const char *identifier, uint8_t identifier_length, size_t identif
 
 void set_swap(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
+#if defined mdebug
+    fprintf(stderr, "set_swap: %.*s\n", identifier_length, identifier);
+#endif
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     label->type |= 0100;
     if (label->mode & 0020)
@@ -178,6 +193,9 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t identifi
 
 void set_entry(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 {
+#if defined mdebug
+    fprintf(stderr, "set_entry: %.*s external name=%.*s\n", identifier_length, identifier, identifier_extern_length, identifier_extern);
+#endif
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     macrocode_entry(label, identifier_extern, identifier_extern_length, identifier_extern_cursor_number);
     return;
@@ -187,6 +205,9 @@ void set_extrn(const char *identifier, uint8_t identifier_length, size_t identif
 // identifier internal name
 // identifier_extern external name
 {
+#if defined mdebug
+    fprintf(stderr, "set_extrn: %.*s external name=%.*s\n", identifier_length, identifier, identifier_extern_length, identifier_extern);
+#endif
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
     if (label->mode & 0020)
     {
@@ -239,6 +260,9 @@ T_LABEL *specifier_definition(void)
 
 void set_equ(const char *identifier1, uint8_t identifier1_length, size_t identifier1_cursor_number, const char *identifier2, uint8_t identifier2_length, size_t identifier2_cursor_number)
 {
+#if defined mdebug
+    fprintf(stderr, "set_equ: %.*s = %.*s\n", identifier1_length, identifier1, identifier2_length, identifier2);
+#endif
     T_LABEL *label1 = lookup_label(identifier1, identifier1_length, identifier1_cursor_number);
     T_LABEL *label2 = lookup_label(identifier2, identifier2_length, identifier2_cursor_number);
     if (label1 == label2)

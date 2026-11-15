@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-14
+// 2026-11-15
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
@@ -218,6 +218,278 @@ static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v);
 static bool ortogonality(uint8_t on1, uint8_t on2);
 static bool try_transplant(void);
 
+#if defined mdebug
+// ----------  debug trace helpers  ----------
+static const char *const state_names[] = {
+    "GET_LPE",
+    "LPE0",
+    "LPE1",
+    "LPE2",
+    "LPE3",
+    "LPE4",
+    "LPE5",
+    "LPE6",
+    "LPE7",
+    "LPE8",
+    "LPE9",
+    "LPE10",
+    "NEXT_LPE",
+    "OSH300",
+    "RCG",
+    "RCGL",
+    "LSW1",
+    "LTXT",
+    "LTXT1",
+    "LTXT2",
+    "LTXT3",
+    "LSCO",
+    "LSW2",
+    "LBCE",
+    "LBNIL",
+    "GEN_LB",
+    "LB1",
+    "LSW3",
+    "LSW4",
+    "LSMD",
+    "L1",
+    "LSW5",
+    "LED",
+    "LEMD",
+    "L2",
+    "LSW6",
+    "RCGR",
+    "RSW1",
+    "RTXT",
+    "RTXT1",
+    "RTXT2",
+    "RTXT3",
+    "RSCO",
+    "RSW2",
+    "RBCE",
+    "RBNIL",
+    "GEN_RB",
+    "RB1",
+    "RSW3",
+    "RSW4",
+    "RSMD",
+    "R1",
+    "RSW5",
+    "RED",
+    "REMD",
+    "R2",
+    "RSW6",
+    "NIL",
+    "CE",
+    "CE1",
+    "CE2",
+    "IMPASSE",
+    "HSCH",
+    "NHOLE",
+    "NHOLE1",
+    "RIGID",
+    "OE",
+    "OE0",
+    "OERMAX",
+    "RMAX",
+    "REM",
+    "OELMAX",
+    "LMAX",
+    "LEM",
+    "OE1",
+    "LOE",
+    "LSG",
+    "LE_CASE",
+    "LESW1",
+    "LESW2",
+    "LESW3",
+    "LESW4",
+    "LESW5",
+    "LESW6",
+    "LE",
+    "ROE",
+    "RSG",
+    "RE_CASE",
+    "RESW1",
+    "RESW2",
+    "RESW3",
+    "RESW4",
+    "RESW5",
+    "RESW6",
+    "RE",
+    "RCGFIN",
+    "GET_RPE",
+    "SW_RPE",
+    "RPE0",
+    "RPE1",
+    "TEXT",
+    "TEXT1",
+    "RPE2",
+    "RPE3",
+    "RPE4",
+    "RPE5",
+    "RPE6",
+    "RPE7",
+    "RPE8",
+    "RPE9",
+    "RPE10",
+    "RP_OSH300",
+    "ERROR"
+};
+
+static T_STATES debug_trace_state(T_STATES state)
+{
+    fprintf(stderr, "compile_sentence: state %s\n", state_names[state]);
+    return state;
+}
+
+static const char *debug_element_type_name(T_SENTENCE_ELEMENT_TYPES type)
+{
+    switch (type)
+    {
+    case NONE:
+        return "NONE";
+    case SC:
+        return "SC";
+    case LB:
+        return "LB";
+    case RB:
+        return "RB";
+    case S_V:
+        return "S_V";
+    case W_V:
+        return "W_V";
+    case E_V:
+        return "E_V";
+    case K:
+        return "K";
+    case DOT:
+        return "DOT";
+    case EQ:
+        return "EQ";
+    case END:
+        return "END";
+    }
+    return "?";
+}
+
+static const char *debug_variable_type_name(T_VARIABLE_TYPES type)
+{
+    switch (type)
+    {
+    case NEW:
+        return "NEW";
+    case S:
+        return "S";
+    case W:
+        return "W";
+    case E:
+        return "E";
+    }
+    return "?";
+}
+
+// prints a sentence element in readable form (without the new line)
+static void debug_print_sentence_element(const T_SENTENCE_ELEMENT *element)
+{
+    fprintf(stderr, "%s", debug_element_type_name(element->type));
+    switch (element->type)
+    {
+    case SC:
+        fprintf(stderr, " ");
+        debug_print_symbol(&element->code);
+        break;
+    case S_V:
+    case W_V:
+    case E_V:
+        fprintf(stderr, " %.*s%s", element->identifier_length, element->identifier, element->v_variable ? " (v-variable)" : "");
+        if (element->specifier.info.codef != NULL)
+        {
+            fprintf(stderr, " specifier=");
+            debug_print_symbol(&element->specifier);
+        }
+        break;
+    default:
+        break;
+    }
+    return;
+}
+
+// prints the text chain collected in symbols_buffer
+static void debug_print_text(const char *where)
+{
+    fprintf(stderr, "compile_sentence: %s text of %u symbols: \"", where, symbols_count);
+    for (uint8_t k = 0; k < symbols_count; k++)
+    {
+        const uint8_t ch = (uint8_t)symbols_buffer[k];
+        if (ch >= 0x20 && ch < 0x7F)
+            fputc(ch, stderr);
+        else
+            fprintf(stderr, "\\x%02X", ch);
+    }
+    fprintf(stderr, "\"\n");
+    return;
+}
+
+// prints the text chain made of the left part elements: the chain begins at the element "first" and goes by "step"
+static void debug_print_left_text(const char *where, uint8_t first, int step)
+{
+    fprintf(stderr, "compile_sentence: %s text of %u symbols: \"", where, symbols_count);
+    int index = first;
+    for (uint8_t k = 0; k < symbols_count; k++, index += step)
+    {
+        const uint8_t ch = (uint8_t)left_part_elements[index].code.info.infoc;
+        if (ch >= 0x20 && ch < 0x7F)
+            fputc(ch, stderr);
+        else
+            fprintf(stderr, "\\x%02X", ch);
+    }
+    fprintf(stderr, "\"\n");
+    return;
+}
+
+static void debug_dump_left_part(void)
+{
+    fprintf(stderr, "compile_sentence: left part table (%u elements):\n", left_part_elements_count);
+    for (uint8_t i = 0; i <= left_part_elements_count; i++)
+    {
+        const char *type_name = debug_element_type_name(left_part_elements[i].type);
+        fprintf(stderr, "    [%3u] %-4s", i, type_name);
+        if (left_part_elements[i].type == S_V || left_part_elements[i].type == W_V || left_part_elements[i].type == E_V)
+            fprintf(stderr, " %.*s", variables[left_part_elements[i].variable_index].identifier_length, variables[left_part_elements[i].variable_index].identifier);
+        else if (left_part_elements[i].type == SC)
+        {
+            fprintf(stderr, " ");
+            debug_print_symbol(&left_part_elements[i].code);
+        }
+        if (left_part_elements[i].pair_bracket != 0)
+            fprintf(stderr, " pair=%u", left_part_elements[i].pair_bracket);
+        if (left_part_elements[i].v_variable)
+            fprintf(stderr, " v");
+        fprintf(stderr, "\n");
+    }
+    return;
+}
+
+static void debug_dump_variables(void)
+{
+    fprintf(stderr, "compile_sentence: variable table (%u variables):\n", variables_count);
+    for (uint8_t v = 0; v < variables_count; v++)
+    {
+        fprintf(stderr, "    [%3u] %-3s %.*s remains=%u last_left_part_element=%u%s\n", v, debug_variable_type_name(variables[v].type), variables[v].identifier_length, variables[v].identifier, variables[v].remains, variables[v].last_left_part_element, variables[v].v_variable ? " v" : "");
+    }
+    return;
+}
+
+static void debug_dump_holes(void)
+{
+    fprintf(stderr, "compile_sentence: hole list (current_hole=%u, free_segment=%u):\n", current_hole, free_segment_hole_list);
+    for (uint8_t h = 1; h != 0 && h != 128; h = hole_list[h].next_hole)
+        fprintf(stderr, "    hole %3u: boards (%u, %u) next=%u\n", h, hole_list[h].left_board, hole_list[h].right_board, hole_list[h].next_hole);
+    return;
+}
+// -------------------------------------------
+#endif
+
 // read left part
 // and full array X
 void compile_sentence(bool direction)
@@ -228,8 +500,15 @@ void compile_sentence(bool direction)
     last_bracket = 0;
     number_element = 0;
     T_STATES state = GET_LPE;
+#if defined mdebug
+    fprintf(stderr, "compile_sentence: begin direction=%s\n", direction ? "LEFT (left to right)" : "RIGHT (right to left)");
+#endif
     while (true)
+#if defined mdebug
+        switch (debug_trace_state(state))
+#else
         switch (state)
+#endif
         {
         case GET_LPE:
             // read left part element
@@ -246,6 +525,15 @@ void compile_sentence(bool direction)
             left_part_elements[current_left_part_element].eoe_mark = false;
             left_part_elements[current_left_part_element].jump_stack_pointer = 0;
             left_part_elements[current_left_part_element].used = false;
+#if defined mdebug
+            {
+                size_t line, column;
+                get_location(&line, &column, current_sentence_element.cursor_number);
+                fprintf(stderr, "compile_sentence: left part element [%u] line=%zu column=%zu: ", current_left_part_element, line, column);
+                debug_print_sentence_element(&current_sentence_element);
+                fprintf(stderr, "\n");
+            }
+#endif
             switch (left_part_elements[current_left_part_element].type)
             {
             case NONE:
@@ -430,6 +718,10 @@ void compile_sentence(bool direction)
         case RCG:
             function_definition();
             left_part_elements_count = current_left_part_element;
+#if defined mdebug
+            debug_dump_left_part();
+            debug_dump_variables();
+#endif
             search_budget = SENTENCE_SEARCH_BUDGET;
             current_left_board = 0;
             current_right_board = current_left_part_element;
@@ -513,6 +805,9 @@ void compile_sentence(bool direction)
             }
             current_left_part_element = current_left_board;
             generate_operator_n(n_ltxt, symbols_count);
+#if defined mdebug
+            debug_print_left_text("left part (left to right)", current_left_board + 1, 1);
+#endif
             state = LTXT3;
             break;
         case LTXT3:
@@ -563,13 +858,13 @@ void compile_sentence(bool direction)
             break;
         case LBCE:
             number_element += 2;
-            compile_output_byte(n_lbce);
+            generate_operator(n_lbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                compile_output_byte(n_nnil);
+                generate_operator(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -583,7 +878,7 @@ void compile_sentence(bool direction)
             state = RCGL;
             break;
         case LBNIL:
-            compile_output_byte(n_lbnil);
+            generate_operator(n_lbnil);
             left_part_elements[current_left_board].right_number_element = number_element;
             left_part_elements[current_left_board].left_number_element = left_part_elements[current_left_board].right_number_element;
             current_left_board = current_left_part_element;
@@ -634,7 +929,7 @@ void compile_sentence(bool direction)
                 generate_operator_n(n_lsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                compile_output_byte(n_ls);
+                generate_operator(n_ls);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = LSMD;
@@ -662,7 +957,7 @@ void compile_sentence(bool direction)
                 state = LED;
                 break;
             }
-            compile_output_byte(n_lw);
+            generate_operator(n_lw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -775,6 +1070,9 @@ void compile_sentence(bool direction)
             }
             current_left_part_element = current_right_board;
             generate_operator_n(n_rtxt, symbols_count);
+#if defined mdebug
+            debug_print_left_text("left part (right to left)", current_right_board - 1, -1);
+#endif
             state = RTXT3;
             break;
         case RTXT3:
@@ -828,13 +1126,13 @@ void compile_sentence(bool direction)
             break;
         case RBCE:
             number_element += 2;
-            compile_output_byte(n_rbce);
+            generate_operator(n_rbce);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                compile_output_byte(n_nnil);
+                generate_operator(n_nnil);
             if (left_part_elements[current_left_part_element].specifier.info.codef != NULL)
                 generate_operator_l(n_espc, left_part_elements[current_left_part_element].specifier.info.codef);
             left_part_elements[current_left_part_element].left_number_element = number_element;
@@ -848,7 +1146,7 @@ void compile_sentence(bool direction)
             state = RCGR;
             break;
         case RBNIL:
-            compile_output_byte(n_rbnil);
+            generate_operator(n_rbnil);
             left_part_elements[current_right_board].right_number_element = number_element + 1;
             left_part_elements[current_right_board].left_number_element = left_part_elements[current_right_board].right_number_element;
             current_right_board = current_left_part_element;
@@ -896,7 +1194,7 @@ void compile_sentence(bool direction)
                 generate_operator_n(n_rsd, (uint8_t)variables[variable_index].main_right_number_element);
             else
             {
-                compile_output_byte(n_rs);
+                generate_operator(n_rs);
                 variables[variable_index].main_right_number_element = number_element;
             };
             state = RSMD;
@@ -924,7 +1222,7 @@ void compile_sentence(bool direction)
                 state = RED;
                 break;
             }
-            compile_output_byte(n_rw);
+            generate_operator(n_rw);
             variables[variable_index].main_right_number_element = number_element + 1;
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
@@ -974,7 +1272,7 @@ void compile_sentence(bool direction)
             break;
         case NIL:
             //     empty hole
-            compile_output_byte(n_nil);
+            generate_operator(n_nil);
             next_hole = hole_list[current_hole].next_hole;
             hole_list[current_hole].next_hole = hole_list[next_hole].next_hole;
             hole_list[current_hole].left_board = hole_list[next_hole].left_board;
@@ -1007,12 +1305,12 @@ void compile_sentence(bool direction)
         case CE2:
             variable_index = left_part_elements[current_left_part_element].variable_index;
             variables[variable_index].main_right_number_element = number_element + 1;
-            compile_output_byte(n_ce);
+            generate_operator(n_ce);
             left_part_elements[current_left_part_element].next_variable = variables[variable_index].last_left_part_element;
             variables[variable_index].last_left_part_element = current_left_part_element;
             variables[variable_index].remains--;
             if (left_part_elements[current_left_part_element].v_variable)
-                compile_output_byte(n_nnil);
+                generate_operator(n_nnil);
             left_part_elements[current_left_part_element].left_number_element = number_element;
             left_part_elements[current_left_part_element].right_number_element = number_element + 1;
             number_element += 2;
@@ -1040,6 +1338,9 @@ void compile_sentence(bool direction)
             hole_list[current_hole].left_board = current_left_board;
             hole_list[current_hole].right_board = current_right_board;
             current_hole = 1;
+#if defined mdebug
+            debug_dump_holes();
+#endif
             if (hole_list[current_hole].next_hole == 0)
             {
                 state = RCGFIN;
@@ -1050,6 +1351,9 @@ void compile_sentence(bool direction)
         case NHOLE:
             current_left_board = hole_list[current_hole].left_board;
             current_right_board = hole_list[current_hole].right_board;
+#if defined mdebug
+            fprintf(stderr, "compile_sentence: hole %u boards (%u, %u)\n", current_hole, current_left_board, current_right_board);
+#endif
             current_left_part_element = current_left_board + 1;
             if (current_left_part_element == current_right_board)
             {
@@ -1127,7 +1431,7 @@ void compile_sentence(bool direction)
             {
                 const uint8_t diff = jump_stack_pointer - left_part_elements[current_left_part_element].jump_stack_pointer;
                 if (diff == 1)
-                    compile_output_byte(n_eoei);
+                    generate_operator(n_eoei);
                 else
                     generate_operator_n(n_eoe, diff);
                 jump_stack_pointer = left_part_elements[current_left_part_element].jump_stack_pointer;
@@ -1190,7 +1494,7 @@ void compile_sentence(bool direction)
         case RMAX:
             generate_operator_l(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                compile_output_byte(n_nnil);
+                generate_operator(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = REM;
             break;
@@ -1206,7 +1510,7 @@ void compile_sentence(bool direction)
         case LMAX:
             generate_operator_l(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
-                compile_output_byte(n_nnil);
+                generate_operator(n_nnil);
             left_part_elements[current_left_part_element].specifier.info.codef = NULL;
             state = LEM;
             break;
@@ -1285,7 +1589,7 @@ void compile_sentence(bool direction)
         case LESW2:
             //   ei ( . . . ) . . .
             generate_operator_e_v(n_pleb, n_plvb);
-            compile_output_byte(n_leb);
+            generate_operator(n_leb);
             stoped_bracket_flag = 0;
             state = LB1;
             break;
@@ -1311,7 +1615,7 @@ void compile_sentence(bool direction)
             break;
         case LE:
             generate_operator_e_v(n_ple, n_plv);
-            compile_output_byte(n_le);
+            generate_operator(n_le);
             state = RCGL;
             break;
         case ROE:
@@ -1380,7 +1684,7 @@ void compile_sentence(bool direction)
         case RESW3:
             // . . .  ( . . .  ) ei
             generate_operator_e_v(n_preb, n_prvb);
-            compile_output_byte(n_reb);
+            generate_operator(n_reb);
             stoped_bracket_flag = 0;
             state = RB1;
             break;
@@ -1403,12 +1707,16 @@ void compile_sentence(bool direction)
             break;
         case RE:
             generate_operator_e_v(n_pre, n_prv);
-            compile_output_byte(n_re);
+            generate_operator(n_re);
             state = RCGR;
             break;
         //                 identification end
         case RCGFIN:
-            compile_output_byte(n_eor);
+#if defined mdebug
+            fprintf(stderr, "compile_sentence: left part compiled, jump_stack_pointer=%u, search_budget=%d\n", jump_stack_pointer, (int)search_budget);
+            debug_dump_variables();
+#endif
+            generate_operator(n_eor);
             compile_output_switch_to_right_part();
             //--------------------------------------------
             //         right part compilation
@@ -1423,6 +1731,11 @@ void compile_sentence(bool direction)
             state = SW_RPE;
             break;
         case SW_RPE:
+#if defined mdebug
+            fprintf(stderr, "compile_sentence: right part element: ");
+            debug_print_sentence_element(&current_sentence_element);
+            fprintf(stderr, "\n");
+#endif
             switch (current_sentence_element.type)
             {
             case NONE:
@@ -1506,6 +1819,9 @@ void compile_sentence(bool direction)
             else
             {
                 generate_operator_n(n_text, symbols_count);
+#if defined mdebug
+                debug_print_text("right part");
+#endif
                 for (uint8_t k = 0; k < symbols_count; k++)
                     compile_output_byte((uint8_t)symbols_buffer[k]);
             };
@@ -1516,7 +1832,7 @@ void compile_sentence(bool direction)
             scan_sentence_element();
             if (current_sentence_element.type == RB)
             {
-                compile_output_byte(n_blr);
+                generate_operator(n_blr);
                 state = GET_RPE;
                 break;
             }
@@ -1528,12 +1844,12 @@ void compile_sentence(bool direction)
                 state = GET_RPE;
                 break;
             }
-            compile_output_byte(n_bl);
+            generate_operator(n_bl);
             state = SW_RPE;
             break;
         case RPE3:
             // right bracket
-            compile_output_byte(n_br);
+            generate_operator(n_br);
             if (brackets_count[brackets_k_level] == 0)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1616,7 +1932,7 @@ void compile_sentence(bool direction)
                 state = GET_RPE;
                 break;
             }
-            compile_output_byte(n_bl);
+            generate_operator(n_bl);
             state = SW_RPE;
             break;
         case RPE8:
@@ -1633,7 +1949,7 @@ void compile_sentence(bool direction)
                     scanner.last_error_cursor = current_sentence_element.cursor_number;
                     print_error_string(401, "Too many '(' in right part");
                 }
-                compile_output_byte(n_bract);
+                generate_operator(n_bract);
                 brackets_k_level--;
             };
             state = GET_RPE;
@@ -1646,7 +1962,7 @@ void compile_sentence(bool direction)
             break;
         case RPE10:
             // sentence end
-            compile_output_byte(n_eos);
+            generate_operator(n_eos);
             if (brackets_k_level != 1)
             {
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -1657,6 +1973,9 @@ void compile_sentence(bool direction)
                 scanner.last_error_cursor = current_sentence_element.cursor_number;
                 print_error_string(401, "Too many '(' in right part");
             }
+#if defined mdebug
+            fprintf(stderr, "compile_sentence: end, right part compiled\n");
+#endif
             compile_output_switch_to_macrocode();
             return;
         case RP_OSH300:
@@ -1899,7 +2218,14 @@ static bool try_transplant(void)
             break;
         }
     if (!has_candidate)
+    {
+#if defined mdebug
+        fprintf(stderr, "try_transplant: no candidate in the left part for ");
+        debug_print_sentence_element(&current_sentence_element);
+        fprintf(stderr, "\n");
+#endif
         return false;
+    }
     // Step 2: Read the rest of the right part ahead
     T_SAVE_SCANNER_STATE saved_state;
     save_scanner_state(&saved_state);
@@ -1913,9 +2239,17 @@ static bool try_transplant(void)
         rp_elements[rp_count++] = current_sentence_element;
     }
     restore_scanner_state(&saved_state);
+#if defined mdebug
+    fprintf(stderr, "try_transplant: read ahead %u right part elements, search_budget=%d\n", rp_count, (int)search_budget);
+#endif
     // Step 3: Choose between transplantation of a piece and ordinary generation
     T_TRANSPLANT_OPTION options[OPTIONS_MAX];
     const uint8_t options_count = collect_options(0, used, in_chain, options);
+#if defined mdebug
+    fprintf(stderr, "try_transplant: %u option(s):\n", options_count);
+    for (uint8_t k = 0; k < options_count; k++)
+        fprintf(stderr, "    option %u: left part elements [%u..%u] (length %u) replace %u right part element(s)\n", k, options[k].first, options[k].first + options[k].length - 1, options[k].length, options[k].consumed);
+#endif
     if (options_count == 0)
     {
         free_scanner_state(&saved_state);
@@ -1934,6 +2268,9 @@ static bool try_transplant(void)
             memcpy(next_used, used, sizeof(next_used));
             mark_option_used(next_used, &options[k]);
             const uint16_t cost = 1 + solve(options[k].consumed, next_used, in_chain, best_cost - 1, &budget);
+#if defined mdebug
+            fprintf(stderr, "try_transplant: option %u cost=%u%s (budget left %d)\n", k, cost, cost < best_cost ? " [best so far]" : "", (int)budget);
+#endif
             if (cost < best_cost)
             {
                 best_cost = cost;
@@ -1943,6 +2280,9 @@ static bool try_transplant(void)
         // Ordinary generation is chosen only if it is strictly cheaper
         const bool copy_is_better = 1 + solve(copy_unit(0), used, in_chain, best_cost - 1, &budget) < best_cost;
         search_budget -= budget_start - budget;
+#if defined mdebug
+        fprintf(stderr, "try_transplant: best transplant cost=%u, ordinary generation is %s, nodes spent=%d, sentence budget left=%d\n", best_cost, copy_is_better ? "cheaper" : "not cheaper", (int)(budget_start - budget), (int)search_budget);
+#endif
         if (copy_is_better)
         {
             free_scanner_state(&saved_state);
@@ -1951,6 +2291,11 @@ static bool try_transplant(void)
     }
     const uint8_t best_i = options[best_option].first;
     const uint8_t best_length = options[best_option].length;
+#if defined mdebug
+    if (search_budget <= 0)
+        fprintf(stderr, "try_transplant: sentence budget exhausted, the first option is taken\n");
+    fprintf(stderr, "try_transplant: transplant option %u, left part elements [%u..%u]\n", best_option, best_i, best_i + best_length - 1);
+#endif
     // Step 6: Restore scanner state
     restore_scanner_state(&saved_state);
     // Re-read right part — LISTING IS OUTPUT
@@ -2018,6 +2363,9 @@ static bool try_transplant(void)
         }
     }
     // Step 8: Success
+#if defined mdebug
+    fprintf(stderr, "try_transplant: done, N=%u M=%u non_empty=%d\n", N, M, has_non_empty);
+#endif
     free_scanner_state(&saved_state);
     return true;
 }
@@ -2030,6 +2378,9 @@ static bool search_variable(bool left_part)
     if (!left_part)
         return false;
     variable_index = variables_count++;
+#if defined mdebug
+    fprintf(stderr, "search_variable: new variable [%u] %.*s\n", variable_index, current_sentence_element.identifier_length, current_sentence_element.identifier);
+#endif
     strncpy(variables[variable_index].identifier, current_sentence_element.identifier, current_sentence_element.identifier_length);
     variables[variable_index].identifier_length = current_sentence_element.identifier_length;
     variables[variable_index].type = NEW;
@@ -2042,6 +2393,9 @@ static bool search_variable(bool left_part)
 //   generation of stoped brackets and setting boards
 static void generate_boards_stoping_brackets(void)
 {
+#if defined mdebug
+    fprintf(stderr, "generate_boards_stoping_brackets: stoped_bracket_flag=%u boards (%u, %u)\n", stoped_bracket_flag, current_left_board, current_right_board);
+#endif
     switch (stoped_bracket_flag)
     {
     case 0: // no stoped brackets
@@ -2050,23 +2404,23 @@ static void generate_boards_stoping_brackets(void)
         return;
     case 1: // left stoped brackets
         if (current_hole == hole_x)
-            compile_output_byte(n_lb);
+            generate_operator(n_lb);
         else if (current_hole == hole_y)
-            compile_output_byte(n_lby);
+            generate_operator(n_lby);
         else
         {
-            compile_output_byte(n_lb);
+            generate_operator(n_lb);
             break;
         };
         return;
     case 2: // right stoped brackets
         if (current_hole == hole_x)
-            compile_output_byte(n_rb);
+            generate_operator(n_rb);
         else if (current_hole == hole_y)
-            compile_output_byte(n_rby);
+            generate_operator(n_rby);
         else
         {
-            compile_output_byte(n_rb);
+            generate_operator(n_rb);
             break;
         };
         return;
@@ -2216,9 +2570,9 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
 static inline void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)
-        compile_output_byte(operator_v);
+        generate_operator(operator_v);
     else
-        compile_output_byte(operator_e);
+        generate_operator(operator_e);
 }
 
 //----------  end of file compile_sentence.c  ----------
