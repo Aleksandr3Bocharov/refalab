@@ -653,7 +653,10 @@ static void dbg_begin_step(const T_STATUS_TABLE *status_table, const T_LINKCB *f
         fputs(*function_cell->info.codef == 0116 ? " (static box)" : " (Refal function)", stderr);
     }
     else if (function_cell->tag == TAGR)
-        fputs("reference (dynamic box)", stderr);
+    {
+        dbg_cell(function_cell);
+        fputs(" (dynamic box)", stderr);
+    }
     else
     {
         fputs("not a function: ", stderr);
