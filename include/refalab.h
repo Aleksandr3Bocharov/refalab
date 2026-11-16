@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-14
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //--------------- file -- REFALAB.H -----------------
@@ -164,6 +164,11 @@ extern T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, c
 extern bool check_count_free_memory(size_t count);
 
 extern void refal_run(T_STATUS_TABLE *status_table);
+
+#if defined mdebug
+extern void print_memory_state(void);
+extern void debug_print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after);
+#endif
 
 extern void (*status_table_debugger)(T_STATUS_TABLE *);
 extern void refal_debugger(T_STATUS_TABLE *status_table);
