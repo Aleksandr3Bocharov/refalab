@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file debugger_interface.c  ----------
@@ -771,6 +771,9 @@ static void one_step(T_STATUS_TABLE *status_table)
             continue;
         break;
     }
+#if defined mdebug
+    print_memory_state();
+#endif
     if (e_empty && status_table->state == 2)
     {
         print_step();

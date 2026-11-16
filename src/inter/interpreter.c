@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-23
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interpeter.c  ----------
@@ -258,6 +258,520 @@ static void (*function_c)(void);
 
 static bool specifier_interpretator(const T_LINKCB *linkcb);
 
+#if defined mdebug
+
+// ---------- debug trace support (only with -Dmdebug) ----------
+// All trace output goes to stderr (as the existing "Switcher" trace did).
+
+#define DBG_MAX_CELLS 48 // max number of cells printed for one expression
+
+// number of hex digits to print an address (info field, reference): 8 on x32, 16 on x64
+#define PTR_HEX_WIDTH ((int)(2 * sizeof(uintptr_t)))
+
+typedef struct dbg_state
+{
+    const T_LINKCB *function;      // function cell of the current term
+    const T_LINKCB *dot;           // '>' cell of the current term
+    const T_LINKCB *result_before; // cell before '<' of the replaced call
+    const T_LINKCB *result_after;  // cell after '>' of the replaced call
+    uint8_t last_operation;        // code of the last started operation
+    uint16_t reported_elements;    // table elements already reported
+    uint16_t max_elements;         // max of number_element in the step
+    ptrdiff_t max_jumps;           // max depth of jump stack in the step
+    ptrdiff_t max_transplantations; // max depth of transplantation stack
+    uint32_t operations;           // operations started in the step
+    uint32_t fails;                // backtracks in the step
+} T_DBG_STATE;
+
+static T_DBG_STATE dbg;
+
+static const char *const dbg_operation_names[] = {
+    [0000] = "ADVANCE", [0001] = "SJUMP", [0002] = "FAIL", [0003] = "SB",
+    [0004] = "LSC", [0005] = "RSC", [0006] = "LSCO", [0007] = "RSCO",
+    [0010] = "LSD", [0011] = "RSD", [0012] = "LTXT", [0013] = "RTXT",
+    [0014] = "LB", [0015] = "LBY", [0016] = "RB", [0017] = "RBY",
+    [0020] = "LS", [0021] = "RS", [0022] = "LW", [0023] = "RW",
+    [0024] = "LBNIL", [0025] = "RBNIL", [0026] = "LBCE", [0027] = "RBCE",
+    [0030] = "NIL", [0031] = "CE", [0032] = "LED", [0033] = "RED",
+    [0034] = "NNIL", [0035] = "PLE", [0036] = "PLV", [0037] = "LE",
+    [0040] = "PRE", [0041] = "PRV", [0042] = "RE", [0043] = "PLESC",
+    [0044] = "PLVSC", [0045] = "LESC", [0046] = "PRESC", [0047] = "PRVSC",
+    [0050] = "RESC", [0051] = "LESD", [0052] = "RESD", [0053] = "PLEB",
+    [0054] = "PLVB", [0055] = "LEB", [0056] = "PREB", [0057] = "PRVB",
+    [0060] = "REB", [0061] = "EOE", [0062] = "EOEI", [0063] = "LSRCH",
+    [0064] = "RSRCH", [0065] = "WSPC", [0066] = "ESPC", [0067] = "PLESPC",
+    [0070] = "LESPC", [0071] = "PRESPC", [0072] = "RESPC", [0073] = "LMAX",
+    [0074] = "RMAX", [0075] = "EOR", [0076] = "NS", [0077] = "NSO",
+    [0100] = "TEXT", [0101] = "BL", [0102] = "BR", [0103] = "BLR",
+    [0104] = "BRACT", [0106] = "MULS", [0107] = "MULE", [0110] = "TPL",
+    [0111] = "TPLM", [0112] = "TPLE", [0113] = "TPLV", [0114] = "TPLS",
+    [0115] = "EOS", [0116] = "SWAP", [0117] = "BLF", [0122] = "CFUNC"};
+
+static const char *dbg_operation_name(uint8_t code)
+{
+    if (code < sizeof(dbg_operation_names) / sizeof(dbg_operation_names[0]) && dbg_operation_names[code] != NULL)
+        return dbg_operation_names[code];
+    return "?";
+}
+
+static void dbg_char(char ch)
+{
+    if (isprint((unsigned char)ch))
+        fputc(ch, stderr);
+    else
+        fprintf(stderr, "\\x%02x", (unsigned)(unsigned char)ch);
+}
+
+static void dbg_function_name(const uint8_t *codef)
+{
+    const uint8_t *label_length = codef - 1;
+    const char *label = (const char *)label_length - *label_length;
+    for (uint8_t idx = 0; idx < *label_length; idx++)
+        fputc(toupper((unsigned char)label[idx]), stderr);
+}
+
+// print one cell, the same format as in print_expression_m (interface.c)
+static void dbg_cell(const T_LINKCB *cell)
+{
+    switch (cell->tag)
+    {
+    case TAGO:
+        fputc('\'', stderr);
+        dbg_char(cell->info.infoc);
+        fputc('\'', stderr);
+        break;
+    case TAGN:
+        fprintf(stderr, "%" PRIu32, cell->info.coden);
+        break;
+    case TAGF:
+        dbg_function_name(cell->info.codef);
+        break;
+    case TAGR:
+        fprintf(stderr, "/%%%0*" PRIxPTR "/", PTR_HEX_WIDTH, (uintptr_t)cell->info.codep);
+        break;
+    case TAGLB:
+        fputc('(', stderr);
+        break;
+    case TAGRB:
+        fputc(')', stderr);
+        break;
+    case TAGK:
+        fputs("< ", stderr);
+        break;
+    case TAGD:
+        fputc('>', stderr);
+        break;
+    default:
+        fprintf(stderr, "/%" PRIx32 ",%0*" PRIxPTR "/", cell->tag, PTR_HEX_WIDTH, (uintptr_t)cell->info.code);
+    }
+}
+
+// print cells strictly between `before` and `after`, at most max_cells (0 - no limit)
+static void dbg_expr_n(const T_LINKCB *before, const T_LINKCB *after, unsigned max_cells)
+{
+    const T_LINKCB *cell = before;
+    const T_LINKCB *last = after->previous;
+    unsigned count = 0;
+    bool quoted = false;
+    while (cell != last)
+    {
+        cell = cell->next;
+        if (cell == NULL)
+        {
+            if (quoted)
+                fputc('\'', stderr);
+            fputs("<NULL link>", stderr);
+            return;
+        }
+        if (max_cells != 0 && count == max_cells)
+        {
+            if (quoted)
+                fputc('\'', stderr);
+            fputs(" ...", stderr);
+            return;
+        }
+        count++;
+        if (cell->tag == TAGO)
+        {
+            if (!quoted)
+            {
+                quoted = true;
+                fputc('\'', stderr);
+            }
+            dbg_char(cell->info.infoc);
+            continue;
+        }
+        if (quoted)
+        {
+            quoted = false;
+            fputc('\'', stderr);
+        }
+        dbg_cell(cell);
+        // a space separates numbers and functions from the next term
+        if (cell->next != NULL && ((cell->tag == TAGN && cell->next->tag == TAGN) || (cell->tag == TAGF && (cell->next->tag == TAGN || cell->next->tag == TAGF))))
+            fputc(' ', stderr);
+    }
+    if (quoted)
+        fputc('\'', stderr);
+    if (count == 0)
+        fputs("<empty>", stderr);
+}
+
+// the same with the default limit
+static void dbg_expr(const T_LINKCB *before, const T_LINKCB *after)
+{
+    dbg_expr_n(before, after, DBG_MAX_CELLS);
+}
+
+// print the whole expression with the prefix and new line, stderr only;
+// it is used by the debug trace instead of print_expression_m (no abort on a broken list)
+void debug_print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after)
+{
+    fflush(stdout); // keep the order of stdout and stderr output
+    fputs(begin_string, stderr);
+    dbg_expr_n(before, after, 0);
+    fputc('\n', stderr);
+}
+
+// depth of transplantation stack, -1 if the stack is not initialized yet
+static ptrdiff_t dbg_transplantation_depth(void)
+{
+    const uintptr_t pointer = (uintptr_t)transplantation_stack_pointer;
+    const uintptr_t begin = (uintptr_t)transplantation_stack;
+    const uintptr_t end = (uintptr_t)(transplantation_stack + sizeof(transplantation_stack) / sizeof(transplantation_stack[0]));
+    if (pointer < begin || pointer > end)
+        return -1;
+    return transplantation_stack_pointer - transplantation_stack;
+}
+
+// operation name and operands
+static void dbg_operation(const uint8_t *pc)
+{
+    const uint8_t code = *pc;
+    fprintf(stderr, " Op: %s", dbg_operation_name(code));
+    switch (code)
+    {
+    case 0003: // SB(N,M)
+    case 0110: // TPL(N,M)
+    case 0111: // TPLM(N,M)
+        fprintf(stderr, "(%u,%u)", (unsigned)pc[NMBL], (unsigned)pc[NMBL + NMBL]);
+        break;
+    case 0006: // LSCO(C)
+    case 0007: // RSCO(C)
+    case 0077: // NSO(C)
+        fputs("('", stderr);
+        dbg_char((char)pc[NMBL]);
+        fputs("')", stderr);
+        break;
+    case 0010: // LSD(N)
+    case 0011: // RSD(N)
+    case 0032: // LED(N)
+    case 0033: // RED(N)
+    case 0051: // LESD(N)
+    case 0052: // RESD(N)
+    case 0061: // EOE(N)
+    case 0106: // MULS(N)
+    case 0107: // MULE(N)
+    case 0112: // TPLE(N)
+    case 0113: // TPLV(N)
+    case 0114: // TPLS(N)
+        fprintf(stderr, "(%u)", (unsigned)pc[NMBL]);
+        break;
+    case 0004: // LSC(S)
+    case 0005: // RSC(S)
+    case 0045: // LESC(S)
+    case 0050: // RESC(S)
+    case 0063: // LSRCH(S)
+    case 0064: // RSRCH(S)
+    case 0076: // NS(S)
+    {
+        T_LINKCB symbol;
+        memcpy(&symbol.tag, pc + NMBL, SMBL);
+        fputc('(', stderr);
+        dbg_cell(&symbol);
+        fputc(')', stderr);
+        break;
+    }
+    case 0012: // LTXT(N,S1,...,SN)
+    case 0013: // RTXT(N,S1,...,SN)
+    case 0100: // TEXT(N,S1,...,SN)
+    {
+        const uint8_t count = pc[NMBL];
+        fprintf(stderr, "(%u,'", (unsigned)count);
+        for (uint8_t idx = 0; idx < count && idx < DBG_MAX_CELLS; idx++)
+            dbg_char((char)pc[NMBL + NMBL + idx]);
+        fputs("')", stderr);
+        break;
+    }
+    case 0001: // SJUMP(L)
+    {
+        const uint8_t *target;
+        memcpy(&target, pc + NMBL, LBLL);
+        fprintf(stderr, "(%+td)", target - pc);
+        break;
+    }
+    case 0117: // BLF(L)
+    {
+        const uint8_t *target;
+        memcpy(&target, pc + NMBL, LBLL);
+        fputc('(', stderr);
+        dbg_function_name(target);
+        fputc(')', stderr);
+        break;
+    }
+    case 0116: // SWAP
+    {
+        const T_LINKCB *box = (const T_LINKCB *)(pc + NMBL);
+        fprintf(stderr, "(box=%p%s)", (const void *)box, box->previous == NULL ? ", not initialized" : "");
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+// how the new table elements created by the operation are interpreted:
+// 'c' - one cell, 'p' - pair (first,last) of an expression, '*' - cells to the end
+static const char *dbg_shape(uint8_t code)
+{
+    switch (code)
+    {
+    case 0022: // LW
+    case 0023: // RW
+    case 0031: // CE
+    case 0032: // LED
+    case 0033: // RED
+    case 0035: // PLE
+    case 0037: // LE
+    case 0040: // PRE
+    case 0042: // RE
+    case 0067: // PLESPC
+    case 0070: // LESPC
+    case 0071: // PRESPC
+    case 0072: // RESPC
+    case 0073: // LMAX
+    case 0074: // RMAX
+        return "p";
+    case 0045: // LESC
+    case 0050: // RESC
+    case 0051: // LESD
+    case 0052: // RESD
+    case 0063: // LSRCH
+    case 0064: // RSRCH
+        return "pc";
+    case 0055: // LEB
+    case 0060: // REB
+        return "pcc";
+    case 0026: // LBCE
+    case 0027: // RBCE
+        return "ccp";
+    default:
+        return "*";
+    }
+}
+
+// report table elements added by the previous operation
+static void dbg_report_new_elements(void)
+{
+    if (dbg.reported_elements > number_element) // backtrack happened
+        dbg.reported_elements = number_element;
+    const char *shape = dbg_shape(dbg.last_operation);
+    uint16_t idx = dbg.reported_elements;
+    while (idx < number_element)
+    {
+        const char kind = *shape == '\0' ? '*' : *shape;
+        if (kind == 'p' && idx + 1 < number_element && table_elements[idx] != NULL && table_elements[idx + 1] != NULL)
+        {
+            fprintf(stderr, "   T[%u..%u]=", (unsigned)idx, (unsigned)(idx + 1));
+            dbg_expr(table_elements[idx]->previous, table_elements[idx + 1]->next);
+            fputc('\n', stderr);
+            idx += 2;
+        }
+        else
+        {
+            fprintf(stderr, "   T[%u]=%p ", (unsigned)idx, (const void *)table_elements[idx]);
+            if (table_elements[idx] != NULL)
+                dbg_cell(table_elements[idx]);
+            fputc('\n', stderr);
+            idx++;
+        }
+        if (*shape != '\0' && *shape != '*')
+            shape++;
+    }
+    dbg.reported_elements = number_element;
+}
+
+// trace of the operation which is going to be executed
+static void dbg_next_operation(void)
+{
+    dbg_report_new_elements();
+    dbg.last_operation = operation_program_code;
+    dbg.operations++;
+    const ptrdiff_t jumps = jump_stack_pointer - jump_stack;
+    const ptrdiff_t transplantations = dbg_transplantation_depth();
+    if (number_element > dbg.max_elements)
+        dbg.max_elements = number_element;
+    if (jumps > dbg.max_jumps)
+        dbg.max_jumps = jumps;
+    if (transplantations > dbg.max_transplantations)
+        dbg.max_transplantations = transplantations;
+    dbg_operation(virtual_program_counter);
+    fprintf(stderr, " | elem=%u jump=%td", (unsigned)number_element, jumps);
+    if (transplantations >= 0)
+        fprintf(stderr, " transp=%td", transplantations);
+    fputs(" | hole: ", stderr);
+    dbg_expr(left_board_hole, right_board_hole);
+    fputc('\n', stderr);
+    // the stacks have no bound checks, so warn before overflow
+    if (number_element > sizeof(table_elements) / sizeof(table_elements[0]) - 8)
+        fprintf(stderr, " WARNING: table of elements is near overflow (%u of %zu)\n", (unsigned)number_element, sizeof(table_elements) / sizeof(table_elements[0]));
+    if (jumps > (ptrdiff_t)(sizeof(jump_stack) / sizeof(jump_stack[0])) - 8)
+        fprintf(stderr, " WARNING: jump stack is near overflow (%td of %zu)\n", jumps, sizeof(jump_stack) / sizeof(jump_stack[0]));
+    if (transplantations > (ptrdiff_t)(sizeof(transplantation_stack) / sizeof(transplantation_stack[0])) - 8)
+        fprintf(stderr, " WARNING: transplantation stack is near overflow (%td of %zu)\n", transplantations, sizeof(transplantation_stack) / sizeof(transplantation_stack[0]));
+}
+
+// start of a step: remember the term, reset counters
+static void dbg_begin_step(const T_STATUS_TABLE *status_table, const T_LINKCB *function_cell, const T_LINKCB *dot)
+{
+    dbg.function = function_cell;
+    dbg.dot = dot;
+    dbg.result_before = NULL;
+    dbg.result_after = NULL;
+    dbg.last_operation = 0;
+    dbg.reported_elements = 4;
+    dbg.max_elements = 4;
+    dbg.max_jumps = 0;
+    dbg.max_transplantations = 0;
+    dbg.operations = 0;
+    dbg.fails = 0;
+    fprintf(stderr, " Enter: step=%" PRIu32 " ", status_table->step + 1);
+    if (function_cell->tag == TAGF)
+    {
+        dbg_cell(function_cell);
+        fputs(" (Refal function)", stderr);
+    }
+    else if (function_cell->tag == TAGR)
+        fputs("reference (box swap)", stderr);
+    else
+    {
+        fputs("not a function: ", stderr);
+        dbg_cell(function_cell);
+    }
+    fputc('\n', stderr);
+}
+
+static void dbg_swap_reference(const T_LINKCB *box, const T_LINKCB *reference_cell, const T_LINKCB *dot)
+{
+    fprintf(stderr, " Swap: box=%p content: ", (const void *)box);
+    if (box->previous == NULL)
+        fputs("<not initialized>", stderr);
+    else
+        dbg_expr(box, box);
+    fputs(" ; argument: ", stderr);
+    dbg_expr(reference_cell, dot);
+    fputc('\n', stderr);
+}
+
+static void dbg_recognition_impossible(void)
+{
+    fputs(" Recognition impossible: ", stderr);
+    if (dbg.function == NULL)
+    {
+        fputs("<no term>\n", stderr);
+        return;
+    }
+    dbg_cell(dbg.function);
+    fputs(" argument: ", stderr);
+    dbg_expr(dbg.function, dbg.dot);
+    fputc('\n', stderr);
+}
+
+// EOS: result generation is finished, planned transplantations follow
+static void dbg_begin_replace(const T_LINKCB *free_memory_head, const T_LINKCB *current)
+{
+    size_t new_cells = 0;
+    for (const T_LINKCB *cell = free_memory_head; cell != current; cell = cell->next)
+        new_cells++;
+    fprintf(stderr, " EOS: new cells=%zu, planned transplantations=%td\n", new_cells, dbg_transplantation_depth());
+    dbg.result_before = table_elements[1]->previous;
+    dbg.result_after = table_elements[2]->next;
+}
+
+static void dbg_transplant(const T_LINKCB *from, const T_LINKCB *to)
+{
+    fputs("   Transplant: ", stderr);
+    dbg_expr(from->previous, to->next);
+    fputc('\n', stderr);
+}
+
+static void dbg_end_replace(void)
+{
+    fputs(" Replaced by: ", stderr);
+    dbg_expr(dbg.result_before, dbg.result_after);
+    fputc('\n', stderr);
+}
+
+// check the list structure of view field: links and bracket pairs
+static void dbg_check_view(const T_STATUS_TABLE *status_table)
+{
+    const T_LINKCB *head = status_table->view;
+    const T_LINKCB *cell = head;
+    size_t cells = 0;
+    size_t errors = 0;
+    do
+    {
+        const T_LINKCB *next = cell->next;
+        if (next == NULL || next->previous != cell)
+        {
+            fprintf(stderr, " !!! View field: broken link after cell %zu (%p)\n", cells, (const void *)cell);
+            return;
+        }
+        cell = next;
+        if (cell == head)
+            break;
+        cells++;
+        if (cell->tag == TAGLB || cell->tag == TAGRB)
+        {
+            const T_LINKCB *mate = cell->info.codep;
+            if (mate == NULL || mate->tag != (cell->tag == TAGLB ? TAGRB : TAGLB) || mate->info.codep != cell)
+            {
+                errors++;
+                fprintf(stderr, " !!! View field: bracket %p of cell %zu has no valid pair\n", (const void *)cell, cells);
+            }
+        }
+    } while (cells < ((size_t)1 << 28));
+    fprintf(stderr, " View: %zu cells%s\n", cells, errors == 0 ? "" : " (BRACKET ERRORS)");
+}
+
+// the step is finished successfully
+static void dbg_end_step(const T_STATUS_TABLE *status_table)
+{
+    fprintf(stderr, " Step done: operations=%" PRIu32 " backtracks=%" PRIu32 " max: elem=%u jump=%td transp=%td\n", dbg.operations, dbg.fails, (unsigned)dbg.max_elements, dbg.max_jumps, dbg.max_transplantations);
+    dbg_check_view(status_table);
+}
+
+// the interpreter leaves the view field
+static void dbg_exit(const T_STATUS_TABLE *status_table)
+{
+    const char *reason = "unknown";
+    switch (status_table->state)
+    {
+    case 1:
+        reason = "normal";
+        break;
+    case 2:
+        reason = "recognition impossible";
+        break;
+    case 3:
+        reason = "free memory exhausted";
+    }
+    fprintf(stderr, " Exit: state=%u (%s) completed steps=%" PRIu32 "\n", (unsigned)status_table->state, reason, status_table->step);
+    fflush(stderr);
+}
+
+#endif
+
 void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
 {
     // dynamic area DSA
@@ -281,26 +795,41 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
     quasi_k.info.codep = status_table->dot;
     // adress of free memory list head
     T_LINKCB *free_memory_head = refal.free_memory_head;
+#if defined mdebug
+    const T_DBG_STATE dbg_save = dbg; // refal_run can be called recursively from C-functions
+#endif
     T_INTERPRETATOR_STATES interpretator_state = START;
     while (true)
         switch (interpretator_state)
         {
             // start of next step
         case START:
+#if defined mdebug
+            fflush(stdout); // keep the order of stdout and stderr output
+#endif
             if (status_table->step >= status_table->stop)
             {
+#if defined mdebug
+                fprintf(stderr, " Stop: step limit reached (step=%" PRIu32 ", stop=%" PRIu32 ")\n", status_table->step, status_table->stop);
+#endif
                 interpretator_state = DONE;
                 break;
             }
             right_board_hole = quasi_k.info.codep;
             if (right_board_hole == NULL)
             {
+#if defined mdebug
+                fputs(" Stop: no more calls in the view field\n", stderr);
+#endif
                 interpretator_state = DONE;
                 break;
             }
             temp_board_hole = right_board_hole->info.codep;
             left_board_hole = temp_board_hole->next;
             virtual_program_counter = left_board_hole->info.codef;
+#if defined mdebug
+            dbg_begin_step(status_table, left_board_hole, right_board_hole);
+#endif
             if (left_board_hole->tag != TAGF)
             {
                 interpretator_state = REF;
@@ -317,6 +846,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // increase step number
         case ADVSTEP:
+#if defined mdebug
+            dbg_end_step(status_table);
+#endif
             status_table->step++;
             interpretator_state = START;
             break;
@@ -331,6 +863,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             table_elements[2] = right_board_hole;
             table_elements[3] = left_board_hole;
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
+#if defined mdebug
+            dbg_swap_reference(current_linkcb_free_memory, left_board_hole, right_board_hole);
+#endif
             interpretator_state = SWAPREF;
             break;
             // interpreter exits
@@ -340,10 +875,16 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             interpretator_state = EXIT;
             break;
         case RCGIMP:
+#if defined mdebug
+            dbg_recognition_impossible();
+#endif
             status_table->state = 2; // recognition impossible
             interpretator_state = EXIT;
             break;
         case LACK:
+#if defined mdebug
+            fprintf(stderr, " Lack of free memory: step=%" PRIu32 " operations=%" PRIu32 "\n", status_table->step + 1, dbg.operations);
+#endif
             status_table->state = 3; // end of free memory
             quasi_k.info.codep = table_elements[2];
             interpretator_state = EXIT;
@@ -351,6 +892,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             // state remove from
         case EXIT:
             status_table->dot = quasi_k.info.codep;
+#if defined mdebug
+            dbg_exit(status_table);
+#endif
             // restore refal-block
             refal.upshot = save_process->upshot;
             refal.previous_argument = save_process->previous_argument;
@@ -359,12 +903,14 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             refal.next_result = save_process->next_result;
             refal.current_status_table = save_process->current_status_table;
             free(save_process);
+#if defined mdebug
+            dbg = dbg_save;
+#endif
             return;
         case NEXTOP:
             operation_program_code = *virtual_program_counter;
 #if defined mdebug
-            fprintf(stderr, " Switcher");
-            fprintf(stderr, " code8=%" PRIo8 "\t(D=%" PRIu8 ",H=%" PRIx8 ")\n", operation_program_code, operation_program_code, operation_program_code);
+            dbg_next_operation();
 #endif
             // operation switcher
             switch (operation_program_code)
@@ -625,13 +1171,23 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // FAIL;
         case FAIL:
+#if defined mdebug
+            dbg.fails++;
+            fprintf(stderr, " Fail at %s", dbg_operation_name(dbg.last_operation));
+#endif
             if (jump_stack_pointer == jump_stack)
             {
+#if defined mdebug
+                fputs(": no alternatives left\n", stderr);
+#endif
                 interpretator_state = RCGIMP;
                 break;
             }
             jump_stack_pointer--;
             GET_JUMP_STACK(left_board_hole, right_board_hole, number_element, virtual_program_counter);
+#if defined mdebug
+            fprintf(stderr, ": backtrack to %s (jump=%td elem=%u)\n", dbg_operation_name(*virtual_program_counter), jump_stack_pointer - jump_stack, (unsigned)number_element);
+#endif
             interpretator_state = NEXTOP;
             break;
             // SB(N,M);
@@ -1346,6 +1902,11 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
         case WSPC:
             if (!specifier_interpretator(table_elements[number_element - 1]))
             {
+#if defined mdebug
+                fputs("   Specifier rejects ", stderr);
+                dbg_cell(table_elements[number_element - 1]);
+                fputc('\n', stderr);
+#endif
                 interpretator_state = FAIL;
                 break;
             }
@@ -1363,6 +1924,11 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
                     temp_board_hole = temp_board_hole->info.codep;
                 if (!specifier_interpretator(temp_board_hole))
                 {
+#if defined mdebug
+                    fputs("   Specifier rejects ", stderr);
+                    dbg_cell(temp_board_hole);
+                    fputc('\n', stderr);
+#endif
                     interpretator_state = FAIL;
                     fail = true;
                     break;
@@ -1392,6 +1958,11 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
                 left_board_hole = left_board_hole->info.codep;
             if (!specifier_interpretator(left_board_hole))
             {
+#if defined mdebug
+                fputs("   Specifier rejects ", stderr);
+                dbg_cell(left_board_hole);
+                fputc('\n', stderr);
+#endif
                 interpretator_state = FAIL;
                 break;
             }
@@ -1420,6 +1991,11 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
                 right_board_hole = right_board_hole->info.codep;
             if (!specifier_interpretator(right_board_hole))
             {
+#if defined mdebug
+                fputs("   Specifier rejects ", stderr);
+                dbg_cell(right_board_hole);
+                fputc('\n', stderr);
+#endif
                 interpretator_state = FAIL;
                 break;
             }
@@ -1654,6 +2230,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             break;
             // EOS;
         case EOS:
+#if defined mdebug
+            dbg_begin_replace(free_memory_head, current_linkcb_free_memory);
+#endif
             last_acted_k->info.codep = table_elements[1]->info.codep;
             last_acted_k->tag = TAGK;
             // item adress followed by result
@@ -1664,6 +2243,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             {
                 transplantation_stack_pointer--;
                 GET_TRANSPLANTATION_STACK(current_linkcb_free_memory, temp_linkcb, temp_linkcb_free_memory);
+#if defined mdebug
+                dbg_transplant(temp_linkcb, temp_linkcb_free_memory);
+#endif
                 LINK(temp_linkcb->previous, temp_linkcb_free_memory->next);
                 LINK(temp_linkcb_free_memory, current_linkcb_free_memory->next);
                 LINK(current_linkcb_free_memory, temp_linkcb);
@@ -1683,6 +2265,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             // DELKD:
             LINK(table_elements[2], next_result);
             LINK(free_memory_head, table_elements[1]);
+#if defined mdebug
+            dbg_end_replace();
+#endif
             interpretator_state = ADVSTEP;
             break;
             // SWAP;
@@ -1746,7 +2331,23 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             refal.previous_argument = left_board_hole;
             refal.next_argument = right_board_hole;
             //        call  C - function
+#if defined mdebug
+            fputs(" C-function: ", stderr);
+            dbg_cell(left_board_hole);
+            fputs(" argument: ", stderr);
+            dbg_expr(left_board_hole, right_board_hole);
+            fputc('\n', stderr);
+#endif
             (*function_c)();
+#if defined mdebug
+            fprintf(stderr, " C-function returned: upshot=%u", (unsigned)refal.upshot);
+            if (refal.upshot == 1)
+            {
+                fputs(" result: ", stderr);
+                dbg_expr(refal.previous_result, refal.next_result);
+            }
+            fputc('\n', stderr);
+#endif
             switch (refal.upshot)
             {
             case 1:

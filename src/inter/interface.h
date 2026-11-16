@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-12
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.h  ----------
@@ -32,6 +32,9 @@ extern void print_expression_s(const char *begin_string, const T_LINKCB *before,
 extern bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb);
 extern T_LINKCB *set_string_expression(const char *string, T_LINKCB *before);
 extern void refal_terminate_memory(void);
+#if defined mdebug
+extern void print_memory_state(void);
+#endif
 extern void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after);
 extern bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after);
 extern bool read_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after);

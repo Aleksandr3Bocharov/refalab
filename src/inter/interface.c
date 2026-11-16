@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-25
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -384,11 +384,12 @@ void refal_execute(uint8_t *refalab_function)
             const T_LINKCB *k = status_table.dot->info.codep;
             const T_LINKCB *previous_k = k->previous;
             const T_LINKCB *next_dot = status_table.dot->next;
-            printf(" Step: %" PRIu32 "\n", status_table.stop);
-            print_expression_m(" Term: ", previous_k, next_dot, true);
+            fprintf(stderr, " Step: %" PRIu32 "\n", status_table.stop);
+            debug_print_expression(" Term: ", previous_k, next_dot);
             refal_run(&status_table);
             if (status_table.state == 1)
-                print_expression_m(" Result: ", previous_k, next_dot, true);
+                debug_print_expression(" Result: ", previous_k, next_dot);
+            print_memory_state();
             break;
 #else
             // no debug info
@@ -438,6 +439,18 @@ void refal_execute(uint8_t *refalab_function)
             return;
         }
 }
+
+#if defined mdebug
+// debug trace: state of list memory (free cells are counted by walking the free list)
+void print_memory_state(void)
+{
+    fflush(stdout); // keep the order of stdout and stderr output
+    size_t free_cells = 0;
+    for (const T_LINKCB *cell = refal.free_memory_head->next; cell != refal.free_memory_head; cell = cell->next)
+        free_cells++;
+    fprintf(stderr, " Memory: free=%zu used=%zu total=%zu\n", free_cells, list_memory_count - free_cells, list_memory_count);
+}
+#endif
 
 void print_status_table(T_STATUS_TABLE *status_table, bool additional_info)
 {

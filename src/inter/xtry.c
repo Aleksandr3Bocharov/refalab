@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-16
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xtry.c  ---------
@@ -68,11 +68,11 @@ static void try_(void)
             const T_LINKCB *current_k = new_status_table->dot->info.codep;
             const T_LINKCB *previous_current_k = current_k->previous;
             const T_LINKCB *next_current_dot = new_status_table->dot->next;
-            printf(" Step: %" PRIu32 "\n", new_status_table->stop);
-            print_expression_m(" Term: ", previous_current_k, next_current_dot, true);
+            fprintf(stderr, " Step: %" PRIu32 "\n", new_status_table->stop);
+            debug_print_expression(" Term: ", previous_current_k, next_current_dot);
             refal_run(new_status_table);
             if (new_status_table->state == 1)
-                print_expression_m(" Result: ", previous_current_k, next_current_dot, true);
+                debug_print_expression(" Result: ", previous_current_k, next_current_dot);
 #else
             refal_run(new_status_table); // net prokrutki
             if (new_status_table->state == 1 && new_status_table->dot != NULL)
