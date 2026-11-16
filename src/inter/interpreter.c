@@ -500,7 +500,10 @@ static void dbg_operation(const uint8_t *pc)
         fprintf(stderr, "(%u,'", (unsigned)count);
         for (uint8_t idx = 0; idx < count && idx < DBG_MAX_CELLS; idx++)
             dbg_char((char)pc[NMBL + NMBL + idx]);
-        fputs("')", stderr);
+        fputc('\'', stderr);
+        if (count > DBG_MAX_CELLS)
+            fputs(" ...", stderr);
+        fputc(')', stderr);
         break;
     }
     case 0001: // SJUMP(L)
@@ -622,13 +625,6 @@ static void dbg_next_operation(void)
     fputs(" | hole: ", stderr);
     dbg_expr(left_board_hole, right_board_hole);
     fputc('\n', stderr);
-    // the stacks have no bound checks, so warn before overflow
-    if (number_element > sizeof(table_elements) / sizeof(table_elements[0]) - 8)
-        fprintf(stderr, " WARNING: table of elements is near overflow (%u of %zu)\n", (unsigned)number_element, sizeof(table_elements) / sizeof(table_elements[0]));
-    if (jumps > (ptrdiff_t)(sizeof(jump_stack) / sizeof(jump_stack[0])) - 8)
-        fprintf(stderr, " WARNING: jump stack is near overflow (%td of %zu)\n", jumps, sizeof(jump_stack) / sizeof(jump_stack[0]));
-    if (transplantations > (ptrdiff_t)(sizeof(transplantation_stack) / sizeof(transplantation_stack[0])) - 8)
-        fprintf(stderr, " WARNING: transplantation stack is near overflow (%td of %zu)\n", transplantations, sizeof(transplantation_stack) / sizeof(transplantation_stack[0]));
 }
 
 // start of a step: remember the term, reset counters
@@ -646,7 +642,9 @@ static void dbg_begin_step(const T_STATUS_TABLE *status_table, const T_LINKCB *f
     dbg.operations = 0;
     dbg.fails = 0;
     fprintf(stderr, " Enter: step=%" PRIu32 " ", status_table->step + 1);
-    if (function_cell->tag == TAGF)
+    if (function_cell == dot)
+        fputs("empty call", stderr);
+    else if (function_cell->tag == TAGF)
     {
         dbg_cell(function_cell);
         // the code of a static box begins with the SWAP operation
@@ -684,6 +682,18 @@ static void dbg_recognition_impossible(void)
     if (dbg.function == NULL)
     {
         fputs("<no term>\n", stderr);
+        return;
+    }
+    if (dbg.function == dbg.dot)
+    {
+        fputs("empty call\n", stderr);
+        return;
+    }
+    if (dbg.function->tag != TAGF && dbg.function->tag != TAGR)
+    {
+        fputs("not a function, term: ", stderr);
+        dbg_expr(dbg.function->previous, dbg.dot);
+        fputc('\n', stderr);
         return;
     }
     dbg_cell(dbg.function);
