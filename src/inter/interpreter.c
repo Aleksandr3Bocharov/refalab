@@ -522,7 +522,7 @@ static void dbg_operation(const uint8_t *pc)
     case 0116: // SWAP
     {
         const T_LINKCB *box = (const T_LINKCB *)(pc + NMBL);
-        fprintf(stderr, "(box=%p%s)", (const void *)box, box->previous == NULL ? ", not initialized" : "");
+        fprintf(stderr, "(static box=%p%s)", (const void *)box, box->previous == NULL ? ", not initialized" : "");
         break;
     }
     default:
@@ -649,10 +649,11 @@ static void dbg_begin_step(const T_STATUS_TABLE *status_table, const T_LINKCB *f
     if (function_cell->tag == TAGF)
     {
         dbg_cell(function_cell);
-        fputs(" (Refal function)", stderr);
+        // the code of a static box begins with the SWAP operation
+        fputs(*function_cell->info.codef == 0116 ? " (static box)" : " (Refal function)", stderr);
     }
     else if (function_cell->tag == TAGR)
-        fputs("reference (box swap)", stderr);
+        fputs("reference (dynamic box)", stderr);
     else
     {
         fputs("not a function: ", stderr);
@@ -661,15 +662,16 @@ static void dbg_begin_step(const T_STATUS_TABLE *status_table, const T_LINKCB *f
     fputc('\n', stderr);
 }
 
-static void dbg_swap_reference(const T_LINKCB *box, const T_LINKCB *reference_cell, const T_LINKCB *dot)
+// exchange of box content and argument; kind is "static" or "dynamic"
+static void dbg_swap(const char *kind, const T_LINKCB *box, const T_LINKCB *name_cell, const T_LINKCB *dot)
 {
-    fprintf(stderr, " Swap: box=%p content: ", (const void *)box);
+    fprintf(stderr, " Swap: %s box=%p content: ", kind, (const void *)box);
     if (box->previous == NULL)
         fputs("<not initialized>", stderr);
     else
         dbg_expr(box, box);
     fputs(" ; argument: ", stderr);
-    dbg_expr(reference_cell, dot);
+    dbg_expr(name_cell, dot);
     fputc('\n', stderr);
 }
 
@@ -864,7 +866,7 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
             table_elements[3] = left_board_hole;
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
 #if defined mdebug
-            dbg_swap_reference(current_linkcb_free_memory, left_board_hole, right_board_hole);
+            dbg_swap("dynamic", current_linkcb_free_memory, left_board_hole, right_board_hole);
 #endif
             interpretator_state = SWAPREF;
             break;
@@ -2275,6 +2277,9 @@ void refal_run(T_STATUS_TABLE *status_table) // adress of current state table
         case SWAP:
             virtual_program_counter += NMBL;
             current_linkcb_free_memory = (T_LINKCB *)virtual_program_counter;
+#if defined mdebug
+            dbg_swap("static", current_linkcb_free_memory, left_board_hole, right_board_hole);
+#endif
             if (current_linkcb_free_memory->previous != NULL)
             {
                 interpretator_state = SWAPREF;
