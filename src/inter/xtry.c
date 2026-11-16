@@ -73,6 +73,7 @@ static void try_(void)
             refal_run(new_status_table);
             if (new_status_table->state == 1)
                 debug_print_expression(" Result: ", previous_current_k, next_current_dot);
+            print_memory_state();
 #else
             refal_run(new_status_table); // net prokrutki
             if (new_status_table->state == 1 && new_status_table->dot != NULL)
