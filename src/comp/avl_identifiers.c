@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file avl_identifiers.c  -----------
@@ -16,8 +16,11 @@
 #include "avl_identifiers.h"
 #include "compiler.h"
 
+// The identifier table is a single AVL tree; its nodes are T_LABEL.
+// Identifiers are ordered by strncmp of the common prefix and then by length.
 static T_LABEL *root = NULL; // tree root
 
+// Fatal error: no memory for the identifier table.
 void error_no_memory_labels(void)
 {
     printf("\nNo memory for identifier table\n");
@@ -25,6 +28,7 @@ void error_no_memory_labels(void)
     return;
 }
 
+// Follows the chain of EQU aliases (kind 0300) to the label that really holds the definition.
 T_LABEL *resolve_label_alias(T_LABEL *label)
 {
     while ((label->mode & 0300) == 0300)
@@ -32,6 +36,8 @@ T_LABEL *resolve_label_alias(T_LABEL *label)
     return label;
 }
 
+// Creates a label for a new identifier: undefined, of unknown type, with the first
+// usage position recorded.
 static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
     T_LABEL *label = (T_LABEL *)calloc(1, sizeof(T_LABEL));
@@ -56,9 +62,15 @@ static T_LABEL *new_label(const char *identifier, uint8_t identifier_length, siz
     return label;
 }
 
+// Finds the label of an identifier, or creates it, and records the position of this
+// use in the usage list (a position equal to the previous one is not repeated).
+// An alias is resolved to the label it stands for.
+// A new node is inserted with the path to it kept in two stacks, then the balance
+// features are corrected moving up; a single or a double rotation restores the balance.
 T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 // identifier_length identifier length
 {
+    // Empty tree: the new label becomes the root.
     if (root == NULL)
     { // empty tree
         root = new_label(identifier, identifier_length, identifier_cursor_number);
@@ -66,10 +78,13 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
     }
     // tree is't empty,begin push.
     // remember path in stack
+    // Descent: the stacks hold the visited nodes and the direction taken at each of them
+    // (45 levels are enough for an AVL tree of any practical size).
     uint8_t current_tree_depth = 0; // current  tree depth
     T_LABEL *label = root;
     T_LABEL *child_label;
     uint8_t balance;
+    // Stacks of the path from the root.
     T_LABEL *labels_stack[45]; // stack for tree work
     uint8_t balances_stack[45];
     while (true)
@@ -138,6 +153,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
         };
         break;
     }
+    // Include the new node into the tree.
     // include new node to tree
     T_LABEL *search_label = new_label(identifier, identifier_length, identifier_cursor_number);
     child_label = search_label;
@@ -167,6 +183,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
         label->balance = 0;
         return search_label;
     };
+    // Rebalancing.
     // tree turn
     // if balance = 0100 -- left turn
     // if balance = 0200 -- right turn
@@ -243,6 +260,7 @@ T_LABEL *lookup_label(const char *identifier, uint8_t identifier_length, size_t 
     return search_label;
 }
 
+// In-order traversal (recursive on the left subtree, iterative on the right one).
 static void traverse_down_label(T_LABEL *label, void (*handler)(T_LABEL *))
 {
     T_LABEL *traverse_label = label;
@@ -256,6 +274,7 @@ static void traverse_down_label(T_LABEL *label, void (*handler)(T_LABEL *))
     return;
 }
 
+// Calls the handler for every label in ascending order of identifiers.
 void through_labels(void (*handler)(T_LABEL *))
 {
     if (root != NULL)
@@ -263,6 +282,7 @@ void through_labels(void (*handler)(T_LABEL *))
     return;
 }
 
+// Releases the subtree with the usage lists of its labels.
 static void kill_tree(T_LABEL *label)
 {
     T_LABEL *traverse_label = label;
@@ -291,6 +311,7 @@ static void kill_tree(T_LABEL *label)
     return;
 }
 
+// Releases the whole identifier table.
 void labels_terminate(void)
 {
     if (root != NULL)

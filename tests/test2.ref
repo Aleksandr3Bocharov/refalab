@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
+// Test 2: files and function names: writing, appending, renaming, reading and removing a file,
+// and the conversions between a function and its name (FuncTab, ChartoF, FtoChar).
 $START TEST2;
 
 $ENTRY Go;
@@ -10,13 +12,15 @@ $EXTERN FOpen, FClose, FGetS, FPutS, Rename, Remove_File;
 $EXTERN Print, Prout, FtoChar, ChartoF, FuncTab;
 $EMPTY Ffff;
 
+// Registers the function Prout in the table of names and calls it by its name, then works with a file.
+// The empty function Ffff has the name 'FFFF', and Tttt is registered and called by name too.
 $FUNC Go
 {
     =
         <FuncTab Prout> 
         < <ChartoF 'prout'> ' eto prout'> 
         < <ChartoF 'PROUT'> ' eto PROUT'> 
-//      <FOpen 'r' 10 'bb'>     !!  neot  !!
+//      <FOpen 'r' 10 'bb'>     !!  negative test  !!
         <FOpen 'w' 0 'lala.tes'> 
         <FPutS 0 ' str 1\n'>
         <FPutS 0 ' str 2\n'>
@@ -37,6 +41,7 @@ $FUNC Go
         <Remove_File 'lala.tos'>;
 }
 
+// A function that is called by its name.
 $FUNC Tttt
 {
     e.E = <Prout e.E>;

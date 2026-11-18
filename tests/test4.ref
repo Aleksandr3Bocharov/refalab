@@ -1,8 +1,9 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-23
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
+// Test 4: the type specifiers and the functions First, Last, Length and LengthW.
 $START TEST4;
 
 $ENTRY Go;
@@ -11,6 +12,7 @@ $EMPTY Pus, Em1, Em2, Em3;
 
 $SPEC Bspe '2134' Pus;
 
+// Runs the check of the specifiers and then the other checks.
 $FUNC Go
 {
     = 
@@ -18,7 +20,7 @@ $FUNC Go
         <Dal>;
 }
 
-//      prowerka  specifikacii
+//      Check of the type specifiers: every symbol of the string is classified.
 $FUNC Prspe
 {
     e.E s(Em1 Em2 Em3).S = 
@@ -36,6 +38,7 @@ $FUNC Prspe
     = ;
 }
 
+// Checks First, Last and Length.
 $FUNC Dal
 {
     = 
@@ -45,26 +48,30 @@ $FUNC Dal
         <Prla 3 '123456'>
         <Prfe 1 2> 
         <Prla 3 1 2 3 '567'> 
-//  neot
+//  Negative tests: recognition is impossible for these calls.
         <Prfe '123'>
         <Prla '123'>;
 }
 
+// Check of First.
 $FUNC Prfe
 {
     e.E = <Prow First e.E>;
 }
 
+// Check of Last.
 $FUNC Prla
 {
     e.E = <Prow Last e.E>;
 }
 
+// Prints the call (the function and the arguments) and its result.
 $FUNC Prow
 {
     s.F e.E = <Proutm s.F ', whod=' e.E '  wyh=' < s.F e.E>>;
 }
 
+// Prints the lengths (Length and LengthW) of the expression.
 $FUNC Prln
 {
     e.E = <Prout ' length,lengthw: whod=' e.E '  wyh=' <Length e.E> '  wyh-w=' <LengthW e.E>>;

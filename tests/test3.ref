@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-25
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
+// Test 3: the store (Br, Rp, Dg, DgAll, Cp) and the boxes (New, Wtr, Rdr, Ptr, Gtr, Swr).
+// The expected result is written in the text printed before it (d.b. = it must be).
 $START TEST3;
 
 $ENTRY Go;
@@ -12,6 +14,7 @@ $EXTERN Br, Rp, Dg, DgAll, Cp;
 $EMPTY Tra;
 $SWAP Sw;
 
+// Checks the store and the static box Sw.
 $FUNC Go
 {
     =
@@ -31,6 +34,7 @@ $FUNC Go
         <Proutm ' d.b. 0 i 0: ' <Rdr Sw> <Gtr Sw> <Rdr Sw>>;
 }
 
+// Checks a dynamic box: exchange (Swr) and writing (Wtr).
 $FUNC Sw1 
 {
     r.X =
@@ -40,6 +44,7 @@ $FUNC Sw1
         <Sw2 r.X>;
 }
 
+// Checks Ptr, Rdr, Gtr and the exchange with an empty box.
 $FUNC Sw2 
 {
     r.X =

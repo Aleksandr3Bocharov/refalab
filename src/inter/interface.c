@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-16
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file interface.c  ----------
@@ -23,6 +23,7 @@
 #include "interface.h"
 #include "interpreter.h"
 
+// Size of the hash table of the open files (the file is found by its number).
 #define FILE_HASH_SIZE 256
 
 // number of hex digits to print an address (info field, reference): 8 on x32, 16 on x64
@@ -30,6 +31,8 @@
 
 extern uint8_t refalab_feof, refalab_ferror;
 
+// A node of the chain of the files with the same hash: the identification number
+// that a Refal program uses and the C stream.
 typedef struct file_node
 {
     uint32_t id_number;
@@ -37,8 +40,16 @@ typedef struct file_node
     struct file_node *next;
 } T_FILE_NODE;
 
+// The global state of the Refal machine (see refalab.h).
 T_REFAL refal;
 
+// Options of the interpreter (set by the first argument --rfinteropt... of the command line):
+//   timer_on - measurement of the run time (-timer_off turns it off);
+//   min_list_memory - the size of the first block of list memory in cells (-minsz=);
+//   max_list_memory - the limit of the whole list memory, 0 for no limit (-maxsz=);
+//   increase_list_memory - the size of the next blocks (-incrsz=);
+//   free_memory_count - how many cells garbage collection must free so that
+//   the memory is not enlarged (-freesz=).
 static struct
 {
     bool timer_on;
@@ -48,19 +59,29 @@ static struct
     uint32_t free_memory_count;
 } options = {true, 500, 0, 200, 200};
 
+// The command line saved by refal_get_args.
 static size_t gargc = 0;
 static char **gargv = NULL;
 
+// List memory is allocated in blocks; the blocks are chained through their first cell, and
+// the cells of a block go to the list of free cells (free_memory_head, a circular list).
 static T_LINKCB *last_block_list_memory = NULL;
 static size_t list_memory_count = 0;
+// The machine is initialized at the first use (refal_initiate).
 static bool refal_init = true;
 static T_LINKCB free_memory_head;
 
+// Hash table of the open files.
 static T_FILE_NODE *file_table[FILE_HASH_SIZE] = {NULL};
 
+// Garbage collection: returns the unreachable cells to the list of free cells.
 static bool collect_garbage(void);
+// Links the cells of a new block into the list of free cells.
 static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_memory);
 
+// Saves the command line and reads the options from the first argument that begins with
+// --rfinteropt. Values out of the range 1..INT32_MAX are ignored, a repeated option is
+// ignored too.
 void refal_get_args(int argc, char *argv[])
 {
     gargc = (size_t)argc;
@@ -119,6 +140,7 @@ void refal_get_args(int argc, char *argv[])
     return;
 }
 
+// Fatal error: prints the message and ends the program with exit code 1.
 void refal_abort_end(const char *abort_message)
 {
     printf(" *** refal-abort-end *** %s\n", abort_message);
@@ -126,6 +148,10 @@ void refal_abort_end(const char *abort_message)
     return;
 }
 
+// Gets more free cells: first garbage is collected (when blocks already exist);
+// if that frees fewer cells than free_memory_count, a new block is allocated (the first
+// one has min_list_memory cells, the next ones increase_list_memory, within max_list_memory).
+// Returns false when the memory cannot be enlarged.
 bool more_free_memory(void)
 {
     uint32_t increase_list_memory;
@@ -177,6 +203,7 @@ bool more_free_memory(void)
 }
 
 //  check a number of items in free items list
+// Checks that the list of free cells has at least count cells.
 bool check_count_free_memory(size_t count)
 {
     const T_LINKCB *linkcb_free_memory = refal.free_memory_head;
@@ -189,6 +216,8 @@ bool check_count_free_memory(size_t count)
     return true;
 }
 
+// Takes count free cells and links them into the expression after the cell where.
+// The cells become empty symbols. Returns false when there are not enough free cells.
 bool insert_from_free_memory(T_LINKCB *where, size_t count)
 {
     if (count == 0)
@@ -214,6 +243,7 @@ bool insert_from_free_memory(T_LINKCB *where, size_t count)
     return true;
 }
 
+// The same, but enlarges the memory when necessary; on a lack of memory sets upshot to 3.
 bool extended_insert_from_free_memory(T_LINKCB *where, size_t count)
 {
     while (!check_count_free_memory(count))
@@ -225,6 +255,9 @@ bool extended_insert_from_free_memory(T_LINKCB *where, size_t count)
     return insert_from_free_memory(where, count);
 }
 
+// Makes the view field of an empty process <function argument>: the argument that is
+// already in the view field is enclosed by the call brackets, and refalab_function
+// is the label that follows '<'.
 bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_function)
 {
     if (!exist_status_table(status_table))
@@ -247,6 +280,8 @@ bool insert_view_k_function_dot(T_STATUS_TABLE *status_table, uint8_t *refalab_f
     return true;
 }
 
+// Initializes the machine: the empty list of status tables, the list of free cells,
+// the command line and the timer.
 void refal_initiate(void)
 {
     refal_init = false;
@@ -269,6 +304,9 @@ void refal_initiate(void)
     return;
 }
 
+// Deletes a process: its status table leaves the list of tables and the cells of its
+// view field and store go back to the list of free cells. A process that runs (state 4)
+// cannot be deleted.
 void delete_status_table(const T_STATUS_TABLE *status_table)
 {
     if (refal_init)
@@ -292,6 +330,8 @@ void delete_status_table(const T_STATUS_TABLE *status_table)
 }
 
 //    delete part of list and add it to free memory list
+// Cuts the part between before and after out of the expression and
+// returns its cells to the list of free cells.
 void insert_to_free_memory(T_LINKCB *before, T_LINKCB *after)
 {
     T_LINKCB *first = before->next;
@@ -308,6 +348,7 @@ void insert_to_free_memory(T_LINKCB *before, T_LINKCB *after)
     return;
 }
 
+// Gives all the blocks of list memory back to the system.
 void refal_terminate_memory(void)
 {
     while (last_block_list_memory != NULL)
@@ -322,6 +363,11 @@ void refal_terminate_memory(void)
     list_memory_count = 0;
 }
 
+// Runs a program: the process with the view field <refalab_function> is computed to the end.
+// Then the final state (the view field, the burried expressions, memory and time) is printed,
+// the process is deleted, the memory is released and the function returns.
+// "Concretization is executed" means a normal end; "Recognition impossible" and
+// "Free memory exhausted" are the two abnormal ends.
 void refal_execute(uint8_t *refalab_function)
 {
     T_STATUS_TABLE status_table;
@@ -344,6 +390,8 @@ void refal_execute(uint8_t *refalab_function)
 #if defined mdebug
     const uint32_t step_stop = status_table.stop;
 #endif
+    // States of the run loop: AGAIN - the next portion of steps, DONE - the view field is
+    // computed, ABEND - an abnormal end, EOJ - print the final state, RET - clean up and return.
     enum
     {
         AGAIN,
@@ -355,6 +403,9 @@ void refal_execute(uint8_t *refalab_function)
     while (true)
         switch (execute_state)
         {
+        // In the debug build every step is executed separately and traced; otherwise the interpreter
+        // runs until it stops. A stop for lack of memory is followed by an enlargement of the memory,
+        // after which the run continues; a stop at the step limit resets the step counter.
         case AGAIN:
 #if defined mdebug
             //	step by step execution with full debug trace information
@@ -410,6 +461,7 @@ void refal_execute(uint8_t *refalab_function)
             execute_state = DONE;
             break;
 #endif
+        // The view field has no call brackets left.
         case DONE:
 #if defined mdebug
             printf("Concretization is executed\n");
@@ -418,6 +470,8 @@ void refal_execute(uint8_t *refalab_function)
             execute_state = RET;
 #endif
             break;
+        // The reason of the stop is the state of the process: 2 - recognition impossible,
+        // 3 - the free memory is exhausted.
         case ABEND:
             switch (status_table.state)
             {
@@ -442,6 +496,7 @@ void refal_execute(uint8_t *refalab_function)
 
 #if defined mdebug
 // debug trace: state of list memory (free cells are counted by walking the free list)
+// Debug trace: the state of the list memory.
 void print_memory_state(void)
 {
     fflush(stdout); // keep the order of stdout and stderr output
@@ -452,6 +507,9 @@ void print_memory_state(void)
 }
 #endif
 
+// Prints the state of a process: the number of completed steps, the view field and the burried
+// expressions (the store). With additional_info also the size of the list memory and
+// the elapsed time.
 void print_status_table(T_STATUS_TABLE *status_table, bool additional_info)
 {
     printf("Completed steps number = %" PRIu32 "\n", status_table->step);
@@ -486,6 +544,10 @@ void print_status_table(T_STATUS_TABLE *status_table, bool additional_info)
     }
 }
 
+// Prints the expression after the cell `before` up to the cell before `after`, preceded by
+// begin_string (print_expression: the form of the function Print). Characters are printed as they
+// are, numbers as '123', function labels as 'NAME' and references as '%address'.
+// New line at the end when new_line is set.
 void print_expression(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
     printf("%s", begin_string);
@@ -529,6 +591,8 @@ void print_expression(const char *begin_string, const T_LINKCB *before, const T_
     return;
 }
 
+// Like print_expression, but numbers and labels are printed without apostrophes
+// (the form of the function Prints).
 void print_expression_s(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
     printf("%s", begin_string);
@@ -570,6 +634,9 @@ void print_expression_s(const char *begin_string, const T_LINKCB *before, const 
     return;
 }
 
+// Like print_expression, but in the form of a source program (the function Printm):
+// neighbouring characters are put into one pair of apostrophes, numbers and labels are separated
+// by blanks, the call bracket is printed as '< ' and references as /%address/.
 void print_expression_m(const char *begin_string, const T_LINKCB *before, const T_LINKCB *after, const bool new_line)
 {
     printf("%s", begin_string);
@@ -635,6 +702,9 @@ void print_expression_m(const char *begin_string, const T_LINKCB *before, const 
     return;
 }
 
+// Moves the part of an expression between `before` and `after` (not including them) to the place
+// after the cell `where`. Nothing is copied; only the links are changed. Nothing happens
+// when the part is empty or already at the place.
 void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
     T_LINKCB *first = before->next;
@@ -653,7 +723,9 @@ void transplantation(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
     return;
 }
 
-//  copy expression and add it to nessecary place
+// Copies the expression between `before` and `after` (not including them) after the cell `where`.
+// The copy is made of free cells, the brackets are paired in the copy.
+// Returns false when the free cells are not enough (nothing is changed then).
 bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
 {
     T_LINKCB *linkcb_free_memory = refal.free_memory_head;
@@ -698,6 +770,7 @@ bool copy_expression(T_LINKCB *where, T_LINKCB *before, T_LINKCB *after)
     return true;
 }
 
+// Checks that the status table is in the list of the tables of the machine.
 bool exist_status_table(const T_STATUS_TABLE *status_table)
 {
     const T_STATUS_TABLE *current_status_table = (T_STATUS_TABLE *)&refal;
@@ -710,6 +783,10 @@ bool exist_status_table(const T_STATUS_TABLE *status_table)
     return false;
 }
 
+// Creates a process: takes two cells from the list of free cells (the heads of the view field
+// and of the store, both empty circular lists) and puts the table into the list of the tables.
+// The process starts in the state 1 with no call brackets and no step limit.
+// Returns false when there are not enough free cells.
 bool create_status_table(T_STATUS_TABLE *status_table)
 {
     if (refal_init)
@@ -741,6 +818,11 @@ bool create_status_table(T_STATUS_TABLE *status_table)
     return true;
 }
 
+// Garbage collection, the marking phase: marks (tag UINT32_MAX) every dynamic box that
+// can be reached from the expression `root`, including the boxes reached through other boxes.
+// There is no recursion and no stack: the way back is kept inside the list itself by reversing
+// the pointers (the reference cell points to the box head that is being walked through,
+// the box head remembers the reference cell), and everything is restored when the walk ends.
 static void mark_dynamic_box_heads(T_LINKCB *root)
 {
     T_LINKCB *current_linkcb = root;
@@ -775,6 +857,10 @@ static void mark_dynamic_box_heads(T_LINKCB *root)
     }
 }
 
+// Garbage collection. The boxes reachable from the view fields and the stores of all
+// processes and from the static boxes are marked, then the dynamic boxes that are not marked
+// (nobody can name them any more) are removed from the list of the dynamic boxes and their
+// cells go to the list of free cells. Returns true when something was collected.
 static bool collect_garbage(void)
 {
     if (refal.dynamic_boxes == NULL)
@@ -832,6 +918,7 @@ static bool collect_garbage(void)
     return was_collected_garbage;
 }
 
+// Links the cells of a new block, as empty symbols, to the end of the list of free cells.
 static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_memory)
 {
     if (refal_init)
@@ -852,6 +939,9 @@ static void add_free_memory(T_LINKCB *block_free_memory, size_t size_block_free_
     return;
 }
 
+// Compares the expression between before and after with the same number of cells that follow
+// before_duplicate. Returns the cell after the equal expression or NULL when they differ
+// (brackets are equal if their tags are equal).
 T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_LINKCB *before_duplicate)
 {
     const T_LINKCB *current = before->next;
@@ -869,6 +959,8 @@ T_LINKCB *find_duplicate(const T_LINKCB *before, const T_LINKCB *after, const T_
     return current_duplicate;
 }
 
+// Writes a C string as a chain of characters into the cells that follow `before`
+// (the cells must be there already). Returns the last cell, NULL for an empty string.
 T_LINKCB *set_string_expression(const char *string, T_LINKCB *before)
 {
     if (*string == '\0')
@@ -884,6 +976,8 @@ T_LINKCB *set_string_expression(const char *string, T_LINKCB *before)
     return current;
 }
 
+// After a failed input or output operation: when the end of the file or an error is the reason,
+// the cell is made the label EOF or ERROR respectively and true is returned.
 bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb)
 {
     enum
@@ -911,6 +1005,8 @@ bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb)
     return false;
 }
 
+// Reads characters from the expression into a C string, up to a term that is not a character,
+// the end of the expression or max_string_size characters. Returns the cell where the reading stopped.
 T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *begin, const T_LINKCB *max_after)
 {
     T_LINKCB *current = begin;
@@ -926,11 +1022,14 @@ T_LINKCB *get_string_expression(char *string, size_t max_string_size, T_LINKCB *
     return current;
 }
 
+// Reads a long integer from an expression: an optional sign and macrodigits. Leading zero
+// macrodigits are skipped; an empty number is zero. Returns false when the expression
+// is not a number (a lone sign or a term that is not a macrodigit).
 bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before, const T_LINKCB *after)
 {
     big_number->sign = '+';
     if (before == after->previous)
-    { // pustoe chislo
+    { // an empty number
         big_number->length = 0;
         return true;
     }
@@ -940,23 +1039,24 @@ bool read_big_number_expression(T_BIG_NUMBER *big_number, const T_LINKCB *before
         big_number->sign = current->info.infoc;
         current = current->next;
         if (current == after)
-            return false; //  w chisle - lish znak
+            return false; //  the number consists of a sign only
     }
     for (; current != after && current->tag == TAGN && gcoden(current) == 0; current = current->next)
         ;
     if (current == after)
-        big_number->length = 0; //  wse cifry - nuli
+        big_number->length = 0; //  all digits are zero
     else
     {
         for (big_number->length = 0, big_number->begin = current; current != after && current->tag == TAGN; current = current->next, big_number->length++)
             ;
         if (current != after)
-            return false; // ne makrocifra
+            return false; // not a macrodigit
         big_number->end = after->previous;
     }
     return true;
 }
 
+// Reads two long integers: the first is between before and middle, the second between middle and after.
 bool read_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2, const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     if (!read_big_number_expression(big_number1, before, middle))
@@ -966,6 +1066,7 @@ bool read_big_numbers_expression(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_nu
     return true;
 }
 
+// Swaps two numbers.
 void exchange_big_numbers(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2)
 {
     T_BIG_NUMBER temp_big_number = *big_number1;
@@ -974,6 +1075,7 @@ void exchange_big_numbers(T_BIG_NUMBER *big_number1, T_BIG_NUMBER *big_number2)
     return;
 }
 
+// Compares long integers: -1, 0 or 1 for less, equal or greater.
 int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2)
 {
     if (big_number1->length == 0 && big_number2->length == 0)
@@ -990,6 +1092,8 @@ int8_t compare_big_numbers(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *
     return 1;      // X>Y
 }
 
+// Compares the absolute values: by the number of macrodigits first (leading zeros are
+// already dropped), then digit by digit from the most significant one.
 int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG_NUMBER *big_number2)
 {
     if (big_number1->length == 0 && big_number2->length == 0)
@@ -1008,6 +1112,11 @@ int8_t compare_big_numbers_absolute(const T_BIG_NUMBER *big_number1, const T_BIG
     return 0; // |X|=|Y|
 }
 
+// Lexicographic comparison of the expression between before and middle with the one between
+// middle and after: -1, 0 or 1. Terms are compared by the tag and then by the value (the address
+// of a label or a reference, the code of a character or of a number). The order of the brackets is such
+// that any term is smaller than a left bracket and greater than a right one, so a shorter expression
+// is smaller and an expression that ends earlier at a closing bracket precedes a longer one.
 int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB *middle, const T_LINKCB *after)
 {
     const T_LINKCB *first_current = before->next;
@@ -1035,6 +1144,8 @@ int8_t compare_expressions_lexicographic(const T_LINKCB *before, const T_LINKCB 
 }
 
 // MurmurHash3 finalizer
+// Hash of a file number (the same mixing as in the final step of MurmurHash3),
+// reduced to the size of the table.
 static inline uint32_t file_hash(uint32_t id_number)
 {
     uint32_t hash = id_number;
@@ -1046,6 +1157,7 @@ static inline uint32_t file_hash(uint32_t id_number)
     return hash & (FILE_HASH_SIZE - 1);
 }
 
+// Table of the open files, a hash table with chains. Returns the stream with the number or NULL.
 FILE *file_get(uint32_t id_number)
 {
     for (T_FILE_NODE *file_node = file_table[file_hash(id_number)]; file_node != NULL; file_node = file_node->next)
@@ -1054,6 +1166,7 @@ FILE *file_get(uint32_t id_number)
     return NULL;
 }
 
+// Enters a stream under a number; false when the number is used or there is no memory.
 bool file_add(uint32_t id_number, FILE *file)
 {
     if (file_get(id_number) != NULL)
@@ -1069,6 +1182,7 @@ bool file_add(uint32_t id_number, FILE *file)
     return true;
 }
 
+// Removes the number from the table (the stream is not closed); false when it is unknown.
 bool file_remove(uint32_t id_number)
 {
     const uint32_t hash = file_hash(id_number);

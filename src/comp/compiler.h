@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-09-25
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.h  ----------
@@ -18,6 +18,9 @@
 #include "compile_sentence.h"
 #include "generate_operators.h"
 
+// Options of the compilation (the command line of the compiler): the source listing, full names of the
+// functions (with the module name), the names of the functions in the module image, only the LLVM IR
+// file (no object file) and the options that are passed to clang.
 typedef struct options_
 { // compiling   options
     bool source_listing;
@@ -29,6 +32,9 @@ typedef struct options_
 
 extern T_OPTIONS options;
 
+// State of the scanner that is shared with the other modules: the position of the last error,
+// the name and the number of the module, and the name and the position of the last label
+// (a function or a specifier) that was read.
 typedef struct scanner
 { // the table for corresponding with scanner
     size_t last_error_cursor;
@@ -42,6 +48,8 @@ typedef struct scanner
 
 extern T_SCANNER scanner;
 
+// The current element of a sentence as the scanner returns it: its type, the name of a variable
+// and whether it is a v-variable, the symbol (code) or the type specifier and the position in the source.
 typedef struct sentence_element
 {                                           // current sentence element
     T_SENTENCE_ELEMENT_TYPES type;          //    element type
@@ -55,6 +63,7 @@ typedef struct sentence_element
 
 extern T_SENTENCE_ELEMENT current_sentence_element;
 
+// A saved state of the scanner, for the reading of the right part ahead (see save_scanner_state).
 typedef struct save_scanner_state
 {
     size_t cursor;                    // position in source code
@@ -71,11 +80,14 @@ typedef struct save_scanner_state
     size_t big_number_index;          // current index
 } T_SAVE_SCANNER_STATE;
 
+// The listing is suppressed while the source is read ahead.
 extern bool suppress_listing;
 
+// The source listing file (NULL when there is no listing) and the terminal.
 extern FILE *refalab_source_listing, *terminal;
 extern FILE *llvm_source; // for llvm
 
+// Interface of the scanner and of the error reporting (see compiler.c).
 extern void get_location(size_t *line, size_t *column, size_t cursor);
 extern void processing_error(void);
 extern void scan_sentence_element(void);

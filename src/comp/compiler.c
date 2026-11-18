@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-15
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compiler.c  ----------
@@ -59,6 +59,8 @@
 #define PRINT_ERROR_212 \
     print_error_string(212, "Range: mixed types (character and number)")
 
+// Codes of the specifier terms written into the module image
+// (they correspond to the SP_* codes of specifier_pool.c).
 #define ns_b 0006
 #define ns_cll 0000
 #define ns_d 0013
@@ -81,6 +83,9 @@
 #define MAX_PATHFILENAME 260
 #endif
 
+// States of the module compilation in main: START_OF_MODULE reads the START directive,
+// NEXT_STM/KEYS process the directives one by one up to END, then the module is finished
+// (END_STATEMENT) and the program ends (END_OF_SYSIN).
 typedef enum module_states
 {
     START_OF_MODULE,
@@ -91,6 +96,7 @@ typedef enum module_states
     END_OF_SYSIN
 } T_MODULE_STATES;
 
+// States of the scanner of a sentence element (scan_sentence_element).
 typedef enum scanner_states
 {
     STATE0,
@@ -133,6 +139,7 @@ typedef enum scanner_states
     SCNRET
 } T_SCANNER_STATES;
 
+// States of the specifier compiler (compile_specifer, compile_range).
 typedef enum specifier_states
 {
     SPCBLO,
@@ -169,17 +176,24 @@ typedef enum specifier_states
 
 typedef struct timespec T_TIMESPEC;
 
+// Global tables shared with the other modules of the compiler (see compiler.h).
 T_OPTIONS options;
 
 T_SCANNER scanner;
 
 T_SENTENCE_ELEMENT current_sentence_element;
 
+// The source listing file (NULL when the listing is off), the terminal and the LLVM IR output.
 FILE *refalab_source_listing, *terminal;
 FILE *llvm_source; // for llvm
 
+// True while the source is scanned ahead: nothing is printed to the listing then.
 bool suppress_listing = false;
 
+// Flags of the compiler: an error was found in a module; the matching direction of the sentence
+// (left to right or reverse); the state of the scanner (inside a chain of characters,
+// after '<', inside a long number); the sentence is being scanned in the left part; the end
+// of the source.
 static struct
 {
     bool was_error;
@@ -191,15 +205,21 @@ static struct
     bool end_refalab_source; // "refalab_source" end flag
 } flags;
 
+// The source text is loaded into memory and scanned there by the cursor (an offset).
 static FILE *refalab_source;               // refalab source
 static char *refalab_source_buffer = NULL; // refalab source buffer
 static size_t refalab_source_size = 0;     // refalab source size
 static size_t refalab_source_cursor = 0;   // refalab source cursor
+// Errors found in the current module; with errors no output is produced.
 static uint32_t errors_count;
+// The keyword of the current directive (after '$').
 static char statement_key[8];
 static size_t module_length; // module length
+// Start of the compilation, for the elapsed time report.
 static T_TIMESPEC time_begin;
 
+// Buffers for the scanning of long numbers: the decimal digits and the macrodigits
+// that they are converted to.
 // for big numbers
 static char *big_number_digits = NULL; // digits buffer
 static size_t big_number_digits_capacity = 0;
@@ -227,6 +247,9 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length);
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length);
 static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length);
 
+// Primitives of the source reading. get_current_char returns the character under the
+// cursor ('\0' and the end flag at the end of the text); next_char moves on and prints
+// the finished line to the listing; previous_char steps back; seek_char skips to a character.
 static inline char get_current_char(void)
 {
     if (refalab_source_buffer == NULL || refalab_source_cursor >= refalab_source_size)
@@ -269,6 +292,7 @@ static inline void seek_char(char seek)
         next_char();
 }
 
+// Start and end of the time measurement.
 static inline void SET_time(void)
 {
     clock_gettime(CLOCK_MONOTONIC, &time_begin);
@@ -294,6 +318,14 @@ static inline void GET_time(void)
     return;
 }
 
+// The compiler. Usage: refalabc source_file [options]; the source is source_file.ref.
+// Options: -nn - no function names, -ns - no source listing, -fn - full names,
+// -ll - only the LLVM module, -l,[options] - options for clang.
+// Output: source_file.lst (listing), source_file.ll (LLVM IR) and, unless -ll is given,
+// the object file made by clang. The exit code is 0 on success, 1 on a compilation
+// error and 8 on a file error.
+// The module is processed by the state machine below; every directive is dispatched
+// by its keyword.
 int main(int argc, char *argv[])
 {
     terminal = NULL;
@@ -388,6 +420,8 @@ int main(int argc, char *argv[])
     while (true)
         switch (module_state)
         {
+        // Start of a module: the pools are initialised, the source is loaded and the START
+        // directive with the name of the module is read.
         case START_OF_MODULE:
             errors_count = 0;
             scanner.module_number++;
@@ -446,11 +480,14 @@ int main(int argc, char *argv[])
             }
             module_state = END_IS_MISSING;
             break;
+        // Reads the key of the next directive.
         case NEXT_STM:
             // read of next sentence
             get_statement_key(false);
             module_state = KEYS;
             break;
+        // Dispatch by the keyword: START (a second one is an error), END, ENTRY, EXTERN, EMPTY, SWAP,
+        // SPEC, EQU and FUNC. FUNC is followed by a name and a body in braces or ';' (an empty function).
         case KEYS:
 #if defined mdebug
             {
@@ -582,11 +619,14 @@ int main(int argc, char *argv[])
             }
             module_state = END_IS_MISSING;
             break;
+        // The source ended without the END directive.
         case END_IS_MISSING:
             scanner.last_error_cursor = refalab_source_cursor;
             print_error_string(3, "END-directive missing");
             module_state = END_STATEMENT;
             break;
+        // End of the module. Without errors the specifiers and the functions are written out
+        // and the module image is produced; then everything is released and the result is printed.
         case END_STATEMENT:
 #if defined mdebug
             fprintf(stderr, "compiler: end of module, errors=%d\n", errors_count);
@@ -614,6 +654,8 @@ int main(int argc, char *argv[])
             print_conclusion();
             module_state = END_OF_SYSIN;
             break;
+        // End of the program: files are closed, the empty or erroneous .ll file is removed,
+        // otherwise it is compiled to an object file by clang.
         case END_OF_SYSIN:
 #if defined mdebug
             fprintf(stderr, "free(main): refalab_source_buffer=%p\n", (void *)refalab_source_buffer);
@@ -652,6 +694,7 @@ int main(int argc, char *argv[])
         }
 } // main program  end
 
+// Reads the whole source file into memory, dropping the '\r' of the '\r\n' line ends.
 static void load_refalab_source_to_memory(void)
 {
     if (refalab_source_buffer != NULL)
@@ -716,6 +759,8 @@ static void load_refalab_source_to_memory(void)
     return;
 }
 
+// Converts a position in the source text into a line and a column (both from 1).
+// A tab counts as one column, UTF-8 continuation bytes and control characters as none.
 void get_location(size_t *line, size_t *column, size_t cursor)
 {
     size_t current_line = 1;
@@ -751,6 +796,8 @@ void get_location(size_t *line, size_t *column, size_t cursor)
         *column = current_column;
 }
 
+// Reads the key of a directive: '$' and up to 7 letters, upper-cased, into statement_key.
+// With is_func a missing '$' is not an error (it is the end of a function body or a sentence).
 static void get_statement_key(bool is_func)
 {
     statement_key[0] = '\0';
@@ -791,6 +838,9 @@ static void get_statement_key(bool is_func)
     return;
 }
 
+// Saving and restoring of the scanner state, used for reading the right part ahead
+// (the transplantation search) and then returning to the element that was current.
+// A long number being scanned is saved with its macrodigits.
 void save_scanner_state(T_SAVE_SCANNER_STATE *state)
 {
     state->cursor = refalab_source_cursor;
@@ -824,6 +874,7 @@ void save_scanner_state(T_SAVE_SCANNER_STATE *state)
     }
 }
 
+// Returns the scanner to a saved state.
 void restore_scanner_state(const T_SAVE_SCANNER_STATE *state)
 {
     refalab_source_cursor = state->cursor;
@@ -895,6 +946,7 @@ void restore_scanner_state(const T_SAVE_SCANNER_STATE *state)
     }
 }
 
+// Releases the memory of a saved state.
 void free_scanner_state(T_SAVE_SCANNER_STATE *state)
 {
     if (state->big_number_buffer_copy != NULL)
@@ -909,6 +961,13 @@ void free_scanner_state(T_SAVE_SCANNER_STATE *state)
     state->big_number_index = 0;
 }
 
+// The scanner of the sentence elements. It reads the next element of a sentence into
+// current_sentence_element: a symbol (identifier, number, long number #..., character),
+// a bracket, a variable (s, w, v, e with an index; in the left part also a type specifier
+// after ':'), a call bracket '<' or '>', '=' or ';'.
+// The scanner keeps its mode in flags: inside a chain of characters ('...'), after '<'
+// (a function name follows) and inside a long number (macrodigits are returned one by one).
+// An error gives the element NONE.
 void scan_sentence_element(void)
 {
     char identifier[MAX_IDENTIFIER_LENGTH];
@@ -930,6 +989,7 @@ void scan_sentence_element(void)
     while (true)
         switch (scanner_state)
         {
+        // Between the elements: the first character selects the kind of the element.
         case STATE0:
             // among elements
             blanks_out();
@@ -1041,6 +1101,7 @@ void scan_sentence_element(void)
             current_sentence_element.type = NONE;
             scanner_state = SCNRET;
             break;
+        // A symbol: an identifier, a number or a function name.
         case SCNSC:
             if (get_multiple_symbol(&current_sentence_element.code, identifier, &identifier_length))
                 scanner_state = EGO;
@@ -1051,6 +1112,7 @@ void scan_sentence_element(void)
             current_sentence_element.type = SC;
             scanner_state = SCNRET;
             break;
+        // A long number '#...': digits are collected and converted to macrodigits.
         case SCNBN:
             next_char();
             current_char = get_current_char();
@@ -1165,6 +1227,8 @@ void scan_sentence_element(void)
             current_sentence_element.type = E_V;
             scanner_state = SCNV;
             break;
+        // A variable: the type letter and the '.' and the index follow; in the left part a type
+        // specifier may follow after ':' (a name or a specifier in brackets).
         case SCNV:
             next_char();
             current_char = get_current_char();
@@ -1217,6 +1281,7 @@ void scan_sentence_element(void)
             current_sentence_element.identifier_length = identifier_length;
             scanner_state = SCNRET;
             break;
+        // The sign '<': a function name may follow it directly.
         case SCNKK:
             current_sentence_element.type = K;
             next_char();
@@ -1228,15 +1293,18 @@ void scan_sentence_element(void)
             current_sentence_element.type = DOT;
             scanner_state = SCNGCR;
             break;
+        // The sign '=' ends the left part.
         case SCNEOL:
             current_sentence_element.type = EQ;
             flags.left_part_sentence = false;
             scanner_state = SCNGCR;
             break;
+        // The sign ';' ends the sentence.
         case SCNEOS:
             current_sentence_element.type = END;
             scanner_state = SCNRET;
             break;
+        // A left apostrophe starts a chain of characters.
         case SCNA:
             next_char();
             current_char = get_current_char();
@@ -1253,6 +1321,7 @@ void scan_sentence_element(void)
             flags.scanner_station = true;
             scanner_state = SCNCHR;
             break;
+        // Inside a chain of characters; a doubled apostrophe is one character.
         case STATE1: // within letter chain
             if (current_char == '\n' || current_char == '\0')
             {
@@ -1281,6 +1350,7 @@ void scan_sentence_element(void)
             current_sentence_element.type = SC;
             scanner_state = SCNGCR;
             break;
+        // After '<': the function name (an identifier) is read, if any.
         case STATE2:
             flags.scanner_station_k = false;
             current_sentence_element.cursor_number = refalab_source_cursor;
@@ -1298,6 +1368,7 @@ void scan_sentence_element(void)
             PRINT_ERROR_100(get_current_char());
             scanner_state = SCNERR;
             break;
+        // Inside a long number: the next macrodigit.
         case STATE3:
             current_sentence_element.cursor_number = refalab_source_cursor;
             current_sentence_element.code.tag = TAGN;
@@ -1339,6 +1410,8 @@ void scan_sentence_element(void)
             specifier_code = 5;
             scanner_state = SABBR;
             break;
+        // The abbreviations f, n, r, o, d, l: an s-variable with the specifier of the class
+        // (function, number, reference, character, digit, letter).
         case SABBR:
             current_sentence_element.type = S_V;
             if (flags.left_part_sentence)
@@ -1385,11 +1458,15 @@ void scan_sentence_element(void)
             next_char();
             scanner_state = SCNRET;
             break;
+        // Return from the scanner.
         case SCNRET:
             return;
         }
 }
 
+// Outputs a code of a specifier term: into the specifier buffer while a specifier is being
+// collected, otherwise straight into the module image. Nothing is generated
+// in the right part.
 static inline void generate_specifier(uint8_t n)
 {
 #if defined mdebug
@@ -1405,6 +1482,10 @@ static inline void generate_specifier(uint8_t n)
     return;
 }
 
+// Compiles a specifier: a sequence of terms (classes of symbols, given symbols,
+// ranges, calls of other specifiers) up to the closing character tail. Terms: the classes s, b, w, f, n, r, o, l, d, a given symbol (an identifier, a number or a quoted
+// character), a call of a named specifier ':Name:' and a range '[..]'; a group in parentheses
+// is a negation (the next segment of the specifier). Returns false on an error (the codes 2xx).
 static bool compile_specifer(char tail)
 { // specifier compiler
     bool negative = false;
@@ -1764,6 +1845,8 @@ static bool compile_specifer(char tail)
         }
 }
 
+// Compiles a range of characters or of numbers [first..second]; error 211 if the first
+// value is greater than the second.
 static bool compile_range(void)
 {
     next_char();
@@ -1945,6 +2028,7 @@ static bool compile_range(void)
     return true;
 }
 
+// Prints the current source line with its line number to the listing.
 static void print_card_refalab_source_listing(void)
 { // writing of card into refalab source listing
     if (refalab_source_listing == NULL || refalab_source_buffer == NULL || suppress_listing)
@@ -1964,6 +2048,7 @@ static void print_card_refalab_source_listing(void)
     fputc('\n', refalab_source_listing);
 }
 
+// Prints the line with the last error and a caret under the position of the error.
 static void print_card_error(FILE *file)
 { // card writing if error
     if (file == NULL || refalab_source_buffer == NULL)
@@ -2003,6 +2088,8 @@ static void print_card_error(FILE *file)
     fprintf(file, "^\n");
 }
 
+// Directives EMPTY and SWAP: a list of identifiers separated by commas up to ';',
+// the handler is called for each of them.
 static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) // treatment of directives having 'EMPTY' and 'SWAP' type
 {
     blanks_out();
@@ -2038,6 +2125,8 @@ static void handle_identifiers(void (*handler)(const char *, uint8_t, size_t)) /
     return;
 }
 
+// Directives ENTRY and EXTERN: identifiers separated by commas, each optionally followed
+// by an external name in parentheses (the identifier itself is the default).
 static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, size_t, const char *, uint8_t, size_t)) // treatment of directives having 'ENTRY' and 'EXTRN' type
 {
     blanks_out();
@@ -2091,6 +2180,7 @@ static void handle_identifiers_extern(void (*handler)(const char *, uint8_t, siz
     return;
 }
 
+// Directive EQU: pairs of identifiers that are given the same meaning.
 static void equ(void)
 { // treatement of directives having 'EQU' type
     do
@@ -2123,6 +2213,8 @@ static void equ(void)
     return;
 }
 
+// Directive FUNC: the sentences of the function body up to '}'. A sentence may be preceded by
+// $LEFT (matching from left to right, the default) or $RIGHT (from right to left).
 static void func(void)
 { // treatement of directives having 'FUNC' type
     while (true)
@@ -2186,6 +2278,8 @@ static void func(void)
     return;
 }
 
+// Directive SPEC: the definition of a named specifier: a name followed by the text
+// of the specifier, up to ';'.
 static void specifier(void)
 { // treatement of directives having 'SPEC' type
 #if defined mdebug
@@ -2236,6 +2330,8 @@ static void specifier(void)
     return;
 }
 
+// Reads one character of a chain: a plain character or an escape sequence
+// (\\, \n, \t, \v, \r, \f, an octal code \ooo or a hexadecimal code \xhh).
 static char get_char_object(void)
 {
     char symbol = get_current_char();
@@ -2349,6 +2445,7 @@ static char get_char_object(void)
     return symbol;
 }
 
+// Reads a multiple symbol: an identifier or a macrodigit (a number).
 static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *identifier_length) // procedure read multiple symbol
 {
     code->tag = TAGO;
@@ -2367,6 +2464,8 @@ static bool get_multiple_symbol(T_LINKTI *code, char *identifier, uint8_t *ident
     return true;
 }
 
+// Reads a number into a macrodigit: decimal, hexadecimal (0x...) or octal (a leading 0).
+// A value above MAX_NUMBER is error 111, a bad hexadecimal number is error 112.
 static bool get_macrodigit(T_LINKTI *code)
 {
     char current_char = get_current_char();
@@ -2480,6 +2579,8 @@ static bool get_macrodigit(T_LINKTI *code)
     return false;
 }
 
+// Reads an identifier: an upper case letter or '_' followed by letters, digits and '_'
+// (letters are made upper case). Returns false if there is none or it is too long (113).
 static bool get_identifier(char *identifier, uint8_t *identifier_length)
 { // read identifier
     memset(identifier, ' ', MAX_IDENTIFIER_LENGTH);
@@ -2514,6 +2615,7 @@ static bool get_identifier(char *identifier, uint8_t *identifier_length)
 }
 
 // read external identifier
+// Reads an external identifier (the name of an exported or imported label), too long is 114.
 static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
 {
     char current_char = get_current_char();
@@ -2546,6 +2648,8 @@ static bool get_identifier_extern(char *identifier, uint8_t *identifier_length)
     return true;
 }
 
+// Skips blanks and comments (// to the end of the line and /* ... */; an unterminated
+// comment is error 10).
 static void blanks_out(void)
 {
     while (flags.end_refalab_source == false)
@@ -2606,6 +2710,8 @@ static void blanks_out(void)
     return;
 }
 
+// Prints the summary of the module: its name, the number of lines, the number of errors,
+// the size of the object code and the elapsed time.
 static void print_conclusion(void)
 { // print conclusion
     char print_line[180];
@@ -2629,6 +2735,8 @@ static void print_conclusion(void)
     return;
 }
 
+// Registers an error: prints the source line with a caret under the error position
+// to the listing and to the terminal, and counts the error.
 void processing_error(void)
 {
 #if defined mdebug

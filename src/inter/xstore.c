@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xstore.c  ----------
@@ -13,6 +13,9 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Checks the argument of a store function. The store holds the terms (e.Name = e.Value).
+// With only_expression_name the argument is a name alone, otherwise it is a name followed by
+// '=' and a value ('=' is looked for on the zero level). Returns the place after the name.
 static bool legal_argument_store(bool only_expression_name, T_LINKCB **after_expression_name_pointer)
 {
     T_LINKCB *current_expression_name = refal.previous_argument->next;
@@ -41,6 +44,8 @@ static bool legal_argument_store(bool only_expression_name, T_LINKCB **after_exp
     return true;
 }
 
+// Br: <Br e.Name = e.Value> - puts the term (e.Name = e.Value) to the beginning of the store;
+// the result is empty. Equal names may be stored several times.
 static void br_(void)
 {
     const bool only_expression_name = false;
@@ -66,6 +71,8 @@ char br_0[] = {Z2 'B', 'R', (char)2};
 G_L_B uint8_t refalab_br = '\122';
 void (*br_1)(void) = br_;
 
+// Dg: <Dg e.Name> - takes the leftmost (the last stored) value of the name out of the store
+// and returns it. The result is empty when there is no such name.
 static void dg_(void)
 {
     const bool only_expression_name = true;
@@ -100,6 +107,8 @@ char dg_0[] = {Z2 'D', 'G', (char)2};
 G_L_B uint8_t refalab_dg = '\122';
 void (*dg_1)(void) = dg_;
 
+// Dgall: <Dgall> - all the contents of the store are the result and the store is left empty.
+// FAIL when there is an argument.
 static void dgall_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
@@ -112,6 +121,8 @@ char dgall_0[] = {Z5 'D', 'G', 'A', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_dgall = '\122';
 void (*dgall_1)(void) = dgall_;
 
+// Rp: <Rp e.Name = e.Value> - replaces the value in the leftmost term with this name in place;
+// the term is added like Br when there is none. The result is empty.
 static void rp_(void)
 {
     const bool only_expression_name = false;
@@ -158,6 +169,8 @@ char rp_0[] = {Z2 'R', 'P', (char)2};
 G_L_B uint8_t refalab_rp = '\122';
 void (*rp_1)(void) = rp_;
 
+// Cp: <Cp e.Name> - a copy of the leftmost value of the name; the store is not changed.
+// The result is empty when there is no such name.
 static void cp_(void)
 {
     const bool only_expression_name = true;

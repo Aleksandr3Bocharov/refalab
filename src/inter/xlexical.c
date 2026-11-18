@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-17
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xlexical.c  ----------
@@ -23,6 +23,9 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Numb: <Numb e.D> - converts a number written with characters into a macrodigit with a sign if needed:
+// decimal, octal (a leading 0) or hexadecimal (0x), with an optional sign; an empty argument is zero.
+// The absolute value is limited by 4294967295; the result is in the normal form. FAIL for anything else.
 static void numb_(void)
 {
     do
@@ -127,6 +130,9 @@ char numb_0[] = {Z4 'N', 'U', 'M', 'B', (char)4};
 G_L_B uint8_t refalab_numb = '\122';
 void (*numb_1)(void) = numb_;
 
+// Symb: <Symb s.B e.N> - writes the long integer e.N (not above 4294967295 in absolute value) with characters
+// in the base B (8, 10 or 16). A plus sign is not written, zero is '0', a hexadecimal number gets the
+// prefix 0x with upper case digits and an octal one the prefix 0. FAIL for a wrong base or number.
 static void symb_(void)
 {
     do
@@ -212,6 +218,8 @@ char symb_0[] = {Z4 'S', 'Y', 'M', 'B', (char)4};
 G_L_B uint8_t refalab_symb = '\122';
 void (*symb_1)(void) = symb_;
 
+// First: <First n.N e.E> --> (e.E1) e.E2, where e.E1 is the first N terms of e.E (level zero).
+// FAIL when e.E has fewer than N terms.
 static void first_(void)
 {
     do
@@ -251,6 +259,8 @@ char first_0[] = {Z5 'F', 'I', 'R', 'S', 'T', (char)5};
 G_L_B uint8_t refalab_first = '\122';
 void (*first_1)(void) = first_;
 
+// Last: <Last n.N e.E> --> (e.E1) e.E2, where e.E2 is the last N terms of e.E.
+// FAIL when e.E has fewer than N terms.
 static void last_(void)
 {
     do
@@ -291,6 +301,8 @@ char last_0[] = {Z4 'L', 'A', 'S', 'T', (char)4};
 G_L_B uint8_t refalab_last = '\122';
 void (*last_1)(void) = last_;
 
+// Left: <Left n.N e.E> - the term number N from the beginning of e.E (level zero).
+// FAIL when N is zero or e.E has fewer than N terms.
 static void left_(void)
 {
     do
@@ -329,6 +341,7 @@ char left_0[] = {Z4 'L', 'E', 'F', 'T', (char)4};
 G_L_B uint8_t refalab_left = '\122';
 void (*left_1)(void) = left_;
 
+// Right: <Right n.N e.E> - the term number N from the end of e.E; FAIL as for Left.
 static void right_(void)
 {
     do
@@ -367,6 +380,7 @@ char right_0[] = {Z5 'R', 'I', 'G', 'H', 'T', (char)5};
 G_L_B uint8_t refalab_right = '\122';
 void (*right_1)(void) = right_;
 
+// Del_left: <Del_left n.N e.E> - e.E without its first N terms. FAIL when e.E has fewer terms.
 static void del_left_(void)
 {
     do
@@ -406,6 +420,7 @@ char del_left_0[] = {Z0 'D', 'E', 'L', '_', 'L', 'E', 'F', 'T', (char)8};
 G_L_B uint8_t refalab_del_left = '\122';
 void (*del_left_1)(void) = del_left_;
 
+// Del_right: <Del_right n.N e.E> - e.E without its last N terms. FAIL when e.E has fewer terms.
 static void del_right_(void)
 {
     do
@@ -445,6 +460,8 @@ char del_right_0[] = {Z1 'D', 'E', 'L', '_', 'R', 'I', 'G', 'H', 'T', (char)9};
 G_L_B uint8_t refalab_del_right = '\122';
 void (*del_right_1)(void) = del_right_;
 
+// Length: <Length e.E> --> w.L e.E, where L is the number of all the symbols and brackets in e.E
+// (a length that does not fit a macrodigit is returned as a bracketed pair of two macrodigits).
 static void length_(void)
 {
     uint64_t length = 0;
@@ -485,6 +502,7 @@ char length_0[] = {Z6 'L', 'E', 'N', 'G', 'T', 'H', (char)6};
 G_L_B uint8_t refalab_length = '\122';
 void (*length_1)(void) = length_;
 
+// Lengthw: <Lengthw e.E> --> w.L e.E, where L is the number of the terms of e.E at level zero.
 static void lengthw_(void)
 {
     uint64_t length = 0;
@@ -527,6 +545,7 @@ char lengthw_0[] = {Z7 'L', 'E', 'N', 'G', 'T', 'H', 'W', (char)7};
 G_L_B uint8_t refalab_lengthw = '\122';
 void (*lengthw_1)(void) = lengthw_;
 
+// Multe: <Multe n.N e.E> - N copies of e.E one after another (the empty expression when N is zero).
 static void multe_(void)
 {
     const T_LINKCB *symbol_number = refal.previous_argument->next;
@@ -575,6 +594,7 @@ char multe_0[] = {Z5 'M', 'U', 'L', 'T', 'E', (char)5};
 G_L_B uint8_t refalab_multe = '\122';
 void (*multe_1)(void) = multe_;
 
+// Chr: <Chr e.N> - every macrodigit of e.N is replaced by the character with the 8-bit code (modulo 256).
 static void chr_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -595,6 +615,7 @@ char chr_0[] = {Z3 'C', 'H', 'R', (char)3};
 G_L_B uint8_t refalab_chr = '\122';
 void (*chr_1)(void) = chr_;
 
+// Ord: <Ord e.C> - every character of e.C is replaced by the macrodigit with its 8-bit code.
 static void ord_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -611,6 +632,7 @@ char ord_0[] = {Z3 'O', 'R', 'D', (char)3};
 G_L_B uint8_t refalab_ord = '\122';
 void (*ord_1)(void) = ord_;
 
+// Upper: <Upper e.C> - the lower case Latin letters of e.C are made upper case.
 static void upper_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -627,6 +649,7 @@ char upper_0[] = {Z5 'U', 'P', 'P', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_upper = '\122';
 void (*upper_1)(void) = upper_;
 
+// Lower: <Lower e.C> - the upper case Latin letters of e.C are made lower case.
 static void lower_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -643,6 +666,7 @@ char lower_0[] = {Z5 'L', 'O', 'W', 'E', 'R', (char)5};
 G_L_B uint8_t refalab_lower = '\122';
 void (*lower_1)(void) = lower_;
 
+// Empty: <Empty e.E> - the empty expression (the argument is dropped).
 static void empty_(void)
 {
     return;
@@ -651,6 +675,7 @@ char empty_0[] = {Z5 'E', 'M', 'P', 'T', 'Y', (char)5};
 G_L_B uint8_t refalab_empty = '\122';
 void (*empty_1)(void) = empty_;
 
+// Unbrackets: <Unbrackets (e.E)> --> e.E. FAIL unless the argument is one bracketed term.
 static void unbrackets_(void)
 {
     T_LINKCB *left_bracket = refal.previous_argument->next;
@@ -667,6 +692,7 @@ char unbrackets_0[] = {Z2 'U', 'N', 'B', 'R', 'A', 'C', 'K', 'E', 'T', 'S', (cha
 G_L_B uint8_t refalab_unbrackets = '\122';
 void (*unbrackets_1)(void) = unbrackets_;
 
+// Reverse: <Reverse e.E> - reverses the order of the terms of e.E at every level, brackets included.
 static void reverse_(void)
 {
     if (refal.previous_argument->next == refal.next_argument)
@@ -696,6 +722,7 @@ char reverse_0[] = {Z7 'R', 'E', 'V', 'E', 'R', 'S', 'E', (char)7};
 G_L_B uint8_t refalab_reverse = '\122';
 void (*reverse_1)(void) = reverse_;
 
+// Reversew: <Reversew e.E> - reverses the order of the terms of e.E at level zero only.
 static void reversew_(void)
 {
     if (refal.previous_argument->next == refal.next_argument)

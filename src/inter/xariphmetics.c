@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xariphmetics.c ----------
@@ -17,15 +17,23 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Operations of arithmetic_operate on long integers (a sign and macrodigits, see Nnorm).
+// The type of the call is a set of flags: 1 - the functions with the suffix n, which return a zero
+// result as an empty expression instead of the macrodigit 0; 2 - only the quotient (Div);
+// 4 - only the remainder (Mod); a call of Dr has neither of the last two flags and returns both.
 #define Oadd 1
 #define Osub 2
 #define Omul 3
 #define Odr 5
 
+// Number of bits in a macrodigit.
 #define SHIFT_MAX 32
 
 static void arithmetic_operate(uint8_t operation, uint8_t type);
 
+// Add, Sub, Mul, Dr, Div, Mod and their variants Addn, Subn, Muln, Drn, Divn, Modn: the functions
+// are the calls <F (e.X) e.Y> of arithmetic_operate, which does all the work (the manual describes
+// each function). FAIL when the arguments are not long integers or on a division by zero.
 static void add_(void)
 {
     arithmetic_operate(Oadd, 0);
@@ -134,16 +142,19 @@ char modn_0[] = {Z4 'M', 'O', 'D', 'N', (char)4};
 G_L_B uint8_t refalab_modn = '\122';
 void (*modn_1)(void) = modn_;
 
+// Multiplies two macrodigits: the result is a 64-bit number, a gets the high half and b the low half.
 static inline void multiply(uint64_t *a, uint64_t *b)
-{ // rezult: a - starshy, b - mladshy
+{ // result: a - the high half, b - the low half
     uint64_t result = *a * *b;
     *b = result & MAX_NUMBER;
     *a = result >> SHIFT_MAX;
     return;
 }
 
-static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t power) //  normaliz. posledov. makrocifr
-{                                                                                    //  Number_end - ukaz. na konec
+// Shifts a number of Number_length macrodigits to the left by power bits; Number_end is its last
+// digit. It is used for the normalization of the divisor and the dividend in the division.
+static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t power) // normalization of a sequence of macrodigits
+{                                                                                    //  Number_end - the pointer to the end
     uint32_t transfer = 0;
     const uint8_t transfer_shift = SHIFT_MAX - power;
     const uint32_t mask = MAX_NUMBER >> power; // maska
@@ -159,6 +170,13 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
     return;
 }
 
+// The arithmetic of long integers. The sum of numbers with the same sign is the sum of the digits with
+// a carry and with a sign of its own, with different signs the smaller absolute value is subtracted from
+// the greater. The product is computed digit by digit. The division uses the algorithm D of Knuth:
+// the divisor is normalized by a shift (normalization) and the quotient digits are estimated from
+// the two leading digits and corrected. The signs: the remainder has the sign of the dividend and
+// the quotient the product of the signs. The operands are changed in place and the result is moved
+// to the result field; a zero result depends on the type of the call.
 static void arithmetic_operate(uint8_t operation, uint8_t type)
 {
     T_LINKCB *x_current = refal.previous_argument->next;
@@ -174,7 +192,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     bool dr_one_remainder_one_quotient = false;
     switch (operation)
     {
-    case Osub: // izmenim znak i skladywaem
+    case Osub: // change the sign and add
         if (Y.sign == '-')
             Y.sign = '+';
         else
@@ -187,19 +205,19 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             break;
         }
         if (X.length == 0)
-        { //  rezult - wtoroe chislo
+        { //  the result is the second number
             X.begin = Y.begin;
             X.end = Y.end;
             X.sign = Y.sign;
         }
         else if (Y.length != 0)
-        { // summiruem
+        { // add
             if (X.sign == Y.sign)
-            { //  skladywaem
+            { //  add the absolute values
                 if (X.length < Y.length)
                     exchange_big_numbers(&X, &Y);
-                //  X  dlinnee  Y  (ili =)
-                X.begin = X.begin->previous; //  pripisywaem  0
+                //  X is longer than Y (or equal)
+                X.begin = X.begin->previous; //  put a zero in front
                 X.begin->tag = TAGN;
                 X.begin->info.code = NULL;
                 uint64_t transfer = 0;
@@ -266,10 +284,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         {
             x_current->tag = TAGN;
             x_current->info.code = NULL;
-        } //  zanulen rezultat
+        } //  the result is zeroed
         if (X.length < Y.length)
             exchange_big_numbers(&X, &Y);
-        //  dobawim 0 k X dlja summir. s perenosom
+        //  append a zero to X for the addition with a carry
         X.begin = X.begin->previous;
         X.begin->tag = TAGN;
         X.begin->info.code = NULL;
@@ -555,8 +573,8 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     }
     if (!dr_one_remainder_one_quotient)
     {
-        //  wozwratim X
-        // podawim wed. nuli
+        //  return X
+        // drop the leading zeros
         for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
         if (type == 1 && x_current == X.end && gcoden(x_current) == 0)
@@ -568,12 +586,12 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             x_current->info.code = NULL;
             x_current->info.infoc = '-';
         }
-        //  perenosim reultat
+        //  move the result
         transplantation(refal.previous_result, x_current->previous, X.end->next);
         return;
     }
-    // wywod rezultata delenija, kogda ostatok i chastnoe
-    // rawno po odnoj makrocifre remainder - ost., quotient - chastnoe
+    // output of the division result when the remainder and the quotient
+    // are one macrodigit each: remainder - the remainder, quotient - the quotient
     if (!extended_insert_from_free_memory(refal.previous_argument, 2))
         return;
     // in bad case: /1/() - 3 zwena est uje + name
@@ -624,6 +642,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     return;
 }
 
+// Shifts a number to the right by the given number of bits and drops the leading zeros (for Gcd).
 static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
 {
     const uint64_t numbers_count = shifts / 32;
@@ -644,12 +663,13 @@ static void shift_right(T_BIG_NUMBER *big_number, uint64_t shifts)
             pcoden(big_number_current, gcoden(big_number_current) >> shifts_right | gcoden(big_number_current->previous) << transfer_shift_bits);
         pcoden(big_number->begin, gcoden(big_number->begin) >> shifts_right);
     }
-    // podawim wed. nuli
+    // drop the leading zeros
     for (; gcoden(big_number->begin) == 0; big_number->begin = big_number->begin->next, big_number->length--)
         ;
     return;
 }
 
+// The number of the low zero bits of a non-zero number (for Gcd).
 static uint64_t count_trailing_zeros(const T_BIG_NUMBER *big_number)
 {
     uint64_t trailing_zeros_count = 0;
@@ -689,6 +709,9 @@ static uint64_t count_trailing_zeros(const T_BIG_NUMBER *big_number)
     }
 }
 
+// Gcd: <Gcd (e.E1) e.E2> - the greatest common divisor, a positive number. The binary Euclid algorithm:
+// common factors of two are removed, then the numbers are reduced by subtraction and shifts.
+// FAIL when both numbers are zero or an argument is not a long integer.
 static void gcd_(void)
 {
     T_LINKCB *x_current = refal.previous_argument->next;
@@ -788,7 +811,7 @@ static void gcd_(void)
                 pcoden(x_current, (uint32_t)substraction);
             } // for
         }
-            // podawim wed. nuli
+            // drop the leading zeros
             for (; gcoden(X.begin) == 0; X.begin = X.begin->next, X.length--)
                 ;
             const uint64_t X_count_trailing_zeros = count_trailing_zeros(&X);
@@ -837,6 +860,7 @@ char gcd_0[] = {Z3 'G', 'C', 'D', (char)3};
 G_L_B uint8_t refalab_gcd = '\122';
 void (*gcd_1)(void) = gcd_;
 
+// Ncheck: <Ncheck e.N> - returns the argument if it is a long integer, FAIL otherwise.
 static void ncheck_(void)
 {
     T_BIG_NUMBER X;
@@ -852,6 +876,8 @@ char ncheck_0[] = {Z6 'N', 'C', 'H', 'E', 'C', 'K', (char)6};
 G_L_B uint8_t refalab_ncheck = '\122';
 void (*ncheck_1)(void) = ncheck_;
 
+// Nnorm: <Nnorm e.N> - the normal form of a long integer: no sign '+', no leading zero macrodigits,
+// zero is the macrodigit 0.
 static void nnorm_(void)
 {
     T_BIG_NUMBER X;
@@ -883,6 +909,7 @@ char nnorm_0[] = {Z5 'N', 'N', 'O', 'R', 'M', (char)5};
 G_L_B uint8_t refalab_nnorm = '\122';
 void (*nnorm_1)(void) = nnorm_;
 
+// Abs: <Abs e.N> - the absolute value of a long integer.
 static void abs_(void)
 {
     T_BIG_NUMBER X;
@@ -906,6 +933,7 @@ char abs_0[] = {Z3 'A', 'B', 'S', (char)3};
 G_L_B uint8_t refalab_abs = '\122';
 void (*abs_1)(void) = abs_;
 
+// Minus: <Minus e.N> - a long integer with the opposite sign.
 static void minus_(void)
 {
     T_BIG_NUMBER X;
@@ -937,6 +965,7 @@ char minus_0[] = {Z5 'M', 'I', 'N', 'U', 'S', (char)5};
 G_L_B uint8_t refalab_minus = '\122';
 void (*minus_1)(void) = minus_;
 
+// Get_max_number: <Get_max_number> - the largest macrodigit, 4294967295.
 static void get_max_number_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
@@ -954,6 +983,7 @@ char get_max_number_0[] = {Z6 'G', 'E', 'T', '_', 'M', 'A', 'X', '_', 'N', 'U', 
 G_L_B uint8_t refalab_get_max_number = '\122';
 void (*get_max_number_1)(void) = get_max_number_;
 
+// P1: <P1 n.N> - the macrodigit N plus 1; FAIL for 4294967295.
 static void p1_(void)
 {
     do
@@ -975,6 +1005,7 @@ char p1_0[] = {Z2 'P', '1', (char)2};
 G_L_B uint8_t refalab_p1 = '\122';
 void (*p1_1)(void) = p1_;
 
+// M1: <M1 n.N> - the macrodigit N minus 1; FAIL for 0.
 static void m1_(void)
 {
     do

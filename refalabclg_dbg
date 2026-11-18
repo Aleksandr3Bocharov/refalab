@@ -2,16 +2,20 @@
 
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-09
+# 2026-11-17
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
 # refalabclg_dbg
-# compile from refal to object file + link + go
-# arg: $1 - name of refal programm (without ext ref)
-# result: running of $1_dbg.exe in debugging mode 
+# Compile a RefalAB program, link it with the standard initiator and run it.
+# Debug version: no optimization, debug information, the debug library and the debug trace.
+# arg: $1 - name of the RefalAB program (without the extension .ref)
+# result: the program $1_dbg is built and run (the log is in $1_dbg.log)
 # *******************************************************************
 
+# Compile to the object file through LLVM IR; the compiler listing goes to the log file.
 bin/refalabc $1 -l,"-o $1_dbg.o -O0 -g -Wno-override-module" > $1_dbg.log
+# Link the object file with the standard initiator and the library; the linker messages are appended to the log file.
 clang -o $1_dbg $1_dbg.o lib/obj/refalab_initiator_dbg.o -Llib -lrefalab_dbg >> $1_dbg.log
+# Run the program.
 $1_dbg

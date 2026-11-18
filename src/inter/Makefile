@@ -1,11 +1,12 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-11
+# 2026-11-17
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
 # Makefile
-# Makefile for interpreter from "jazyk sborki" creation
+# Makefile for building the RefalAB interpreter library and the standard
+# initiator/debugger objects (the C sources of the interpreter and of the built-in modules)
 # result - lib/librefalab.a library
 # result - lib/librefalab_dbg.a library
 # result - lib/obj/refalab_initiator.o lib/obj/refalab_initiator_dbg.o
@@ -124,19 +125,21 @@ $(OBJ_DIR)$(SLASH)refalab_debugger_dbg.o: debugger.c $(HEADERS)
 	@$(call MKDIR,$(OBJ_DIR))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Pattern rule for all standard Refal modules
+# Pattern rule for the standard Refal modules (.ref): they are compiled by the RefalAB compiler
+# into an object file through LLVM IR; the compiler listing goes to a .log file
 %.o: %.ref
 	$(REFALABC) $* -l,"-o $@ $(LLFLAGS)" > $*.log
 
-# Special rule for platform-dependent xplatform.o
+# xplatform.o is built from the module for the OS in use: xplatform_posix.ref or xplatform_win.ref
+# (XPLATFORM_SRC, selected in section 1)
 xplatform.o: $(XPLATFORM_SRC).ref
 	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ $(LLFLAGS)" > xplatform.log
 
-# Pattern rule for all standard Refal modules
+# The same rule for the debug build (_dbg objects)
 %_dbg.o: %.ref
 	$(REFALABC) $* -l,"-o $@ $(LLFLAGS)" > $*_dbg.log
 
-# Special rule for platform-dependent xplatform.o
+# The same rule for the debug build of the platform module
 xplatform_dbg.o: $(XPLATFORM_SRC).ref
 	$(REFALABC) $(XPLATFORM_SRC) -l,"-o $@ $(LLFLAGS)" > xplatform_dbg.log
 

@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Спецификаторы библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
+// Specifiers of the RefalAB library.
 //====================================================================
 
 $START ARIPHMETICS2;
@@ -15,6 +15,7 @@ $ENTRY Max_Number, Is_Max_Number;
 $EXTERN Add, Sub;
 $EXTERN True, False;
 
+// The specifier Max_Number: the largest macrodigit.
 $SPEC Max_Number 4294967295;
 
 /* 
@@ -22,6 +23,7 @@ $SPEC Max_Number 4294967295;
     e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
     v.Number1 ::= '-'? s(n).Number+ 
 */
+// Increment of a long integer.
 $FUNC Inc
 {
     e.Number = <Add (e.Number) 1>;
@@ -32,12 +34,14 @@ $FUNC Inc
     e.Number ::= '+' s(n).Number+ | '-' s(n).Number+ | s(n).Number*
     v.Number1 ::= '-'? s(n).Number+
 */
+// Decrement of a long integer.
 $FUNC Dec 
 {
     e.Number = <Sub (e.Number) 1>;
 }
 
 //  <Is_Max_Number s.Any> == True | False
+// True when the symbol is the largest macrodigit.
 $FUNC Is_Max_Number
 {
     s(:Max_Number:)._ = True;

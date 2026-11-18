@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-16
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file debugger_interface.c  ----------
@@ -20,6 +20,10 @@
 #include "interface.h"
 #include "interpreter.h"
 
+// States of the debugger that runs a whole program (refal_debugger); the statuses of the program steps
+// and the end of the run: NOT_YET and ALREADY are the states S1 and S2 of the trace control (see the
+// manual, "Controlling the trace"), DONE - the program ended normally, TRAP - the stop on a trap function,
+// ABEND/ABEND1 - the stop on the step limit or on a failure, EOJ - the final report.
 typedef enum debugger_states
 {
     DBG_NOT_YET,
@@ -31,6 +35,7 @@ typedef enum debugger_states
     DBG_EOJ
 } T_DEBUGGER_STATES;
 
+// The same states for the debugger of a nested process (debugger_status_table, called by Try).
 typedef enum status_table_debugger_states
 {
     DB_NOT_YET,
@@ -42,6 +47,8 @@ typedef enum status_table_debugger_states
     DB_AB
 } T_STATUS_TABLE_DEBUGGER_STATES;
 
+// The conditions that were given for one function name: the trace conditions
+// > (gt), >= (ge), = (eq), != (ne), < (lt), <= (le) and the trap (tr). The names are kept in a list.
 typedef struct determination
 {
     struct determination *next;
@@ -54,26 +61,36 @@ typedef struct determination
     bool tr;
     char *identifier;
 } T_DETERMINATION;
+// The list of the functions that have conditions; a function that is not in the list gets dummy_determination
+// (no condition at all).
 static T_DETERMINATION *last_determination = NULL;
 static T_DETERMINATION *current_determination;
 static T_DETERMINATION dummy_determination = {NULL, 0, 0, 0, 0, 0, 0, 0, NULL};
 
+// Switches of the trace: any trace condition was given; no condition > or >= (so the trace starts at once);
+// no condition = (so every function is traced); the mode e._=; (a failed match is not fatal).
 static bool trace_condition = false;
 static bool ge_all = true;
 static bool eq_all = true;
 static bool e_empty = false;
+// Flags: the conditions that were met inside the current trace level.
 static bool was_ge;
 static bool was_le;
 static bool was_eq;
+// The range of the trace (FROM and TO) and the step at which the run stops (STOP).
 static uint32_t step_from = 0;
 static uint32_t step_upto = 0;
 static uint32_t step_stop = MAX_STOP;
+// Counter of the garbage collections.
 static uint32_t garbage_collection_number = 0; // garbage collection counter
+// The line read from the user and the parsing of it: the name or the number that is being read.
 static char *parameters = NULL;
 static size_t parameter_delimiters;
 static size_t parameter_length;
 static char *parameter = NULL;
+// The name of the leading function of the current step ('%' for a reference).
 static char identifier[UINT8_MAX + 1];
+// The numbers of the steps and the cells of the leading term and of its result that the trace works with.
 static uint32_t printed_step;
 static uint32_t current_step;
 static uint32_t leading_term_step;
@@ -84,6 +101,7 @@ static T_LINKCB *previous_k;
 static T_LINKCB *next_dot;
 static const T_LINKCB *result_previous_k;
 static const T_LINKCB *result_next_dot;
+// The place where the trace of a function with >= or <= was started (to print its final result later).
 static uint32_t current_step_ge;
 static T_LINKCB *dot_ge;
 static const T_LINKCB *previous_k_ge, *next_dot_ge;
@@ -105,8 +123,15 @@ static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, co
 static void print_immediate_result(void);
 static void print_step(void);
 
+// The hook of the debugger (see debugger_interface.h): set to debugger_status_table by refal_debugger.
 void (*status_table_debugger)(T_STATUS_TABLE *) = NULL;
 
+// The debugger. First the questions are asked, each answer is a list of function names or a number:
+// > >= = != < <=  - the trace conditions, TRAP - the functions to stop at, STOP - the step to stop at,
+// FROM, TO - the range of the steps to trace, and e._=; (y/n) - the mode where a failed match deletes the
+// leading term instead of stopping the program. Then the program is run step by step with the trace
+// according to the answers; the program ends with the exit code 0 (the debugger never returns).
+// An error of the answers or of the memory ends the debugger.
 void refal_debugger(T_STATUS_TABLE *status_table)
 {
     // read task for debugging
@@ -555,6 +580,8 @@ void refal_debugger(T_STATUS_TABLE *status_table)
         }
 }
 
+// The debugger for a process that was started by Try. It follows the same trace rules as the main one
+// but keeps the state of the trace of the outer process, which is saved and restored around the call.
 static void debugger_status_table(T_STATUS_TABLE *status_table)
 {
     T_LINKCB *save_previous_k = previous_k;
@@ -744,6 +771,7 @@ static void debugger_status_table(T_STATUS_TABLE *status_table)
 }
 
 //    procedures
+// Releases the list of the conditions.
 static void init_determinations_flags(void)
 {
     for (T_DETERMINATION *determination = last_determination; determination != NULL;)
@@ -757,6 +785,8 @@ static void init_determinations_flags(void)
     return;
 }
 
+// Executes one step of the process. In the mode e._=; a failed match is not fatal:
+// the leading term is deleted and the run goes on.
 static void one_step(T_STATUS_TABLE *status_table)
 {
     status_table->stop = status_table->step + 1;
@@ -792,6 +822,7 @@ static void one_step(T_STATUS_TABLE *status_table)
     return;
 }
 
+// Prints the number of the step.
 static inline void print_step(void)
 {
     if (current_step != printed_step)
@@ -802,6 +833,7 @@ static inline void print_step(void)
     return;
 }
 
+// Prints the leading term of the step.
 static inline void print_leading_term(void)
 {
     if (current_step > step_upto || current_step < step_from)
@@ -819,6 +851,7 @@ static inline void print_leading_term(void)
     return;
 }
 
+// Prints the result of the step (the immediate replacement).
 static inline void print_immediate_result(void)
 {
     if (current_step > step_upto || current_step < step_from)
@@ -831,6 +864,8 @@ static inline void print_immediate_result(void)
     return;
 }
 
+// Prints the final result of a call: the expression that is left when all the calls inside
+// are computed, with the step where the computation of the call ended.
 static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, const T_LINKCB *x_next_dot)
 {
     if (current_step > step_upto || current_step < step_from)
@@ -859,6 +894,8 @@ static void print_final_result(uint32_t x_step, const T_LINKCB *x_previous_k, co
     return;
 }
 
+// Gets the name of the leading function of the next step and finds its conditions.
+// The name of a reference is '%'; a function without conditions gets dummy_determination.
 static void get_identifier(const T_STATUS_TABLE *status_table)
 {
     current_step = status_table->step + 1;
@@ -894,6 +931,8 @@ static void get_identifier(const T_STATUS_TABLE *status_table)
     return;
 }
 
+// Reads a line from the standard input into a buffer that grows as needed.
+// Returns NULL at the end of the input or when there is no memory.
 static char *card(void)
 {
     static char *buffer = NULL;
@@ -937,6 +976,8 @@ static char *card(void)
     return buffer_length == 0 ? NULL : buffer;
 }
 
+// Takes the next name from the line: it is made upper case and its length and the length of
+// the delimiters (blanks and commas) after it are measured.
 static void get_parameter(void)
 {
     for (parameter_length = 0;; parameter_length++)
@@ -950,6 +991,7 @@ static void get_parameter(void)
     return;
 }
 
+// Finds the name of the parameter in the list of the conditions or adds it with no condition set.
 static bool get_determination(void)
 {
     current_determination = last_determination;
@@ -990,6 +1032,7 @@ static bool get_determination(void)
     return true;
 }
 
+// Reads a step number (1..MAX_STOP) from the line; false for anything else.
 static bool get_number(int32_t *number)
 {
     char *end_parameters;
@@ -1007,6 +1050,7 @@ static bool get_number(int32_t *number)
     return true;
 }
 
+// Checks the answer y or n; y turns the mode e._=; on.
 static bool get_yes_no(const char *answer)
 {
     if (*answer != 'y' && *answer != 'n')

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //-----------  file xbool.c  ----------
@@ -14,8 +14,12 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Boolean results of the Refal functions True and False.
 extern uint8_t refalab_true, refalab_false;
 
+// Existw: <Existw w.S e.E> - checks whether the term w.S (a symbol, or a bracketed
+// term with its contents) occurs in e.E at level zero.
+// Returns True or False followed by the unchanged arguments; FAIL for an empty argument.
 static void existw_(void)
 {
     if (refal.previous_argument->next == refal.next_argument)
@@ -23,6 +27,7 @@ static void existw_(void)
         refal.upshot = 2;
         return;
     }
+    // Assume the term is absent; the loop below switches the answer to True.
     refal.previous_argument->info.codef = &refalab_false;
     const T_LINKCB *exist_term_begin = refal.previous_argument->next;
     const T_LINKCB *exist_term_end = exist_term_begin;
@@ -47,6 +52,9 @@ char existw_0[] = {Z6 'E', 'X', 'I', 'S', 'T', 'W', (char)6};
 G_L_B uint8_t refalab_existw = '\122';
 void (*existw_1)(void) = existw_;
 
+// Existn: <Existn (e.F) e.N> - checks whether the long integer e.F occurs in the
+// sequence e.N of bracketed long integers. Returns True or False followed by the
+// unchanged arguments; FAIL when any term is not a bracketed long integer.
 static void existn_(void)
 {
     do
@@ -60,6 +68,7 @@ static void existn_(void)
             break;
         const T_LINKCB *current_argument_begin = exist_big_number_end->next;
         bool impossible = false;
+        // Phase 1: search for the number. Stops at the first equal number.
         bool exist_big_number = false;
         while (current_argument_begin != refal.next_argument)
         {
@@ -83,6 +92,7 @@ static void existn_(void)
             }
             current_argument_begin = current_argument_end->next;
         }
+        // A malformed argument turns the call into FAIL.
         if (impossible)
             break;
         while (current_argument_begin != refal.next_argument)

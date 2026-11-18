@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xdelf.c  ----------
@@ -12,6 +12,10 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Delf: <Delf> - deletes a chain of function terms from the view field: from the term
+// that becomes the leading one after this call up to the first term directly followed
+// by the symbol '#'; the '#' is deleted too. The freed cells go back to free memory.
+// The argument must be empty (FAIL otherwise); aborts when no such '#' exists.
 static void delf_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
@@ -19,6 +23,7 @@ static void delf_(void)
         refal.upshot = 2;
         return;
     } // FAIL
+    // Walk the list of call brackets in evaluation order until a call followed by '#' is found.
     const T_LINKCB *delete_dot = refal.next_argument;
     const T_LINKCB *temp_k;
     const T_LINKCB *delete_dot_next;
@@ -33,6 +38,7 @@ static void delf_(void)
             continue;
         break;
     }
+    // Free the cells of every call of the chain except the last one.
     const T_LINKCB *current_delete_dot = refal.next_result->info.codep;
     T_LINKCB *temp_dot;
     while (current_delete_dot != delete_dot)
@@ -45,6 +51,7 @@ static void delf_(void)
     temp_k = current_delete_dot->info.codep;
     temp_dot = temp_k->info.codep;
     insert_to_free_memory(temp_k->previous, delete_dot_next->next);
+    // The next leading call is the one that followed the deleted chain.
     refal.next_result->info.codep = temp_dot;
     return;
 }

@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
 //====================================================================
 
 $START SETS;
@@ -15,70 +15,84 @@ $EXTERN Map, NNorm, ExistW, True, False;
 $EMPTY Intersection, Difference;
 
 //  <SetW w.Item*> == w.Item*′
+// Makes a set of terms of e.Terms: duplicates are removed, the first occurrence is lost and the last one stays.
 $FUNC SetW 
 {
     e.Terms = <PurgeDuplicates e.Terms>;
 }
 
 //  <SetW_Union (w.Item1*) w.Item2*> == w.Item_Union*
+// The union of two sets of terms.
 $FUNC SetW_Union
 {
     (e.Terms1) e.Terms2 = <SetW e.Terms1 e.Terms2>;
 }
 
 //  <SetW_Intersect (w.Item1*) w.Item2*> == w.Item_Intersect*
+// The intersection: the terms of the first set that are in the second one.
 $FUNC SetW_Intersect
 {
     (e.Terms1) e.Terms2 = <Set_Operation Intersection (<SetW e.Terms1>) e.Terms2>;
 }
 
 //  <SetW_Diff (w.Item1*) w.Item2*> == w.Item_Diff*
+// The difference: the terms of the first set that are not in the second one.
 $FUNC SetW_Diff
 {
     (e.Terms1) e.Terms2 = <Set_Operation Difference (<SetW e.Terms1>) e.Terms2>;
 }
 
 //  <SetN (e.Number)*> == (e.Number)*′
+// Makes a set of numbers (every number is a bracketed term): the numbers are normalized and duplicates are removed.
 $FUNC SetN
 {
     e.Numbers = <PurgeDuplicates <Map NormTerm e.Numbers>>;
 }
 
+// Normalizes the long integer inside a bracketed term.
 $FUNC NormTerm
 {
     (e.Number) = (<NNorm e.Number>);
 }
 
 //  <SetN_Union ((e.Number1)*) (e.Number2)*> == (e.Number_Union)*
+// The union of two sets of numbers.
 $FUNC SetN_Union
 {
     (e.Numbers1) e.Numbers2 = <SetN e.Numbers1 e.Numbers2>;
 }
 
 //  <SetN_Intersect ((e.Number1)*) (e.Number2)*> == (e.Number_Intersect)*
+// The intersection of two sets of numbers.
 $FUNC SetN_Intersect
 {
     (e.Numbers1) e.Numbers2 = <Set_Operation Intersection (<SetN e.Numbers1>) <SetN e.Numbers2>>;
 }
 
 //  <SetN_Diff ((e.Number1)*) (e.Number2)*> == (e.Number_Diff)*
+// The difference of two sets of numbers.
 $FUNC SetN_Diff
 {
     (e.Numbers1) e.Numbers2 = <Set_Operation Difference (<SetN e.Numbers1>) <SetN e.Numbers2>>;
 }
 
+// Removes duplicate terms: the expression is scanned from the right (the $RIGHT direction), so a term
+// that occurs again on the left of its last occurrence is dropped. The result keeps the terms in order.
 $FUNC PurgeDuplicates
 {
     $RIGHT e.Items_B w.Repeated e.Items_E w.Repeated e.Uniques = <PurgeDuplicates e.Items_B w.Repeated e.Items_E> e.Uniques;
     e._ = e._;
 }
 
+// The common loop of Intersect and Difference: every term of the first set is looked for in the second one,
+// the operation s.Set_Operation (Intersection or Difference) decides whether the term goes to the result.
 $FUNC Set_Operation
 {
     s.Set_Operation (w.Item1 e.Items1_E) e.Items2 = <Set_Operation_Aux s.Set_Operation <ExistW w.Item1 e.Items2> (e.Items1_E)>;
     s._ () e.__ = ;
 }
 
+// Takes or drops the term according to the operation and to the answer of ExistW (True or False).
 $FUNC Set_Operation_Aux
 {
     Intersection True w.Item1 e.Items2 (e.Items1_E) = w.Item1 <Set_Operation Intersection (e.Items1_E) e.Items2>;

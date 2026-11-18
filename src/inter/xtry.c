@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-16
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xtry.c  ---------
@@ -16,11 +16,18 @@
 #include "interpreter.h"
 #include "debugger_interface.h"
 
+// Try: runs the argument expression as a separate computation with its own
+// status table and returns its outcome as the first symbol of the result:
+// N - computation finished normally, the result follows;
+// R - recognition impossible, the remaining expression follows;
+// S - out of memory, nothing follows.
 static void try_(void)
 {
     T_STATUS_TABLE *new_status_table = NULL;
     size_t new_status_table_pointer_number = (size_t)&new_status_table;
     bool lack_memory = false;
+    // Crude stack guard: the address of a local variable stands for the stack position,
+    // and the function aborts when it gets too close to a 64 KiB boundary.
     if ((new_status_table_pointer_number & 0xffff) < 200)
         refal_abort_end("Try: stack overflow");
     else
@@ -42,6 +49,7 @@ static void try_(void)
         free(new_status_table);
         return;
     }
+    // Build the view field of the new computation: k, argument, dot.
     T_LINKCB *k = new_status_table->view->next;
     T_LINKCB *dot = k->next;
     k->info.code = NULL;
@@ -51,8 +59,10 @@ static void try_(void)
     new_status_table->dot = dot;
     transplantation(k, refal.previous_argument, refal.next_argument);
     T_STATUS_TABLE *current_status_table = refal.current_status_table;
+    // Hand the store over to the nested computation; it is taken back below.
     transplantation(new_status_table->store, current_status_table->store, current_status_table->store);
     new_status_table->step = ++current_status_table->step;
+    // No step limit by default.
     new_status_table->stop = MAX_STOP;
 #if defined mdebug
     const uint32_t step_stop = new_status_table->stop;
@@ -75,7 +85,7 @@ static void try_(void)
                 debug_print_expression(" Result: ", previous_current_k, next_current_dot);
             print_memory_state();
 #else
-            refal_run(new_status_table); // net prokrutki
+            refal_run(new_status_table); // no stepping mode: run the interpreter freely
             if (new_status_table->state == 1 && new_status_table->dot != NULL)
             {
                 new_status_table->step = 0;
@@ -84,11 +94,12 @@ static void try_(void)
 #endif
         }
         else
-            (*status_table_debugger)(new_status_table); // prokrutka vkluchena
+            (*status_table_debugger)(new_status_table); // stepping mode is on: the debugger executes the steps
         if (new_status_table->state == 3)
             if (more_free_memory())
                 new_status_table->state = 1;
     } while (new_status_table->state == 1 && new_status_table->dot != NULL);
+    // The nested computation is over: take the store back and carry over the step count.
     transplantation(current_status_table->store, new_status_table->store, new_status_table->store);
     current_status_table->step = --new_status_table->step;
 #if defined mdebug
@@ -99,6 +110,7 @@ static void try_(void)
     T_LINKCB *symbol_char_result = refal.previous_result->next;
     symbol_char_result->tag = TAGO;
     symbol_char_result->info.code = NULL;
+    // Build the result: the outcome letter followed by its payload.
     switch (new_status_table->state)
     {
     case 1:

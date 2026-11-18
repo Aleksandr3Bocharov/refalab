@@ -1,14 +1,15 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-14
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Пустые функции библиотеки РефалАБ.
+// Empty functions of the RefalAB library (they only fail).
 //====================================================================
 
 $START EMPTY;
 
+// The labels NULL, Begin, End and Current are empty functions: they are used only as symbols.
 $ENTRY NULL, Begin, End, Current;
 $EMPTY NULL, Begin, End, Current;
 

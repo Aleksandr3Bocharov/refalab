@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-15
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.c  ----------
@@ -17,6 +17,8 @@
 
 #if defined mdebug
 // names of the assembly language statement codes (see compile_sentence.h)
+// Names of the assembly language statement codes (see compile_sentence.h),
+// indexed by code; used only for the debug trace.
 static const char *const operator_names[] = {
     [1] = "n_sjump",
     [2] = "n_fail",
@@ -98,6 +100,7 @@ static const char *const operator_names[] = {
     [79] = "n_blf",
 };
 
+// Returns the name of an operator code, or "n_?" for an unknown one.
 const char *operator_name(uint8_t operator)
 {
     if (operator < sizeof(operator_names) / sizeof(operator_names[0]) && operator_names[operator] != NULL)
@@ -135,6 +138,9 @@ void debug_print_symbol(const T_LINKTI *code)
 }
 #endif
 
+// Generators of the assembly language statements.
+// Every statement is the operator code followed by its operands:
+// generate_operator - no operands
 void generate_operator(uint8_t operator)
 {
 #if defined mdebug
@@ -144,6 +150,7 @@ void generate_operator(uint8_t operator)
     return;
 }
 
+// one numeric operand (a variable or element number)
 void generate_operator_n(uint8_t operator, uint8_t n)
 {
 #if defined mdebug
@@ -154,6 +161,7 @@ void generate_operator_n(uint8_t operator, uint8_t n)
     return;
 }
 
+// two numeric operands
 void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
 {
 #if defined mdebug
@@ -165,6 +173,7 @@ void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
     return;
 }
 
+// one label operand (a jump target or a function reference)
 void generate_operator_l(uint8_t operator, T_LABEL *l)
 {
 #if defined mdebug
@@ -178,6 +187,8 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
     return;
 }
 
+// Outputs a symbol in the memory layout of a list cell: the tag, then the payload
+// padded to the size of a pointer (a function label is output as an address).
 void generate_symbol(const T_LINKTI *code)
 {
 #if defined mdebug
@@ -211,6 +222,7 @@ void generate_symbol(const T_LINKTI *code)
     return;
 }
 
+// an operator followed by a symbol operand
 void generate_operator_s(uint8_t operator, const T_LINKTI *code)
 {
 #if defined mdebug

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-07
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file function_pool.c  ----------
@@ -21,10 +21,12 @@
 #include "generate_operators.h"
 #include "compiler.h"
 
+// The list of stored functions of the module and the function being compiled.
 static T_STORED_FUNCTION *function_pool_head = NULL;
 static T_STORED_FUNCTION *function_pool_tail = NULL;
 static T_STORED_FUNCTION *current_function = NULL;
 
+// Starts an empty pool.
 void function_pool_init(void)
 {
     function_pool_head = NULL;
@@ -33,6 +35,7 @@ void function_pool_init(void)
     return;
 }
 
+// Releases the memory of a buffer and makes it empty.
 static void clear_operator_buffer(T_OPERATOR_BUFFER *buf)
 {
     if (buf->bytes != NULL)
@@ -58,6 +61,7 @@ static void clear_operator_buffer(T_OPERATOR_BUFFER *buf)
     return;
 }
 
+// Releases all functions with their sentences.
 void function_pool_clear(void)
 {
     T_STORED_FUNCTION *func = function_pool_head;
@@ -94,6 +98,7 @@ void function_pool_clear(void)
     return;
 }
 
+// The function being compiled (NULL after an error in its definition).
 T_STORED_FUNCTION *function_pool_get_current_function(void)
 {
     return current_function;
@@ -105,6 +110,7 @@ void function_pool_set_current_function(T_STORED_FUNCTION *func)
     return;
 }
 
+// Appends a new empty function with the given label to the end of the pool.
 T_STORED_FUNCTION *function_pool_begin(T_LABEL *label)
 {
     T_STORED_FUNCTION *func = (T_STORED_FUNCTION *)calloc(1, sizeof(T_STORED_FUNCTION));
@@ -128,6 +134,9 @@ T_STORED_FUNCTION *function_pool_begin(T_LABEL *label)
     return func;
 }
 
+// Stores the name that is written before the function code. The name is kept only
+// when the names option is on; with the full-name option it is prefixed with the
+// module name and ':'. A name longer than 255 characters is truncated in its length byte.
 void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, uint8_t name_length)
 {
     if (func->func_name != NULL)
@@ -177,6 +186,7 @@ void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, uint8_t n
     return;
 }
 
+// Appends an empty sentence to the function; returns NULL when there is no function.
 T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *sentence_label)
 {
     if (func == NULL)
@@ -210,6 +220,7 @@ T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *
     return sentence;
 }
 
+// Selects the destination of the generated code.
 void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_part)
 {
     if (sentence == NULL)
@@ -222,6 +233,8 @@ void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_par
     return;
 }
 
+// Makes the buffer able to hold at least `needed` elements: starts from
+// `initial_capacity` and doubles the size when necessary.
 static void *ensure_buffer_capacity(void *buffer, size_t *capacity, size_t needed, size_t element_size, size_t initial_capacity, const char *debug_name)
 {
     if (*capacity >= needed)
@@ -239,18 +252,21 @@ static void *ensure_buffer_capacity(void *buffer, size_t *capacity, size_t neede
     return new_buffer;
 }
 
+// Capacity of the byte area: initially 64 bytes.
 static inline void ensure_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
 {
     buf->bytes = ensure_buffer_capacity(buf->bytes, &buf->capacity, needed, sizeof(uint8_t), 64, "ensure_capacity");
     return;
 }
 
+// Capacity of the label list: initially 8 labels.
 static inline void ensure_label_capacity(T_OPERATOR_BUFFER *buf, size_t needed)
 {
     buf->labels = ensure_buffer_capacity(buf->labels, &buf->label_capacity, needed, sizeof(T_LABEL_REF), 8, "ensure_label_capacity");
     return;
 }
 
+// Appending a byte.
 void sentence_append_byte_left(T_STORED_SENTENCE *sentence, uint8_t byte)
 {
     T_OPERATOR_BUFFER *buf = &sentence->left_part;
@@ -267,6 +283,8 @@ void sentence_append_byte_right(T_STORED_SENTENCE *sentence, uint8_t byte)
     return;
 }
 
+// Appending an address: a zeroed slot of LBLL bytes is reserved and the label
+// is remembered with the offset of the slot; the slot is filled when the buffer is written.
 void sentence_append_address_left(T_STORED_SENTENCE *sentence, T_LABEL *label)
 {
     T_OPERATOR_BUFFER *buf = &sentence->left_part;
@@ -293,6 +311,8 @@ void sentence_append_address_right(T_STORED_SENTENCE *sentence, T_LABEL *label)
     return;
 }
 
+// Copies the buffer to the macrocode, replacing every reserved address slot
+// by the address of its label.
 static void write_buffer_to_macrocode(T_OPERATOR_BUFFER *buf)
 {
     size_t pos = 0;
@@ -316,6 +336,7 @@ static void write_buffer_to_macrocode(T_OPERATOR_BUFFER *buf)
     return;
 }
 
+// Writes the name of a function and its length byte (or a zero byte without a name).
 static void write_function_name(T_STORED_FUNCTION *func)
 {
     if (func->func_name != NULL)
@@ -329,6 +350,11 @@ static void write_function_name(T_STORED_FUNCTION *func)
     return;
 }
 
+// Writes every function to the macrocode: the name, the function label, a jump
+// (n_sjump) that sets the failure address to the label of the first sentence,
+// then for each sentence its left part, its right part and its label. After the label
+// comes n_sjump to the next sentence or n_fail for the last one.
+// Labels that became aliases of another label (EQU) are defined elsewhere and skipped.
 void function_pool_finalize(void)
 {
 #if defined mdebug

@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-12
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Спецификаторы библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
+// Specifiers of the RefalAB library.
 //====================================================================
 
 $START FILEIO2;
@@ -16,6 +16,7 @@ $ENTRY Load_FBytes, Save_FBytes, Append_FBytes;
 $EXTERN FOpen, FClose, FGetS, FPutS, FRead, FWrite, FEOF, FError;
 $EXTERN NULL;
 
+// The specifier EOF: the label FEOF or FError, which the file functions return at the end of the file or on an error.
 $SPEC EOF FEOF FError;
 
 /*
@@ -23,12 +24,15 @@ $SPEC EOF FEOF FError;
     v.Out ::= NULL | v(o).Open_Error NULL | e.Lines s(:EOF:).EOF e(o).Close_Error
     e.Lines ::= (e(o).Line)*
 */
+// Reads the whole text file (line by line, in the text mode) into the lines in brackets. The result ends with the label EOF
+// and the result of closing the file; NULL is returned when the number is already used.
 $FUNC Load_File
 {
     s.Handle e.FileName =
         <Check_Open <FOpen 'r' s.Handle e.FileName> s.Handle>;
 }
 
+// Goes on to read the file only if it was opened (an open error is returned as it is).
 $FUNC Check_Open
 {
     NULL e._ = NULL;
@@ -37,6 +41,7 @@ $FUNC Check_Open
         <FClose s.Handle>;
 }
 
+// Reads the lines one by one up to the end of the file.
 $FUNC Load_File_Aux 
 {
     e._ NULL = ;
@@ -50,6 +55,7 @@ $FUNC Load_File_Aux
     e.Lines ::= (e(o).Line)*
     e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
+// Writes the lines to a new text file (an existing one is overwritten) and closes it.
 $FUNC Save_File
 {
     s.Handle (e.FileName) e.Lines =
@@ -62,6 +68,7 @@ $FUNC Save_File
     e.Lines ::= (e(o).Line)*
     e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
+// Appends the lines to the end of the text file.
 $FUNC Append_File
 {
     s.Handle (e.FileName) e.Lines =
@@ -69,6 +76,7 @@ $FUNC Append_File
         <Check_Open_Write_Lines <FOpen 'a' s.Handle e.FileName> s.Handle (e.Lines)>;
 }
 
+// Writes the lines only if the file was opened.
 $FUNC Check_Open_Write_Lines
 {
     NULL e._ = NULL;
@@ -77,18 +85,21 @@ $FUNC Check_Open_Write_Lines
         <FClose s.Handle>;
 }
 
+// Checks that the argument is a sequence of bracketed lines of characters; FAIL otherwise.
 $FUNC Check_Lines
 {
     = ;
     (e(o).Line) e.Rest_Lines = <Check_Lines e.Rest_Lines>;
 }
 
+// Writes the lines one by one, each followed by a line feed.
 $FUNC Write_Bracket_Lines
 {
     s._ = ;
     s.Handle (e.Line) e.Rest_Lines = <Write_Bracket_Lines_Aux <FPutS s.Handle e.Line '\n'> s.Handle e.Rest_Lines>;
 }
 
+// Stops on the first error of writing.
 $FUNC Write_Bracket_Lines_Aux
 {
     NULL e._ = ;
@@ -101,12 +112,14 @@ $FUNC Write_Bracket_Lines_Aux
     v.Out ::= NULL | v(o).Open_Error NULL | e.Bytes s(:EOF:).EOF e(O).Close_Error
     e.Bytes ::= s(n).Byte*
 */
+// Reads the whole file in the binary mode as macrodigits (bytes), by blocks of 4096 bytes.
 $FUNC Load_FBytes
 {
     s.Handle e.FileName =
         <Check_Open_FBytes <FOpen 'rb' s.Handle e.FileName> s.Handle>;
 }
 
+// Goes on to read the file only if it was opened.
 $FUNC Check_Open_FBytes
 {
     NULL e._ = NULL;
@@ -115,6 +128,7 @@ $FUNC Check_Open_FBytes
         <FClose s.Handle>;
 }
 
+// Reads the blocks up to the end of the file.
 $FUNC Load_FBytes_Aux
 {
     e._ NULL = ;
@@ -127,6 +141,7 @@ $FUNC Load_FBytes_Aux
     e.Bytes ::= s(on).Byte*
     e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
+// Writes the bytes to a new binary file (an existing one is overwritten) and closes it.
 $FUNC Save_FBytes
 {
     s.Handle (e.FileName) e(on).Bytes =
@@ -138,12 +153,14 @@ $FUNC Save_FBytes
     e.Bytes ::= s(on).Byte*
     e.Out ::= NULL | v(o).Open_Error NULL | e(:EOF:).EOF e(o).Close_Error
 */
+// Appends the bytes to the end of the binary file.
 $FUNC Append_FBytes
 {
     s.Handle (e.FileName) e(on).Bytes =
         <Check_Open_Write_Bytes <FOpen 'ab' s.Handle e.FileName> s.Handle (e.Bytes)>;
 }
 
+// Writes the bytes only if the file was opened.
 $FUNC Check_Open_Write_Bytes
 {
     NULL e._ = NULL;
@@ -152,6 +169,7 @@ $FUNC Check_Open_Write_Bytes
         <FClose s.Handle>;
 }
 
+// Returns the result of writing as it is, an empty one when the write is good.
 $FUNC Write_FBytes
 {
     NULL = ;

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-10
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xchar_func.c  -----------
@@ -15,9 +15,14 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Table of the functions known by name (those registered by Functab or created by Chartof).
+// A function label is laid out as the name, the length byte, then the function itself,
+// so the name of a function is found just before the address stored in the symbol.
 static size_t functions_count = 0;
 static uint8_t **functions_table = NULL;
 
+// Ftochar: <Ftochar s.F> - the name of the function as a chain of characters.
+// FAIL unless the argument is one function symbol.
 static void ftochar_(void)
 {
     const T_LINKCB *symbol_label = refal.previous_argument->next;
@@ -46,6 +51,9 @@ char ftochar_0[] = {Z7 'F', 'T', 'O', 'C', 'H', 'A', 'R', (char)7};
 G_L_B uint8_t refalab_ftochar = '\122';
 void (*ftochar_1)(void) = ftochar_;
 
+// Functab: <Functab s.F> - registers the function in the table of named functions
+// (so that Chartof can find it); a function already registered is ignored.
+// FAIL unless the argument is one function symbol.
 static void functab_(void)
 {
     const T_LINKCB *symbol_label = refal.previous_argument->next;
@@ -74,6 +82,10 @@ char functab_0[] = {Z7 'F', 'U', 'N', 'C', 'T', 'A', 'B', (char)7};
 G_L_B uint8_t refalab_functab = '\122';
 void (*functab_1)(void) = functab_;
 
+// Chartof: <Chartof e.Name> - a function symbol with the given name. The name (1 to 255
+// characters) is made upper case; if the table has a function with that name it is returned,
+// otherwise a new empty function (one that always fails) with that name is created and
+// registered. FAIL for an empty or a too long name or for a non-character term.
 static void chartof_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -105,14 +117,15 @@ static void chartof_(void)
         label[i] = (char)toupper((unsigned char)current_symbol_char->info.infoc);
     label[i] = (char)i;
     i++;
+    // The marker of an empty function: a function that consists of the FAIL statement only.
     label[i] = '\002'; // EMPTY
     for (size_t k = 0; k < functions_count; k++)
     {
         const uint8_t *label_length = functions_table[k] - 1;
         if (i == (size_t)*label_length + 1 && strncmp(label, (char *)label_length - *label_length, *label_length) == 0)
         {
-            // identificator iz tablicy ne preobr. w zaglawnye!!!
-            // poetomu w m.o. imja d.b. napisano zaglawnymi!
+            // Identifiers of the table are not converted to upper case,
+            // so in a module the names must be written in upper case!
             refal.previous_argument->info.codef = functions_table[k];
             transplantation(refal.previous_result, refal.previous_argument->previous, refal.previous_argument->next);
             free(label);

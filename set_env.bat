@@ -2,12 +2,12 @@
 
 rem Copyright (c) 2026 Aleksandr Bocharov
 rem SPDX-License-Identifier: MIT
-rem 2026-06-11
+rem 2026-11-17
 rem https://github.com/Aleksandr3Bocharov/refalab
 
 rem *******************************************************************
 rem set_env.bat
-rem set environment variables for RefalAB
+rem set environment variables for RefalAB (user environment, setx)
 rem *******************************************************************
 
 rem Check for spaces in the folder path
@@ -25,6 +25,14 @@ if not "%current_dir%"=="%current_dir: =%" (
 )
 
 rem If there are no spaces, set environment variables
+rem Environment variables of RefalAB (used by the scripts and the makefiles):
+rem REFALABBIN, REFALABLIB, REFALABINCLUDE - the directories of the compiler binaries, of the libraries and of the headers
+rem REFALABLLFLAGS, REFALABLLFLAGS_DBG - the options of clang for the LLVM IR of a RefalAB module (release, debug)
+rem REFALABCFLAGS, REFALABCFLAGS_DBG - the options of the C compiler for the modules in C (release, debug with -Dmdebug)
+rem REFALABLFLAGS, REFALABLFLAGS_DBG - the linker options of a program: the standard initiator and the library (release, debug)
+rem REFALABLFLAGS_DEBUGGER, REFALABLFLAGS_DEBUGGER_DBG - the same with the debugger initiator
+rem These values are stored in the user environment, they are available in new command prompts.
+rem
 setx REFALABBIN %~dp0bin
 setx REFALABLIB %~dp0lib
 setx REFALABINCLUDE %~dp0include

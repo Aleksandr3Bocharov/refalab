@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_output.h  ----------
@@ -14,6 +14,7 @@
 #include "avl_identifiers.h"
 #include "function_pool.h"
 
+// Destination of the generated code.
 typedef enum
 {
     OUTPUT_MACROCODE,
@@ -21,6 +22,7 @@ typedef enum
     OUTPUT_RIGHT_PART
 } T_OUTPUT_MODE;
 
+// Output interface used by the operator generator (see compile_output.c).
 extern void compile_output_init(void);
 extern void compile_output_set_mode(T_OUTPUT_MODE mode, T_STORED_SENTENCE *sentence);
 extern void compile_output_set_current_sentence(T_STORED_SENTENCE *sentence);

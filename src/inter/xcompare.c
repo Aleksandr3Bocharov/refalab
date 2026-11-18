@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-27
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xcompare.c  ----------
@@ -14,6 +14,12 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Codes of the comparison operations: Orel - the sign of the relation ('<', '=' or '>'),
+// the others return True or False: less, less or equal, equal, not equal, greater or equal, greater.
+// The functions of the first family (Nrel, Ltn, Len, Eqn, Nen, Gen, Gtn) compare long integers,
+// the functions of the second family (Lrel, Ltl, Lel, Eql, Nel, Gel, Gtl) compare expressions
+// lexicographically. The call is <Nrel (e.X) e.Y> or <Lrel (e.X) e.Y>; FAIL when the first term
+// is not a bracketed argument or when an argument is not a number.
 #define Orel 1
 #define Olt 2
 #define Ole 3
@@ -24,6 +30,7 @@
 
 extern uint8_t refalab_true, refalab_false;
 
+// The common code of the two families.
 static void nrel_operate(uint8_t operation);
 static void lrel_operate(uint8_t operation);
 
@@ -153,6 +160,7 @@ char gtl_0[] = {Z3 'G', 'T', 'L', (char)3};
 G_L_B uint8_t refalab_gtl = '\122';
 void (*gtl_1)(void) = gtl_;
 
+// Turns the result of a comparison (-1, 0 or 1) into True or False for the operation.
 static inline uint8_t *rel_operate(uint8_t operation, int8_t compare)
 {
     uint8_t *rel_result = NULL;
@@ -197,6 +205,8 @@ static inline uint8_t *rel_operate(uint8_t operation, int8_t compare)
     return rel_result;
 }
 
+// Comparison of two long integers: the result replaces the first (bracketed) term of the argument
+// and the numbers are dropped.
 static void nrel_operate(uint8_t operation)
 {
     const T_LINKCB *x_current = refal.previous_argument->next;
@@ -225,6 +235,7 @@ static void nrel_operate(uint8_t operation)
     return;
 }
 
+// Lexicographic comparison of two expressions (symbol by symbol).
 static void lrel_operate(uint8_t operation)
 {
     const T_LINKCB *first_begin = refal.previous_argument->next;

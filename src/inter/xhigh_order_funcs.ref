@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
 //====================================================================
 
 $START HIGH_ORDER_FUNCS;
@@ -15,6 +15,8 @@ $ENTRY Apply, Map, FoldL, FoldR, Map_Accumulator;
     <Apply w.Closure e.Arg> == e.Res
     w.Closure ::= s(f).Fn | (w.Closure e.Bounded)
 */
+// Applies a closure to the arguments: a function symbol is called, a closure in brackets
+// is a closure with bound arguments, which are put before the new ones.
 $FUNC Apply 
 {
     s(f).Fn e.Argument = < s.Fn e.Argument>;
@@ -25,6 +27,7 @@ $FUNC Apply
     <Map w.Closure w.Item*> == e.Item_Res*
     <Apply w.Closure w.Item> == e.Item_Res
 */
+// Applies the closure to every term of the list and joins the results.
 $FUNC Map
 {
     w.Fn w.Next e.Tail =
@@ -38,6 +41,7 @@ $FUNC Map
     <Apply w.Closure w.Accum w.Item> == w.Accum′
     w.Accum′ ::= w.Accum
 */
+// Left fold: the accumulator goes through the list from the left, each step is a call of the closure.
 $FUNC FoldL
 {
     w.Fn w.Acc w.Next e.Tail = <FoldL w.Fn <Apply w.Fn w.Acc w.Next> e.Tail>;
@@ -49,6 +53,7 @@ $FUNC FoldL
     <Apply w.Closure w.Item w.Accum> == w.Accum′
     w.Accum′ ::= w.Accum
 */
+// Right fold: the accumulator goes through the list from the right.
 $FUNC FoldR
 {
     w.Fn e.Head w.Prev w.Acc = <FoldR w.Fn e.Head <Apply w.Fn w.Prev w.Acc>>;
@@ -60,11 +65,14 @@ $FUNC FoldR
     <Apply w.Closure w.Accum w.Item> == w.Accum′ e.Item_Res
     w.Accum′ ::= w.Accum
 */
+// Map with an accumulator: the closure gets the accumulator and a term and returns
+// the new accumulator followed by the result for the term; the final accumulator comes first in the result.
 $FUNC Map_Accumulator
 {
     w.Fn w.Acc e.Tail = <Map_Accumulator_Aux w.Fn w.Acc () e.Tail>;
 }
 
+// The loop of Map_Accumulator: the results already obtained are kept in the brackets (e.Scanned).
 $FUNC Map_Accumulator_Aux
 {
     w.Fn w.Acc (e.Scanned) w.Next e.Tail = 
@@ -74,6 +82,7 @@ $FUNC Map_Accumulator_Aux
     w.Fn w.Acc (e.Scanned) = w.Acc e.Scanned;
 }
 
+// Moves the result of one step into the brackets of the results obtained so far.
 $FUNC Map_Accumulator_Add_Scanned 
 {
     w.Acc e.Step_Scanned (e.Scanned) = w.Acc (e.Scanned e.Step_Scanned);

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xsystem.c  ---------
@@ -20,6 +20,8 @@
 
 extern uint8_t refalab_null;
 
+// Arg: <Arg s.N> - the command line argument number N as characters; 0 is the name of the program.
+// The result is empty when there is no such argument. FAIL unless the argument is one macrodigit.
 static void arg_(void)
 {
     T_LINKCB *symbol_number = refal.previous_argument->next;
@@ -43,6 +45,10 @@ char arg_0[] = {Z3 'A', 'R', 'G', (char)3};
 G_L_B uint8_t refalab_arg = '\122';
 void (*arg_1)(void) = arg_;
 
+// System: <System e.Command> - runs the command by the C function system() and returns its
+// status as a macrodigit, with a sign '-' when it is negative. POSIX: the exit code of the process,
+// 128 + the number of the signal for a killed process, otherwise -1. The command is limited to
+// 8191 characters.
 static void system_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -85,6 +91,8 @@ char system_0[] = {Z6 'S', 'Y', 'S', 'T', 'E', 'M', (char)6};
 G_L_B uint8_t refalab_system = '\122';
 void (*system_1)(void) = system_;
 
+// Exit: <Exit v.N> - ends the program with the exit code N (a macrodigit, maybe with a sign).
+// FAIL for any other argument.
 static void exit_(void)
 {
     do
@@ -111,6 +119,8 @@ char exit_0[] = {Z4 'E', 'X', 'I', 'T', (char)4};
 G_L_B uint8_t refalab_exit = '\122';
 void (*exit_1)(void) = exit_;
 
+// Get_env: <Get_env e.Name> - the value of the environment variable as characters;
+// the symbol NULL when it is not set. The extra cells are counted with the cells of the name.
 static void get_env_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -141,6 +151,8 @@ char get_env_0[] = {Z7 'G', 'E', 'T', '_', 'E', 'N', 'V', (char)7};
 G_L_B uint8_t refalab_get_env = '\122';
 void (*get_env_1)(void) = get_env_;
 
+// Change_dir: <Change_dir e.Dir> - changes the current directory. The result is empty on
+// success and the text of the system error message otherwise.
 static void change_dir_(void)
 {
     T_LINKCB *current_argument = refal.previous_argument->next;
@@ -169,6 +181,8 @@ char change_dir_0[] = {Z2 'C', 'H', 'A', 'N', 'G', 'E', '_', 'D', 'I', 'R', (cha
 G_L_B uint8_t refalab_change_dir = '\122';
 void (*change_dir_1)(void) = change_dir_;
 
+// Get_current_dir: <Get_current_dir> - the current directory as characters; empty when
+// it is unknown. FAIL when there is an argument.
 static void get_current_dir_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
@@ -191,6 +205,8 @@ char get_current_dir_0[] = {Z7 'G', 'E', 'T', '_', 'C', 'U', 'R', 'R', 'E', 'N',
 G_L_B uint8_t refalab_get_current_dir = '\122';
 void (*get_current_dir_1)(void) = get_current_dir_;
 
+// Step: <Step> - the number of the finished steps of the current process (the field step
+// of the status table). FAIL when there is an argument.
 static void step_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)

@@ -1,15 +1,15 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Спецификаторы библиотеки РефалАБ.
-// Пустые функции библиотеки РефалАБ.
-// Модуль "PLATFORM" с реализацией специфичных рефал-функций 
-// и спецификаторов в среде Windows.
-// Для среды POSIX используется аналогичный модуль.
+// Refal functions of the RefalAB library.
+// Specifiers of the RefalAB library.
+// Empty functions of the RefalAB library (they only fail).
+// The module "PLATFORM" with the platform-specific Refal functions 
+// and specifiers for the Windows environment.
+// A similar module is used for the POSIX environment.
 //====================================================================
 
 $START PLATFORM;
@@ -21,36 +21,44 @@ $ENTRY Max_PathFileName, Get_Max_PathFileName, Is_Max_PathFileName;
 $EXTERN True, False;
 $EMPTY POSIX, Windows;
 
+// The specifier Directory_Separators: the characters that separate the directories in a path (Windows).
 $SPEC Directory_Separators '\\/';
 
+// The specifier Max_PathFileName: the largest length of a path with a file name (Windows).
 $SPEC Max_PathFileName 260;
 
+// The name of the platform: the label POSIX or Windows.
 $FUNC Platform
 {
     = Windows;
 }
 
+// The main directory separator.
 $FUNC Directory_Separator
 {
     = '\\';
 }
 
+// True when the symbol is a directory separator.
 $FUNC Is_Directory_Separator
 {
     s(:Directory_Separators:)._ = True;
     s._ = False;
 }
  
+// The separator of the paths in a list of paths.
 $FUNC Path_Separator
 {
     = ';';
 }
 
+// The largest length of a path with a file name.
 $FUNC Get_Max_PathFileName
 {
     = 260;
 }
 
+// True when the symbol is the largest length of a path with a file name.
 $FUNC Is_Max_PathFileName
 {
     s(:Max_PathFileName:)._ = True;

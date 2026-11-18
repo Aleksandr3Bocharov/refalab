@@ -2,12 +2,12 @@
 
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-11
+# 2026-11-17
 # https://github.com/Aleksandr3Bocharov/refalab
 
 # *******************************************************************
 # set_env
-# set environment variables for RefalAB
+# set environment variables for RefalAB (run it as: source ./set_env)
 # *******************************************************************
 
 # Get the current directory where the script is located
@@ -28,6 +28,13 @@ case "$CURRENT_DIR" in
 esac
 
 # If there are no spaces, set environment variables
+# Environment variables of RefalAB (used by the scripts and the makefiles):
+# REFALABBIN, REFALABLIB, REFALABINCLUDE - the directories of the compiler binaries, of the libraries and of the headers
+# REFALABLLFLAGS, REFALABLLFLAGS_DBG - the options of clang for the LLVM IR of a RefalAB module (release, debug)
+# REFALABCFLAGS, REFALABCFLAGS_DBG - the options of the C compiler for the modules in C (release, debug with -Dmdebug)
+# REFALABLFLAGS, REFALABLFLAGS_DBG - the linker options of a program: the standard initiator and the library (release, debug)
+# REFALABLFLAGS_DEBUGGER, REFALABLFLAGS_DEBUGGER_DBG - the same with the debugger initiator
+#
 export REFALABBIN=$CURRENT_DIR/bin
 export REFALABLIB=$CURRENT_DIR/lib
 export REFALABINCLUDE=$CURRENT_DIR/include

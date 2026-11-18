@@ -1,18 +1,19 @@
 # Copyright (c) 2026 Aleksandr Bocharov
 # SPDX-License-Identifier: MIT
-# 2026-06-05
+# 2026-11-17
 # https://github.com/Aleksandr3Bocharov/refalab
 
 #############################################################################
 # Makefile
-# Makefile for building of the compiler from RefalAB language
-# result - bin/refalabc executable module
-# result - bin/refalabc_dbg executable module
+# Makefile for building the RefalAB compiler (C sources in this directory, built with clang)
+# result - bin/refalabc executable module (release)
+# result - bin/refalabc_dbg executable module (debug, -Dmdebug trace output)
 #############################################################################
 
 # ====================================================================
 # 1. CROSS-PLATFORM & ENVIRONMENT DETECTION
 # ====================================================================
+# The compiler is built with clang on every platform
 CC = clang
 
 ifdef OS
@@ -49,7 +50,8 @@ REFALABBIN  = ..$(SLASH)..$(SLASH)bin
 TARGET_RELEASE = $(REFALABBIN)$(SLASH)refalabc$(EXE)
 TARGET_DEBUG   = $(REFALABBIN)$(SLASH)refalabc_dbg$(EXE)
 
-# Source and object files automation
+# Every .c file of the directory is part of the compiler; release objects are
+# <name>.o, debug objects are <name>_dbg.o so both builds can coexist
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 OBJS_DBG = $(SRCS:.c=_dbg.o)
@@ -72,7 +74,7 @@ $(TARGET_RELEASE): $(OBJS)
 	$(LINK) $(LFLAGS) -o $@ $^
 
 # --- DEBUG VERSION BUILD ---
-# Add debugging flags specifically for this target.
+# Debug flags (no optimization, symbols, -Dmdebug) apply to this target only.
 debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: $(TARGET_DEBUG)
 
@@ -80,12 +82,12 @@ $(TARGET_DEBUG): $(OBJS_DBG)
 	@echo Linking Debug binary: $(TARGET_DEBUG)...
 	$(LINK) $(LFLAGS) -o $@ $^
 
-# Template rule to compile any local .c file into .o
+# Pattern rule: compile a .c file into a release object (rebuilt when any header changes)
 %.o: %.c $(HEADERS)
 	@echo Compiling $<...
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Template rule to compile any local .c file into _dbg.o
+# Pattern rule: compile a .c file into a debug object (the flags come from the debug target)
 %_dbg.o: %.c $(HEADERS)
 	@echo Compiling $<...
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -93,11 +95,11 @@ $(TARGET_DEBUG): $(OBJS_DBG)
 # ====================================================================
 # 4. CLEANUP
 # ====================================================================
-# Helper target to clear object files between release and debug builds
+# Remove object files (used between the release and debug builds)
 clean_objs:
 	$(RM) *.o
 
-# Complete cleanup of all build artifacts and temporary files src/comp
+# Remove object files and both compiler binaries
 clean: clean_objs
 	@echo Cleaning compiler build artifacts...
 	$(RM) $(TARGET_RELEASE)

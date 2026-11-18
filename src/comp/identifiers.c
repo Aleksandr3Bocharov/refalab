@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-15
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file identifiers.c  ----------
@@ -23,12 +23,15 @@
 #include "compile_output.h"
 #include "function_pool.h"
 
+// Error messages shared by several functions.
 #define PRINT_ERROR_504(identifier, identifier_length) \
     print_error_three_strings(504, "Label", identifier, identifier_length, " is already defined")
 
 #define PRINT_ERROR_501 \
     print_error_string(501, "Both labels in EQU-directive already defined")
 
+// Sentence labels are allocated in blocks of 16 to avoid a malloc per label;
+// the blocks are chained and released together in module_terminate.
 typedef struct array_info_labels
 {
     struct array_info_labels *next;
@@ -37,11 +40,14 @@ typedef struct array_info_labels
 
 static T_ARRAY_INFO_LABELS *first_array_info_labels = NULL;
 static uint8_t number_info_label = 15;
+// Chain of sentence labels: labels of the previous sentences are made equal (EQU)
+// to the label of the next one, so a pattern failure jumps to the following sentence.
 static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
 static T_INFO_LABEL *next_sentence = NULL; // next sentence label
 
 static void function_head(const char *identifier, uint8_t identifier_length);
 
+// Takes the next free sentence label, allocating a new block when the current one is used up.
 static T_INFO_LABEL *allocate_info_label(void)
 {
     if (number_info_label == 15)
@@ -65,12 +71,17 @@ static T_INFO_LABEL *allocate_info_label(void)
     return info_label;
 }
 
+// Public wrapper of allocate_info_label.
 T_INFO_LABEL *generate_info_label(void)
 {
     T_INFO_LABEL *info_label = allocate_info_label();
     return info_label;
 }
 
+// Starts a function (when a label name was scanned) or the next sentence of the current one.
+// For a new function the label must not be defined yet (error 504 otherwise);
+// then a stored function is opened in the function pool and the output is switched
+// to the left part of a new sentence, which is kept in memory for optimization.
 void function_definition(void)
 {
 #if defined mdebug
@@ -114,6 +125,8 @@ void function_definition(void)
     return;
 }
 
+// Ends the sentence: links the sentence label with the failure chain
+// and returns the output to the macrocode text.
 void function_end(void)
 {
 #if defined mdebug
@@ -131,6 +144,7 @@ void function_end(void)
     return;
 }
 
+// $EMPTY: defines a function that consists of the FAIL statement only.
 void set_empty(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
 #if defined mdebug
@@ -153,6 +167,8 @@ void set_empty(const char *identifier, uint8_t identifier_length, size_t identif
     return;
 }
 
+// $SWAP: defines a box. Its head is padded with spaces so that it is aligned to
+// 8 bytes, and the box body is filled with zeros.
 void set_swap(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
 #if defined mdebug
@@ -191,6 +207,7 @@ void set_swap(const char *identifier, uint8_t identifier_length, size_t identifi
     return;
 }
 
+// $ENTRY: the label becomes visible to other modules under the external name.
 void set_entry(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 {
 #if defined mdebug
@@ -201,6 +218,7 @@ void set_entry(const char *identifier, uint8_t identifier_length, size_t identif
     return;
 }
 
+// $EXTRN: the label is defined in another module under the external name.
 void set_extrn(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 // identifier internal name
 // identifier_extern external name
@@ -222,6 +240,7 @@ void set_extrn(const char *identifier, uint8_t identifier_length, size_t identif
     return;
 }
 
+// A use of a function name: finds or creates the label and marks it as a function.
 T_LABEL *function_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
@@ -229,6 +248,8 @@ T_LABEL *function_reference(const char *identifier, uint8_t identifier_length, s
     return label;
 }
 
+// A use of a specifier name: marks the label as a specifier. A specifier used before
+// its definition is an error (505) unless it is the tail of a bracketed definition.
 T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, size_t identifier_cursor_number, char tail)
 {
     T_LABEL *label = lookup_label(identifier, identifier_length, identifier_cursor_number);
@@ -241,6 +262,7 @@ T_LABEL *specifier_reference(const char *identifier, uint8_t identifier_length, 
     return label;
 }
 
+// A definition of a specifier name; its address is set when the module ends.
 T_LABEL *specifier_definition(void)
 {
     T_LABEL *label = lookup_label(scanner.label_name, scanner.label_name_length, scanner.label_cursor_number);
@@ -258,6 +280,7 @@ T_LABEL *specifier_definition(void)
     return label;
 }
 
+// $EQU: makes one label an alias of the other. Error 501 when both are defined already.
 void set_equ(const char *identifier1, uint8_t identifier1_length, size_t identifier1_cursor_number, const char *identifier2, uint8_t identifier2_length, size_t identifier2_cursor_number)
 {
 #if defined mdebug
@@ -289,6 +312,8 @@ void set_equ(const char *identifier1, uint8_t identifier1_length, size_t identif
     return;
 }
 
+// Writes the head of a function: the name (with the module name when the full-name
+// option is set) and its length byte, or a zero byte when names are switched off.
 static void function_head(const char *identifier, uint8_t identifier_length)
 {
     if (options.names)
@@ -313,6 +338,9 @@ static void function_head(const char *identifier, uint8_t identifier_length)
     return;
 }
 
+// Checks the attributes of a label at the end of the module:
+// it is defined (512), is not both extern and entry (511) and
+// is not used both as a function and as a specifier (502).
 static void check_identifier(T_LABEL *label) // check identifier attributes on confirmness
 {
     T_LABEL *not_equ_label = resolve_label_alias(label);
@@ -334,12 +362,14 @@ static void check_identifier(T_LABEL *label) // check identifier attributes on c
     return;
 }
 
+// Checks every label of the module.
 void module_end(void)
 {
     through_labels(check_identifier);
     return;
 }
 
+// Initializes the label allocator and the sentence label chain.
 void module_init(void)
 { // module initiation
     first_array_info_labels = NULL;
@@ -349,6 +379,7 @@ void module_init(void)
     return;
 }
 
+// Releases the sentence label blocks and the identifier table.
 void module_terminate(void)
 { // module termination
     T_ARRAY_INFO_LABELS *array_info_labels = first_array_info_labels;

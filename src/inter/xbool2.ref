@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-14
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Пустые функции библиотеки РефалАБ.
-// Спецификаторы библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
+// Empty functions of the RefalAB library (they only fail).
+// Specifiers of the RefalAB library.
 //====================================================================
 
 $START BOOL2;
@@ -16,17 +16,21 @@ $ENTRY If, And, Or, Not;
 $EXTERN Eval;
 $EMPTY True, False;
 
+// The specifier Bool: True or False.
 $SPEC Bool True False;
 
 /*
     <If (v.Cond e.Any)+ (e.Any)> = e.Any
     v.Cond ::= True | False | (e.Any)
 */
+// Conditional: the pairs (condition expression) are checked in turn; the expression of the first true
+// condition is evaluated (Eval), the last bracketed term is the one for the case when all the conditions are False.
 $FUNC If  
 {
     e(b).CExp = <If_Aux e.CExp>;
 }
 
+// The loop of If: a condition True or False, or a delayed call in brackets that is evaluated and checked by BCheck.
 $FUNC If_Aux 
 {
     (True e.Expr) e._ w.False = <Eval e.Expr>;
@@ -35,17 +39,20 @@ $FUNC If_Aux
     ((e.BExp) e.Expr) e.Rest w.False = <If_Aux (<BCheck <Eval e.BExp>> e.Expr) e.Rest w.False>;
 }
 
+// Checks that the value of a condition is True or False (the specifier Bool); FAIL otherwise.
 $FUNC BCheck
 {
     s(:Bool:).Bool = s.Bool;
 }
 
 //  <And e(:Bool: b).BExp> = True | False
+// The logical And of the conditions; the conditions are evaluated one after another and the first False ends it.
 $FUNC And
 {
     e(:Bool: b).BExp = <And_Aux e.BExp>;
 }
 
+// The loop of And.
 $FUNC And_Aux 
 {
     = True;
@@ -55,11 +62,13 @@ $FUNC And_Aux
 }
 
 //  <Or e(:Bool: b).BExp> = True | False
+// The logical Or of the conditions; the first True ends it.
 $FUNC Or 
 {  
     e(:Bool: b).BExp = <Or_Aux e.BExp>;
 }
 
+// The loop of Or.
 $FUNC Or_Aux 
 { 
     = False;
@@ -69,6 +78,7 @@ $FUNC Or_Aux
 }
 
 //  <Not s(:Bool:).Bool> = True | False
+// The logical Not.
 $FUNC Not 
 {
     True = False;

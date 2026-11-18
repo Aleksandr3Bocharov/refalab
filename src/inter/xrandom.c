@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xrandom.c  ---------
@@ -15,14 +15,18 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Lagged Fibonacci generator x[n] = x[n - 33] + x[n - 97] (mod 2^32): the lags of the
+// additive generator are MIN_DELAY and MAX_DELAY, the state is the table x.
 #define MIN_DELAY 33
 #define MAX_DELAY 97
 
+// The state of the generator; it is filled from rand() at the first call, seeded by the time.
 static bool randomizer_init = false;
 static uint8_t n_sub_max_delay = MAX_DELAY - 1;
 static uint8_t n_sub_min_delay = MIN_DELAY - 1;
 static uint32_t x[MAX_DELAY];
 
+// Returns the next 32-bit random number (the table is initialised at the first call).
 static uint32_t random_number(void)
 {
     if (!randomizer_init)
@@ -39,6 +43,8 @@ static uint32_t random_number(void)
     return number;
 }
 
+// Returns a number in 0..limit-1 without modulo bias: numbers above the largest multiple
+// of limit are rejected and drawn again.
 static uint32_t random_number_in_range(uint32_t limit)
 {
     if (limit == 0)
@@ -52,6 +58,8 @@ static uint32_t random_number_in_range(uint32_t limit)
     return number_random % limit;
 }
 
+// Random: <Random s.N> - a sequence of 1..N random macrodigits; the length is chosen at random
+// too. FAIL unless the argument is one macrodigit that is not zero.
 static void random_(void)
 {
     do
@@ -85,6 +93,8 @@ char random_0[] = {Z6 'R', 'A', 'N', 'D', 'O', 'M', (char)6};
 G_L_B uint8_t refalab_random = '\122';
 void (*random_1)(void) = random_;
 
+// Random_number: <Random_number s.N> - one random macrodigit in 0..N. FAIL unless
+// the argument is one macrodigit.
 static void random_number_(void)
 {
     T_LINKCB *symbol_number = refal.previous_argument->next;

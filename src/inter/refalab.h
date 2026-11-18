@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file refalab.h  ----------
@@ -14,10 +14,14 @@
 #include <stdbool.h>
 #include <time.h>
 
+// Tag values of a list cell (T_LINKCB.tag).
+// Even tags mark terms, odd tags mark brackets (see BRACKET below).
+// TAGO: a symbol, TAGF: a function label, TAGN: a macrodigit, TAGR: a reference to a box
 #define TAGO 0
 #define TAGF 2
 #define TAGN 4
 #define TAGR 6
+// TAGLB/TAGRB: structure brackets, TAGK/TAGD: call brackets '<' and '>'.
 #define TAGLB 1
 #define TAGRB 3
 #define TAGK 5
@@ -33,7 +37,9 @@
 #define Z7 '0', '0', '0', '0', '0', '0', '0',
 #define Z0 '0', '0', '0', '0', '0', '0',
 
+// Marker of a global (externally visible) label.
 #define G_L_B
+// Accessors for the macrodigit and the bracket-test macros.
 #define gcoden(p) p->info.coden
 #define pcoden(p, W) p->info.coden = W
 #define BRACKET(b) (b->tag & 0001) != 0

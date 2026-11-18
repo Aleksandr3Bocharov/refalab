@@ -1,11 +1,11 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-14
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Пустые функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
+// Empty functions of the RefalAB library (they only fail).
 //====================================================================
 
 $START EVAL;
@@ -16,6 +16,9 @@ $EMPTY Call;
 /*
     <Eval e.Any> = e.Eval
 */
+// Evaluates the expression: every bracketed term (Call e.Call) is replaced by the call < e.Call > evaluated,
+// other brackets are processed inside, symbols stay as they are. It is used to compute
+// delayed calls (the conditions of If, And, Or).
 $FUNC Eval
 { 
     = ;

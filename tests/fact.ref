@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-18
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
+// The factorial of a number read from the terminal. It shows the long integer arithmetic:
+// the factorial is computed with Mul, so the result is not limited to a macrodigit.
 $START FACT;
 
 $ENTRY Go;
@@ -11,11 +13,13 @@ $EXTERN Mul;
 $EXTERN Prouts, Card, M1;
 $EXTERN Try;
 
+// Asks for a number and prints its factorial, then asks again; zero ends the program.
 $FUNC Go
 {
     = <Fact <Numb <Card ' Give a number: '>>>;
 }
 
+// Prints N!=<the factorial> and goes back to Go.
 $FUNC Fact
 {
     0 = ; 
@@ -24,18 +28,21 @@ $FUNC Fact
         <Go>;
 }
 
+// The factorial by recursion: F(1) = 1, F(N) = N * F(N - 1).
 $FUNC F 
 {  
     1 = 1;
     e.N = <Mul (e.N) <F <M1 e.N>>>;
 }
 
+// Prints a long string in the lines of 80 characters (Try catches the case of a shorter rest).
 $FUNC Pr 
 {
     = ;
     e.S = <Pr1 <Try First 80 e.S>>;
 }
 
+// Normal end of Try (N): prints the line and goes on with the rest; recognition impossible (R): prints what is left.
 $FUNC Pr1
 {
     'N' (e.S) e.E =

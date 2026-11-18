@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-10
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xbitarray.c  ----------
@@ -14,6 +14,9 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Bit arrays: a bit array is a non-empty sequence of macrodigits (32-bit digits) of a fixed length.
+// The operations work on the arrays digit by digit, there are no signs. Codes of the operations:
+// bit_operate does And, Or, Xor and Not, bit_shift_operate does the shift (Osh) and the rotation (Orot).
 #define Oand 1
 #define Oor 2
 #define Oxor 3
@@ -24,6 +27,7 @@
 static void bit_operate(uint8_t operation);
 static void bit_shift_operate(uint8_t operation);
 
+// Bitand: <Bitand (v.N1) v.N2> - the bitwise And of two bit arrays of equal length.
 static void bitand_(void)
 {
     bit_operate(Oand);
@@ -33,6 +37,7 @@ char bitand_0[] = {Z6 'B', 'I', 'T', 'A', 'N', 'D', (char)6};
 G_L_B uint8_t refalab_bitand = '\122';
 void (*bitand_1)(void) = bitand_;
 
+// Bitor: <Bitor (v.N1) v.N2> - the bitwise Or of two bit arrays of equal length.
 static void bitor_(void)
 {
     bit_operate(Oor);
@@ -42,6 +47,7 @@ char bitor_0[] = {Z5 'B', 'I', 'T', 'O', 'R', (char)5};
 G_L_B uint8_t refalab_bitor = '\122';
 void (*bitor_1)(void) = bitor_;
 
+// Bitxor: <Bitxor (v.N1) v.N2> - the bitwise exclusive Or of two bit arrays of equal length.
 static void bitxor_(void)
 {
     bit_operate(Oxor);
@@ -51,6 +57,7 @@ char bitxor_0[] = {Z6 'B', 'I', 'T', 'X', 'O', 'R', (char)6};
 G_L_B uint8_t refalab_bitxor = '\122';
 void (*bitxor_1)(void) = bitxor_;
 
+// Bitnot: <Bitnot v.N> - the bitwise Not of a bit array.
 static void bitnot_(void)
 {
     bit_operate(Onot);
@@ -60,6 +67,8 @@ char bitnot_0[] = {Z6 'B', 'I', 'T', 'N', 'O', 'T', (char)6};
 G_L_B uint8_t refalab_bitnot = '\122';
 void (*bitnot_1)(void) = bitnot_;
 
+// Bitsh: <Bitsh (v.A) e.S> - the shift of the array by S bits, to the left (to the high bits) for a
+// positive S and to the right for a negative one; the freed bits are zeros, the bits that go out are lost.
 static void bitsh_(void)
 {
     bit_shift_operate(Osh);
@@ -69,6 +78,8 @@ char bitsh_0[] = {Z5 'B', 'I', 'T', 'S', 'H', (char)5};
 G_L_B uint8_t refalab_bitsh = '\122';
 void (*bitsh_1)(void) = bitsh_;
 
+// Bitrot: <Bitrot (v.A) e.S> - the rotation of the array by S bits (modulo its length); the bits
+// that go out appear at the other end.
 static void bitrot_(void)
 {
     bit_shift_operate(Orot);
@@ -78,6 +89,8 @@ char bitrot_0[] = {Z6 'B', 'I', 'T', 'R', 'O', 'T', (char)6};
 G_L_B uint8_t refalab_bitrot = '\122';
 void (*bitrot_1)(void) = bitrot_;
 
+// The bitwise operations. The result is built in the cells of the first array. FAIL when the arguments
+// are not macrodigits or the arrays have different lengths (Bitnot: a sequence of macrodigits alone).
 static void bit_operate(uint8_t operation)
 {
     do
@@ -154,6 +167,9 @@ static void bit_operate(uint8_t operation)
     return;
 }
 
+// The shift and the rotation of a bit array. The count S is a long integer; a count that is zero returns
+// the array as it is, a shift by the length of the array or more gives the array of zeros, a rotation
+// takes the count modulo the length. FAIL for an empty or a not numeric array.
 static void bit_shift_operate(uint8_t operation)
 {
     do
@@ -389,6 +405,9 @@ static void bit_shift_operate(uint8_t operation)
     return;
 }
 
+// Bit: <Bit v.B (e.N)> - makes a bit array of B bits (a multiple of 32, one or two macrodigits)
+// from the macrodigits e.N: missing high digits are filled with zeros, extra high digits are dropped.
+// FAIL for a wrong B or when e.N has a term that is not a macrodigit.
 static void bit_(void)
 {
     do

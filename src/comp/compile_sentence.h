@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-20
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.h  ----------
-//      Compiler file
+//   Compilation of a sentence: left and right part
 //------------------------------------------------
 
 #ifndef COMPILER_SENTENCE_H
@@ -15,6 +15,22 @@
 #include <stdbool.h>
 
 // the table of assembly language statement codes
+// The table of assembly language statement codes (octal). Naming of the statements:
+//   l.../r...   - projection from the left / from the right board of a hole
+//   s, w, e     - s-, w- and e-variable (a symbol, a term, an expression)
+//   ...d        - the variable is repeated: compare with its first occurrence (n_lsd, n_led, ...)
+//   sc / sco    - a constant symbol / a constant character
+//   txt         - a text of several characters
+//   b, nil, ce  - brackets, an empty hole, a closed e-variable
+//   ple/plv, pre/prv - save the point to return to when an e-/v-variable is expanded
+//   le/re       - expand an e-variable by one term; ...sc, ...sd, ...b - expand up to a symbol,
+//                 a repeated s-variable or a bracket
+//   lsrch/rsrch, eoe/eoei - search for a symbol; end of a search level
+//   wspc/espc.. - check of the type specifier; lmax/rmax - maximal projection
+//   eor         - end of the left part (recognition)
+//   ns, nso, text, bl, br, blr, blf, bract, muls, mule - building of the result
+//   tpl, tplm, tple, tplv, tpls - transplantation of a piece of the left part
+//   eos         - end of the sentence; sjump, fail, swap - control statements and a box
 #define n_sjump 0001
 #define n_fail 0002
 #define n_sb1b2 0003
@@ -94,6 +110,10 @@
 #define n_swap 0116
 #define n_blf 0117
 
+// Types of the sentence elements returned by the scanner:
+// SC - a constant symbol, LB/RB - parentheses, S_V/W_V/E_V - variables,
+// K/DOT - call brackets '<' and '>', EQ - the sign '=', END - the end of the sentence,
+// NONE - an error of the scanner.
 typedef enum sentence_element_types
 {
     NONE,
@@ -109,6 +129,7 @@ typedef enum sentence_element_types
     END
 } T_SENTENCE_ELEMENT_TYPES;
 
+// Compiles one sentence; direction: true - matching from left to right.
 extern void compile_sentence(bool direction);
 
 #endif

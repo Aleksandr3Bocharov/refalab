@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xbitwise.c  ----------
@@ -14,6 +14,11 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Codes of the operations: bit_operate does And, Or, Xor and Not, shift_operate does Shl and Shr.
+// A number is a long integer: an optional sign and macrodigits (32-bit digits), the most
+// significant digit first. The bitwise operations work on the macrodigits from the right,
+// the missing digits are zeros; the sign of the result is the same operation on the signs
+// ('+' = 0, '-' = 1).
 #define Oand 1
 #define Oor 2
 #define Oxor 3
@@ -24,6 +29,7 @@
 static void bit_operate(uint8_t operation);
 static void shift_operate(uint8_t operation);
 
+// Band: <Band (e.E1) e.E2> - the bitwise And of two long integers.
 static void band_(void)
 {
     bit_operate(Oand);
@@ -33,6 +39,7 @@ char band_0[] = {Z4 'B', 'A', 'N', 'D', (char)4};
 G_L_B uint8_t refalab_band = '\122';
 void (*band_1)(void) = band_;
 
+// Bor: <Bor (e.E1) e.E2> - the bitwise Or.
 static void bor_(void)
 {
     bit_operate(Oor);
@@ -42,6 +49,7 @@ char bor_0[] = {Z3 'B', 'O', 'R', (char)3};
 G_L_B uint8_t refalab_bor = '\122';
 void (*bor_1)(void) = bor_;
 
+// Bxor: <Bxor (e.E1) e.E2> - the bitwise exclusive Or.
 static void bxor_(void)
 {
     bit_operate(Oxor);
@@ -51,6 +59,7 @@ char bxor_0[] = {Z4 'B', 'X', 'O', 'R', (char)4};
 G_L_B uint8_t refalab_bxor = '\122';
 void (*bxor_1)(void) = bxor_;
 
+// Bnot: <Bnot e.N> - the bitwise Not; the sign is inverted too, so Bnot 0 is -4294967295.
 static void bnot_(void)
 {
     bit_operate(Onot);
@@ -60,6 +69,7 @@ char bnot_0[] = {Z4 'B', 'N', 'O', 'T', (char)4};
 G_L_B uint8_t refalab_bnot = '\122';
 void (*bnot_1)(void) = bnot_;
 
+// Shl: <Shl (e.E) v.S> - the shift to the left by S bits (S is one or two macrodigits).
 static void shl_(void)
 {
     shift_operate(Oshl);
@@ -69,6 +79,7 @@ char shl_0[] = {Z3 'S', 'H', 'L', (char)3};
 G_L_B uint8_t refalab_shl = '\122';
 void (*shl_1)(void) = shl_;
 
+// Shr: <Shr (e.E) v.S> - the shift to the right by S bits (rounded towards zero).
 static void shr_(void)
 {
     shift_operate(Oshr);
@@ -78,6 +89,11 @@ char shr_0[] = {Z3 'S', 'H', 'R', (char)3};
 G_L_B uint8_t refalab_shr = '\122';
 void (*shr_1)(void) = shr_;
 
+// The bitwise operations. The result is built in the cells of the first number (the shorter or the
+// longer one depending on the operation); a result that is zero is the macrodigit 0, otherwise
+// the leading zero macrodigits are dropped and the sign '-' is put in front of a negative number.
+// FAIL when the argument is not a bracketed long integer followed by a long integer
+// (Bnot: a long integer alone).
 static void bit_operate(uint8_t operation)
 {
     do
@@ -183,8 +199,8 @@ static void bit_operate(uint8_t operation)
             transplantation(refal.previous_result, x_current->previous, x_current->next);
             return;
         }
-        //  wozwratim X
-        // podawim wed. nuli
+        //  return X
+        // drop the leading zeros
         for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
         if (X.sign == '-')
@@ -194,7 +210,7 @@ static void bit_operate(uint8_t operation)
             x_current->info.code = NULL;
             x_current->info.infoc = '-';
         }
-        //  perenosim reultat
+        //  move the result
         transplantation(refal.previous_result, x_current->previous, X.end->next);
         return;
     } while (false);
@@ -202,6 +218,10 @@ static void bit_operate(uint8_t operation)
     return;
 }
 
+// The shifts. The shift count is split into whole macrodigits and the remaining bits;
+// the whole digits are added or dropped and the bits are moved from digit to digit with a carry.
+// Shl takes the extra free cells that the longer result needs. FAIL when the argument is not a
+// bracketed long integer followed by a shift count of one or two macrodigits.
 static void shift_operate(uint8_t operation)
 {
     do
@@ -297,8 +317,8 @@ static void shift_operate(uint8_t operation)
             transplantation(refal.previous_result, x_current->previous, x_current->next);
             return;
         }
-        //  wozwratim X
-        // podawim wed. nuli
+        //  return X
+        // drop the leading zeros
         for (x_current = X.begin; gcoden(x_current) == 0; x_current = x_current->next)
             ;
         if (X.sign == '-')
@@ -308,7 +328,7 @@ static void shift_operate(uint8_t operation)
             x_current->info.code = NULL;
             x_current->info.infoc = '-';
         }
-        //  perenosim reultat
+        //  move the result
         transplantation(refal.previous_result, x_current->previous, X.end->next);
         return;
     } while (false);

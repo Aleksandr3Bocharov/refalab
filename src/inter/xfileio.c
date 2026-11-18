@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-12
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xfileio.c  ----------
@@ -33,8 +33,11 @@ extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_current;
 
+// The path of the file or the directory that could not be removed (reported by Remove_dir and Clear_dir).
 static char remove_error_path[MAX_PATHFILENAME + 1];
 
+// The labels of the empty functions EOF, ERROR, StdIn, StdOut and StdErr, which this module returns
+// or accepts as symbols (see Chartof about this layout of a label).
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
 
@@ -50,6 +53,10 @@ G_L_B uint8_t refalab_stdout = '\002';
 char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
 G_L_B uint8_t refalab_stderr = '\002';
 
+// Fopen: <Fopen s.Z s.N e.B e.F> - opens the file e.F with the number N. Z is 'R' for reading, 'W' for writing
+// (an existing file is overwritten) or 'A' for appending (a missing file is created); B is an optional 'B'
+// for a binary file. The result is empty on success,
+// and the description of the error as characters on a failure; NULL when the number is already used.
 static void fopen_(void)
 {
     do
@@ -119,6 +126,8 @@ char fopen_0[] = {Z5 'F', 'O', 'P', 'E', 'N', (char)5};
 G_L_B uint8_t refalab_fopen = '\122';
 void (*fopen_1)(void) = fopen_;
 
+// Fclose: <Fclose s.N> - closes the file with the number N. The result is empty on success, the description
+// of the error as characters on a failure, NULL when the file is not open.
 static void fclose_(void)
 {
     do
@@ -158,6 +167,9 @@ char fclose_0[] = {Z6 'F', 'C', 'L', 'O', 'S', 'E', (char)6};
 G_L_B uint8_t refalab_fclose = '\122';
 void (*fclose_1)(void) = fclose_;
 
+// Fgets: <Fgets s.N> - reads the next line of the file (or of StdIn) as characters, without the line feed.
+// At the end of the file or on a read error the characters read so far are followed by the label EOF
+// or ERROR respectively.
 static void fgets_(void)
 {
     do
@@ -208,6 +220,9 @@ char fgets_0[] = {Z5 'F', 'G', 'E', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fgets = '\122';
 void (*fgets_1)(void) = fgets_;
 
+// Fputs: <Fputs s.N e.E> - writes the characters e.E to the file (or to StdOut, StdErr) without a line
+// feed. The result is empty on success, NULL when the file is not open and the label EOF or ERROR
+// when the writing fails.
 static void fputs_(void)
 {
     do
@@ -270,6 +285,8 @@ char fputs_0[] = {Z5 'F', 'P', 'U', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fputs = '\122';
 void (*fputs_1)(void) = fputs_;
 
+// Fprint: <Fprint s.N e.E> - writes the expression e.E to the file in the form of Print, without a line feed;
+// the result is as for Fputs.
 static void fprint_(void)
 {
     do
@@ -357,6 +374,7 @@ char fprint_0[] = {Z6 'F', 'P', 'R', 'I', 'N', 'T', (char)6};
 G_L_B uint8_t refalab_fprint = '\122';
 void (*fprint_1)(void) = fprint_;
 
+// Fprints: like Fprint, but characters are not put into apostrophes.
 static void fprints_(void)
 {
     do
@@ -443,6 +461,7 @@ char fprints_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'S', (char)7};
 G_L_B uint8_t refalab_fprints = '\122';
 void (*fprints_1)(void) = fprints_;
 
+// Fprintm: like Fprint, but the expression is written in the form of a source program.
 static void fprintm_(void)
 {
     do
@@ -561,6 +580,8 @@ char fprintm_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'M', (char)7};
 G_L_B uint8_t refalab_fprintm = '\122';
 void (*fprintm_1)(void) = fprintm_;
 
+// Fread: <Fread s.N s.C> - reads up to C bytes from the file as macrodigits. If the end of the file or
+// an error comes first, the bytes read so far are followed by the label EOF or ERROR.
 static void fread_(void)
 {
     do
@@ -607,6 +628,8 @@ char fread_0[] = {Z5 'F', 'R', 'E', 'A', 'D', (char)5};
 G_L_B uint8_t refalab_fread = '\122';
 void (*fread_1)(void) = fread_;
 
+// Fwrite: <Fwrite s.N e.B> - writes the bytes e.B to the file: a character is written as its 8-bit code,
+// a macrodigit modulo 256. The result is as for Fputs.
 static void fwrite_(void)
 {
     do
@@ -660,6 +683,8 @@ char fwrite_0[] = {Z6 'F', 'W', 'R', 'I', 'T', 'E', (char)6};
 G_L_B uint8_t refalab_fwrite = '\122';
 void (*fwrite_1)(void) = fwrite_;
 
+// Fseek: <Fseek s.N v.N s.F> - moves the file pointer by the signed offset N (one or two macrodigits)
+// from the position F, which is the label Begin, Current or End. The result is empty on success.
 static void fseek_(void)
 {
     do
@@ -733,6 +758,8 @@ char fseek_0[] = {Z5 'F', 'S', 'E', 'E', 'K', (char)5};
 G_L_B uint8_t refalab_fseek = '\122';
 void (*fseek_1)(void) = fseek_;
 
+// Ftell: <Ftell s.N> - the position of the file pointer as a number of one or two macrodigits,
+// or the description of the error.
 static void ftell_(void)
 {
     do
@@ -783,6 +810,8 @@ char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_ftell = '\122';
 void (*ftell_1)(void) = ftell_;
 
+// Is_eof: <Is_eof s.N> - True when the end-of-file flag or the error flag of the file is set,
+// otherwise False; NULL when the file is not open.
 static void is_eof_(void)
 {
     do
@@ -829,6 +858,8 @@ char is_eof_0[] = {Z6 'I', 'S', '_', 'E', 'O', 'F', (char)6};
 G_L_B uint8_t refalab_is_eof = '\122';
 void (*is_eof_1)(void) = is_eof_;
 
+// Is_feof: <Is_feof s.N> - True when the end-of-file flag of the file is set, otherwise False;
+// NULL when the file is not open.
 static void is_feof_(void)
 {
     do
@@ -875,6 +906,8 @@ char is_feof_0[] = {Z7 'I', 'S', '_', 'F', 'E', 'O', 'F', (char)7};
 G_L_B uint8_t refalab_is_feof = '\122';
 void (*is_feof_1)(void) = is_feof_;
 
+// Is_ferror: <Is_ferror s.N> - True when the error flag of the file is set, otherwise False;
+// NULL when the file is not open.
 static void is_ferror_(void)
 {
     do
@@ -921,6 +954,8 @@ char is_ferror_0[] = {Z1 'I', 'S', '_', 'F', 'E', 'R', 'R', 'O', 'R', (char)9};
 G_L_B uint8_t refalab_is_ferror = '\122';
 void (*is_ferror_1)(void) = is_ferror_;
 
+// Make_dir: <Make_dir e.Dir> - creates the directory (mode 0755 on POSIX). The result is empty on success and
+// the description of the error otherwise.
 static void make_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -953,6 +988,8 @@ char make_dir_0[] = {Z0 'M', 'A', 'K', 'E', '_', 'D', 'I', 'R', (char)8};
 G_L_B uint8_t refalab_make_dir = '\122';
 void (*make_dir_1)(void) = make_dir_;
 
+// Remove_file: <Remove_file e.File> - deletes the file. The result is empty on success and
+// the description of the error otherwise.
 static void remove_file_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -981,6 +1018,8 @@ char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E'
 G_L_B uint8_t refalab_remove_file = '\122';
 void (*remove_file_1)(void) = remove_file_;
 
+// Remove_dir: <Remove_dir e.Dir> - deletes the directory with everything inside it. The result is
+// empty on success; on a failure the description of the error and the path that could not be removed.
 static void remove_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -1009,6 +1048,9 @@ char remove_dir_0[] = {Z2 'R', 'E', 'M', 'O', 'V', 'E', '_', 'D', 'I', 'R', (cha
 G_L_B uint8_t refalab_remove_dir = '\122';
 void (*remove_dir_1)(void) = remove_dir_;
 
+// Deletes the contents of a directory recursively (the directory itself too when remove_self is set).
+// The entries are examined with lstat, so a symbolic link is removed and never followed.
+// Returns 0 on success, otherwise the error number, and the path of the failure is in remove_error_path.
 static int remove_directory_recursive(const char *path, bool remove_self)
 {
     DIR *directory = opendir(path);
@@ -1102,6 +1144,8 @@ static int remove_directory_recursive(const char *path, bool remove_self)
     return 0;
 }
 
+// Clear_dir: <Clear_dir e.Dir> - deletes everything inside the directory and leaves the directory.
+// The result is as for Remove_dir.
 static void clear_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -1131,6 +1175,9 @@ char clear_dir_0[] = {Z1 'C', 'L', 'E', 'A', 'R', '_', 'D', 'I', 'R', (char)9};
 G_L_B uint8_t refalab_clear_dir = '\122';
 void (*clear_dir_1)(void) = clear_dir_;
 
+// Rename: <Rename v.F> - v.F is two names separated by the macrodigit 0. The first file or
+// directory is renamed (moved) to the second name, replacing it. The result is empty on success
+// and the description of the error otherwise.
 static void rename_(void)
 {
     do
@@ -1166,6 +1213,7 @@ char rename_0[] = {Z6 'R', 'E', 'N', 'A', 'M', 'E', (char)6};
 G_L_B uint8_t refalab_rename = '\122';
 void (*rename_1)(void) = rename_;
 
+// Exist_file: <Exist_file e.File> - True when the path exists and is a regular file, otherwise False.
 static void exist_file_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -1188,6 +1236,7 @@ char exist_file_0[] = {Z2 'E', 'X', 'I', 'S', 'T', '_', 'F', 'I', 'L', 'E', (cha
 G_L_B uint8_t refalab_exist_file = '\122';
 void (*exist_file_1)(void) = exist_file_;
 
+// Exist_dir: <Exist_dir e.Dir> - True when the directory exists, otherwise False.
 static void exist_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;

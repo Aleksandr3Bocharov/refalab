@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-30
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
 //====================================================================
 
 $START COMPARE2;
@@ -14,6 +14,8 @@ $ENTRY QSortW, MinW, MaxW;
 $EXTERN NNorm, NCheck, UnBrackets, FoldL, NRel, LRel;
 
 //  <QSortN e.AnyNumbers> == e.Sort_AnyNumbers
+// Quick sort of the long integers: the first one is the pivot, the others are divided by FoldL into
+// those that are less, equal and greater; the parts are sorted in turn. The integers are bracketed terms.
 $FUNC QSortN
 {
     = ;
@@ -21,16 +23,19 @@ $FUNC QSortN
     w.Pivot e.Items = <QSortN_Aux <FoldL DoQSortN (() (w.Pivot) ()) e.Items>>;
 }
 
+// Sorts the less and the greater parts and joins them with the equal ones.
 $FUNC QSortN_Aux
 {
     ((e.Less) (e.Equal) (e.Greater)) = <QSortN e.Less> e.Equal <QSortN e.Greater>;
 }
 
+// One step of the FoldL: puts the next number to the part where it belongs (the answer of NRel).
 $FUNC DoQSortN 
 {
     (w.Less ((e.Pivot) e.Equal) w.Greater) w.Next = <DoQSortN_Aux <NRel w.Next e.Pivot> (w.Less ((e.Pivot) e.Equal) w.Greater)>;
 }
 
+// Adds the number to the part chosen by the relation sign.
 $FUNC DoQSortN_Aux
 {
     '<' w.Next e._ ((e.Less) e.__) = ((e.Less w.Next) e.__);
@@ -39,16 +44,19 @@ $FUNC DoQSortN_Aux
 }
 
 //  <MinN (e.First) (e.Number)*> == v.Min
+// The least of the long integers.
 $FUNC MinN
 {
     w.First e.Tail = <NNorm <UnBrackets <FoldL DoMinN w.First e.Tail>>>;
 }
 
+// One step of the fold: the lesser one of two numbers.
 $FUNC DoMinN
 {
     w.X (e.Y) = <DoMinN_Aux <NRel w.X e.Y>>;
 }
 
+// Keeps the first number if it is less, otherwise the second one.
 $FUNC DoMinN_Aux 
 {
     '<' w.X e._ = w.X;
@@ -56,16 +64,19 @@ $FUNC DoMinN_Aux
 }
 
 //  <MaxN (e.First) (e.Number)*> == v.Max
+// The greatest of the long integers.
 $FUNC MaxN
 {
     w.First e.Tail = <NNorm <UnBrackets <FoldL DoMaxN w.First e.Tail>>>;
 }
 
+// One step of the fold: the greater one of two numbers.
 $FUNC DoMaxN
 {
     w.X (e.Y) = <DoMaxN_Aux <NRel w.X e.Y>>;
 }
 
+// Keeps the first number if it is greater, otherwise the second one.
 $FUNC DoMaxN_Aux
 {
     '>' w.X e._ = w.X;
@@ -73,6 +84,7 @@ $FUNC DoMaxN_Aux
 }
 
 //  <QSortW e.Any> == e.Sort_Any
+// Quick sort of terms in the lexicographic order (LRel); the method is the same as in QSortN.
 $FUNC QSortW
 {
     = ;
@@ -80,16 +92,19 @@ $FUNC QSortW
     w.Pivot e.Items = <QSortW_Aux <FoldL DoQSortW (() (w.Pivot) ()) e.Items>>;
 }
 
+// Sorts the less and the greater parts and joins them with the equal ones.
 $FUNC QSortW_Aux
 {
     ((e.Less) (e.Equal) (e.Greater)) = <QSortW e.Less> e.Equal <QSortW e.Greater>;
 }
 
+// One step of the FoldL: puts the next term to the part where it belongs (the answer of LRel).
 $FUNC DoQSortW
 {
     (w.Less (w.Pivot e.Equal) w.Greater) w.Next = <DoQSortW_Aux <LRel (w.Next) w.Pivot> (w.Less (w.Pivot e.Equal) w.Greater)>;
 }
 
+// Adds the term to the part chosen by the relation sign.
 $FUNC DoQSortW_Aux
 {
     '<' (w.Next) e._ ((e.Less) e.__) = ((e.Less w.Next) e.__);
@@ -98,12 +113,14 @@ $FUNC DoQSortW_Aux
 }
 
 //  <MinW w.First e.Tail> == w.Min
+// The least term in the lexicographic order.
 $FUNC MinW
 {
     w.X w.Y = <MinW_Aux <LRel (w.X) w.Y>>;
     w.First e.Tail = <FoldL MinW w.First e.Tail>;
 }
 
+// Keeps the first term if it is less, otherwise the second one.
 $FUNC MinW_Aux
 {
     '<' (w.X) e._ = w.X;
@@ -111,12 +128,14 @@ $FUNC MinW_Aux
 }
 
 //  <MaxW w.First e.Tail> == w.Max
+// The greatest term in the lexicographic order.
 $FUNC MaxW 
 {
     w.X w.Y = <MaxW_Aux <LRel (w.X) w.Y>>;
     w.First e.Tail = <FoldL MaxW w.First e.Tail>;
 }
 
+// Keeps the first term if it is greater, otherwise the second one.
 $FUNC MaxW_Aux
 {
     '>' (w.X) e._ = w.X;

@@ -1,8 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-18
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
+// Test 1: arithmetic of long integers: Add, Sub, Mul, Dr, Div, Mod and the variants AddN, SubN, MulN,
+// DrN, DivN, ModN (a zero result is empty), P1, M1, Numb, Symb and the comparison LRel.
 $START TEST1;
 
 $ENTRY Go;
@@ -10,6 +12,7 @@ $EXTERN Add, Sub, Mul, Dr, Div, Mod;
 $EXTERN AddN, SubN, MulN, DrN, DivN, ModN;
 $EXTERN P1, M1, Numb, Symb, Prout, Proutm, LRel;
 
+// Runs the groups of checks F1 to F4.
 $FUNC Go
 {
     =
@@ -19,7 +22,7 @@ $FUNC Go
         <F4>;
 }
 
-//  prowerka Mul, Dr, Div, Mod, Add, Sub
+//  Check of Mul, Dr, Div, Mod, Add, Sub
 $FUNC F1 
 {    
     = 
@@ -64,7 +67,7 @@ $FUNC F1
         <Prmd ('-' 5) '-' 33>;
 }
 
-//  prowerka Muln, Drn, Divn, Modn, Addn, Subn
+//  Check of MulN, DrN, DivN, ModN, AddN, SubN
 $FUNC F2
 {
     =
@@ -109,7 +112,7 @@ $FUNC F2
         <Prmdn ('-' 5) '-' 33>;     
 }
 
-//  neot
+//  Negative tests: recognition is impossible for these calls.
 $FUNC F3
 {
     =
@@ -125,7 +128,7 @@ $FUNC F3
         <Prmdn (1 2 3 4)>;
 }
 
-//  prowerka P1, M1, Numb, Symb
+//  Check of P1, M1, Numb, Symb
 $FUNC F4
 {
     =
@@ -142,7 +145,7 @@ $FUNC F4
         <Prsy 10 1000000000> 
         <Prsy 10 4294967295> 
         <Prsy 10 '+' 0 0 0> 
-//  neot
+//  Negative tests: recognition is impossible for these calls.
         <Prp1 4294967295> 
         <Prp1 '+' 1> 
         <Prm1 0> 
@@ -154,7 +157,7 @@ $FUNC F4
         <Prsy 10 '-'> 
         <Prsy 10 '+'>     
         <Prsy 10 1 0> 
-//  prowerka LRel
+//  Check of LRel
         <LRel ('a') 'a'> 
         <LRel (1 2) 1 2> 
         <LRel (LRel) LRel> 
@@ -182,18 +185,20 @@ $FUNC F4
         <LRel ('a' ('b')) 'a' ('c')>
         <LRel ('a' ('b')) 'a' ('b')>
         <LRel ('a' ('bc')) 'a' ('b')>
-//  neot
+//  Negative tests: recognition is impossible for these calls.
         <LRel>
         <LRel 0>
         <LRel LRel>
         <LRel '123'>;
 }
 
+// Check of Add.
 $FUNC Prad
 {
     e.N = <Prow Add e.N>;
 }
 
+// Check of Sub.
 $FUNC Prsu
 {
     e.N = <Prow Sub e.N>;

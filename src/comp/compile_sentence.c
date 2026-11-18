@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-15
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_sentence.c  ----------
-//      Compiler file
+//   Compilation of a sentence: left and right part
 //-----------------------------------------------
 
 #include <stdio.h>
@@ -27,6 +27,13 @@
 #define PRINT_ERROR_406 \
     print_error_two_strings(406, "In left part missing variable ", current_sentence_element.identifier, current_sentence_element.identifier_length)
 
+// States of the compiler automaton. The compilation of a sentence is a state machine
+// that works in three stages:
+//   GET_LPE .. NEXT_LPE - reading and checking of the left part (the pattern);
+//   RCG .. RCGFIN       - generation of the matching code: first the rigid elements,
+//                         then the e-variables, which need a search;
+//   GET_RPE ..          - reading of the right part (the result) and generation of its code.
+// OSH300, RP_OSH300 and ERROR are the error exits.
 typedef enum states
 {
     GET_LPE,
@@ -144,6 +151,8 @@ typedef enum states
     ERROR
 } T_STATES;
 
+// Kind of a variable in the variable table: NEW - not met yet, S - a symbol,
+// W - a term (a symbol or a bracketed expression), E - an expression (also v-variables).
 typedef enum variable_types
 {
     NEW,
@@ -152,6 +161,13 @@ typedef enum variable_types
     E
 } T_VARIABLE_TYPES;
 
+// Elements of the left part in the order of reading. Element 0 and the last element
+// (the '=' sign, number left_part_elements_count) are the ends of the pattern.
+// left_number_element/right_number_element: numbers of the element's boundaries in the
+//   matching stack of the generated code (operands of the generated statements);
+// pair_bracket: the index of the matching bracket; next_variable: the previous
+//   occurrence of the same variable; specifier: the type specifier of a variable;
+// eoe_mark, jump_stack_pointer, used: attributes used by the search for e-variables.
 static struct
 { // left part buffer elements
     uint16_t left_number_element, right_number_element;
@@ -167,6 +183,10 @@ static struct
     bool used;
 } left_part_elements[UINT8_MAX];
 
+// Variable table. last_left_part_element: the last occurrence of the variable that
+// has been generated (0 - none yet, i.e. the variable is still free); remains: the number
+// of the occurrences left to generate; main_right_number_element: number of the first
+// occurrence, which later occurrences are compared with.
 static struct
 { // variable table elements
     uint8_t last_left_part_element;
@@ -185,10 +205,14 @@ static struct
     uint8_t left_board, right_board;
 } hole_list[130];
 
+// Work structures and counters of the compiler.
+// The left part is a list of holes: a hole is a segment of the pattern between two
+// boards (left_board, right_board) that is not matched yet. Brackets split a hole in two.
 static T_LINKTI xncode;           // work structure
 static T_LINKTI function_pointer; // work pointer
 
 static uint8_t current_left_part_element, current_left_board, current_right_board; // left part element pointers
+// Limits of the search for the best transplantation (see try_transplant).
 #define SENTENCE_SEARCH_BUDGET 5000  // nodes of transplantation search for one sentence
 #define DECISION_SEARCH_BUDGET 2000  // nodes of transplantation search for one decision
 static uint8_t left_part_elements_count;                                           // left part element count
@@ -210,6 +234,7 @@ static uint8_t free_segment_hole_list; // free segment number in the hole  list
 static uint8_t next_hole;              // next hole number
 static uint8_t hole_x, hole_y;         // hole numbers (under enter in brackets)
 
+// Forward declarations of the helper functions.
 static bool search_variable(bool left_part);
 static void generate_boards_stoping_brackets(void);
 static bool lsg_p(void);
@@ -492,6 +517,10 @@ static void debug_dump_holes(void)
 
 // read left part
 // and full array X
+// Compiles one sentence, from the first element of its left part to its end.
+// direction is the direction of matching: true - from left to right, false - from right to left.
+// The sentence is not written directly: its code goes to the function pool.
+// After an error the rest of the sentence is skipped and the compilation goes on.
 void compile_sentence(bool direction)
 // direction;     matching feature :left to right or otherwise
 {
@@ -510,6 +539,9 @@ void compile_sentence(bool direction)
         switch (state)
 #endif
         {
+        // ---------- reading of the left part ----------
+        // Every element is stored in left_part_elements, and the state is chosen by its type.
+        // Variables are entered in the variable table, brackets are linked in pairs.
         case GET_LPE:
             // read left part element
             current_left_part_element++;
@@ -573,6 +605,7 @@ void compile_sentence(bool direction)
                 state = OSH300;
             }
             break;
+        // The scanner found an error.
         case LPE0:
             // scanner error
             state = OSH300;
@@ -678,6 +711,7 @@ void compile_sentence(bool direction)
             current_left_part_element--;
             state = NEXT_LPE;
             break;
+        // The end of the left part ('=' was met): the brackets must be balanced.
         case LPE9:
             // left part end
             if (last_bracket == 0)
@@ -689,6 +723,7 @@ void compile_sentence(bool direction)
             print_error_string(301, "Too many '(' in left part");
             state = OSH300;
             break;
+        // The sentence ended before the '=' sign.
         case LPE10:
             // sentence end
             scanner.last_error_cursor = current_sentence_element.cursor_number;
@@ -696,6 +731,7 @@ void compile_sentence(bool direction)
             compile_output_switch_to_macrocode();
             function_definition();
             return;
+        // The sentence is limited to 252 numbered elements.
         case NEXT_LPE:
             // end of element processing
             if (number_element <= 252)
@@ -707,6 +743,7 @@ void compile_sentence(bool direction)
             print_error_string(305, "Very large left part");
             state = OSH300;
             break;
+        // Error exit: the sentence is replaced by an empty one and the rest is skipped.
         case OSH300:
             compile_output_switch_to_macrocode();
             function_definition();
@@ -715,6 +752,10 @@ void compile_sentence(bool direction)
         //--------------------------------------------
         //         left part compilation
         //--------------------------------------------
+        // ---------- generation of the left part code ----------
+        // The pattern is matched from its both ends towards the middle. First the rigid elements
+        // (symbols, brackets, variables that are already bound) are projected, as they are
+        // checked without any search. direction selects the end to start from.
         case RCG:
             function_definition();
             left_part_elements_count = current_left_part_element;
@@ -743,6 +784,7 @@ void compile_sentence(bool direction)
             state = RCGR;
             break;
         //    hard element projection from left part of current hole
+        // Rigid element projection from the left board of the current hole.
         case RCGL:
             current_left_part_element = current_left_board + 1;
             if (current_left_part_element == current_right_board)
@@ -774,6 +816,7 @@ void compile_sentence(bool direction)
                 state = OSH300;
             };
             break;
+        // A constant symbol: a text of several characters is collected into one n_ltxt statement.
         case LSW1:
             //        constant symbol
             if (left_part_elements[current_left_part_element].code.tag == TAGO)
@@ -828,6 +871,8 @@ void compile_sentence(bool direction)
             generate_operator_n(n_lsco, (uint8_t)left_part_elements[current_left_part_element].code.info.infoc);
             state = L1;
             break;
+        // A left bracket: an empty pair of brackets and a pair holding one free e-variable
+        // get special statements, any other pair opens a new hole.
         case LSW2:
             //  left bracket
             current_left_board = current_left_part_element;
@@ -887,6 +932,8 @@ void compile_sentence(bool direction)
             number_element += 2;
             state = RCGL;
             break;
+        // A bracket pair that opens a new hole: the hole inside the brackets is separated
+        // from the rest of the pattern.
         case GEN_LB:
             current_left_part_element = current_left_board;
             stoped_bracket_flag = 1;
@@ -919,9 +966,11 @@ void compile_sentence(bool direction)
             number_element += 2;
             state = HSCH;
             break;
+        // A right bracket cannot be at the left board of a hole.
         case LSW3:
             state = ERROR;
             break;
+        // An s-variable: the first occurrence is read (n_ls), later ones are compared (n_lsd).
         case LSW4:
             //    s-variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
@@ -949,6 +998,7 @@ void compile_sentence(bool direction)
             current_left_board = current_left_part_element;
             state = RCGL;
             break;
+        // A w-variable: the first occurrence is read (n_lw), later ones are compared (n_led).
         case LSW5:
             //   w-variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
@@ -985,6 +1035,8 @@ void compile_sentence(bool direction)
             current_left_board = current_left_part_element;
             state = RCGL;
             break;
+        // An e-variable: an already bound one is compared; a free one needs a search,
+        // so it is left for later (or is closed when it is alone in its hole).
         case LSW6:
             //   e-variable
             variable_index = left_part_elements[current_left_part_element].variable_index;
@@ -1008,6 +1060,8 @@ void compile_sentence(bool direction)
         //                 hard element projection
         //                 from  right board of
         //                    current hole
+        // Rigid element projection from the right board of the current hole
+        // (the same as RCGL, mirrored).
         case RCGR:
             current_left_part_element = current_right_board - 1;
             if (current_left_part_element == current_left_board)
@@ -1270,6 +1324,7 @@ void compile_sentence(bool direction)
             }
             state = IMPASSE;
             break;
+        // The hole is empty: n_nil checks it and the hole is removed from the list.
         case NIL:
             //     empty hole
             generate_operator(n_nil);
@@ -1280,6 +1335,7 @@ void compile_sentence(bool direction)
             current_hole = next_hole;
             state = IMPASSE;
             break;
+        // Closed e-variable: the only element of its hole, it takes the whole contents of the hole.
         case CE:
             //   closed including
             if (left_part_elements[current_left_part_element].eoe_mark)
@@ -1325,6 +1381,7 @@ void compile_sentence(bool direction)
         //          It is impossible movement
         //          on hard element here or
         //          hole ended here
+        // No rigid element can be projected from this hole any more.
         case IMPASSE:
             stoped_bracket_flag = 0;
             hole_x = current_hole;
@@ -1334,6 +1391,8 @@ void compile_sentence(bool direction)
         //          elements on its boards.
         //          If it not exist than project
         //          e-variable from first hole.
+        // Search for a hole with rigid elements on its boards;
+        // when there is none, an e-variable has to be projected from the first hole.
         case HSCH:
             hole_list[current_hole].left_board = current_left_board;
             hole_list[current_hole].right_board = current_right_board;
@@ -1348,6 +1407,8 @@ void compile_sentence(bool direction)
             }
             state = NHOLE;
             break;
+        // Takes the next hole: a hole whose boards still carry rigid elements goes on being
+        // projected (RIGID); an empty hole, and a hole with a single e-variable, are closed at once.
         case NHOLE:
             current_left_board = hole_list[current_hole].left_board;
             current_right_board = hole_list[current_hole].right_board;
@@ -1397,6 +1458,7 @@ void compile_sentence(bool direction)
             }
             state = NHOLE1;
             break;
+        // The hole is left for the e-variable stage; after the last hole the search starts.
         case NHOLE1:
             current_hole = hole_list[current_hole].next_hole;
             if (hole_list[current_hole].next_hole == 0)
@@ -1406,6 +1468,7 @@ void compile_sentence(bool direction)
             }
             state = NHOLE;
             break;
+        // A rigid element is on the boards of the hole: the projection goes on.
         case RIGID:
             //  hard element on the both hole boards
             generate_boards_stoping_brackets();
@@ -1417,6 +1480,10 @@ void compile_sentence(bool direction)
             state = RCGR;
             break;
         //  opened e_variable processing
+        // ---------- opened e-variables ----------
+        // No hole has rigid elements left, so an e-variable has to be opened: the first hole is
+        // taken, the pending end-of-expression mark (n_eoe/n_eoei) is generated when an earlier
+        // search is complete, and the variable at the board is processed depending on the direction.
         case OE:
             current_hole = 1;
             current_left_board = hole_list[current_hole].left_board;
@@ -1454,6 +1521,8 @@ void compile_sentence(bool direction)
             }
             state = OE0;
             break;
+        // Checks whether the e-variable with a specifier can be expanded to the maximal length
+        // (n_lmax/n_rmax): only if it is the last occurrence and no other free e-variable is left in the hole.
         case OE0:
             variable_index = left_part_elements[current_left_part_element].variable_index;
             if (variables[variable_index].last_left_part_element != 0 || variables[variable_index].remains != 1)
@@ -1486,11 +1555,14 @@ void compile_sentence(bool direction)
             }
             state = OE0;
             break;
+        // The hole holds only one free e-variable besides this one: the maximal right projection.
         case OERMAX:
             current_left_part_element = current_right_board - 1;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             state = RMAX;
             break;
+        // The e-variable takes the maximal part to the right (n_rmax); its specifier is
+        // checked by this statement, so it is not checked again.
         case RMAX:
             generate_operator_l(n_rmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
@@ -1502,11 +1574,13 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             state = REMD;
             break;
+        // The same for the maximal left projection.
         case OELMAX:
             current_left_part_element = current_left_board + 1;
             variable_index = left_part_elements[current_left_part_element].variable_index;
             state = LMAX;
             break;
+        // The e-variable takes the maximal part to the left (n_lmax).
         case LMAX:
             generate_operator_l(n_lmax, left_part_elements[current_left_part_element].specifier.info.codef);
             if (left_part_elements[current_left_part_element].v_variable)
@@ -1518,6 +1592,7 @@ void compile_sentence(bool direction)
             variables[variable_index].main_right_number_element = number_element + 1;
             state = LEMD;
             break;
+        // The general case: the e-variable is expanded step by step (a search with backtracking).
         case OE1:
             if (direction)
             {
@@ -1526,12 +1601,15 @@ void compile_sentence(bool direction)
             }
             state = ROE;
             break;
+        // Expansion from the left board.
         case LOE:
             current_left_part_element = current_left_board + 1;
             temp_variable_index = left_part_elements[current_left_part_element].variable_index;
             state = LSG;
             break;
         //         attempt to extract left support group
+        // Attempt to extract the left support group: elements right after the e-variable
+        // that can be found faster than by stepping (a symbol, a bracket, a bound variable).
         case LSG:
             if (lsg_p())
             {
@@ -1540,6 +1618,7 @@ void compile_sentence(bool direction)
             }
             state = RCGL;
             break;
+        // The element after the e-variable decides the kind of the search statements.
         case LE_CASE:
             current_left_part_element = current_left_board + 1;
             switch (left_part_elements[current_left_part_element].type)
@@ -1566,6 +1645,8 @@ void compile_sentence(bool direction)
                 state = OSH300;
             };
             break;
+        // e 'a' ...: a search for the symbol (n_lsrch) when the search is the last one,
+        // otherwise an expansion that stops at the symbol (n_plesc, n_lesc).
         case LESW1:
             //  ei 'a' . . .
             xncode.tag = left_part_elements[current_left_part_element].code.tag;
@@ -1586,6 +1667,7 @@ void compile_sentence(bool direction)
             current_left_part_element--;
             state = L1;
             break;
+        // e ( ... ) ...: an expansion that stops at a bracket (n_pleb, n_leb); the bracket opens a hole.
         case LESW2:
             //   ei ( . . . ) . . .
             generate_operator_e_v(n_pleb, n_plvb);
@@ -1596,6 +1678,8 @@ void compile_sentence(bool direction)
         case LESW3:
             state = ERROR;
             break;
+        // e s ...: an expansion that stops at a symbol equal to the bound s-variable (n_lesd);
+        // a free s-variable cannot be used for the stop, so a plain expansion is generated.
         case LESW4:
             //  ei sj . . .
             variable_index = left_part_elements[current_left_part_element].variable_index;
@@ -1608,22 +1692,27 @@ void compile_sentence(bool direction)
             generate_operator_n(n_lesd, (uint8_t)variables[variable_index].main_right_number_element);
             state = LSMD;
             break;
+        // e w ... and e e ...: a plain expansion by one term.
         case LESW5:
         case LESW6:
             //  ei . . .
             state = LE;
             break;
+        // Plain expansion of the e-variable from the left: n_ple/n_plv saves the point to return to
+        // (v-variables must not be empty), n_le makes one step.
         case LE:
             generate_operator_e_v(n_ple, n_plv);
             generate_operator(n_le);
             state = RCGL;
             break;
+        // Expansion from the right board (the mirror image of LOE).
         case ROE:
             current_left_part_element = current_right_board - 1;
             temp_variable_index = left_part_elements[current_left_part_element].variable_index;
             state = RSG;
             break;
         //                 attempt to extract right support group
+        // Attempt to extract the right support group (the mirror image of LSG).
         case RSG:
             if (rsg_p())
             {
@@ -1632,6 +1721,7 @@ void compile_sentence(bool direction)
             }
             state = RCGR;
             break;
+        // The element before the e-variable decides the kind of the search statements.
         case RE_CASE:
             current_left_part_element = current_right_board - 1;
             switch (left_part_elements[current_left_part_element].type)
@@ -1711,6 +1801,8 @@ void compile_sentence(bool direction)
             state = RCGR;
             break;
         //                 identification end
+        // The left part is compiled: n_eor ends it and the output switches to the right part.
+        // A counter of bracket levels is initialised for the right part.
         case RCGFIN:
 #if defined mdebug
             fprintf(stderr, "compile_sentence: left part compiled, jump_stack_pointer=%u, search_budget=%d\n", jump_stack_pointer, (int)search_budget);
@@ -1726,10 +1818,15 @@ void compile_sentence(bool direction)
             state = GET_RPE;
             break;
         //  read next element of right part
+        // ---------- right part ----------
+        // Every element is read and the code that builds the result is generated.
         case GET_RPE:
             scan_sentence_element();
             state = SW_RPE;
             break;
+        // The element type selects the handler. Before an element that can be a part of a piece
+        // of the left part, a transplantation is tried (see try_transplant): when it succeeds, the
+        // elements of the piece are already consumed and the next element is read.
         case SW_RPE:
 #if defined mdebug
             fprintf(stderr, "compile_sentence: right part element: ");
@@ -1790,10 +1887,13 @@ void compile_sentence(bool direction)
                 state = RP_OSH300;
             };
             break;
+        // The scanner found an error.
         case RPE0:
             // scanner error
             state = RP_OSH300;
             break;
+        // A constant symbol: characters are collected into one n_text statement
+        // (n_nso for a single character), any other symbol is generated by n_ns.
         case RPE1:
             // symbol-constant
             if (current_sentence_element.code.tag == TAGO)
@@ -1827,6 +1927,9 @@ void compile_sentence(bool direction)
             };
             state = SW_RPE;
             break;
+        // A left bracket: "()" is generated as one statement (n_blr); a bracket followed by a
+        // function label as n_blf; any other bracket as n_bl. The counter of the open
+        // brackets of the current call level is increased.
         case RPE2:
             // left bracket
             scan_sentence_element();
@@ -1847,6 +1950,7 @@ void compile_sentence(bool direction)
             generate_operator(n_bl);
             state = SW_RPE;
             break;
+        // A right bracket: n_br; it must have an open bracket at the current call level (402).
         case RPE3:
             // right bracket
             generate_operator(n_br);
@@ -1859,6 +1963,8 @@ void compile_sentence(bool direction)
                 brackets_count[brackets_k_level]--;
             state = GET_RPE;
             break;
+        // An s-variable of the result: copied by n_muls from its first occurrence in the left part;
+        // it must be present there (406) and be of the same kind (303).
         case RPE4:
             // s - varyable
             if (!search_variable(false))
@@ -1878,6 +1984,7 @@ void compile_sentence(bool direction)
                 };
             state = GET_RPE;
             break;
+        // A w-variable of the result: copied by n_mule (a term is copied like an expression).
         case RPE5:
             // w - varyable
             if (!search_variable(false))
@@ -1897,6 +2004,7 @@ void compile_sentence(bool direction)
                 };
             state = GET_RPE;
             break;
+        // An e- or v-variable of the result: copied by n_mule.
         case RPE6:
             // e- or v-varyable
             if (!search_variable(false))
@@ -1913,6 +2021,8 @@ void compile_sentence(bool direction)
             }
             state = GET_RPE;
             break;
+        // The call bracket '<': a new level is opened (at most 511 levels), the function label after
+        // it is generated together with the bracket (n_blf).
         case RPE7:
             // sign '<'
             if (brackets_k_level > 511)
@@ -1935,6 +2045,8 @@ void compile_sentence(bool direction)
             generate_operator(n_bl);
             state = SW_RPE;
             break;
+        // The call bracket '>': n_bract closes the call; its level must be open (404)
+        // and all its structure brackets must be closed (401).
         case RPE8:
             // sign '>'
             if (brackets_k_level == 1)
@@ -1954,12 +2066,14 @@ void compile_sentence(bool direction)
             };
             state = GET_RPE;
             break;
+        // The '=' sign is not allowed in the right part.
         case RPE9:
             // sign '=' in right part
             scanner.last_error_cursor = current_sentence_element.cursor_number;
             print_error_string(405, "Sign '=' in right part");
             state = GET_RPE;
             break;
+        // The end of the sentence: n_eos; all brackets and calls must be closed (403, 401).
         case RPE10:
             // sentence end
             generate_operator(n_eos);
@@ -1978,12 +2092,14 @@ void compile_sentence(bool direction)
 #endif
             compile_output_switch_to_macrocode();
             return;
+        // Error exit from the right part: the sentence is reported as not scanned (300).
         case RP_OSH300:
             scanner.last_error_cursor = current_sentence_element.cursor_number;
             print_error_string(300, "Sentence is't scanned");
             compile_output_switch_to_macrocode();
             return;
         //                      place of compiler's error
+        // An impossible state: an error of the compiler itself.
         case ERROR:
             printf("Compiler's error\n");
             exit(1);
@@ -2192,6 +2308,13 @@ static uint16_t solve(uint16_t pos, const bool *used, const bool *in_chain, uint
     return best;
 }
 
+// Tries to transplant a piece of the left part into the result instead of generating the
+// current right part element: a piece that equals a run of right part elements is moved
+// by one n_tpl* statement (copy of a part of the matched expression).
+// The decision is made by a search over the rest of the right part (see solve): the
+// transplant is taken only if the number of generated operators does not grow.
+// Returns true when a piece was transplanted (the right part elements are consumed),
+// false when the current element is to be generated as usual.
 static bool try_transplant(void)
 {
     bool used[UINT8_MAX];
@@ -2370,6 +2493,9 @@ static bool try_transplant(void)
     return true;
 }
 
+// Looks for the variable named by the current sentence element in the variable table
+// and sets variable_index. In the left part a missing variable is entered as a new one;
+// in the right part false is returned (the variable is not defined, error 406).
 static bool search_variable(bool left_part)
 {
     for (variable_index = 0; variable_index < variables_count; variable_index++)
@@ -2390,7 +2516,9 @@ static bool search_variable(bool left_part)
     return true;
 }
 
-//   generation of stoped brackets and setting boards
+// Generation of the statements for stopped brackets and setting of the boards.
+// stoped_bracket_flag: 0 - no stopped bracket, 1 - left bracket, 2 - right bracket; for a
+// hole that is not the one just opened n_sb1b2 sets the new boards of the hole.
 static void generate_boards_stoping_brackets(void)
 {
 #if defined mdebug
@@ -2429,7 +2557,11 @@ static void generate_boards_stoping_brackets(void)
     return;
 }
 
-//    attempt to extract left support group
+// Attempt to extract the left support group: the search goes right from the left board
+// and stops at the first free e-variable that is orthogonal to the elements before it
+// (no other occurrence of its variables outside). Such a variable is marked (eoe_mark)
+// as the end of the search level. The e-variable at the left board is then bound.
+// Returns false when its specifier is checked at once (n_plespc, n_lespc).
 static bool lsg_p(void)
 {
     while (true)
@@ -2473,7 +2605,7 @@ static bool lsg_p(void)
     return false;
 }
 
-//        attempt to extract right support group
+// Attempt to extract the right support group: the mirror image of lsg_p.
 static bool rsg_p(void)
 {
     while (true)
@@ -2517,7 +2649,10 @@ static bool rsg_p(void)
     return false;
 }
 
-//    check ortogonality of this sentence against left part
+// Checks the orthogonality of the elements between on1 and on2: every free variable
+// in the range must have all its remaining occurrences inside the range. Then a failure
+// to match the elements after the range does not require another expansion of the
+// e-variable in front of it, so the search level can be closed (the n_eoe statement).
 static bool ortogonality(uint8_t on1, uint8_t on2)
 {
     uint8_t on = on1;
@@ -2567,6 +2702,8 @@ static bool ortogonality(uint8_t on1, uint8_t on2)
     return res;
 }
 
+// Generates the statement for an e-variable, or for a v-variable (which must not be empty)
+// when not_nil is set.
 static inline void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v)
 {
     if (not_nil)

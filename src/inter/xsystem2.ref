@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-07-01
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
 //====================================================================
 
 $START SYSTEM2;
@@ -13,16 +13,20 @@ $ENTRY ArgList;
 $EXTERN P1, Arg;
 
 //  <ArgList> == (s(o).Arg+)*
+// The list of all the command line arguments: every argument is in the brackets, as characters.
+// The argument 0 (the name of the program) is not included.
 $FUNC ArgList
 {
     = <ArgList_Aux 1>;
 }
 
+// Takes the argument number s.Next, the next number is made by P1.
 $FUNC ArgList_Aux
 {
     s.Next = <SwArgList_Aux <P1 s.Next> <Arg s.Next>>;
 }
 
+// Switch: an empty answer of Arg ends the list, otherwise the argument is added and the list goes on.
 $FUNC SwArgList_Aux
 {
     s.Next = ;

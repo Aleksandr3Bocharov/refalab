@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-06-05
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xtime.c  ---------
@@ -19,10 +19,15 @@
 #include "refalab.h"
 #include "interface.h"
 
+// Symbol of the empty function NULL, returned by Time when the local time is unknown.
 extern uint8_t refalab_null;
 
+// Start and current moments of the stopwatch Tm and the moment for Tm_elapsed.
 static T_TIMESPEC time_start, time_current, time_elapsed;
 
+// Time: <Time> - the current date and time as a string of characters in the format of
+// the system locale (strftime "%c"). The call must have no argument (FAIL otherwise).
+// NULL is returned when the local time cannot be obtained.
 static void time_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)
@@ -56,6 +61,11 @@ char time_0[] = {Z4 'T', 'I', 'M', 'E', (char)4};
 G_L_B uint8_t refalab_time = '\122';
 void (*time_1)(void) = time_;
 
+// Tm: <Tm s.T> - a stopwatch. 'S' or 's' starts it (the result is empty), 'G' or 'g'
+// returns the elapsed time as the string "HH:MM:SS.nnnnnnnnn"; without a start the time is
+// counted from the zero start moment (the clock's own origin). FAIL for any other argument.
+// The number of cells that are requested accounts for the cell of the argument,
+// which is reused in the result.
 static void tm_(void)
 {
     do
@@ -69,6 +79,8 @@ static void tm_(void)
         else if (timer_command == 'G' || timer_command == 'g')
         {
             clock_gettime(CLOCK_MONOTONIC, &time_current);
+            // Elapsed time: seconds and nanoseconds are subtracted with a borrow,
+            // then split into hours, minutes and seconds.
             long int nanoseconds = time_current.tv_nsec - time_start.tv_nsec;
             long long int seconds = (long long int)difftime(time_current.tv_sec, time_start.tv_sec);
             if (nanoseconds < 0)
@@ -98,6 +110,9 @@ char tm_0[] = {Z2 'T', 'M', (char)2};
 G_L_B uint8_t refalab_tm = '\122';
 void (*tm_1)(void) = tm_;
 
+// Tm_elapsed: <Tm_elapsed> - the time that has passed since the interpreter started, in the
+// format of Tm. The result is empty unless the timer option is on (refal.timer.mode);
+// the call must have no argument (FAIL otherwise).
 static void tm_elapsed_(void)
 {
     if (refal.previous_argument->next != refal.next_argument)

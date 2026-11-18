@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-15
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.h  ----------
@@ -13,6 +13,8 @@
 #include <stdint.h>
 #include "avl_identifiers.h"
 
+// A symbol of the compiled text: the tag (TAGO, TAGF or TAGN) selects what the union
+// holds - a character, a macrodigit or the label of a function.
 typedef struct linkti
 {
     uint32_t tag;
@@ -24,6 +26,7 @@ typedef struct linkti
     } info;
 } T_LINKTI;
 
+// Generators of assembly language statements (see generate_operators.c).
 extern void generate_operator(uint8_t operator);
 extern void generate_operator_l(uint8_t operator, T_LABEL *l);
 extern void generate_operator_n(uint8_t operator, uint8_t n);

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-10-02
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file macrocode.c  ----------
@@ -21,9 +21,11 @@
 #include "compiler.h"
 #include "avl_identifiers.h"
 
+// Error: an external name is already used by an entry or an extrn directive.
 #define PRINT_ERROR_604 \
     print_error_three_strings(604, "External label", identifier_extern, identifier_extern_length, " is already defined")
 
+// Exported (entry) label: the label with its external name; a singly linked list.
 typedef struct entry
 { // entry table element
     struct entry *next;
@@ -32,6 +34,8 @@ typedef struct entry
     uint8_t identifier_extern_length;
 } T_ENTRY;
 
+// Imported (extrn) label: the label with its external name; a singly linked list.
+// The label's info.infon holds the ordinal number of the extern in this list.
 typedef struct extrn
 { // external pointer table element
     struct extrn *next;
@@ -40,12 +44,16 @@ typedef struct extrn
     uint8_t identifier_extern_length;
 } T_EXTRN;
 
+// Description of a piece of the module image: `delta` plain bytes followed by
+// the address of `label` (a NULL label marks the end of the image).
 typedef struct relay
 {
     T_LABEL *label;
     size_t delta;
 } T_RELAY;
 
+// A growing memory buffer used as a sequential stream (length - size of the buffer,
+// current - read/write position).
 typedef struct stream_bytes_nodes
 {
     size_t length;
@@ -53,6 +61,8 @@ typedef struct stream_bytes_nodes
     uint8_t *buffer;
 } T_STREAM_BYTES_NODES;
 
+// The image is kept in two streams: stream_bytes - the plain bytes,
+// stream_nodes - the T_RELAY records telling where the addresses go between the bytes.
 static T_STREAM_BYTES_NODES stream_bytes = {0, 0, NULL};
 static T_STREAM_BYTES_NODES stream_nodes = {0, 0, NULL};
 
@@ -64,11 +74,14 @@ static T_ENTRY *last_entry;
 static T_EXTRN *first_extrn;
 static T_EXTRN *last_extrn;
 static size_t extrn_count;
+// Offset of the next byte of the image from its start.
 static size_t current_address; // module generation files
 static size_t module_length;
+// The record being written or read, and the number of plain bytes since the last address.
 static T_RELAY relay;
 static size_t delta;
 
+// Releases the buffer of a stream.
 static inline void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
 #if defined mdebug
@@ -81,6 +94,8 @@ static inline void stream_bytes_nodes_clear(T_STREAM_BYTES_NODES *stream_bytes_n
     return;
 }
 
+// Allocates the initial buffer: tries 8192 records and halves the size until
+// the allocation succeeds (but not below 2 records).
 static void stream_bytes_nodes_new(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes_clear(stream_bytes_nodes);
@@ -108,6 +123,7 @@ static void stream_bytes_nodes_new(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
+// Enlarges the buffer by up to 8192 records, halving the step on a lack of memory.
 static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     const size_t max_stream_bytes_nodes_append_length = 8192 * sizeof(T_RELAY);
@@ -136,12 +152,14 @@ static void stream_bytes_nodes_append(T_STREAM_BYTES_NODES *stream_bytes_nodes)
     return;
 }
 
+// Rewinds a stream to read it from the beginning.
 static inline void stream_bytes_nodes_begin(T_STREAM_BYTES_NODES *stream_bytes_nodes)
 {
     stream_bytes_nodes->current = 0;
     return;
 }
 
+// Appends the current relay record to stream_nodes.
 static void stream_nodes_write(void)
 {
     while (true)
@@ -157,6 +175,7 @@ static void stream_nodes_write(void)
     } // while
 } // stream_nodes_write
 
+// Reads the next byte of stream_bytes.
 static inline void stream_bytes_read(uint8_t *buffer)
 {
     if (stream_bytes.current != stream_bytes.length)
@@ -167,6 +186,7 @@ static inline void stream_bytes_read(uint8_t *buffer)
     return;
 } // stream_bytes_read
 
+// Reads the next relay record from stream_nodes.
 static inline void stream_nodes_read(void)
 {
     const size_t residual = stream_nodes.length - stream_nodes.current;
@@ -178,6 +198,8 @@ static inline void stream_nodes_read(void)
     return;
 } // stream_nodes_read
 
+// Begins a new module image: empty streams and empty entry/extrn lists
+// (each list starts with a dummy head node).
 void macrocode_start(void)
 {
     delta = 0;
@@ -204,11 +226,13 @@ void macrocode_start(void)
     return;
 } // macrocode_start
 
+// The current address (offset) in the image.
 size_t macrocode_where(void)
 {
     return current_address;
 }
 
+// Appends a byte to the image.
 void macrocode_byte(uint8_t byte)
 {
 #if defined mdebug
@@ -230,6 +254,8 @@ void macrocode_byte(uint8_t byte)
     return;
 } // macrocode_byte
 
+// Appends an address slot of a label: the label and the number of plain bytes before it
+// are recorded, the slot itself is produced when the image is written.
 void macrocode_address(T_LABEL *label)
 {
     relay.label = label;
@@ -240,6 +266,8 @@ void macrocode_address(T_LABEL *label)
     return;
 }
 
+// Registers an exported label. An external name that was already used
+// is error 604.
 void macrocode_entry(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 // identifier_extern label
 {
@@ -282,6 +310,8 @@ void macrocode_entry(T_LABEL *label, const char *identifier_extern, uint8_t iden
     return;
 } // macrocode_entry
 
+// Registers an imported label. The same external name imported twice shares one number;
+// an external name that is exported by this module is error 604.
 void macrocode_extrn(T_LABEL *label, const char *identifier_extern, uint8_t identifier_extern_length, size_t identifier_extern_cursor_number)
 // identifier_extern label
 {
@@ -326,6 +356,7 @@ void macrocode_extrn(T_LABEL *label, const char *identifier_extern, uint8_t iden
     return;
 } // macrocode_extrn
 
+// Defines the label (internal, defined) at the current address.
 void macrocode_label(T_LABEL *label)
 {
 #if defined mdebug
@@ -336,6 +367,7 @@ void macrocode_label(T_LABEL *label)
     return;
 }
 
+// Makes equ_label an alias of label.
 void macrocode_equ(T_LABEL *equ_label, T_LABEL *label)
 {
     equ_label->info.infop = label;
@@ -343,6 +375,7 @@ void macrocode_equ(T_LABEL *equ_label, T_LABEL *label)
     return;
 }
 
+// Writes the final relay record (without a label) and fixes the module length.
 static inline void ending(void)
 {
     relay.delta = delta;
@@ -352,6 +385,7 @@ static inline void ending(void)
     return;
 } // ending
 
+// Checks the result of an output call; a write error terminates the compiler (code 8).
 static inline void write_llvm_source(int put_result)
 {
     if (put_result == EOF)
@@ -362,6 +396,13 @@ static inline void write_llvm_source(int put_result)
         }
 }
 
+// Writes the module image as LLVM IR: one packed global structure @_d<N>$ that
+// mixes byte arrays and pointers, then the declarations of the imported labels
+// and the aliases of the exported ones. Names are made lower case with the
+// "refalab_" prefix. Pass 1 of the structure writes its type, pass 2 its values:
+// byte arrays as constants, addresses of internal labels as offsets in the structure,
+// addresses of imported labels as references to the imported globals.
+// Afterwards all streams and lists are released.
 void macrocode_end(void)
 {
     ending();

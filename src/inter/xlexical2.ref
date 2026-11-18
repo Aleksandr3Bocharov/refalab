@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-08-18
+// 2026-11-17
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //====================================================================
-// Рефал-функции библиотеки РефалАБ.
-// Спецификаторы библиотеки РефалАБ.
-// Пустые функции библиотеки РефалАБ.
+// Refal functions of the RefalAB library.
+// Specifiers of the RefalAB library.
+// Empty functions of the RefalAB library (they only fail).
 //====================================================================
 
 $START LEXICAL2;
@@ -19,8 +19,10 @@ $EXTERN Numb, Symb, Add, Mul, DrN;
 $EXTERN True, False;
 $EMPTY Void, Label, Number, Reference, Latin, Digit, Char, Brackets, OtherT;
 
+// The specifier White_Spaces: a blank, a line feed, a horizontal and a vertical tab, a form feed and a carriage return.
 $SPEC White_Spaces ' \n\t\v\f\r';
 
+// Cvb: converts a string of decimal digits with an optional sign into a long integer (see Cvb0).
 $FUNC Cvb 
 {
     '-' v('0').X = 0;
@@ -29,6 +31,8 @@ $FUNC Cvb
     e(d).X = <Cvb0 e.X>;
 }
 
+// Converts digits to a number by groups of nine: the number is the previous groups multiplied
+// by 10^9 plus the last group, which is converted by Numb.
 $FUNC Cvb0
 {
     v.X s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9 = 
@@ -37,12 +41,14 @@ $FUNC Cvb0
     e.X = <Numb <Strip_Zeros e.X>>;
 }
 
+// Drops the leading zero digits (Numb would take them for an octal prefix).
 $FUNC Strip_Zeros
 {
     '0' e.X = <Strip_Zeros e.X>;
     e.X = e.X;
 }
 
+// Cvd: converts a long integer into a string of decimal digits (the reverse of Cvb).
 $FUNC Cvd 
 {
     '-' v(0).X = '0';
@@ -51,17 +57,20 @@ $FUNC Cvd
     e(n).X = <Cvd0 e.X>;
 }
 
+// Divides the number by 10^9, which splits it into the high part and a group of nine digits.
 $FUNC Cvd0 
 {
     e.X = <Cvd1 <DrN (e.X) 1000000000>>;
 }
 
+// Writes the high part recursively, then the group of nine digits (padded with zeros by Cvd2).
 $FUNC Cvd1
 {
     (e.Y) = <Symb 10 e.Y>;
     e.X (e.Y) = <Cvd0 e.X> <Cvd2 <Symb 10 e.Y>>;
 }
 
+// Pads a group with leading zeros up to nine digits.
 $FUNC Cvd2
 {
     s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9 = s.D1 s.D2 s.D3 s.D4 s.D5 s.D6 s.D7 s.D8 s.D9;
@@ -69,6 +78,7 @@ $FUNC Cvd2
 }
 
 //  <Is_White_Space s.Any> == True | False
+// True when the symbol is a white space (see the specifier White_Spaces).
 $FUNC Is_White_Space
 {
     s(:White_Spaces:)._ = True;
@@ -76,12 +86,14 @@ $FUNC Is_White_Space
 }
 
 //  <Trim e.Any> == e.Any′
+// Removes the white spaces at both ends of the expression.
 $FUNC Trim
 {
     e.Any = <TrimL <TrimR e.Any>>;
 }
 
 //  <TrimL e.Any> == e.Any′
+// Removes the white spaces at the beginning.
 $FUNC TrimL
 {
     s(:White_Spaces:)._ e.Any = <TrimL e.Any>;
@@ -89,6 +101,7 @@ $FUNC TrimL
 }
 
 //  <TrimR e.Any> == e.Any′
+// Removes the white spaces at the end.
 $FUNC TrimR
 {
     e.Any s(:White_Spaces:)._ = <TrimR e.Any>;
@@ -100,6 +113,8 @@ $FUNC TrimR
     s.Type ::= Void | Label | Number | Reference | Char | Brackets | OtherT
     e.SubType ::= Latin | Digit |
 */
+// The type of the first term of the expression, put in front of the expression.
+// For characters the subtype (Latin or Digit) is added when there is one.
 $FUNC Type
 {
     = Void;
@@ -117,6 +132,8 @@ $FUNC Type
     <Is_Type s.Type e.Any> == True s.Type e.Any | False s.Type e.Any
     s.Type ::= Void | Label | Number | Reference | Char | Latin | Digit | Brackets | OtherT
 */
+// Checks the first term against the type: True or False is put in front of the type and the expression.
+// OtherT is a term that has none of the other types.
 $FUNC Is_Type
 {
     Void = True Void;
