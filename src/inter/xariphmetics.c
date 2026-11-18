@@ -4,7 +4,7 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file xariphmetics.c ----------
-//              Ariphmetics MO:
+//              Arithmetic MO:
 //       Add, Sub, Mul, Dr, Div, Mod
 //       Addn, Subn, Muln, Drn, Divn, Modn
 //       Gcd, Ncheck, Nnorm, Abs, Minus,
@@ -157,7 +157,7 @@ static void normalization(T_LINKCB *Number_end, size_t Number_length, uint8_t po
 {                                                                                    //  Number_end - the pointer to the end
     uint32_t transfer = 0;
     const uint8_t transfer_shift = SHIFT_MAX - power;
-    const uint32_t mask = MAX_NUMBER >> power; // maska
+    const uint32_t mask = MAX_NUMBER >> power; // mask of the low bits
     T_LINKCB *number_current = Number_end;
     for (size_t i = 0; i < Number_length; i++)
     {
@@ -236,7 +236,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                 } // for
             }
             else
-            { // wychitaem
+            { // subtract
                 const int8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
                 if (compare_absolute == 0)
                 {
@@ -244,7 +244,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                     break;
                 }
                 if (compare_absolute == -1)
-                    exchange_big_numbers(&X, &Y); //  menjaem x i y
+                    exchange_big_numbers(&X, &Y); //  swap X and Y
                 int64_t transfer = 0;
                 for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
                 {
@@ -276,7 +276,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         T_LINKCB *result_begin = refal.previous_argument;
         T_LINKCB *result_end = result_begin->next;
-        if (!extended_insert_from_free_memory(result_begin, X.length + Y.length + 1)) //  1 zweno dlja znaka
+        if (!extended_insert_from_free_memory(result_begin, X.length + Y.length + 1)) //  1 cell for the sign
             return;
         result_begin = result_begin->next;
         result_end = result_end->previous;
@@ -296,7 +296,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         {
             const uint64_t b = gcoden(y_current);
             if (b != 0)
-            { // umn. na 1 cifru
+            { // multiplication by one digit
                 uint64_t transfer = 0;
                 for (x_current = X.end, result_begin = result_current; x_current != X.begin->previous; x_current = x_current->previous, result_begin = result_begin->previous)
                 {
@@ -334,14 +334,14 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         }
         const int8_t compare_absolute = compare_big_numbers_absolute(&X, &Y);
         if (compare_absolute == 0)
-        { //  rawny
+        { //  equal lengths
             remainder = 0;
             quotient = 1;
             dr_one_remainder_one_quotient = true;
             break;
         }
         if (compare_absolute == -1)
-        { //  delimoe < delitelja
+        { //  the dividend is less than the divisor
             if ((type & 2) == 2)
             { // DIV, DIVN
                 remainder = 0;
@@ -379,20 +379,20 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             transplantation(refal.previous_result, X.begin->previous, X.end->next);
             return;
         }
-        //   delimoe > delitelja
+        //   the dividend is greater than the divisor
         if (X.length == 1)
-        { //  oba po odnoj cifre
+        { //  both are one digit
             remainder = gcoden(X.begin) % gcoden(Y.begin);
             quotient = gcoden(X.begin) / gcoden(Y.begin);
             dr_one_remainder_one_quotient = true;
             break;
         }
-        //  delenie mnogih  cifr
+        //  division of long numbers
         T_LINKCB *temp_linkcb = refal.previous_argument;
-        if (!extended_insert_from_free_memory(temp_linkcb, X.length - Y.length + 2)) // t.k. k chastnomu dob. 0 i zweno na znak
+        if (!extended_insert_from_free_memory(temp_linkcb, X.length - Y.length + 2)) // the quotient gets one more zero digit and a cell for the sign
             return;
-        temp_linkcb = temp_linkcb->next;  //  dlja znaka
-        result_begin = temp_linkcb->next; //  dlja  perwoj  cifry
+        temp_linkcb = temp_linkcb->next;  //  for the sign
+        result_begin = temp_linkcb->next; //  for the first digit
         T_LINKCB *begin = result_begin;
         X.begin = X.begin->previous;
         X.begin->tag = TAGN;
@@ -406,7 +406,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         y_current->info.code = NULL;
         uint8_t power = 0;
         if (Y.length != 0)
-        { // wozmovna normalizacija
+        { // normalization is possible
             uint64_t exponentation = gcoden(Y.begin);
             for (power = 0; exponentation < 2147483648; power++, exponentation += exponentation)
                 ;
@@ -428,11 +428,11 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
             {
                 if (a == 0 && a0 >= b)
                 {
-                    c = 1; //  t.k. b - normalizowano
+                    c = 1; //  because b is normalized
                     a = a0;
                 }
                 else
-                { // delim a,a0 na b
+                { // divide a,a0 by b
                     const uint64_t aa0 = a << 32 | a0;
                     c = aa0 / b;
                     a = aa0 % b;
@@ -456,10 +456,10 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
                         y1 += b;
                     }
                     if (state == true)
-                        c++; // na wcjakij sluchaj
+                        c++; // just in case
                 }
             }
-            // umnovenie  delitelja  na 'c' i wychit. iz X
+            // multiply the divisor by 'c' and subtract it from X
             if (c != 0)
             {
                 const T_LINKCB *Y_temp = Y.end;
@@ -508,7 +508,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
         X.begin = X.begin->previous;
         result_begin = result_begin->previous;
         if (power != 0)
-        { // denormalizacija ostatka
+        { // denormalization of the remainder
             uint32_t transfer = 0;
             const uint8_t transfer_shift = SHIFT_MAX - power;
             const uint32_t mask = MAX_NUMBER >> transfer_shift;
@@ -564,7 +564,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     if (result_zero)
     {
         if (type == 1)
-            return; // dlja n-operacij
+            return; // for the operations with the suffix n
         x_current = refal.previous_argument->next;
         x_current->tag = TAGN;
         x_current->info.code = NULL;
@@ -594,7 +594,7 @@ static void arithmetic_operate(uint8_t operation, uint8_t type)
     // are one macrodigit each: remainder - the remainder, quotient - the quotient
     if (!extended_insert_from_free_memory(refal.previous_argument, 2))
         return;
-    // in bad case: /1/() - 3 zwena est uje + name
+    // in the bad case: /1/() - the 3 cells are there already + the name
     x_current = refal.previous_argument;
     if (X.sign != Y.sign)
     {
@@ -790,7 +790,7 @@ static void gcd_(void)
             break;
         case TWO_ODD:
         {
-            int64_t transfer = 0; // wychitaem
+            int64_t transfer = 0; // subtract
             for (x_current = X.end, y_current = Y.end; x_current != X.begin->previous; x_current = x_current->previous)
             {
                 int64_t substraction = gcoden(x_current);

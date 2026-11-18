@@ -24,8 +24,9 @@ $SPEC EOF FEOF FError;
     v.Out ::= NULL | v(o).Open_Error NULL | e.Lines s(:EOF:).EOF e(o).Close_Error
     e.Lines ::= (e(o).Line)*
 */
-// Reads the whole text file (line by line, in the text mode) into the lines in brackets. The result ends with the label EOF
-// and the result of closing the file; NULL is returned when the number is already used.
+// Reads the whole text file (line by line, in the text mode) into the lines in brackets. The result ends with the label FEOF
+// or FError (the specifier EOF) and the result of closing the file; NULL is returned when the number is
+// already used and an open error (the text of it) when the file cannot be opened.
 $FUNC Load_File
 {
     s.Handle e.FileName =

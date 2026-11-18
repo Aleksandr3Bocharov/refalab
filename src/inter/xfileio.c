@@ -33,10 +33,10 @@ extern uint8_t refalab_true, refalab_false;
 extern uint8_t refalab_null;
 extern uint8_t refalab_begin, refalab_end, refalab_current;
 
-// The path of the file or the directory that could not be removed (reported by Remove_dir and Clear_dir).
+// The path of the file or the directory that could not be removed (reported by Clear_dir).
 static char remove_error_path[MAX_PATHFILENAME + 1];
 
-// The labels of the empty functions EOF, ERROR, StdIn, StdOut and StdErr, which this module returns
+// The labels of the empty functions FEOF, FError, StdIn, StdOut and StdErr, which this module returns
 // or accepts as symbols (see Chartof about this layout of a label).
 char feof_0[] = {Z4 'F', 'E', 'O', 'F', (char)4};
 G_L_B uint8_t refalab_feof = '\002';
@@ -53,10 +53,10 @@ G_L_B uint8_t refalab_stdout = '\002';
 char stderr_0[] = {Z6 'S', 'T', 'D', 'E', 'R', 'R', (char)6};
 G_L_B uint8_t refalab_stderr = '\002';
 
-// Fopen: <Fopen s.Z s.N e.B e.F> - opens the file e.F with the number N. Z is 'R' for reading, 'W' for writing
-// (an existing file is overwritten) or 'A' for appending (a missing file is created); B is an optional 'B'
-// for a binary file. The result is empty on success,
-// and the description of the error as characters on a failure; NULL when the number is already used.
+// Fopen: <Fopen s.M [s.B] s.N e.F> - opens the file e.F under the number N. M is 'R', 'W' or 'A' (in any case):
+// reading, writing (an existing file is overwritten) or appending (a missing file is created); the optional
+// s.B is 'B' for a binary file. The result is empty on success, NULL when the number is already used and
+// the text of the system error (as characters) when the file cannot be opened. FAIL for a wrong argument.
 static void fopen_(void)
 {
     do
@@ -126,8 +126,8 @@ char fopen_0[] = {Z5 'F', 'O', 'P', 'E', 'N', (char)5};
 G_L_B uint8_t refalab_fopen = '\122';
 void (*fopen_1)(void) = fopen_;
 
-// Fclose: <Fclose s.N> - closes the file with the number N. The result is empty on success, the description
-// of the error as characters on a failure, NULL when the file is not open.
+// Fclose: <Fclose s.N> - closes the file with the number N and frees the number. The result is empty
+// on success, NULL when the file is not open and the text of the system error when closing fails.
 static void fclose_(void)
 {
     do
@@ -167,9 +167,9 @@ char fclose_0[] = {Z6 'F', 'C', 'L', 'O', 'S', 'E', (char)6};
 G_L_B uint8_t refalab_fclose = '\122';
 void (*fclose_1)(void) = fclose_;
 
-// Fgets: <Fgets s.N> - reads the next line of the file (or of StdIn) as characters, without the line feed.
-// At the end of the file or on a read error the characters read so far are followed by the label EOF
-// or ERROR respectively.
+// Fgets: <Fgets s.N> - reads the next line of the file (the label StdIn can be used instead of the number)
+// and returns it as characters, without the line feed. At the end of the file or on a read error the
+// characters read so far are followed by the label FEOF or FError. NULL when the file is not open.
 static void fgets_(void)
 {
     do
@@ -220,9 +220,9 @@ char fgets_0[] = {Z5 'F', 'G', 'E', 'T', 'S', (char)5};
 G_L_B uint8_t refalab_fgets = '\122';
 void (*fgets_1)(void) = fgets_;
 
-// Fputs: <Fputs s.N e.E> - writes the characters e.E to the file (or to StdOut, StdErr) without a line
-// feed. The result is empty on success, NULL when the file is not open and the label EOF or ERROR
-// when the writing fails.
+// Fputs: <Fputs s.N e.E> - writes the characters e.E to the file (the labels StdOut and StdErr can be used
+// instead of the number) without a line feed. The result is empty on success, NULL when the file is not open
+// and the label FEOF or FError when the writing fails.
 static void fputs_(void)
 {
     do
@@ -580,8 +580,8 @@ char fprintm_0[] = {Z7 'F', 'P', 'R', 'I', 'N', 'T', 'M', (char)7};
 G_L_B uint8_t refalab_fprintm = '\122';
 void (*fprintm_1)(void) = fprintm_;
 
-// Fread: <Fread s.N s.C> - reads up to C bytes from the file as macrodigits. If the end of the file or
-// an error comes first, the bytes read so far are followed by the label EOF or ERROR.
+// Fread: <Fread s.N s.C> - reads C bytes from the file as macrodigits. If the end of the file or an error
+// comes first, the bytes read so far are followed by the label FEOF or FError. NULL when the file is not open.
 static void fread_(void)
 {
     do
@@ -683,8 +683,10 @@ char fwrite_0[] = {Z6 'F', 'W', 'R', 'I', 'T', 'E', (char)6};
 G_L_B uint8_t refalab_fwrite = '\122';
 void (*fwrite_1)(void) = fwrite_;
 
-// Fseek: <Fseek s.N v.N s.F> - moves the file pointer by the signed offset N (one or two macrodigits)
-// from the position F, which is the label Begin, Current or End. The result is empty on success.
+// Fseek: <Fseek s.N [s.Sign] s.O [s.O2] s.Origin> - moves the file pointer. The offset is an optional sign
+// '+' or '-' and then one macrodigit or two (the high digit first, the value must fit 64 bits with a sign);
+// Origin is the label Begin, Current or End. The result is empty on success, NULL when the file is not open
+// and the text of the system error on a failure.
 static void fseek_(void)
 {
     do
@@ -758,8 +760,9 @@ char fseek_0[] = {Z5 'F', 'S', 'E', 'E', 'K', (char)5};
 G_L_B uint8_t refalab_fseek = '\122';
 void (*fseek_1)(void) = fseek_;
 
-// Ftell: <Ftell s.N> - the position of the file pointer as a number of one or two macrodigits,
-// or the description of the error.
+// Ftell: <Ftell s.N> - the position of the file pointer as one macrodigit, or as two macrodigits
+// (the high digit first) when it is above 4294967295. NULL when the file is not open, the text of the
+// system error on a failure.
 static void ftell_(void)
 {
     do
@@ -810,8 +813,9 @@ char ftell_0[] = {Z5 'F', 'T', 'E', 'L', 'L', (char)5};
 G_L_B uint8_t refalab_ftell = '\122';
 void (*ftell_1)(void) = ftell_;
 
-// Is_eof: <Is_eof s.N> - True when the end-of-file flag or the error flag of the file is set,
-// otherwise False; NULL when the file is not open.
+// Is_eof: <Is_eof s.N> - True when the end-of-file flag or the error flag of the file is set, otherwise False;
+// NULL when the file is not open. The labels StdIn, StdOut and StdErr can be used instead of the number
+// (also in Is_feof and Is_ferror).
 static void is_eof_(void)
 {
     do
@@ -1018,8 +1022,8 @@ char remove_file_0[] = {Z3 'R', 'E', 'M', 'O', 'V', 'E', '_', 'F', 'I', 'L', 'E'
 G_L_B uint8_t refalab_remove_file = '\122';
 void (*remove_file_1)(void) = remove_file_;
 
-// Remove_dir: <Remove_dir e.Dir> - deletes the directory with everything inside it. The result is
-// empty on success; on a failure the description of the error and the path that could not be removed.
+// Remove_dir: <Remove_dir e.Dir> - deletes an empty directory (rmdir). The result is empty on success
+// and the text of the system error otherwise.
 static void remove_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;
@@ -1049,8 +1053,10 @@ G_L_B uint8_t refalab_remove_dir = '\122';
 void (*remove_dir_1)(void) = remove_dir_;
 
 // Deletes the contents of a directory recursively (the directory itself too when remove_self is set).
-// The entries are examined with lstat, so a symbolic link is removed and never followed.
-// Returns 0 on success, otherwise the error number, and the path of the failure is in remove_error_path.
+// On POSIX the entries are examined with lstat, so a symbolic link is removed and never followed;
+// on Windows stat is used. Paths are joined with '/'.
+// Returns 0 on success, otherwise -1 with the error number in errno; the path of the failure is then
+// in remove_error_path.
 static int remove_directory_recursive(const char *path, bool remove_self)
 {
     DIR *directory = opendir(path);
@@ -1144,8 +1150,9 @@ static int remove_directory_recursive(const char *path, bool remove_self)
     return 0;
 }
 
-// Clear_dir: <Clear_dir e.Dir> - deletes everything inside the directory and leaves the directory.
-// The result is as for Remove_dir.
+// Clear_dir: <Clear_dir e.Dir> - deletes everything inside the directory (recursively) and keeps the directory
+// itself. The result is empty on success; on a failure it is the text "<path>: <system error>", where
+// the path is the file or the directory that could not be removed.
 static void clear_dir_(void)
 {
     T_LINKCB *current_symbol_char = refal.previous_argument->next;

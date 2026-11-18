@@ -977,7 +977,7 @@ T_LINKCB *set_string_expression(const char *string, T_LINKCB *before)
 }
 
 // After a failed input or output operation: when the end of the file or an error is the reason,
-// the cell is made the label EOF or ERROR respectively and true is returned.
+// the cell is made the label FEOF or FError respectively and true is returned.
 bool set_eof_linkcb(int file_result, FILE *file, T_LINKCB *linkcb)
 {
     enum
