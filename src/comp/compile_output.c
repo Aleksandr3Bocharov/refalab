@@ -1,13 +1,15 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-17
+// 2026-11-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_output.c  ----------
 //    output abstraction for macrocode/buffers
 //---------------------------------------------
 
+#if defined mdebug
 #include <stdio.h>
+#endif
 #include <stddef.h>
 #include <stdint.h>
 #include "compile_output.h"

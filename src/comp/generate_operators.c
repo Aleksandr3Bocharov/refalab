@@ -1,14 +1,16 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-17
+// 2026-11-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file generate_operators.c  ----------
 //    generation of the assembly language operators
 //-------------------------------------------------
 
+#if defined mdebug
 #include <stdio.h>
 #include <stddef.h>
+#endif
 #include <stdint.h>
 #include "refalab.h"
 #include "generate_operators.h"

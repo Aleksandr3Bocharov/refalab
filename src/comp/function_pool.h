@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-17
+// 2026-11-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file function_pool.h  ----------
@@ -92,7 +92,7 @@ extern void sentence_append_address_right(T_STORED_SENTENCE *sentence, T_LABEL *
 
 // Directs the generated code to the left or to the right part of the sentence
 // (to the macrocode when the sentence is NULL).
-extern void function_pool_set_output_mode(struct stored_sentence *sentence, bool is_left_part);
+extern void function_pool_set_output_mode(T_STORED_SENTENCE *sentence, bool is_left_part);
 
 // Writes all stored functions to the macrocode. The common beginnings of the left
 // parts of neighbouring sentences are merged first (see the comment in function_pool.c).

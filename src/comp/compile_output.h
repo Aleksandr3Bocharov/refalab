@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Aleksandr Bocharov
 // SPDX-License-Identifier: MIT
-// 2026-11-17
+// 2026-11-21
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //----------  file compile_output.h  ----------
