@@ -102,6 +102,8 @@ typedef enum states
     NHOLE,
     NHOLE1,
     RIGID,
+    ODECOMP,
+    OCLASS,
     OE,
     OE0,
     OERMAX,
@@ -205,6 +207,23 @@ static struct
     uint8_t left_board, right_board;
 } hole_list[130];
 
+// Classes of independent holes (see decompose_holes). When the holes of the pattern split into
+// several classes that have no free variable in common, the classes are compiled one after another.
+// The holes of the classes that wait for their turn are kept in class_holes (a stack, the last
+// class pushed is on the top), class_stack describes these classes: where its holes start in
+// class_holes, how many they are, and the value of jump_stack_pointer when the classes were set aside.
+static struct
+{
+    uint8_t left_board, right_board;
+} class_holes[130];
+static uint8_t class_holes_count;
+static struct
+{
+    uint8_t first_hole, hole_count;
+    uint8_t jump_stack_pointer;
+} class_stack[130];
+static uint8_t class_stack_count;
+
 // Work structures and counters of the compiler.
 // The left part is a list of holes: a hole is a segment of the pattern between two
 // boards (left_board, right_board) that is not matched yet. Brackets split a hole in two.
@@ -242,6 +261,8 @@ static bool rsg_p(void);
 static void generate_operator_e_v(uint8_t operator_e, uint8_t operator_v);
 static bool ortogonality(uint8_t on1, uint8_t on2);
 static bool try_transplant(void);
+static void decompose_holes(void);
+static void load_class_holes(const uint8_t *left_boards, const uint8_t *right_boards, uint8_t count);
 
 #if defined mdebug
 // ----------  debug trace helpers  ----------
@@ -312,6 +333,8 @@ static const char *const state_names[] = {
     "NHOLE",
     "NHOLE1",
     "RIGID",
+    "ODECOMP",
+    "OCLASS",
     "OE",
     "OE0",
     "OERMAX",
@@ -776,6 +799,8 @@ void compile_sentence(bool direction)
             hole_list[1].next_hole = 128;
             free_segment_hole_list = 2;
             jump_stack_pointer = 0;
+            class_holes_count = 0;
+            class_stack_count = 0;
             if (direction)
             {
                 state = RCGL;
@@ -1402,7 +1427,8 @@ void compile_sentence(bool direction)
 #endif
             if (hole_list[current_hole].next_hole == 0)
             {
-                state = RCGFIN;
+                // No holes left: the next class of independent holes is taken, if there is one.
+                state = (class_stack_count > 0) ? OCLASS : RCGFIN;
                 break;
             }
             state = NHOLE;
@@ -1463,11 +1489,43 @@ void compile_sentence(bool direction)
             current_hole = hole_list[current_hole].next_hole;
             if (hole_list[current_hole].next_hole == 0)
             {
-                state = OE;
+                state = ODECOMP;
                 break;
             }
             state = NHOLE;
             break;
+        // Every hole has an open e-variable on both boards: the holes are split into classes of
+        // independent holes, the first class is compiled now and the others wait.
+        case ODECOMP:
+            decompose_holes();
+            state = OE;
+            break;
+        // The class of independent holes is compiled: the points of the searches that are left
+        // are removed (the other classes do not depend on them), then the next class is taken.
+        case OCLASS:
+        {
+            const uint8_t top = class_stack_count - 1;
+            const uint8_t diff = jump_stack_pointer - class_stack[top].jump_stack_pointer;
+            if (diff == 1)
+                generate_operator(n_eoei);
+            else if (diff > 1)
+                generate_operator_n(n_eoe, diff);
+            jump_stack_pointer = class_stack[top].jump_stack_pointer;
+            uint8_t left_boards[130], right_boards[130];
+            for (uint8_t i = 0; i < class_stack[top].hole_count; i++)
+            {
+                left_boards[i] = class_holes[class_stack[top].first_hole + i].left_board;
+                right_boards[i] = class_holes[class_stack[top].first_hole + i].right_board;
+            }
+            class_holes_count = class_stack[top].first_hole;
+            const uint8_t count = class_stack[top].hole_count;
+            class_stack_count--;
+            load_class_holes(left_boards, right_boards, count);
+            // The boards of the generated code are those of the last hole of the finished class.
+            hole_x = 0;
+            state = NHOLE;
+            break;
+        }
         // A rigid element is on the boards of the hole: the projection goes on.
         case RIGID:
             //  hard element on the both hole boards
@@ -2514,6 +2572,137 @@ static bool search_variable(bool left_part)
     variables[variable_index].last_left_part_element = 0;
     variables[variable_index].v_variable = current_sentence_element.v_variable;
     return true;
+}
+
+// Loads the holes into the hole list: the first hole gets the number 1, the list ends with the
+// terminating segment 128, the holes that appear later are numbered from count + 1.
+static void load_class_holes(const uint8_t *left_boards, const uint8_t *right_boards, uint8_t count)
+{
+    for (uint8_t i = 0; i < count; i++)
+    {
+        hole_list[i + 1].left_board = left_boards[i];
+        hole_list[i + 1].right_board = right_boards[i];
+        hole_list[i + 1].next_hole = (i + 1 < count) ? (uint8_t)(i + 2) : 128;
+    }
+    hole_list[128].next_hole = 0;
+    current_hole = 1;
+    free_segment_hole_list = count + 1;
+    return;
+}
+
+// The root of the set of the holes that contains the hole i (union-find with path halving).
+static uint8_t class_root(uint8_t *parent, uint8_t i)
+{
+    while (parent[i] != i)
+    {
+        parent[i] = parent[parent[i]];
+        i = parent[i];
+    }
+    return i;
+}
+
+// Decomposition of the hole list into classes of independent holes (S.A. Romanenko, "Realization
+// of Refal-2", section 4.2, the step HDECOMP). Two holes are dependent when a variable that
+// is not bound yet occurs in both of them; the classes are the sets of the holes that are linked by
+// this relation (directly or through other holes). The matching of one class cannot be influenced
+// by the choices made in another class, so the classes are compiled one after another, and when a
+// class is compiled, the points that its searches have left on the jump stack are removed by n_eoe
+// (see the state OCLASS): if a later class fails, it would be useless to look for other solutions
+// of this class. Only the first class stays in the hole list, the others are put on the class stack.
+// The decomposition is not done while some e-variable is marked (eoe_mark): such a mark was put when
+// the search that is still open was started, and the marked variable closes it, so the elements
+// that are marked and the searches they close must stay in the same class and the same order.
+static void decompose_holes(void)
+{
+    uint8_t slots[130];
+    uint8_t count = 0;
+    for (uint8_t h = 1; hole_list[h].next_hole != 0; h = hole_list[h].next_hole)
+        slots[count++] = h;
+    if (count < 2)
+        return;
+    uint8_t parent[130];
+    uint8_t owner[UINT8_MAX + 1]; // the first hole where a free variable occurs
+    for (uint8_t i = 0; i < count; i++)
+        parent[i] = i;
+    for (uint16_t v = 0; v <= UINT8_MAX; v++)
+        owner[v] = UINT8_MAX;
+    for (uint8_t i = 0; i < count; i++)
+    {
+        for (uint8_t e = hole_list[slots[i]].left_board + 1; e < hole_list[slots[i]].right_board; e++)
+        {
+            if (left_part_elements[e].eoe_mark)
+                return;
+            const T_SENTENCE_ELEMENT_TYPES type = left_part_elements[e].type;
+            if (type != S_V && type != W_V && type != E_V)
+                continue;
+            const uint8_t v = left_part_elements[e].variable_index;
+            if (variables[v].last_left_part_element != 0)
+                continue;
+            if (owner[v] == UINT8_MAX)
+                owner[v] = i;
+            else
+            {
+                const uint8_t root_a = class_root(parent, owner[v]);
+                const uint8_t root_b = class_root(parent, i);
+                if (root_a != root_b)
+                    parent[root_b] = root_a;
+            }
+        }
+    }
+    // The classes are numbered in the order of their first holes.
+    uint8_t class_of[130];
+    uint8_t root_class[130];
+    uint8_t class_count = 0;
+    for (uint8_t i = 0; i < count; i++)
+        root_class[i] = UINT8_MAX;
+    for (uint8_t i = 0; i < count; i++)
+    {
+        const uint8_t root = class_root(parent, i);
+        if (root_class[root] == UINT8_MAX)
+            root_class[root] = class_count++;
+        class_of[i] = root_class[root];
+    }
+    if (class_count < 2)
+        return;
+#if defined mdebug
+    fprintf(stderr, "decompose_holes: %u holes, %u classes, jump_stack_pointer=%u\n", count, class_count, jump_stack_pointer);
+#endif
+    // The classes from the last to the second are put on the stack, so the second one is on the top.
+    for (uint8_t c = class_count - 1; c >= 1; c--)
+    {
+        class_stack[class_stack_count].first_hole = class_holes_count;
+        class_stack[class_stack_count].jump_stack_pointer = jump_stack_pointer;
+        uint8_t holes_in_class = 0;
+        for (uint8_t i = 0; i < count; i++)
+        {
+            if (class_of[i] != c)
+                continue;
+            class_holes[class_holes_count].left_board = hole_list[slots[i]].left_board;
+            class_holes[class_holes_count].right_board = hole_list[slots[i]].right_board;
+            class_holes_count++;
+            holes_in_class++;
+        }
+        class_stack[class_stack_count].hole_count = holes_in_class;
+        class_stack_count++;
+    }
+    // The first class replaces the hole list. If the boards of the generated code are those of
+    // one of its holes, that hole keeps being the current one and needs no n_sb1b2.
+    uint8_t left_boards[130], right_boards[130];
+    uint8_t first_count = 0;
+    uint8_t new_hole_x = 0;
+    for (uint8_t i = 0; i < count; i++)
+    {
+        if (class_of[i] != 0)
+            continue;
+        left_boards[first_count] = hole_list[slots[i]].left_board;
+        right_boards[first_count] = hole_list[slots[i]].right_board;
+        if (slots[i] == hole_x)
+            new_hole_x = first_count + 1;
+        first_count++;
+    }
+    load_class_holes(left_boards, right_boards, first_count);
+    hole_x = new_hole_x;
+    return;
 }
 
 // Generation of the statements for stopped brackets and setting of the boards.

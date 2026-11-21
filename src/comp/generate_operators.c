@@ -139,13 +139,15 @@ void debug_print_symbol(const T_LINKTI *code)
 #endif
 
 // Generators of the assembly language statements.
-// Every statement is the operator code followed by its operands:
+// Every statement is the operator code followed by its operands; compile_output_statement_start
+// marks where it begins:
 // generate_operator - no operands
 void generate_operator(uint8_t operator)
 {
 #if defined mdebug
     fprintf(stderr, "generate_operator: %s\n", operator_name(operator));
 #endif
+    compile_output_statement_start();
     compile_output_byte(operator);
     return;
 }
@@ -156,6 +158,7 @@ void generate_operator_n(uint8_t operator, uint8_t n)
 #if defined mdebug
     fprintf(stderr, "generate_operator: %s %u\n", operator_name(operator), n);
 #endif
+    compile_output_statement_start();
     compile_output_byte(operator);
     compile_output_byte(n);
     return;
@@ -167,6 +170,7 @@ void generate_operator_n_m(uint8_t operator, uint8_t n, uint8_t m)
 #if defined mdebug
     fprintf(stderr, "generate_operator: %s %u %u\n", operator_name(operator), n, m);
 #endif
+    compile_output_statement_start();
     compile_output_byte(operator);
     compile_output_byte(n);
     compile_output_byte(m);
@@ -182,6 +186,7 @@ void generate_operator_l(uint8_t operator, T_LABEL *l)
         fprintf(stderr, " (%.*s)", l->identifier_length, l->identifier);
     fprintf(stderr, "\n");
 #endif
+    compile_output_statement_start();
     compile_output_byte(operator);
     compile_output_address(l);
     return;
@@ -230,6 +235,7 @@ void generate_operator_s(uint8_t operator, const T_LINKTI *code)
     debug_print_symbol(code);
     fprintf(stderr, "\n");
 #endif
+    compile_output_statement_start();
     compile_output_byte(operator);
     generate_symbol(code);
     return;

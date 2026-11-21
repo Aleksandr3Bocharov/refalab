@@ -25,7 +25,7 @@ typedef struct info_label
 extern T_INFO_LABEL *generate_info_label(void);
 
 // Definition and reference of functions and specifiers.
-// function_definition: begins a function or its next sentence; function_end: ends a sentence.
+// function_definition: begins a function or its next sentence; function_end: ends a function.
 extern void function_definition(void);
 extern void function_end(void);
 extern T_LABEL *specifier_definition(void);

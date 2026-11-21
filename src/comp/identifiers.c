@@ -40,10 +40,10 @@ typedef struct array_info_labels
 
 static T_ARRAY_INFO_LABELS *first_array_info_labels = NULL;
 static uint8_t number_info_label = 15;
-// Chain of sentence labels: labels of the previous sentences are made equal (EQU)
-// to the label of the next one, so a pattern failure jumps to the following sentence.
-static T_INFO_LABEL *fail_sentence = NULL; // sentence FAIL label
-static T_INFO_LABEL *next_sentence = NULL; // next sentence label
+// The label of the sentence that is being compiled: it marks the place that follows the sentence
+// in the code, where its failure continues (the entry of the next alternative). The label is
+// defined by function_pool_finalize, wherever the next alternative begins.
+static T_INFO_LABEL *next_sentence = NULL;
 
 static void function_head(const char *identifier, uint8_t identifier_length);
 
@@ -125,21 +125,13 @@ void function_definition(void)
     return;
 }
 
-// Ends the sentence: links the sentence label with the failure chain
-// and returns the output to the macrocode text.
+// Ends the function: forgets its last sentence label and returns the output to the macrocode text.
 void function_end(void)
 {
 #if defined mdebug
-    fprintf(stderr, "function_end: fail_sentence=%p next_sentence=%p\n", (void *)fail_sentence, (void *)next_sentence);
+    fprintf(stderr, "function_end: next_sentence=%p\n", (void *)next_sentence);
 #endif
-    if (next_sentence != NULL)
-    {
-        if (fail_sentence != NULL)
-            macrocode_equ((T_LABEL *)next_sentence, (T_LABEL *)fail_sentence);
-        else
-            fail_sentence = next_sentence;
-        next_sentence = NULL;
-    }
+    next_sentence = NULL;
     compile_output_switch_to_macrocode();
     return;
 }
@@ -374,7 +366,6 @@ void module_init(void)
 { // module initiation
     first_array_info_labels = NULL;
     number_info_label = 15;
-    fail_sentence = NULL;
     next_sentence = NULL;
     return;
 }

@@ -27,6 +27,9 @@ typedef struct label_ref
 // Operator's buffer
 // Growing buffer with the code of one part of a sentence: the bytes of the operators,
 // where every address slot (LBLL bytes) is listed in labels[] with its label.
+// For the left part the offset of the first byte of every statement is also kept
+// in statements[], so that the left part can be split into statements without
+// knowing the format of each one (statement_count of them).
 typedef struct operator_buffer
 {
     uint8_t *bytes;
@@ -35,6 +38,9 @@ typedef struct operator_buffer
     T_LABEL_REF *labels;
     size_t label_count;
     size_t label_capacity;
+    size_t *statements;
+    size_t statement_count;
+    size_t statement_capacity;
 } T_OPERATOR_BUFFER;
 
 // Sentence
@@ -76,6 +82,8 @@ extern void function_pool_set_name(T_STORED_FUNCTION *func, const char *name, ui
 
 extern T_STORED_SENTENCE *function_pool_add_sentence(T_STORED_FUNCTION *func, T_LABEL *sentence_label);
 
+// Remember that a new statement starts at the end of the left part of a sentence.
+extern void sentence_mark_statement_left(T_STORED_SENTENCE *sentence);
 // Append a byte or an address to the left or to the right part of a sentence.
 extern void sentence_append_byte_left(T_STORED_SENTENCE *sentence, uint8_t byte);
 extern void sentence_append_address_left(T_STORED_SENTENCE *sentence, T_LABEL *label);
@@ -86,7 +94,8 @@ extern void sentence_append_address_right(T_STORED_SENTENCE *sentence, T_LABEL *
 // (to the macrocode when the sentence is NULL).
 extern void function_pool_set_output_mode(struct stored_sentence *sentence, bool is_left_part);
 
-// Writes all stored functions to the macrocode.
+// Writes all stored functions to the macrocode. The common beginnings of the left
+// parts of neighbouring sentences are merged first (see the comment in function_pool.c).
 extern void function_pool_finalize(void);
 
 #endif

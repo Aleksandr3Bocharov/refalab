@@ -60,6 +60,15 @@ void compile_output_switch_to_macrocode(void)
     return;
 }
 
+// Announces the start of a statement (its operator code is output next). Only the left part
+// keeps the boundaries of the statements: the optimizer of the function pool needs them.
+void compile_output_statement_start(void)
+{
+    if (current_mode == OUTPUT_LEFT_PART && current_sentence != NULL)
+        sentence_mark_statement_left(current_sentence);
+    return;
+}
+
 // Outputs one byte of an operator or its operand to the current destination.
 void compile_output_byte(uint8_t byte)
 {
