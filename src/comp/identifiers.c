@@ -7,9 +7,7 @@
 //         Work with identifier table
 //------------------------------------------
 
-#if defined mdebug
 #include <stdio.h>
-#endif
 #include <stdlib.h>
 #include <stdint.h>
 #include "refalab.h"

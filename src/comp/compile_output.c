@@ -7,9 +7,7 @@
 //    output abstraction for macrocode/buffers
 //---------------------------------------------
 
-#if defined mdebug
 #include <stdio.h>
-#endif
 #include <stddef.h>
 #include <stdint.h>
 #include "compile_output.h"

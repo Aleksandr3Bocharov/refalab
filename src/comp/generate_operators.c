@@ -7,10 +7,8 @@
 //    generation of the assembly language operators
 //-------------------------------------------------
 
-#if defined mdebug
 #include <stdio.h>
 #include <stddef.h>
-#endif
 #include <stdint.h>
 #include "refalab.h"
 #include "generate_operators.h"

@@ -7,9 +7,7 @@
 //    pool of unique specifiers optimization
 //----------------------------------------------
 
-#if defined mdebug
 #include <stdio.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
