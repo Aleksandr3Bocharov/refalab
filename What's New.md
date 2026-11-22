@@ -1,9 +1,9 @@
 Что нового?
 --------------
 
-**Версия 2.2-dev**
+**Версия 2.2**
 
-**21-09-2026**
+**23-11-2026**
 
 Внесены изменения в работу интерфейсных функций: transplantation,
 read_big_number_expression, print_expression, print_expression_s,
