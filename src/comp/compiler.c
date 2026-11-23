@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
     scanner.module_number = 0;
     printf("\n");
     // Aleksandr Bocharov   // compiler version
-    printf("RefalAB Version 2.2 20261123 (c) Aleksandr Bocharov\n");
+    printf("RefalAB Version 2.3-dev 20261123 (c) Aleksandr Bocharov\n");
     printf("https://github.com/Aleksandr3Bocharov/refalab\n");
     printf("Compiled with clang version: %s\n", CLANG_VERSION);
     printf("Target: %s\n", CLANG_TARGET_TRIPLE);
