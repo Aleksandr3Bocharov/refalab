@@ -5,8 +5,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // bootstrap.c
-// The first-stage builder of the RefalAB system: it needs only clang, no make,
-// no shell scripts. Build and run it with one command:
+// The first-stage builder of the RefalAB system: it needs only clang
+// and no other tools or scripts. Build and run it with one command:
 //     POSIX:   clang -DPOSIX bootstrap.c -o bootstrap && ./bootstrap
 //     Windows: clang bootstrap.c -o bootstrap.exe && bootstrap.exe
 // As everywhere in RefalAB, the directive POSIX selects the POSIX environment;
@@ -16,7 +16,7 @@
 //     bootstrap release    - build the release variant only
 //     bootstrap debug      - build the debug variant only (-Dmdebug)
 //     bootstrap clean      - remove build/, bin/ and lib/
-// Result (the same layout as the Makefile build):
+// Result:
 //     bin/refalabc, bin/refalabc_dbg                    - the compilers
 //     lib/librefalab.a, lib/librefalab_dbg.a            - the libraries
 //     lib/obj/refalab_initiator[_dbg].o, lib/obj/refalab_debugger[_dbg].o
@@ -43,7 +43,7 @@
 #define LSTAT(path, st) stat(path, st) // no symbolic links to care about on Windows
 #define EXE ".exe"                      // the suffix of the executables
 #define PLATFORM_CFLAGS ""              // no -DPOSIX on Windows
-#define PLATFORM_LFLAGS "-pthread -static " // the linker flags of the compiler (as in src/comp/Makefile)
+#define PLATFORM_LFLAGS "-pthread -static " // the linker flags of the compiler
 #define PLATFORM_SRC "xplatform_win"    // the platform module built as xplatform.o
 #define OTHER_PLATFORM_SRC "xplatform_posix"
 #else
@@ -74,7 +74,7 @@ static const variant_t variants[] = {
     {"release", "", "-pipe -Wall -O2", "-O2 -Wno-override-module"},
     {"debug", "_dbg", "-pipe -Wall -O0 -g -Dmdebug", "-O0 -g -Wno-override-module"}};
 
-// The compiler version defines, the same as in src/comp/Makefile
+// The defines with the version, the target and the thread model of clang
 static char clang_defs[512];
 
 static void fail(const char *what, const char *path)
@@ -303,7 +303,7 @@ static void build_inter(const variant_t *v)
 {
     char *cnames[MAX_FILES], *rnames[MAX_FILES];
     char objdir[128], tmpdir[128], cmd[CMD_SIZE], obj[512], src[512], tmp[512], ar[CMD_SIZE];
-    const char *compiler = "bin/refalabc" EXE; // the release compiler, as in the Makefile
+    const char *compiler = "bin/refalabc" EXE; // the release compiler compiles the modules of both variants
     time_t hdr = newest("src/inter", ".h");
     int nc = list_files("src/inter", ".c", cnames);
     int nr = list_files("src/inter", ".ref", rnames);
