@@ -26,6 +26,7 @@
 // by C code, not by shell commands (mkdir -p, cp, rm do not exist in cmd.exe).
 //////////////////////////////////////////////////////////////////////////////
 
+#include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
@@ -106,7 +107,7 @@ static void run(const char *command)
 static void copy_token(char *dst, size_t size, const char *s)
 {
     size_t n = 0;
-    while (s[n] != '\0' && s[n] != ' ' && s[n] != '\t' && s[n] != '\r' && s[n] != '\n' && n + 1 < size)
+    while (s[n] != '\0' && !isspace((unsigned char)s[n]) && n + 1 < size)
     {
         dst[n] = s[n];
         n++;
