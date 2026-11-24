@@ -6,8 +6,11 @@
 //////////////////////////////////////////////////////////////////////////////
 // bootstrap.c
 // The first-stage builder of the RefalAB system: it needs only clang, no make,
-// no shell scripts. Build and run it with one command (POSIX and Windows):
-//     clang bootstrap.c -o bootstrap && ./bootstrap
+// no shell scripts. Build and run it with one command:
+//     POSIX:   clang -DPOSIX bootstrap.c -o bootstrap && ./bootstrap
+//     Windows: clang bootstrap.c -o bootstrap.exe && bootstrap.exe
+// As everywhere in RefalAB, the directive POSIX selects the POSIX environment;
+// without it the Windows environment is assumed.
 // Usage:
 //     bootstrap            - build the release and the debug variants
 //     bootstrap release    - build the release variant only
@@ -23,14 +26,6 @@
 // by C code, not by shell commands (mkdir -p, cp, rm do not exist in cmd.exe).
 //////////////////////////////////////////////////////////////////////////////
 
-#if defined(_WIN32)
-#define BOOT_WINDOWS
-#elif defined(__unix__) || defined(__APPLE__)
-#define BOOT_POSIX
-#else
-#error "bootstrap.c: unknown platform"
-#endif
-
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
@@ -39,7 +34,7 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#if defined(BOOT_WINDOWS)
+#if !defined(POSIX)
 #include <direct.h>
 #define popen _popen
 #define pclose _pclose
@@ -96,7 +91,7 @@ static void run(const char *command)
     char cmd[CMD_SIZE];
     strncpy(cmd, command, sizeof cmd - 1);
     cmd[sizeof cmd - 1] = '\0';
-#if defined(BOOT_WINDOWS)
+#if !defined(POSIX)
     for (char *p = cmd; *p != '\0'; p++)
         if (*p == '/')
             *p = '\\';
