@@ -299,21 +299,39 @@ static void build_comp(const variant_t *v)
     free_names(names, n);
 }
 
+// Compile one RefalAB module src/inter/<name>.ref into the object file obj.
+// This is where the RefalAB modules are compiled:
+//   1. the module is copied to build/<variant>/tmp, because the compiler writes
+//      its .ll and .lst files next to the source and the sources stay clean;
+//   2. the release compiler bin/refalabc translates the copy into LLVM IR (.ll);
+//   3. the option -l," ..." makes the compiler run clang on the .ll with these
+//      arguments: -o <obj> and the flags of the variant, which gives the object;
+//   4. the output of the compiler goes to build/<variant>/<name>.log.
+static void compile_ref(const variant_t *v, const char *name, const char *obj)
+{
+    char src[512], tmp[512], cmd[CMD_SIZE];
+    snprintf(src, sizeof src, "src/inter/%s.ref", name);
+    snprintf(tmp, sizeof tmp, "build/%s/tmp/%s.ref", v->name, name);
+    copy_file(src, tmp);
+    snprintf(cmd, sizeof cmd, "bin/refalabc" EXE " build/%s/tmp/%s -l,\"-o %s %s\" > build/%s/%s.log", v->name, name,
+             obj, v->llflags, v->name, name);
+    run(cmd);
+}
+
 // Build the interpreter library and the standard initiator/debugger objects
 static void build_inter(const variant_t *v)
 {
     char *cnames[MAX_FILES], *rnames[MAX_FILES];
-    char objdir[128], tmpdir[128], cmd[CMD_SIZE], obj[512], src[512], tmp[512], ar[CMD_SIZE];
-    const char *compiler = "bin/refalabc" EXE; // the release compiler compiles the modules of both variants
+    char objdir[128], cmd[CMD_SIZE], obj[512], src[512], ar[CMD_SIZE];
     time_t hdr = newest("src/inter", ".h");
     int nc = list_files("src/inter", ".c", cnames);
     int nr = list_files("src/inter", ".ref", rnames);
 
     printf("=== Building interpreter (%s) ===\n", v->name);
     snprintf(objdir, sizeof objdir, "build/%s/inter", v->name);
-    snprintf(tmpdir, sizeof tmpdir, "build/%s/tmp", v->name);
     make_dir(objdir);
-    make_dir(tmpdir);
+    snprintf(src, sizeof src, "build/%s/tmp", v->name); // the temporary copies of the .ref modules
+    make_dir(src);
     make_dir("lib/obj");
     snprintf(ar, sizeof ar, "ar rcs lib/librefalab%s.a", v->suffix);
 
@@ -340,8 +358,9 @@ static void build_inter(const variant_t *v)
         }
     }
 
-    // RefalAB modules; the module of this platform is built as xplatform.o, the other one is skipped
-    time_t cmp_time = mtime(compiler);
+    // RefalAB modules (see compile_ref); the module of this platform is built as xplatform.o,
+    // the other one is skipped. A module is rebuilt when its source or the compiler is newer.
+    time_t cmp_time = mtime("bin/refalabc" EXE);
     for (int i = 0; i < nr; i++)
     {
         const char *objname;
@@ -353,14 +372,7 @@ static void build_inter(const variant_t *v)
         snprintf(src, sizeof src, "src/inter/%s.ref", rnames[i]);
         time_t dep = mtime(src) > cmp_time ? mtime(src) : cmp_time;
         if (stale(obj, dep))
-        {
-            // The compiler writes the .ll/.lst files next to the source: work in a temporary copy
-            snprintf(tmp, sizeof tmp, "%s/%s.ref", tmpdir, rnames[i]);
-            copy_file(src, tmp);
-            snprintf(cmd, sizeof cmd, "%s %s/%s -l,\"-o %s %s\" > build/%s/%s.log", compiler, tmpdir, rnames[i], obj,
-                     v->llflags, v->name, rnames[i]);
-            run(cmd);
-        }
+            compile_ref(v, rnames[i], obj);
         strncat(ar, " ", sizeof ar - strlen(ar) - 1);
         strncat(ar, obj, sizeof ar - strlen(ar) - 1);
     }
