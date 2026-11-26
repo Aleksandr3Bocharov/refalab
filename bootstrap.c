@@ -15,7 +15,12 @@
 //     bootstrap            - build the release and the debug variants
 //     bootstrap release    - build the release variant only
 //     bootstrap debug      - build the debug variant only (-Dmdebug)
-//     bootstrap clean      - remove build/, bin/ and lib/
+//     bootstrap clean      - remove build/, bin/ and lib/ and remove bin/ from PATH
+// After a successful build it offers to add the directory bin to the PATH of
+// the user; "clean" removes it from PATH without asking.
+//     Windows: the user variable Path in the registry (HKCU\\Environment);
+//     POSIX:   a block between the lines "# >>> refalab >>>" and "# <<< refalab <<<"
+//              in the startup file of the shell (~/.zshrc, ~/.bashrc or ~/.profile).
 // Result:
 //     bin/refalabc, bin/refalabc_dbg                    - the compilers
 //     lib/librefalab.a, lib/librefalab_dbg.a            - the libraries
@@ -37,9 +42,11 @@
 
 #if !defined(POSIX)
 #include <direct.h>
+#include <windows.h>
 #define popen _popen
 #define pclose _pclose
 #define MKDIR(path) _mkdir(path)
+#define GETCWD(buf, size) _getcwd(buf, size)
 #define RMDIR(path) _rmdir(path)
 #define LSTAT(path, st) stat(path, st) // no symbolic links to care about on Windows
 #define EXE ".exe"                      // the suffix of the executables
@@ -50,6 +57,7 @@
 #else
 #include <unistd.h>
 #define MKDIR(path) mkdir(path, 0755)
+#define GETCWD(buf, size) getcwd(buf, size)
 #define RMDIR(path) rmdir(path)
 #define LSTAT(path, st) lstat(path, st) // a symbolic link is removed, never followed
 #define EXE ""
@@ -384,6 +392,285 @@ static void build_inter(const variant_t *v)
     free_names(rnames, nr);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// The user PATH
+//////////////////////////////////////////////////////////////////////////////
+
+enum
+{
+    PATH_CHECK, // is the directory in PATH?
+    PATH_ADD,   // add the directory to PATH
+    PATH_REMOVE // remove the directory from PATH
+};
+
+// The absolute path of the directory bin
+static void bin_dir(char *dir, size_t size)
+{
+    char cwd[512];
+    if (GETCWD(cwd, sizeof cwd) == NULL)
+        fail("cannot get the current directory", ".");
+    snprintf(dir, size, "%s/bin", cwd);
+#if !defined(POSIX)
+    for (char *p = dir; *p != '\0'; p++)
+        if (*p == '/')
+            *p = '\\';
+#endif
+}
+
+#if !defined(POSIX)
+
+// Windows: the user variable Path in the registry (the type REG_EXPAND_SZ is kept).
+// Returns 1 if dir was in Path before the operation.
+static int user_path(const char *dir, int op)
+{
+    HKEY key;
+    DWORD type = REG_EXPAND_SZ, size = 0;
+    size_t dl = strlen(dir);
+    int present = 0;
+
+    if (RegOpenKeyExA(HKEY_CURRENT_USER, "Environment", 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &key) != ERROR_SUCCESS)
+    {
+        fprintf(stderr, "bootstrap: cannot open the user environment in the registry\n");
+        return 0;
+    }
+    if (RegQueryValueExA(key, "Path", NULL, &type, NULL, &size) != ERROR_SUCCESS)
+    {
+        size = 0;
+        type = REG_EXPAND_SZ;
+    }
+    else if (type != REG_SZ && type != REG_EXPAND_SZ)
+        type = REG_EXPAND_SZ;
+    char *old = calloc((size_t)size + 2, 1);
+    char *updated = calloc((size_t)size + dl + 4, 1);
+    if (old == NULL || updated == NULL)
+        fail("out of memory", "PATH");
+    if (size > 0)
+    {
+        DWORD got = size;
+        RegQueryValueExA(key, "Path", NULL, NULL, (LPBYTE)old, &got);
+    }
+    // Copy the entries one by one, dropping the empty ones and (for PATH_REMOVE) the entry dir
+    for (const char *p = old; *p != '\0';)
+    {
+        const char *end = strchr(p, ';');
+        size_t l = end != NULL ? (size_t)(end - p) : strlen(p);
+        size_t k = l;
+        while (k > 0 && (p[k - 1] == '\\' || p[k - 1] == '/'))
+            k--;
+        int match = k == dl && _strnicmp(p, dir, k) == 0;
+        if (match)
+            present = 1;
+        if (l > 0 && !(match && op == PATH_REMOVE))
+        {
+            if (updated[0] != '\0')
+                strcat(updated, ";");
+            strncat(updated, p, l);
+        }
+        p += l;
+        if (*p == ';')
+            p++;
+    }
+    if (op == PATH_ADD && !present)
+    {
+        if (updated[0] != '\0')
+            strcat(updated, ";");
+        strcat(updated, dir);
+    }
+    if ((op == PATH_ADD && !present) || (op == PATH_REMOVE && present))
+    {
+        if (RegSetValueExA(key, "Path", 0, type, (const BYTE *)updated, (DWORD)strlen(updated) + 1) != ERROR_SUCCESS)
+            fprintf(stderr, "bootstrap: cannot write the user Path to the registry\n");
+        // Let the running programs (Explorer, new terminals) see the change
+        SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM) "Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+    }
+    RegCloseKey(key);
+    free(old);
+    free(updated);
+    return present;
+}
+
+#else
+
+#define MARK_BEGIN "# >>> refalab >>>"
+#define MARK_END "# <<< refalab <<<"
+
+// The names of the startup files where a block could have been written
+static const char *const rc_files[] = {".profile", ".bashrc", ".bash_profile", ".zshrc"};
+
+// Read a whole text file into a new string; NULL if there is no such file
+static char *read_text(const char *path)
+{
+    FILE *f = fopen(path, "rb");
+    if (f == NULL)
+        return NULL;
+    size_t cap = 4096, len = 0, n;
+    char *text = malloc(cap);
+    if (text == NULL)
+        fail("out of memory", path);
+    while ((n = fread(text + len, 1, cap - len - 1, f)) > 0)
+    {
+        len += n;
+        if (len + 1 >= cap)
+        {
+            cap *= 2;
+            text = realloc(text, cap);
+            if (text == NULL)
+                fail("out of memory", path);
+        }
+    }
+    text[len] = '\0';
+    fclose(f);
+    return text;
+}
+
+// Quote dir for sh: 'dir', a single quote inside is written as '\''
+static void sh_quote(const char *dir, char *quoted, size_t size)
+{
+    size_t n = 0;
+    quoted[n++] = '\'';
+    for (; *dir != '\0' && n + 5 < size; dir++)
+    {
+        if (*dir == '\'')
+        {
+            memcpy(quoted + n, "'\\''", 4);
+            n += 4;
+        }
+        else
+            quoted[n++] = *dir;
+    }
+    quoted[n++] = '\'';
+    quoted[n] = '\0';
+}
+
+// Look through the RefalAB blocks of a startup file. If rewrite is not 0 the blocks are removed from it.
+// Returns 1 if a block with the directory quoted was found.
+static int rc_scan(const char *path, const char *quoted, int rewrite)
+{
+    char *text = read_text(path);
+    if (text == NULL)
+        return 0;
+    char *out = malloc(strlen(text) + 1);
+    size_t on = 0;
+    int in_block = 0, found = 0, removed = 0;
+    if (out == NULL)
+        fail("out of memory", path);
+    for (char *line = text; *line != '\0';)
+    {
+        char *eol = strchr(line, '\n');
+        size_t ll = eol != NULL ? (size_t)(eol - line) + 1 : strlen(line);
+        char saved = line[ll];
+        line[ll] = '\0';
+        if (!in_block && strncmp(line, MARK_BEGIN, strlen(MARK_BEGIN)) == 0)
+        {
+            in_block = 1;
+            removed = 1;
+        }
+        if (in_block)
+        {
+            if (strstr(line, quoted) != NULL)
+                found = 1;
+            if (strncmp(line, MARK_END, strlen(MARK_END)) == 0)
+                in_block = 0;
+        }
+        else
+        {
+            memcpy(out + on, line, ll);
+            on += ll;
+        }
+        line[ll] = saved;
+        line += ll;
+    }
+    if (rewrite && removed)
+    {
+        FILE *f = fopen(path, "wb");
+        if (f == NULL)
+            fprintf(stderr, "bootstrap: cannot write %s\n", path);
+        else
+        {
+            fwrite(out, 1, on, f);
+            fclose(f);
+        }
+    }
+    free(text);
+    free(out);
+    return found;
+}
+
+// POSIX: a block in the startup file of the shell of the user.
+// Returns 1 if dir was in PATH (in a block of RefalAB) before the operation.
+static int user_path(const char *dir, int op)
+{
+    char quoted[1100], path[1100];
+    int present = 0;
+    const char *home = getenv("HOME");
+    if (home == NULL)
+    {
+        fprintf(stderr, "bootstrap: HOME is not set, the startup files of the shell cannot be found\n");
+        return 0;
+    }
+    sh_quote(dir, quoted, sizeof quoted);
+    // PATH_ADD and PATH_REMOVE remove the old blocks from all the files, so there is never more than one
+    for (size_t i = 0; i < sizeof rc_files / sizeof rc_files[0]; i++)
+    {
+        snprintf(path, sizeof path, "%s/%s", home, rc_files[i]);
+        if (rc_scan(path, quoted, op != PATH_CHECK))
+            present = 1;
+    }
+    if (op == PATH_ADD)
+    {
+        // zsh: ~/.zshrc; bash: ~/.bashrc (or ~/.bash_profile if only it exists); the others: ~/.profile
+        const char *shell = getenv("SHELL");
+        const char *rc = ".profile";
+        if (shell != NULL && strstr(shell, "zsh") != NULL)
+            rc = ".zshrc";
+        else if (shell != NULL && strstr(shell, "bash") != NULL)
+        {
+            char other[1100];
+            snprintf(other, sizeof other, "%s/.bashrc", home);
+            rc = mtime(other) == 0 ? ".bash_profile" : ".bashrc";
+        }
+        snprintf(path, sizeof path, "%s/%s", home, rc);
+        char *old = read_text(path);
+        int need_newline = old != NULL && old[0] != '\0' && old[strlen(old) - 1] != '\n';
+        free(old);
+        FILE *f = fopen(path, "ab");
+        if (f == NULL)
+        {
+            fprintf(stderr, "bootstrap: cannot write %s\n", path);
+            return present;
+        }
+        fprintf(f, "%s%s\nexport PATH=%s:\"$PATH\"\n%s\n", need_newline ? "\n" : "", MARK_BEGIN, quoted, MARK_END);
+        fclose(f);
+        printf("Added to %s\n", path);
+    }
+    return present;
+}
+
+#endif
+
+// After a successful build: offer to add the directory bin to PATH
+static void offer_path(void)
+{
+    char dir[600], answer[16];
+    bin_dir(dir, sizeof dir);
+    if (user_path(dir, PATH_CHECK))
+    {
+        printf("%s is already in PATH\n", dir);
+        return;
+    }
+    printf("Add %s to PATH? [y/N] ", dir);
+    fflush(stdout);
+    if (fgets(answer, sizeof answer, stdin) == NULL)
+    {
+        printf("\n"); // no answer (the input is closed): do not change PATH
+        return;
+    }
+    if (answer[0] != 'y' && answer[0] != 'Y')
+        return;
+    user_path(dir, PATH_ADD);
+    printf("Done. Open a new terminal for the change to take effect.\n");
+}
+
 int main(int argc, char *argv[])
 {
     int first = 0, last = 1;
@@ -395,6 +682,10 @@ int main(int argc, char *argv[])
             remove_tree("build");
             remove_tree("bin");
             remove_tree("lib");
+            char dir[600];
+            bin_dir(dir, sizeof dir);
+            if (user_path(dir, PATH_REMOVE))
+                printf("Removed %s from PATH. Open a new terminal for the change to take effect.\n", dir);
             return 0;
         }
         else if (strcmp(argv[1], "release") == 0)
@@ -417,5 +708,6 @@ int main(int argc, char *argv[])
     printf("=======================================================\n");
     printf(" RefalAB bootstrap build successfully completed!\n");
     printf("=======================================================\n");
+    offer_path();
     return 0;
 }
