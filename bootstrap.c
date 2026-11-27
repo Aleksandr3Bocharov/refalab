@@ -18,7 +18,8 @@
 //     bootstrap clean      - remove build/, bin/ and lib/ and remove bin/ from PATH
 // After a successful build it offers to add the directory bin to the PATH of
 // the user; "clean" removes it from PATH without asking.
-//     Windows: the user variable Path in the registry (HKCU\\Environment);
+//     Windows: the user variable Path in the registry (HKCU\Environment), the added directory
+//              is remembered in HKCU\Software\RefalAB (BinDir) to remove the old one later;
 //     POSIX:   a block between the lines "# >>> refalab >>>" and "# <<< refalab <<<"
 //              in the startup file of the shell (~/.zshrc, ~/.bashrc or ~/.profile).
 // Result:
@@ -419,74 +420,173 @@ static void bin_dir(char *dir, size_t size)
 
 #if !defined(POSIX)
 
-// Windows: the user variable Path in the registry (the type REG_EXPAND_SZ is kept).
-// Returns 1 if dir was in Path before the operation.
-static int user_path(const char *dir, int op)
-{
-    HKEY key;
-    DWORD type = REG_EXPAND_SZ, size = 0;
-    size_t dl = strlen(dir);
-    int present = 0;
+// Windows: the user variable Path in the registry (HKCU\Environment). The directory that was added
+// to Path is remembered in HKCU\Software\RefalAB, the value BinDir: it is what lets the old directory
+// (the project was moved) be found and removed. The type of Path (REG_SZ or REG_EXPAND_SZ) is kept.
 
-    if (RegOpenKeyExA(HKEY_CURRENT_USER, "Environment", 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &key) != ERROR_SUCCESS)
-    {
-        fprintf(stderr, "bootstrap: cannot open the user environment in the registry\n");
-        return 0;
-    }
-    if (RegQueryValueExA(key, "Path", NULL, &type, NULL, &size) != ERROR_SUCCESS)
-    {
-        size = 0;
-        type = REG_EXPAND_SZ;
-    }
-    else if (type != REG_SZ && type != REG_EXPAND_SZ)
-        type = REG_EXPAND_SZ;
-    char *old = calloc((size_t)size + 2, 1);
-    char *updated = calloc((size_t)size + dl + 4, 1);
-    if (old == NULL || updated == NULL)
-        fail("out of memory", "PATH");
-    if (size > 0)
-    {
-        DWORD got = size;
-        RegQueryValueExA(key, "Path", NULL, NULL, (LPBYTE)old, &got);
-    }
-    // Copy the entries one by one, dropping the empty ones and (for PATH_REMOVE) the entry dir
+#define APP_KEY "Software\\RefalAB"
+
+// The length of a path without the trailing slashes
+static size_t trimmed_length(const char *p, size_t l)
+{
+    while (l > 0 && (p[l - 1] == '\\' || p[l - 1] == '/'))
+        l--;
+    return l;
+}
+
+// Copy the entries of the list old (separated by ';') to out, dropping the empty entries and
+// the entry drop (a case-insensitive comparison, the trailing slashes are ignored).
+// out may be NULL. Returns the number of the dropped entries.
+static int path_rewrite(const char *old, const char *drop, char *out)
+{
+    int dropped = 0;
+    size_t dl = drop != NULL ? trimmed_length(drop, strlen(drop)) : 0;
+    if (out != NULL)
+        out[0] = '\0';
     for (const char *p = old; *p != '\0';)
     {
         const char *end = strchr(p, ';');
         size_t l = end != NULL ? (size_t)(end - p) : strlen(p);
-        size_t k = l;
-        while (k > 0 && (p[k - 1] == '\\' || p[k - 1] == '/'))
-            k--;
-        int match = k == dl && _strnicmp(p, dir, k) == 0;
-        if (match)
-            present = 1;
-        if (l > 0 && !(match && op == PATH_REMOVE))
+        size_t k = trimmed_length(p, l);
+        if (l > 0)
         {
-            if (updated[0] != '\0')
-                strcat(updated, ";");
-            strncat(updated, p, l);
+            if (drop != NULL && dl > 0 && k == dl && _strnicmp(p, drop, k) == 0)
+                dropped++;
+            else if (out != NULL)
+            {
+                if (out[0] != '\0')
+                    strcat(out, ";");
+                strncat(out, p, l);
+            }
         }
         p += l;
         if (*p == ';')
             p++;
     }
-    if (op == PATH_ADD && !present)
+    return dropped;
+}
+
+// Read a string value of a registry key into a new string (empty if there is no such value)
+static char *reg_read(HKEY key, const char *name, DWORD *type)
+{
+    DWORD size = 0, t = REG_SZ;
+    if (RegQueryValueExA(key, name, NULL, &t, NULL, &size) != ERROR_SUCCESS)
     {
-        if (updated[0] != '\0')
-            strcat(updated, ";");
-        strcat(updated, dir);
+        size = 0;
+        t = REG_SZ;
     }
-    if ((op == PATH_ADD && !present) || (op == PATH_REMOVE && present))
+    char *value = calloc((size_t)size + 2, 1);
+    if (value == NULL)
+        fail("out of memory", name);
+    if (size > 0)
     {
-        if (RegSetValueExA(key, "Path", 0, type, (const BYTE *)updated, (DWORD)strlen(updated) + 1) != ERROR_SUCCESS)
-            fprintf(stderr, "bootstrap: cannot write the user Path to the registry\n");
-        // Let the running programs (Explorer, new terminals) see the change
-        SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM) "Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+        DWORD got = size;
+        RegQueryValueExA(key, name, NULL, NULL, (LPBYTE)value, &got);
     }
-    RegCloseKey(key);
+    if (type != NULL)
+        *type = t;
+    return value;
+}
+
+static void reg_write(HKEY key, const char *name, DWORD type, const char *value)
+{
+    if (RegSetValueExA(key, name, 0, type, (const BYTE *)value, (DWORD)strlen(value) + 1) != ERROR_SUCCESS)
+        fprintf(stderr, "bootstrap: cannot write %s to the registry\n", name);
+}
+
+// Let the running programs (Explorer, new terminals) see the change of the environment
+static void broadcast_change(void)
+{
+    SendMessageTimeoutA(HWND_BROADCAST, WM_SETTINGCHANGE, 0, (LPARAM) "Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+}
+
+// PATH_CHECK:  returns 1 if dir is in Path and it is the directory remembered in BinDir.
+// PATH_ADD:    removes the remembered directory from Path (if it is another one), adds dir, remembers dir.
+// PATH_REMOVE: removes the remembered directory and dir from Path, forgets the remembered one;
+//              returns 1 if something was removed from Path.
+static int user_path(const char *dir, int op)
+{
+    HKEY env, app;
+    DWORD type;
+    int result = 0, changed = 0;
+
+    if (RegOpenKeyExA(HKEY_CURRENT_USER, "Environment", 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &env) != ERROR_SUCCESS)
+    {
+        fprintf(stderr, "bootstrap: cannot open the user environment in the registry\n");
+        return 0;
+    }
+    char *saved = strdup(""); // the directory added by the previous run
+    if (RegOpenKeyExA(HKEY_CURRENT_USER, APP_KEY, 0, KEY_QUERY_VALUE, &app) == ERROR_SUCCESS)
+    {
+        free(saved);
+        saved = reg_read(app, "BinDir", NULL);
+        RegCloseKey(app);
+    }
+    char *old = reg_read(env, "Path", &type);
+    if (type != REG_SZ && type != REG_EXPAND_SZ)
+        type = REG_EXPAND_SZ;
+    size_t cap = strlen(old) + strlen(saved) + strlen(dir) + 8;
+    char *work = calloc(cap, 1), *next = calloc(cap, 1);
+    if (saved == NULL || work == NULL || next == NULL)
+        fail("out of memory", "PATH");
+
+    if (op == PATH_CHECK)
+    {
+        size_t dl = trimmed_length(dir, strlen(dir));
+        result = path_rewrite(old, dir, NULL) > 0 && trimmed_length(saved, strlen(saved)) == dl &&
+                 _strnicmp(saved, dir, dl) == 0;
+    }
+    else
+    {
+        // 1. Drop the remembered directory (it may be the old place of the project)
+        path_rewrite(old, saved, work);
+        if (op == PATH_REMOVE)
+        {
+            // 2. Drop the current one, even if it was not remembered
+            result = path_rewrite(old, saved, NULL) > 0;
+            strcpy(next, work);
+            if (path_rewrite(next, dir, work) > 0)
+                result = 1;
+        }
+        else
+        {
+            // 2. Add the current one unless the user has already added it by hand
+            if (path_rewrite(work, dir, NULL) == 0)
+            {
+                if (work[0] != '\0')
+                    strcat(work, ";");
+                strcat(work, dir);
+            }
+        }
+        if (strcmp(work, old) != 0)
+        {
+            reg_write(env, "Path", type, work);
+            changed = 1;
+        }
+        // 3. Remember (or forget) the directory
+        if (op == PATH_ADD)
+        {
+            if (RegCreateKeyExA(HKEY_CURRENT_USER, APP_KEY, 0, NULL, 0, KEY_SET_VALUE, NULL, &app, NULL) == ERROR_SUCCESS)
+            {
+                reg_write(app, "BinDir", REG_SZ, dir);
+                RegCloseKey(app);
+            }
+            changed = 1;
+        }
+        else if (saved[0] != '\0')
+        {
+            RegDeleteKeyA(HKEY_CURRENT_USER, APP_KEY);
+            changed = 1;
+        }
+        if (changed)
+            broadcast_change();
+    }
+    RegCloseKey(env);
+    free(saved);
     free(old);
-    free(updated);
-    return present;
+    free(work);
+    free(next);
+    return result;
 }
 
 #else
