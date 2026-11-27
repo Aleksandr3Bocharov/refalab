@@ -281,15 +281,17 @@ static void remove_tree(const char *path)
 static void build_comp(const variant_t *v)
 {
     char *names[MAX_FILES];
-    char objdir[128], cmd[CMD_SIZE], obj[512], src[512], link[CMD_SIZE];
-    time_t hdr = newest("src/comp", ".h");
+    char objdir[128], cmd[CMD_SIZE], obj[512], src[512], exe[128], link[CMD_SIZE];
+    time_t hdr = newest("src/comp", ".h"), newest_obj = 0;
+    int rebuilt = 0; // some object was compiled by this run
     int n = list_files("src/comp", ".c", names);
 
     printf("=== Building compiler (%s) ===\n", v->name);
     snprintf(objdir, sizeof objdir, "build/%s/comp", v->name);
     make_dir(objdir);
     make_dir("bin");
-    snprintf(link, sizeof link, "clang %s-o bin/refalabc%s" EXE, PLATFORM_LFLAGS, v->suffix);
+    snprintf(exe, sizeof exe, "bin/refalabc%s" EXE, v->suffix);
+    snprintf(link, sizeof link, "clang %s-o %s", PLATFORM_LFLAGS, exe);
     for (int i = 0; i < n; i++)
     {
         names[i][strlen(names[i]) - 2] = '\0'; // drop ".c"
@@ -300,11 +302,17 @@ static void build_comp(const variant_t *v)
         {
             snprintf(cmd, sizeof cmd, "clang %s" PLATFORM_CFLAGS " %s -c %s -o %s", v->cflags, clang_defs, src, obj);
             run(cmd);
+            rebuilt = 1;
         }
+        if (mtime(obj) > newest_obj)
+            newest_obj = mtime(obj);
         strncat(link, " ", sizeof link - strlen(link) - 1);
         strncat(link, obj, sizeof link - strlen(link) - 1);
     }
-    run(link);
+    // Link only if an object was compiled by this run or is newer than the compiler (or it is absent).
+    // The compiler must not be touched otherwise: the RefalAB modules are rebuilt when it is newer.
+    if (rebuilt || stale(exe, newest_obj))
+        run(link);
     free_names(names, n);
 }
 
@@ -331,8 +339,9 @@ static void compile_ref(const variant_t *v, const char *name, const char *obj)
 static void build_inter(const variant_t *v)
 {
     char *cnames[MAX_FILES], *rnames[MAX_FILES];
-    char objdir[128], cmd[CMD_SIZE], obj[512], src[512], ar[CMD_SIZE];
-    time_t hdr = newest("src/inter", ".h");
+    char objdir[128], cmd[CMD_SIZE], obj[512], src[512], lib[128], ar[CMD_SIZE];
+    time_t hdr = newest("src/inter", ".h"), newest_obj = 0;
+    int rebuilt = 0; // some object of the library was compiled by this run
     int nc = list_files("src/inter", ".c", cnames);
     int nr = list_files("src/inter", ".ref", rnames);
 
@@ -342,7 +351,8 @@ static void build_inter(const variant_t *v)
     snprintf(src, sizeof src, "build/%s/tmp", v->name); // the temporary copies of the .ref modules
     make_dir(src);
     make_dir("lib/obj");
-    snprintf(ar, sizeof ar, "ar rcs lib/librefalab%s.a", v->suffix);
+    snprintf(lib, sizeof lib, "lib/librefalab%s.a", v->suffix);
+    snprintf(ar, sizeof ar, "ar rcs %s", lib);
 
     // C modules: the initiator and the debugger go to lib/obj, the rest to the library
     for (int i = 0; i < nc; i++)
@@ -359,9 +369,13 @@ static void build_inter(const variant_t *v)
         {
             snprintf(cmd, sizeof cmd, "clang %s" PLATFORM_CFLAGS " -c %s -o %s", v->cflags, src, obj);
             run(cmd);
+            if (!standalone)
+                rebuilt = 1;
         }
         if (!standalone)
         {
+            if (mtime(obj) > newest_obj)
+                newest_obj = mtime(obj);
             strncat(ar, " ", sizeof ar - strlen(ar) - 1);
             strncat(ar, obj, sizeof ar - strlen(ar) - 1);
         }
@@ -381,14 +395,22 @@ static void build_inter(const variant_t *v)
         snprintf(src, sizeof src, "src/inter/%s.ref", rnames[i]);
         time_t dep = mtime(src) > cmp_time ? mtime(src) : cmp_time;
         if (stale(obj, dep))
+        {
             compile_ref(v, rnames[i], obj);
+            rebuilt = 1;
+        }
+        if (mtime(obj) > newest_obj)
+            newest_obj = mtime(obj);
         strncat(ar, " ", sizeof ar - strlen(ar) - 1);
         strncat(ar, obj, sizeof ar - strlen(ar) - 1);
     }
-    // The library is rebuilt from scratch so that removed modules disappear from it
-    snprintf(cmd, sizeof cmd, "lib/librefalab%s.a", v->suffix);
-    remove_tree(cmd);
-    run(ar);
+    // The library is rebuilt from scratch, only if some object is newer than it (or it is absent),
+    // so that the removed modules disappear from it
+    if (rebuilt || stale(lib, newest_obj))
+    {
+        remove_tree(lib);
+        run(ar);
+    }
     free_names(cnames, nc);
     free_names(rnames, nr);
 }
