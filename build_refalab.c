@@ -4,18 +4,18 @@
 // https://github.com/Aleksandr3Bocharov/refalab
 
 //////////////////////////////////////////////////////////////////////////////
-// bootstrap.c
-// The first-stage builder of the RefalAB system: it needs only clang
-// and no other tools or scripts. Build and run it with one command:
-//     POSIX:   clang -DPOSIX bootstrap.c -o bootstrap && ./bootstrap
-//     Windows: clang bootstrap.c -o bootstrap.exe && bootstrap.exe
+// build_refalab.c
+// The builder of the RefalAB system: it needs only clang and no other tools
+// or scripts. Build and run it with one command:
+//     POSIX:   clang -DPOSIX build_refalab.c -o build_refalab && ./build_refalab
+//     Windows: clang build_refalab.c -o build_refalab.exe && build_refalab.exe
 // As everywhere in RefalAB, the directive POSIX selects the POSIX environment;
 // without it the Windows environment is assumed.
 // Usage:
-//     bootstrap            - build the release and the debug variants
-//     bootstrap release    - build the release variant only
-//     bootstrap debug      - build the debug variant only (-Dmdebug)
-//     bootstrap clean      - remove build/, bin/ and lib/ and remove bin/ from PATH
+//     build_refalab            - build the release and the debug variants
+//     build_refalab release    - build the release variant only
+//     build_refalab debug      - build the debug variant only (-Dmdebug)
+//     build_refalab clean      - remove build/, bin/ and lib/ and remove bin/ from PATH
 // After a successful build it offers to add the directory bin to the PATH of
 // the user; "clean" removes it from PATH without asking.
 //     Windows: the user variable Path in the registry (HKCU\Environment), the added directory
@@ -89,7 +89,7 @@ static char clang_defs[512];
 
 static void fail(const char *what, const char *path)
 {
-    fprintf(stderr, "bootstrap: %s: %s\n", what, path);
+    fprintf(stderr, "build: %s: %s\n", what, path);
     exit(1);
 }
 
@@ -513,7 +513,7 @@ static char *reg_read(HKEY key, const char *name, DWORD *type)
 static void reg_write(HKEY key, const char *name, DWORD type, const char *value)
 {
     if (RegSetValueExA(key, name, 0, type, (const BYTE *)value, (DWORD)strlen(value) + 1) != ERROR_SUCCESS)
-        fprintf(stderr, "bootstrap: cannot write %s to the registry\n", name);
+        fprintf(stderr, "build: cannot write %s to the registry\n", name);
 }
 
 // Let the running programs (Explorer, new terminals) see the change of the environment
@@ -534,7 +534,7 @@ static int user_path(const char *dir, int op)
 
     if (RegOpenKeyExA(HKEY_CURRENT_USER, "Environment", 0, KEY_QUERY_VALUE | KEY_SET_VALUE, &env) != ERROR_SUCCESS)
     {
-        fprintf(stderr, "bootstrap: cannot open the user environment in the registry\n");
+        fprintf(stderr, "build: cannot open the user environment in the registry\n");
         return 0;
     }
     char *saved = strdup(""); // the directory added by the previous run
@@ -706,7 +706,7 @@ static int rc_scan(const char *path, const char *quoted, int rewrite)
     {
         FILE *f = fopen(path, "wb");
         if (f == NULL)
-            fprintf(stderr, "bootstrap: cannot write %s\n", path);
+            fprintf(stderr, "build: cannot write %s\n", path);
         else
         {
             fwrite(out, 1, on, f);
@@ -727,7 +727,7 @@ static int user_path(const char *dir, int op)
     const char *home = getenv("HOME");
     if (home == NULL)
     {
-        fprintf(stderr, "bootstrap: HOME is not set, the startup files of the shell cannot be found\n");
+        fprintf(stderr, "build: HOME is not set, the startup files of the shell cannot be found\n");
         return 0;
     }
     sh_quote(dir, quoted, sizeof quoted);
@@ -758,7 +758,7 @@ static int user_path(const char *dir, int op)
         FILE *f = fopen(path, "ab");
         if (f == NULL)
         {
-            fprintf(stderr, "bootstrap: cannot write %s\n", path);
+            fprintf(stderr, "build: cannot write %s\n", path);
             return present;
         }
         fprintf(f, "%s%s\nexport PATH=%s:\"$PATH\"\n%s\n", need_newline ? "\n" : "", MARK_BEGIN, quoted, MARK_END);
@@ -830,7 +830,7 @@ int main(int argc, char *argv[])
     for (int i = first; i <= last; i++)
         build_inter(&variants[i]);
     printf("=======================================================\n");
-    printf(" RefalAB bootstrap build successfully completed!\n");
+    printf(" RefalAB build successfully completed!\n");
     printf("=======================================================\n");
     offer_path();
     return 0;
