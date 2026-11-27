@@ -665,7 +665,7 @@ static void sh_quote(const char *dir, char *quoted, size_t size)
 }
 
 // Look through the RefalAB blocks of a startup file. If rewrite is not 0 the blocks are removed from it.
-// Returns 1 if a block with the directory quoted was found.
+// Returns 1 if a block with the directory quoted was found (when rewriting: if any block was removed).
 static int rc_scan(const char *path, const char *quoted, int rewrite)
 {
     char *text = read_text(path);
@@ -715,7 +715,7 @@ static int rc_scan(const char *path, const char *quoted, int rewrite)
     }
     free(text);
     free(out);
-    return found;
+    return rewrite ? removed : found; // when removing: was there any RefalAB block (maybe of the old place)
 }
 
 // POSIX: a block in the startup file of the shell of the user.
@@ -807,7 +807,9 @@ int main(int argc, char *argv[])
             char dir[600];
             bin_dir(dir, sizeof dir);
             if (user_path(dir, PATH_REMOVE))
-                printf("Removed %s from PATH. Open a new terminal for the change to take effect.\n", dir);
+                printf("Removed the RefalAB bin directory from PATH. Open a new terminal for the change to take effect.\n");
+            else
+                printf("%s is not in PATH, nothing to remove from it.\n", dir);
             return 0;
         }
         else if (strcmp(argv[1], "release") == 0)
