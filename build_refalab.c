@@ -664,16 +664,26 @@ static void sh_quote(const char *dir, char *quoted, size_t size)
     quoted[n] = '\0';
 }
 
-// Look through the RefalAB blocks of a startup file. If rewrite is not 0 the blocks are removed from it.
-// Returns 1 if a block with the directory quoted was found (when rewriting: if any block was removed).
-static int rc_scan(const char *path, const char *quoted, int rewrite)
+// What was found in a startup file
+typedef struct
 {
+    int blocks; // the number of the RefalAB blocks
+    int found;  // 1 if a block contains the directory quoted
+    int broken; // 1 if a block has no end line (or a block begins inside a block)
+} rc_info_t;
+
+// Look through the RefalAB blocks of a startup file. If rewrite is not 0 the blocks are removed from it.
+// A damaged file (see broken) is never changed: the lines after the begin line of a block without
+// the end line may be the lines of the user.
+static rc_info_t rc_scan(const char *path, const char *quoted, int rewrite)
+{
+    rc_info_t info = {0, 0, 0};
     char *text = read_text(path);
     if (text == NULL)
-        return 0;
+        return info;
     char *out = malloc(strlen(text) + 1);
     size_t on = 0;
-    int in_block = 0, found = 0, removed = 0;
+    int in_block = 0;
     if (out == NULL)
         fail("out of memory", path);
     for (char *line = text; *line != '\0';)
@@ -682,15 +692,17 @@ static int rc_scan(const char *path, const char *quoted, int rewrite)
         size_t ll = eol != NULL ? (size_t)(eol - line) + 1 : strlen(line);
         char saved = line[ll];
         line[ll] = '\0';
-        if (!in_block && strncmp(line, MARK_BEGIN, strlen(MARK_BEGIN)) == 0)
+        if (strncmp(line, MARK_BEGIN, strlen(MARK_BEGIN)) == 0)
         {
+            if (in_block)
+                info.broken = 1; // the previous block has no end line
             in_block = 1;
-            removed = 1;
+            info.blocks++;
         }
         if (in_block)
         {
             if (strstr(line, quoted) != NULL)
-                found = 1;
+                info.found = 1;
             if (strncmp(line, MARK_END, strlen(MARK_END)) == 0)
                 in_block = 0;
         }
@@ -702,7 +714,12 @@ static int rc_scan(const char *path, const char *quoted, int rewrite)
         line[ll] = saved;
         line += ll;
     }
-    if (rewrite && removed)
+    if (in_block)
+        info.broken = 1; // the end of the file inside a block
+    if (info.broken)
+        fprintf(stderr, "build: the RefalAB block in %s has no end line \"%s\": the file is not changed\n", path,
+                MARK_END);
+    else if (rewrite && info.blocks > 0)
     {
         FILE *f = fopen(path, "wb");
         if (f == NULL)
@@ -715,15 +732,20 @@ static int rc_scan(const char *path, const char *quoted, int rewrite)
     }
     free(text);
     free(out);
-    return rewrite ? removed : found; // when removing: was there any RefalAB block (maybe of the old place)
+    return info;
 }
 
 // POSIX: a block in the startup file of the shell of the user.
-// Returns 1 if dir was in PATH (in a block of RefalAB) before the operation.
+// PATH_CHECK:  returns 1 if there is exactly one block of RefalAB and it is for dir.
+// PATH_ADD:    removes all the blocks of RefalAB from all the files and adds one for dir.
+// PATH_REMOVE: removes all the blocks of RefalAB (of any directory) from all the files;
+//              returns 1 if there was any.
+// If a startup file is damaged (a block has no end line) nothing is changed and PATH_ADD and
+// PATH_REMOVE return -1.
 static int user_path(const char *dir, int op)
 {
     char quoted[1100], path[1100];
-    int present = 0;
+    int blocks = 0, found = 0, broken = 0;
     const char *home = getenv("HOME");
     if (home == NULL)
     {
@@ -731,12 +753,28 @@ static int user_path(const char *dir, int op)
         return 0;
     }
     sh_quote(dir, quoted, sizeof quoted);
-    // PATH_ADD and PATH_REMOVE remove the old blocks from all the files, so there is never more than one
+    // The first pass changes nothing: it only looks for the damaged files
     for (size_t i = 0; i < sizeof rc_files / sizeof rc_files[0]; i++)
     {
         snprintf(path, sizeof path, "%s/%s", home, rc_files[i]);
-        if (rc_scan(path, quoted, op != PATH_CHECK))
-            present = 1;
+        rc_info_t info = rc_scan(path, quoted, 0);
+        blocks += info.blocks;
+        found |= info.found;
+        broken |= info.broken;
+    }
+    int present = op == PATH_CHECK ? found && blocks == 1 && !broken : op == PATH_REMOVE ? blocks > 0 : found;
+    if (op == PATH_CHECK)
+        return present;
+    if (broken)
+    {
+        fprintf(stderr, "build: PATH is not changed, repair the file and run again\n");
+        return -1;
+    }
+    // The second pass removes the blocks, so that there is never more than one
+    for (size_t i = 0; i < sizeof rc_files / sizeof rc_files[0]; i++)
+    {
+        snprintf(path, sizeof path, "%s/%s", home, rc_files[i]);
+        rc_scan(path, quoted, 1);
     }
     if (op == PATH_ADD)
     {
@@ -789,7 +827,8 @@ static void offer_path(void)
     }
     if (answer[0] != 'y' && answer[0] != 'Y')
         return;
-    user_path(dir, PATH_ADD);
+    if (user_path(dir, PATH_ADD) < 0)
+        return; // a damaged startup file: the reason is already printed
     printf("Done. Open a new terminal for the change to take effect.\n");
 }
 
@@ -806,9 +845,10 @@ int main(int argc, char *argv[])
             remove_tree("lib");
             char dir[600];
             bin_dir(dir, sizeof dir);
-            if (user_path(dir, PATH_REMOVE))
+            int removed = user_path(dir, PATH_REMOVE);
+            if (removed > 0)
                 printf("Removed the RefalAB bin directory from PATH. Open a new terminal for the change to take effect.\n");
-            else
+            else if (removed == 0)
                 printf("%s is not in PATH, nothing to remove from it.\n", dir);
             return 0;
         }
